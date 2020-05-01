@@ -1,0 +1,43 @@
+#@TODO when ready for production swap out all for .env versions
+doctrine:
+  dbal:
+    default_table_options:
+      charset: utf8mb4
+      collate: utf8mb4_unicode_ci
+    driver: pdo_mysql
+    server_version: '10.1.44'
+    host:     "klh17101990.asuscomm.com"
+    port:     "3306"
+    dbname:   "HomeAppProject"
+    user:     "HomeApp"
+    password: "HomeApp1234"
+    options:
+#      1007  : '%env(PRIV_KEY)%'
+#      1008  : '%env(CLIENT_CERT)%'
+#      1009  : '%env(CA_CERT)%'
+#      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
+      1007  : SSL/client-key.pem
+      1008  : SSL/client-cert.pem
+      1009  : SSL/ca-cert.pem
+      1014  : false
+
+  orm:
+    auto_generate_proxy_classes: '%kernel.debug%'
+    naming_strategy: doctrine.orm.naming_strategy.underscore
+    auto_mapping: true
+    filters:
+      softdeleteable: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+      product_generation_filter: App\Doctrine\ProductGenerationFilter
+      product_data_filter: App\Doctrine\ProductDataFilter
+      product_price_filter: App\Doctrine\ProductPriceFilter
+      product_minutes_filter: App\Doctrine\ProductMinutesFilter
+      product_subscription_length_filter: App\Doctrine\ProductSubscriptionLengthFilter
+      product_sms_filter: App\Doctrine\ProductSmsFilter
+      product_category_filter: App\Doctrine\ProductCategoryFilter
+    mappings:
+      App:
+        is_bundle: false
+        type: annotation
+        dir: '%kernel.project_dir%/src/Entity'
+        prefix: 'App\Entity'
+        alias: App

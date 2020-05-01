@@ -1,0 +1,20 @@
+.text-red {
+    color: #e74a3b !important;
+}
+.text-blue {
+    color: #3bb1e7 !important;
+}
+
+.nav-item {
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -o-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.nav-link {
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -o-transition: 0.5s;
+    transition: 0.5s;
+}
