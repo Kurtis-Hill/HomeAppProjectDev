@@ -2,19 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3ff9239-272c-4490-910a-21761cd8910a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/HomeApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HomeApp.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arduino Sketches/DHT_Dallas_ADC/DHT_Dallas_ADC.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Arduino Sketches/DHT_Dallas_ADC/DHT_Dallas_ADC.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SSL/ca-key.pem" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SSL/client-req.pem" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/config/routes.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/config/routes.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Controller/Core/TokenController.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Controller/Core/TokenController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Security/UserAuthenticator.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Security/UserAuthenticator.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,8 +38,17 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="483">
-                  <caret line="55" column="36" selection-start-line="55" selection-start-column="36" selection-end-line="55" selection-end-column="36" />
+                <state relative-caret-position="224">
+                  <caret line="59" selection-start-line="59" selection-end-line="105" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/.gitignore">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="128">
+                  <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
                 </state>
               </provider>
             </entry>
@@ -150,7 +148,6 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>api/login_check</find>
-      <find>login_check</find>
       <find>pass</find>
       <find>isPasswordValid</find>
       <find>get</find>
@@ -166,6 +163,8 @@
       <find>authentication_success</find>
       <find>/api/log</find>
       <find>login</find>
+      <find>ven</find>
+      <find>login_check</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -353,12 +352,12 @@
       <workItem from="1588326144700" duration="1896000" />
       <workItem from="1588584541982" duration="421000" />
       <workItem from="1588585554922" duration="17614000" />
-      <workItem from="1588627902076" duration="1713000" />
+      <workItem from="1588627902076" duration="2955000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21644000" />
+    <option name="totallyTimeSpent" value="22886000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -415,13 +414,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/bin/doctrine">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="9" column="33" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/config/bundles.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -619,10 +611,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="55" column="36" selection-start-line="55" selection-start-column="36" selection-end-line="55" selection-end-column="36" />
+        <state relative-caret-position="224">
+          <caret line="59" selection-start-line="59" selection-end-line="105" />
         </state>
       </provider>
     </entry>

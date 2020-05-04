@@ -1,0 +1,2 @@
+Remove Guard authenticator from composer
+remove npm packages, migrate to yarn
