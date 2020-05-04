@@ -21,6 +21,6 @@ SymfonyReact/symfony.lock
 
 SymfonyReact/yarn.lock
 
-SymfonyReact/package.lock.json
+SymfonyReact/package-lock.json
 
 ###< symfony/webpack-encore-bundle ###

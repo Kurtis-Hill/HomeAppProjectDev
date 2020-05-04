@@ -42,14 +42,16 @@ class TokenController extends AbstractController
        // dd($this->getUser()->getUsername());
         $user = $this->getDoctrine()
             ->getRepository(User::class)
-            ->findOneBy(['email' => $request->getUser()]);
+            ->findOneBy(['email' => $this->getUser()->getUsername()]);
       //  dd($user);
+        dd($user->getUsername());
 
         if (!$user) {
             throw new BadCredentialsException();
         }
         $security = $encoderFactory->getEncoder($user);
         $isValid = $security->isPasswordValid($user->getPassword(), 'Dreadnaught1', null);
+
 
 //        if (!$isValid) {
 //            throw new BadCredentialsException();

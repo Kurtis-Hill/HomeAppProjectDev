@@ -24,6 +24,9 @@
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/laminas/laminas-code" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/laminas/laminas-eventmanager" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/laminas/laminas-zendframework-bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/lcobucci/jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/lexik/jwt-authentication-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/namshi/jose" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/nikic/php-parser" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/ocramius/package-versions" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/ocramius/proxy-manager" />

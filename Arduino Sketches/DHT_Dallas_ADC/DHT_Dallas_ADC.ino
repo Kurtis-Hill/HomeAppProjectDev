@@ -1021,7 +1021,7 @@ void loop() {
   if(WiFi.status()== WL_CONNECTED){
     Serial.println("Connected");
     if(busTempData.busNumber >= 1) {
-      busTemp();
+      oneWire = busTemp();
     }
     if(analogSensors.sensorCount >= 1) {
     //  analogReading();
