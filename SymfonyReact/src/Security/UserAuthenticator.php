@@ -46,6 +46,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     public function getCredentials(Request $request)
     {
+        dd($request);
         $credentials = [
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),

@@ -59,4 +59,5 @@ class CardDataController extends AbstractController
 
         return new JsonResponse($cardFormData);
     }
+
 }

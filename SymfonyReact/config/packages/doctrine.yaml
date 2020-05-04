@@ -8,7 +8,7 @@ doctrine:
     server_version: '10.1.44'
     host:     "klh17101990.asuscomm.com"
     port:     "3306"
-    dbname:   "HomeAppProject"
+    dbname:   "HomeApp"
     user:     "HomeApp"
     password: "HomeApp1234"
     options:
@@ -16,9 +16,9 @@ doctrine:
 #      1008  : '%env(CLIENT_CERT)%'
 #      1009  : '%env(CA_CERT)%'
 #      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
-      1007  : SSL/client-key.pem
-      1008  : SSL/client-cert.pem
-      1009  : SSL/ca-cert.pem
+      1007  : ../SSL/client-key.pem
+      1008  : ../SSL/client-cert.pem
+      1009  : ../SSL/ca-cert.pem
       1014  : false
 
   orm:

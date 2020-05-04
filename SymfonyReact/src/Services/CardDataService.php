@@ -42,12 +42,12 @@ class CardDataService extends HomeAppRoomAbstract
     }
 
     //Add to this array if adding more sensors
-    public function returnAllCardSensorData($type)
+    public function returnAllCardSensorData($type, $room)
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $tempHumid = $cardRepository->getTempHumidCardReadings($this->groupNameid, $this->userID, $type);
-        $analog = $cardRepository->getAnalogCardReadings($this->groupNameid, $this->userID, $type);
+        $tempHumid = $cardRepository->getTempHumidCardReadings($this->groupNameid, $this->userID, $type, $room);
+        $analog = $cardRepository->getAnalogCardReadings($this->groupNameid, $this->userID, $type, $room);
 
         $cardData = [];
         $cardData['tempHumid'] = $tempHumid;

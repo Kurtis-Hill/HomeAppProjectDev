@@ -1,3 +1,2 @@
-index:
-    path: /HomeApp/index
-    controller: App\Controller\IndexController::indexAction
+api_login_check:
+    path: /HomeApp/login_check
