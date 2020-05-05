@@ -41,7 +41,7 @@ class Consthumid
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })
@@ -51,7 +51,7 @@ class Consthumid
     /**
      * @var Groupname
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Groupname")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
@@ -61,7 +61,7 @@ class Consthumid
     /**
      * @var Sensornames
      *
-     * @ORM\ManyToOne(targetEntity="Sensornames")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Sensornames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })

@@ -34,6 +34,11 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        refresh:
+            pattern:  ^/HomeApp/token/refresh
+            stateless: true
+            anonymous: true
+
         main:
             anonymous: true
 
@@ -54,6 +59,7 @@ security:
     access_control:
         - { path: ^/HomeApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp,       roles: IS_AUTHENTICATED_FULLY }
 
 

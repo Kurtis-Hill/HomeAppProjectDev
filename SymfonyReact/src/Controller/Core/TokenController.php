@@ -28,6 +28,7 @@ class TokenController extends AbstractController
 
     /**
      * @Route("/", name="token")
+ * @TODO Delete just messing around
      */
     public function newTokenAction(Request $request, EncoderFactoryInterface $encoderFactory, JWTEncoderInterface $JWTEncoder)
     {

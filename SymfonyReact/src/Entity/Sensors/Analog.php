@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Analog
  *
- * @ORM\Table(name="analog", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="analog_ibfk_4", columns={"cardShowID"}), @ORM\Index(name="roomID", columns={"roomID"}), @ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_5", columns={"cardViewID"})})
+ * @ORM\Table(name="analog", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}),@ORM\Index(name="roomID", columns={"roomID"}), @ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_5", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
  */
 class Analog
@@ -90,16 +90,6 @@ class Analog
      * })
      */
     private $sensornameid;
-
-    /**
-     * @var Cardshow
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardstate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
-     * })
-     */
-    private $cardstateid;
 
     /**
      * @var Cardview
@@ -212,17 +202,6 @@ class Analog
         return $this;
     }
 
-    public function getCardshowid(): ?Cardshow
-    {
-        return $this->cardshowid;
-    }
-
-    public function setCardshowid(?Cardshow $cardstateid): self
-    {
-        $this->cardshowid = $cardstateid;
-
-        return $this;
-    }
 
     public function getCardviewid(): ?Cardview
     {

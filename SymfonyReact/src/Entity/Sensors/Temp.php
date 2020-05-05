@@ -2,7 +2,6 @@
 
 namespace App\Entity\Sensors;
 
-use App\Entity\Card\Cardshow;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Groupname;
@@ -13,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Temp
  *
- * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="SensorName", columns={"sensorNameID"}), @ORM\Index(name="temp_ibfk_5", columns={"cardViewID"}), @ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="temp_ibfk_4", columns={"cardstateid"})})
+ * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="SensorName", columns={"sensorNameID"}), @ORM\Index(name="temp_ibfk_5", columns={"cardViewID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\TempRepository")
  */
 class Temp
@@ -91,16 +90,6 @@ class Temp
      * })
      */
     private $sensornameid;
-
-    /**
-     * @var Cardshow
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardstate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
-     * })
-     */
-    private $cardstateid;
 
     /**
      * @var Cardview
@@ -213,17 +202,6 @@ class Temp
         return $this;
     }
 
-    public function getcardstateid(): Cardstate
-    {
-        return $this->cardstateid;
-    }
-
-    public function setcardstateid(?Cardshow $cardstateid): self
-    {
-        $this->cardstateid = $cardstateid;
-
-        return $this;
-    }
 
     public function getCardviewid(): ?Cardview
     {
