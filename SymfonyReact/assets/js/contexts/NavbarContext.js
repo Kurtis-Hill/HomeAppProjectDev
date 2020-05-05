@@ -7,6 +7,7 @@ export const NavbarContext = createContext();
 export default class NavbarContextProvider extends Component {
     constructor(props) {
         super(props);
+        
         this.state = {
             rooms: [],
             sensorNames: [],

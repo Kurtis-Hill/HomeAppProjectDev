@@ -7,6 +7,7 @@ export const CardContext = createContext();
 class CardContextProvider extends Component {
     constructor(props) {
         super(props);
+        axios.defaults.headers.common['Authorization'] = getToken();
         this.state = {
             state: 'setting',
             refreshTimer: 4000,
