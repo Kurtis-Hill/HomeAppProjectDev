@@ -46,14 +46,12 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     public function getCredentials(Request $request)
     {
-       // dd($request);
         $credentials = [
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
-       // dd($credentials);
-       // dd($request);
+
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $credentials['email']
@@ -64,12 +62,9 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-       // dd($credentials['csrf_token']);
-      //  dd($this->csrfTokenManager->getToken('authenticate'));
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        //dd($token);
+
         if (!$this->csrfTokenManager->isTokenValid($token)) {
-            dd('notValuids');
             throw new InvalidCsrfTokenException();
         }
 
@@ -102,11 +97,9 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             return new RedirectResponse($targetPath);
         }
         return new RedirectResponse($this->urlGenerator->generate('index'));
-
-
 //        return new Response('index/index-view.html.twig');
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+//        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
+//        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl()

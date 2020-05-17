@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { setUserSession } from '../Utilities/Common';
-import qs from 'querystring';
+
 
 function Login(props) {
     const username = useFormInput('');
@@ -16,19 +16,18 @@ function Login(props) {
         axios.get('csrfToken')
         .then(response => {
             console.log('csrfToken', response.data);
-            const token = response.data.token;
-         
-
+            const formToken = response.data.token;
+        
             axios.post('api/login_check', {username: username.value, password: password.value})
             .then(response => {
                 setLoading(false);
                 console.log("api jwt token success", response.data.token, response.data.user);
                 setUserSession(response.data.token, response.data.user);
                 
-                let myForm = document.getElementById('loginForm');
-                let formData = new FormData(myForm); 
+                const loginForm = document.getElementById('loginForm');
+                const formData = new FormData(loginForm); 
                 
-                formData.append('_csrf_token', token);
+                formData.append('_csrf_token', formToken);
                 
                 const config = {     
                     headers: { 'content-type': 'multipart/form-data' }
@@ -37,11 +36,11 @@ function Login(props) {
                 axios.post('login', formData, config)
                 .then(response => {
                     console.log(response);
+                    props.history.push('index');
                 })
                 .catch(error => {
                     console.log(error);
                 });
-
             }).catch(error => {
                 setLoading(false);
                 console.log(error);
@@ -50,7 +49,6 @@ function Login(props) {
         .catch(error => {
             console.log(error);
         })
-        props.history.push('index');
     }
 
 
@@ -74,12 +72,10 @@ function Login(props) {
                                                 {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
                                                 <form id="loginForm" className="user">
                                                     <div className="form-group">
-                                                        <input type="text" name="email" {...username} className="form-control form-control-user" aria-describedby="emailHelp" />
+                                                        <input type="text" name="email" {...username} autoComplete="username" className="form-control form-control-user" aria-describedby="emailHelp" />
                                                     </div>
                                                     <div className="form-group">
-                                                        <input type="password" name="password" {...password} className="form-control form-control-user" />
-                                                        
-                                                        {/* { getToken() } */}
+                                                        <input type="password" name="password" {...password} autoComplete="new-password" className="form-control form-control-user" />
                                                     </div>
                                                     <div className="form-group">
                                                         <div className="custom-control custom-checkbox small">
@@ -87,7 +83,7 @@ function Login(props) {
                                                             <label className="custom-control-label" htmlFor="customCheck">Remember Me</label>
                                                         </div>
                                                     </div>
-                                                    {loading ? <div className=" fa-2x fas fa-spinner fa-spin"></div> : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
+                                                    {loading ? <div className="center-item fa-2x fas fa-spinner fa-spin"></div> : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
                                                     <hr />
                                                     <a href="index.html" className="btn btn-google btn-user btn-block">
                                                         <i className="fab fa-google fa-fw" /> Login with Google
