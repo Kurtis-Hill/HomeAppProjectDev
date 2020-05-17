@@ -3,29 +3,28 @@
 
 namespace App\Controller;
 
-use App\Entity\Card\Cardview;
-use App\Entity\Core\Sensornames;
-use App\Entity\Core\Sensortype;
+
 use App\Entity\Core\User;
-use App\Entity\Sensors\Temp;
-use App\Form\CardViewFormType;
+
 use App\PageData\LiveSensorData;
-use App\Services\CardDataService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+
 
 /**
- * @Route("/HomeApp/index", name="index")
+ * @Route("/HomeApp")
  */
 class IndexController extends AbstractController
 {
 
     /**
-     * @Route("/", name="indexview")
+     * @Route("/index", name="index")
      * @param Request $request
      * @return Response
      */
@@ -36,16 +35,16 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/CardData", name="cardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
+     * @Route("/csrfToken", name="csrf")
      */
-    public function returnAllCardData(Request $request, CardDataService $cardDataService)
+    public function viewToken(CsrfTokenManagerInterface $csrfTokenManager, Request $request)
     {
-        $cardData = $cardDataService->returnAllCardSensorData('json', 'index');
-        return new JsonResponse($cardData);
+
+        $token = $csrfTokenManager->getToken('authenticate')->getValue();
+       // dd($token);
+        return new JsonResponse(['token' => $token]);
     }
+
 
     /**
      * @Route("/ssl")

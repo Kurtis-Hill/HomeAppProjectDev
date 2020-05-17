@@ -1,23 +1,40 @@
 import React, { Component, createContext } from 'react'
 import ReactDOM from "react-dom";
 import axios from 'axios';
+import { getToken } from '../Utilities/Common';
+import { getUser } from '../Utilities/Common';
 
 export const CardContext = createContext();
+
+
+const token = sessionStorage.getItem('token');
 
 class CardContextProvider extends Component {
     constructor(props) {
         super(props);
-        axios.defaults.headers.common['Authorization'] = getToken();
         this.state = {
             state: 'setting',
             refreshTimer: 4000,
             tempHumid: [],
             analog: [],
         };
+        console.log('Token from storage', token)
     }
+
+
+//     axiosToken = () => {
+//         const token = sessionStorage.getItem('token');
+//         if (token) {
+//             axios.defaults.headers.common["Bearer"] = token;
+//         } else {
+//             axios.defaults.headers.common['Authorization'] = null;
+//         }
+//    };
 
     componentDidMount() {
         //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()
+        // this.axiosToken();
+      
         this.fetchIndexCardData();
     }
 
@@ -26,9 +43,11 @@ class CardContextProvider extends Component {
         // console.log('prev props', prevProps);
     }
 
+
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
-        axios.get('/HomeApp/index/CardData')
+        axios.get('/HomeApp/api/CardData/index', 
+        { headers: {"Authorization" : `Bearer ${token}`} })
         .then(response => {
             console.log('CardData', response.data);
             this.setState({
@@ -44,7 +63,6 @@ class CardContextProvider extends Component {
     //gets the card form data so users can customize cards
     getCardDataForm = (id) => {
         console.log("pressed" + id);
-
         axios.get('/HomeApp/index/CardViewForm?&id='+id)
         .then(response => {
             // let hey = ReactDOM.findDOMNode(<div className="modal fade" id="logoutModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>).getElementsByClassName('aria-hidden');

@@ -20,6 +20,7 @@
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/doctrine/orm" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/doctrine/persistence" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/doctrine/reflection" />
+      <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/jdorn/sql-formatter" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/laminas/laminas-code" />
       <excludeFolder url="file://$MODULE_DIR$/SymfonyReact/vendor/laminas/laminas-eventmanager" />

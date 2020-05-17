@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { setUserSession } from '../Utilities/Common';
+import qs from 'querystring';
 
 function Login(props) {
     const username = useFormInput('');
@@ -8,22 +9,52 @@ function Login(props) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = () => {
+    const handleLogin = (event) => {
         setError(null);
         setLoading(true);
 
-        axios.post('login_check', {username: username.value, password: password.value})
+        axios.get('csrfToken')
         .then(response => {
-            setLoading(false);
-            setUserSession(response.data.token, response.data.user);
-            props.history.push('index');
-            console.log("success", response.data.token, response.data.user);
-        }).catch(error => {
-            setLoading(false);
-            if (error.response.status === 401) setError(error.response.data.message);
-            else setError("Something went Wrong");
-        });
+            console.log('csrfToken', response.data);
+            const token = response.data.token;
+         
+
+            axios.post('api/login_check', {username: username.value, password: password.value})
+            .then(response => {
+                setLoading(false);
+                console.log("api jwt token success", response.data.token, response.data.user);
+                setUserSession(response.data.token, response.data.user);
+                
+                let myForm = document.getElementById('loginForm');
+                let formData = new FormData(myForm); 
+                
+                formData.append('_csrf_token', token);
+                
+                const config = {     
+                    headers: { 'content-type': 'multipart/form-data' }
+                }
+                
+                axios.post('login', formData, config)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+            }).catch(error => {
+                setLoading(false);
+                console.log(error);
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        })
+        props.history.push('index');
     }
+
+
+        
 
     return (
         <React.Fragment>
@@ -41,12 +72,14 @@ function Login(props) {
                                                     <h1 className="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                                 </div>
                                                 {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
-                                                <div className="user">
+                                                <form id="loginForm" className="user">
                                                     <div className="form-group">
-                                                        <input type="text" {...username} autoComplete="new-password" className="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" />
+                                                        <input type="text" name="email" {...username} className="form-control form-control-user" aria-describedby="emailHelp" />
                                                     </div>
                                                     <div className="form-group">
-                                                        <input type="password" {...password} autoComplete="new-password" className="form-control form-control-user" id="exampleInputPassword" />
+                                                        <input type="password" name="password" {...password} className="form-control form-control-user" />
+                                                        
+                                                        {/* { getToken() } */}
                                                     </div>
                                                     <div className="form-group">
                                                         <div className="custom-control custom-checkbox small">
@@ -54,7 +87,7 @@ function Login(props) {
                                                             <label className="custom-control-label" htmlFor="customCheck">Remember Me</label>
                                                         </div>
                                                     </div>
-                                                    {loading ? <div className=" fa-2x fas fa-spinner fa-spin"></div> : <a onClick={handleLogin} className="btn btn-primary btn-user btn-block">Login</a>}
+                                                    {loading ? <div className=" fa-2x fas fa-spinner fa-spin"></div> : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
                                                     <hr />
                                                     <a href="index.html" className="btn btn-google btn-user btn-block">
                                                         <i className="fab fa-google fa-fw" /> Login with Google
@@ -62,7 +95,7 @@ function Login(props) {
                                                     <a href="index.html" className="btn btn-facebook btn-user btn-block">
                                                         <i className="fab fa-facebook-f fa-fw" /> Login with Facebook
                                                     </a>
-                                                </div>
+                                                </form>
                                                 <hr />
                                                 <div className="text-center">
                                                     <a className="small" href="forgot-password.html">Forgot Password?</a>
@@ -89,10 +122,14 @@ const useFormInput = initialValue => {
     const handleChange = e => {
         setvalue(e.target.value);
     }
-    console.log(value);
+
     return {
         value,
         onChange: handleChange
     }
 }
+
+
+
+
 export default Login;

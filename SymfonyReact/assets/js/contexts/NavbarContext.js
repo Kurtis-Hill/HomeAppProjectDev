@@ -4,6 +4,8 @@ import axios from 'axios';
 
 export const NavbarContext = createContext();
 
+const token = sessionStorage.getItem('token');
+
 export default class NavbarContextProvider extends Component {
     constructor(props) {
         super(props);
@@ -15,6 +17,14 @@ export default class NavbarContextProvider extends Component {
             settingsNavToggle: false,
             navbarToggle: false,
         }
+      //  this.navbarRoomLinks();
+    }
+
+    
+    componentDidMount() {
+        //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()
+        // this.axiosToken();
+      
         this.navbarRoomLinks();
     }
 
@@ -54,7 +64,8 @@ export default class NavbarContextProvider extends Component {
 
 
     navbarRoomLinks = () => {
-        axios.get('/HomeApp/Navbar/rooms')
+        axios.get('/HomeApp/Navbar/rooms',
+        { headers: {"Authorization" : `Bearer ${token}`} })
         .then(response => {
             console.log('NavbarRoomLinks', response.data);
             this.setState({rooms: response.data})

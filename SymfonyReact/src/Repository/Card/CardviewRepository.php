@@ -7,9 +7,17 @@ namespace App\Repository\Card;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class CardviewRepository extends EntityRepository
 {
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed
+
+     */
 
     public function getTempHumidCardReadings($groupNameID, $userID, $type = null)
     {

@@ -24,9 +24,9 @@ export default class App extends Component {
     
     render() {
         return (    
+            
         <Router>
             <Route path="/HomeApp/login" component={Login}>
-                {/* <Login></Login> */}
             </Route>
             <div id="page-top">
                 <div id="wrapper">

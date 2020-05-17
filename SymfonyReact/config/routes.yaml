@@ -1,6 +1,6 @@
 api_login_check:
-    path: /HomeApp/login_check
+    path: /HomeApp/api/login_check
 
 gesdinet_jwt_refresh_token:
-  path:       /HomeApp/token/refresh
+  path:       /HomeApp/api/token/refresh
   controller: gesdinet.jwtrefreshtoken::refresh

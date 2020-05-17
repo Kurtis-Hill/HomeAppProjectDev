@@ -9,6 +9,7 @@ use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
 use App\Entity\Core\Sensornames;
 use App\Form\CardViewFormType;
+use App\Services\CardDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class CardDataController
  * @package App\Controller\CardData
- * @Route("/HomeApp/CardData")
+ * @Route("/HomeApp/api/CardData")
  */
 class CardDataController extends AbstractController
 {
@@ -45,6 +46,18 @@ class CardDataController extends AbstractController
 
         return new JsonResponse($cardSensorData);
 
+    }
+
+    /**
+     * @Route("/index", name="cardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
+     */
+    public function returnIndexAllCardData(Request $request, CardDataService $cardDataService)
+    {
+        $cardData = $cardDataService->returnAllCardSensorData('json', 'index');
+        return new JsonResponse($cardData);
     }
 
 
