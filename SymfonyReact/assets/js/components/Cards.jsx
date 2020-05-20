@@ -5,6 +5,8 @@ const cardRender = () => {
 
   const context = useContext(CardContext);
 
+  const modalStyle = context.modalDisplay ? 'display: none;' : 'display: block; padding-right: 17px;';
+
   return ( 
     <React.Fragment>
       {context.tempHumid.map((tempHumid, index) => (
@@ -47,6 +49,7 @@ const cardRender = () => {
           </div>
           // </div>
       ))}
+      {context.modalDisplay()}
     </React.Fragment>
   )
 }

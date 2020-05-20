@@ -9,6 +9,8 @@ function Login(props) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const loginPhoto = require('../../images/sitepictures/indexPhoto.jpg');
+
     const handleLogin = (event) => {
         setError(null);
         setLoading(true);
@@ -63,7 +65,7 @@ function Login(props) {
                             <div className="card o-hidden border-0 shadow-lg my-5">
                                 <div className="card-body p-0">
                                     <div className="row">
-                                        <div className="col-lg-6 d-none d-lg-block bg-login-image" />
+                                        <img src={ loginPhoto } className="col-lg-6 d-none d-lg-block bg-login-image" />
                                         <div className="col-lg-6">
                                             <div className="p-5">
                                                 <div className="text-center">

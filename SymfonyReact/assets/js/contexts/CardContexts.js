@@ -17,19 +17,11 @@ class CardContextProvider extends Component {
             refreshTimer: 4000,
             tempHumid: [],
             analog: [],
+            modal: false,
         };
         console.log('Token from storage', token)
     }
 
-
-//     axiosToken = () => {
-//         const token = sessionStorage.getItem('token');
-//         if (token) {
-//             axios.defaults.headers.common["Bearer"] = token;
-//         } else {
-//             axios.defaults.headers.common['Authorization'] = null;
-//         }
-//    };
 
     componentDidMount() {
         //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()
@@ -63,9 +55,8 @@ class CardContextProvider extends Component {
     //gets the card form data so users can customize cards
     getCardDataForm = (id) => {
         console.log("pressed" + id);
-        axios.get('/HomeApp/index/CardViewForm?&id='+id)
+        axios.get('/HomeApp/api/CardData/cardviewform&id='+id)
         .then(response => {
-            // let hey = ReactDOM.findDOMNode(<div className="modal fade" id="logoutModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>).getElementsByClassName('aria-hidden');
             console.log(response.data);
         }).catch(error => {
             console.log(error);
@@ -96,6 +87,31 @@ class CardContextProvider extends Component {
         
     }
 
+    modalDisplayStyle = () => {
+        const style = this.modal !== true ? 
+        <div className="modal fade show id=logoutModal tabIndex={-1} role=dialog aria-labelledby=exampleModalLabel aria-hidden=true modal-show">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+              <button className="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div className="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <a className="btn btn-primary" href="login.html">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+        :
+        'modal-show';
+
+        return style;
+    }
+
     
     render() {
         return (
@@ -107,6 +123,7 @@ class CardContextProvider extends Component {
                         getCardDataForm: this.getCardDataForm,
                         getSensorReadingStyle: this.getSensorReadingStyle,
                         isHumidityAvalible: this.isHumidityAvalible,
+                        modalDisplay: this.modalDisplayStyle,
                     }}>
                         {this.props.children}
                     </CardContext.Provider>

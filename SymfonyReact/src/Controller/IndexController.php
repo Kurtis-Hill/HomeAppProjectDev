@@ -63,14 +63,5 @@ class IndexController extends AbstractController
        $this->getDoctrine()->getRepository(User::class)->showSSL();
     }
 
-    /**
-     * @Route("/token")
-     */
-    public function newTokenAction()
-    {
-        $hey = "hery";
-        return new JsonResponse($hey);
-    }
-
 
 }

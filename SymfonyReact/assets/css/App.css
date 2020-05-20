@@ -23,4 +23,10 @@
     margin-left: 40%;
 }
 
+.modal-show {
+    display: block; padding-right: 17px;
+}
 
+.modal-hide {
+    display: none;
+}
