@@ -34,6 +34,6 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-       return $this->render('index/index.html.twig');
+        return $this->redirectToRoute('index');
     }
 }
