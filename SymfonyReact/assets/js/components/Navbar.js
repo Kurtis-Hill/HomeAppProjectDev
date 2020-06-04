@@ -49,11 +49,11 @@ const Navbar = () => {
                     <div id="collapseTwo" className={context.navStyle('room')} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">View Room:</h6>
-                        {/* {context.navRooms.map((navRoom, index) => (
+                        {context.navRooms.map((navRoom, index) => (
                         
                             <a key={navRoom.r_roomid} className="collapse-item" href={roomRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
                         ))}
-                        {context.navRooms} */}
+                        {/* {context.navRooms} */}
                     </div>
                     </div>
                 </li>
@@ -66,11 +66,11 @@ const Navbar = () => {
                     <div id="collapseTwo" className={context.navStyle('settings')} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Settings:</h6>
-                        {/* {context.navRooms}
+                        {/* {context.navRooms} */}
                         {context.navRooms.map((navRoom, index) => (
                             // WANTS TO BE LINK
                             <a key={navRoom.r_roomid} className="collapse-item" href={settingRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
-                        ))} */}
+                        ))}
                     </div>
                     </div>
                 </li>

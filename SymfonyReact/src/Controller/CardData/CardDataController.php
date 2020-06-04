@@ -29,22 +29,30 @@ class CardDataController extends AbstractController
     {
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
-        $cardView = new Cardview();
+        $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
 
-        $form = $this->createForm(CardViewFormType::class, $cardView, []);
-        $errors = [];
+        $colours= $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
 
-        if ($form->isSubmitted() && !$form->isValid()) {
-            //$submittedData = $form->getData();
-            foreach ($form->getErrors(true, true) as $error) {
-                $propertyName = $error->getOrigin()->getName();
-                $errors[$propertyName] = $error->getMessage();
-            }
-            return new JsonResponse();
+        $cardFormData = [$cardSensorData, $icons, $colours];
 
-        }
+      //  dd($cardSensorData);
 
-        return new JsonResponse($cardSensorData);
+//        $cardView = new Cardview();
+//
+//        $form = $this->createForm(CardViewFormType::class, $cardView, []);
+//        $errors = [];
+//
+//        if ($form->isSubmitted() && !$form->isValid()) {
+//            //$submittedData = $form->getData();
+//            foreach ($form->getErrors(true, true) as $error) {
+//                $propertyName = $error->getOrigin()->getName();
+//                $errors[$propertyName] = $error->getMessage();
+//            }
+//            return new JsonResponse();
+//
+//        }
+        //dd($icons);
+        return new JsonResponse($cardFormData);
 
     }
 

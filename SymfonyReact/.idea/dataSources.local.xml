@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="ProjectPi" uuid="e1e96832-4d60-42f6-8a04-3754f1454467">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MARIADB" exact-version="0" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>kurtis</user-name>
+      <ssl-config>
+        <ca-cert>C:\Users\spiko\Documents\Projects\HomeAppProjectDev\SSL\ca-cert.pem</ca-cert>
+        <client-cert>C:\Users\spiko\Documents\Projects\HomeAppProjectDev\SSL\client-cert.pem</client-cert>
+        <client-key>C:\Users\spiko\Documents\Projects\HomeAppProjectDev\SSL\client-key.pem</client-key>
+        <enabled>true</enabled>
+      </ssl-config>
+    </data-source>
+  </component>
+</project>

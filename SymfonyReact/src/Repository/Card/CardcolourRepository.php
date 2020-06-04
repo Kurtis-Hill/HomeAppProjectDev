@@ -21,8 +21,8 @@ class CardcolourRepository extends ServiceEntityRepository
 
     public function getAllColours()
     {
-        $qb = $this->createQueryBuilder('cc')
-              ->orderBy('cc.colour', 'ASC');
+        $qb = $this->createQueryBuilder('c')
+              ->orderBy('c.colour', 'ASC');
 
         $result = $qb->getQuery()->getScalarResult();
         return $result;

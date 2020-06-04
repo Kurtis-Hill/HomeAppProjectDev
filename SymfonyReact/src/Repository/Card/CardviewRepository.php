@@ -144,23 +144,27 @@ class CardviewRepository extends EntityRepository
 
 
     //Add left join for additional sensors
+    //@TODO need to change cardstate to be in cardview table rather than temp, humid and analog -- will lose the ability to take secodnary sensor data off the card but will ultimatly save DB requests
     public function getCardFormData($criteria)
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('cv', 't', 'h', 'a', 'i', 'cc')
+        $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's.sensorname')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Card\Cardstate', 'cs', Join::WITH,'cs.cardstateid = cv.sensornameid')
             ->where(
                 $qb->expr()->eq('cv.cardviewid', ':id')
             )
             ->setParameters(['id' => $criteria['id']]);
 
         $result = $qb->getQuery()->getScalarResult();
-      //  dd($result);
-        return $result;
+        //$result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        //dd($result);
+        return $result[0];
 
     }
 }

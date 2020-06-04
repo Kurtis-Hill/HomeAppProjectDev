@@ -61,8 +61,8 @@ security:
         - { path: ^/HomeApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/csrf, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/HomeApp/api, roles: IS_AUTHENTICATED_FULLY }
+#        - { path: ^/HomeApp/, roles: IS_AUTHENTICATED_FULLY }
+#        - { path: ^/HomeApp/api, roles: IS_AUTHENTICATED_FULLY }
 
 
 #

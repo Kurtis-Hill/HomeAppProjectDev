@@ -18,12 +18,13 @@ class IconRepository extends ServiceEntityRepository
 
    public function getAllIcons()
    {
-       $qb = $this->createQueryBuilder('ci')
-           ->orderBy('ci.iconname', 'ASC');
+       $qb = $this->createQueryBuilder('i')
+           ->orderBy('i.iconname', 'ASC');
 
        $result = $qb->getQuery()->getScalarResult();
        //dd($result);
        return $result;
    }
+
 
 }

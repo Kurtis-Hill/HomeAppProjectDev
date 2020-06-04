@@ -28,6 +28,13 @@ class Cardcolour
      */
     private $colour;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shade", type="string", length=20, nullable=false)
+     */
+    private $shade;
+
     public function getColourid(): ?int
     {
         return $this->colourid;
@@ -41,6 +48,18 @@ class Cardcolour
     public function setColour(string $colour): self
     {
         $this->colour = $colour;
+
+        return $this;
+    }
+
+    public function getShade(): ?string
+    {
+
+    }
+
+    public function setShade(string $shade): self#
+    {
+        $this->shade = $shade;
 
         return $this;
     }

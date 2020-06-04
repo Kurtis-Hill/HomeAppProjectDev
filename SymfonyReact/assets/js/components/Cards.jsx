@@ -1,11 +1,11 @@
-import React, { Component, useContext, useState } from 'react'
-import { CardContext } from '../contexts/CardContexts'
+import React, { Component, useContext, useState } from 'react';
+import { CardContext } from '../contexts/CardContexts';
 
 const cardRender = () => {
 
   const context = useContext(CardContext);
 
-  const showModal = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
+  const modalStyle = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
 
   return ( 
     <React.Fragment>
@@ -18,6 +18,7 @@ const cardRender = () => {
                     <div className="font-weight-bold text text-uppercase mb-1">{tempHumid.sensorname}</div>
                     <div className={context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
                     {context.isHumidityAvalible(tempHumid)}
+                    <div>@{tempHumid.t_timez.date}</div>
                   </div>
                   <div className="col-auto">
                     <i className={"fas fa-2x text-gray-300 fa-"+tempHumid.iconname}></i>
@@ -36,6 +37,7 @@ const cardRender = () => {
                   <div className="col mr-2">
                   <div className="font-weight-bold text text-uppercase mb-1">{analog.sensorname}</div>
                     <div className="h5 mb-0 font-weight-bold text-gray-800">Sensor Reading: {analog.a_analogreading}</div>
+                    <div>@{analog.a_timez.date}</div>
                   </div>
                   <div className="col-auto">
                     <i className={"fas fa-2x text-gray-300 fa-"+analog.iconname}></i>
@@ -47,20 +49,14 @@ const cardRender = () => {
       ))}
 
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-      <div id="logoutModal" style={showModal} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+      <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">TITLE</h5>
-                            <button className="close" type="button" data-dismiss="modal" aria-label="Close">
-                              {/* <span aria-hidden="true" onClick={context.toggleModal()}>×</span> */}
-                              <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        
+                        {context.modalContent}
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                              <a className="btn btn-primary" href="login.html">Logout</a>
+                            <button className="btn btn-secondary" type="button" onClick={context.toggleModal()} data-dismiss="modal">Cancel</button>
+                              <a className="btn btn-primary" href="login.html">Submit</a>
                         </div>
                     </div>
                 </div>
