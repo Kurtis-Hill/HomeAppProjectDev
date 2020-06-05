@@ -6,7 +6,7 @@ const cardRender = () => {
   const context = useContext(CardContext);
 
   const modalStyle = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
-
+  //const modalStyle = {display: 'none'};
   return ( 
     <React.Fragment>
       {context.tempHumid.map((tempHumid, index) => (
@@ -16,7 +16,7 @@ const cardRender = () => {
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
                     <div className="font-weight-bold text text-uppercase mb-1">{tempHumid.sensorname}</div>
-                    <div className={context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
+                    <div className={'h5 mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
                     {context.isHumidityAvalible(tempHumid)}
                     <div>@{tempHumid.t_timez.date}</div>
                   </div>
@@ -51,16 +51,16 @@ const cardRender = () => {
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
       <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        {context.modalContent}
-                        <div className="modal-footer">
-                            <button className="btn btn-secondary" type="button" onClick={context.toggleModal()} data-dismiss="modal">Cancel</button>
-                              <a className="btn btn-primary" href="login.html">Submit</a>
-                        </div>
-                    </div>
-                </div>
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            {context.modalContent}
+            <div className="modal-footer">
+                <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
+                  <a className="btn btn-primary" href="login.html">Submit</a>
             </div>
+          </div>
+        </div>
+      </div>
     </React.Fragment>
   )
 }

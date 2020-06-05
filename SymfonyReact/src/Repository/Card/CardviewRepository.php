@@ -148,14 +148,14 @@ class CardviewRepository extends EntityRepository
     public function getCardFormData($criteria)
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's.sensorname')
+        $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's.sensorname', 'cs')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
-            ->innerJoin('App\Entity\Card\Cardstate', 'cs', Join::WITH,'cs.cardstateid = cv.sensornameid')
+            ->innerJoin('App\Entity\Card\Cardstate', 'cs', Join::WITH,'cs.cardstateid = cv.cardstateid')
             ->where(
                 $qb->expr()->eq('cv.cardviewid', ':id')
             )

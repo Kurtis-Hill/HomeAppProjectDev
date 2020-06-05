@@ -31,27 +31,13 @@ class CardDataController extends AbstractController
 
         $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
 
-        $colours= $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
 
-        $cardFormData = [$cardSensorData, $icons, $colours];
+        $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
+        $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
 
-      //  dd($cardSensorData);
+        $cardFormData = [$cardSensorData, $icons, $colours, $states];
 
-//        $cardView = new Cardview();
-//
-//        $form = $this->createForm(CardViewFormType::class, $cardView, []);
-//        $errors = [];
-//
-//        if ($form->isSubmitted() && !$form->isValid()) {
-//            //$submittedData = $form->getData();
-//            foreach ($form->getErrors(true, true) as $error) {
-//                $propertyName = $error->getOrigin()->getName();
-//                $errors[$propertyName] = $error->getMessage();
-//            }
-//            return new JsonResponse();
-//
-//        }
-        //dd($icons);
+        //dd($cardFormData);
         return new JsonResponse($cardFormData);
 
     }

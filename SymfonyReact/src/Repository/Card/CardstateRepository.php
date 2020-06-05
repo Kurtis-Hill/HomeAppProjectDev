@@ -24,4 +24,14 @@ class CardstateRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    public function getAllStates()
+    {
+        $qb = $this->createQueryBuilder('cs')
+            ->orderBy('cs.cardstateid', 'ASC');
+
+        $result = $qb->getQuery()->getScalarResult();
+        //dd($result);
+        return $result;
+    }
 }

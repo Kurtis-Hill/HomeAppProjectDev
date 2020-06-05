@@ -38,3 +38,16 @@
     margin-top: -50px;
     margin-left: -50px;
 }
+
+.modal-element {
+    padding-top: 2.5%;  
+}
+
+.form-space {
+    max-width: 50%;
+}
+
+.modal-icon {
+    max-width: 30%;
+    display: inline-block;
+}
