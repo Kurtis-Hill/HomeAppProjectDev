@@ -47,7 +47,6 @@ class CardViewFormType extends AbstractType
 //                },
             ])
 
-
             ->add('cardSensorStateOne', ChoiceType::class, [
                 'mapped' => false,
 //                'label' => 'Card View For Temperature',

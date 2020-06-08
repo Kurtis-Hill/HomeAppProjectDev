@@ -43,6 +43,9 @@ class CardDataController extends AbstractController
         //dd($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $sensorCardView = new Cardview();
+            $sensorCardState = new Cardstate();
+
         }
 
         return new JsonResponse($cardFormData);

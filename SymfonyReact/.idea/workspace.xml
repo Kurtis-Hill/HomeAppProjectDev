@@ -6,12 +6,10 @@
       <change beforePath="$PROJECT_DIR$/../SSL/ca-cert.pem" beforeDir="false" afterPath="$PROJECT_DIR$/../SSL/ca-cert.pem" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../SSL/client-cert.pem" beforeDir="false" afterPath="$PROJECT_DIR$/../SSL/client-cert.pem" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../SSL/client-key.pem" beforeDir="false" afterPath="$PROJECT_DIR$/../SSL/client-key.pem" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/components/CardFormModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/CardFormModal.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Cards.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/components/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Login.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Form/CardViewFormType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Form/CardViewFormType.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,6 +42,9 @@
     </expand>
     <select />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="SymfonyReact" />
+  </component>
   <component name="FileEditorManager">
     <splitter split-orientation="horizontal" split-proportion="0.45521215">
       <split-first>
@@ -51,8 +52,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="460">
-                  <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
+                <state relative-caret-position="357">
+                  <caret line="48" column="8" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="8" />
                 </state>
               </provider>
             </entry>
@@ -103,8 +104,11 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="680">
-                  <caret line="50" column="37" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="37" />
+                <state relative-caret-position="143">
+                  <caret line="36" column="34" selection-start-line="36" selection-start-column="34" selection-end-line="36" selection-end-column="34" />
+                  <folding>
+                    <element signature="e#28#59#0#PHP" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -136,8 +140,8 @@
         <option value="$PROJECT_DIR$/src/Entity/Card/Cardview.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php" />
-        <option value="$PROJECT_DIR$/src/Form/CardViewFormType.php" />
         <option value="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" />
+        <option value="$PROJECT_DIR$/src/Form/CardViewFormType.php" />
       </list>
     </option>
   </component>
@@ -241,10 +245,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="510" />
-    <option name="height" value="723" />
+    <option name="x" value="4127" />
+    <option name="y" value="677" />
+    <option name="width" value="340" />
+    <option name="height" value="482" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -334,21 +338,21 @@
       <workItem from="1591350886357" duration="6675000" />
       <workItem from="1591369228367" duration="7394000" />
       <workItem from="1591463694808" duration="1187000" />
-      <workItem from="1591651062319" duration="4421000" />
+      <workItem from="1591651062319" duration="6557000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34429000" />
+    <option name="totallyTimeSpent" value="36565000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
+    <frame x="3832" y="690" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10695825" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49790794" visible="true" weight="0.20347957" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
-      <window_info id="Favorites" order="3" side_tool="true" />
+      <window_info id="Favorites" order="3" sideWeight="0.50209206" side_tool="true" weight="0.20347957" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -360,7 +364,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.08963367" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.21767594" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -528,17 +532,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
+    <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="50" column="37" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="37" />
+        <state relative-caret-position="357">
+          <caret line="48" column="8" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
+    <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
+        <state relative-caret-position="143">
+          <caret line="36" column="34" selection-start-line="36" selection-start-column="34" selection-end-line="36" selection-end-column="34" />
+          <folding>
+            <element signature="e#28#59#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

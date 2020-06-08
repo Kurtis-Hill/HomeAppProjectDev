@@ -1,5 +1,6 @@
 import React, { Component, useContext, useState } from 'react';
 import { CardContext } from '../contexts/CardContexts';
+import { CardModal } from '../components/CardFormModal.jsx';
 
 const cardRender = () => {
 
@@ -47,7 +48,10 @@ const cardRender = () => {
             </div>
           </div>
       ))}
+      
 
+      {CardModal}
+{/* 
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
       <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -56,7 +60,7 @@ const cardRender = () => {
             {context.modalContent}
           </div>
         </div>
-      </div>
+      </div> */}
     </React.Fragment>
   )
 }
