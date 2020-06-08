@@ -27,6 +27,9 @@ class CardDataController extends AbstractController
      */
     public function cardViewForm(Request $request, $cardviewid)
     {
+
+        $form = $this->createForm(CardViewFormType::class);
+
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
         $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
@@ -37,7 +40,11 @@ class CardDataController extends AbstractController
 
         $cardFormData = [$cardSensorData, $icons, $colours, $states];
 
-        //dd($cardFormData);
+        //dd($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+        }
+
         return new JsonResponse($cardFormData);
 
     }

@@ -6,15 +6,12 @@
       <change beforePath="$PROJECT_DIR$/../SSL/ca-cert.pem" beforeDir="false" afterPath="$PROJECT_DIR$/../SSL/ca-cert.pem" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../SSL/client-cert.pem" beforeDir="false" afterPath="$PROJECT_DIR$/../SSL/client-cert.pem" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../SSL/client-key.pem" beforeDir="false" afterPath="$PROJECT_DIR$/../SSL/client-key.pem" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/App.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Cards.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/components/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Login.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Card/Cardview.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Card/Cardview.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,14 +45,14 @@
     <select />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.46369138">
+    <splitter split-orientation="horizontal" split-proportion="0.45521215">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="867">
-                  <caret line="61" column="5" lean-forward="true" selection-start-line="61" selection-start-column="5" selection-end-line="61" selection-end-column="5" />
+                <state relative-caret-position="460">
+                  <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
                 </state>
               </provider>
             </entry>
@@ -94,11 +91,20 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="425">
                   <caret line="28" column="5" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="680">
+                  <caret line="50" column="37" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="37" />
                 </state>
               </provider>
             </entry>
@@ -130,6 +136,7 @@
         <option value="$PROJECT_DIR$/src/Entity/Card/Cardview.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php" />
+        <option value="$PROJECT_DIR$/src/Form/CardViewFormType.php" />
         <option value="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" />
       </list>
     </option>
@@ -234,10 +241,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1743" />
-    <option name="y" value="-17" />
+    <option name="x" value="-11" />
+    <option name="y" value="-11" />
     <option name="width" value="510" />
-    <option name="height" value="722" />
+    <option name="height" value="723" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -245,7 +252,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -279,40 +285,13 @@
               <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
               <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Entity" type="462c0819:PsiDirectoryNode" />
-              <item name="Card" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Entity" type="462c0819:PsiDirectoryNode" />
-              <item name="Core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Repository" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Repository" type="462c0819:PsiDirectoryNode" />
-              <item name="Card" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Repository" type="462c0819:PsiDirectoryNode" />
-              <item name="Core" type="462c0819:PsiDirectoryNode" />
+              <item name="Form" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -353,18 +332,20 @@
       <workItem from="1591139234476" duration="329000" />
       <workItem from="1591304263213" duration="5895000" />
       <workItem from="1591350886357" duration="6675000" />
-      <workItem from="1591369228367" duration="7281000" />
+      <workItem from="1591369228367" duration="7394000" />
+      <workItem from="1591463694808" duration="1187000" />
+      <workItem from="1591651062319" duration="4421000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28708000" />
+    <option name="totallyTimeSpent" value="34429000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24174951" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10695825" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -522,6 +503,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="5" column="24625" selection-start-line="5" selection-start-column="24625" selection-end-line="5" selection-end-column="24638" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/bootstrap/dist/css/bootstrap.css.map">
+      <provider editor-type-id="sourcemapFileViewerProvider" />
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -529,10 +521,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/symfony/framework-bundle/Controller/AbstractController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="324" column="23" selection-start-line="324" selection-start-column="23" selection-end-line="324" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="50" column="37" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="867">
-          <caret line="61" column="5" lean-forward="true" selection-start-line="61" selection-start-column="5" selection-end-line="61" selection-end-column="5" />
+        <state relative-caret-position="460">
+          <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
         </state>
       </provider>
     </entry>

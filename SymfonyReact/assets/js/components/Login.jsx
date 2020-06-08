@@ -38,6 +38,7 @@ function Login(props) {
                 axios.post('login', formData, config)
                 .then(response => {
                     console.log(response);
+                    //@TODO Not finnished
                     props.history.push('index');
                 })
                 .catch(error => {
@@ -53,12 +54,9 @@ function Login(props) {
         })
     }
 
-
-        
-
     return (
         <React.Fragment>
-            <div className="bg-gradient-primary">
+            <body className="bg-gradient-primary">
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-xl-10 col-lg-12 col-md-9">
@@ -109,7 +107,7 @@ function Login(props) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </body>
         </React.Fragment>
     );
 }
