@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Switch, NavLink} from 'react-router-dom
 
 import Navbar from "./components/Navbar";
 import Cards from "./components/Cards";
+import  CardModal  from './components/CardFormModal.jsx';
 
 import CardContextProvider from "./contexts/CardContexts";
 import NavbarContextProvider from "./contexts/NavbarContext";
@@ -42,6 +43,7 @@ export default class App extends Component {
                                     <Profilebar></Profilebar>
                                     <CardContextProvider>
                                         <Cards/>
+                                        {/* <CardModal/> */}
                                     </CardContextProvider>
                                 </div>
                             </div>

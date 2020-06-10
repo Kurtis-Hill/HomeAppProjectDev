@@ -1,6 +1,8 @@
 import React, { Component, useContext, useState } from 'react';
 import { CardContext } from '../contexts/CardContexts';
-import { CardModal } from '../components/CardFormModal.jsx';
+import  { CardModal }  from '../components/CardFormModal.jsx';
+
+
 
 const cardRender = () => {
 
@@ -10,7 +12,9 @@ const cardRender = () => {
   //const modalStyle = {display: 'none'};
   return ( 
     <React.Fragment>
+      
       {context.tempHumid.map((tempHumid, index) => (
+          // <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(tempHumid.cardviewid, tempHumid.room, tempHumid.sensorname)}} key={index}>
           <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(tempHumid.cardviewid, tempHumid.room, tempHumid.sensorname)}} key={index}>
             <div className={"shadow h-100 py-2 card border-left-"+tempHumid.colour}>
               <div className="card-body">
@@ -31,7 +35,8 @@ const cardRender = () => {
       ))}
 
       {context.analog.map((analog, index) => (
-          <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(analog.cardviewid, analog.room, analog.sensorname)}} key={index} >
+          // <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(analog.cardviewid, analog.room, analog.sensorname)}} key={index} >
+            <div className="col-xl-3 col-md-6 mb-4" onClick={() => {CardModal}} key={index} >
             <div className={"shadow h-100 py-2 card border-left-"+analog.colour}>
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
@@ -50,7 +55,7 @@ const cardRender = () => {
       ))}
       
 
-      {CardModal}
+      
 {/* 
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 

@@ -1,23 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
 import axios from 'axios';
 
-function cardFormModal(props) {
+function cardFormModal(id, room, sensorname) {
+  console.log('hgey');
     // const context = useContext(CardContext);
 
     // const [updateCard, setupdateCard] = useState('');
-    const modalStyle = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
+    const modalShow = true;
+     const modalStyle = modalShow !== true ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
+
+    const token = sessionStorage.getItem('token');
+    
+    const getCardFormData = () => {
+      console.log('hey');
+      // axios.get('/HomeApp/api/CardData/cardviewform&id='+id,
+      // { headers: {"Authorization" : `Bearer ${token}`} })
+      // .then(response => {
+      //     // this.setState({modalLoading: false});
+      //     // this.modalContent(response.data, id);
+      //     // this.setState({modalShow: true});
+      //     // console.log(response.data);
+      // }).catch(error => {
+      //     console.log(error);
+      // })
+    }
+
+    const modalContent = (response, id) => {
+
+
+    }
 
     return ( 
       <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog" role="document">
           <div className="modal-content">
 
-            <form method="post" action={formURL} >
+            {/* <form method="post" action={formURL} >
               <div className="modal-header">
                   <h5 className="modal-title" id="exampleModalLabel">Change {sensorName}'s Sensor Details</h5>
                       <button className="close" onClick={() => {this.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">×</span>
-                          {/* <span onClick={context.toggleModal()} aria-hidden="true">×</span> */}
+                          <span onClick={context.toggleModal()} aria-hidden="true">×</span>
                       </button>
               </div>
               <div className="modal-body">
@@ -61,11 +85,12 @@ function cardFormModal(props) {
                   <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
                   <button className="btn btn-primary" name="submit" action="submit">Submit</button>
               </div>
-            </form>
+            </form> */}
+
           </div>
         </div>
       </div>
-)
+    )
 
 }
 
