@@ -1,6 +1,8 @@
 import React, { Component, useContext, useState } from 'react';
 import { CardContext } from '../contexts/CardContexts';
-import  { CardModal }  from '../components/CardFormModal.jsx';
+// import  { CardModal }  from '../components/CardFormModal.jsx';
+
+import { cardFormModal } from '../components/CardFormModal.jsx';
 
 
 
@@ -9,10 +11,9 @@ const cardRender = () => {
   const context = useContext(CardContext);
 
   const modalStyle = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
-  //const modalStyle = {display: 'none'};
+
   return ( 
     <React.Fragment>
-      
       {context.tempHumid.map((tempHumid, index) => (
           // <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(tempHumid.cardviewid, tempHumid.room, tempHumid.sensorname)}} key={index}>
           <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(tempHumid.cardviewid, tempHumid.room, tempHumid.sensorname)}} key={index}>
@@ -54,9 +55,6 @@ const cardRender = () => {
           </div>
       ))}
       
-
-      
-{/* 
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
       <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -65,7 +63,7 @@ const cardRender = () => {
             {context.modalContent}
           </div>
         </div>
-      </div> */}
+      </div>
     </React.Fragment>
   )
 }

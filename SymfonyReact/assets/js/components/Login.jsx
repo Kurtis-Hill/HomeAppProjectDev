@@ -39,7 +39,8 @@ function Login(props) {
                 .then(response => {
                     console.log(response);
                     //@TODO Not finnished
-                    props.history.push('index');
+                    //props.history.push('index');
+                    window.location.replace('index');
                 })
                 .catch(error => {
                     console.log(error);

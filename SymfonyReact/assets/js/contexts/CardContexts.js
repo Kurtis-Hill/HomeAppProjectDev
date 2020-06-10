@@ -55,25 +55,25 @@ class CardContextProvider extends Component {
     }
 
     //gets the card form data so users can customize cards
-    // getCardDataForm = (id, room, sensorname) => {
-    //     this.setState({modalLoading: true})
-    //     console.log("pressed" + id);
-    //     axios.get('/HomeApp/api/CardData/cardviewform&id='+id,
-    //     { headers: {"Authorization" : `Bearer ${token}`} })
-    //     .then(response => {
-    //         this.setState({modalLoading: false});
-    //         this.modalContent(response.data, id);
-    //         this.setState({modalShow: true});
-    //         console.log(response.data);
-    //     }).catch(error => {
-    //         console.log(error);
-    //     })
-    // }
-
     getCardDataForm = (id, room, sensorname) => {
-        console.log('clickedd');
-        // CardModal(id, room, sensorname);
+        this.setState({modalLoading: true})
+        console.log("pressed" + id);
+        axios.get('/HomeApp/api/CardData/cardviewform&id='+id,
+        { headers: {"Authorization" : `Bearer ${token}`} })
+        .then(response => {
+            this.setState({modalLoading: false});
+            this.modalContent(response.data, id);
+            this.setState({modalShow: true});
+            console.log(response.data);
+        }).catch(error => {
+            console.log(error);
+        })
     }
+
+    // getCardDataForm = (id, room, sensorname) => {
+    //     console.log('clickedd');
+    //     // CardModal(id, room, sensorname);
+    // }
 
     modalContent = (response, id) => {
 
