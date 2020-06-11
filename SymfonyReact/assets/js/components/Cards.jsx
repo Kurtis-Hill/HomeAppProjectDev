@@ -1,8 +1,6 @@
 import React, { Component, useContext, useState } from 'react';
 import { CardContext } from '../contexts/CardContexts';
-// import  { CardModal }  from '../components/CardFormModal.jsx';
 
-import { cardFormModal } from '../components/CardFormModal.jsx';
 
 
 

@@ -1,85 +1,85 @@
-import React, { useState, useEffect, useRef } from 'react';
+// import React, { useState, useEffect, useRef } from 'react';
 
-import axios from 'axios';
+// import axios from 'axios';
 
-const cardFormModal = (cardViewid, room, sensorname) => {
+// const cardFormModal = (cardViewid, room, sensorname) => {
 
-  console.log("pressed" + cardViewid);
+//   console.log("pressed" + cardViewid);
 
-  const [modalShow, setModalShow] = useState ('false');
+//   const [modalShow, setModalShow] = useState ('false');
 
-  axios.get('/HomeApp/api/CardData/cardviewform&id='+cardViewid,
-  { headers: {"Authorization" : `Bearer ${token}`} })
-  .then(response => {
-      const usecardFormModal = cardFormModal(cardViewid, sensorname, response.data);
-      // this.setState({modalLoading: false});
-      // this.setState({modalContent: usecardFormModal});
-      // // this.modalContent(response.data, id);
-      // this.setState({modalShow: true});
-      console.log(response.data);
+//   axios.get('/HomeApp/api/CardData/cardviewform&id='+cardViewid,
+//   { headers: {"Authorization" : `Bearer ${token}`} })
+//   .then(response => {
+//       const usecardFormModal = cardFormModal(cardViewid, sensorname, response.data);
+//       // this.setState({modalLoading: false});
+//       // this.setState({modalContent: usecardFormModal});
+//       // // this.modalContent(response.data, id);
+//       // this.setState({modalShow: true});
+//       console.log(response.data);
       
-  }).catch(error => {
-      console.log(error);
-  })
+//   }).catch(error => {
+//       console.log(error);
+//   })
  
-  const formURL = 'api/CardData/cardviewform&id='+cardViewid;
-  console.log("response", cardData);
-  const userData = cardData[0];
+//   const formURL = 'api/CardData/cardviewform&id='+cardViewid;
+//   console.log("response", cardData);
+//   const userData = cardData[0];
 
-  if (userData.t_tempid != null) {
-      var sensorHighReading = userData.t_hightemp;
-      var sensorLowReadings = userData.t_lowtemp;
-      var constRecord = userData.t_constrecord ? "selected" : null;
-      var sensorID = userData.t_tempid;
+//   if (userData.t_tempid != null) {
+//       var sensorHighReading = userData.t_hightemp;
+//       var sensorLowReadings = userData.t_lowtemp;
+//       var constRecord = userData.t_constrecord ? "selected" : null;
+//       var sensorID = userData.t_tempid;
 
-      if (userData.h_humidid !== undefined) {
-          var humidHighReading = userData.h_highhumid;
-          var sensorLowReading = userData.h_lowhumid;
-          var sensorTwoID = userData.h_humidid;
-      }
-  }
+//       if (userData.h_humidid !== undefined) {
+//           var humidHighReading = userData.h_highhumid;
+//           var sensorLowReading = userData.h_lowhumid;
+//           var sensorTwoID = userData.h_humidid;
+//       }
+//   }
 
-  if (userData.a_analogid != null) {
-      var sensorHighReading = userData.h_highanalog;
-      var sensorLowReadings = userData.h_lowanalog;
-      var sensorID = userData.h_analogid;
-  }
+//   if (userData.a_analogid != null) {
+//       var sensorHighReading = userData.h_highanalog;
+//       var sensorLowReadings = userData.h_lowanalog;
+//       var sensorID = userData.h_analogid;
+//   }
 
-  const capitalizeFirstLetter =  (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+//   const capitalizeFirstLetter =  (string) => {
+//     return string.charAt(0).toUpperCase() + string.slice(1);
+//   }
 
-  const sensorName = userData.sensorname;
+//   const sensorName = userData.sensorname;
 
-  const currentIcon = userData.i_iconname;
-  const icons = cardData[1];
+//   const currentIcon = userData.i_iconname;
+//   const icons = cardData[1];
 
-  const currentColour = capitalizeFirstLetter(userData.cc_colour);
-  const colours = cardData[2];
+//   const currentColour = capitalizeFirstLetter(userData.cc_colour);
+//   const colours = cardData[2];
 
-  const currentCardView = capitalizeFirstLetter(userData.cs_state);
-  const states = cardData[3];
+//   const currentCardView = capitalizeFirstLetter(userData.cs_state);
+//   const states = cardData[3];
 
-  const modalShow = true;
+//   const modalShow = true;
 
-  const modalStyle = modalShow !== true ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
+//   const modalStyle = modalShow !== true ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
 
-  const token = sessionStorage.getItem('token');
+//   const token = sessionStorage.getItem('token');
 
-  const toggleModal = () => {
+//   const toggleModal = () => {
 
-  }
+//   }
   
-  return ( 
+//   return ( 
 
     
-    <div id="" style={{paddingRight: '17px', display: 'block'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div className="modal-dialog" role="document">
-      <div className="modal-content">
+//     <div id="" style={{paddingRight: '17px', display: 'block'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+//     <div className="modal-dialog" role="document">
+//       <div className="modal-content">
        
-      </div>
-    </div>
-  </div>
+//       </div>
+//     </div>
+//   </div>
     // <form method="post" action={formURL} >
     //   <div className="modal-header">
     //       <h5 className="modal-title" id="exampleModalLabel">Change {sensorName}'s Sensor Details</h5>
@@ -130,7 +130,7 @@ const cardFormModal = (cardViewid, room, sensorname) => {
     //       <button className="btn btn-primary" name="submit" action="submit">Submit</button>
     //   </div>
     // </form> 
-  )
-}
+//   )
+// }
 
-export default cardFormModal;
+// export default cardFormModal;

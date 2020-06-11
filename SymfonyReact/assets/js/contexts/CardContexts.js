@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import axios from 'axios';
 import { getToken } from '../Utilities/Common';
 import { getUser } from '../Utilities/Common';
-import  { CardModal }  from '../components/CardFormModal.jsx';
+
 
 export const CardContext = createContext();
 
@@ -20,6 +20,7 @@ class CardContextProvider extends Component {
             modalShow: false,
             modalContent: '',
             modalLoading: false,
+            modalIcon: '',
         };
         console.log('Token from storage', token)
     }
@@ -78,7 +79,7 @@ class CardContextProvider extends Component {
     modalContent = (response) => {
 
         console.log("response", response);
-        const userData = response[0];
+        const userData = response.cardSensorData;
 
         if (userData.t_tempid != null) {
             var sensorHighReading = userData.t_hightemp;
@@ -101,17 +102,14 @@ class CardContextProvider extends Component {
 
         const sensorName = userData.sensorname;
 
-        const cardColour = userData.cc_colour;
-        const allCardColours = userData.cardColours
-
         const currentIcon = userData.i_iconname;
-        const icons = response[1];
+        const icons = response.icons;
 
         const currentColour = this.capitalizeFirstLetter(userData.cc_colour);
-        const colours = response[2];
+        const colours = response.colours;
 
         const currentCardView = this.capitalizeFirstLetter(userData.cs_state);
-        const states = response[3];
+        const states = response.states;
 
         this.setState({modalContent: 
             <div>
@@ -123,35 +121,39 @@ class CardContextProvider extends Component {
                     </button>
                 </div>
                 <div className="modal-body">
-                    <label className="modal-element large font-weight-bold">High Reading</label>
+                    <label className="modal-header large font-weight-bold">High Reading</label>
                     <input type="text" name="highReading" className="form-control" placeholder={sensorHighReading}></input>
                 
-                    <label className="modal-element large font-weight-bold">Low Reading</label>
+                    <label className="modal-header large font-weight-bold">Low Reading</label>
                     <input type="text" name="lowReading" className="form-control" placeholder={sensorLowReadings}></input>
-
-                    <label className="modal-element large font-weight-bold">Icon</label>
-                    <select defaultValue={this.capitalizeFirstLetter(currentIcon)} className="form-control form-space">
+                    
+                
+                    <label className="modal-header large font-weight-bold">Icon</label>
+                    <br />
+                    <select onChange={this.updateModalIcon()} defaultValue={this.capitalizeFirstLetter(currentIcon)} className="form-space">
                         {icons.map((icons, index) => (
                         <option key={index}>{this.capitalizeFirstLetter(icons.i_iconname)}</option>
                         ))}
                     </select>
                     <i className={"fas fa-2x text-gray-300 modal-icon fa-"+currentIcon}></i>
-
-                    <label className="modal-element large font-weight-bold">Card Colour</label>
+                    <br />
+                
+                    
+                    <label className="modal-header large font-weight-bold">Card Colour</label>
                     <select defaultValue={currentColour} className="form-control">
                         {colours.map((colours, index) => (
                         <option key={colours.colourid}>{colours.c_shade}</option>
                         ))}
                     </select>
 
-                    <label className="modal-element large font-weight-bold">Card View</label>
+                    <label className="modal-header large font-weight-bold">Card View</label>
                     <select defaultValue={currentCardView} className="form-control">
                         {states.map((states, index) => (
                         <option key={states.cardstateid}>{this.capitalizeFirstLetter(states.cs_state)}</option>
                         ))}
                     </select>
 
-                    <label className="modal-element large font-weight-bold">Constantly Record Data</label>
+                    <label className="modal-header large font-weight-bold">Constantly Record Data</label>
                     <select className="form-control">
                         <option key="no" selected={constRecord}>No</option>
                         <option key="yes">Yes</option>
@@ -169,7 +171,7 @@ class CardContextProvider extends Component {
 
     //Send data from the card modal to the backend
     sendCardFormData = () => {
-
+        
     }
 
     //Changes the style of the card text if the reading is above or below high-low readings in DB
@@ -187,6 +189,11 @@ class CardContextProvider extends Component {
 
     toggleModal = () => {
         this.setState({modalShow: !this.state.modalShow});
+    }
+
+    updateModalIcon = () => {
+        console.log('icon', e);
+        // this.setState({modalIcon: icon})
     }
 
     

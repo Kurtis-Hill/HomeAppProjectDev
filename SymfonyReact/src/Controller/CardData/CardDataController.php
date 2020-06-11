@@ -38,7 +38,7 @@ class CardDataController extends AbstractController
         $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
         $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
 
-        $cardFormData = [$cardSensorData, $icons, $colours, $states];
+        $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
         //dd($request);
         if ($form->isSubmitted() && $form->isValid()) {
