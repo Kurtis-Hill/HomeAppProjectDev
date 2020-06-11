@@ -61,6 +61,10 @@ const cardRender = () => {
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             {context.modalContent}
+            <div className="modal-footer">
+                <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
+                  <a className="btn btn-primary" href="login.html">Submit</a>
+            </div>
           </div>
         </div>
       </div>
