@@ -55,17 +55,75 @@ const cardRender = () => {
       
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
-      <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            {context.modalContent}
-            <div className="modal-footer">
-                <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
-                  <a className="btn btn-primary" href="login.html">Submit</a>
+        { context.modalContent == undefined ? null : 
+          <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+
+                <form onSubmit={(e) => {context.handleModalForm(e)}} id="modal-form">
+
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">Change {context.modalContent.sensorName}'s Sensor Details</h5>
+                        <button className="close" onClick={() => {context.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div className="modal-body">
+                        <label className="modal-space large font-weight-bold">High Reading</label>
+                        <input type="text" name="highReading" className="form-control" placeholder={context.modalContent.sensorHighReading}></input>
+                    
+                        <label className="modal-space large font-weight-bold">Low Reading</label>
+                        <input type="text" name="lowReading" className="form-control" placeholder={context.modalContent.sensorLowReadings}></input>
+      
+                        <label className="modal-space large font-weight-bold">Icon</label>
+                        <br />
+                        <select onChange={(e) => {context.updateModalIcon(e)}} defaultValue={context.modalIcon} className="form-space">
+                            {context.modalContent.icons.map((icons, index) => (
+                            <option key={icons.i_iconid}>{context.capitalizeFirstLetter(icons.i_iconname)}</option>
+                            ))}
+                        </select>
+                        <i className={"fas fa-2x text-gray-300 modal-icon fa-"+context.modalIcon}></i>
+                        <br />
+                    
+                        
+                        <label className="modal-space large font-weight-bold">Card Colour</label>
+                        <select defaultValue={context.modalContent.currentColour} className="form-control">
+                            {context.modalContent.colours.map((colours, index) => (
+                            <option key={colours.c_colourid}>{colours.c_shade}</option>
+                            ))}
+                        </select>
+
+                        <label className="modal-space large font-weight-bold">Card View</label>
+                        <select defaultValue={context.modalContent.currentCardView} className="form-control">
+                            {context.modalContent.states.map((states, index) => (
+                            <option key={states.cs_cardstateid}>{context.capitalizeFirstLetter(states.cs_state)}</option>
+                            ))}
+                        </select>
+
+                        <label className="modal-space large font-weight-bold">Constantly Record Data</label>
+                        <select className="form-control">
+                            <option key="no" selected={context.modalContent.constRecord}>No</option>
+                            <option key="yes">Yes</option>
+                        </select>
+
+                        <input type="hidden" value={context.modalContent.sensorID}></input>
+
+                    </div>
+
+
+
+                  <div className="modal-footer">
+                        <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
+                        <button className="btn btn-primary" type="submit" value="submit">Submit</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        }
+
+
+
     </React.Fragment>
   )
 }

@@ -21,6 +21,7 @@ class CardContextProvider extends Component {
             modalContent: '',
             modalLoading: false,
             modalIcon: '',
+            modalContent: {currentIcon: '', icons: [], currentColour: '', colours: [], currentCardView: '', states: []},
         };
         console.log('Token from storage', token)
     }
@@ -55,6 +56,19 @@ class CardContextProvider extends Component {
         })
     }
 
+    //Changes the style of the card text if the reading is above or below high-low readings in DB
+    getSensorReadingStyle = (highReading, lowReading, currentReading) => {
+        return currentReading >= highReading ? 'text-red' : currentReading <= lowReading ? 'text-blue' : 'text-gray-800';
+    }
+    
+    //Checks to see if humidity is set in the tempHumid array
+    isHumidityAvalible = (object) => {
+        return object.h_humidreading !== null ?
+        <div className={'h5 mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {
+            object.h_humidreading
+            }</div> : object.h_humidreading;
+    }
+
     //gets the card form data so users can customize cards
     getCardDataForm = (id, room, sensorname) => {
         this.setState({modalLoading: true})
@@ -68,6 +82,8 @@ class CardContextProvider extends Component {
             console.log(response.data);
         }).catch(error => {
             console.log(error);
+            this.setState({modalLoading: false});
+            alert("Failed Getting Form Please Try Again");
         })
     }
 
@@ -102,6 +118,7 @@ class CardContextProvider extends Component {
 
         const sensorName = userData.sensorname;
 
+        this.setState({modalIcon: userData.i_iconname})
         const currentIcon = userData.i_iconname;
         const icons = response.icons;
 
@@ -111,89 +128,52 @@ class CardContextProvider extends Component {
         const currentCardView = this.capitalizeFirstLetter(userData.cs_state);
         const states = response.states;
 
-        this.setState({modalContent: 
-            <div>
-                <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">Change {sensorName}'s Sensor Details</h5>
-                    <button className="close" onClick={() => {this.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                        {/* <span onClick={context.toggleModal()} aria-hidden="true">×</span> */}
-                    </button>
-                </div>
-                <div className="modal-body">
-                    <label className="modal-header large font-weight-bold">High Reading</label>
-                    <input type="text" name="highReading" className="form-control" placeholder={sensorHighReading}></input>
-                
-                    <label className="modal-header large font-weight-bold">Low Reading</label>
-                    <input type="text" name="lowReading" className="form-control" placeholder={sensorLowReadings}></input>
-                    
-                
-                    <label className="modal-header large font-weight-bold">Icon</label>
-                    <br />
-                    <select onChange={this.updateModalIcon()} defaultValue={this.capitalizeFirstLetter(currentIcon)} className="form-space">
-                        {icons.map((icons, index) => (
-                        <option key={index}>{this.capitalizeFirstLetter(icons.i_iconname)}</option>
-                        ))}
-                    </select>
-                    <i className={"fas fa-2x text-gray-300 modal-icon fa-"+currentIcon}></i>
-                    <br />
-                
-                    
-                    <label className="modal-header large font-weight-bold">Card Colour</label>
-                    <select defaultValue={currentColour} className="form-control">
-                        {colours.map((colours, index) => (
-                        <option key={colours.colourid}>{colours.c_shade}</option>
-                        ))}
-                    </select>
-
-                    <label className="modal-header large font-weight-bold">Card View</label>
-                    <select defaultValue={currentCardView} className="form-control">
-                        {states.map((states, index) => (
-                        <option key={states.cardstateid}>{this.capitalizeFirstLetter(states.cs_state)}</option>
-                        ))}
-                    </select>
-
-                    <label className="modal-header large font-weight-bold">Constantly Record Data</label>
-                    <select className="form-control">
-                        <option key="no" selected={constRecord}>No</option>
-                        <option key="yes">Yes</option>
-                    </select>
-
-                </div>
-            </div>
-        })
+        this.setState({modalContent:{ sensorName, sensorHighReading, sensorLowReadings, constRecord, sensorID, icons, currentColour, colours, currentCardView, states}});
+        this.setState({modalIcon: currentIcon});
+        console.log('modal content',this.state.modalContent);
     }
+
 
     capitalizeFirstLetter = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+        if (string != undefined) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        return null;
     }
 
-
-    //Send data from the card modal to the backend
-    sendCardFormData = () => {
-        
+    lowercaseFirstLetter = (string) => {
+        if (string != undefined) {
+            return string.charAt(0).toLowerCase() + string.slice(1);
+        }
+        return null;
     }
 
-    //Changes the style of the card text if the reading is above or below high-low readings in DB
-    getSensorReadingStyle = (highReading, lowReading, currentReading) => {
-        return currentReading >= highReading ? 'text-red' : currentReading <= lowReading ? 'text-blue' : 'text-gray-800';
-    }
-    
-    //Checks to see if humidity is set in the tempHumid array
-    isHumidityAvalible = (object) => {
-        return object.h_humidreading !== null ?
-        <div className={'h5 mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {
-            object.h_humidreading
-           }</div> : object.h_humidreading;
-    }
 
     toggleModal = () => {
         this.setState({modalShow: !this.state.modalShow});
     }
 
-    updateModalIcon = () => {
-        console.log('icon', e);
-        // this.setState({modalIcon: icon})
+    updateModalIcon = (e) => {
+        console.log('icon', e.target.value);
+         this.setState({modalIcon: this.lowercaseFirstLetter(e.target.value)});
+    }
+
+    //  <--!!! TODO WORKING ON THIS !!!-->
+    handleModalForm = (e) => {
+        e.preventDefault();
+        const modalForm = document.getElementById('modal-form');
+        const formData = new FormData(modalForm);
+        
+        //console.log('form', e.target.value);
+        console.log('form', formData.target.value.sensorID);c(On)s t= >9 0{ => {
+
+
+        }}
+
+        // axios.post('/HomeApp/api/CardData/cardviewform&id='+id,
+        // { headers: {"Authorization" : `Bearer ${token}`} })
+        // .then(response => {
+        // }
     }
 
     
@@ -207,10 +187,15 @@ class CardContextProvider extends Component {
                         getCardDataForm: this.getCardDataForm,
                         getSensorReadingStyle: this.getSensorReadingStyle,
                         isHumidityAvalible: this.isHumidityAvalible,
+                        capitalizeFirstLetter: this.capitalizeFirstLetter,
                         modalShow: this.state.modalShow,
-                        modalContent: this.state.modalContent,
                         modalLoading: this.state.modalLoading,
                         toggleModal: this.toggleModal,
+                        modalContent: this.state.modalContent,
+                        handleModalForm: this.handleModalForm,
+                        modalIcon: this.state.modalIcon,
+                        updateModalIcon: this.updateModalIcon,
+                        //lowercaseFirstLetter: this.lowercaseFirstLetter
                     }}>
                         {this.props.children}
                     </CardContext.Provider>
