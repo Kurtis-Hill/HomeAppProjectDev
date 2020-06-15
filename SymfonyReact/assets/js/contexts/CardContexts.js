@@ -165,10 +165,7 @@ class CardContextProvider extends Component {
         const formData = new FormData(modalForm);
         
         //console.log('form', e.target.value);
-        console.log('form', formData.target.value.sensorID);c(On)s t= >9 0{ => {
-
-
-        }}
+        console.log('form', formData.target.value.sensorID);
 
         // axios.post('/HomeApp/api/CardData/cardviewform&id='+id,
         // { headers: {"Authorization" : `Bearer ${token}`} })
