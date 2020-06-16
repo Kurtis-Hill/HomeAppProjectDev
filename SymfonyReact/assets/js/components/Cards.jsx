@@ -10,6 +10,11 @@ const cardRender = () => {
 
   const modalStyle = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
 
+  const modalSensorType = context.modalContent.sensorType;
+
+  const secondModalSensorType = context.modalContent.secondSensorType;
+
+
   return ( 
     <React.Fragment>
       {context.tempHumid.map((tempHumid, index) => (
@@ -22,7 +27,7 @@ const cardRender = () => {
                     <div className="font-weight-bold text text-uppercase mb-1">{tempHumid.sensorname}</div>
                     <div className={'h5 mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
                     {context.isHumidityAvalible(tempHumid)}
-                    <div>@{tempHumid.t_timez.date}</div>
+                    <div className="">@{tempHumid.t_timez.date}</div>
                   </div>
                   <div className="col-auto">
                     <i className={"fas fa-2x text-gray-300 fa-"+tempHumid.iconname}></i>
@@ -55,7 +60,7 @@ const cardRender = () => {
       
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
-        { context.modalContent == undefined ? null : 
+        { context.modalContent === undefined ? null :
           <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
@@ -63,52 +68,69 @@ const cardRender = () => {
                 <form onSubmit={(e) => {context.handleModalForm(e)}} id="modal-form">
 
                   <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">Change {context.modalContent.sensorName}'s Sensor Details</h5>
+                    <h5 className="modal-title">Change {context.modalContent.sensorName}'s Sensor Details</h5>
                         <button className="close" onClick={() => {context.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
+
+                  
                     <div className="modal-body">
-                        <label className="modal-space large font-weight-bold">High Reading</label>
-                        <input type="text" name="highReading" className="form-control" placeholder={context.modalContent.sensorHighReading}></input>
+                        <label className="modal-space large font-weight-bold">{modalSensorType} High Reading</label>
+                        <input type="text" name="highReading" className="form-control" defaultValue={context.modalContent.sensorHighReading}></input>
                     
-                        <label className="modal-space large font-weight-bold">Low Reading</label>
-                        <input type="text" name="lowReading" className="form-control" placeholder={context.modalContent.sensorLowReadings}></input>
+                        <label className="modal-space large font-weight-bold">{modalSensorType} Low Reading</label>
+                        <input type="text" name="lowReading" className="form-control" defaultValue={context.modalContent.sensorLowReadings}></input>
+
+                      {context.modalContent.secondSensorHighReading === null ? null : 
+                        <React.Fragment>
+                          <label className="modal-space large font-weight-bold">{secondModalSensorType} High Reading</label>
+                          <input type="text" name="secondHighReading" className="form-control" defaultValue={context.modalContent.secondSensorHighReading}></input>
+                      
+                          <label className="modal-space large font-weight-bold">{secondModalSensorType} Low Reading</label>
+                          <input type="text" name="secondLowReading" className="form-control" defaultValue={context.modalContent.secondSensorLowReading}></input>
+                        </React.Fragment>
+                      }
+
+                        
       
+
+                        
                         <label className="modal-space large font-weight-bold">Icon</label>
                         <br />
-                        <select onChange={(e) => {context.updateModalIcon(e)}} defaultValue={context.modalIcon} className="form-space">
+                        <select name="icon" onChange={(e) => {context.updateModalIcon(e)}} className="form-space">
                             {context.modalContent.icons.map((icons, index) => (
-                            <option key={icons.i_iconid}>{context.capitalizeFirstLetter(icons.i_iconname)}</option>
+                              <option key={icons.i_iconid}>{context.capitalizeFirstLetter(icons.i_iconname)}</option>
                             ))}
                         </select>
                         <i className={"fas fa-2x text-gray-300 modal-icon fa-"+context.modalIcon}></i>
                         <br />
                     
-                        
                         <label className="modal-space large font-weight-bold">Card Colour</label>
-                        <select defaultValue={context.modalContent.currentColour} className="form-control">
+                        <select defaultValue="1" name="colour" className="form-control">
                             {context.modalContent.colours.map((colours, index) => (
-                            <option key={colours.c_colourid}>{colours.c_shade}</option>
+                             <option key={colours.c_colourid}>{colours.c_shade}</option>
                             ))}
+                           
                         </select>
-
+                        
                         <label className="modal-space large font-weight-bold">Card View</label>
-                        <select defaultValue={context.modalContent.currentCardView} className="form-control">
+                        <select name="card-view" className="form-control">
                             {context.modalContent.states.map((states, index) => (
-                            <option key={states.cs_cardstateid}>{context.capitalizeFirstLetter(states.cs_state)}</option>
+                              <option key={states.cs_cardstateid}>{context.capitalizeFirstLetter(states.cs_state)}</option>
                             ))}
                         </select>
 
                         <label className="modal-space large font-weight-bold">Constantly Record Data</label>
-                        <select className="form-control">
+                        <select name="const-record" className="form-control">
                             <option key="no" selected={context.modalContent.constRecord}>No</option>
                             <option key="yes">Yes</option>
                         </select>
 
-                        <input type="hidden" value={context.modalContent.sensorID}></input>
+                        <input name="cardViewID" type="hidden" defaultValue={context.modalContent.cardViewID}></input>
 
-                    </div>
+                    
+                  </div>
 
 
 
@@ -129,3 +151,5 @@ const cardRender = () => {
 }
  
  export default cardRender;
+
+

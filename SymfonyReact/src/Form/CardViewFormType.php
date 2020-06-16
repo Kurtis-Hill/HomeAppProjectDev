@@ -21,7 +21,7 @@ class CardViewFormType extends AbstractType
     {
    //     dd($options['cardSensorState']);
         $builder
-            ->add('cardiconid', EntityType::class, [
+            ->add('icon', EntityType::class, [
                 'class'          => Icons::class,
 //                'choice_label'   => 'iconname',
 //                'data'           => $options['cardIcon'],
@@ -34,7 +34,7 @@ class CardViewFormType extends AbstractType
 //                },
             ])
 
-            ->add('cardcolourid', EntityType::class, [
+            ->add('colour', EntityType::class, [
                 'class'          => Cardcolour::class,
 //                'choice_label'   => 'colour',
 //                'data'           => $options['cardColour'],
@@ -47,7 +47,7 @@ class CardViewFormType extends AbstractType
 //                },
             ])
 
-            ->add('cardSensorStateOne', ChoiceType::class, [
+            ->add('state', ChoiceType::class, [
                 'mapped' => false,
 //                'label' => 'Card View For Temperature',
 //                'data' => $options['cardSensorStateOne'],
