@@ -7,7 +7,7 @@ import { NavbarContext } from '../contexts/NavbarContext';
 const Navbar = () => {
     const context = useContext(NavbarContext);
     
-    const navbarCollapse = context.navbarSize ? 'toggled' : '';
+    const navbarCollapse = context.navbarSize ? '' : 'toggled';
     
     const settingRoute = "HomeApp/settings/";
     const roomRoute = "HomeApp/rooms/";  

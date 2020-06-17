@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e791815-29e9-4b31-83d3-899edd0da3a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Cards.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -48,8 +46,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="96">
-                  <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+                <state relative-caret-position="510">
+                  <caret line="52" column="4" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="4" />
                 </state>
               </provider>
             </entry>
@@ -109,8 +107,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="17">
-                  <caret line="38" column="47" selection-start-line="38" selection-start-column="47" selection-end-line="38" selection-end-column="47" />
+                <state relative-caret-position="255">
+                  <caret line="52" column="47" selection-start-line="52" selection-start-column="47" selection-end-line="52" selection-end-column="47" />
                   <folding>
                     <element signature="e#28#59#0#PHP" expanded="true" />
                   </folding>
@@ -145,9 +143,9 @@
         <option value="$PROJECT_DIR$/src/Entity/Card/Cardview.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php" />
-        <option value="$PROJECT_DIR$/src/Form/CardViewFormType.php" />
         <option value="$PROJECT_DIR$/src/Controller/SecurityController.php" />
         <option value="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" />
+        <option value="$PROJECT_DIR$/src/Form/CardViewFormType.php" />
       </list>
     </option>
   </component>
@@ -259,9 +257,23 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
+      <showMembers ProjectPane="false" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="mariadb" />
@@ -270,7 +282,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="yarn" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -316,7 +328,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53419000" />
+    <option name="totallyTimeSpent" value="55636000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="3832" y="690" width="1382" height="744" extended-state="6" />
@@ -336,7 +348,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.4893617" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.4893617" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -463,8 +475,8 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/bootstrap/dist/css/bootstrap.css.map">
-      <provider editor-type-id="sourcemapFileViewerProvider" />
       <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="sourcemapFileViewerProvider" />
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/symfony/framework-bundle/Controller/AbstractController.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -513,8 +525,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="38" column="47" selection-start-line="38" selection-start-column="47" selection-end-line="38" selection-end-column="47" />
+        <state relative-caret-position="255">
+          <caret line="52" column="47" selection-start-line="52" selection-start-column="47" selection-end-line="52" selection-end-column="47" />
           <folding>
             <element signature="e#28#59#0#PHP" expanded="true" />
           </folding>
@@ -523,8 +535,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+        <state relative-caret-position="510">
+          <caret line="52" column="4" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="4" />
         </state>
       </provider>
     </entry>

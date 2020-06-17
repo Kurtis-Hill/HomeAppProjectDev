@@ -41,6 +41,10 @@ class CardContextProvider extends Component {
         // console.log('prev props', prevProps);
     }
 
+    componentWillUnmount() {
+        clearInterval(this.fetchIndexCardData);
+      }
+
 
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
@@ -52,7 +56,7 @@ class CardContextProvider extends Component {
                 tempHumid:response.data.tempHumid,
                 analog:response.data.analog,
             })
-            setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
+            setInterval(() => this.fetchIndexCardData(), this.state.refreshTimer);
         }).catch(error => {
             console.log(error);
         })
@@ -163,7 +167,6 @@ class CardContextProvider extends Component {
         if (this.state.modalShow === false) {
             this.setState({modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], currentCardView: '', states: []}})
         }
-
     }
 
     updateModalIcon = (e) => {
@@ -187,7 +190,7 @@ class CardContextProvider extends Component {
 
 
         axios.post('/HomeApp/api/CardData/cardviewform&id='+sensorID, formData, config,
-        { headers: {"Authorization" : `BEARER ${token}`} })
+            { headers: {"Authorization" : `BEARER ${token}`} })
         .then(response => {
             console.log('card modal form resposne', response);
         })

@@ -42,8 +42,7 @@ export default class App extends Component {
                                 <div id="content">
                                     <Profilebar></Profilebar>
                                     <CardContextProvider>
-                                        <Cards/>
-                                        {/* <CardModal/> */}
+                                        <Cards/>                                        
                                     </CardContextProvider>
                                 </div>
                             </div>
