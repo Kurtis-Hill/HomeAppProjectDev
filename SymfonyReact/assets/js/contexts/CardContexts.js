@@ -18,7 +18,6 @@ class CardContextProvider extends Component {
             tempHumid: [],
             analog: [],
             modalShow: false,
-            modalContent: '',
             modalLoading: false,
             modalIcon: '',
             modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: ''},
