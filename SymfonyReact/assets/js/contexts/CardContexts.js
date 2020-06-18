@@ -1,13 +1,13 @@
 import React, { Component, createContext } from 'react'
-import ReactDOM from "react-dom";
 import axios from 'axios';
 import { getToken } from '../Utilities/Common';
-import { getUser } from '../Utilities/Common';
+import { capitalizeFirstLetter } from '../Utilities/Common';
+import { lowercaseFirstLetter } from '../Utilities/Common';
 
 
 export const CardContext = createContext();
 
-const emptyModalContent = {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: '', modalSubmit: false};
+const emptyModalContent = {sensorHighReading: '', sensorLowReading: '', secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
 
 class CardContextProvider extends Component {
     constructor(props) {
@@ -42,7 +42,6 @@ class CardContextProvider extends Component {
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            console.log('CardData', response.data);
             this.setState({
                 tempHumid:response.data.tempHumid,
                 analog:response.data.analog,
@@ -61,15 +60,14 @@ class CardContextProvider extends Component {
     //Checks to see if humidity is set in the tempHumid array
     isHumidityAvalible = (object) => {
         return object.h_humidreading !== null ?
-        <div className={'h5 mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {object.h_humidreading}</div> 
+        <div className={'card-font mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {object.h_humidreading}</div> 
         : null;
     }
 
     //gets the card form data so users can customize cards
-    getCardDataForm = (id, room, sensorname) => {
+    getCardDataForm = (cardViewID) => {
         this.setState({modalLoading: true})
-        console.log("pressed" + id);
-        axios.get('/HomeApp/api/CardData/cardviewform&id='+id,
+        axios.get('/HomeApp/api/CardData/cardviewform&id='+cardViewID,
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             this.setState({modalLoading: false});
@@ -78,93 +76,58 @@ class CardContextProvider extends Component {
         }).catch(error => {
             console.log(error);
             this.setState({modalLoading: false});
-            alert("Failed Getting Form Please Try Again");
+            alert("Failed Getting Form Please Try Again or Contact System Admin");
         })
     }
 
-    // getCardDataForm = (id, room, sensorname) => {
-    //     console.log('clickedd');
-    //     // CardModal(id, room, sensorname);
-    // }
 
     modalContent = (response) => {
 
-      //  console.log('new token', getToken());
         const userData = response.cardSensorData;
-
-        let sensorType;
-        let secondSensorType;
-
-        let secondSensorID = null;
-
-        console.log('reponseData', userData);
 
         if (userData.t_tempid !== null) {
             var sensorHighReading = userData.t_hightemp;
-            var sensorLowReadings = userData.t_lowtemp;
+            var sensorLowReading = userData.t_lowtemp;
             var constRecord = userData.t_constrecord ? "Yes" : 'No';
             var sensorID = userData.t_tempid;
-            sensorType = "Temperature";
+            var sensorType = "Temperature";
 
             if (userData.h_humidid !== undefined) {
                 var secondSensorHighReading = userData.h_highhumid;
                 var secondSensorLowReading = userData.h_lowhumid;
                 var secondConstRecord = userData.h_constrecord ? "Yes" : 'No';
-                secondSensorID = userData.h_humidid;
-                secondSensorType = "Humidity";
+                var secondSensorID = userData.h_humidid;
+                var secondSensorType = "Humidity";
             }
         }
 
         if (userData.a_analogid !== null) {
             var sensorHighReading = userData.a_highanalog;
-            var sensorLowReadings = userData.a_lowanalog;
+            var sensorLowReading = userData.a_lowanalog;
             var constRecord = userData.a_constrecord ? "Yes" : 'No';
             var sensorID = userData.h_analogid;
-            sensorType = "Analog";
+            var sensorType = "Analog";
         }
 
         const cardViewID = userData.cv_cardviewid;
 
         const sensorName = userData.sensorname;
 
-     
         const currentIcon = userData.i_iconname;
         const icons = response.icons;
 
-        const currentColour = this.capitalizeFirstLetter(userData.cc_shade);
+        const currentColour = capitalizeFirstLetter(userData.cc_shade);
         const colours = response.colours;
 
-        const currentState = this.capitalizeFirstLetter(userData.cs_state);
+        const currentState = capitalizeFirstLetter(userData.cs_state);
         const states = response.states;
 
-        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReadings, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
-
-        console.log('modal content', this.state.modalContent);
-        // console.log('icons', this.state.modalContent.)
+        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
     }
 
-
-    capitalizeFirstLetter = (string) => {
-        if (string != undefined) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-        return null;
-    }
-
-    lowercaseFirstLetter = (string) => {
-        if (string != undefined) {
-            return string.charAt(0).toLowerCase() + string.slice(1);
-        }
-        return null;
-    }
 
 
     toggleModal = () => {
-        if (this.state.modalShow !== false) {
-            console.log('CLEARED');
-            this.setState({modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: '', modalSubmit: false}});
-            console.log('current state', this.state.modalContent);
-        }
         this.setState({modalShow: !this.state.modalShow});
     }
 
@@ -173,23 +136,23 @@ class CardContextProvider extends Component {
 
         switch(event.target.name) {
             case "icon":
-                this.setState({modalContent:{...this.state.modalContent, currentIcon: this.lowercaseFirstLetter(value)}});
+                this.setState({modalContent:{...this.state.modalContent, currentIcon: lowercaseFirstLetter(value)}});
                 break;
 
             case "colour":
-                this.setState({modalContent:{...this.state.modalContent, currentColour: this.lowercaseFirstLetter(value)}});
+                this.setState({modalContent:{...this.state.modalContent, currentColour: lowercaseFirstLetter(value)}});
                 break;
 
             case "card-view":
-                this.setState({modalContent:{...this.state.modalContent, currentState: this.lowercaseFirstLetter(value)}});
+                this.setState({modalContent:{...this.state.modalContent, currentState: lowercaseFirstLetter(value)}});
                 break;
 
             case "const-record":
-                this.setState({modalContent:{...this.state.modalContent, constRecord: this.lowercaseFirstLetter(value)}});
+                this.setState({modalContent:{...this.state.modalContent, constRecord: lowercaseFirstLetter(value)}});
                 break;
 
             case "second-const-record":
-                this.setState({modalContent:{...this.state.modalContent, secondConstRecord: this.lowercaseFirstLetter(value)}});
+                this.setState({modalContent:{...this.state.modalContent, secondConstRecord: lowercaseFirstLetter(value)}});
                 break;
 
             case "highReading":
@@ -208,21 +171,17 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, secondSensorLowReading: value}});
                 break;
         }
-        console.log('form update', event.target.name, value);
     }
 
     //  <--!!! TODO WORKING ON THIS !!!-->
-    handleModalForm = (event) => {
+    handleSubmissionModalForm = (event) => {
         this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
         event.preventDefault();
         
-
         const formData = new FormData(event.target);
 
         formData.append('cardViewID', this.state.modalContent.cardViewID);
                 
-        console.log('form', this.state.modalContent.modalSubmit);
-
         const config = {     
             headers: { 'content-type': 'multipart/form-data' }
         }
@@ -232,11 +191,11 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} })
         .then(response => {
             console.log('card modal form resposne', response);
+
+            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+            this.setState({modalContent: emptyModalContent});
+            this.toggleModal();
         })
-    }
-
-    handleModalFormInput = (e) => {
-
     }
 
     
@@ -250,16 +209,14 @@ class CardContextProvider extends Component {
                         getCardDataForm: this.getCardDataForm,
                         getSensorReadingStyle: this.getSensorReadingStyle,
                         isHumidityAvalible: this.isHumidityAvalible,
-                        capitalizeFirstLetter: this.capitalizeFirstLetter,
                         modalShow: this.state.modalShow,
                         modalLoading: this.state.modalLoading,
                         toggleModal: this.toggleModal,
                         modalContent: this.state.modalContent,
-                        handleModalForm: this.handleModalForm,
+                        handleSubmissionModalForm: this.handleSubmissionModalForm,
                         modalIcon: this.state.modalIcon,
                         updateModalForm: this.updateModalForm,
                         handleModalFormInput: this.handleModalFormInput,
-                        //lowercaseFirstLetter: this.lowercaseFirstLetter
                     }}>
                         {this.props.children}
                     </CardContext.Provider>

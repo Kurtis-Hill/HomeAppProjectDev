@@ -29,7 +29,7 @@ class CardDataController extends AbstractController
     {
 
         $form = $this->createForm(CardViewFormType::class);
-
+        $form->handleRequest($request);
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
         $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
@@ -40,8 +40,8 @@ class CardDataController extends AbstractController
 
         $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
-        //dd($request);
         if ($form->isSubmitted()) {
+        dd($request);
 
             $sensorCardView = new Cardview();
             $sensorCardState = new Cardstate();

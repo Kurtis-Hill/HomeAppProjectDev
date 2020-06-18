@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Validator\Constraints\Date;
 
 class CardviewRepository extends EntityRepository
 {
@@ -134,6 +135,7 @@ class CardviewRepository extends EntityRepository
 
         if($type === "json") {
             $result = $qb->getQuery()->getScalarResult();
+
         }
         else {
             $result = $qb->getQuery()->getResult();
@@ -163,7 +165,9 @@ class CardviewRepository extends EntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
         //$result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-        //dd($result);
+        //$newDate = new \DateTime($result[0]['t_timez']);
+//        dd($result[0]);
+//        dd($newDate);
         return $result[0];
 
     }
