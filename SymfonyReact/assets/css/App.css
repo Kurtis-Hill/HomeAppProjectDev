@@ -60,3 +60,15 @@
     width: 30%;
     display: inline-block;
 }
+
+
+
+@media only screen and (max-width: 600px) {
+    .modal-dialog{
+        overflow-y: initial !important
+    }
+    .modal-body{
+        height: 400px;
+        overflow-y: auto;
+    }
+  }

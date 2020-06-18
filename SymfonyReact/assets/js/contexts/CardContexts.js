@@ -21,7 +21,7 @@ class CardContextProvider extends Component {
             modalContent: '',
             modalLoading: false,
             modalIcon: '',
-            modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], currentCardView: '', states: []},
+            modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: ''},
         };
         console.log('Token from storage', token)
     }
@@ -42,7 +42,7 @@ class CardContextProvider extends Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.fetchIndexCardData);
+        // clearInterval(this.fetchIndexCardData);
       }
 
 
@@ -56,7 +56,7 @@ class CardContextProvider extends Component {
                 tempHumid:response.data.tempHumid,
                 analog:response.data.analog,
             })
-            setInterval(() => this.fetchIndexCardData(), this.state.refreshTimer);
+            setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
         }).catch(error => {
             console.log(error);
         })
@@ -136,10 +136,10 @@ class CardContextProvider extends Component {
         const currentColour = this.capitalizeFirstLetter(userData.cc_colour);
         const colours = response.colours;
 
-        const currentCardView = this.capitalizeFirstLetter(userData.cs_state);
+        const currentState = this.capitalizeFirstLetter(userData.cs_state);
         const states = response.states;
 
-        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReadings, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, sensorID, icons, currentColour, colours, cardViewID, currentCardView, states}});
+        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReadings, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
         this.setState({modalIcon: currentIcon});
 
         console.log('modal content', this.state.modalContent);
@@ -165,13 +165,29 @@ class CardContextProvider extends Component {
     toggleModal = () => {
         this.setState({modalShow: !this.state.modalShow});
         if (this.state.modalShow === false) {
-            this.setState({modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], currentCardView: '', states: []}})
+            this.setState({modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], currentCardView: '', states: []}});
         }
     }
 
-    updateModalIcon = (e) => {
-        console.log('icon', e.target.value);
-         this.setState({modalIcon: this.lowercaseFirstLetter(e.target.value)});
+    updateModalForm = (e) => {
+        switch(e.target.name) {
+            case "icon":
+                this.setState({modalContent:{...this.state.modalContent, currentIcon: this.lowercaseFirstLetter(e.target.value)}});
+                break;
+
+            case "colour":
+                this.setState({modalContent:{...this.state.modalContent, currentColour: this.lowercaseFirstLetter(e.target.value)}});
+                break;
+
+            case "card-view":
+                this.setState({modalContent:{...this.state.modalContent, state: this.lowercaseFirstLetter(e.target.value)}});
+                break;
+
+            case "const-record":
+                this.setState({modalContent:{...this.state.modalContent, currentState: this.lowercaseFirstLetter(e.target.value)}});
+                break;
+        }
+        console.log('icon', e.target.name);
     }
 
     //  <--!!! TODO WORKING ON THIS !!!-->
@@ -196,6 +212,10 @@ class CardContextProvider extends Component {
         })
     }
 
+    handleModalFormInput = (e) => {
+
+    }
+
     
     render() {
         return (
@@ -214,7 +234,8 @@ class CardContextProvider extends Component {
                         modalContent: this.state.modalContent,
                         handleModalForm: this.handleModalForm,
                         modalIcon: this.state.modalIcon,
-                        updateModalIcon: this.updateModalIcon,
+                        updateModalForm: this.updateModalForm,
+                        handleModalFormInput: this.handleModalFormInput,
                         //lowercaseFirstLetter: this.lowercaseFirstLetter
                     }}>
                         {this.props.children}
