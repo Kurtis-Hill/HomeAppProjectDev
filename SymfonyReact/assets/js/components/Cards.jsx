@@ -84,7 +84,7 @@ const cardRender = () => {
                         <label className="modal-space large font-weight-bold">{modalContent.sensorType} Low Reading</label>
                         <input type="text" name="lowReading" className="form-control" defaultValue={modalContent.sensorLowReadings} onChange={(e) => {context.updateModalForm(e)}}></input>
 
-                        {context.modalContent.secondSensorID === null ? null : 
+                        {(context.modalContent.secondSensorID ===  null) ? null : 
                           <React.Fragment>
                             <label className="modal-space large font-weight-bold">{modalContent.secondSensorType} High Reading</label>
                             <input type="text" name="secondHighReading" className="form-control" defaultValue={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>

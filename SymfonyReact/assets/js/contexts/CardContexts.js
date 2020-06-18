@@ -22,7 +22,6 @@ class CardContextProvider extends Component {
         };
     }
 
-
     componentDidMount() {
         //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()      
         this.fetchIndexCardData();
@@ -96,6 +95,10 @@ class CardContextProvider extends Component {
         let sensorType;
         let secondSensorType;
 
+        let secondSensorID = null;
+
+        console.log('reponseData', userData);
+
         if (userData.t_tempid !== null) {
             var sensorHighReading = userData.t_hightemp;
             var sensorLowReadings = userData.t_lowtemp;
@@ -107,14 +110,14 @@ class CardContextProvider extends Component {
                 var secondSensorHighReading = userData.h_highhumid;
                 var secondSensorLowReading = userData.h_lowhumid;
                 var secondConstRecord = userData.h_constrecord ? "Yes" : 'No';
-                var secondSensorID = userData.h_humidid;
+                secondSensorID = userData.h_humidid;
                 secondSensorType = "Humidity";
             }
         }
 
         if (userData.a_analogid !== null) {
-            var sensorHighReading = userData.h_highanalog;
-            var sensorLowReadings = userData.h_lowanalog;
+            var sensorHighReading = userData.a_highanalog;
+            var sensorLowReadings = userData.a_lowanalog;
             var constRecord = userData.a_constrecord ? "Yes" : 'No';
             var sensorID = userData.h_analogid;
             sensorType = "Analog";
@@ -136,7 +139,7 @@ class CardContextProvider extends Component {
 
         this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReadings, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
 
-        console.log('modal content', currentColour);
+        console.log('modal content', this.state.modalContent);
         // console.log('icons', this.state.modalContent.)
     }
 
@@ -157,16 +160,18 @@ class CardContextProvider extends Component {
 
 
     toggleModal = () => {
-        this.setState({modalShow: !this.state.modalShow});
-        if (this.state.modalShow === false) {
-            this.setState({modalContent: emptyModalContent});
+        if (this.state.modalShow !== false) {
+            console.log('CLEARED');
+            this.setState({modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: '', modalSubmit: false}});
+            console.log('current state', this.state.modalContent);
         }
+        this.setState({modalShow: !this.state.modalShow});
     }
 
-    updateModalForm = (e) => {
-        const value = e.target.value;
+    updateModalForm = (event) => {
+        const value = event.target.value;
 
-        switch(e.target.name) {
+        switch(event.target.name) {
             case "icon":
                 this.setState({modalContent:{...this.state.modalContent, currentIcon: this.lowercaseFirstLetter(value)}});
                 break;
@@ -203,16 +208,16 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, secondSensorLowReading: value}});
                 break;
         }
-        console.log('form update', e.target.name, value);
+        console.log('form update', event.target.name, value);
     }
 
     //  <--!!! TODO WORKING ON THIS !!!-->
-    handleModalForm = (e) => {
+    handleModalForm = (event) => {
         this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
-        e.preventDefault();
+        event.preventDefault();
         
 
-        const formData = new FormData(e.target);
+        const formData = new FormData(event.target);
 
         formData.append('cardViewID', this.state.modalContent.cardViewID);
                 

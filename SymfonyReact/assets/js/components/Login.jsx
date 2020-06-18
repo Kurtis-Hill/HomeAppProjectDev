@@ -39,7 +39,7 @@ function Login(props) {
                 .then(response => {
                     console.log(response);
                     setLoading(false);
-                    setTimeout(() => handleRefreshToken(), 7200000);
+                    // setTimeout(() => handleRefreshToken(), 7200000);
                     //@TODO Not finnished
                     //props.history.push('index');
                     window.location.replace('index');
@@ -57,14 +57,14 @@ function Login(props) {
         })
     }
 
-    const handleRefreshToken = () => {
-        console.log('HEYYY');
-        setTimeout(() => {handleRefreshToken(), 5000})
-    }
+    // const handleRefreshToken = () => {
+    //     console.log('HEYYY');
+    //     setTimeout(() => {handleRefreshToken(), 5000})
+    // }
 
     return (
         <React.Fragment>
-            <body className="bg-gradient-primary">
+            <div className="bg-gradient-primary">
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-xl-10 col-lg-12 col-md-9">
@@ -115,7 +115,7 @@ function Login(props) {
                         </div>
                     </div>
                 </div>
-            </body>
+            </div>
         </React.Fragment>
     );
 }
