@@ -14,6 +14,8 @@ const cardRender = () => {
 
   const secondModalSensorType = context.modalContent.secondSensorType;
 
+  const modalContent = context.modalContent;
+
 
   return ( 
     <React.Fragment>
@@ -72,22 +74,23 @@ const cardRender = () => {
                         </button>
                     </div>
                     <div className="modal-body">
-                      
-       
-                 
-                        <label className="modal-space large font-weight-bold">{modalSensorType} High Reading</label>
-                        <input type="text" name="highReading" className="form-control" defaultValue={context.modalContent.sensorHighReading}></input>
                     
-                        <label className="modal-space large font-weight-bold">{modalSensorType} Low Reading</label>
-                        <input type="text" name="lowReading" className="form-control" defaultValue={context.modalContent.sensorLowReadings}></input>
+                      
+                    {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+                 
+                        <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
+                        <input type="text" name="highReading" className="form-control" defaultValue={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                    
+                        <label className="modal-space large font-weight-bold">{modalContent.sensorType} Low Reading</label>
+                        <input type="text" name="lowReading" className="form-control" defaultValue={modalContent.sensorLowReadings} onChange={(e) => {context.updateModalForm(e)}}></input>
 
-                        {context.modalContent.secondSensorHighReading === null ? null : 
+                        {context.modalContent.secondSensorID === null ? null : 
                           <React.Fragment>
-                            <label className="modal-space large font-weight-bold">{secondModalSensorType} High Reading</label>
-                            <input type="text" name="secondHighReading" className="form-control" defaultValue={context.modalContent.secondSensorHighReading}></input>
+                            <label className="modal-space large font-weight-bold">{modalContent.secondSensorType} High Reading</label>
+                            <input type="text" name="secondHighReading" className="form-control" defaultValue={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                         
-                            <label className="modal-space large font-weight-bold">{secondModalSensorType} Low Reading</label>
-                            <input type="text" name="secondLowReading" className="form-control" defaultValue={context.modalContent.secondSensorLowReading}></input>
+                            <label className="modal-space large font-weight-bold">{modalContent.secondSensorType} Low Reading</label>
+                            <input type="text" name="secondLowReading" className="form-control" defaultValue={context.modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                           </React.Fragment>
                         }
                    
@@ -104,25 +107,35 @@ const cardRender = () => {
                         <br />
                     
                         <label className="modal-space large font-weight-bold">Card Colour</label>
-                        <select value={context.modalContent.currentColour} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
+                        <select value={context.capitalizeFirstLetter(context.modalContent.currentColour)} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
                             {context.modalContent.colours.map((colours) => (
-                             <option key={colours.c_colourid}>{colours.c_shade}</option>
+                             <option key={colours.c_colourid}>{context.capitalizeFirstLetter(colours.c_shade)}</option>
                             ))}
                            
                         </select>
                         
                         <label className="modal-space large font-weight-bold">Card View</label>
-                        <select value={context.modalContent.currentState} onChange={(e) => {context.updateModalForm(e)}} name="card-view" className="form-control">
+                        <select name="card-view" value={context.capitalizeFirstLetter(context.modalContent.currentState)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
                             {context.modalContent.states.map((states, index) => (
                               <option key={states.cs_cardstateid}>{context.capitalizeFirstLetter(states.cs_state)}</option>
                             ))}
                         </select>
 
-                        <label className="modal-space large font-weight-bold">Constantly Record Data</label>
-                        <select value={context.modalContent.constRecord} onChange={(e) => {context.updateModalForm(e)}} name="const-record" className="form-control">
+                        <label className="modal-space large font-weight-bold">{modalSensorType} Constantly Record Data</label>
+                        <select value={context.capitalizeFirstLetter(context.modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="const-record" className="form-control">
                             <option key="no">No</option>
                             <option key="yes">Yes</option>
                         </select>
+
+                        {context.modalContent.secondSensorID === null ? null : 
+                          <React.Fragment>
+                            <label className="modal-space large font-weight-bold">{secondModalSensorType} Constantly Record Data</label>
+                            <select value={context.capitalizeFirstLetter(context.modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="second-const-record" className="form-control">
+                                <option key="no">No</option>
+                                <option key="yes">Yes</option>
+                            </select>
+                          </React.Fragment>
+                        }
 
                         <input name="cardViewID" type="hidden" defaultValue={context.modalContent.cardViewID}></input>
                   
@@ -132,6 +145,7 @@ const cardRender = () => {
 
 
                   <div className="modal-footer">
+                  
                         <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
                         <button className="btn btn-primary" type="submit" value="submit">Submit</button>
                   </div>

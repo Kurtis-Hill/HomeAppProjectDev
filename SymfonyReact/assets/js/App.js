@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Switch, NavLink} from 'react-router-dom
 
 import Navbar from "./components/Navbar";
 import Cards from "./components/Cards";
-import  CardModal  from './components/CardFormModal.jsx';
+
 
 import CardContextProvider from "./contexts/CardContexts";
 import NavbarContextProvider from "./contexts/NavbarContext";
@@ -16,9 +16,7 @@ import Login from './components/Login';
 
 import { getToken } from './Utilities/Common';
 
-import axios from 'axios';
-
-
+//TODO look into react router set up proper swtich router
 export default class App extends Component {
 
        
@@ -27,8 +25,7 @@ export default class App extends Component {
         return (    
             
         <Router>
-            <Route path="/HomeApp/login" component={Login}>
-            </Route>
+            <Route path="/HomeApp/login" component={Login}/>
             <div id="page-top">
                 <div id="wrapper">
                     <Route path="/HomeApp/index">

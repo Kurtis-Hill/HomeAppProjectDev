@@ -40,8 +40,8 @@ class CardDataController extends AbstractController
 
         $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
+        //dd($request);
         if ($form->isSubmitted()) {
-        dd($request);
 
             $sensorCardView = new Cardview();
             $sensorCardState = new Cardstate();

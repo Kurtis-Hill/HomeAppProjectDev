@@ -7,8 +7,7 @@ import { getUser } from '../Utilities/Common';
 
 export const CardContext = createContext();
 
-
-const token = sessionStorage.getItem('token');
+const emptyModalContent = {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: '', modalSubmit: false};
 
 class CardContextProvider extends Component {
     constructor(props) {
@@ -19,23 +18,17 @@ class CardContextProvider extends Component {
             analog: [],
             modalShow: false,
             modalLoading: false,
-            modalIcon: '',
-            modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: ''},
+            modalContent: emptyModalContent,
         };
-        console.log('Token from storage', token)
     }
 
 
     componentDidMount() {
-        //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()
-        // this.axiosToken();
-      
+        //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()      
         this.fetchIndexCardData();
     }
 
     componentDidUpdate(prevProps, preState) {
-
-
         // console.log('prev state', preState);
         // console.log('prev props', prevProps);
     }
@@ -48,7 +41,7 @@ class CardContextProvider extends Component {
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
         axios.get('/HomeApp/api/CardData/index', 
-        { headers: {"Authorization" : `Bearer ${token}`} })
+        { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             console.log('CardData', response.data);
             this.setState({
@@ -69,9 +62,8 @@ class CardContextProvider extends Component {
     //Checks to see if humidity is set in the tempHumid array
     isHumidityAvalible = (object) => {
         return object.h_humidreading !== null ?
-        <div className={'h5 mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {
-            object.h_humidreading
-            }</div> : object.h_humidreading;
+        <div className={'h5 mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {object.h_humidreading}</div> 
+        : null;
     }
 
     //gets the card form data so users can customize cards
@@ -79,7 +71,7 @@ class CardContextProvider extends Component {
         this.setState({modalLoading: true})
         console.log("pressed" + id);
         axios.get('/HomeApp/api/CardData/cardviewform&id='+id,
-        { headers: {"Authorization" : `Bearer ${token}`} })
+        { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             this.setState({modalLoading: false});
             this.modalContent(response.data);
@@ -98,20 +90,23 @@ class CardContextProvider extends Component {
 
     modalContent = (response) => {
 
+      //  console.log('new token', getToken());
         const userData = response.cardSensorData;
+
         let sensorType;
         let secondSensorType;
 
         if (userData.t_tempid !== null) {
             var sensorHighReading = userData.t_hightemp;
             var sensorLowReadings = userData.t_lowtemp;
-            var constRecord = userData.t_constrecord ? "selected" : null;
+            var constRecord = userData.t_constrecord ? "Yes" : 'No';
             var sensorID = userData.t_tempid;
             sensorType = "Temperature";
 
             if (userData.h_humidid !== undefined) {
                 var secondSensorHighReading = userData.h_highhumid;
                 var secondSensorLowReading = userData.h_lowhumid;
+                var secondConstRecord = userData.h_constrecord ? "Yes" : 'No';
                 var secondSensorID = userData.h_humidid;
                 secondSensorType = "Humidity";
             }
@@ -120,28 +115,28 @@ class CardContextProvider extends Component {
         if (userData.a_analogid !== null) {
             var sensorHighReading = userData.h_highanalog;
             var sensorLowReadings = userData.h_lowanalog;
+            var constRecord = userData.a_constrecord ? "Yes" : 'No';
             var sensorID = userData.h_analogid;
-            sensorType = "analog";
+            sensorType = "Analog";
         }
 
         const cardViewID = userData.cv_cardviewid;
 
         const sensorName = userData.sensorname;
 
-        this.setState({modalIcon: userData.i_iconname})
+     
         const currentIcon = userData.i_iconname;
         const icons = response.icons;
 
-        const currentColour = this.capitalizeFirstLetter(userData.cc_colour);
+        const currentColour = this.capitalizeFirstLetter(userData.cc_shade);
         const colours = response.colours;
 
         const currentState = this.capitalizeFirstLetter(userData.cs_state);
         const states = response.states;
 
-        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReadings, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
-        this.setState({modalIcon: currentIcon});
+        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReadings, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
 
-        console.log('modal content', this.state.modalContent);
+        console.log('modal content', currentColour);
         // console.log('icons', this.state.modalContent.)
     }
 
@@ -164,48 +159,72 @@ class CardContextProvider extends Component {
     toggleModal = () => {
         this.setState({modalShow: !this.state.modalShow});
         if (this.state.modalShow === false) {
-            this.setState({modalContent: {sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], currentCardView: '', states: []}});
+            this.setState({modalContent: emptyModalContent});
         }
     }
 
     updateModalForm = (e) => {
+        const value = e.target.value;
+
         switch(e.target.name) {
             case "icon":
-                this.setState({modalContent:{...this.state.modalContent, currentIcon: this.lowercaseFirstLetter(e.target.value)}});
+                this.setState({modalContent:{...this.state.modalContent, currentIcon: this.lowercaseFirstLetter(value)}});
                 break;
 
             case "colour":
-                this.setState({modalContent:{...this.state.modalContent, currentColour: this.lowercaseFirstLetter(e.target.value)}});
+                this.setState({modalContent:{...this.state.modalContent, currentColour: this.lowercaseFirstLetter(value)}});
                 break;
 
             case "card-view":
-                this.setState({modalContent:{...this.state.modalContent, state: this.lowercaseFirstLetter(e.target.value)}});
+                this.setState({modalContent:{...this.state.modalContent, currentState: this.lowercaseFirstLetter(value)}});
                 break;
 
             case "const-record":
-                this.setState({modalContent:{...this.state.modalContent, currentState: this.lowercaseFirstLetter(e.target.value)}});
+                this.setState({modalContent:{...this.state.modalContent, constRecord: this.lowercaseFirstLetter(value)}});
+                break;
+
+            case "second-const-record":
+                this.setState({modalContent:{...this.state.modalContent, secondConstRecord: this.lowercaseFirstLetter(value)}});
+                break;
+
+            case "highReading":
+                this.setState({modalContent:{...this.state.modalContent, sensorHighReading: value}});
+                break;
+
+            case "lowReading":
+                this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
+                break;
+
+            case "secondHighReading":
+                this.setState({modalContent:{...this.state.modalContent, secondSensorHighReading: value}});
+                break;
+
+            case "secondLowReading":
+                this.setState({modalContent:{...this.state.modalContent, secondSensorLowReading: value}});
                 break;
         }
-        console.log('icon', e.target.name);
+        console.log('form update', e.target.name, value);
     }
 
     //  <--!!! TODO WORKING ON THIS !!!-->
     handleModalForm = (e) => {
+        this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
         e.preventDefault();
+        
+
         const formData = new FormData(e.target);
 
-        const sensorID = formData.get('cardViewID');
+        formData.append('cardViewID', this.state.modalContent.cardViewID);
                 
-        //console.log('form', e.target.value);
-        console.log('form', sensorID);
+        console.log('form', this.state.modalContent.modalSubmit);
 
         const config = {     
             headers: { 'content-type': 'multipart/form-data' }
         }
 
 
-        axios.post('/HomeApp/api/CardData/cardviewform&id='+sensorID, formData, config,
-            { headers: {"Authorization" : `BEARER ${token}`} })
+        axios.post('/HomeApp/api/CardData/cardviewform&id='+this.state.modalContent.cardViewID, formData, config,
+            { headers: {"Authorization" : `BEARER ${getToken()}`} })
         .then(response => {
             console.log('card modal form resposne', response);
         })

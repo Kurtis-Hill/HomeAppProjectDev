@@ -22,7 +22,7 @@ function Login(props) {
         
             axios.post('api/login_check', {username: username.value, password: password.value})
             .then(response => {
-                setLoading(false);
+                
                 console.log("api jwt token success", response.data.token, response.data.user);
                 setUserSession(response.data.token, response.data.user);
                 
@@ -38,6 +38,8 @@ function Login(props) {
                 axios.post('login', formData, config)
                 .then(response => {
                     console.log(response);
+                    setLoading(false);
+                    setTimeout(() => handleRefreshToken(), 7200000);
                     //@TODO Not finnished
                     //props.history.push('index');
                     window.location.replace('index');
@@ -53,6 +55,11 @@ function Login(props) {
         .catch(error => {
             console.log(error);
         })
+    }
+
+    const handleRefreshToken = () => {
+        console.log('HEYYY');
+        setTimeout(() => {handleRefreshToken(), 5000})
     }
 
     return (
