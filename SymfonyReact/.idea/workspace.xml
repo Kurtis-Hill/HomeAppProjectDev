@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1e791815-29e9-4b31-83d3-899edd0da3a7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Cards.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +46,7 @@
             <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="139">
-                  <caret line="20" column="34" lean-forward="true" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
+                  <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
                 </state>
               </provider>
             </entry>
@@ -108,7 +106,7 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="281">
+                <state relative-caret-position="365">
                   <caret line="68" column="26" selection-start-line="68" selection-start-column="26" selection-end-line="68" selection-end-column="26" />
                   <folding>
                     <element signature="e#28#59#0#PHP" expanded="true" />
@@ -252,10 +250,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="4119" />
-    <option name="y" value="681" />
-    <option name="width" value="1294" />
-    <option name="height" value="708" />
+    <option name="x" value="240" />
+    <option name="y" value="130" />
+    <option name="width" value="1440" />
+    <option name="height" value="780" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -329,15 +327,15 @@
       <workItem from="1592254772372" duration="2044000" />
       <workItem from="1592389238002" duration="465000" />
       <workItem from="1592428764810" duration="1367000" />
+      <workItem from="1592473755716" duration="707000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="57468000" />
+    <option name="totallyTimeSpent" value="58175000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3832" y="690" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49790794" weight="0.2065053" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -354,7 +352,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.31914893" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.31852654" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -481,13 +479,20 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/bootstrap/dist/css/bootstrap.css.map">
-      <provider selected="true" editor-type-id="text-editor" />
       <provider editor-type-id="sourcemapFileViewerProvider" />
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/symfony/framework-bundle/Controller/AbstractController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="381">
           <caret line="324" column="23" selection-start-line="324" selection-start-column="23" selection-end-line="324" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -531,18 +536,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Form/CardViewFormType.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
+        <state relative-caret-position="365">
           <caret line="68" column="26" selection-start-line="68" selection-start-column="26" selection-end-line="68" selection-end-column="26" />
           <folding>
             <element signature="e#28#59#0#PHP" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="20" column="34" lean-forward="true" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
         </state>
       </provider>
     </entry>
