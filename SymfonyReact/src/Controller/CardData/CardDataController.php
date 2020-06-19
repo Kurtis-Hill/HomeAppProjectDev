@@ -65,16 +65,16 @@ class CardDataController extends AbstractController
     }
 
 
-    /**
-     * @Route("/CardFomOptions", name="cardformdata")
-     */
-    public function getAllCardFormOptions()
-    {
-        $cardFormData['colours'] = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
-        $cardFormData['icons'] = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
-        $cardFormData['cardState'] = $this->getDoctrine()->getRepository(Cardstate::class)->getAllCardStates();
-
-        return new JsonResponse($cardFormData);
-    }
+//    /**
+//     * @Route("/CardFomOptions", name="cardformdata")
+//     */
+//    public function getAllCardFormOptions()
+//    {
+//        $cardFormData['colours'] = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
+//        $cardFormData['icons'] = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
+//        $cardFormData['cardState'] = $this->getDoctrine()->getRepository(Cardstate::class)->getAllCardStates();
+//
+//        return new JsonResponse($cardFormData);
+//    }
 
 }

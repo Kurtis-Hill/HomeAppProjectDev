@@ -190,8 +190,6 @@ class CardContextProvider extends Component {
         axios.post('/HomeApp/api/CardData/cardviewform&id='+this.state.modalContent.cardViewID, formData, config,
             { headers: {"Authorization" : `BEARER ${getToken()}`} })
         .then(response => {
-            console.log('card modal form resposne', response);
-
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
             this.setState({modalContent: emptyModalContent});
             this.toggleModal();

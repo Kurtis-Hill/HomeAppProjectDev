@@ -34,34 +34,6 @@ class IndexController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/csrfToken", name="csrf")
-     */
-    public function viewToken(CsrfTokenManagerInterface $csrfTokenManager, Request $request)
-    {
-
-        $token = $csrfTokenManager->getToken('authenticate')->getValue();
-       // dd($token);
-        return new JsonResponse(['token' => $token]);
-    }
-
-
-    /**
-     * @Route("/ssl")
-     */
-    public function showSSL()
-    {
-
-        echo \PDO::MYSQL_ATTR_SSL_KEY;
-        echo "<br>";
-        echo \PDO::MYSQL_ATTR_SSL_CERT;
-        echo "<br>";
-        echo \PDO::MYSQL_ATTR_SSL_CA;
-        echo "<br>";
-        echo \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT;
-        echo "<br>";
-       $this->getDoctrine()->getRepository(User::class)->showSSL();
-    }
 
 
 }

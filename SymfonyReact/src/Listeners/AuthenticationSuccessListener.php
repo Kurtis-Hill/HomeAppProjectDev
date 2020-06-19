@@ -11,6 +11,6 @@ class AuthenticationSuccessListener
     public function onAuthenticationListener(AuthenticationSuccessEvent $authenticationSuccessEvent)
     {
 //       $data = $authenticationSuccessEvent
-        echo "success";die;
+//        echo "success";die;
     }
 }

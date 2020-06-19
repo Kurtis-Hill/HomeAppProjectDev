@@ -51,7 +51,7 @@ class TokenController extends AbstractController
             throw new BadCredentialsException();
         }
         $security = $encoderFactory->getEncoder($user);
-        $isValid = $security->isPasswordValid($user->getPassword(), 'Dreadnaught1', null);
+
 
 
 //        if (!$isValid) {

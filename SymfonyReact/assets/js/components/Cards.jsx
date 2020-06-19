@@ -60,8 +60,6 @@ const cardRender = () => {
       ))}
       
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-
-        {/* { context.modalContent.cardViewID === null ? <p>fuckk</p> : */}
           <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
@@ -71,10 +69,10 @@ const cardRender = () => {
                         <button className="close" onClick={() => {context.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
-                    </div>
-                    <div className="modal-body">
-                      {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-                    
+                  </div>
+                  <div className="modal-body">
+                    {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+                  
                     {context.modalContent.cardViewID === null ? <p>Submission Made</p> : 
                     <React.Fragment>
                       <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
@@ -92,7 +90,7 @@ const cardRender = () => {
                           <input type="text" name="secondLowReading" className="form-control" value={context.modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                         </React.Fragment>
                       }
-                                    
+                                  
                       <label className="modal-space large font-weight-bold">Icon</label>
                       <br />
                       <select name="icon" value={capitalizeFirstLetter(context.modalContent.currentIcon)} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
@@ -135,12 +133,12 @@ const cardRender = () => {
                       <input name="cardViewID" type="hidden" defaultValue={context.modalContent.cardViewID}></input>             
                     </React.Fragment>
                     }
-                    </div>
-                    <div className="modal-footer">          
-                      <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
-                      <button className="btn btn-primary" type="submit" value="submit">Submit</button>
-                    </div>
-                  </form>       
+                  </div>
+                  <div className="modal-footer">          
+                    <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
+                    <button className="btn btn-primary" type="submit" value="submit">Submit</button>
+                  </div>
+                </form>       
               </div>
             </div>
           </div>

@@ -43,19 +43,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $raw = "SHOW STATUS LIKE 'Ssl_cipher'";
 
-         //$em = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($raw);
         $result =$stmt->execute();
 
-//        if($result)
-//        {
-//            echo 'No SSL';
-//        }
-//        else {
-            dd($stmt->fetchAll());
-       // }
+        dd($stmt->fetchAll());
 
-//
     }
 
     // /**
