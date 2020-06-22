@@ -44,7 +44,7 @@ class CardContextProvider extends Component {
         .then(response => {
             console.log('responser', response.data);
             this.setState({
-                tempHumid:response.data.tempHumid,
+                tempHumid:response.data.sensorData,
                 analog:response.data.analog,
             })
             setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);

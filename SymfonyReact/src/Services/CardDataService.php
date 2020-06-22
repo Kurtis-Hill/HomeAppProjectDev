@@ -47,11 +47,11 @@ class CardDataService extends HomeAppRoomAbstract
         $cardRepository = $this->em->getRepository(Cardview::class);
 
         $tempHumid = $cardRepository->getTempHumidCardReadings($this->groupNameid, $this->userID, $type, $room);
-        $analog = $cardRepository->getAnalogCardReadings($this->groupNameid, $this->userID, $type, $room);
+       // $analog = $cardRepository->getAnalogCardReadings($this->groupNameid, $this->userID, $type, $room);
 
-        $cardData = [];
-        $cardData['tempHumid'] = $tempHumid;
-        $cardData['analog'] = $analog;
+      //  $cardData = [];
+        $cardData['sensorData'] = $tempHumid;
+       // $cardData['analog'] = $analog;
 
         return $cardData;
     }

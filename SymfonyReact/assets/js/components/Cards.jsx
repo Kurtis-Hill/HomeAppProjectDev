@@ -28,6 +28,7 @@ const cardRender = () => {
                 <div className="col mr-2">
                   <div className="d-flex font-weight-bold text text-uppercase mb-1">{tempHumid.sensorname}</div>
                   <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
+                  <div className="card-font mb-0 font-weight-bold text-gray-800">Reading: {analog.a_analogreading}</div>
                   {tempHumid.h_humidreading !== null ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.h_highhumid, tempHumid.h_lowhumid, tempHumid.h_humidreading)}>Humidity: {tempHumid.h_humidreading}</div> : null}
                   <div className="card-font mb-0 text-gray-400">@{tempHumid.t_timez.date}</div>
                 </div>
@@ -39,7 +40,7 @@ const cardRender = () => {
           </div>
         </div>
       ))}
-
+{/* 
       {context.analog.map((analog, index) => (
         <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(analog.cardviewid)}} key={index} >
           <div className={"shadow h-100 py-2 card border-left-"+analog.colour}>
@@ -57,7 +58,7 @@ const cardRender = () => {
             </div>
           </div>
         </div>
-      ))}
+      ))} */}
       
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
           <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
