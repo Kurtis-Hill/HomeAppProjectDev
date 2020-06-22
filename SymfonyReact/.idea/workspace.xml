@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e791815-29e9-4b31-83d3-899edd0da3a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Cards.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Sensors/Analog.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Sensors/Analog.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Sensors/Humid.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Sensors/Humid.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Sensors/Temp.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Sensors/Temp.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Services/CardDataService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/CardDataService.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,20 +44,20 @@
     <splitter split-orientation="horizontal" split-proportion="0.49542743">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1071">
-                  <caret line="98" column="10" selection-start-line="98" selection-start-column="10" selection-end-line="98" selection-end-column="10" />
+                <state relative-caret-position="833">
+                  <caret line="99" column="38" lean-forward="true" selection-start-line="99" selection-start-column="38" selection-end-line="99" selection-end-column="38" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Services/CardDataService.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="765">
-                  <caret line="48" column="53" selection-start-line="48" selection-start-column="53" selection-end-line="48" selection-end-column="53" />
+                <state relative-caret-position="833">
+                  <caret line="52" column="29" selection-start-line="52" selection-start-column="19" selection-end-line="52" selection-end-column="29" />
                 </state>
               </provider>
             </entry>
@@ -82,8 +78,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="459">
-                  <caret line="48" column="10" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
+                <state relative-caret-position="748">
+                  <caret line="65" column="70" lean-forward="true" selection-start-line="65" selection-start-column="70" selection-end-line="65" selection-end-column="70" />
                   <folding>
                     <element signature="e#41#75#0#PHP" expanded="true" />
                   </folding>
@@ -137,8 +133,8 @@
       <find>h6</find>
       <find>state</find>
       <find>cardstate</find>
-      <find>getSe</find>
       <find>cardsateid</find>
+      <find>getSe</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -166,6 +162,7 @@
         <option value="$PROJECT_DIR$/src/Form/CardViewFormType.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" />
         <option value="$PROJECT_DIR$/src/Controller/CardData/CardDataController.php" />
+        <option value="$PROJECT_DIR$/src/Services/CardDataService.php" />
       </list>
     </option>
   </component>
@@ -370,16 +367,15 @@
       <workItem from="1592576642822" duration="998000" />
       <workItem from="1592744493764" duration="20000" />
       <workItem from="1592766690634" duration="456000" />
-      <workItem from="1592859810561" duration="7950000" />
+      <workItem from="1592859810561" duration="8290000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="74441000" />
+    <option name="totallyTimeSpent" value="74781000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49790794" weight="0.1137177" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -396,7 +392,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.10678098" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.10678098" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -646,13 +642,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Entity/Card/Cardview.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="541">
-          <caret line="135" column="35" selection-start-line="135" selection-start-column="20" selection-end-line="135" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardstateRepository.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -667,17 +656,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Services/CardDataService.php">
+    <entry file="file://$PROJECT_DIR$/src/Entity/Card/Cardview.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="48" column="53" selection-start-line="48" selection-start-column="53" selection-end-line="48" selection-end-column="53" />
+        <state relative-caret-position="541">
+          <caret line="135" column="35" selection-start-line="135" selection-start-column="20" selection-end-line="135" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="48" column="10" selection-start-line="48" selection-start-column="10" selection-end-line="48" selection-end-column="10" />
+        <state relative-caret-position="748">
+          <caret line="65" column="70" lean-forward="true" selection-start-line="65" selection-start-column="70" selection-end-line="65" selection-end-column="70" />
           <folding>
             <element signature="e#41#75#0#PHP" expanded="true" />
           </folding>
@@ -686,8 +675,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/CardData/CardDataController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="98" column="10" selection-start-line="98" selection-start-column="10" selection-end-line="98" selection-end-column="10" />
+        <state relative-caret-position="833">
+          <caret line="99" column="38" lean-forward="true" selection-start-line="99" selection-start-column="38" selection-end-line="99" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Services/CardDataService.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="52" column="29" selection-start-line="52" selection-start-column="19" selection-end-line="52" selection-end-column="29" />
         </state>
       </provider>
     </entry>
