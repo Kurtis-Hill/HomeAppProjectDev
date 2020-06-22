@@ -42,6 +42,7 @@ class CardContextProvider extends Component {
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
+            console.log('responser', response.data);
             this.setState({
                 tempHumid:response.data.tempHumid,
                 analog:response.data.analog,
@@ -181,7 +182,7 @@ class CardContextProvider extends Component {
         }
         
 
-        axios.post('/HomeApp/api/CardData/cardviewform&id='+this.state.modalContent.cardViewID, formData, config,
+        axios.post('/HomeApp/api/CardData/updatecardview&id&id='+this.state.modalContent.cardViewID, formData, config,
             { headers: {"Authorization" : `BEARER ${getToken()}`} })
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});

@@ -2,8 +2,7 @@
 
 namespace App\Entity\Sensors;
 
-use App\Entity\Card\Cardshow;
-use App\Entity\Card\Cardstate;
+
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
@@ -13,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Humid
  *
- * @ORM\Table(name="humid", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_4", columns={"cardstateid"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="humid_ibfk_5", columns={"cardViewID"})})
+ * @ORM\Table(name="humid", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_4"), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="humid_ibfk_5", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\HumidRepository")
  */
 class Humid
@@ -91,16 +90,6 @@ class Humid
      * })
      */
     private $sensornameid;
-
-    /**
-     * @var Cardshow
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardstate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
-     * })
-     */
-    private $cardstateid;
 
     /**
      * @var Cardview
@@ -213,17 +202,6 @@ class Humid
         return $this;
     }
 
-    public function getcardstateid(): ?Cardstate
-    {
-        return $this->cardstateid;
-    }
-
-    public function setcardstateid(?Cardshow $cardstateid): self
-    {
-        $this->cardstateid = $cardstateid;
-
-        return $this;
-    }
 
     public function getCardviewid(): ?Cardview
     {

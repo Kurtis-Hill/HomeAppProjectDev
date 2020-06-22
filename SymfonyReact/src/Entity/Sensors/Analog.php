@@ -91,15 +91,6 @@ class Analog
      */
     private $sensornameid;
 
-    /**
-     * @var Cardshow
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardstate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
-     * })
-     */
-    private $cardstateid;
 
     /**
      * @var Cardview
@@ -212,17 +203,6 @@ class Analog
         return $this;
     }
 
-    public function getCardshowid(): ?Cardshow
-    {
-        return $this->cardshowid;
-    }
-
-    public function setCardshowid(?Cardshow $cardstateid): self
-    {
-        $this->cardshowid = $cardstateid;
-
-        return $this;
-    }
 
     public function getCardviewid(): ?Cardview
     {

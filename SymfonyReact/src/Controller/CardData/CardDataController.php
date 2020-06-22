@@ -8,6 +8,7 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
 use App\Entity\Core\Sensornames;
+use App\Entity\Sensors\Temp;
 use App\Form\CardViewFormType;
 use App\Services\CardDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,15 +28,32 @@ class CardDataController extends AbstractController
      */
     public function cardViewForm(Request $request, $cardviewid)
     {
-        $requestType = ($request->isMethod('POST')) ? 'JSON' : 'Object';
-        dd($requestType);
-        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid], $requestType);
 
-        dd($cardSensorData->getSensornameid()->getSensorTypeid());
+        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
+         dd($cardSensorData);
+//            if ($cardSensorData['t_tempid'] !== null ) {
+//
+//            }
+//        }
+//        else {
+//            $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
+//           // dd($cardSensorData[3] instanceof Temp);
+//        }
+
+//        if (($cardSensorData['t_tempid'] !== null && is_int((intval($cardSensorData['t_tempid']))) || $cardSensorData[3] instanceof Temp)) {
+//            dd('heyyy');
+//        }
+//        dd('nooo');
+
+//        $cardSensorData = ($request->isMethod('POST')) ?
+//            $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]) :
+//            $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
+//        switch ()
 
         $form = $this->createForm(CardViewFormType::class, null, [
             'sensorType' => $cardSensorData->getSensornameid()->getSensorTypeid()
         ]);
+
         $form->handleRequest($request);
 
 
@@ -51,17 +69,21 @@ class CardDataController extends AbstractController
             if ($cardView->getSensornameid()) {
 
             }
-            $sensorData = $this->getDoctrine()->getRepository();
 
-            $sensorCardView = new Cardview();
-            $sensorCardState = new Cardstate();
-
-        }
-        else {
+        } else {
             return new JsonResponse('error');
         }
 
         return new JsonResponse($cardFormData);
+
+
+    }
+
+    /**
+     * @Route("/updatecardview&id={cardviewid}", name="updateCardView")
+     */
+    public function updateCardView(Request $request, $cardviewid)
+    {
 
     }
 
@@ -74,6 +96,7 @@ class CardDataController extends AbstractController
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService)
     {
         $cardData = $cardDataService->returnAllCardSensorData('json', 'index');
+        //dd($cardData);
         return new JsonResponse($cardData);
     }
 

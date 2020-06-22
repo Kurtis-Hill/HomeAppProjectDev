@@ -32,10 +32,8 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
             ->where(
                 $qb->expr()->orX(
-                    $qb->expr()->eq('t.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('t.cardstateid', ':cardviewTwo'),
-                    $qb->expr()->eq('h.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('h.cardstateid', ':cardviewTwo')
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
@@ -48,6 +46,7 @@ class CardviewRepository extends EntityRepository
          else {
              $result = $qb->getQuery()->getResult();
          }
+        //dd($result);
 
         return $result;
     }
@@ -63,8 +62,8 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
             ->where(
                 $qb->expr()->orX(
-                    $qb->expr()->eq('a.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('a.cardstateid', ':cardviewTwo')
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
@@ -77,7 +76,7 @@ class CardviewRepository extends EntityRepository
         else {
             $result = $qb->getQuery()->getResult();
         }
-        //  dd($result);
+//          dd($result);
         return $result;
     }
 
@@ -92,10 +91,8 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
             ->where(
                 $qb->expr()->orX(
-                    $qb->expr()->eq('t.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('t.cardstateid', ':cardviewTwo'),
-                    $qb->expr()->eq('h.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('h.cardstateid', ':cardviewTwo')
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
@@ -123,21 +120,19 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
             ->where(
                 $qb->expr()->orX(
-                    $qb->expr()->eq('t.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('t.cardstateid', ':cardviewTwo'),
-                    $qb->expr()->eq('h.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('h.cardstateid', ':cardviewTwo')
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                    $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
-        if($type === "json") {
+        $result = null;
+        if($type === "JSON") {
             $result = $qb->getQuery()->getScalarResult();
-
         }
-        else {
+        if($type === "Object") {
             $result = $qb->getQuery()->getResult();
         }
 
@@ -147,10 +142,10 @@ class CardviewRepository extends EntityRepository
 
     //Add left join for additional sensors
     //@TODO need to change cardstate to be in cardview table rather than temp, humid and analog -- will lose the ability to take secodnary sensor data off the card but will ultimatly save DB requests
-    public function getCardFormData($criteria ,$type)
+    public function getCardFormData(array $criteria)
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's.sensorname', 'cs')
+        $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's', 'cs')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -163,17 +158,33 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['id' => $criteria['id']]);
 
-        if ($type === 'JSON') {
-            $result = $qb->getQuery()->getScalarResult();
-            //$result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-            //$newDate = new \DateTime($result[0]['t_timez']);
-    //        dd($result[0]);
-    //        dd($newDate);
-            return $result[0];
-        }
-        if ($type === 'Object') {
-            return $qb->getQuery()->getResult();
-        }
+        $result = $qb->getQuery()->getScalarResult();
+       // dd($result);
+        //$result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        //$newDate = new \DateTime($result[0]['t_timez']);
+//        dd($result[0]);
+        return $result[0];
+
 
     }
+
+    public function getUsersCurrentCardData(array $criteria)
+    {
+        $qb = $this->createQueryBuilder('cv');
+        $qb->select('cv', 't', 'h', 'a')
+            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
+            ->where(
+                $qb->expr()->eq('cv.cardviewid', ':id')
+            )
+            ->setParameters(['id' => $criteria['id']]);
+
+            //dd('heyt');
+            $result = $qb->getQuery()->getResult();
+           // dd($result);
+            return $result;
+
+    }
+
 }
