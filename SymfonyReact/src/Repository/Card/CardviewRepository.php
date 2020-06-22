@@ -147,7 +147,7 @@ class CardviewRepository extends EntityRepository
 
     //Add left join for additional sensors
     //@TODO need to change cardstate to be in cardview table rather than temp, humid and analog -- will lose the ability to take secodnary sensor data off the card but will ultimatly save DB requests
-    public function getCardFormData($criteria)
+    public function getCardFormData($criteria ,$type)
     {
         $qb = $this->createQueryBuilder('cv');
         $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's.sensorname', 'cs')
@@ -163,12 +163,17 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['id' => $criteria['id']]);
 
-        $result = $qb->getQuery()->getScalarResult();
-        //$result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-        //$newDate = new \DateTime($result[0]['t_timez']);
-//        dd($result[0]);
-//        dd($newDate);
-        return $result[0];
+        if ($type === 'JSON') {
+            $result = $qb->getQuery()->getScalarResult();
+            //$result = $qb->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+            //$newDate = new \DateTime($result[0]['t_timez']);
+    //        dd($result[0]);
+    //        dd($newDate);
+            return $result[0];
+        }
+        if ($type === 'Object') {
+            return $qb->getQuery()->getResult();
+        }
 
     }
 }

@@ -56,21 +56,4 @@ class CardDataService extends HomeAppRoomAbstract
         return $cardData;
     }
 
-
-
-    private function queryForTempCardData()
-    {
-
-    }
-
-    private function queryForHumidCardData()
-    {
-
-    }
-
-    private function queryForAnalogCardData()
-    {
-
-    }
-
 }

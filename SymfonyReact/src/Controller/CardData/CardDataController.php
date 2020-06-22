@@ -27,25 +27,38 @@ class CardDataController extends AbstractController
      */
     public function cardViewForm(Request $request, $cardviewid)
     {
+        $requestType = ($request->isMethod('POST')) ? 'JSON' : 'Object';
+        dd($requestType);
+        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid], $requestType);
 
-        $form = $this->createForm(CardViewFormType::class);
+        dd($cardSensorData->getSensornameid()->getSensorTypeid());
+
+        $form = $this->createForm(CardViewFormType::class, null, [
+            'sensorType' => $cardSensorData->getSensornameid()->getSensorTypeid()
+        ]);
         $form->handleRequest($request);
-        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
+
 
         $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
-
-
         $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
         $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
 
         $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
-        if ($form->isSubmitted()) {
-        dd($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $cardView = $this->getDoctrine()->getRepository(Cardview::class)->findOneBy(['id' => $cardviewid]);
+
+            if ($cardView->getSensornameid()) {
+
+            }
+            $sensorData = $this->getDoctrine()->getRepository();
 
             $sensorCardView = new Cardview();
             $sensorCardState = new Cardstate();
 
+        }
+        else {
+            return new JsonResponse('error');
         }
 
         return new JsonResponse($cardFormData);

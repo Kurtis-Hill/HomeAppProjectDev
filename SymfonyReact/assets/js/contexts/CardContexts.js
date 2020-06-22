@@ -56,13 +56,6 @@ class CardContextProvider extends Component {
     getSensorReadingStyle = (highReading, lowReading, currentReading) => {
         return currentReading >= highReading ? 'text-red' : currentReading <= lowReading ? 'text-blue' : 'text-gray-800';
     }
-    
-    //Checks to see if humidity is set in the tempHumid array
-    isHumidityAvalible = (object) => {
-        return object.h_humidreading !== null ?
-        <div className={'card-font mb-0 font-weight-bold '+this.getSensorReadingStyle(object.h_highhumid, object.h_lowhumid, object.h_humidreading)}>Humidity: {object.h_humidreading}</div> 
-        : null;
-    }
 
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
@@ -175,8 +168,9 @@ class CardContextProvider extends Component {
 
     //  <--!!! TODO WORKING ON THIS !!!-->
     handleSubmissionModalForm = (event) => {
-        this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
         event.preventDefault();
+        console.log('hey');
+        this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
         
         const formData = new FormData(event.target);
 
@@ -185,7 +179,7 @@ class CardContextProvider extends Component {
         const config = {     
             headers: { 'content-type': 'multipart/form-data' }
         }
-
+        
 
         axios.post('/HomeApp/api/CardData/cardviewform&id='+this.state.modalContent.cardViewID, formData, config,
             { headers: {"Authorization" : `BEARER ${getToken()}`} })

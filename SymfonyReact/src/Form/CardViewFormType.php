@@ -21,6 +21,22 @@ class CardViewFormType extends AbstractType
     {
    //     dd($options['cardSensorState']);
         $builder
+
+            ->add('highReading', EntityType::class, [
+                'class'          => Icons::class,
+//                'choice_label'   => 'iconname',
+//                'data'           => $options['cardIcon'],
+//                'error_bubbling' => true,
+//                'label'          => 'Choose Card Icon',
+//
+//                'query_builder' => function(EntityRepository $er) {
+//                    return $er->createQueryBuilder('i')
+//                        ->orderBy('i.iconname', 'ASC');
+//                },
+            ])
+
+
+
             ->add('icon', EntityType::class, [
                 'class'          => Icons::class,
 //                'choice_label'   => 'iconname',
@@ -75,7 +91,7 @@ class CardViewFormType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => Cardview::class,
+            'data_class' => Cardview::class,x
 //            'cardIcon' => $resolver->setRequired('cardIcon'),
 //            'cardColour' => $resolver->setRequired('cardColour'),
 //            'cardSensorStateOne' => $resolver->setRequired('cardSensorStateOne'),

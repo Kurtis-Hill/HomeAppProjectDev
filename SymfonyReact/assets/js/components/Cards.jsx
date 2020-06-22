@@ -28,7 +28,7 @@ const cardRender = () => {
                 <div className="col mr-2">
                   <div className="d-flex font-weight-bold text text-uppercase mb-1">{tempHumid.sensorname}</div>
                   <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
-                  {context.isHumidityAvalible(tempHumid)}
+                  {tempHumid.h_humidreading !== null ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.h_highhumid, tempHumid.h_lowhumid, tempHumid.h_humidreading)}>Humidity: {tempHumid.h_humidreading}</div> : null}
                   <div className="card-font mb-0 text-gray-400">@{tempHumid.t_timez.date}</div>
                 </div>
                 <div className="col-auto">
