@@ -30,7 +30,7 @@ class CardDataController extends AbstractController
     {
 
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
-         dd($cardSensorData);
+//         dd($cardSensorData);
 //            if ($cardSensorData['t_tempid'] !== null ) {
 //
 //            }
@@ -50,29 +50,30 @@ class CardDataController extends AbstractController
 //            $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
 //        switch ()
 
-        $form = $this->createForm(CardViewFormType::class, null, [
-            'sensorType' => $cardSensorData->getSensornameid()->getSensorTypeid()
-        ]);
+//        $form = $this->createForm(CardViewFormType::class, null, [
+//            'sensorType' => $cardSensorData->getSensornameid()->getSensorTypeid()
+//        ]);
+//
+//        $form->handleRequest($request);
 
-        $form->handleRequest($request);
-
-
+        $states = $this->getDoctrine()->getRepository(Cardview::class)->getFormSelectData();
+        dd($states);
         $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
         $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
         $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
 
         $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $cardView = $this->getDoctrine()->getRepository(Cardview::class)->findOneBy(['id' => $cardviewid]);
-
-            if ($cardView->getSensornameid()) {
-
-            }
-
-        } else {
-            return new JsonResponse('error');
-        }
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $cardView = $this->getDoctrine()->getRepository(Cardview::class)->findOneBy(['id' => $cardviewid]);
+//
+//            if ($cardView->getSensornameid()) {
+//
+//            }
+//
+//        } else {
+//            return new JsonResponse('error');
+//        }
 
         return new JsonResponse($cardFormData);
 
@@ -95,7 +96,7 @@ class CardDataController extends AbstractController
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService)
     {
-        $cardData = $cardDataService->returnAllCardSensorData('json', 'index');
+        $cardData = $cardDataService->returnAllCardSensorData('JSON', 'index');
         //dd($cardData);
         return new JsonResponse($cardData);
     }

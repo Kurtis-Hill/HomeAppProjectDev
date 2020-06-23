@@ -9,64 +9,45 @@ const cardRender = () => {
 
   const context = useContext(CardContext);
 
-  const modalStyle = context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'};
-
   const modalSensorType = context.modalContent.sensorType;
 
   const secondModalSensorType = context.modalContent.secondSensorType;
+  
+  const secondSensor = modalContent.secondSensorID;
 
   const modalContent = context.modalContent;
 
-
   return ( 
     <React.Fragment>
-      {context.tempHumid.map((tempHumid, index) => (
-        <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(tempHumid.cardviewid)}} key={index}>
-          <div className={"shadow h-100 py-2 card border-left-"+tempHumid.colour}>
+      {context.cardData.map((cardData, index) => (
+        <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(cardData.cardviewid)}} key={index}>
+          <div className={"shadow h-100 py-2 card border-left-"+cardData.colour}>
             <div className="card-body">
               <div className="row no-gutters align-items-center">
                 <div className="col mr-2">
-                  <div className="d-flex font-weight-bold text text-uppercase mb-1">{tempHumid.sensorname}</div>
-                  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.t_hightemp, tempHumid.t_lowtemp, tempHumid.t_tempreading)}>Temperature: {tempHumid.t_tempreading}</div>
-                  { tempHumid.a_analogid !== null ? <div className="card-font mb-0 font-weight-bold text-gray-800">Reading: {analog.a_analogreading}</div> : null}
-                  {tempHumid.h_humidreading !== null ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(tempHumid.h_highhumid, tempHumid.h_lowhumid, tempHumid.h_humidreading)}>Humidity: {tempHumid.h_humidreading}</div> : null}
-                  <div className="card-font mb-0 text-gray-400">@{tempHumid.t_timez.date}</div>
+                  <div className="d-flex font-weight-bold text text-uppercase mb-1">{cardData.sensorname}</div>
+                  {cardData.t_tempreading !== null ? <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.t_hightemp, cardData.t_lowtemp, cardData.t_tempreading)}>Temperature: {cardData.t_tempreading}</div> : null}
+                  {cardData.a_analogreading !== null ? <div className="card-font mb-0 font-weight-bold text-gray-800">Reading: {cardData.a_analogreading}</div> : null}
+                  {(cardData.h_humidreading !== null  ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.h_highhumid, cardData.h_lowhumid, cardData.h_humidreading)}>Humidity: {cardData.h_humidreading}</div> : null)}
+                  {cardData.t_timez !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.t_timez.date}</div> : null}
+                  {cardData.a_timez !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.a_timez.date}</div> : null}
                 </div>
                 <div className="col-auto">
-                  <i className={"fas fa-2x text-gray-300 fa-"+tempHumid.iconname}></i>
+                  <i className={"fas fa-2x text-gray-300 fa-"+cardData.iconname}></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
       ))}
-{/* 
-      {context.analog.map((analog, index) => (
-        <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(analog.cardviewid)}} key={index} >
-          <div className={"shadow h-100 py-2 card border-left-"+analog.colour}>
-            <div className="card-body">
-              <div className="row no-gutters align-items-center">
-                <div className="col mr-2">
-                  <div className="d-flex font-weight-bold text text-uppercase mb-1">{analog.sensorname}</div>
-                    <div className="card-font mb-0 font-weight-bold text-gray-800">Reading: {analog.a_analogreading}</div>
-                    <div className="card-font mb-0 text-gray-400">@{analog.a_timez.date}</div>
-                </div>
-                <div className="col-auto">
-                  <i className={"fas fa-2x text-gray-300 fa-"+analog.iconname}></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))} */}
       
       {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-          <div id="" style={modalStyle} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div id="" style={context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <form onSubmit={(e) => {context.handleSubmissionModalForm(e)}} id="modal-form">
                   <div className="modal-header">
-                    <h5 className="modal-title">Change {context.modalContent.sensorName}'s Sensor Details</h5>
+                    <h5 className="modal-title">Change {modalContent.sensorName}'s Sensor Details</h5>
                         <button className="close" onClick={() => {context.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -74,7 +55,7 @@ const cardRender = () => {
                   <div className="modal-body">
                     {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                   
-                    {context.modalContent.cardViewID === null ? <p>Submission Made</p> : 
+                    {modalContent.cardViewID === null ? <p>Submission Made</p> : 
                     <React.Fragment>
                       <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
                       <input type="text" name="highReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
@@ -82,56 +63,56 @@ const cardRender = () => {
                       <label className="modal-space large font-weight-bold">{modalContent.sensorType} Low Reading</label>
                       <input type="text" name="lowReading" className="form-control" value={modalContent.sensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
 
-                      {(context.modalContent.secondSensorID ===  null) ? null : 
+                      {(secondSensor ===  null || secondSensor === undefined) ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{modalContent.secondSensorType} High Reading</label>
                           <input type="text" name="secondHighReading" className="form-control" value={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                       
                           <label className="modal-space large font-weight-bold">{modalContent.secondSensorType} Low Reading</label>
-                          <input type="text" name="secondLowReading" className="form-control" value={context.modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                          <input type="text" name="secondLowReading" className="form-control" value={modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                         </React.Fragment>
                       }
                                   
                       <label className="modal-space large font-weight-bold">Icon</label>
                       <br />
-                      <select name="icon" value={capitalizeFirstLetter(context.modalContent.currentIcon)} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
-                          {context.modalContent.icons.map((icons, index) => (
+                      <select name="icon" value={capitalizeFirstLetter(modalContent.currentIcon)} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
+                          {modalContent.icons.map((icons, index) => (
                             <option key={icons.i_iconid}>{capitalizeFirstLetter(icons.i_iconname)}</option>
                           ))}
                       </select>
-                      <i className={"fas fa-2x text-gray-300 modal-icon fa-"+context.modalContent.currentIcon}></i>
+                      <i className={"fas fa-2x text-gray-300 modal-icon fa-"+modalContent.currentIcon}></i>
                       <br />
                   
                       <label className="modal-space large font-weight-bold">Card Colour</label>
-                      <select value={capitalizeFirstLetter(context.modalContent.currentColour)} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
-                          {context.modalContent.colours.map((colours) => (
+                      <select value={capitalizeFirstLetter(modalContent.currentColour)} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
+                          {modalContent.colours.map((colours) => (
                             <option key={colours.c_colourid}>{capitalizeFirstLetter(colours.c_shade)}</option>
                           ))}
                       </select>
                       
                       <label className="modal-space large font-weight-bold">Card View</label>
-                      <select name="card-view" value={capitalizeFirstLetter(context.modalContent.currentState)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
-                          {context.modalContent.states.map((states, index) => (
+                      <select name="card-view" value={capitalizeFirstLetter(modalContent.currentState)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
+                          {modalContent.states.map((states, index) => (
                             <option key={states.cs_cardstateid}>{capitalizeFirstLetter(states.cs_state)}</option>
                           ))}
                       </select>
 
                       <label className="modal-space large font-weight-bold">{modalSensorType} Constantly Record Data</label>
-                      <select value={capitalizeFirstLetter(context.modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="const-record" className="form-control">
+                      <select value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="const-record" className="form-control">
                           <option key="no">No</option>
                           <option key="yes">Yes</option>
                       </select>
 
-                      {context.modalContent.secondSensorID === null ? null : 
+                      {secondSensor === null || undefined ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{secondModalSensorType} Constantly Record Data</label>
-                          <select value={capitalizeFirstLetter(context.modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="second-const-record" className="form-control">
+                          <select value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="second-const-record" className="form-control">
                               <option key="no">No</option>
                               <option key="yes">Yes</option>
                           </select>
                         </React.Fragment>
                       }
-                      <input name="cardViewID" type="hidden" defaultValue={context.modalContent.cardViewID}></input>             
+                      <input name="cardViewID" type="hidden" defaultValue={modalContent.cardViewID}></input>             
                     </React.Fragment>
                     }
                   </div>

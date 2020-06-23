@@ -7,19 +7,19 @@ import { lowercaseFirstLetter } from '../Utilities/Common';
 
 export const CardContext = createContext();
 
-const emptyModalContent = {sensorHighReading: '', sensorLowReading: '', secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
+const emptyModalContent = {secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
 
 class CardContextProvider extends Component {
     constructor(props) {
         super(props);
         this.state = {
             refreshTimer: 4000,
-            tempHumid: [],
-            analog: [],
+            cardData: [],
             modalShow: false,
             modalLoading: false,
             modalContent: emptyModalContent,
         };
+        console.log('modal content inital state', this.state.modalContent);
     }
 
     componentDidMount() {
@@ -42,10 +42,9 @@ class CardContextProvider extends Component {
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            console.log('responser', response.data);
+            console.log('fetch card form response', response.data);
             this.setState({
-                tempHumid:response.data.sensorData,
-                analog:response.data.analog,
+                cardData:response.data.sensorData,
             })
             setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
         }).catch(error => {
@@ -64,6 +63,7 @@ class CardContextProvider extends Component {
         axios.get('/HomeApp/api/CardData/cardviewform&id='+cardViewID,
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
+            console.log('modal form data', response.data);
             this.setState({modalLoading: false});
             this.modalContent(response.data);
             this.setState({modalShow: true});
@@ -116,7 +116,7 @@ class CardContextProvider extends Component {
         const currentState = capitalizeFirstLetter(userData.cs_state);
         const states = response.states;
 
-        this.setState({modalContent:{ sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
+        this.setState({modalContent:{sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
     }
 
 
@@ -197,8 +197,7 @@ class CardContextProvider extends Component {
             <div className="container-fluid">
                 <div className="row">
                     <CardContext.Provider value={{
-                        tempHumid: this.state.tempHumid,
-                        analog: this.state.analog,
+                        cardData: this.state.cardData,
                         getCardDataForm: this.getCardDataForm,
                         getSensorReadingStyle: this.getSensorReadingStyle,
                         isHumidityAvalible: this.isHumidityAvalible,
