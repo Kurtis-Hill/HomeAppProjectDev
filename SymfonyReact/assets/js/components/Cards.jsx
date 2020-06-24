@@ -13,8 +13,6 @@ const cardRender = () => {
 
   const secondModalSensorType = context.modalContent.secondSensorType;
   
-  const secondSensor = modalContent.secondSensorID;
-
   const modalContent = context.modalContent;
 
   return ( 
@@ -28,7 +26,7 @@ const cardRender = () => {
                   <div className="d-flex font-weight-bold text text-uppercase mb-1">{cardData.sensorname}</div>
                   {cardData.t_tempreading !== null ? <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.t_hightemp, cardData.t_lowtemp, cardData.t_tempreading)}>Temperature: {cardData.t_tempreading}</div> : null}
                   {cardData.a_analogreading !== null ? <div className="card-font mb-0 font-weight-bold text-gray-800">Reading: {cardData.a_analogreading}</div> : null}
-                  {(cardData.h_humidreading !== null  ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.h_highhumid, cardData.h_lowhumid, cardData.h_humidreading)}>Humidity: {cardData.h_humidreading}</div> : null)}
+                  {cardData.h_humidreading !== null  ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.h_highhumid, cardData.h_lowhumid, cardData.h_humidreading)}>Humidity: {cardData.h_humidreading}</div> : null}
                   {cardData.t_timez !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.t_timez.date}</div> : null}
                   {cardData.a_timez !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.a_timez.date}</div> : null}
                 </div>
@@ -41,7 +39,7 @@ const cardRender = () => {
         </div>
       ))}
       
-      {context.modalLoading === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+      {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
           <div id="" style={context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog" role="document">
               <div className="modal-content">
@@ -53,9 +51,9 @@ const cardRender = () => {
                         </button>
                   </div>
                   <div className="modal-body">
-                    {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+                    {modalContent.modalSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                   
-                    {modalContent.cardViewID === null ? <p>Submission Made</p> : 
+                    
                     <React.Fragment>
                       <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
                       <input type="text" name="highReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
@@ -63,7 +61,7 @@ const cardRender = () => {
                       <label className="modal-space large font-weight-bold">{modalContent.sensorType} Low Reading</label>
                       <input type="text" name="lowReading" className="form-control" value={modalContent.sensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
 
-                      {(secondSensor ===  null || secondSensor === undefined) ? null : 
+                      {modalContent.secondSensorID ===  null || modalContent.secondSensorID === undefined ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{modalContent.secondSensorType} High Reading</label>
                           <input type="text" name="secondHighReading" className="form-control" value={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
@@ -103,7 +101,7 @@ const cardRender = () => {
                           <option key="yes">Yes</option>
                       </select>
 
-                      {secondSensor === null || undefined ? null : 
+                      {modalContent.secondSensorID === null || undefined ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{secondModalSensorType} Constantly Record Data</label>
                           <select value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="second-const-record" className="form-control">
@@ -114,7 +112,7 @@ const cardRender = () => {
                       }
                       <input name="cardViewID" type="hidden" defaultValue={modalContent.cardViewID}></input>             
                     </React.Fragment>
-                    }
+                    
                   </div>
                   <div className="modal-footer">          
                     <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>

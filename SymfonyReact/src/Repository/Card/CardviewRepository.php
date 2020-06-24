@@ -179,18 +179,31 @@ class CardviewRepository extends EntityRepository
             return $result;
     }
 
-    public function getFormSelectData()
-    {
-        $qb = $this->createQueryBuilder('cv');
-        $qb->select('i', 'cc', 's', 'cs')
-            ->leftJoin('App\Entity\Core\Icons', 'i')
-            ->leftJoin('App\Entity\Card\Cardcolour', 'cc')
-            ->leftJoin('App\Entity\Core\Sensornames', 's')
-            ->leftJoin('App\Entity\Card\Cardstate', 'cs');
-
-        $result = $qb->getQuery()->getScalarResult();
-
-        return $result;
-    }
+//    public function getFormSelectData()
+//    {
+////        $qb = $this->createQueryBuilder('cv');
+////        $qb->select('i', 'cc', 's', 'cs')
+////            ->leftJoin('App\Entity\Core\Icons', 'i')
+////            ->leftJoin('App\Entity\Card\Cardcolour', 'cc')
+////            ->leftJoin('App\Entity\Core\Sensornames', 's')
+////            ->leftJoin('App\Entity\Card\Cardstate', 'cs');
+////
+////        $result = $qb->getQuery()->getScalarResult();
+////
+////        return $result;
+//
+//        $conn = $this->getEntityManager()
+//            ->getConnection();
+//
+//
+//        $sql = 'SELECT iconname, shade, state FROM icons, cardcolour, cardstate';
+//
+//
+//        $stmt = $conn->prepare($sql);
+//        $stmt->execute();
+//        dd($stmt->fetchAll());
+//
+//
+//    }
 
 }

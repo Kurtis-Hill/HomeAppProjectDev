@@ -49,20 +49,37 @@ class CardDataController extends AbstractController
 //            $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]) :
 //            $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
 //        switch ()
+        //$form = $this->createFormBuilder()
+        if ($cardSensorData['t_tempid'] && !$cardSensorData['h_humidid']) {
+            dd('temp');
+            $form = $this->createForm(CardViewFormType::class, null, [
+                'sensorType' => 'Temp'
+            ]);
+        }
+        if ($cardSensorData['t_tempid'] && $cardSensorData['h_humidid']) {
+            dd('tempHumid');
+            $form = $this->createForm(CardViewFormType::class, null, [
+                'sensorType' => 'TempHumid'
+            ]);
+        }
+        if (($cardSensorData['a_analogid'])) {
+            dd('analog');
+            $form = $this->createForm(CardViewFormType::class, null, [
+                'sensorType' => 'Analog'
+            ]);
+        }
 
-//        $form = $this->createForm(CardViewFormType::class, null, [
-//            'sensorType' => $cardSensorData->getSensornameid()->getSensorTypeid()
-//        ]);
 //
 //        $form->handleRequest($request);
-
-        $states = $this->getDoctrine()->getRepository(Cardview::class)->getFormSelectData();
-        dd($states);
+        //$states = $this->getDoctrine()->getRepository(Cardview::class)->getFormSelectData();
+        //dd($states);
         $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
         $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
         $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
 
         $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
+
+        dd($cardSensorData);
 
 //        if ($form->isSubmitted() && $form->isValid()) {
 //            $cardView = $this->getDoctrine()->getRepository(Cardview::class)->findOneBy(['id' => $cardviewid]);
