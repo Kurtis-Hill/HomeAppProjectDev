@@ -101,10 +101,10 @@ const cardRender = () => {
                           <option key="yes">Yes</option>
                       </select>
 
-                      {modalContent.secondSensorID === null || undefined ? null : 
+                      {modalContent.secondSensorID === null || modalContent.secondSensorID === undefined ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{secondModalSensorType} Constantly Record Data</label>
-                          <select name="secondConstRecord" value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}}  className="form-control">
+                          <select name="secondConstRecord" value={capitalizeFirstLetter(modalContent.secondConstRecord)} onChange={(e) => {context.updateModalForm(e)}}  className="form-control">
                               <option key="no">No</option>
                               <option key="yes">Yes</option>
                           </select>

@@ -108,6 +108,7 @@ class CardContextProvider extends Component {
         const sensorName = userData.sensorname;
 
         const currentIcon = userData.i_iconname;
+        const iconID = userData.i_iconid;
         const icons = response.icons;
 
         const currentColour = capitalizeFirstLetter(userData.cc_shade);
@@ -116,7 +117,7 @@ class CardContextProvider extends Component {
         const currentState = capitalizeFirstLetter(userData.cs_state);
         const states = response.states;
 
-        this.setState({modalContent:{sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, currentColour, colours, cardViewID, currentState, states}});
+        this.setState({modalContent:{sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
     }
 
 
@@ -137,15 +138,15 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, currentColour: lowercaseFirstLetter(value)}});
                 break;
 
-            case "card-view":
+            case "cardViewState":
                 this.setState({modalContent:{...this.state.modalContent, currentState: lowercaseFirstLetter(value)}});
                 break;
 
-            case "const-record":
+            case "constRecord":
                 this.setState({modalContent:{...this.state.modalContent, constRecord: lowercaseFirstLetter(value)}});
                 break;
 
-            case "second-const-record":
+            case "secondConstRecord":
                 this.setState({modalContent:{...this.state.modalContent, secondConstRecord: lowercaseFirstLetter(value)}});
                 break;
 
