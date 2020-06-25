@@ -1,4 +1,4 @@
-import React, { Component, useContext, useState } from 'react';
+import React, { Component, useContext } from 'react';
 import { CardContext } from '../contexts/CardContexts';
 import { capitalizeFirstLetter } from '../Utilities/Common';
 
@@ -51,9 +51,9 @@ const cardRender = () => {
                         </button>
                   </div>
                   <div className="modal-body">
-                    {modalContent.modalSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+                    {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                   
-                    
+                    {modalContent.cardViewID === null ? <p>Submission Made</p> :
                     <React.Fragment>
                       <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
                       <input type="text" name="highReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
@@ -89,14 +89,14 @@ const cardRender = () => {
                       </select>
                       
                       <label className="modal-space large font-weight-bold">Card View</label>
-                      <select name="card-view" value={capitalizeFirstLetter(modalContent.currentState)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
+                      <select name="cardViewState" value={capitalizeFirstLetter(modalContent.currentState)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
                           {modalContent.states.map((states, index) => (
                             <option key={states.cs_cardstateid}>{capitalizeFirstLetter(states.cs_state)}</option>
                           ))}
                       </select>
 
                       <label className="modal-space large font-weight-bold">{modalSensorType} Constantly Record Data</label>
-                      <select value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="const-record" className="form-control">
+                      <select name="constRecord" value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
                           <option key="no">No</option>
                           <option key="yes">Yes</option>
                       </select>
@@ -104,15 +104,14 @@ const cardRender = () => {
                       {modalContent.secondSensorID === null || undefined ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{secondModalSensorType} Constantly Record Data</label>
-                          <select value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} name="second-const-record" className="form-control">
+                          <select name="secondConstRecord" value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}}  className="form-control">
                               <option key="no">No</option>
                               <option key="yes">Yes</option>
                           </select>
                         </React.Fragment>
-                      }
-                      <input name="cardViewID" type="hidden" defaultValue={modalContent.cardViewID}></input>             
+                      }    
                     </React.Fragment>
-                    
+                    }
                   </div>
                   <div className="modal-footer">          
                     <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
@@ -122,7 +121,6 @@ const cardRender = () => {
               </div>
             </div>
           </div>
-        
     </React.Fragment>
   )
 }

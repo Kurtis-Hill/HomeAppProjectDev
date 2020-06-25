@@ -91,7 +91,8 @@ class CardViewFormType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => Cardview::class,x
+            'data_class' => Cardview::class,
+            'sensorType' => null,
 //            'cardIcon' => $resolver->setRequired('cardIcon'),
 //            'cardColour' => $resolver->setRequired('cardColour'),
 //            'cardSensorStateOne' => $resolver->setRequired('cardSensorStateOne'),

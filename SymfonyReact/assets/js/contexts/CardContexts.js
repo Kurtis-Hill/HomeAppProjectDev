@@ -39,6 +39,7 @@ class CardContextProvider extends Component {
 
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
+        console.log('mdoal submit', this.state.modalContent.modalSubmit);
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
@@ -76,7 +77,6 @@ class CardContextProvider extends Component {
 
 
     modalContent = (response) => {
-
         const userData = response.cardSensorData;
 
         if (userData.t_tempid !== null) {
@@ -178,12 +178,11 @@ class CardContextProvider extends Component {
         formData.append('cardViewID', this.state.modalContent.cardViewID);
                 
         const config = {     
-            headers: { 'content-type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
         
 
-        axios.post('/HomeApp/api/CardData/updatecardview&id&id='+this.state.modalContent.cardViewID, formData, config,
-            { headers: {"Authorization" : `BEARER ${getToken()}`} })
+        axios.post('/HomeApp/api/CardData/updatecardview&id='+this.state.modalContent.cardViewID, JSON.stringify(formData), config)
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
             this.setState({modalContent: emptyModalContent});
