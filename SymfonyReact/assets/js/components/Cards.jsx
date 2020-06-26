@@ -73,40 +73,40 @@ const cardRender = () => {
                                   
                       <label className="modal-space large font-weight-bold">Icon</label>
                       <br />
-                      <select name="icon" value={capitalizeFirstLetter(modalContent.currentIcon)} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
+                      <select id="icon-select" name="icon" value={modalContent.iconID} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
                           {modalContent.icons.map((icons, index) => (
-                            <option key={icons.i_iconid}>{capitalizeFirstLetter(icons.i_iconname)}</option>
+                            <option value={icons.i_iconid} key={icons.i_iconid}>{capitalizeFirstLetter(icons.i_iconname)}</option>
                           ))}
                       </select>
                       <i className={"fas fa-2x text-gray-300 modal-icon fa-"+modalContent.currentIcon}></i>
                       <br />
                   
                       <label className="modal-space large font-weight-bold">Card Colour</label>
-                      <select value={capitalizeFirstLetter(modalContent.currentColour)} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
+                      <select value={modalContent.currentColour} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
                           {modalContent.colours.map((colours) => (
-                            <option key={colours.c_colourid}>{capitalizeFirstLetter(colours.c_shade)}</option>
+                            <option value={colours.c_colourid} key={colours.c_colourid}>{capitalizeFirstLetter(colours.c_shade)}</option>
                           ))}
                       </select>
                       
                       <label className="modal-space large font-weight-bold">Card View</label>
-                      <select name="cardViewState" value={capitalizeFirstLetter(modalContent.currentState)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
+                      <select name="cardViewState" value={modalContent.currentState} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
                           {modalContent.states.map((states, index) => (
-                            <option key={states.cs_cardstateid}>{capitalizeFirstLetter(states.cs_state)}</option>
+                            <option value={states.cs_cardstateid} key={states.cs_cardstateid}>{capitalizeFirstLetter(states.cs_state)}</option>
                           ))}
                       </select>
 
                       <label className="modal-space large font-weight-bold">{modalSensorType} Constantly Record Data</label>
-                      <select name="constRecord" value={capitalizeFirstLetter(modalContent.constRecord)} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
-                          <option key="no">No</option>
-                          <option key="yes">Yes</option>
+                      <select name="constRecord" value={modalContent.constRecord} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
+                          <option value={false} key="no">No</option>
+                          <option value={true} key="yes">Yes</option>
                       </select>
 
-                      {modalContent.secondSensorID === null || modalContent.secondSensorID === undefined ? null : 
+                      {!modalContent.secondSensorID || modalContent.secondSensorID === undefined ? null : 
                         <React.Fragment>
                           <label className="modal-space large font-weight-bold">{secondModalSensorType} Constantly Record Data</label>
-                          <select name="secondConstRecord" value={capitalizeFirstLetter(modalContent.secondConstRecord)} onChange={(e) => {context.updateModalForm(e)}}  className="form-control">
-                              <option key="no">No</option>
-                              <option key="yes">Yes</option>
+                          <select name="secondConstRecord" value={modalContent.secondConstRecord} onChange={(e) => {context.updateModalForm(e)}}  className="form-control">
+                              <option value={false} key="no">No</option>
+                              <option value={true} key="yes">Yes</option>
                           </select>
                         </React.Fragment>
                       }    

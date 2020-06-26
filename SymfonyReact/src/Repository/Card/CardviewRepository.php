@@ -18,8 +18,9 @@ class CardviewRepository extends EntityRepository
 
      */
 
-    public function getAllCardReadings($groupNameID, $userID, $type = null)
+    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null)
     {
+       // dd($room);
         $qb = $this->createQueryBuilder('cv');
          $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
@@ -39,6 +40,7 @@ class CardviewRepository extends EntityRepository
             )
              ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
+         $result = null;
          if($type === "JSON") {
              $result = $qb->getQuery()->getScalarResult();
          }
@@ -67,6 +69,7 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
+        $result = null;
         if($type === "json") {
             $result = $qb->getQuery()->getScalarResult();
         }
@@ -95,6 +98,7 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
+        $result = null;
         if($type === "json") {
             $result = $qb->getQuery()->getScalarResult();
         }
@@ -137,7 +141,6 @@ class CardviewRepository extends EntityRepository
 
 
     //Add left join for additional sensors
-    //@TODO need to change cardstate to be in cardview table rather than temp, humid and analog -- will lose the ability to take secodnary sensor data off the card but will ultimatly save DB requests
     public function getCardFormData(array $criteria)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -153,12 +156,9 @@ class CardviewRepository extends EntityRepository
                 $qb->expr()->eq('cv.cardviewid', ':id')
             )
             ->setParameters(['id' => $criteria['id']]);
-
         $result = $qb->getQuery()->getScalarResult();
 
         return $result[0];
-
-
     }
 
     public function getUsersCurrentCardData(array $criteria)
@@ -173,37 +173,11 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['id' => $criteria['id']]);
 
-            //dd('heyt');
             $result = $qb->getQuery()->getResult();
-           // dd($result);
+
             return $result;
     }
 
-//    public function getFormSelectData()
-//    {
-////        $qb = $this->createQueryBuilder('cv');
-////        $qb->select('i', 'cc', 's', 'cs')
-////            ->leftJoin('App\Entity\Core\Icons', 'i')
-////            ->leftJoin('App\Entity\Card\Cardcolour', 'cc')
-////            ->leftJoin('App\Entity\Core\Sensornames', 's')
-////            ->leftJoin('App\Entity\Card\Cardstate', 'cs');
-////
-////        $result = $qb->getQuery()->getScalarResult();
-////
-////        return $result;
-//
-//        $conn = $this->getEntityManager()
-//            ->getConnection();
-//
-//
-//        $sql = 'SELECT iconname, shade, state FROM icons, cardcolour, cardstate';
-//
-//
-//        $stmt = $conn->prepare($sql);
-//        $stmt->execute();
-//        dd($stmt->fetchAll());
-//
-//
-//    }
+
 
 }

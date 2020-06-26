@@ -109,15 +109,18 @@ class CardDataController extends AbstractController
     }
 
     /**
-     * @Route("/updatecardview&id={cardviewid}", name="updateCardView")
+     * @Route("/updatecardview", name="updateCardView")
      */
-    public function updateCardView(Request $request, $cardviewid)
+    public function updateCardView(Request $request)
     {
-        dd($request->request->all());        //$icon = $request->headers->get('content-type');
+        $cardviewid = $request->get('cardViewID');
+        //dd($request->request->all());        //$icon = $request->headers->get('content-type');
+        //dd($cardviewid);
         //dd($icon);
         // $reading = $request->get('highReading');
         //dd($reading);
         $formContent = $request->getContent('Form Data');
+        dd($formContent);
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
         //  dd($request->getContent('Form Data'));
         //  dd($cardSensorData);
