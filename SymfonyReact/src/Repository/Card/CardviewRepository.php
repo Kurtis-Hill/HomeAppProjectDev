@@ -173,9 +173,15 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['id' => $criteria['id']]);
 
-            $result = $qb->getQuery()->getResult();
+        $result = $qb->getQuery()->getResult();
 
-            return $result;
+        $sensorResults["cardView"] = $result[0];
+        $sensorResults["temp"] = $result[1];
+        $sensorResults["humid"] = $result[2];
+        $sensorResults["analog"] = $result[3];
+
+
+        return $sensorResults;
     }
 
 
