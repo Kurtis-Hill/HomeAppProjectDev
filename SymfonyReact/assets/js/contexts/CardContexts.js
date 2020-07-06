@@ -182,7 +182,6 @@ class CardContextProvider extends Component {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
         
-
         axios.post('/HomeApp/api/CardData/updatecardview',formData, config)
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});

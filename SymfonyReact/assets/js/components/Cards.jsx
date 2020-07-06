@@ -82,7 +82,7 @@ const cardRender = () => {
                       <br />
                   
                       <label className="modal-space large font-weight-bold">Card Colour</label>
-                      <select value={modalContent.currentColour} onChange={(e) => {context.updateModalForm(e)}} name="colour" className="form-control">
+                      <select value={modalContent.currentColour} onChange={(e) => {context.updateModalForm(e)}} name="cardColour" className="form-control">
                           {modalContent.colours.map((colours) => (
                             <option value={colours.c_colourid} key={colours.c_colourid}>{capitalizeFirstLetter(colours.c_shade)}</option>
                           ))}

@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class TempHumidFormType extends AbstractType
@@ -20,77 +21,82 @@ class TempHumidFormType extends AbstractType
         $builder
 
             ->add('highReading', TextType::class, [
+                'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'High Reading Cannot be blank']),
-                ]
-//                'class'          => $options["sensorType"],
+                  new NotBlank(),
+                  new Length(['min' => 1, 'max' => 3,
+                      'minMessage' => 'You must enter a value',
+                      'maxMessage' => 'This number is too high {{ value }}']),
+                ],
+            ])
 
-//                'choice_label'   => 'iconname',
-//                'data'           => $options['cardIcon'],
-//                'error_bubbling' => true,
-//                'label'          => 'Choose Card Icon',
-//
-//                'query_builder' => function(EntityRepository $er) {
-//                    return $er->createQueryBuilder('i')
-//                        ->orderBy('i.iconname', 'ASC');
-//                },
-            ]);
+            ->add('lowReading', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 1, 'max' => 3,
+                        'minMessage' => 'You must enter a value',
+                        'maxMessage' => 'This number is too high {{ value }}']),
+                ],
+            ])
 
-//            ->add('lowReading', TextType::class, [
-//                'class'          => Temp::class,
+            ->add('icon', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
 
-//                'choice_label'   => 'iconname',
-//                'data'           => $options['cardIcon'],
-//                'error_bubbling' => true,
-//                'label'          => 'Choose Card Icon',
-//
-//                'query_builder' => function(EntityRepository $er) {
-//                    return $er->createQueryBuilder('i')
-//                        ->orderBy('i.iconname', 'ASC');
-//                },
-//            ]);
+            ->add('colour', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
 
-//            ->add('icon', TextType::class, [
-////                'class'          => Cardview::class,
-//
-////                'choice_label'   => 'colour',
-////                'data'           => $options['cardColour'],
-////                'error_bubbling' => true,
-////                'label'          => 'Choose Card Colour',
-////
-////                'query_builder' => function(EntityRepository $er) {
-////                    return $er->createQueryBuilder('cc')
-////                        ->orderBy('cc.colour', 'ASC');
-////                },
-//            ])
-//
-//            ->add('colour', TextType::class, [
-////                'class'          => Cardview::class,
-//
-////                'choice_label'   => 'colour',
-////                'data'           => $options['cardColour'],
-////                'error_bubbling' => true,
-////                'label'          => 'Choose Card Colour',
-////
-////                'query_builder' => function(EntityRepository $er) {
-////                    return $er->createQueryBuilder('cc')
-////                        ->orderBy('cc.colour', 'ASC');
-////                },
-//            ])
-//
-//            ->add('cardViewState', TextType::class, [
-//
-//
-//            ])
-//
-//            ->add('constRecord', TextType::class, [
-//
-//
-//
-//
-//            ]);
+            ->add('cardViewState', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
 
-
+            ->add('constRecord', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
+        ;
+        //If adding sensor with more than one reading type add the sensor type name in the if statement
+        if ($options['sensorType'] == 'Temp&Humid') {
+            $builder
+                ->add('secondHighReading', TextType::class, [
+                    'constraints' => [
+                        new NotBlank(),
+                        new Length(['min' => 1, 'max' => 3,
+                            'minMessage' => 'You must enter a value',
+                            'maxMessage' => 'This number is too high {{ value }}']),
+                    ],
+                ])
+            ->add('secondLowReading', TextType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 1, 'max' => 3,
+                        'minMessage' => 'You must enter a value',
+                        'maxMessage' => 'This number is too high {{ value }}']),
+                ],
+            ])
+            ->add('secondConstRecord', TextType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 1, 'max' => 3,
+                        'minMessage' => 'You must enter a value',
+                        'maxMessage' => 'This number is too high {{ value }}']),
+                ],
+            ])
+            ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -99,17 +105,6 @@ class TempHumidFormType extends AbstractType
             'csrf_protection' => false,
             'data_class' => null,
             'sensorType' => null,
-//            'cardIcon' => $resolver->setRequired('cardIcon'),
-//            'cardColour' => $resolver->setRequired('cardColour'),
-//            'cardSensorStateOne' => $resolver->setRequired('cardSensorStateOne'),
-//            'cardSensorStateTwo' => $resolver->setDefault('cardSensorStateTwo', null),
-//            'sensorType' => $resolver->setRequired('sensorType'),
         ]);
-
-//        if ($options['sensorType'] == 'Temp&Humid') {
-//            $resolver->setDefaults([
-//                'cardSensorStateTwo' => $resolver->setRequired('cardSensorStateTwo'),
-//            ]);
-//        }
     }
 }

@@ -13,6 +13,7 @@ use App\Entity\Sensors\Humid;
 use App\Entity\Sensors\Temp;
 use App\Form\CardViewForms\TempHumidFormType;
 use App\Form\CardViewFormType;
+use App\Form\TempHumidCardFormType;
 use App\Services\CardDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,83 +32,20 @@ class CardDataController extends AbstractController
      */
     public function cardViewForm(Request $request, $cardviewid)
     {
+        if ($request->isMethod('GET')) {
+            $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
-        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
+            $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
+            $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
+            $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
 
-        $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
-        $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
-        $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
+            $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
-        $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
-
-
-//         dd($cardSensorData);
-//            if ($cardSensorData['t_tempid'] !== null ) {
-//
-//            }
-//        }
-//        else {
-//            $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
-//           // dd($cardSensorData[3] instanceof Temp);
-//        }
-
-//        if (($cardSensorData['t_tempid'] !== null && is_int((intval($cardSensorData['t_tempid']))) || $cardSensorData[3] instanceof Temp)) {
-//            dd('heyyy');
-//        }
-//        dd('nooo');
-
-//        $cardSensorData = ($request->isMethod('POST')) ?
-//            $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]) :
-//            $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
-//        switch ()
-        //$form = $this->createFormBuilder()
-
-
-//        if ($cardSensorData['t_tempid'] && !$cardSensorData['h_humidid']) {
-//          //  dd('temp');
-//            $form = $this->createForm(TempHumidFormType::class, null, [
-//                'sensorType' => 'Temp'
-//            ]);
-//        }
-//        if ($cardSensorData['t_tempid'] && $cardSensorData['h_humidid']) {
-//           // dd('tempHumid');
-//
-//            $form = $this->createForm(TempHumidFormType::class, null, [
-//                'sensorType' => 'TempHumid'
-//            ]);
-//        }
-//        if (($cardSensorData['a_analogid'])) {
-//          //  dd('analog');
-//            $form = $this->createForm(CardViewFormType::class, null, [
-//                'sensorType' => 'Analog'
-//            ]);
-//        }
-
-//
-//        $form->handleRequest($request);
-        //$states = $this->getDoctrine()->getRepository(Cardview::class)->getFormSelectData();
-        //dd($states);
-
-
-       // dd($cardSensorData);
-
-//        if ($form->isSubmitted())
-//        //{if ($form->isSubmitted() && $form->isValid())
-//        {
-//            dd($form->getData());
-////            $cardView = $this->getDoctrine()->getRepository(Cardview::class)->findOneBy(['id' => $cardviewid]);
-////
-////            if ($cardView->getSensornameid()) {
-////
-////            }
-//        }
-//        else {
-//            return new JsonResponse('error');
-//        }
-
-        return new JsonResponse($cardFormData);
-
-
+            return new JsonResponse($cardFormData);
+        }
+        else {
+            //move update card view method content here when done
+        }
     }
 
     /**
@@ -116,63 +54,54 @@ class CardDataController extends AbstractController
     public function updateCardView(Request $request)
     {
         $cardviewid = $request->get('cardViewID');
-        //dd((array)$request->getContent('Form Data'));
-        //dd($request->request->all());        //$icon = $request->headers->get('content-type');
-        //dd($cardviewid);
-        //dd($icon);
-        // $reading = $request->get('highReading');
-        //dd($reading);
-       // dd($request);
-        //$formContent = $request->getContent('Form Data');
-//        dd($formContent);
-//        dd('he');
+
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
-        //  dd($request->getContent('Form Data'));
-       //   dd($cardSensorData);
-        if ($cardSensorData["temp"] instanceof Temp && !$cardSensorData["humid"] instanceof Humid) {
-            $temp = new Temp();
-            //  dd('temp');
-            $form = $this->createForm(TempHumidFormType::class, null, [
-                'sensorType' => $temp
+        //dd($cardSensorData['cardView']->getSensornameid()->getSensortypeid()->getSensortype());
+
+
+        $form = $this->createForm(TempHumidFormType::class, null, [
+            'sensorType' => $cardSensorData['cardView']->getSensornameid()->getSensortypeid()->getSensortype()
+            ]);
+
+        //For Sensors with 2 reading types add here
+        if ($cardSensorData['humid'] instanceof Humid) {
+            $form->submit([
+                'highReading' => $request->get('highReading'),
+                'lowReading' => $request->get('lowReading'),
+                'secondHighReading' => $request->get('secondHighReading'),
+                'secondLowReading' => $request->get('secondLowReading'),
+                'icon' => $request->get('icon'),
+                'colour' => $request->get('cardColour'),
+                'cardViewState' => $request->get('cardViewState'),
+                'constRecord' => $request->get('constRecord'),
+                'secondConstRecord' => $request->get('secondConstRecord')
+
             ]);
         }
-        if ($cardSensorData["temp"] && $cardSensorData["humid"]) {
-            // dd('tempHumid');
+        else {
+            $form->submit([
+                'highReading' => $request->get('highReading'),
+                'lowReading' => $request->get('lowReading'),
+                'icon' => $request->get('icon'),
+                'colour' => $request->get('cardColour'),
+                'cardViewState' => $request->get('cardViewState'),
+                'constRecord' => $request->get('constRecord'),
 
-            $form = $this->createForm(CardViewFormType::class, null, [
-                'sensorType' => 'TempHumid'
             ]);
         }
-        if (($cardSensorData["analog"] instanceof Analog)) {
 
-            $form = $this->createForm(CardViewFormType::class, null, [
-                'sensorType' => 'Analog'
-            ]);
-        }
-
-        $form->submit((array)$request->request->all());
-
-
-        if ($form->isSubmitted())
-            //{if ($form->isSubmitted() && $form->isValid())
-        {
-          //  dd($form->get(('highReading')));
-
-           //dd($form->getData());
-            dd($form->isValid());
-//            $cardView = $this->getDoctrine()->getRepository(Cardview::class)->findOneBy(['id' => $cardviewid]);
-//
-//            if ($cardView->getSensornameid()) {
-//
-//            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $validFormData = $form->getData();
+            //dd($form->isValid());
         }
         else {
             $errors = [];
             foreach ($form->getErrors() as $error) {
                 $name = $error->getOrigin()->getName();
                 $errors[$name] = $error->getMessage();
+
+                return new JsonResponse(['errors' => $errors]);
             }
-            return new JsonResponse(['Name' => $name, 'errors' => $errors]);
         }
     }
 
