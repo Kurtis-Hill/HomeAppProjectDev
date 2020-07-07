@@ -41,6 +41,7 @@ class CardContextProvider extends Component {
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
+            console.log('fetch', response.data);
             this.setState({
                 cardData:response.data.sensorData,
             })
@@ -145,7 +146,7 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, currentIcon: lowercaseFirstLetter(opt.text), iconID: value}});
                 break;
 
-            case "colour":
+            case "cardColour":
                 this.setState({modalContent:{...this.state.modalContent, currentColour: value}});
                 break;
 
@@ -180,7 +181,6 @@ class CardContextProvider extends Component {
         console.log('changed state', this.state.modalContent);
     }
 
-    //  <--!!! TODO WORKING ON THIS !!!-->
     handleSubmissionModalForm = (event) => {
         event.preventDefault();
         this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
@@ -222,10 +222,6 @@ class CardContextProvider extends Component {
                     }}>
                         {this.props.children}
                     </CardContext.Provider>
-                    <CardModal.Provider>
-
-                    </CardModal.Provider>
-
                 </div>  
             </div> 
         )

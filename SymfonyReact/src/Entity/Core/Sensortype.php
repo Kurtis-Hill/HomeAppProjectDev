@@ -28,6 +28,29 @@ class Sensortype
      */
     private $sensortype;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=50, nullable=false)
+     */
+    private $description;
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
     public function getSensortypeid(): ?int
     {
         return $this->sensortypeid;

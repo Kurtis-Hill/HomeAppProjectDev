@@ -35,7 +35,7 @@ class Groupname
      */
     private $timez = 'CURRENT_TIMESTAMP';
 
-    public function getGroupnameid(): ?int
+    public function getGroupnameid()
     {
         return $this->groupnameid;
     }

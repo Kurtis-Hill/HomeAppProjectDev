@@ -42,12 +42,12 @@ class RegistrationController extends AbstractController
                 )
             );
 //
-            //dd($groupName->getGroupnameid());
+      //      dd($groupName->getGroupnameid());
             $user->setEmail($form->get('email')->getData());
             $user->setFirstname($form->get('firstName')->getData());
             $user->setLastname($form->get('lastName')->getData());
-
-            $user->setGroupnameid($groupName->getGroupnameid());
+            $user->setRoles($user->getRoles());
+            $user->setGroupnameid($groupName);
             $user->setTimez(new \DateTime());
 
 

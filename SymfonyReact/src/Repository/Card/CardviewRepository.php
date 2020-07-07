@@ -38,7 +38,8 @@ class CardviewRepository extends EntityRepository
                 $qb->expr()->eq('cv.userid', ':userid'),
                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
             )
-             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
+             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6])
+        ;
 
          $result = null;
          if($type === "JSON") {

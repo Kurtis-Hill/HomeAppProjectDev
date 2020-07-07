@@ -69,7 +69,7 @@ class TempHumidFormType extends AbstractType
             ])
         ;
         //If adding sensor with more than one reading type add the sensor type name in the if statement
-        if ($options['sensorType'] == 'Temp&Humid') {
+        if ($options['sensorType'] == 'DHT') {
             $builder
                 ->add('secondHighReading', TextType::class, [
                     'constraints' => [

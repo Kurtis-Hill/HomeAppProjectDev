@@ -79,7 +79,7 @@ class User implements UserInterface
     private $timez = 'CURRENT_TIMESTAMP';
 
     /**
-     * @var Groupname
+     * @var int
      *
      * @ORM\ManyToOne(targetEntity="Groupname")
      * @ORM\JoinColumns({
@@ -106,6 +106,7 @@ class User implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_ADMIN';
 
         return array_unique($roles);
     }
@@ -209,12 +210,12 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getGroupnameid(): Groupname
+    public function getGroupnameid()
     {
         return $this->groupnameid;
     }
 
-    public function setGroupnameid(int $groupnameid): self
+    public function setGroupnameid($groupnameid)
     {
         $this->groupnameid = $groupnameid;
 

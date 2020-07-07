@@ -1,7 +1,7 @@
 import React, { Component, useContext } from 'react';
 import { CardContext } from '../contexts/CardContexts';
 import { capitalizeFirstLetter } from '../Utilities/Common';
-import { cardModal } from '../components/CardModal'
+
 
 
 
@@ -10,11 +10,6 @@ const cardRender = () => {
 
   const context = useContext(CardContext);
 
-  // const modalSensorType = context.modalContent.sensorType;
-
-  // const secondModalSensorType = context.modalContent.secondSensorType;
-  
-  const modalContent = context.modalContent;
 
   return ( 
     <React.Fragment>
@@ -39,37 +34,6 @@ const cardRender = () => {
           </div>
         </div>
       ))}
-      
-      
-      {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-
-
-        
-
-          <div id="" style={context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <form onSubmit={(e) => {context.handleSubmissionModalForm(e)}} id="modal-form">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Change {modalContent.sensorName}'s Sensor Details</h5>
-                        <button className="close" onClick={() => {context.toggleModal()}} type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                  </div>
-                  <div className="modal-body">
-                    {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-                  
-                    {cardModal(modalContent)}
-
-                  </div>
-                  <div className="modal-footer">          
-                    <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
-                    <button className="btn btn-primary" type="submit" value="submit">Submit</button>
-                  </div>
-                </form>       
-              </div>
-            </div>
-          </div>
     </React.Fragment>
   )
 }
