@@ -75,19 +75,30 @@ class CardContextProvider extends Component {
     modalContent = (response) => {
         const userData = response.cardSensorData;
          console.log('userData', userData);
+         const sensorType = userData.st_sensortype;
+
+        if (sensorType === "Temp") {
+
+        }
+        if (sensorType === "TempHumid") {
+             
+        }
+        if (sensorType === "Analog") {
+             
+        }
         if (userData.t_tempid !== null) {
             var sensorHighReading = userData.t_hightemp;
             var sensorLowReading = userData.t_lowtemp;
             var constRecord = userData.t_constrecord;
             var sensorID = userData.t_tempid;
-            var sensorType = "Temperature";
+            // var sensorType = "Temperature";
 
             if (userData.h_humidid !== undefined) {
                 var secondSensorHighReading = userData.h_highhumid;
                 var secondSensorLowReading = userData.h_lowhumid;
                 var secondConstRecord = userData.h_constrecord;
                 var secondSensorID = userData.h_humidid;
-                var secondSensorType = "Humidity";
+                 var secondSensorType = "Humidity";
             }
         }
 
@@ -96,7 +107,7 @@ class CardContextProvider extends Component {
             var sensorLowReading = userData.a_lowanalog;
             var constRecord = userData.a_constrecord ? "Yes" : 'No';
             var sensorID = userData.h_analogid;
-            var sensorType = "Analog";
+          //  var sensorType = "Analog";
         }
 
         const cardViewID = userData.cv_cardviewid;
@@ -115,6 +126,7 @@ class CardContextProvider extends Component {
         const states = response.states;
 
         this.setState({modalContent:{sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
+        console.log('moda content', this.state.modalContent);
     }
 
 
@@ -128,9 +140,8 @@ class CardContextProvider extends Component {
 
         switch(event.target.name) {
             case "icon":
-                const sel = document.getElementById('icon-select');
-                const opt = sel.options[sel.selectedIndex];
-                console.log('text', opt.text );
+                const selectText = document.getElementById('icon-select');
+                const opt = selectText.options[selectText.selectedIndex];
                 this.setState({modalContent:{...this.state.modalContent, currentIcon: lowercaseFirstLetter(opt.text), iconID: value}});
                 break;
 
@@ -211,6 +222,10 @@ class CardContextProvider extends Component {
                     }}>
                         {this.props.children}
                     </CardContext.Provider>
+                    <CardModal.Provider>
+
+                    </CardModal.Provider>
+
                 </div>  
             </div> 
         )

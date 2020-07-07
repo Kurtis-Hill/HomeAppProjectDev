@@ -53,6 +53,7 @@ class CardDataController extends AbstractController
      */
     public function updateCardView(Request $request)
     {
+        dd($request->request->all());
         $cardviewid = $request->get('cardViewID');
 
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
@@ -63,6 +64,7 @@ class CardDataController extends AbstractController
             'sensorType' => $cardSensorData['cardView']->getSensornameid()->getSensortypeid()->getSensortype()
             ]);
 
+        $formData = [];
         //For Sensors with 2 reading types add here
         if ($cardSensorData['humid'] instanceof Humid) {
             $form->submit([
@@ -78,17 +80,21 @@ class CardDataController extends AbstractController
 
             ]);
         }
-        else {
-            $form->submit([
-                'highReading' => $request->get('highReading'),
-                'lowReading' => $request->get('lowReading'),
-                'icon' => $request->get('icon'),
-                'colour' => $request->get('cardColour'),
-                'cardViewState' => $request->get('cardViewState'),
-                'constRecord' => $request->get('constRecord'),
 
-            ]);
+        if ($cardSensorData['temp'] instanceof Temp) {
+            $formData['tempHighReading'] = 0;
         }
+//        else {
+//            $form->submit([
+//                'highReading' => $request->get('highReading'),
+//                'lowReading' => $request->get('lowReading'),
+//                'icon' => $request->get('icon'),
+//                'colour' => $request->get('cardColour'),
+//                'cardViewState' => $request->get('cardViewState'),
+//                'constRecord' => $request->get('constRecord'),
+//
+//            ]);
+//        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $validFormData = $form->getData();
