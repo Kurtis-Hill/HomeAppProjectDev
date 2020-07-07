@@ -17,6 +17,9 @@ use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
 use App\Form\CardViewFormType;
 use App\Form\TempHumidCardFormType;
+use App\Repository\Sensors\AnalogRepository;
+use App\Repository\Sensors\HumidRepository;
+use App\Repository\Sensors\TempRepository;
 use App\Services\CardDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,9 +59,9 @@ class CardDataController extends AbstractController
     public function updateCardView(Request $request)
     {
         //dd($request->request->all());
-        $cardviewid = $request->get('cardViewID');
+        $cardViewID = $request->get('cardViewID');
 
-        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardviewid]);
+        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewID]);
 
         if (!$cardSensorData) {
             return new JsonResponse('No Sensor Found', 404);
@@ -68,6 +71,7 @@ class CardDataController extends AbstractController
 
         $formData = [];
         $form = null;
+        $errors = [];
         if ($sensorType === 'DHT') {
             $form = $this->createForm(DHTTempHumidCardModalForm::class, null, [
                 'sensorType' => $sensorType
@@ -83,6 +87,9 @@ class CardDataController extends AbstractController
                 'constRecord' => $request->get('constRecord'),
                 'secondConstRecord' => $request->get('secondConstRecord')
             ];
+
+            $temp = $this->getDoctrine()->getRepository(TempRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
+            $humid = $this->getDoctrine()->getRepository(HumidRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
         }
 
         if ($sensorType === "Dallas Temperature") {
@@ -97,6 +104,7 @@ class CardDataController extends AbstractController
                 'cardViewState' => $request->get('cardViewState'),
                 'constRecord' => $request->get('constRecord')
             ];
+            $temp = $this->getDoctrine()->getRepository(TempRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
         }
 
         if ($sensorType === "Soil") {
@@ -111,6 +119,7 @@ class CardDataController extends AbstractController
                 'cardViewState' => $request->get('cardViewState'),
                 'constRecord' => $request->get('constRecord')
             ];
+            $soil = $this->getDoctrine()->getRepository(AnalogRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
         }
 
         if ($form !== null) {
@@ -119,48 +128,29 @@ class CardDataController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $validFormData = $form->getData();
                 dd($validFormData);
-            }
-            else {
-                $errors = [];
+                if ($temp) {
+
+                }
+                if ($humid) {
+
+                }
+                if ($soil) {
+
+                }
+            } else {
                 foreach ($form->getErrors() as $error) {
                     $name = $error->getOrigin()->getName();
                     $errors[$name] = $error->getMessage();
                     //ADD HTTP RESPONSE CODE
-                    return new JsonResponse(['errors' => $errors]);
                 }
             }
+        } else {
+            $errors['Form'] = "Form Failed To Prepare";
         }
-        else {
-            return new JsonResponse('Failed getting form prepared', 422);
-        }
 
-        dd($form->isValid());
+        return new JsonResponse(['errors' => $errors], 500);
+    }
 
-        //For Sensors with 2 reading types add here
-
-//            $form->submit([
-//                'highReading' => $request->get('highReading'),
-//                'lowReading' => $request->get('lowReading'),
-//                'secondHighReading' => $request->get('secondHighReading'),
-//                'secondLowReading' => $request->get('secondLowReading'),
-//                'icon' => $request->get('icon'),
-//                'colour' => $request->get('cardColour'),
-//                'cardViewState' => $request->get('cardViewState'),
-//                'constRecord' => $request->get('constRecord'),
-//                'secondConstRecord' => $request->get('secondConstRecord')
-//
-//            ]);
-
-
-
-
-
-//    else {
-
-//        }
-//    }
-//    }
-}
 
     /**
      * @Route("/index", name="cardData")
