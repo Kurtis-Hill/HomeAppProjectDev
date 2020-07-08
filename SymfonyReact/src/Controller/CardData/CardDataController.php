@@ -16,6 +16,7 @@ use App\Form\CardViewForms\DHTTempHumidCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
 use App\Form\CardViewFormType;
+use App\Form\CardViewModalFormType;
 use App\Form\TempHumidCardFormType;
 use App\Repository\Sensors\AnalogRepository;
 use App\Repository\Sensors\HumidRepository;
@@ -59,6 +60,7 @@ class CardDataController extends AbstractController
     public function updateCardView(Request $request)
     {
         //dd($request->request->all());
+        //dd((int)$request->get('cardColour'));
         $cardViewID = $request->get('cardViewID');
 
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewID]);
@@ -68,6 +70,21 @@ class CardDataController extends AbstractController
         }
 
         $sensorType = $cardSensorData['cardView']->getSensornameid()->getSensortypeid()->getSensortype();
+
+        $cardViewForm = $this->createForm(CardViewModalFormType::class, $cardSensorData['cardView']);
+
+        $cardViewForm->submit([
+                'cardcolourid' => $request->get('cardColour'),
+                'cardiconid' => $request->get('icon'),
+                'cardstateid' => $request->get('cardViewState'),
+                ]
+        );
+
+        if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
+
+        }
+
+
 
         $formData = [];
         $form = null;
