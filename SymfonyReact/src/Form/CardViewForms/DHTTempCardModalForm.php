@@ -15,17 +15,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class DHTTempHumidCardModalForm extends AbstractType
+class DHTTempCardModalForm extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('hightemp', TextType::class, [
-//                'class' => Temp::class,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 1, 'max' => 2,
+                        'minMessage' => 'You must enter a value',
+                        'maxMessage' => 'This number is too high {{ value }}']),
+                ],
             ])
             ->add('lowtemp', TextType::class, [
-//                'class' => Temp::class,
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
@@ -35,37 +39,11 @@ class DHTTempHumidCardModalForm extends AbstractType
                 ],
             ])
             ->add('constrecord', TextType::class, [
-//                'class' => Temp::class,
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
                 ],
             ])
-//
-//            ->add('highhumid', TextType::class, [
-//                'class' => Humid::class,
-//                'constraints' => [
-//                    new NotBlank(),
-//                    new Length(['min' => 1, 'max' => 2,
-//                        'minMessage' => 'You must enter a value',
-//                        'maxMessage' => 'This number is too high {{ value }}']),
-//                ],
-//            ])
-//            ->add('lowhumid', TextType::class, [
-//                'class' => Humid::class,
-//                'constraints' => [
-//                    new NotBlank(),
-//                    new Length(['min' => 1, 'max' => 2,
-//                        'minMessage' => 'You must enter a value',
-//                        'maxMessage' => 'This number is too high {{ value }}']),
-//                ],
-//            ])
-//            ->add('humidconstrecord', TextType::class, [
-//                'class' => Humid::class,
-//                'constraints' => [
-//                    new NotBlank()
-//                    ]
-//            ])
         ;
     }
 

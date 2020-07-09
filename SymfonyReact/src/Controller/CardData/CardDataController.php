@@ -12,6 +12,8 @@ use App\Entity\Sensors\Analog;
 use App\Entity\Sensors\Humid;
 use App\Entity\Sensors\Temp;
 use App\Form\CardViewForms\AnalogFormType;
+use App\Form\CardViewForms\DHTHumidCardModalForm;
+use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\DHTTempHumidCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
@@ -60,7 +62,7 @@ class CardDataController extends AbstractController
     public function updateCardView(Request $request)
     {
         //dd($request->request->all());
-        //dd((int)$request->get('cardColour'));
+        $errors = [];
         $cardViewID = $request->get('cardViewID');
 
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewID]);
@@ -81,88 +83,92 @@ class CardDataController extends AbstractController
         );
 
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
+            $formData = [];
+            $form = null;
+            $em = $this->getDoctrine()->getManager();
+            if ($sensorType === 'DHT') {
+                $temp = $this->getDoctrine()->getRepository(Temp::class)->findOneBy(['cardviewid' => $cardViewID]);
+                $humid = $this->getDoctrine()->getRepository(Humid::class)->findOneBy(['cardviewid' => $cardViewID]);
 
-        }
+                $form = $this->createForm(DHTTempCardModalForm::class, $temp);
+                $formData = [
+                    'hightemp' => $request->get('highReading'),
+                    'lowtemp' => $request->get('lowReading'),
+                    'constrecord' => $request->get('constRecord'),
+                ];
+                $secondForm = $this->createForm(DHTHumidCardModalForm::class, $humid);
+                $secondFormData = [
+                    'highhumid' => $request->get('secondHighReading'),
+                    'lowhumid' => $request->get('secondLowReading'),
+                    'humidconstrecord' => $request->get('secondConstRecord')
+                ];
+                //$em->persist();
+            }
 
+            if ($sensorType === "Dallas Temperature") {
+                $form = $this->createForm(TempHumidFormType::class, null, [
+                    'sensorType' => $sensorType
+                ]);
+                $formData = [
+                    'highReading' => $request->get('highReading'),
+                    'lowReading' => $request->get('lowReading'),
+                    'constRecord' => $request->get('constRecord')
+                ];
+                $temp = $this->getDoctrine()->getRepository(TempRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
+            }
 
+            if ($sensorType === "Soil") {
+                $form = $this->createForm(SoilFormType::class, null, [
+                    'sensorType' => $sensorType
+                ]);
+                $formData = [
+                    'highReading' => $request->get('highReading'),
+                    'lowReading' => $request->get('lowReading'),
+                    'constRecord' => $request->get('constRecord')
+                ];
+                $soil = $this->getDoctrine()->getRepository(AnalogRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
+            }
 
-        $formData = [];
-        $form = null;
-        $errors = [];
-        if ($sensorType === 'DHT') {
-            $form = $this->createForm(DHTTempHumidCardModalForm::class, null, [
-                'sensorType' => $sensorType
-            ]);
-            $formData = [
-                'highReading' => $request->get('highReading'),
-                'lowReading' => $request->get('lowReading'),
-                'secondHighReading' => $request->get('secondHighReading'),
-                'secondLowReading' => $request->get('secondLowReading'),
-                'icon' => $request->get('icon'),
-                'colour' => $request->get('cardColour'),
-                'cardViewState' => $request->get('cardViewState'),
-                'constRecord' => $request->get('constRecord'),
-                'secondConstRecord' => $request->get('secondConstRecord')
-            ];
+            if ($form !== null) {
+                $form->submit($formData);
 
-            $temp = $this->getDoctrine()->getRepository(TempRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
-            $humid = $this->getDoctrine()->getRepository(HumidRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
-        }
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $validFormData = $form->getData();
+                    dd('it worked');
 
-        if ($sensorType === "Dallas Temperature") {
-            $form = $this->createForm(TempHumidFormType::class, null, [
-                'sensorType' => $sensorType
-            ]);
-            $formData = [
-                'highReading' => $request->get('highReading'),
-                'lowReading' => $request->get('lowReading'),
-                'icon' => $request->get('icon'),
-                'colour' => $request->get('cardColour'),
-                'cardViewState' => $request->get('cardViewState'),
-                'constRecord' => $request->get('constRecord')
-            ];
-            $temp = $this->getDoctrine()->getRepository(TempRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
-        }
+                    if (!$secondForm !== null) {
+                        $secondForm->submit($secondFormData);
 
-        if ($sensorType === "Soil") {
-            $form = $this->createForm(SoilFormType::class, null, [
-                'sensorType' => $sensorType
-            ]);
-            $formData = [
-                'highReading' => $request->get('highReading'),
-                'lowReading' => $request->get('lowReading'),
-                'icon' => $request->get('icon'),
-                'colour' => $request->get('cardColour'),
-                'cardViewState' => $request->get('cardViewState'),
-                'constRecord' => $request->get('constRecord')
-            ];
-            $soil = $this->getDoctrine()->getRepository(AnalogRepository::class)->findOneBy(['cardviewid' => $cardViewID]);
-        }
+                        if ($secondForm->isSubmitted() && $secondForm->isValid()) {
 
-        if ($form !== null) {
-            $form->submit($formData);
+                        }
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $validFormData = $form->getData();
-                dd($validFormData);
-                if ($temp) {
+                        else {
+                            foreach ($secondForm->getErrors() as $error) {
+                                $name = $error->getOrigin()->getName();
+                                $errors[$name] = $error->getMessage();
+                            }
+                        }
+                    }
 
+                    else {
+                        $errors['Form'] = "Failed to Prepare Second Form";
+                    }
                 }
-                if ($humid) {
 
-                }
-                if ($soil) {
-
-                }
-            } else {
-                foreach ($form->getErrors() as $error) {
-                    $name = $error->getOrigin()->getName();
-                    $errors[$name] = $error->getMessage();
-                    //ADD HTTP RESPONSE CODE
+                else {
+                    foreach ($form->getErrors() as $error) {
+                        $name = $error->getOrigin()->getName();
+                        $errors[$name] = $error->getMessage();
+                        //ADD HTTP RESPONSE CODE
+                    }
+                    //dd($form->getErrors());
                 }
             }
-        } else {
-            $errors['Form'] = "Form Failed To Prepare";
+            else {
+                $errors['Form'] = "Form Failed To Prepare";
+            }
+
         }
 
         return new JsonResponse(['errors' => $errors], 500);
