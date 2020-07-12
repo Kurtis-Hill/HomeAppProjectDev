@@ -18,7 +18,7 @@ class CardviewRepository extends EntityRepository
 
      */
 
-    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null)
+    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null, $order = null)
     {
        // dd($room);
         $qb = $this->createQueryBuilder('cv');
@@ -29,21 +29,30 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
-            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
-            ->where(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
-                    $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
-                ),
-                $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
-            )
+            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid');
+         if ($order = null) {
+//             $qb->orderBy('r.roomname', 'ASC');
+//             $qb->addOrderBy('t.tempid')
+//                 ->addOrderBy('h.humidid')
+//                 ->addOrderBy('a.analogid');
+         }
+         $qb->where(
+                 $qb->expr()->orX(
+                     $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
+                 ),
+                 $qb->expr()->eq('cv.userid', ':userid'),
+                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
+             )
              ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6])
-        ;
+             ;
+
+
 
          $result = null;
          if($type === "JSON") {
              $result = $qb->getQuery()->getScalarResult();
+            // dd($result);
          }
          else {
              $result = $qb->getQuery()->getResult();
@@ -171,11 +180,13 @@ class CardviewRepository extends EntityRepository
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
             ->where(
-                $qb->expr()->eq('cv.cardviewid', ':id')
+                $qb->expr()->eq('cv.cardviewid', ':id'),
+                $qb->expr()->eq('cv.userid', ':userid')
             )
-            ->setParameters(['id' => $criteria['id']]);
+            ->setParameters(['id' => $criteria['id'], 'userid' => $criteria['userID']]);
 
         $result = $qb->getQuery()->getResult();
+        //dd($result);
 
         $sensorResults["cardView"] = $result[0];
         $sensorResults["temp"] = $result[1];
@@ -185,6 +196,14 @@ class CardviewRepository extends EntityRepository
 
         return $sensorResults;
     }
+
+//    public function getTempHumidCardViewData(array $criteria)
+//    {
+//        $qb = $this->createQueryBuilder('cv');
+//        $qb->select('cv', 't', 'h')
+//        ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
+//        ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
+//    }
 
 
 

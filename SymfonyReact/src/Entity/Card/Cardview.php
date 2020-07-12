@@ -138,7 +138,7 @@ class Cardview
         return $this->sensornameid;
     }
 
-    public function setcardstateid(?Cardshow $cardstateid): self
+    public function setcardstateid(?Cardstate $cardstateid): self
     {
         $this->cardstateid = $cardstateid;
 

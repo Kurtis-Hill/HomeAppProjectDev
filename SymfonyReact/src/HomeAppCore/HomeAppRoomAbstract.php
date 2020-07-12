@@ -64,6 +64,14 @@ class HomeAppRoomAbstract
 
     }
 
+    public function getGroupNameID()
+    {
+        return $this->groupNameid;
+    }
 
+    public function getUserID()
+    {
+        return $this->groupNameid;
+    }
 
 }

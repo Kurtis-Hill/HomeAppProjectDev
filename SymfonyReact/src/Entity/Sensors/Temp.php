@@ -148,8 +148,11 @@ class Temp
         return $this->constrecord;
     }
 
-    public function setConstrecord(bool $constrecord): self
+    public function setConstrecord($constrecord): self
     {
+       // dd($constrecord);
+        $constrecord = ($constrecord == "true") ? true : false;
+
         $this->constrecord = $constrecord;
 
         return $this;

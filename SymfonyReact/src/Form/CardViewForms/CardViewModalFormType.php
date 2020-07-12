@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\CardViewForms;
 
 use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;

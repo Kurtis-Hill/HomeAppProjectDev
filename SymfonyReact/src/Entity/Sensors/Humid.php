@@ -52,7 +52,7 @@ class Humid
      *
      * @ORM\Column(name="constRecord", type="boolean", nullable=false)
      */
-    private $humidconstrecord = '0';
+    private $constrecord = '0';
 
     /**
      * @var \DateTime
@@ -142,13 +142,14 @@ class Humid
         return $this;
     }
 
-    public function getHumidConstrecord(): ?bool
+    public function getConstrecord(): ?bool
     {
-        return $this->humidconstrecord;
+        return $this->constrecord;
     }
 
-    public function setHumidConstrecord(bool $constrecord): self
+    public function setConstrecord($constrecord): self
     {
+        $constrecord = ($constrecord == "true") ? true : false;
         $this->constrecord = $constrecord;
 
         return $this;
