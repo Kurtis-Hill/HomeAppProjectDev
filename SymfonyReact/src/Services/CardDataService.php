@@ -58,21 +58,23 @@ class CardDataService extends HomeAppRoomAbstract
         return $cardData;
     }
 
-    public function processForm($form, $formData)
+    public function processForm(FormInterface $form, $formData)
     {
-      //  dd($formData);
         $form->submit($formData);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $validFormData = $form->getData();
             $this->em->persist($validFormData);
+            return false;
         }
         else {
-         //  dd($formData);
-            foreach ($form->getErrors() as $error) {
+           $errors = [];
+            foreach ($form->getErrors(true, true) as $error) {
                 $name = $error->getOrigin()->getName();
                 $errors[$name] = $error->getMessage();
             }
+            $message = join("\n", $errors);
+            return $message;
         }
     }
 

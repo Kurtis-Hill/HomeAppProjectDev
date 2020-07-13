@@ -113,25 +113,40 @@ class CardDataController extends AbstractController
             }
 
             if ($form !== null) {
-                $cardDataService->processForm($form, $formData);
-                if (isset($secondForm)) {
-                    $cardDataService->processForm($secondForm, $secondFormData);
+                $processedForm = $cardDataService->processForm($form, $formData);
+                //dd($processedForm);
+                if ($processedForm !== false) {
+                    $errors[] = $processedForm;
                 }
-                try {
-                    $em->flush();
-                    return new JsonResponse('sucess', 200);
-                } catch (\Exception $e) {
-                    $e->getMessage();
+
+                if (isset($secondForm)) {
+                    $secondProcessedForm = $cardDataService->processForm($secondForm, $secondFormData);
+                    if ($secondProcessedForm !== false) {
+                        $errors[] = $secondProcessedForm;
+                    }
                 }
             }
             else {
-                $errors[] = "Form Failed To Prepare";
+                $errors['SystemFailed'] = "Form Failed To Prepare";
             }
         }
+
         else {
-            $errors[] = "CardView Form Not Valid";
+            $errors['SystemFailed'] = "CardView Form Not Valid";
         }
+
+        if (empty($errors)) {
+            try {
+                $em->flush();
+            } catch (\Exception $e) {
+                $e->getMessage();
+            }
+            return new JsonResponse('sucess', 200);
+        }
+        else {
+          //  dd($errors);
             return new JsonResponse(['errors' => $errors], 500);
+        }
     }
 
     /**

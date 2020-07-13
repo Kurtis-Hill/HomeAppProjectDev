@@ -196,7 +196,7 @@ class CardContextProvider extends Component {
             this.toggleModal();
         }).catch(error => {
             console.log(error);
-            this.setState({modalLoading: false});
+            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
             alert("Failed To Submit The Form");
         })
     }

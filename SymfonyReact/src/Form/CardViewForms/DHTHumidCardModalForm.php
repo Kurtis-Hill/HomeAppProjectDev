@@ -24,7 +24,7 @@ class DHTHumidCardModalForm extends AbstractType
             ->add('highhumid', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(),
+                    new NotBlank(['message' => 'High Humidity Cannot be Blank']),
                     new Length(['min' => 1, 'max' => 2,
                         'minMessage' => 'You must enter a value',
                         'maxMessage' => 'This number is too high {{ value }}']),
@@ -42,7 +42,7 @@ class DHTHumidCardModalForm extends AbstractType
             ->add('constrecord', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(),
+                    new NotBlank(['message' => 'Const Record Cannot be Blank']),
                 ],
             ])
         ;

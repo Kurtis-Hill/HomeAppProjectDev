@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Constraint;
 
 class DHTTemperatureConstraint extends Constraint
 {
-    public $message = "Temperature settings for DHT sensor must be between 5oC and 80oC";
+    public $minMessage = 'Temperature settings for DHT sensor cannot be below -40°C  you entered "{{ string }}"';
+
+    public $maxMessage = 'Temperature settings for DHT sensor cannot exceed 80°C "{{ string }}"';
 
 }
