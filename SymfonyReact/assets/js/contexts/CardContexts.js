@@ -74,41 +74,29 @@ class CardContextProvider extends Component {
 
 
     modalContent = (response) => {
+        console.log('revcieved data', response);
         const userData = response.cardSensorData;
-         console.log('userData', userData);
-         const sensorType = userData.st_sensortype;
+        console.log('userData', userData);
+        const sensorType = userData.st_sensortype;
 
-        if (sensorType === "Temp") {
-
-        }
-        if (sensorType === "TempHumid") {
-             
-        }
-        if (sensorType === "Analog") {
-             
-        }
         if (userData.t_tempid !== null) {
             var sensorHighReading = userData.t_hightemp;
             var sensorLowReading = userData.t_lowtemp;
             var constRecord = userData.t_constrecord;
             var sensorID = userData.t_tempid;
-            // var sensorType = "Temperature";
 
             if (userData.h_humidid !== undefined) {
                 var secondSensorHighReading = userData.h_highhumid;
                 var secondSensorLowReading = userData.h_lowhumid;
                 var secondConstRecord = userData.h_constrecord;
-                var secondSensorID = userData.h_humidid;
-                 var secondSensorType = "Humidity";
+                var secondSensorID = userData.h_humidid;  
             }
         }
-
         if (userData.a_analogid !== null) {
             var sensorHighReading = userData.a_highanalog;
             var sensorLowReading = userData.a_lowanalog;
             var constRecord = userData.a_constrecord ? "Yes" : 'No';
             var sensorID = userData.h_analogid;
-          //  var sensorType = "Analog";
         }
 
         const cardViewID = userData.cv_cardviewid;
@@ -126,7 +114,7 @@ class CardContextProvider extends Component {
         const currentState = userData.cs_cardstateid;
         const states = response.states;
 
-        this.setState({modalContent:{sensorType, secondSensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
+        this.setState({modalContent:{sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
         console.log('moda content', this.state.modalContent);
     }
 
@@ -162,20 +150,28 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, secondConstRecord: value}});
                 break;
 
-            case "highReading":
+            case "tempHighReading":
                 this.setState({modalContent:{...this.state.modalContent, sensorHighReading: value}});
                 break;
 
-            case "lowReading":
+            case "tempLowReading":
                 this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
                 break;
 
-            case "secondHighReading":
+            case "humidHighReading":
                 this.setState({modalContent:{...this.state.modalContent, secondSensorHighReading: value}});
                 break;
 
-            case "secondLowReading":
+            case "humidLowReading":
                 this.setState({modalContent:{...this.state.modalContent, secondSensorLowReading: value}});
+                break;
+
+            case "analogHighReading":
+                this.setState({modalContent:{...this.state.modalContent, sensorHighReading: value}});
+                break;
+
+            case "analogLowReading":
+                this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
                 break;
         }
         console.log('changed state', this.state.modalContent);
@@ -198,6 +194,10 @@ class CardContextProvider extends Component {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
             this.setState({modalContent: emptyModalContent});
             this.toggleModal();
+        }).catch(error => {
+            console.log(error);
+            this.setState({modalLoading: false});
+            alert("Failed To Submit The Form");
         })
     }
 

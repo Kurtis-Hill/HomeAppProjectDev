@@ -7,6 +7,8 @@ use App\Entity\Card\Cardview;
 use App\Entity\Sensors\Humid;
 use App\Entity\Sensors\Temp;
 use App\HomeAppCore\HomeAppRoomAbstract;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class CardDataService
@@ -54,6 +56,24 @@ class CardDataService extends HomeAppRoomAbstract
        // $cardData['analog'] = $analog;
 
         return $cardData;
+    }
+
+    public function processForm($form, $formData)
+    {
+      //  dd($formData);
+        $form->submit($formData);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $validFormData = $form->getData();
+            $this->em->persist($validFormData);
+        }
+        else {
+         //  dd($formData);
+            foreach ($form->getErrors() as $error) {
+                $name = $error->getOrigin()->getName();
+                $errors[$name] = $error->getMessage();
+            }
+        }
     }
 
 }

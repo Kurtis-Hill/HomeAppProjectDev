@@ -6,9 +6,10 @@ namespace App\Form\Transformers;
 
 use App\Entity\Card\Cardshow;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
-class CardShowTransformer
+class CardShowTransformer implements DataTransformerInterface
 {
     private $entityManager;
 

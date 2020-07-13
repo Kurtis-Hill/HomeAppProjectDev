@@ -40,8 +40,6 @@ class HomeAppRoomAbstract
      */
     public function __construct(EntityManagerInterface $em, Security $security)
     {
-        $request = new Request();
-
         $this->em = $em;
 
         $this->user = $security;

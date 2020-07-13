@@ -7,11 +7,8 @@ namespace App\Form\CustomFormValidators;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class DHTTemperatureValidator extends ConstraintValidator
+class DHTTemperatureConstraintValidator extends ConstraintValidator
 {
-    public $message;
-
-
     public function validate($value, Constraint $constraint)
     {
         dd($value);
@@ -21,4 +18,5 @@ class DHTTemperatureValidator extends ConstraintValidator
         }
         dd($value);
     }
+
 }

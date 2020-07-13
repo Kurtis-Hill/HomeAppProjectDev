@@ -4,6 +4,7 @@
 namespace App\Form\CardViewForms;
 
 
+use App\Entity\Sensors\Analog;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,51 +17,28 @@ class SoilFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //     dd($options['cardSensorState']);
         $builder
-
-            ->add('highReading', TextType::class, [
+            ->add('highanalog', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 3,
+                    new Length(['min' => 1, 'max' => 5,
                         'minMessage' => 'You must enter a value',
                         'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
 
-            ->add('lowReading', TextType::class, [
+            ->add('lowanalog', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 3,
+                    new Length(['min' => 1, 'max' => 5,
                         'minMessage' => 'You must enter a value',
                         'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
 
-            ->add('icon', TextType::class, [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(),
-                ],
-            ])
-
-            ->add('colour', TextType::class, [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(),
-                ],
-            ])
-
-            ->add('cardViewState', TextType::class, [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(),
-                ],
-            ])
-
-            ->add('constRecord', TextType::class, [
+            ->add('constrecord', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
@@ -73,8 +51,7 @@ class SoilFormType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => null,
-            'sensorType' => null,
+            'data_class' => Analog::class,
         ]);
     }
 
