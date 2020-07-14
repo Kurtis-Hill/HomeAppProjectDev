@@ -7,7 +7,7 @@ import { lowercaseFirstLetter } from '../Utilities/Common';
 
 export const CardContext = createContext();
 
-const emptyModalContent = {secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], iconID: '', currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
+const emptyModalContent = {errors: [], secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], iconID: '', currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
 
 class CardContextProvider extends Component {
     constructor(props) {
@@ -114,7 +114,7 @@ class CardContextProvider extends Component {
         const currentState = userData.cs_cardstateid;
         const states = response.states;
 
-        this.setState({modalContent:{sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
+        this.setState({modalContent:{...this.state.modalContent, sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
         console.log('moda content', this.state.modalContent);
     }
 
@@ -180,8 +180,8 @@ class CardContextProvider extends Component {
     handleSubmissionModalForm = (event) => {
         event.preventDefault();
         this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
+
         const formData = new FormData(event.target);
-        console.log('subbmite bvalues', formData.value);
 
         formData.append('cardViewID', this.state.modalContent.cardViewID);
                 
@@ -191,13 +191,32 @@ class CardContextProvider extends Component {
         
         axios.post('/HomeApp/api/CardData/updatecardview',formData, config)
         .then(response => {
-            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
-            this.setState({modalContent: emptyModalContent});
+            this.setState({modalContent: emptyModalContent, modalSubmit: false});
+            // this.setState({modalContent: emptyModalContent});
             this.toggleModal();
+            console.log('it was response', response);
         }).catch(error => {
-            console.log(error);
-            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
-            alert("Failed To Submit The Form");
+            const err = error.response;
+            
+            if (err.status === 400) {
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data}});
+                console.log('400 error', this.state.modalContent.errors);
+                //console.log(this.state.modalContent.errors);
+            }
+
+            if (err.status === 404) {
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+                this.toggleModal();
+                alert('Could not handle request please try again');
+            }
+
+            if (err.status === 500) {
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+                alert('Could not handle request server error try again');
+            }
+
+
+            console.log(err);
         })
     }
 

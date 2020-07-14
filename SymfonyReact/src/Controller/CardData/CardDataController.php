@@ -145,7 +145,7 @@ class CardDataController extends AbstractController
         }
         else {
           //  dd($errors);
-            return new JsonResponse(['errors' => $errors], 500);
+            return new JsonResponse(['errors' => $errors], 400);
         }
     }
 

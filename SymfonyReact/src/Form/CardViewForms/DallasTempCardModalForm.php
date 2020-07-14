@@ -5,6 +5,7 @@ namespace App\Form\CardViewForms;
 
 
 use App\Entity\Sensors\Temp;
+use App\Form\CustomFormValidators\DallasTemperatureConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,16 +24,18 @@ class DallasTempCardModalForm extends AbstractType
             ->add('hightemp', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                  new NotBlank(),
-                  new Length(['min' => 1, 'max' => 3,
-                      'minMessage' => 'You must enter a value',
-                      'maxMessage' => 'This number is too high {{ value }}']),
+                    new DallasTemperatureConstraint(),
+                    new NotBlank(),
+                    new Length(['min' => 1, 'max' => 3,
+                        'minMessage' => 'You must enter a value',
+                        'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
 
             ->add('lowtemp', TextType::class, [
                 'required' => true,
                 'constraints' => [
+                    new DallasTemperatureConstraint(),
                     new NotBlank(),
                     new Length(['min' => 1, 'max' => 3,
                         'minMessage' => 'You must enter a value',

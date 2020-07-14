@@ -26,10 +26,6 @@ class DHTTempCardModalForm extends AbstractType
                 'constraints' => [
                     new DHTTemperatureConstraint(),
                     new NotBlank(['message' => 'High Temperature Cannot be Blank']),
-                    new Length(['min' => 1, 'max' => 2,
-                        'minMessage' => 'Not enough Numbers Entered',
-                        'maxMessage' => 'Too many numbers entered'
-                        ]),
                 ],
             ])
             ->add('lowtemp', TextType::class, [
@@ -37,9 +33,6 @@ class DHTTempCardModalForm extends AbstractType
                 'constraints' => [
                     new DHTTemperatureConstraint(),
                     new NotBlank(['message' => 'Low Temperature Cannot be Blank']),
-                    new Length(['min' => 1, 'max' => 3,
-                        'minMessage' => 'You must enter a value',
-                        'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
             ->add('constrecord', TextType::class, [

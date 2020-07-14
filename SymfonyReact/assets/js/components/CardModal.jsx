@@ -26,9 +26,13 @@ import { CardContext } from '../contexts/CardContexts';
                     <span aria-hidden="true">×</span>
                   </button>
               </div>
+
+              {context.modalContent.errors.length > 1 ? <p>not emprty</p>
+              :<p>empty</p>
+              }
+           
               <div className="modal-body">
-                {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-              
+                {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}              
                 {modalContent.cardViewID === null ? <p>Submission Made</p> :
                   <React.Fragment>   
                   {modalContent.sensorType === "DHT" || modalContent.sensorType === "Dallas Temperature" ? 

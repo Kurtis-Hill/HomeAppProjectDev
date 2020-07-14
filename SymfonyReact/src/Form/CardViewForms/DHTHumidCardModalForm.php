@@ -5,8 +5,7 @@ namespace App\Form\CardViewForms;
 
 
 use App\Entity\Sensors\Humid;
-use App\Entity\Sensors\Temp;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Form\CustomFormValidators\DHTHumidityConstraint;
 use Symfony\Component\Form\AbstractType;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,21 +23,19 @@ class DHTHumidCardModalForm extends AbstractType
             ->add('highhumid', TextType::class, [
                 'required' => true,
                 'constraints' => [
+                   new DHTHumidityConstraint(),
                     new NotBlank(['message' => 'High Humidity Cannot be Blank']),
-                    new Length(['min' => 1, 'max' => 2,
-                        'minMessage' => 'You must enter a value',
-                        'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
+
             ->add('lowhumid', TextType::class, [
                 'required' => true,
                 'constraints' => [
+                    new DHTHumidityConstraint(),
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 2,
-                        'minMessage' => 'You must enter a value',
-                        'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
+
             ->add('constrecord', TextType::class, [
                 'required' => true,
                 'constraints' => [
