@@ -71,10 +71,11 @@ class CardDataService extends HomeAppRoomAbstract
            $errors = [];
             foreach ($form->getErrors(true, true) as $error) {
                 $name = $error->getOrigin()->getName();
-                $errors[$name] = $error->getMessage();
+                $errors[] = $error->getMessage();
             }
-            $message = join("\n", $errors);
-            return $message;
+//            $message = join("\n", $errors);
+            //dd($errors);
+            return $errors;
         }
     }
 

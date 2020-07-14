@@ -1,6 +1,5 @@
 import React, { Component, useContext } from 'react';
 import { CardContext } from '../contexts/CardContexts';
-import { capitalizeFirstLetter } from '../Utilities/Common';
 
 
 

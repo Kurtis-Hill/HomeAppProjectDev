@@ -3,20 +3,29 @@
 
 namespace App\Form\CustomFormValidators;
 
-
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class DallasTemperatureConstraintValidation extends ConstraintValidator
+class DallasTemperatureConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof DHTTemperatureConstraint) {
+        if (!$constraint instanceof DallasTemperatureConstraint) {
             throw new UnexpectedTypeException($constraint, DallasTemperatureConstraint::class);
         }
 
         if ($value === null || $value === '') {
             return;
+        }
+
+        $value = (int) $value;
+
+        if (!is_int($value)) {
+            $this->context->buildViolation($constraint->intMessage)
+                ->setParameter('{{ string }}', $value)
+                ->setInvalidValue($value)
+                ->addViolation();
         }
 
         if ($value > 125) {

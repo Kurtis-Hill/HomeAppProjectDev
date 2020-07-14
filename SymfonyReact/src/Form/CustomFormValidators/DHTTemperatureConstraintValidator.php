@@ -20,6 +20,15 @@ class DHTTemperatureConstraintValidator extends ConstraintValidator
             return;
         }
 
+        $value = (int) $value;
+
+        if (!is_int($value)) {
+            $this->context->buildViolation($constraint->intMessage)
+                ->setParameter('{{ string }}', $value)
+                ->setInvalidValue($value)
+                ->addViolation();
+        }
+
         if ($value > 80) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)

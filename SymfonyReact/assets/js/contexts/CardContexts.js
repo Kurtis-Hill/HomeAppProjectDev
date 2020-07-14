@@ -1,7 +1,6 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
 import { getToken } from '../Utilities/Common';
-import { capitalizeFirstLetter } from '../Utilities/Common';
 import { lowercaseFirstLetter } from '../Utilities/Common';
 
 
@@ -35,13 +34,11 @@ class CardContextProvider extends Component {
         // clearInterval(this.fetchIndexCardData);
       }
 
-
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            console.log('fetch', response.data);
             this.setState({
                 cardData:response.data.sensorData,
             })
@@ -72,11 +69,8 @@ class CardContextProvider extends Component {
         })
     }
 
-
     modalContent = (response) => {
-        console.log('revcieved data', response);
         const userData = response.cardSensorData;
-        console.log('userData', userData);
         const sensorType = userData.st_sensortype;
 
         if (userData.t_tempid !== null) {
@@ -115,13 +109,10 @@ class CardContextProvider extends Component {
         const states = response.states;
 
         this.setState({modalContent:{...this.state.modalContent, sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
-        console.log('moda content', this.state.modalContent);
     }
 
-
-
     toggleModal = () => {
-        this.setState({modalShow: !this.state.modalShow});
+        this.setState({modalContent: emptyModalContent, modalShow: !this.state.modalShow});
     }
 
     updateModalForm = (event) => {
@@ -174,7 +165,6 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
                 break;
         }
-        console.log('changed state', this.state.modalContent);
     }
 
     handleSubmissionModalForm = (event) => {
@@ -192,35 +182,32 @@ class CardContextProvider extends Component {
         axios.post('/HomeApp/api/CardData/updatecardview',formData, config)
         .then(response => {
             this.setState({modalContent: emptyModalContent, modalSubmit: false});
-            // this.setState({modalContent: emptyModalContent});
-            this.toggleModal();
-            console.log('it was response', response);
-        }).catch(error => {
+
+            setTimeout(() => 
+                this.toggleModal(), 1500
+            );
+        })
+        .catch(error => {
             const err = error.response;
             
             if (err.status === 400) {
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data}});
-                console.log('400 error', this.state.modalContent.errors);
-                //console.log(this.state.modalContent.errors);
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data.errors['formErrors']}});
+                console.log('eror', this.state.modalContent.errors);
             }
 
             if (err.status === 404) {
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+                this.setState({modalContent:{modalContent: emptyModalContent, modalSubmit: false}});
                 this.toggleModal();
                 alert('Could not handle request please try again');
             }
 
             if (err.status === 500) {
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+                this.setState({modalContent:{modalSubmit: false}});
                 alert('Could not handle request server error try again');
             }
-
-
-            console.log(err);
         })
     }
 
-    
     render() {
         return (
             <div className="container-fluid">
@@ -229,7 +216,6 @@ class CardContextProvider extends Component {
                         cardData: this.state.cardData,
                         getCardDataForm: this.getCardDataForm,
                         getSensorReadingStyle: this.getSensorReadingStyle,
-                        isHumidityAvalible: this.isHumidityAvalible,
                         modalShow: this.state.modalShow,
                         modalLoading: this.state.modalLoading,
                         toggleModal: this.toggleModal,
@@ -246,6 +232,4 @@ class CardContextProvider extends Component {
         )
     }
 }
-
-
 export default CardContextProvider;

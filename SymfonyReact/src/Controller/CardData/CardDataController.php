@@ -116,13 +116,15 @@ class CardDataController extends AbstractController
                 $processedForm = $cardDataService->processForm($form, $formData);
                 //dd($processedForm);
                 if ($processedForm !== false) {
-                    $errors[] = $processedForm;
+                    $errors['formErrors'] = $processedForm;
                 }
 
                 if (isset($secondForm)) {
                     $secondProcessedForm = $cardDataService->processForm($secondForm, $secondFormData);
                     if ($secondProcessedForm !== false) {
-                        $errors[] = $secondProcessedForm;
+                        foreach ($secondProcessedForm as $value) {
+                            array_push($errors['formErrors'], $value);
+                        }
                     }
                 }
             }

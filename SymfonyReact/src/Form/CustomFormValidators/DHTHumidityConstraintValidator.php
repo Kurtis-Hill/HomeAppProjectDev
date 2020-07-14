@@ -25,6 +25,16 @@ class DHTHumidityConstraintValidator extends ConstraintValidator
              throw new InvalidTypeException($constraint);
         }
 
+        //$value = (int) $value;
+
+//        if (!preg_match('/[^0-9]+/', $value)) {
+//          //  dd('violation');
+//            $this->context->buildViolation($constraint->intMessage)
+//                ->setParameter('{{ string }}', $value)
+//                ->setInvalidValue($value)
+//                ->addViolation();
+//        }
+
         if ($value > 100) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
