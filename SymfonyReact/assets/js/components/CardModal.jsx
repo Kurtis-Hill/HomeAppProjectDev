@@ -27,7 +27,8 @@ const cardModal = () => {
                 </button>
             </div>
 
-            {modalContent.errors.length > 0 ?                
+            {
+              modalContent.errors.length > 0 ?                
                 <div className="error-container">
                   <div className="form-modal-error-box">
                     <ol>
@@ -37,9 +38,10 @@ const cardModal = () => {
                     </ol>
                   </div>
                 </div>                
-            : null}
+            : null
+          }
                   
-            {modalContent.cardViewID === null ? <div className="modal-success"><h4 style={{textAlign:"center"}}>Submission Made Successfully</h4> </div> :
+              {modalContent.submitSuccess === true ? <div className="modal-success"><h4 style={{textAlign:"center"}}>Submission Made Successfully</h4> </div> :
               <React.Fragment>   
                 <div className="modal-body">
                   <React.Fragment>   

@@ -20,6 +20,7 @@ use App\Repository\Sensors\HumidRepository;
 use App\Repository\Sensors\TempRepository;
 use App\Services\CardDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -115,15 +116,18 @@ class CardDataController extends AbstractController
             if ($form !== null) {
                 $processedForm = $cardDataService->processForm($form, $formData);
                 //dd($processedForm);
-                if ($processedForm !== false) {
-                    $errors['formErrors'] = $processedForm;
+                if ($processedForm instanceof FormInterface) {
+                    foreach ($processedForm->getErrors(true, true) as $value) {
+                        array_push($errors, $value->getMessage());
+                    }
+                  //  dd((array)$errors);
                 }
 
                 if (isset($secondForm)) {
                     $secondProcessedForm = $cardDataService->processForm($secondForm, $secondFormData);
-                    if ($secondProcessedForm !== false) {
-                        foreach ($secondProcessedForm as $value) {
-                            array_push($errors['formErrors'], $value);
+                    if ($secondProcessedForm instanceof FormInterface) {
+                        foreach ($secondProcessedForm->getErrors(true, true) as $value) {
+                            array_push($errors, $value->getMessage());
                         }
                     }
                 }
@@ -146,7 +150,7 @@ class CardDataController extends AbstractController
             return new JsonResponse('sucess', 200);
         }
         else {
-          //  dd($errors);
+            //dd($errors);
             return new JsonResponse(['errors' => $errors], 400);
         }
     }

@@ -6,7 +6,7 @@ import { lowercaseFirstLetter } from '../Utilities/Common';
 
 export const CardContext = createContext();
 
-const emptyModalContent = {errors: [], secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], iconID: '', currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
+const emptyModalContent = {submitSuccess: false, errors: [], secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], iconID: '', currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
 
 class CardContextProvider extends Component {
     constructor(props) {
@@ -181,7 +181,7 @@ class CardContextProvider extends Component {
         
         axios.post('/HomeApp/api/CardData/updatecardview',formData, config)
         .then(response => {
-            this.setState({modalContent: emptyModalContent, modalSubmit: false});
+            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true}});
 
             setTimeout(() => 
                 this.toggleModal(), 1500
@@ -191,7 +191,7 @@ class CardContextProvider extends Component {
             const err = error.response;
             
             if (err.status === 400) {
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data.errors['formErrors']}});
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data.errors}});
                 console.log('eror', this.state.modalContent.errors);
             }
 
