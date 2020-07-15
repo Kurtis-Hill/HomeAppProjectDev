@@ -3,9 +3,7 @@
 
 namespace App\Form\CustomFormValidators;
 
-
 use Symfony\Component\Validator\Constraint;
-
 
 class DHTTemperatureConstraint extends Constraint
 {
@@ -13,6 +11,6 @@ class DHTTemperatureConstraint extends Constraint
 
     public $maxMessage = 'Temperature settings for DHT sensor cannot exceed 80°C "{{ string }}" entered';
 
-    public $intMessage = 'The submitted vvalue is not a number';
+    public $intMessage = 'The submitted value is not a number "{{ string }}"';
 
 }

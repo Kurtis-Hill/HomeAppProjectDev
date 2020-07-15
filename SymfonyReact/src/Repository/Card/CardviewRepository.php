@@ -18,7 +18,7 @@ class CardviewRepository extends EntityRepository
 
      */
 
-    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null, $order = null)
+    public function getAllCardReadings($groupNameID, $userID, $type = null, $order = null)
     {
        // dd($room);
         $qb = $this->createQueryBuilder('cv');
@@ -37,13 +37,13 @@ class CardviewRepository extends EntityRepository
 //                 ->addOrderBy('a.analogid');
          }
          $qb->where(
-                 $qb->expr()->orX(
-                     $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
-                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
-                 ),
-                 $qb->expr()->eq('cv.userid', ':userid'),
-                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
-             )
+             $qb->expr()->orX(
+                 $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                 $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
+             ),
+             $qb->expr()->eq('cv.userid', ':userid'),
+             $qb->expr()->eq('s.groupnameid', ':groupNameID')
+         )
              ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6])
              ;
 

@@ -11,5 +11,5 @@ class DHTHumidityConstraint extends Constraint
 
     public $maxMessage = 'Humidity for this sensor cannot be over 100 you entered "{{ string }}"';
 
-    public $intMessage = 'The submitted vvalue is not a number';
+    public $intMessage = 'The submitted value is not a number "{{ string }}"';
 }

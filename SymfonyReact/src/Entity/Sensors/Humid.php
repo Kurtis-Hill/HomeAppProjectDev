@@ -123,7 +123,7 @@ class Humid
         return $this->highhumid;
     }
 
-    public function setHighhumid(float $highhumid): self
+    public function setHighhumid($highhumid): self
     {
         $this->highhumid = $highhumid;
 
@@ -135,7 +135,7 @@ class Humid
         return $this->lowhumid;
     }
 
-    public function setLowhumid(float $lowhumid): self
+    public function setLowhumid($lowhumid): self
     {
         $this->lowhumid = $lowhumid;
 

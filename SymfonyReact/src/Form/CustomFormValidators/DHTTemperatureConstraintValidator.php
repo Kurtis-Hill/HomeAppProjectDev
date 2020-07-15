@@ -20,9 +20,7 @@ class DHTTemperatureConstraintValidator extends ConstraintValidator
             return;
         }
 
-        $value = (int) $value;
-
-        if (!is_int($value)) {
+        if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

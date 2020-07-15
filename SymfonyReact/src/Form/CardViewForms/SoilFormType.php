@@ -5,6 +5,7 @@ namespace App\Form\CardViewForms;
 
 
 use App\Entity\Sensors\Analog;
+use App\Form\CustomFormValidators\SoilContraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +22,7 @@ class SoilFormType extends AbstractType
             ->add('highanalog', TextType::class, [
                 'required' => true,
                 'constraints' => [
+                    new SoilContraint(),
                     new NotBlank(),
                     new Length(['min' => 1, 'max' => 5,
                         'minMessage' => 'You must enter a value',
@@ -31,6 +33,7 @@ class SoilFormType extends AbstractType
             ->add('lowanalog', TextType::class, [
                 'required' => true,
                 'constraints' => [
+                    new SoilContraint(),
                     new NotBlank(),
                     new Length(['min' => 1, 'max' => 5,
                         'minMessage' => 'You must enter a value',

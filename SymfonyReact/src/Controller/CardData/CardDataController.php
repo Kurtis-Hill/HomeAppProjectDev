@@ -15,15 +15,14 @@ use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\DHTTempHumidCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
-use App\Repository\Sensors\AnalogRepository;
-use App\Repository\Sensors\HumidRepository;
-use App\Repository\Sensors\TempRepository;
+
 use App\Services\CardDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Json;
 
 /**
  * Class CardDataController
@@ -32,6 +31,23 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CardDataController extends AbstractController
 {
+    /**
+     * @Route("/index", name="cardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
+     */
+    public function returnIndexAllCardData(Request $request, CardDataService $cardDataService)
+    {
+        $cardData = $cardDataService->returnAllCardSensorData('JSON');
+
+        if (!$cardData) {
+            return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
+        }
+
+        return new JsonResponse($cardData);
+    }
+
     /**
      * @Route("/cardviewform&id={cardviewid}", name="cardViewForm")
      */
@@ -153,19 +169,6 @@ class CardDataController extends AbstractController
             //dd($errors);
             return new JsonResponse(['errors' => $errors], 400);
         }
-    }
-
-    /**
-     * @Route("/index", name="cardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
-     */
-    public function returnIndexAllCardData(Request $request, CardDataService $cardDataService)
-    {
-        $cardData = $cardDataService->returnAllCardSensorData('JSON', 'index');
-        //dd($cardData);
-        return new JsonResponse($cardData);
     }
 
 }

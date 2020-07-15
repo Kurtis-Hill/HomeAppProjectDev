@@ -12,5 +12,5 @@ class DallasTemperatureConstraint extends Constraint
 
     public $maxMessage = 'Temperature for this sensor cannot be over 125°C you entered "{{ string }}"';
 
-    public $intMessage = 'The submitted vvalue is not a number';
+    public $intMessage = 'The submitted value is not a number "{{ string }}"';
 }

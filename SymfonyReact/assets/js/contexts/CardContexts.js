@@ -7,6 +7,8 @@ import { lowercaseFirstLetter } from '../Utilities/Common';
 export const CardContext = createContext();
 
 const emptyModalContent = {submitSuccess: false, errors: [], secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], iconID: '', currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
+const emptyCardData = {t_timez: null, a_timez: null};
+
 
 class CardContextProvider extends Component {
     constructor(props) {
@@ -39,12 +41,13 @@ class CardContextProvider extends Component {
         axios.get('/HomeApp/api/CardData/index', 
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            this.setState({
-                cardData:response.data.sensorData,
-            })
+            this.setState({cardData:response.data.sensorData})
             setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
         }).catch(error => {
-            console.log(error);
+            const err = error.response;
+            if (err.status === 400) {
+                this.setState({cardData: err.data});
+            }
         })
     }
 
@@ -63,7 +66,6 @@ class CardContextProvider extends Component {
             this.modalContent(response.data);
             this.setState({modalShow: true});
         }).catch(error => {
-            console.log(error);
             this.setState({modalLoading: false});
             alert("Failed Getting Form Please Try Again or Contact System Admin");
         })
@@ -192,7 +194,6 @@ class CardContextProvider extends Component {
             
             if (err.status === 400) {
                 this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data.errors}});
-                console.log('eror', this.state.modalContent.errors);
             }
 
             if (err.status === 404) {

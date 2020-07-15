@@ -124,7 +124,7 @@ class Analog
         return $this->highanalog;
     }
 
-    public function setHighanalog(?float $highanalog): self
+    public function setHighanalog($highanalog): self
     {
         $this->highanalog = $highanalog;
 
@@ -136,7 +136,7 @@ class Analog
         return $this->lowanalog;
     }
 
-    public function setLowanalog(?float $lowanalog): self
+    public function setLowanalog($lowanalog): self
     {
         $this->lowanalog = $lowanalog;
 

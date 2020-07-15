@@ -124,7 +124,7 @@ class Temp
         return $this->hightemp;
     }
 
-    public function setHightemp(float $hightemp): self
+    public function setHightemp($hightemp): self
     {
         $this->hightemp = $hightemp;
 
@@ -136,7 +136,7 @@ class Temp
         return $this->lowtemp;
     }
 
-    public function setLowtemp(float $lowtemp): self
+    public function setLowtemp($lowtemp): self
     {
         $this->lowtemp = $lowtemp;
 
