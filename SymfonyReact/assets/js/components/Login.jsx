@@ -17,14 +17,11 @@ function Login(props) {
 
         axios.get('csrfToken')
         .then(response => {
-            console.log('csrfToken', response.data);
             const formToken = response.data.token;
         
             axios.post('api/login_check', {username: username.value, password: password.value})
-            .then(response => {
-                
-                console.log("api jwt token success", response.data.token, response.data.user);
-                setUserSession(response.data.token, response.data.user);
+            .then(response => {               
+                setUserSession(response.data.token, response.data.refreshToken);
                 
                 const loginForm = document.getElementById('loginForm');
                 const formData = new FormData(loginForm); 
@@ -39,8 +36,6 @@ function Login(props) {
                 .then(response => {
                     console.log(response);
                     setLoading(false);
-                    // setTimeout(() => handleRefreshToken(), 7200000);
-                    //@TODO Not finnished
                     //props.history.push('index');
                     window.location.replace('index');
                 })

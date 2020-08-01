@@ -149,12 +149,13 @@ class CardDataController extends AbstractController
                 }
             }
             else {
-                $errors['SystemFailed'] = "Form Failed To Prepare";
+                //$errors['SystemFailed'] = "Form Failed To Prepare";
+                return new JsonResponse($errors[] = 'Sensor Not Recognised', 500);
             }
         }
 
         else {
-            $errors['SystemFailed'] = "CardView Form Not Valid";
+            $errors[] = "CardView Form Not Valid";
         }
 
         if (empty($errors)) {

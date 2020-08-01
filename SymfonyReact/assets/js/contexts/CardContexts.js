@@ -43,6 +43,7 @@ class CardContextProvider extends Component {
         .then(response => {
             this.setState({cardData:response.data.sensorData})
             setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
+            console.log(response.data);
         }).catch(error => {
             const err = error.response;
             if (err.status === 400) {
@@ -204,7 +205,7 @@ class CardContextProvider extends Component {
 
             if (err.status === 500) {
                 this.setState({modalContent:{modalSubmit: false}});
-                alert('Could not handle request server error try again');
+                alert('Could not handle request server error'+error.response.data.errors[0]);
             }
         })
     }

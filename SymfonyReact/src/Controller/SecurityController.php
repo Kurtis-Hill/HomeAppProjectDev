@@ -17,12 +17,14 @@ class SecurityController extends AbstractController
     /**
      * @Route("/HomeApp/csrfToken", name="csrf")
      */
-    public function getToken(CsrfTokenManagerInterface $csrfTokenManager, Request $request)
+    public function getToken(CsrfTokenManagerInterface $csrfTokenManager,  Request $request)
     {
 
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
+        $refreshToken = $csrfTokenManager;
 
-        return new JsonResponse(['token' => $token]);
+
+        return new JsonResponse(['token' => $token, 'refreshToken' => $refreshToken]);
     }
 
     /**
@@ -33,8 +35,7 @@ class SecurityController extends AbstractController
          if ($this->getUser()) {
              return $this->redirectToRoute('index');
          }
-//         dd($authenticationUtils);
-
+        // dd($authenticationUtils);
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 //        // last username entered by the user
