@@ -21,6 +21,7 @@ function Login(props) {
         
             axios.post('api/login_check', {username: username.value, password: password.value})
             .then(response => {               
+                console.log('tokens', response.data);
                 setUserSession(response.data.token, response.data.refreshToken);
                 
                 const loginForm = document.getElementById('loginForm');
@@ -51,11 +52,6 @@ function Login(props) {
             console.log(error);
         })
     }
-
-    // const handleRefreshToken = () => {
-    //     console.log('HEYYY');
-    //     setTimeout(() => {handleRefreshToken(), 5000})
-    // }
 
     return (
         <React.Fragment>

@@ -1,6 +1,6 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
-import { getToken } from '../Utilities/Common';
+import { getToken, getRefreshToken, setUserSession } from '../Utilities/Common';
 import { lowercaseFirstLetter } from '../Utilities/Common';
 
 
@@ -39,7 +39,8 @@ class CardContextProvider extends Component {
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
         axios.get('/HomeApp/api/CardData/index', 
-        { headers: {"Authorization" : `Bearer ${getToken()}`} })
+            { headers: {"Authorization" : `Bearer ${getToken()}`} }
+        )
         .then(response => {
             this.setState({cardData:response.data.sensorData})
             setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
@@ -48,6 +49,16 @@ class CardContextProvider extends Component {
             const err = error.response;
             if (err.status === 400) {
                 this.setState({cardData: err.data});
+            }
+            if (err.status === 401) {
+                console.log('refresh token before send', getRefreshToken());
+                axios.post('/HomeApp/api/token/refresh', 
+                    { headers: {"Authorization" : `Bearer ${getRefreshToken()}`} }
+                )
+                .then(response => {
+                    console.log('forbidden getting new token', response.data);
+                    setUserSession(response.data.token, response.data.refreshToken);
+                });
             }
         })
     }

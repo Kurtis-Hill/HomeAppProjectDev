@@ -8,15 +8,20 @@ export const getToken = () => {
     return sessionStorage.getItem('token') || null;
 }
 
+export const getRefreshToken = () => {
+    return sessionStorage.getItem('refreshToken') || null;
+}
+
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     
 }
 
-export const setUserSession = (token, user) => {
+export const setUserSession = (token, refreshToken) => {
     sessionStorage.setItem('token' , token);
-    sessionStorage.setItem('user' , JSON.stringify(user));
+    sessionStorage.setItem('refreshToken' , refreshToken);
+    // sessionStorage.setItem('user' , JSON.stringify(user));
 }
 
 export const capitalizeFirstLetter = (string) => {
