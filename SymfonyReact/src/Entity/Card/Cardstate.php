@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cardstate
 {
+
+    const ON = 1;
+
+    const OFF = 2;
+
+    const INDEX_ONLY = 6;
+
+    const ROOM_ONLY = 7;
+
     /**
      * @var int
      *
@@ -28,16 +37,26 @@ class Cardstate
      */
     private $state;
 
+    /**
+     * @return int|null
+     */
     public function getCardstateid(): ?int
     {
         return $this->cardstateid;
     }
 
+    /**
+     * @return string|null
+     */
     public function getState(): ?string
     {
         return $this->state;
     }
 
+    /**
+     * @param string $state
+     * @return Cardstate
+     */
     public function setState(string $state): self
     {
         $this->state = $state;

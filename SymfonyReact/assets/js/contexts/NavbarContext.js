@@ -15,7 +15,7 @@ export default class NavbarContextProvider extends Component {
             sensorNames: [],
             roomNavToggle: false,
             settingsNavToggle: false,
-            navbarToggle: false,
+            showNavbarToggle: false,
         }
       //  this.navbarRoomLinks();
     }
@@ -75,10 +75,8 @@ export default class NavbarContextProvider extends Component {
     }
 
     navbarSizeToggle = () => {
-        // let currentNavState = !this.state.navBarToggle;
         console.log('nav toggle pressed')
-        this.setState({navbarToggle: !this.state.navbarToggle});
-        console.log(this.state.navbarToggle);
+        this.setState({showNavbarToggle: !this.state.showNavbarToggle});
     }
 //  END OF TAB METHODS
 

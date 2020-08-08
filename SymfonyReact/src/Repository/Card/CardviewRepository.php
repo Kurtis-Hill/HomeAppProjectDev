@@ -4,6 +4,7 @@
 namespace App\Repository\Card;
 
 
+use App\Entity\Card\Cardstate;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
@@ -18,9 +19,19 @@ class CardviewRepository extends EntityRepository
 
      */
 
-    public function getAllCardReadings($groupNameID, $userID, $type = null, $order = null)
+    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null)
     {
-       // dd($room);
+        $cardViewOne = Cardstate::ON;
+
+        switch ($room) {
+            case 'index':
+                $cardViewTwo = Cardstate::INDEX_ONLY;
+                break;
+            case 'room' :
+                $cardViewTwo = Cardstate::ROOM_ONLY;
+        }
+
+
         $qb = $this->createQueryBuilder('cv');
          $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
@@ -30,12 +41,7 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid');
-         if ($order = null) {
-//             $qb->orderBy('r.roomname', 'ASC');
-//             $qb->addOrderBy('t.tempid')
-//                 ->addOrderBy('h.humidid')
-//                 ->addOrderBy('a.analogid');
-         }
+
          $qb->where(
              $qb->expr()->orX(
                  $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
@@ -44,19 +50,17 @@ class CardviewRepository extends EntityRepository
              $qb->expr()->eq('cv.userid', ':userid'),
              $qb->expr()->eq('s.groupnameid', ':groupNameID')
          )
-             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6])
-             ;
-
-
+             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
 
          $result = null;
+
          if($type === "JSON") {
              $result = $qb->getQuery()->getScalarResult();
-            // dd($result);
          }
          else {
              $result = $qb->getQuery()->getResult();
          }
+
         return $result;
     }
 

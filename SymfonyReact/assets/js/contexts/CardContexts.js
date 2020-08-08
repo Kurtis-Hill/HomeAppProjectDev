@@ -1,7 +1,7 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
-import { getToken, getRefreshToken, setUserSession } from '../Utilities/Common';
-import { lowercaseFirstLetter } from '../Utilities/Common';
+import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
+
 
 
 export const CardContext = createContext();
@@ -22,9 +22,11 @@ class CardContextProvider extends Component {
         };
     }
 
-    componentDidMount() {
-        //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()      
-        this.fetchIndexCardData();
+    componentDidMount() {    
+        this.cardRefreshTimerID = setInterval(
+            () => this.fetchIndexCardData(), 
+            this.state.refreshTimer
+        );
     }
 
     componentDidUpdate(prevProps, preState) {
@@ -33,7 +35,7 @@ class CardContextProvider extends Component {
     }
 
     componentWillUnmount() {
-        // clearInterval(this.fetchIndexCardData);
+        clearInterval(this.cardRefreshTimerID);
       }
 
     //Fetches all the card data to be displayed on the index page
@@ -43,20 +45,16 @@ class CardContextProvider extends Component {
         )
         .then(response => {
             this.setState({cardData:response.data.sensorData})
-            setTimeout(() => this.fetchIndexCardData(), this.state.refreshTimer);
-            console.log(response.data);
         }).catch(error => {
             const err = error.response;
             if (err.status === 400) {
                 this.setState({cardData: err.data});
             }
             if (err.status === 401) {
-                console.log('refresh token before send', getRefreshToken());
                 axios.post('/HomeApp/api/token/refresh', 
-                    { headers: {"Authorization" : `Bearer ${getRefreshToken()}`} }
+                    { refreshToken : getRefreshToken() } 
                 )
                 .then(response => {
-                    console.log('forbidden getting new token', response.data);
                     setUserSession(response.data.token, response.data.refreshToken);
                 });
             }

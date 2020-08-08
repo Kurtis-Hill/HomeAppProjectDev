@@ -14,11 +14,13 @@ export const getRefreshToken = () => {
 
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
     sessionStorage.removeItem('user');
     
 }
 
 export const setUserSession = (token, refreshToken) => {
+    removeUserSession();
     sessionStorage.setItem('token' , token);
     sessionStorage.setItem('refreshToken' , refreshToken);
     // sessionStorage.setItem('user' , JSON.stringify(user));

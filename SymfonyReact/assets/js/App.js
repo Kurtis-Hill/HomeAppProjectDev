@@ -19,18 +19,14 @@ import { getToken } from './Utilities/Common';
 
 //TODO look into react router set up proper swtich router
 export default class App extends Component {
-
-       
     
     render() {
-        return (    
-            
+        return (                
         <Router>
             <Route path="/HomeApp/login" component={Login} />
             <div id="page-top">
                 <div id="wrapper">
                     <Route path="/HomeApp/index">
-                       
                         <div className="d-sm-flex align-items-center justify-content-between mb-4">
                         </div>
                             <NavbarContextProvider>
@@ -48,9 +44,7 @@ export default class App extends Component {
                     </Route>
                 </div>
             </div>
-        </Router>  
-
-      
+        </Router>        
         );
     }
 }

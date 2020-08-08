@@ -11,54 +11,42 @@ function Login(props) {
 
     const loginPhoto = require('../../images/sitepictures/indexPhoto.jpg');
 
-    const handleLogin = (event) => {
+    const handleLogin = async (event) => {
         setError(null);
         setLoading(true);
 
-        axios.get('csrfToken')
-        .then(response => {
-            const formToken = response.data.token;
-        
-            axios.post('api/login_check', {username: username.value, password: password.value})
-            .then(response => {               
-                console.log('tokens', response.data);
-                setUserSession(response.data.token, response.data.refreshToken);
-                
-                const loginForm = document.getElementById('loginForm');
-                const formData = new FormData(loginForm); 
-                
-                formData.append('_csrf_token', formToken);
-                
-                const config = {     
-                    headers: { 'content-type': 'multipart/form-data' }
-                }
-                
-                axios.post('login', formData, config)
-                .then(response => {
-                    console.log(response);
-                    setLoading(false);
-                    //props.history.push('index');
-                    window.location.replace('index');
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }).catch(error => {
+        const csrfTokenResponse = await axios.get('csrfToken')
+            .catch(error => {
+                alert('Please Fresher The Browser');
+            });
+
+        const formToken = csrfTokenResponse.data.token;
+
+        const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})
+            .catch(error => {
                 setLoading(false);
                 console.log(error);
             });
-        })
-        .catch(error => {
-            console.log(error);
-        })
-    }
 
+        setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
+
+        const loginForm = document.getElementById('loginForm');
+
+        const formData = new FormData(loginForm);
+
+        formData.append('_csrf_token', formToken);
+
+        const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } });
+
+        window.location.replace('index');
+    }
+    
     return (
         <React.Fragment>
             <div className="bg-gradient-primary">
-                <div className="container">
+                {/* <div className="container"> */}
                     <div className="row justify-content-center">
-                        <div className="col-xl-10 col-lg-12 col-md-9">
+                        <div className="col-xl-6 col-lg-12 col-md-12">
                             <div className="card o-hidden border-0 shadow-lg my-5">
                                 <div className="card-body p-0">
                                     <div className="row">
@@ -105,7 +93,7 @@ function Login(props) {
                             </div>
                         </div>
                     </div>
-                </div>
+                {/* </div> */}
             </div>
         </React.Fragment>
     );
@@ -123,8 +111,5 @@ const useFormInput = initialValue => {
         onChange: handleChange
     }
 }
-
-
-
 
 export default Login;

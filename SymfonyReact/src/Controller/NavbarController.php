@@ -17,6 +17,8 @@ class NavbarController extends AbstractController
 {
     /**
      * @Route("/rooms", name="userRooms")
+     * @param NavbarService $navbarService
+     * @return JsonResponse
      */
     public function getAllRooms(NavbarService $navbarService)
     {
@@ -27,6 +29,8 @@ class NavbarController extends AbstractController
 
     /**
      * @Route("/SensorsByRoom")
+     * @param NavbarService $navbarService
+     * @return JsonResponse
      */
     public function getAllSensorsByRoom(NavbarService $navbarService)
     {

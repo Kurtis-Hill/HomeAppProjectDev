@@ -94,16 +94,17 @@
 }
 
 @media only screen and (max-width: 700px) {
+    
     .modal-body{
         height: 400px;
         overflow-y: auto;
         
     }
+
     .modal-success{
-        height: 200px;
-        overflow-y: auto;
-        
+        height: 200px;        
     }
+
     .card-font{
         font-size:0.95rem;
     }
@@ -120,8 +121,6 @@
         overflow-y: auto;
     }
     .modal-success{
-        height: 300px;
-        overflow-y: auto;
-        
+        height: 100px;       
     }
 }
