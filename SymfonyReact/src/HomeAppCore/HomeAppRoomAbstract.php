@@ -48,7 +48,6 @@ class HomeAppRoomAbstract
         } catch (\Exception $e) {
             $e->getMessage();
         }
-
     }
 
     private function setUserVariables()

@@ -9,9 +9,10 @@ const Navbar = () => {
     
     const navbarCollapse = context.navbarSize ? 'toggled' : '';
     
-    const settingRoute = "HomeApp/settings/";
-    const roomRoute = "HomeApp/rooms/";  
-    const homeRoute = "HomeApp/index/";  
+    const settingRoute = "settings/";
+    const roomRoute = "rooms/";  
+    const homeRoute = "index/";  
+    const newSensorRoute = "sensors/new-sensor"
     
     return ( 
         
@@ -69,6 +70,7 @@ const Navbar = () => {
                             // WANTS TO BE LINK
                             <a key={navRoom.r_roomid} className="collapse-item" href={settingRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
                         ))}
+                         <Link to={newSensorRoute} className="collapse-item">+Add New Sensor</Link>
                     </div>
                     </div>
                 </li>
