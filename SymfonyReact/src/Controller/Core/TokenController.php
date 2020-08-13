@@ -27,40 +27,31 @@ class TokenController extends AbstractController
 {
 
     /**
+     * For use in future if I create an app this would allow me to access a token
+     * @TODO take request and brake down content and insert credentials in the query
      * @Route("/", name="token")
- * @TODO Delete just messing around
      */
     public function newTokenAction(Request $request, EncoderFactoryInterface $encoderFactory, JWTEncoderInterface $JWTEncoder)
     {
-        var_dump($request->getContent());
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        if (0 !== strpos($request->headers->get('Content-Type'), 'application/json')) {
             $data = json_decode($request->getContent(), true);
-//            $request->request->replace(is_array($data) ? $data : array());
         }
 
-
-     //   var_dump($data);
-       // dd($this->getUser()->getUsername());
         $user = $this->getDoctrine()
             ->getRepository(User::class)
             ->findOneBy(['email' => $this->getUser()->getUsername()]);
-      //  dd($user);
-        dd($user->getUsername());
 
         if (!$user) {
             throw new BadCredentialsException();
         }
+
         $security = $encoderFactory->getEncoder($user);
 
+        $userName = $user->getUsername();
 
-
-//        if (!$isValid) {
-//            throw new BadCredentialsException();
-//        }
 
         $token = $JWTEncoder->encode(['username' => $user->getUsername(), 'exp' => time() + 3600]);
 
-//        dd($isValid);
         return new JsonResponse(['token' => $token]);
     }
 }

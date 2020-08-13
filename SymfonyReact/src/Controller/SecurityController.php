@@ -5,24 +5,23 @@ namespace App\Controller;
 use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends AbstractController
 {
 
     /**
      * @Route("/HomeApp/csrfToken", name="csrf")
+     * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @return JsonResponse
      */
-    public function getToken(CsrfTokenManagerInterface $csrfTokenManager,  Request $request)
+    public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
-
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
         $refreshToken = $csrfTokenManager;
-
 
         return new JsonResponse(['token' => $token, 'refreshToken' => $refreshToken]);
     }
@@ -30,7 +29,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/HomeApp/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils)
     {
          if ($this->getUser()) {
              return $this->redirectToRoute('index');
@@ -44,15 +43,15 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        return $this->redirectToRoute('app_login');
+        return $this->render('index/index.html.twig');
     }
 
-    /**FOR DEVELOPMENT ONLY
-     * @Route("/ssl")
+    /**
+     * FOR DEVELOPMENT ONLY
+     * @Route("/ssl", name="ssl")
      */
-    public function showSSL()
+    public function showSSLConfig()
     {
-
         echo \PDO::MYSQL_ATTR_SSL_KEY;
         echo "<br>";
         echo \PDO::MYSQL_ATTR_SSL_CERT;
@@ -61,6 +60,7 @@ class SecurityController extends AbstractController
         echo "<br>";
         echo \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT;
         echo "<br>";
-        $this->getDoctrine()->getRepository(User::class)->showSSL();
+        dd($this->getDoctrine()->getRepository(User::class)->showSSL());
+
     }
 }

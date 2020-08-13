@@ -102,7 +102,6 @@ class CardDataController extends AbstractController
                     foreach ($processedForm->getErrors(true, true) as $value) {
                         array_push($errors, $value->getMessage());
                     }
-                  //  dd((array)$errors);
                 }
 
                 if (isset($secondForm)) {
@@ -123,16 +122,17 @@ class CardDataController extends AbstractController
             $errors[] = "CardView Form Not Valid";
         }
 
-        if (empty($errors)) {
+        if (!empty($errors)) {
+            return new JsonResponse(['errors' => $errors], 400);
+        }
+        else {
             try {
                 $em->flush();
             } catch (\Exception $e) {
                 $e->getMessage();
             }
+
             return new JsonResponse('sucess', 200);
-        }
-        else {
-            return new JsonResponse(['errors' => $errors], 400);
         }
     }
 
@@ -142,7 +142,7 @@ class CardDataController extends AbstractController
      * @param $cardSensorData
      * @return array
      */
-    private function handleSensorForms(Request $request, $sensorType, $cardSensorData): array
+    private function handleSensorForms(Request $request, string $sensorType, array $cardSensorData): array
     {
         if ($sensorType === 'DHT') {
             $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);

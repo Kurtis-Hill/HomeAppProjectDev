@@ -44,15 +44,7 @@ function ShowUserDropdown () {
     }
 
 }
- 
-
-  // const showUserDropdown = toggle => {
-  //   console.log('Clidsfgdfgcked');
-  //   const newState = !dropDown;
-  //   setdropDown(newState);
-  // }
-
-
+ 0
  function profileBar()  {
   const [userData, setuserData] = useState([
     {

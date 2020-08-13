@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormInterface;
  */
 class CardDataService extends HomeAppRoomAbstract
 {
-    public function getAllTemperatureCards($type)
+    public function getAllTemperatureCards(string $type)
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
@@ -25,7 +25,7 @@ class CardDataService extends HomeAppRoomAbstract
         return $tempCards;
     }
 
-    public function getAllHumidCards($type)
+    public function getAllHumidCards(string $type)
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
@@ -34,7 +34,7 @@ class CardDataService extends HomeAppRoomAbstract
         return $humidCards;
     }
 
-    public function getAllAnalogCards($type)
+    public function getAllAnalogCards(string $type)
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 

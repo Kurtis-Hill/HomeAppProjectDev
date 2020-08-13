@@ -14,9 +14,7 @@ export const getRefreshToken = () => {
 
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
-    sessionStorage.removeItem('refreshToken');
-    sessionStorage.removeItem('user');
-    
+    sessionStorage.removeItem('refreshToken');    
 }
 
 export const setUserSession = (token, refreshToken) => {

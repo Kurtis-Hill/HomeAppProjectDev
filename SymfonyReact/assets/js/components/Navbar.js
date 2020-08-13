@@ -14,9 +14,7 @@ const Navbar = () => {
     const homeRoute = "HomeApp/index/";  
     
     return ( 
-        <React.Fragment>         
-               
-      
+        
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "+ navbarCollapse} id="accordionSidebar">
       
                 <Link className="sidebar-brand d-flex align-items-center justify-content-center" to={homeRoute}>
@@ -120,9 +118,9 @@ const Navbar = () => {
                 </div>
             </ul>
     
-
-            </React.Fragment>
-        );
+            
+  
+    );
 }
 
  

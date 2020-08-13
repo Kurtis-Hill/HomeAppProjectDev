@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch, NavLink} from 'react-router-dom';
-//may not need react-router DEFFIANTLY NEED react-router-dom
 
+import { removeUserSession } from "./Utilities/Common";
 
 import Navbar from "./components/Navbar";
 import Cards from "./components/Cards";
@@ -15,38 +15,47 @@ import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
 
-import { getToken } from './Utilities/Common';
-
-//TODO look into react router set up proper swtich router
 export default class App extends Component {
-    
+    // @TODO PROFILE BAR NEEDS LOOKING ATc
     render() {
         return (                
         <Router>
-            <Route path="/HomeApp/login" component={Login} />
-            <div id="page-top">
-                <div id="wrapper">
-                    <Route path="/HomeApp/index">
-                        <div className="d-sm-flex align-items-center justify-content-between mb-4">
-                        </div>
+            <Switch>
+                <Route exact path="/HomeApp/login" component={Login}/>
+                <Route exact path="/HomeApp/register"/>
+                <Route exact path="/HomeApp/logout" component={removeUserSession}/>
+                <React.Fragment>
+                    <div id="page-top">
+                        <div id="wrapper">                     
                             <NavbarContextProvider>
                                 <Navbar/>
-                            </NavbarContextProvider>
+                            </NavbarContextProvider>                                               
                             <div id="content-wrapper" className="d-flex flex-column">
-                                <div id="content">
-                                    <Profilebar></Profilebar>
-                                    <CardContextProvider>
-                                        <Cards/>       
-                                        <CardModal/>                                 
-                                    </CardContextProvider>
+                                <div id="content">  
+                                    <Route path="/HomeApp/index">                                                                 
+                                        <Profilebar></Profilebar>                                 
+                                            <CardContextProvider>
+                                                <Cards/>       
+                                                <CardModal/>                                 
+                                            </CardContextProvider>                                        
+                                    </Route>
+                                        <Route path="HomeApp/sensors/new-sensor">
+                                            <Profilebar></Profilebar>  
+                                    </Route>
                                 </div>
-                            </div>
-                    </Route>
-                </div>
-            </div>
+                            </div>                        
+                        </div>
+                    </div>
+                </React.Fragment>
+            </Switch>
         </Router>        
         );
     }
 }
+                                            
 
 ReactDOM.render(<App/>, document.getElementById("root"));
+
+
+{/* <div className="d-sm-flex align-items-center justify-content-between mb-4">
+</div>      */}

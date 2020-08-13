@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { setUserSession } from '../Utilities/Common';
 
@@ -10,6 +11,8 @@ function Login(props) {
     const [loading, setLoading] = useState(false);
 
     const loginPhoto = require('../../images/sitepictures/indexPhoto.jpg');
+
+    const createAccountLink = "/HomeApp/register";
 
     const handleLogin = async (event) => {
         setError(null);
@@ -23,14 +26,16 @@ function Login(props) {
         const formToken = csrfTokenResponse.data.token;
 
         const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})
+            .then(response => {
+                setUserSession(response.data.token, response.data.refreshToken);
+            })
             .catch(error => {
                 setLoading(false);
                 console.log(error);
             });
 
-        setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
 
-        const loginForm = document.getElementById('loginForm');
+        const loginForm = document.getElementById('login-form');
 
         const formData = new FormData(loginForm);
 
@@ -46,23 +51,22 @@ function Login(props) {
             <div className="bg-gradient-primary">
                 {/* <div className="container"> */}
                     <div className="row justify-content-center">
-                        <div className="col-xl-6 col-lg-12 col-md-12">
+                        <div className="col-xl-5 col-lg-2 col-md-12">
                             <div className="card o-hidden border-0 shadow-lg my-5">
                                 <div className="card-body p-0">
                                     <div className="row">
-                                        <img src={ loginPhoto } className="col-lg-6 d-none d-lg-block bg-login-image" />
+                                        <img src={ loginPhoto } className="col-lg-6 d-none d-lg-block" />
                                         <div className="col-lg-6">
-                                            <div className="p-5">
+                                            <div className="login-form">
                                                 <div className="text-center">
-                                                    <h1 className="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                                                </div>
-                                                {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
-                                                <form id="loginForm" className="user">
-                                                    <div className="form-group">
-                                                        <input type="text" name="email" {...username} autoComplete="username" className="form-control form-control-user" aria-describedby="emailHelp" />
+                                                    <h1 className="login-formn-container h2 text-gray-700 mb-4 login-banner">Welcome Back To The Home-App!</h1>
+                                                </div>                                            
+                                                <form className="user" id="login-form">
+                                                    <div className="form-group">                                    
+                                                        <input type="text" name="email" {...username} placeholder="E-mail" autoComplete="username" className="form-control form-control-user login-form-field" aria-describedby="emailHelp" />
                                                     </div>
                                                     <div className="form-group">
-                                                        <input type="password" name="password" {...password} autoComplete="new-password" className="form-control form-control-user" />
+                                                        <input type="password" name="password" {...password} placeholder="Password" autoComplete="new-password" className="form-control form-control-user login-form-field" />
                                                     </div>
                                                     <div className="form-group">
                                                         <div className="custom-control custom-checkbox small">
@@ -70,21 +74,13 @@ function Login(props) {
                                                             <label className="custom-control-label" htmlFor="customCheck">Remember Me</label>
                                                         </div>
                                                     </div>
-                                                    {loading ? <div className="center-item fa-2x fas fa-spinner fa-spin"></div> : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
-                                                    <hr />
-                                                    <a href="index.html" className="btn btn-google btn-user btn-block">
-                                                        <i className="fab fa-google fa-fw" /> Login with Google
-                                                    </a>
-                                                    <a href="index.html" className="btn btn-facebook btn-user btn-block">
-                                                        <i className="fab fa-facebook-f fa-fw" /> Login with Facebook
-                                                    </a>
-                                                </form>
-                                                <hr />
+                                                    {loading 
+                                                    ? <div className="center-item login-spinner fa-2x fas fa-spinner fa-spin"></div> 
+                                                    : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
+                                                    <hr />        
+                                                </form>                                               
                                                 <div className="text-center">
-                                                    <a className="small" href="forgot-password.html">Forgot Password?</a>
-                                                </div>
-                                                <div className="text-center">
-                                                    <a className="small" href="register.html">Create an Account!</a>
+                                                    <Link to={createAccountLink} className="small login-form-field" href="register.html">Create an Account!</Link>
                                                 </div>
                                             </div>
                                         </div>

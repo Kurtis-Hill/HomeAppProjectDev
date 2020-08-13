@@ -46,7 +46,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $stmt = $conn->prepare($raw);
         $result =$stmt->execute();
 
-        dd($stmt->fetchAll());
+        return $stmt->fetchAll();
 
     }
 

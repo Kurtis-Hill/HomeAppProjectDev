@@ -5,12 +5,12 @@
     color: #3bb1e7 !important;
 }
 
-.nav-item {
+/* .nav-item {
     -webkit-transition: 0.5s;
     -moz-transition: 0.5s;
     -o-transition: 0.5s;
     transition: 0.5s;
-}
+} */
 
 .nav-link {
     -webkit-transition: 0.5s;
@@ -87,11 +87,34 @@
     
 }
 
+.login-banner {
+    padding: 0 0 5% 5%;
+}
+
 .form-modal-error-text {
     font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     color: #fff;
     padding-bottom: 1%
 }
+
+
+/* #login-form-field-container {
+    padding: 15% 5% 5% 15%;
+} */
+
+.login-form-field {
+    margin: 7% 0 2% 0;
+}
+
+.login-form {
+    width: 95%;
+    padding: 10% 10% 5% 7%;
+}
+
+.login-spinner {
+    margin: 0 0 0 47%;
+}
+
 
 @media only screen and (max-width: 700px) {
     
