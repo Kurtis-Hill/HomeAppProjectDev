@@ -131,8 +131,7 @@ class CardDataController extends AbstractController
             } catch (\Exception $e) {
                 $e->getMessage();
             }
-
-            return new JsonResponse('sucess', 200);
+            return new JsonResponse('success', 200);
         }
     }
 

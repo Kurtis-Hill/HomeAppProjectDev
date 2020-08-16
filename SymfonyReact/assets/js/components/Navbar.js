@@ -70,7 +70,7 @@ const Navbar = () => {
                             // WANTS TO BE LINK
                             <a key={navRoom.r_roomid} className="collapse-item" href={settingRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
                         ))}
-                         <Link to={newSensorRoute} className="collapse-item">+Add New Sensor</Link>
+                         <Link to={newSensorRoute} className="collapse-item">+Add New Device</Link>
                     </div>
                     </div>
                 </li>
