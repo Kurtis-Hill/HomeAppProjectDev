@@ -74,6 +74,12 @@ const Navbar = () => {
                     </div>
                     </div>
                 </li>
+
+                <li className="nav-item">
+                    <a className="nav-link" href="charts.html">
+                        <i className="fas fa-fw fa-microchip" />
+                        <span>+ Add New Device</span></a>
+                </li>
           
                 <hr className="sidebar-divider" />
         

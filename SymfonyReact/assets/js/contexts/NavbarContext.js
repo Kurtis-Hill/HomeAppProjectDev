@@ -53,12 +53,14 @@ export default class NavbarContextProvider extends Component {
     navTabToggleStyle = (tab) => {
         if (tab === 'room') {
             const navRoomStyle = this.state.roomNavToggle === true ? 'collapse show' : 'collapse';
+            
             return navRoomStyle;
         }
 
         if (tab === 'settings') {
-        const navSettingsStyle = this.state.settingsNavToggle === true ? 'collapse show' : 'collapse';
-        return navSettingsStyle;
+            const navSettingsStyle = this.state.settingsNavToggle === true ? 'collapse show' : 'collapse';
+            
+            return navSettingsStyle;
         }
     }
 
@@ -76,6 +78,7 @@ export default class NavbarContextProvider extends Component {
 
     navbarSizeToggle = () => {
         console.log('nav toggle pressed')
+        //@TODO need to toggle nav bar size doesnt work currently need to swap class over
         this.setState({showNavbarToggle: !this.state.showNavbarToggle});
     }
 //  END OF TAB METHODS

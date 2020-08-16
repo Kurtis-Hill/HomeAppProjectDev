@@ -81,7 +81,7 @@ class CardviewRepository extends EntityRepository
                 $qb->expr()->eq('cv.userid', ':userid'),
                 $qb->expr()->eq('s.groupnameid', ':groupNameID')
             )
-            ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
+            ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => Cardstate::ON, 'cardviewTwo' => Cardstate::INDEX_ONLY]);
 
         $result = null;
         if($type === "json") {
@@ -171,6 +171,7 @@ class CardviewRepository extends EntityRepository
                 $qb->expr()->eq('cv.cardviewid', ':id')
             )
             ->setParameters(['id' => $criteria['id']]);
+
         $result = $qb->getQuery()->getScalarResult();
 
         return $result[0];
@@ -201,13 +202,6 @@ class CardviewRepository extends EntityRepository
         return $sensorResults;
     }
 
-//    public function getTempHumidCardViewData(array $criteria)
-//    {
-//        $qb = $this->createQueryBuilder('cv');
-//        $qb->select('cv', 't', 'h')
-//        ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
-//        ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
-//    }
 
 
 

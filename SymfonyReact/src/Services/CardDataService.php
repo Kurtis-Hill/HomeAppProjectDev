@@ -62,6 +62,7 @@ class CardDataService extends HomeAppRoomAbstract
         if ($form->isSubmitted() && $form->isValid()) {
             $validFormData = $form->getData();
             $this->em->persist($validFormData);
+
             return false;
         }
         else {
