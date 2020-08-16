@@ -5,15 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e3ff9239-272c-4490-910a-21761cd8910a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/HomeApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HomeApp.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Login.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/contexts/CardContexts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/config/packages/gesdinet_jwt_refresh_token.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/config/packages/gesdinet_jwt_refresh_token.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/contexts/NavbarContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/contexts/NavbarContext.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Entity/Card/Cardstate.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Entity/Card/Cardstate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,29 +46,38 @@
     <splitter split-orientation="horizontal" split-proportion="0.53571427">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="51">
-                  <caret line="19" column="74" selection-start-line="19" selection-start-column="74" selection-end-line="19" selection-end-column="74" />
+                <state relative-caret-position="327">
+                  <caret line="27" selection-start-line="27" selection-end-line="27" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Document/AbstractRefreshToken.php">
+            <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/doctrine.yaml">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="221">
-                  <caret line="22" column="26" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="35" />
+                <state relative-caret-position="170">
+                  <caret line="10" column="22" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="22" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/symfony/security-csrf/CsrfTokenManagerInterface.php">
+            <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="663">
-                  <caret line="46" column="32" selection-start-line="46" selection-start-column="20" selection-end-line="46" selection-end-column="32" />
+                <state relative-caret-position="136">
+                  <caret line="39" column="70" selection-start-line="39" selection-start-column="70" selection-end-line="39" selection-end-column="70" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="616">
+                  <caret line="64" selection-start-line="64" selection-end-line="64" />
                 </state>
               </provider>
             </entry>
@@ -82,8 +89,26 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="292">
-                  <caret line="58" column="32" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="43" />
+                <state relative-caret-position="37">
+                  <caret line="13" column="31" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="31" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="911">
+                  <caret line="157" column="35" selection-start-line="157" selection-start-column="20" selection-end-line="157" selection-end-column="35" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-1197">
+                  <caret line="65" column="31" lean-forward="true" selection-start-line="65" selection-start-column="31" selection-end-line="65" selection-end-column="31" />
                 </state>
               </provider>
             </entry>
@@ -91,17 +116,26 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/SymfonyReact/config/routes.yaml">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="34">
-                  <caret line="2" selection-start-line="2" selection-end-line="2" />
+                <state relative-caret-position="85">
+                  <caret line="5" column="47" selection-start-line="5" selection-start-column="47" selection-end-line="5" selection-end-column="47" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/gesdinet_jwt_refresh_token.yaml">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="68">
-                  <caret line="4" column="36" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="36" />
+                  <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="51">
+                  <caret line="3" column="24" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
                 </state>
               </provider>
             </entry>
@@ -109,7 +143,7 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Service/RefreshToken.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="204">
+                <state relative-caret-position="1785">
                   <caret line="122" column="13" selection-start-line="122" selection-start-column="12" selection-end-line="122" selection-end-column="13" />
                 </state>
               </provider>
@@ -121,13 +155,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>card</find>
-      <find>cardshow</find>
-      <find>JwtTokenAuthenticator</find>
-      <find>lexik_jwt_authentication.handler.authentication_success</find>
-      <find>Authentication\AuthenticationSuccessHandler</find>
-      <find>security_login_check</find>
-      <find>public function login</find>
       <find>dd(</find>
       <find>app_login</find>
       <find>form</find>
@@ -151,6 +178,13 @@
       <find>em</find>
       <find>refreshToken</find>
       <find>login_check</find>
+      <find>const index</find>
+      <find>$secondF</find>
+      <find>getUsersCurrentCardData</find>
+      <find>handleSensorForms</find>
+      <find>getCardFormData</find>
+      <find>getAllCardReadings</find>
+      <find>$secondForm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -159,10 +193,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/SymfonyReact/config/packages/doctrine.yaml" />
-        <option value="$PROJECT_DIR$/SymfonyReact/config/bundles.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/.env" />
-        <option value="$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/Core/TokenController.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Entity/Sensors/ConstRecord/Consthumid.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Entity/Sensors/ConstRecord/Consttemp.php" />
@@ -173,7 +204,6 @@
         <option value="$PROJECT_DIR$/SymfonyReact/src/Entity/Card/CardShow.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Entity/Sensors/Analog.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Settings.php" />
-        <option value="$PROJECT_DIR$/SymfonyReact/config/routes.yaml" />
         <option value="$PROJECT_DIR$/SymfonyReact/config/services.yaml" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Listeners/AuthenticationSuccessListener.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/templates/security/login.html.twig" />
@@ -181,7 +211,6 @@
         <option value="$PROJECT_DIR$/SymfonyReact/src/Security/UserAuthenticator.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/public/build/vendors~sb-admin2.css" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/IndexController.php" />
-        <option value="$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Form/CardViewForms/CardViewModalFormType.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Entity/Sensors/Humid.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Form/CardViewForms/DHTTempHumidCardModalForm.php" />
@@ -205,11 +234,16 @@
         <option value="$PROJECT_DIR$/SymfonyReact/src/Form/CustomFormValidators/DHTTemperatureConstraintValidator.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Form/CustomFormValidators/DHTHumidityConstraintValidator.php" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Form/CustomFormValidators/DHTTemperatureConstraint.php" />
-        <option value="$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php" />
-        <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" />
-        <option value="$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml" />
         <option value="$PROJECT_DIR$/SymfonyReact/config/packages/gesdinet_jwt_refresh_token.yaml" />
         <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/config/routes.yaml" />
+        <option value="$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml" />
+        <option value="$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Entity/Card/Cardstate.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/config/packages/doctrine.yaml" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php" />
       </list>
     </option>
   </component>
@@ -303,83 +337,17 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
+    <option name="x" value="952" />
     <option name="y" value="-8" />
-    <option name="width" value="974" />
-    <option name="height" value="527" />
+    <option name="width" value="976" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Entity" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Repository" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-              <item name="lexik" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
-              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-              <item name="lexik" type="462c0819:PsiDirectoryNode" />
-              <item name="jwt-authentication-bundle" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="mariadb" />
@@ -452,11 +420,14 @@
       <workItem from="1594771427890" duration="2701000" />
       <workItem from="1594895291452" duration="2544000" />
       <workItem from="1596278983776" duration="2604000" />
+      <workItem from="1596289070890" duration="2135000" />
+      <workItem from="1596363620523" duration="936000" />
+      <workItem from="1597593769679" duration="4835000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="149795000" />
+    <option name="totallyTimeSpent" value="157701000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -469,13 +440,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.1609808" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.33694476" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.33694476" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -484,7 +454,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.33333334" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49973333" weight="0.16359697" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49973333" visible="true" weight="0.1516793" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5002667" side_tool="true" weight="0.2502629" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -527,13 +497,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Entity/Sensors/Humid.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2465">
-          <caret line="149" column="28" selection-start-line="149" selection-start-column="28" selection-end-line="149" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Repository/Sensors/TempRepository.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -574,23 +537,6 @@
           <caret line="26" column="35" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
           <folding>
             <element signature="e#44#74#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Entity/Card/Cardview.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="122" lean-forward="true" selection-start-line="122" selection-end-line="122" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="174" column="60" lean-forward="true" selection-start-line="174" selection-start-column="60" selection-end-line="174" selection-end-column="60" />
-          <folding>
-            <element signature="e#41#75#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -745,27 +691,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/var/cache/dev/ContainerGNcoRTY/App_KernelDevDebugContainer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="5025" column="23" selection-start-line="5025" selection-start-column="23" selection-end-line="5025" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/var/cache/dev/ContainerQNGOxwA/App_KernelDevDebugContainer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="5030" column="30" lean-forward="true" selection-start-line="5030" selection-start-column="30" selection-end-line="5037" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1615">
-          <caret line="114" column="28" selection-start-line="114" selection-start-column="28" selection-end-line="114" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/var/cache/dev/ContainerGNcoRTY/App_KernelDevDebugContainer.php" />
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/var/cache/dev/ContainerQNGOxwA/App_KernelDevDebugContainer.php" />
     <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/NavbarController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -782,9 +709,6 @@
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/lexik/jwt-authentication-bundle/LexikJWTAuthenticationBundle.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -831,17 +755,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Services/NavbarService.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Document/AbstractRefreshToken.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="22" column="26" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="64" column="24" selection-start-line="64" selection-start-column="19" selection-end-line="64" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -852,45 +776,80 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Services/NavbarService.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Service/RefreshToken.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="122" column="13" selection-start-line="122" selection-start-column="12" selection-end-line="122" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="19" column="74" selection-start-line="19" selection-start-column="74" selection-end-line="19" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="58" column="32" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/config/routes.yaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        <state relative-caret-position="85">
+          <caret line="5" column="47" selection-start-line="5" selection-start-column="47" selection-end-line="5" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/gesdinet_jwt_refresh_token.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="4" column="36" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="36" />
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/lexik_jwt_authentication.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="24" selection-start-line="3" selection-start-column="24" selection-end-line="3" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Service/RefreshToken.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1785">
+          <caret line="122" column="13" selection-start-line="122" selection-start-column="12" selection-end-line="122" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="37">
+          <caret line="13" column="31" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/doctrine.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="22" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/SecurityController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Entity/Card/Cardview.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1785">
+          <caret line="122" selection-start-line="122" selection-end-line="122" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Repository/Card/CardviewRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="911">
+          <caret line="157" column="35" selection-start-line="157" selection-start-column="20" selection-end-line="157" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="39" column="70" selection-start-line="39" selection-start-column="70" selection-end-line="39" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Services/CardDataService.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="616">
+          <caret line="64" selection-start-line="64" selection-end-line="64" />
         </state>
       </provider>
     </entry>
