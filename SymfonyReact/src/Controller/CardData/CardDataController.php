@@ -51,7 +51,7 @@ class CardDataController extends AbstractController
     /**
      * @Route("/cardviewform&id={cardviewid}", name="cardViewForm")
      */
-    public function cardViewForm(Request $request, $cardviewid): JsonResponse
+    public function showCardViewForm(Request $request, $cardviewid): JsonResponse
     {
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
@@ -93,11 +93,42 @@ class CardDataController extends AbstractController
             $form = null;
             $em = $this->getDoctrine()->getManager();
 
-            list($form, $formData, $secondForm, $secondFormData) = $this->handleSensorForms($request, $sensorType, $cardSensorData);
+            if ($sensorType === 'DHT') {
+                $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
+                $formData = [
+                    'hightemp' => $request->get('tempHighReading'),
+                    'lowtemp' => $request->get('tempLowReading'),
+                    'constrecord' => $request->get('constRecord'),
+                ];
+
+                $secondForm = $this->createForm(DHTHumidCardModalForm::class, $cardSensorData['humid']);
+                $secondFormData = [
+                    'highhumid' => $request->get('humidHighReading'),
+                    'lowhumid' => $request->get('humidLowReading'),
+                    'constrecord' => $request->get('secondConstRecord')
+                ];
+            }
+
+            if ($sensorType === "Dallas Temperature") {
+                $form = $this->createForm(DallasTempCardModalForm::class, $cardSensorData['temp']);
+                $formData = [
+                    'hightemp' => $request->get('tempHighReading'),
+                    'lowtemp' => $request->get('tempLowReading'),
+                    'constrecord' => $request->get('constRecord')
+                ];
+            }
+
+            if ($sensorType === "Soil") {
+                $form = $this->createForm(SoilFormType::class, $cardSensorData['analog']);
+                $formData = [
+                    'highanalog' => $request->get('analogHighReading'),
+                    'lowanalog' => $request->get('analogLowReading'),
+                    'constrecord' => $request->get('constRecord')
+                ];
+            }
 
             if ($form !== null) {
                 $processedForm = $cardDataService->processForm($form, $formData);
-                //dd($processedForm);
                 if ($processedForm instanceof FormInterface) {
                     foreach ($processedForm->getErrors(true, true) as $value) {
                         array_push($errors, $value->getMessage());
@@ -135,50 +166,4 @@ class CardDataController extends AbstractController
             return new JsonResponse('sucess', 200);
         }
     }
-
-    /**
-     * @param Request $request
-     * @param $sensorType
-     * @param $cardSensorData
-     * @return array
-     */
-    private function handleSensorForms(Request $request, string $sensorType, array $cardSensorData): array
-    {
-        if ($sensorType === 'DHT') {
-            $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
-            $formData = [
-                'hightemp' => $request->get('tempHighReading'),
-                'lowtemp' => $request->get('tempLowReading'),
-                'constrecord' => $request->get('constRecord'),
-            ];
-
-            $secondForm = $this->createForm(DHTHumidCardModalForm::class, $cardSensorData['humid']);
-            $secondFormData = [
-                'highhumid' => $request->get('humidHighReading'),
-                'lowhumid' => $request->get('humidLowReading'),
-                'constrecord' => $request->get('secondConstRecord')
-            ];
-        }
-
-        if ($sensorType === "Dallas Temperature") {
-            $form = $this->createForm(DallasTempCardModalForm::class, $cardSensorData['temp']);
-            $formData = [
-                'hightemp' => $request->get('tempHighReading'),
-                'lowtemp' => $request->get('tempLowReading'),
-                'constrecord' => $request->get('constRecord')
-            ];
-        }
-
-        if ($sensorType === "Soil") {
-            $form = $this->createForm(SoilFormType::class, $cardSensorData['analog']);
-            $formData = [
-                'highanalog' => $request->get('analogHighReading'),
-                'lowanalog' => $request->get('analogLowReading'),
-                'constrecord' => $request->get('constRecord')
-            ];
-        }
-
-        return array($form, $formData, $secondForm, $secondFormData);
-    }
-
 }

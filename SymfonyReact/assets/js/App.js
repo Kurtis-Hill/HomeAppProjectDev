@@ -14,6 +14,7 @@ import NavbarContextProvider from "./contexts/NavbarContext";
 import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
+import AddNewSensor from './components/AddNewSensor'
 
 export default class App extends Component {
     render() {
@@ -39,13 +40,11 @@ export default class App extends Component {
                                             </CardContextProvider>                                        
                                     </Route>
 
-                                    <Route path="HomeApp/sensors/new-sensor">                                            
+                                    <Route path="/HomeApp/sensors/new-sensor">                                            
                                     </Route>
-                                    
-                                    <Route path="HomeApp/devices/new-device">
-                                    </Route>
+                                    <Route path="/HomeApp/devices/new-device" component={AddNewSensor}/> 
                                 </div>
-                            </div>                        
+                            </div>1                        
                         </div>
                     </div>
                 </React.Fragment>

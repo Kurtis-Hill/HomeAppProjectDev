@@ -11,13 +11,13 @@ const Navbar = () => {
     
     const settingRoute = "settings/";
     const roomRoute = "rooms/";  
-    const homeRoute = "index/";  
+    const homeRoute = "/HomeApp/index/";  
     const newSensorRoute = "sensors/new-sensor";
     const newDeviceRoute = "devices/new-device";
 
-    let deviceNavShowToggle = context.deviceSettingsNavToggle === true ? 'show' : '';
-    let roomNavShowToggle = context.roomNavToggle === true ? 'show' : '';
-    console.log('page', roomNavShowToggle);
+    const deviceNavShowToggle = context.deviceSettingsNavToggle === true ? 'show' : null;
+    const roomNavShowToggle = context.roomNavToggle === true ? 'show' : null;
+
     return ( 
         
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "+ navbarCollapse} id="accordionSidebar">

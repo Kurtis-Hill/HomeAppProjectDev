@@ -30,26 +30,20 @@ export default class NavbarContextProvider extends Component {
     toggleShowNavTabElement = (navDropDownElement) => {       
         if (navDropDownElement === 'room') {
             this.setState({roomNavToggle: !this.state.roomNavToggle});
-            console.log('room', this.state.roomNavToggle);
         }
         
         if (navDropDownElement === 'device-settings') {
             this.setState({deviceSettingsNavToggle: !this.state.deviceSettingsNavToggle});
-            console.log('debvice', this.state.deviceSettingsNavToggle);
-           // return this.state.deviceSettingsNavToggle === true ? 'collapse show' : 'collapse'; 
         }
     }
 
     toggleOffNavTabElement = (navDropDownElement) => {       
         if (navDropDownElement === 'room') {
             this.setState({roomNavToggle: false});
-            console.log('room', this.state.roomNavToggle);
         }
         
         if (navDropDownElement === 'device-settings') {
             this.setState({deviceSettingsNavToggle: false});
-            console.log('debvice', this.state.deviceSettingsNavToggle);
-           // return this.state.deviceSettingsNavToggle === true ? 'collapse show' : 'collapse'; 
         }
     }
 
@@ -57,7 +51,6 @@ export default class NavbarContextProvider extends Component {
         axios.get('/HomeApp/Navbar/rooms',
         { headers: {"Authorization" : `Bearer ${token}`} })
         .then(response => {
-            console.log('NavbarRoomLinks', response.data);
             this.setState({rooms: response.data})
         }).catch(error => {
             console.log(error);
@@ -68,7 +61,6 @@ export default class NavbarContextProvider extends Component {
         axios.get('/HomeApp/Navbar/devices',
         { headers: {"Authorization" : `Bearer ${token}`} })
         .then(response => {
-            console.log('devicess', response.data);
             this.setState({devices: response.data});
         }).catch(error => {
             console.log(error);
@@ -85,8 +77,6 @@ export default class NavbarContextProvider extends Component {
         return (
             <NavbarContext.Provider value={{
                 toggleNavElement: this.toggleShowNavTabElement,
-                navStyle: this.navTabToggleStyle,
-                closeNavElemnt: this.closeNavTabElement,
                 navRooms: this.state.rooms,
                 navbarSizeToggle: this.navbarSizeToggle,
                 navbarSize: this.state.showNavbarToggleSize,

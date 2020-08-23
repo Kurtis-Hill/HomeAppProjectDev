@@ -17,9 +17,9 @@ class Cardstate
 
     const OFF = 2;
 
-    const INDEX_ONLY = 6;
+    const INDEX_ONLY = 3;
 
-    const ROOM_ONLY = 7;
+    const ROOM_ONLY = 4;
 
     /**
      * @var int
