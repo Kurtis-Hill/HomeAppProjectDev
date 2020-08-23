@@ -15,6 +15,7 @@ class CardviewRepository extends EntityRepository
      * @param $groupNameID
      * @param $userID
      * @param null $type
+     * @param null $room
      * @return array|mixed
 
      */
@@ -30,7 +31,6 @@ class CardviewRepository extends EntityRepository
             case 'room' :
                 $cardViewTwo = Cardstate::ROOM_ONLY;
         }
-
 
         $qb = $this->createQueryBuilder('cv');
          $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
@@ -64,6 +64,12 @@ class CardviewRepository extends EntityRepository
         return $result;
     }
 
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed|null
+     */
     public function getAnalogCardReadings($groupNameID, $userID, $type = null)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -93,6 +99,12 @@ class CardviewRepository extends EntityRepository
         return $result;
     }
 
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed|null
+     */
     public function getTempCardReadings($groupNameID, $userID, $type = null)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -123,6 +135,12 @@ class CardviewRepository extends EntityRepository
         return $result;
     }
 
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed|null
+     */
     public function getHumidCardReadings($groupNameID, $userID, $type = null)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -154,7 +172,11 @@ class CardviewRepository extends EntityRepository
     }
 
 
-    //Add left join for additional sensors
+    /**
+     * Add left join for additional sensors
+     * @param array $criteria
+     * @return mixed
+     */
     public function getCardFormData(array $criteria)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -176,6 +198,10 @@ class CardviewRepository extends EntityRepository
         return $result[0];
     }
 
+    /**
+     * @param array $criteria
+     * @return mixed
+     */
     public function getUsersCurrentCardData(array $criteria)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -190,7 +216,6 @@ class CardviewRepository extends EntityRepository
             ->setParameters(['id' => $criteria['id'], 'userid' => $criteria['userID']]);
 
         $result = $qb->getQuery()->getResult();
-        //dd($result);
 
         $sensorResults["cardView"] = $result[0];
         $sensorResults["temp"] = $result[1];

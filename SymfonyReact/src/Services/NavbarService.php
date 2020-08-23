@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Entity\Core\Devices;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
 use App\HomeAppCore\HomeAppRoomAbstract;
@@ -34,11 +35,18 @@ class NavbarService extends HomeAppRoomAbstract
     }
 
 
-    public function getAllSensorsByRoom()
+    public function getAllSensorsByRoomForUser()
     {
         $sensorByRoom = $this->em->getRepository(Sensornames::class)->getAllSensorsForUser($this->usersRooms, $this->groupNameid);
 
         return $sensorByRoom;
+    }
+
+    public function getUsersDevices(): array
+    {
+        $devices = $this->em->getRepository(Devices::class)->returnAllUsersDevices($this->groupNameid);
+
+        return $devices;
     }
 
 }

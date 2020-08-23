@@ -34,10 +34,27 @@ class NavbarController extends AbstractController
      */
     public function getAllSensorsByRoom(NavbarService $navbarService)
     {
-        $rooms = $navbarService->getAllSensorsByRoom();
+        $rooms = $navbarService->getAllSensorsByRoomForUser();
 
         return new JsonResponse($rooms);
     }
+
+    /**
+     * @Route("/devices")
+     * @param NavbarService $navbarService
+     * @return JsonResponse
+     */
+    public function getAllDevicesForUser(NavbarService $navbarService)
+    {
+        $devices = $navbarService->getUsersDevices();
+
+        if (!$devices) {
+            return new JsonResponse('error no devices', 404);
+        }
+
+        return new JsonResponse($devices);
+    }
+
 
 
 }

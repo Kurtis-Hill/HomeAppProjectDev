@@ -12,56 +12,46 @@ export default class NavbarContextProvider extends Component {
         
         this.state = {
             rooms: [],
+            devices: [],
             sensorNames: [],
             roomNavToggle: false,
-            settingsNavToggle: false,
-            showNavbarToggle: false,
+            deviceSettingsNavToggle: false,
+            showNavbarToggleSize: false,
         }
-      //  this.navbarRoomLinks();
     }
 
     
     componentDidMount() {
-        //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()
-        // this.axiosToken();
-      
         this.navbarRoomLinks();
+        this.navbarDeviceLinks();
     }
 
     //BEGGINING OF TAB METHODS
-    openNavTabElement = (navDropDownElement) => {       
+    toggleShowNavTabElement = (navDropDownElement) => {       
         if (navDropDownElement === 'room') {
-            this.setState({roomNavToggle: !this.state.roomNavToggle}) 
+            this.setState({roomNavToggle: !this.state.roomNavToggle});
+            console.log('room', this.state.roomNavToggle);
         }
         
-        if (navDropDownElement === 'settings') {
-            this.setState({settingsNavToggle: !this.state.settingsNavToggle}) 
+        if (navDropDownElement === 'device-settings') {
+            this.setState({deviceSettingsNavToggle: !this.state.deviceSettingsNavToggle});
+            console.log('debvice', this.state.deviceSettingsNavToggle);
+           // return this.state.deviceSettingsNavToggle === true ? 'collapse show' : 'collapse'; 
         }
     }
 
-    closeNavTabElement = (navDropDownElement) => {
+    toggleOffNavTabElement = (navDropDownElement) => {       
         if (navDropDownElement === 'room') {
-            this.setState({roomNavToggle: false}) 
+            this.setState({roomNavToggle: false});
+            console.log('room', this.state.roomNavToggle);
         }
         
-        if (navDropDownElement === 'settings') {
-            this.setState({settingsNavToggle: false}) 
+        if (navDropDownElement === 'device-settings') {
+            this.setState({deviceSettingsNavToggle: false});
+            console.log('debvice', this.state.deviceSettingsNavToggle);
+           // return this.state.deviceSettingsNavToggle === true ? 'collapse show' : 'collapse'; 
         }
     }
-
-
-    navTabToggleStyle = (tab) => {
-        if (tab === 'room') {
-            const navRoomStyle = this.state.roomNavToggle === true ? 'collapse show' : 'collapse';
-            return navRoomStyle;
-        }
-
-        if (tab === 'settings') {
-        const navSettingsStyle = this.state.settingsNavToggle === true ? 'collapse show' : 'collapse';
-        return navSettingsStyle;
-        }
-    }
-
 
     navbarRoomLinks = () => {
         axios.get('/HomeApp/Navbar/rooms',
@@ -74,9 +64,19 @@ export default class NavbarContextProvider extends Component {
         })
     }
 
+    navbarDeviceLinks = () => {
+        axios.get('/HomeApp/Navbar/devices',
+        { headers: {"Authorization" : `Bearer ${token}`} })
+        .then(response => {
+            console.log('devicess', response.data);
+            this.setState({devices: response.data});
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+
     navbarSizeToggle = () => {
-        console.log('nav toggle pressed')
-        this.setState({showNavbarToggle: !this.state.showNavbarToggle});
+        this.setState({showNavbarToggleSize: !this.state.showNavbarToggleSize});
     }
 //  END OF TAB METHODS
 
@@ -84,12 +84,17 @@ export default class NavbarContextProvider extends Component {
     render() {
         return (
             <NavbarContext.Provider value={{
-                openNavElement: this.openNavTabElement,
+                toggleNavElement: this.toggleShowNavTabElement,
                 navStyle: this.navTabToggleStyle,
                 closeNavElemnt: this.closeNavTabElement,
                 navRooms: this.state.rooms,
                 navbarSizeToggle: this.navbarSizeToggle,
-                navbarSize: this.state.navbarToggle,
+                navbarSize: this.state.showNavbarToggleSize,
+                userDevices: this.state.devices,
+                roomNavToggle: this.state.roomNavToggle,
+                deviceSettingsNavToggle: this.state.deviceSettingsNavToggle,
+                toggleOffNavTabElement: this.toggleOffNavTabElement,
+
             }}>
                 {this.props.children}
             </NavbarContext.Provider>
