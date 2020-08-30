@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-function AddNewSensor(props) {
-    const deviceName = useFormInput('');
-    const deviceRoom = useFormInput('');
-    const deviceGroupName = useFormInput('');
+    // const deviceName = useFormInput('');
+    // const deviceRoom = useFormInput('');
+    // const deviceGroupName = useFormInput('');
+    
+    function AddNewSensor(props) {
+      //  const deviceName = useFormInput('');
+    console.log('clicked');
 
     const getAllUserFormDetails = async (event) => {
 
@@ -26,17 +29,22 @@ function AddNewSensor(props) {
 
     return (
         <React.Fragment>
-            <h1>New Device Setup Form</h1>
-                <form>
-                    <input placeholder="Device Name" type="text" name="device-name"  {...deviceName}/>
-                    <select placeholder="Room/Area" name="device-room">
-                        <option>dallase</option>
-                    </select>
-                    <select placeholder="Group Name" name="device-group-name">
-                        <option>Some Groups</option>
-                    </select>
-                    <button name="submit" action="submit" onClick={handleNewDeviceFormSubmission}>Submit</button>
-                </form>
+
+<div id="" style={{paddingRight: '17px', display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <form id="modal-form">
+            <div className="modal-header">
+              <h5 className="modal-title">Change 's Sensor Details</h5>
+                <button className="close"  type="button" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+                <input type="text" name="deviceName" {...this.deviceName} />
+            </div>
+            </form>
+            </div>
+            </div>
+            </div>
         </React.Fragment>
     );
 }

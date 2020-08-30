@@ -4,6 +4,7 @@
 namespace App\HomeAppCore;
 
 
+use App\Entity\Core\GroupMapping;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensortype;
@@ -17,26 +18,32 @@ use Symfony\Component\Security\Core\Security;
 
 class HomeAppRoomAbstract
 {
+    /**
+     * @var Security
+     */
     protected $user;
 
-    protected $currentRoom;
-
-    protected $userID;
-
-    protected $currentSensorType;
-
-    protected $allSensorTypes;
-
+    /**
+     * @var EntityManager|EntityManagerInterface
+     */
     protected $em;
 
-    protected $groupNameid;
+    /**
+     * @var User
+     */
+    protected $userID;
 
 
+    /**
+     * @var GroupMapping
+     */
+    protected $groupNameids;
 
 
     /**
      * HomeAppRoomAbstract constructor.
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
+     * @param Security $security
      */
     public function __construct(EntityManagerInterface $em, Security $security)
     {
@@ -52,23 +59,23 @@ class HomeAppRoomAbstract
 
     private function setUserVariables()
     {
-        $this->groupNameid = $this->user->getUser()->getGroupNameId();
         $this->userID = $this->user->getUser()->getUserid();
+        $this->groupNameids = $this->groupNameids = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
 
-        if ($this->groupNameid === null || $this->userID === null) {
-            throw new Exception("The User Variables Cannot be set Please try again");
+        if ($this->groupNameids === null || $this->userID === null) {
+            throw new \Exception("The User Variables Cannot be set Please try again");
         }
 
     }
 
     public function getGroupNameID()
     {
-        return $this->groupNameid;
+        return $this->groupNameids;
     }
 
     public function getUserID()
     {
-        return $this->groupNameid;
+        return $this->groupNameids;
     }
 
 }

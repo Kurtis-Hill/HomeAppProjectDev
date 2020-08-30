@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { NavbarContext } from '../contexts/NavbarContext';
 
 
-
 const Navbar = () => {
     const context = useContext(NavbarContext);
     
@@ -13,7 +12,7 @@ const Navbar = () => {
     const roomRoute = "rooms/";  
     const homeRoute = "/HomeApp/index/";  
     const newSensorRoute = "sensors/new-sensor";
-    const newDeviceRoute = "devices/new-device";
+
 
     const deviceNavShowToggle = context.deviceSettingsNavToggle === true ? 'show' : null;
     const roomNavShowToggle = context.roomNavToggle === true ? 'show' : null;
@@ -21,7 +20,6 @@ const Navbar = () => {
     return ( 
         
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "+ navbarCollapse} id="accordionSidebar">
-      
                 <a href={homeRoute} className="sidebar-brand d-flex align-items-center justify-content-center">
                     <div className="sidebar-brand-icon rotate-n-15">
                         <i className="fas fa-home" />
@@ -51,7 +49,7 @@ const Navbar = () => {
                     <div id="collapseTwo" className={'collapse '+ roomNavShowToggle} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">View Room:</h6>
-                        {context.navRooms.map((navRoom) => (                        
+                        {context.userRooms.map((navRoom) => (                        
                             <a key={navRoom.r_roomid} className="collapse-item" href={roomRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
                         ))}
                     </div>
@@ -69,7 +67,7 @@ const Navbar = () => {
                         {context.userDevices.map((devices) => (
                             <a key={devices.devicename} className="collapse-item" href={settingRoute+devices.devicename}>{devices.devicename}</a>
                         ))}
-                         <a href={newDeviceRoute} className="collapse-item">+Add New Device</a>
+                         <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
                     </div>
                     </div>                    
                 </li>            

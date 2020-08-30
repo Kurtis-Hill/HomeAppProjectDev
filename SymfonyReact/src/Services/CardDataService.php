@@ -20,7 +20,7 @@ class CardDataService extends HomeAppRoomAbstract
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $tempCards = $cardRepository->getTempCardReadings($this->groupNameid, $this->userID, $type);
+        $tempCards = $cardRepository->getTempCardReadings($this->groupNameids, $this->userID, $type);
 
         return $tempCards;
     }
@@ -29,7 +29,7 @@ class CardDataService extends HomeAppRoomAbstract
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $humidCards = $cardRepository->getHumidCardReadings($this->groupNameid, $this->userID, $type);
+        $humidCards = $cardRepository->getHumidCardReadings($this->groupNameids, $this->userID, $type);
 
         return $humidCards;
     }
@@ -38,7 +38,7 @@ class CardDataService extends HomeAppRoomAbstract
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $analogCards = $cardRepository->getAnalogCardReadings($this->groupNameid, $this->userID, $type);
+        $analogCards = $cardRepository->getAnalogCardReadings($this->groupNameids, $this->userID, $type);
 
         return $analogCards;
     }
@@ -48,7 +48,7 @@ class CardDataService extends HomeAppRoomAbstract
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $cardReadings = $cardRepository->getAllCardReadings($this->groupNameid, $this->userID, $type, $room);
+        $cardReadings = $cardRepository->getAllCardReadings($this->groupNameids, $this->userID, $type, $room);
 
         $cardData['sensorData'] = $cardReadings;
 

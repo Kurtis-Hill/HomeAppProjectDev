@@ -20,7 +20,7 @@ class CardviewRepository extends EntityRepository
 
      */
 
-    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null)
+    public function getAllCardReadings($groupNameIDs, $userID, $type = null, $room = null)
     {
         $cardViewOne = Cardstate::ON;
 
@@ -48,9 +48,9 @@ class CardviewRepository extends EntityRepository
                  $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
              ),
              $qb->expr()->eq('cv.userid', ':userid'),
-             $qb->expr()->eq('s.groupnameid', ':groupNameID')
+             $qb->expr()->in('s.groupnameid', ':groupNameID')
          )
-             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
 
          $result = null;
 
@@ -72,6 +72,7 @@ class CardviewRepository extends EntityRepository
      */
     public function getAnalogCardReadings($groupNameID, $userID, $type = null)
     {
+
         $qb = $this->createQueryBuilder('cv');
         $qb->select('a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -96,6 +97,7 @@ class CardviewRepository extends EntityRepository
         else {
             $result = $qb->getQuery()->getResult();
         }
+
         return $result;
     }
 

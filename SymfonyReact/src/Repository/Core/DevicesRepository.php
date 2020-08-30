@@ -15,7 +15,7 @@ class DevicesRepository extends EntityRepository
     /**
      * @param $groupNameID
      */
-    public function returnAllUsersDevices(Groupname $groupNameID)
+    public function returnAllUsersDevices($groupNameID)
     {
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv.devicename');
@@ -25,7 +25,7 @@ class DevicesRepository extends EntityRepository
         ->setParameters(['groupNameID' => $groupNameID]);
 
         $result = $qb->getQuery()->getArrayResult();
-
+//dd($result);
         return $result;
     }
 }

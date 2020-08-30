@@ -14,7 +14,8 @@ import NavbarContextProvider from "./contexts/NavbarContext";
 import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
-import AddNewSensor from './components/AddNewSensor'
+import AddNewSensor from './components/AddNewSensor';
+import AddNewDevice from './components/AddNewDevice';
 
 export default class App extends Component {
     render() {
@@ -27,8 +28,9 @@ export default class App extends Component {
                 <React.Fragment>
                     <div id="page-top">
                         <div id="wrapper">                     
-                            <NavbarContextProvider>
+                            <NavbarContextProvider>                                
                                 <Navbar/>
+                                <AddNewDevice/>
                             </NavbarContextProvider>                                               
                             <div id="content-wrapper" className="d-flex flex-column">
                                 <div id="content">  
@@ -42,7 +44,7 @@ export default class App extends Component {
 
                                     <Route path="/HomeApp/sensors/new-sensor">                                            
                                     </Route>
-                                    <Route path="/HomeApp/devices/new-device" component={AddNewSensor}/> 
+                                    {/* <Route path="/HomeApp/sensor/:sensorname/" component={AddNewSensor}/>  */}
                                 </div>
                             </div>1                        
                         </div>

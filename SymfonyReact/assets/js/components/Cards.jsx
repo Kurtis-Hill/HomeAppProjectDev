@@ -15,7 +15,7 @@ const cardRender = () => {
           {context.cardData.map((cardData, index) => (
             <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(cardData.cardviewid)}} key={index}>
               <div className={"shadow h-100 py-2 card border-left-"+cardData.colour}>
-                <div className="card-body">
+                <div className="card-body hover">
                   <div className="row no-gutters align-items-center">
                     <div className="col mr-2">
                       <div className="d-flex font-weight-bold text text-uppercase mb-1">{cardData.sensorname}</div>
