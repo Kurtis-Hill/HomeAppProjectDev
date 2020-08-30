@@ -86,7 +86,7 @@ class CardviewRepository extends EntityRepository
                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
+                $qb->expr()->in('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
@@ -122,7 +122,7 @@ class CardviewRepository extends EntityRepository
                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
+                $qb->expr()->in('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
@@ -158,7 +158,7 @@ class CardviewRepository extends EntityRepository
                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
+                $qb->expr()->in('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 

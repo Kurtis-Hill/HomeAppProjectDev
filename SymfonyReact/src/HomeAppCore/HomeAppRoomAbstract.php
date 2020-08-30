@@ -5,15 +5,10 @@ namespace App\HomeAppCore;
 
 
 use App\Entity\Core\GroupMapping;
-use App\Entity\Core\Groupname;
-use App\Entity\Core\Room;
-use App\Entity\Core\Sensortype;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\Security\Core\Security;
 
 class HomeAppRoomAbstract
@@ -21,7 +16,7 @@ class HomeAppRoomAbstract
     /**
      * @var Security
      */
-    protected $user;
+    private $user;
 
     /**
      * @var EntityManager|EntityManagerInterface
@@ -37,13 +32,14 @@ class HomeAppRoomAbstract
     /**
      * @var GroupMapping
      */
-    protected $groupNameids;
+    protected $groupNameIDs;
 
 
     /**
      * HomeAppRoomAbstract constructor.
      * @param EntityManagerInterface $em
      * @param Security $security
+     *
      */
     public function __construct(EntityManagerInterface $em, Security $security)
     {
@@ -57,12 +53,15 @@ class HomeAppRoomAbstract
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private function setUserVariables()
     {
         $this->userID = $this->user->getUser()->getUserid();
-        $this->groupNameids = $this->groupNameids = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
+        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
 
-        if ($this->groupNameids === null || $this->userID === null) {
+        if ($this->groupNameIDs === null || $this->userID === null) {
             throw new \Exception("The User Variables Cannot be set Please try again");
         }
 
@@ -70,12 +69,12 @@ class HomeAppRoomAbstract
 
     public function getGroupNameID()
     {
-        return $this->groupNameids;
+        return $this->groupNameIDs;
     }
 
     public function getUserID()
     {
-        return $this->groupNameids;
+        return $this->groupNameIDs;
     }
 
 }

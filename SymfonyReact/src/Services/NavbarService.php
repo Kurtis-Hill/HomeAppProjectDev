@@ -26,7 +26,7 @@ class NavbarService extends HomeAppRoomAbstract
     {
         $roomRepository = $this->em->getRepository(Room::class);
 
-        return $roomRepository->getRoomsForUser($this->groupNameids);
+        return $roomRepository->getRoomsForUser($this->groupNameIDs);
     }
 
     public function getUsersRooms()
@@ -37,14 +37,14 @@ class NavbarService extends HomeAppRoomAbstract
 
     public function getAllSensorsByRoomForUser()
     {
-        $sensorByRoom = $this->em->getRepository(Sensornames::class)->getAllSensorsForUser($this->usersRooms, $this->groupNameids);
+        $sensorByRoom = $this->em->getRepository(Sensornames::class)->getAllSensorsForUser($this->usersRooms, $this->groupNameIDs);
 
         return $sensorByRoom;
     }
 
     public function getUsersDevices(): array
     {
-        $devices = $this->em->getRepository(Devices::class)->returnAllUsersDevices($this->groupNameids);
+        $devices = $this->em->getRepository(Devices::class)->returnAllUsersDevices($this->groupNameIDs);
 
         return $devices;
     }

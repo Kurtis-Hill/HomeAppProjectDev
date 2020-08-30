@@ -2,19 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e791815-29e9-4b31-83d3-899edd0da3a7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Entity/Core/GroupMapping.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Repository/Core/GroupNameMappingTableRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/components/AddNewSensor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/AddNewSensor.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Cards.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/components/Navbar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/CardContexts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/contexts/NavbarContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/contexts/NavbarContext.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/RegistrationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/RegistrationController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/Core/DevicesRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/Core/DevicesRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Services/CardDataService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/CardDataService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Services/NavbarService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/NavbarService.php" afterDir="false" />
     </list>
@@ -95,13 +85,25 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="544">
-                  <caret line="32" column="27" selection-start-line="32" selection-start-column="27" selection-end-line="32" selection-end-column="27" />
+                <state relative-caret-position="578">
+                  <caret line="34" column="27" selection-start-line="34" selection-start-column="27" selection-end-line="34" selection-end-column="27" />
                   <folding>
                     <element signature="e#37#70#0#PHP" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="65">
+                  <caret line="53" column="48" selection-start-line="53" selection-start-column="48" selection-end-line="53" selection-end-column="48" />
+                  <folding>
+                    <element signature="e#34#67#0#PHP" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -111,7 +113,7 @@
             <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="736">
-                  <caret line="54" column="37" selection-start-line="54" selection-start-column="31" selection-end-line="54" selection-end-column="37" />
+                  <caret line="52" column="37" selection-start-line="52" selection-start-column="31" selection-end-line="52" selection-end-column="37" />
                   <folding>
                     <element signature="e#41#71#0#PHP" expanded="true" />
                   </folding>
@@ -123,7 +125,7 @@
             <entry file="file://$PROJECT_DIR$/src/Entity/Core/GroupMapping.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="153">
-                  <caret line="9" column="2" lean-forward="true" selection-start-line="9" selection-start-column="2" selection-end-line="9" selection-end-column="2" />
+                  <caret line="9" column="2" selection-start-line="9" selection-start-column="2" selection-end-line="9" selection-end-column="2" />
                 </state>
               </provider>
             </entry>
@@ -160,7 +162,7 @@
             <entry file="file://$PROJECT_DIR$/src/Repository/Core/GroupNameMappingTableRepository.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="442">
-                  <caret line="26" column="27" lean-forward="true" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
+                  <caret line="26" column="27" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
                   <folding>
                     <element signature="e#41#75#0#PHP" expanded="true" />
                   </folding>
@@ -184,7 +186,7 @@
             <entry file="file://$PROJECT_DIR$/src/Services/CardDataService.php">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="765">
-                  <caret line="50" column="47" lean-forward="true" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
+                  <caret line="50" column="47" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
                 </state>
               </provider>
             </entry>
@@ -192,8 +194,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="206">
-                  <caret line="24" column="10" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="39" />
+                <state relative-caret-position="3536">
+                  <caret line="220" selection-start-line="220" selection-end-line="220" />
                   <folding>
                     <element signature="e#41#71#0#PHP" expanded="true" />
                   </folding>
@@ -245,7 +247,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/Controller/RegistrationController.php" />
         <option value="$PROJECT_DIR$/src/Entity/Core/Sensortype.php" />
         <option value="$PROJECT_DIR$/src/Form/CardViewForms/TempHumidFormType.php" />
         <option value="$PROJECT_DIR$/src/Form/CardViewForms/AnalogFormType.php" />
@@ -294,8 +295,9 @@
         <option value="$PROJECT_DIR$/src/Entity/Core/GroupMapping.php" />
         <option value="$PROJECT_DIR$/src/Entity/Core/User.php" />
         <option value="$PROJECT_DIR$/src/Repository/Core/GroupNameMappingTableRepository.php" />
-        <option value="$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php" />
         <option value="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" />
+        <option value="$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php" />
+        <option value="$PROJECT_DIR$/src/Controller/RegistrationController.php" />
       </list>
     </option>
   </component>
@@ -388,10 +390,10 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="3729" />
-    <option name="y" value="-1723" />
-    <option name="width" value="2180" />
-    <option name="height" value="786" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1382" />
+    <option name="height" value="784" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -417,14 +419,13 @@
               <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
               <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Entity" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
               <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Entity" type="462c0819:PsiDirectoryNode" />
-              <item name="Core" type="462c0819:PsiDirectoryNode" />
+              <item name="Form" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SymfonyReact" type="b2602c69:ProjectViewProjectNode" />
@@ -554,18 +555,18 @@
       <workItem from="1598197880104" duration="1323000" />
       <workItem from="1598645157396" duration="1208000" />
       <workItem from="1598783148788" duration="2344000" />
-      <workItem from="1598790680468" duration="9208000" />
+      <workItem from="1598790680468" duration="11794000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="175857000" />
+    <option name="totallyTimeSpent" value="178443000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3433" y="-1710" width="1455" height="2535" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49790794" visible="true" weight="0.11899642" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49790794" visible="true" weight="0.036247335" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" sideWeight="0.50209206" side_tool="true" weight="0.20347957" />
@@ -580,7 +581,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.17561382" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.45720476" />
       <window_info anchor="bottom" id="TypeScript" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -626,13 +627,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Form/CustomFormValidators/DallasTemperatureConstraintValidator.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="26" column="9" selection-start-line="26" selection-start-column="9" selection-end-line="26" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Form/CustomFormValidators/DallasTemperatureConstraint.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -797,13 +791,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="13" column="6" selection-start-line="13" selection-start-column="6" selection-end-line="13" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/Sensors/AddNewSensorController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
@@ -895,8 +882,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/Core/AddNewDevice.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="1" selection-start-line="22" selection-start-column="1" selection-end-line="22" selection-end-column="1" />
+        <state relative-caret-position="17">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
           <folding>
             <element signature="e#41#106#0#PHP" expanded="true" />
           </folding>
@@ -953,28 +940,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Entity/Core/User.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="7" selection-start-line="15" selection-start-column="7" selection-end-line="15" selection-end-column="7" />
-          <folding>
-            <element signature="e#35#67#0#PHP" expanded="true" />
-          </folding>
+        <state relative-caret-position="85">
+          <caret line="5" column="32" selection-start-line="5" selection-start-column="32" selection-end-line="5" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Entity/Core/GroupMapping.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
-          <caret line="9" column="2" lean-forward="true" selection-start-line="9" selection-start-column="2" selection-end-line="9" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="32" column="27" selection-start-line="32" selection-start-column="27" selection-end-line="32" selection-end-column="27" />
-          <folding>
-            <element signature="e#37#70#0#PHP" expanded="true" />
-          </folding>
+          <caret line="9" column="2" selection-start-line="9" selection-start-column="2" selection-end-line="9" selection-end-column="2" />
         </state>
       </provider>
     </entry>
@@ -991,7 +965,7 @@
     <entry file="file://$PROJECT_DIR$/src/Repository/Core/GroupNameMappingTableRepository.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
-          <caret line="26" column="27" lean-forward="true" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
+          <caret line="26" column="27" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
           <folding>
             <element signature="e#41#75#0#PHP" expanded="true" />
           </folding>
@@ -1001,16 +975,39 @@
     <entry file="file://$PROJECT_DIR$/src/Services/CardDataService.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="765">
-          <caret line="50" column="47" lean-forward="true" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
+          <caret line="50" column="47" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="24" column="10" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="39" />
+        <state relative-caret-position="736">
+          <caret line="52" column="37" selection-start-line="52" selection-start-column="31" selection-end-line="52" selection-end-column="37" />
           <folding>
             <element signature="e#41#71#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Form/RegistrationFormType.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="34" column="27" selection-start-line="34" selection-start-column="27" selection-end-line="34" selection-end-column="27" />
+          <folding>
+            <element signature="e#37#70#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="53" column="48" selection-start-line="53" selection-start-column="48" selection-end-line="53" selection-end-column="48" />
+          <folding>
+            <element signature="e#34#67#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
