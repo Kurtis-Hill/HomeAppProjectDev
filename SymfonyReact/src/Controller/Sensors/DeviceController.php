@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DeviceController extends AbstractController
 {
     /**
-     * @Route("/new-device/modal-data", name="navbar")
+     * @Route("/new-device/modal-data", name="navbar-new-device-data")
      */
     public function addNewDeviceModalData(DeviceService $deviceService, Request $request)
     {
@@ -30,5 +30,14 @@ class DeviceController extends AbstractController
         if (empty($errors)) {
             return new JsonResponse($secret, 200);
         }
+    }
+
+    /**
+     * @Route("/{deviceName}", name="navbar")
+     */
+    public function showDeviceSettings($deviceName, Request $request)
+    {
+        //query for device if no device redirect
+        return $this->render('index');
     }
 }

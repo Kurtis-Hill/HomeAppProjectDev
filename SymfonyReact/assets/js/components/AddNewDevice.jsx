@@ -9,6 +9,8 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = context.newDeviceModalContent;
 
+    const newSensorRoute = "/HomeApp/devices/"+newDeviceModalContent.newDeviceName;
+
     return (
         <React.Fragment>
             <div id="" style={context.addNewDeviceModalToggle !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-hidden="true">
@@ -61,7 +63,7 @@ const addNewDevice = () => {
                                         <p className="font-weight-bold"> {newDeviceModalContent.deviceSecret}</p>
                                         </div>
                                         <div className="center">
-                                        <a href="#" className="btn-primary" type="submit" value="submit">Got it!</a>
+                                        <a href={newSensorRoute} className="btn-primary" type="submit" value="submit">Got it!</a>
                                         </div>
                                     </div>
                                     : null
