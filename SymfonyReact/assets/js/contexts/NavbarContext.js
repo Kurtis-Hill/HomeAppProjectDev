@@ -6,7 +6,7 @@ import { getToken } from '../Utilities/Common';
 
 export const NavbarContext = createContext();
 
-const emptynewDeviceModalContent = {newDeviceName:'', deviceGroupNames:[], errors:[], formSubmit:null}
+const emptynewDeviceModalContent = {newDeviceName:'', deviceGroupNames:[], deviceRoom:[], deviceSecret:'', errors:[], formSubmit:false}
 
 export default class NavbarContextProvider extends Component {
     constructor(props) {
@@ -15,19 +15,19 @@ export default class NavbarContextProvider extends Component {
             rooms: [],
             devices: [],
             sensorNames: [],
+            groupNames: [],
             roomNavToggle: false,
             deviceSettingsNavToggle: false,
             showNavbarToggleSize: false,
             addNewDeviceModalToggle: false,
-            addNewDeviceModalLoading: false,
             newDeviceModalContent: emptynewDeviceModalContent,
         }
     }
 
     
     componentDidMount() {
-        this.navbarRoomLinks();
-        this.navbarDeviceLinks();
+        this.navbarData();
+        // this.navbarDeviceLinks();
     }
 
     //BEGGINING OF TAB METHODS
@@ -51,21 +51,11 @@ export default class NavbarContextProvider extends Component {
         }
     }
 
-    navbarRoomLinks = () => {
-        axios.get('/HomeApp/Navbar/rooms',
-        { headers: {"Authorization" : `BEARER ${getToken()}`} })
-        .then(response => {
-            this.setState({rooms: response.data})
-        }).catch(error => {
-            console.log(error);
-        })
-    }
-
-    navbarDeviceLinks = () => {
-        axios.get('/HomeApp/Navbar/devices',
+    navbarData = () => {
+        axios.get('/HomeApp/navbar/navbar-data',
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            this.setState({devices: response.data});
+            this.setState({devices: response.data.devices, rooms: response.data.rooms, groupNames: response.data.groupNames});
         }).catch(error => {
             console.log(error);
         })
@@ -77,37 +67,55 @@ export default class NavbarContextProvider extends Component {
 //  END OF TAB METHODS
 
 // START OF ADD NEW DEVICE METHODS
-// Can be refactored out after finsihed 
+// Can be refactored out after finsihed make a Navbar class use component drilling to share state and break into smaller componenets
     toggleNewDeviceModal = () => {
         this.setState({addNewDeviceModalToggle: !this.state.addNewDeviceModalToggle});
     }
 
     toggleNewDeviceLoading = () => {
-        this.setState({addNewDeviceModalLoading: !addNewDeviceModalLoading});
+        this.setState({addNewDeviceModalLoading: !addNewDeviceModalLoading, newDeviceModalContent:emptynewDeviceModalContent});
     }
 
-    getNewDeviceModalContent = () => {
+    handleNewDeviceFormSubmission = (event) => {
+        event.preventDefault();
 
-    }
+        this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
-    handleNewDeviceFormSubmission = () => {
+        const formData = new FormData(event.target);
 
+        const config = {     
+            headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
+        }
+
+        axios.post('/HomeApp/devices/new-device/modal-data', formData, config)
+        .then(response => {
+            console.log('submit response', response.data);
+            this.setState({addNewDeviceModalSubmit: false});
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data}});    
+            console.log('secret', this.state.newDeviceModalContent.deviceSecret);
+        })
+        .catch(error => {
+            if (error.status === 400) {
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.data}})
+            }
+        })
     }
 
     updateNewDeviceModalForm = (event) => {
-        const formInput = event.targe.value;
-
+        const formInput = event.target.value;
         switch(event.target.name) {
             case "device-name":
-                this.setState({newDeviceModalContent:{...newDeviceModalContent, newDeviceName: formInput}});
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
 
-            case "device-name":
-                this.setState({newDeviceModalContent:{...newDeviceModalContent, device: formInput}});
+            case "group-name":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, device: formInput}});
+                break;
+
+            case "room-name":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, deviceRoom: formInput}});
                 break;
         }
-
-        console.log('key up device modal', formInput);
     }
 
 
@@ -121,13 +129,15 @@ export default class NavbarContextProvider extends Component {
                 navbarSizeToggle: this.navbarSizeToggle,
                 navbarSize: this.state.showNavbarToggleSize,
                 userDevices: this.state.devices,
+                groupNames: this.state.groupNames,
                 roomNavToggle: this.state.roomNavToggle,
                 deviceSettingsNavToggle: this.state.deviceSettingsNavToggle,
                 toggleOffNavTabElement: this.toggleOffNavTabElement,
                 toggleNewDeviceModal: this.toggleNewDeviceModal,
                 addNewDeviceModalToggle: this.state.addNewDeviceModalToggle,
-                addNewDeviceModalLoading: this.state.addNewDeviceModalLoading,
                 newDeviceModalContent: this.state.newDeviceModalContent,
+                updateNewDeviceModalForm: this.updateNewDeviceModalForm,
+                handleNewDeviceFormSubmission: this.handleNewDeviceFormSubmission,
 
             }}>
                 {this.props.children}

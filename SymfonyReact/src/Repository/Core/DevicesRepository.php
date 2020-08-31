@@ -20,7 +20,7 @@ class DevicesRepository extends EntityRepository
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv.devicename');
         $qb->where(
-            $qb->expr()->eq('dv.groupnameid', ':groupNameID')
+            $qb->expr()->in('dv.groupnameid', ':groupNameID')
         )
         ->setParameters(['groupNameID' => $groupNameID]);
 

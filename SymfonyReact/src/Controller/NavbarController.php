@@ -11,50 +11,35 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp/Navbar", name="navbar")
+ * @Route("/HomeApp/navbar", name="navbar")
  */
 class NavbarController extends AbstractController
 {
     /**
-     * @Route("/rooms", name="userRooms")
+     * @Route("/navbar-data", name="navbar-data")
      * @param NavbarService $navbarService
      * @return JsonResponse
      */
-    public function getAllRooms(NavbarService $navbarService)
+    public function navBarData(NavbarService $navbarService)
     {
-        $rooms = $navbarService->getUsersRooms();
+        $navbarData = [];
 
-        return new JsonResponse($rooms);
-    }
+        $navbarData['rooms'] = $navbarService->getUsersRooms();
 
-    /**
-     * @Route("/SensorsByRoom")
-     * @param NavbarService $navbarService
-     * @return JsonResponse
-     */
-    public function getAllSensorsByRoom(NavbarService $navbarService)
-    {
-        $rooms = $navbarService->getAllSensorsByRoomForUser();
+        $navbarData['devices'] = $navbarService->getUserDevices();
 
-        return new JsonResponse($rooms);
-    }
+        $navbarData['groupNames'] = $navbarService->getUsersGroupNames();
 
-    /**
-     * @Route("/devices")
-     * @param NavbarService $navbarService
-     * @return JsonResponse
-     */
-    public function getAllDevicesForUser(NavbarService $navbarService)
-    {
-        $devices = $navbarService->getUsersDevices();
-
-        if (!$devices) {
-            return new JsonResponse('error no devices', 404);
+        if (empty($navbarData['rooms'])){
+            $navbarData['rooms'] = 'No Rooms You May Need To Add A Room First';
         }
 
-        return new JsonResponse($devices);
+        if (empty($navbarData['devices'])){
+            $navbarData['devices'] = 'No Devices You May Need To Add A Room First';
+        }
+
+
+        return new JsonResponse($navbarData);
     }
-
-
 
 }

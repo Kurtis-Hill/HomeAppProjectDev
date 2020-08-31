@@ -24,26 +24,26 @@ class SensorNamesRepository extends ServiceEntityRepository
 
     }
 
-    public function getAllSensorsForUser($rooms, $groupNameid)
-    {
-        $qb = $this->createQueryBuilder('sn');
-
-        $sensorByRoom = [];
-        foreach ($rooms as $value) {
-            $qb->select('sn')
-            ->where(
-                $qb->expr()->eq('sn.roomid', ':roomid'),
-                $qb->expr()->eq('sn.groupnameid', ':groupnameid')
-            )
-            ->setParameters(['roomid' => $value['r_roomid'], 'groupnameid' => $groupNameid]);
-
-            $result = $qb->getQuery()->getScalarResult();
-            $sensorByRoom[$value['r_room']] = $result;
-        }
-       // dd($sensorByRoom);
-
-        return $sensorByRoom;
-
-    }
+//    public function getAllSensorsForUser($rooms, $groupNameid)
+//    {
+//        $qb = $this->createQueryBuilder('sn');
+//
+//        $sensorByRoom = [];
+//        foreach ($rooms as $value) {
+//            $qb->select('sn')
+//            ->where(
+//                $qb->expr()->eq('sn.roomid', ':roomid'),
+//                $qb->expr()->eq('sn.groupnameid', ':groupnameid')
+//            )
+//            ->setParameters(['roomid' => $value['r_roomid'], 'groupnameid' => $groupNameid]);
+//
+//            $result = $qb->getQuery()->getScalarResult();
+//            $sensorByRoom[$value['r_room']] = $result;
+//        }
+//       // dd($sensorByRoom);
+//
+//        return $sensorByRoom;
+//
+//    }
 
 }
