@@ -50,6 +50,8 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/cardviewform&id={cardviewid}", name="cardViewForm")
+     * @param Request $request
+     * @return JsonResponse
      */
     public function showCardViewForm(Request $request, $cardviewid): JsonResponse
     {
@@ -66,6 +68,9 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/updatecardview", name="updateCardView")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
      */
     public function updateCardView(Request $request, CardDataService $cardDataService): JsonResponse
     {

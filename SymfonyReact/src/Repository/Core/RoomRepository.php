@@ -13,7 +13,7 @@ class RoomRepository extends EntityRepository
 
         $qb->select('r')
             ->where(
-                $qb->expr()->eq('r.groupnameid', ':groupnameid')
+                $qb->expr()->in('r.groupnameid', ':groupnameid')
             )
             ->setParameter('groupnameid', $groupNameid);
 

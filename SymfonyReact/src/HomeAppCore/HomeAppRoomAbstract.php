@@ -32,7 +32,7 @@ class HomeAppRoomAbstract
     /**
      * @var GroupMapping
      */
-    protected $groupNameIDs;
+    protected $groupNameIDs = [];
 
 
     /**
@@ -44,8 +44,8 @@ class HomeAppRoomAbstract
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
-
         $this->user = $security;
+
         try {
             $this->setUserVariables();
         } catch (\Exception $e) {
@@ -61,7 +61,7 @@ class HomeAppRoomAbstract
         $this->userID = $this->user->getUser()->getUserid();
         $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
 
-        if ($this->groupNameIDs === null || $this->userID === null) {
+        if (!$this->groupNameIDs || !$this->userID) {
             throw new \Exception("The User Variables Cannot be set Please try again");
         }
 
@@ -74,7 +74,7 @@ class HomeAppRoomAbstract
 
     public function getUserID()
     {
-        return $this->groupNameIDs;
+        return $this->userID;
     }
 
 }
