@@ -41,7 +41,7 @@ class CardContextProvider extends Component {
     //Fetches all the card data to be displayed on the index page
     fetchIndexCardData = () => {
         axios.get('/HomeApp/api/CardData/index', 
-            { headers: {"Authorization" : `Bearer ${getToken()}`} }
+            { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
             this.setState({cardData:response.data.sensorData})
@@ -133,8 +133,8 @@ class CardContextProvider extends Component {
         switch(event.target.name) {
             case "icon":
                 const selectText = document.getElementById('icon-select');
-                const opt = selectText.options[selectText.selectedIndex];
-                this.setState({modalContent:{...this.state.modalContent, currentIcon: lowercaseFirstLetter(opt.text), iconID: value}});
+                const option = selectText.options[selectText.selectedIndex];
+                this.setState({modalContent:{...this.state.modalContent, currentIcon: lowercaseFirstLetter(option.text), iconID: value}});
                 break;
 
             case "cardColour":
@@ -191,7 +191,7 @@ class CardContextProvider extends Component {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
         
-        axios.post('/HomeApp/api/CardData/updatecardview',formData, config)
+        axios.post('/HomeApp/api/CardData/updatecardview', formData, config)
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true}});
 

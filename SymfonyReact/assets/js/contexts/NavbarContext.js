@@ -2,97 +2,143 @@ import React, { Component, createContext } from 'react';
 import ReactDOM from "react-dom";
 import axios from 'axios';
 
+import { getToken } from '../Utilities/Common';
+
 export const NavbarContext = createContext();
 
-const token = sessionStorage.getItem('token');
+const emptynewDeviceModalContent = {newDeviceName:'', deviceGroupNames:[], deviceRoom:[], deviceSecret:'', errors:[], formSubmit:false}
 
 export default class NavbarContextProvider extends Component {
     constructor(props) {
-        super(props);
-        
+        super(props);        
         this.state = {
             rooms: [],
+            devices: [],
             sensorNames: [],
+            groupNames: [],
             roomNavToggle: false,
-            settingsNavToggle: false,
-            showNavbarToggle: false,
+            deviceSettingsNavToggle: false,
+            showNavbarToggleSize: false,
+            addNewDeviceModalToggle: false,
+            newDeviceModalContent: emptynewDeviceModalContent,
         }
-      //  this.navbarRoomLinks();
     }
 
     
     componentDidMount() {
-        //if HomeApp/index fetchIndexCardData if Rooms fetch cardsForRoom()
-        // this.axiosToken();
-      
-        this.navbarRoomLinks();
+        this.navbarData();
+        // this.navbarDeviceLinks();
     }
 
     //BEGGINING OF TAB METHODS
-    openNavTabElement = (navDropDownElement) => {       
+    toggleShowNavTabElement = (navDropDownElement) => {       
         if (navDropDownElement === 'room') {
-            this.setState({roomNavToggle: !this.state.roomNavToggle}) 
+            this.setState({roomNavToggle: !this.state.roomNavToggle});
         }
         
-        if (navDropDownElement === 'settings') {
-            this.setState({settingsNavToggle: !this.state.settingsNavToggle}) 
+        if (navDropDownElement === 'device-settings') {
+            this.setState({deviceSettingsNavToggle: !this.state.deviceSettingsNavToggle});
         }
     }
 
-    closeNavTabElement = (navDropDownElement) => {
+    toggleOffNavTabElement = (navDropDownElement) => {       
         if (navDropDownElement === 'room') {
-            this.setState({roomNavToggle: false}) 
+            this.setState({roomNavToggle: false});
         }
         
-        if (navDropDownElement === 'settings') {
-            this.setState({settingsNavToggle: false}) 
+        if (navDropDownElement === 'device-settings') {
+            this.setState({deviceSettingsNavToggle: false});
         }
     }
 
-
-    navTabToggleStyle = (tab) => {
-        if (tab === 'room') {
-            const navRoomStyle = this.state.roomNavToggle === true ? 'collapse show' : 'collapse';
-            
-            return navRoomStyle;
-        }
-
-        if (tab === 'settings') {
-            const navSettingsStyle = this.state.settingsNavToggle === true ? 'collapse show' : 'collapse';
-            
-            return navSettingsStyle;
-        }
-    }
-
-
-    navbarRoomLinks = () => {
-        axios.get('/HomeApp/Navbar/rooms',
-        { headers: {"Authorization" : `Bearer ${token}`} })
+    navbarData = () => {
+        axios.get('/HomeApp/navbar/navbar-data',
+        { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            console.log('NavbarRoomLinks', response.data);
-            this.setState({rooms: response.data})
+            this.setState({devices: response.data.devices, rooms: response.data.rooms, groupNames: response.data.groupNames});
         }).catch(error => {
             console.log(error);
         })
     }
 
     navbarSizeToggle = () => {
-        console.log('nav toggle pressed')
-        //@TODO need to toggle nav bar size doesnt work currently need to swap class over
-        this.setState({showNavbarToggle: !this.state.showNavbarToggle});
+        this.setState({showNavbarToggleSize: !this.state.showNavbarToggleSize});
     }
 //  END OF TAB METHODS
+
+// START OF ADD NEW DEVICE METHODS
+// Can be refactored out after finsihed make a Navbar class use component drilling to share state and break into smaller componenets
+    toggleNewDeviceModal = () => {
+        this.setState({addNewDeviceModalToggle: !this.state.addNewDeviceModalToggle});
+    }
+
+    toggleNewDeviceLoading = () => {
+        this.setState({addNewDeviceModalLoading: !addNewDeviceModalLoading, newDeviceModalContent:emptynewDeviceModalContent});
+    }
+
+    handleNewDeviceFormSubmission = (event) => {
+        event.preventDefault();
+
+        this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
+
+        const formData = new FormData(event.target);
+
+        const config = {     
+            headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
+        }
+
+        axios.post('/HomeApp/devices/new-device/modal-data', formData, config)
+        .then(response => {
+            console.log('submit response', response.data);
+            this.setState({addNewDeviceModalSubmit: false});
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data}});    
+            console.log('secret', this.state.newDeviceModalContent.deviceSecret);
+        })
+        .catch(error => {
+            if (error.status === 400) {
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.data}})
+            }
+        })
+    }
+
+    updateNewDeviceModalForm = (event) => {
+        const formInput = event.target.value;
+        switch(event.target.name) {
+            case "device-name":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
+                break;
+
+            case "group-name":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, device: formInput}});
+                break;
+
+            case "room-name":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, deviceRoom: formInput}});
+                break;
+        }
+    }
+
+
 
 
     render() {
         return (
             <NavbarContext.Provider value={{
-                openNavElement: this.openNavTabElement,
-                navStyle: this.navTabToggleStyle,
-                closeNavElemnt: this.closeNavTabElement,
-                navRooms: this.state.rooms,
+                toggleNavElement: this.toggleShowNavTabElement,
+                userRooms: this.state.rooms,
                 navbarSizeToggle: this.navbarSizeToggle,
-                navbarSize: this.state.navbarToggle,
+                navbarSize: this.state.showNavbarToggleSize,
+                userDevices: this.state.devices,
+                groupNames: this.state.groupNames,
+                roomNavToggle: this.state.roomNavToggle,
+                deviceSettingsNavToggle: this.state.deviceSettingsNavToggle,
+                toggleOffNavTabElement: this.toggleOffNavTabElement,
+                toggleNewDeviceModal: this.toggleNewDeviceModal,
+                addNewDeviceModalToggle: this.state.addNewDeviceModalToggle,
+                newDeviceModalContent: this.state.newDeviceModalContent,
+                updateNewDeviceModalForm: this.updateNewDeviceModalForm,
+                handleNewDeviceFormSubmission: this.handleNewDeviceFormSubmission,
+
             }}>
                 {this.props.children}
             </NavbarContext.Provider>

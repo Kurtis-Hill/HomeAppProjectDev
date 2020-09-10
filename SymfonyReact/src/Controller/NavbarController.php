@@ -11,33 +11,35 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp/Navbar", name="navbar")
+ * @Route("/HomeApp/navbar", name="navbar")
  */
 class NavbarController extends AbstractController
 {
     /**
-     * @Route("/rooms", name="userRooms")
+     * @Route("/navbar-data", name="navbar-data")
      * @param NavbarService $navbarService
      * @return JsonResponse
      */
-    public function getAllRooms(NavbarService $navbarService)
+    public function navBarData(NavbarService $navbarService)
     {
-        $rooms = $navbarService->getUsersRooms();
+        $navbarData = [];
 
-        return new JsonResponse($rooms);
+        $navbarData['rooms'] = $navbarService->getUsersRooms();
+
+        $navbarData['devices'] = $navbarService->getUserDevices();
+
+        $navbarData['groupNames'] = $navbarService->getUsersGroupNames();
+
+        if (empty($navbarData['rooms'])){
+            $navbarData['rooms'] = 'No Rooms You May Need To Add A Room First';
+        }
+
+        if (empty($navbarData['devices'])){
+            $navbarData['devices'] = 'No Devices You May Need To Add A Room First';
+        }
+
+
+        return new JsonResponse($navbarData);
     }
-
-    /**
-     * @Route("/SensorsByRoom")
-     * @param NavbarService $navbarService
-     * @return JsonResponse
-     */
-    public function getAllSensorsByRoom(NavbarService $navbarService)
-    {
-        $rooms = $navbarService->getAllSensorsByRoom();
-
-        return new JsonResponse($rooms);
-    }
-
 
 }

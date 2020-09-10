@@ -80,7 +80,7 @@ function Login(props) {
                                                     <hr />        
                                                 </form>                                               
                                                 <div className="text-center">
-                                                    <Link to={createAccountLink} className="small login-form-field" href="register.html">Create an Account!</Link>
+                                                    <a href={createAccountLink} className="small login-form-field" href="register.html">Create an Account!</a>
                                                 </div>
                                             </div>
                                         </div>

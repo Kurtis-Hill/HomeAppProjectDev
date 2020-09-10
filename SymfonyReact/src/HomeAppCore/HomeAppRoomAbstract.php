@@ -4,45 +4,48 @@
 namespace App\HomeAppCore;
 
 
-use App\Entity\Core\Groupname;
-use App\Entity\Core\Room;
-use App\Entity\Core\Sensortype;
+use App\Entity\Core\GroupMapping;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\Security\Core\Security;
 
 class HomeAppRoomAbstract
 {
-    protected $user;
+    /**
+     * @var Security
+     */
+    private $user;
 
-    protected $currentRoom;
-
-    protected $userID;
-
-    protected $currentSensorType;
-
-    protected $allSensorTypes;
-
+    /**
+     * @var EntityManager|EntityManagerInterface
+     */
     protected $em;
 
-    protected $groupNameid;
+    /**
+     * @var User
+     */
+    protected $userID;
 
 
+    /**
+     * @var GroupMapping
+     */
+    protected $groupNameIDs = [];
 
 
     /**
      * HomeAppRoomAbstract constructor.
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
+     * @param Security $security
+     *
      */
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
-
         $this->user = $security;
+
         try {
             $this->setUserVariables();
         } catch (\Exception $e) {
@@ -50,25 +53,28 @@ class HomeAppRoomAbstract
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private function setUserVariables()
     {
-        $this->groupNameid = $this->user->getUser()->getGroupNameId();
         $this->userID = $this->user->getUser()->getUserid();
+        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
 
-        if ($this->groupNameid === null || $this->userID === null) {
-            throw new Exception("The User Variables Cannot be set Please try again");
+        if (!$this->groupNameIDs || !$this->userID) {
+            throw new \Exception("The User Variables Cannot be set Please try again");
         }
 
     }
 
     public function getGroupNameID()
     {
-        return $this->groupNameid;
+        return $this->groupNameIDs;
     }
 
     public function getUserID()
     {
-        return $this->groupNameid;
+        return $this->userID;
     }
 
 }

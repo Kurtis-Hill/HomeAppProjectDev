@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { NavbarContext } from '../contexts/NavbarContext';
 
 
-
 const Navbar = () => {
     const context = useContext(NavbarContext);
     
@@ -11,19 +10,22 @@ const Navbar = () => {
     
     const settingRoute = "settings/";
     const roomRoute = "rooms/";  
-    const homeRoute = "index/";  
-    const newSensorRoute = "sensors/new-sensor"
-    
+    const homeRoute = "/HomeApp/index/";  
+    const newSensorRoute = "sensors/new-sensor";
+
+
+    const deviceNavShowToggle = context.deviceSettingsNavToggle === true ? 'show' : null;
+    const roomNavShowToggle = context.roomNavToggle === true ? 'show' : null;
+
     return ( 
         
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "+ navbarCollapse} id="accordionSidebar">
-      
-                <Link className="sidebar-brand d-flex align-items-center justify-content-center" to={homeRoute}>
+                <a href={homeRoute} className="sidebar-brand d-flex align-items-center justify-content-center">
                     <div className="sidebar-brand-icon rotate-n-15">
                         <i className="fas fa-home" />
                     </div>
                     <div className="sidebar-brand-text mx-3">Home App <sup>2</sup></div>
-                </Link>
+                </a>
               
                 <hr className="sidebar-divider my-0" />
               
@@ -38,49 +40,38 @@ const Navbar = () => {
                 <div className="sidebar-heading">
                     Interface
                 </div>
-               
-              
-                <li className="nav-item" onMouseEnter={() => {context.openNavElement('room')}} onMouseLeave={() => {context.closeNavElemnt('room')}}>
+                             
+                <li className="nav-item" onClick={() => {{context.toggleNavElement('room')}}} onMouseEnter={() => {context.toggleNavElement('room')}} onMouseLeave={() => {context.toggleOffNavTabElement('room')}}>
                     <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                         <i className="fas fa-fw fa-person-booth"/>
                         <span>Room</span>
                     </a>
-                    <div id="collapseTwo" className={context.navStyle('room')} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div id="collapseTwo" className={'collapse '+ roomNavShowToggle} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">View Room:</h6>
-                        {context.navRooms.map((navRoom, index) => (
-                        
+                        {context.userRooms.map((navRoom) => (                        
                             <a key={navRoom.r_roomid} className="collapse-item" href={roomRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
                         ))}
-                        {/* {context.navRooms} */}
                     </div>
                     </div>
                 </li>
             
-                <li className="nav-item" onMouseEnter={() => {context.openNavElement('settings')}} onMouseLeave={() => {context.closeNavElemnt('settings')}}>
+                <li className="nav-item" onClick={() => {{context.toggleNavElement('device-settings')}}} onMouseEnter={() => {context.toggleNavElement('device-settings')}} onMouseLeave={() => {context.toggleOffNavTabElement('device-settings')}}>
                     <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-                        <i className="fas fa-fw fa-wrench" />
-                        <span>Settings</span>
-                    </a>
-                    <div id="collapseTwo" className={context.navStyle('settings')} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div className="bg-white py-2 collapse-inner rounded">
-                        <h6 className="collapse-header">Settings:</h6>
-                        {/* {context.navRooms} */}
-                        {context.navRooms.map((navRoom, index) => (
-                            // WANTS TO BE LINK
-                            <a key={navRoom.r_roomid} className="collapse-item" href={settingRoute+navRoom.r_roomid}>{navRoom.r_room}</a>
-                        ))}
-                         <Link to={newSensorRoute} className="collapse-item">+Add New Device</Link>
-                    </div>
-                    </div>
-                </li>
-
-                <li className="nav-item">
-                    <a className="nav-link" href="charts.html">
                         <i className="fas fa-fw fa-microchip" />
-                        <span>+ Add New Device</span></a>
-                </li>
-          
+                        <span>Device Settings</span>
+                    </a>
+                    <div id="collapseTwo" className={'collapse '+deviceNavShowToggle} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div className="bg-white py-2 collapse-inner rounded">
+                        <h6 className="collapse-header">Devices:</h6>
+                        {context.userDevices.map((devices) => (
+                            <a key={devices.devicename} className="collapse-item" href={settingRoute+devices.devicename}>{devices.devicename}</a>
+                        ))}
+                         <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
+                    </div>
+                    </div>                    
+                </li>            
+
                 <hr className="sidebar-divider" />
         
                 <div className="sidebar-heading">

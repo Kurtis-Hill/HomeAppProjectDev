@@ -15,11 +15,12 @@ class CardviewRepository extends EntityRepository
      * @param $groupNameID
      * @param $userID
      * @param null $type
+     * @param null $room
      * @return array|mixed
 
      */
 
-    public function getAllCardReadings($groupNameID, $userID, $type = null, $room = null)
+    public function getAllCardReadings($groupNameIDs, $userID, $type = null, $room = null)
     {
         $cardViewOne = Cardstate::ON;
 
@@ -31,9 +32,9 @@ class CardviewRepository extends EntityRepository
                 $cardViewTwo = Cardstate::ROOM_ONLY;
         }
 
-
         $qb = $this->createQueryBuilder('cv');
          $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
+
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -48,9 +49,9 @@ class CardviewRepository extends EntityRepository
                  $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
              ),
              $qb->expr()->eq('cv.userid', ':userid'),
-             $qb->expr()->eq('s.groupnameid', ':groupNameID')
+             $qb->expr()->in('s.groupnameid', ':groupNameID')
          )
-             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
 
          $result = null;
 
@@ -64,8 +65,15 @@ class CardviewRepository extends EntityRepository
         return $result;
     }
 
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed|null
+     */
     public function getAnalogCardReadings($groupNameID, $userID, $type = null)
     {
+
         $qb = $this->createQueryBuilder('cv');
         $qb->select('a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -79,7 +87,7 @@ class CardviewRepository extends EntityRepository
                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
+                $qb->expr()->in('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => Cardstate::ON, 'cardviewTwo' => Cardstate::INDEX_ONLY]);
 
@@ -90,9 +98,16 @@ class CardviewRepository extends EntityRepository
         else {
             $result = $qb->getQuery()->getResult();
         }
+
         return $result;
     }
 
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed|null
+     */
     public function getTempCardReadings($groupNameID, $userID, $type = null)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -108,7 +123,7 @@ class CardviewRepository extends EntityRepository
                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
+                $qb->expr()->in('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
@@ -123,6 +138,12 @@ class CardviewRepository extends EntityRepository
         return $result;
     }
 
+    /**
+     * @param $groupNameID
+     * @param $userID
+     * @param null $type
+     * @return array|mixed|null
+     */
     public function getHumidCardReadings($groupNameID, $userID, $type = null)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -138,7 +159,7 @@ class CardviewRepository extends EntityRepository
                     $qb->expr()->eq('cv.cardstateid', ':cardviewTwo'),
                 ),
                 $qb->expr()->eq('cv.userid', ':userid'),
-                $qb->expr()->eq('s.groupnameid', ':groupNameID')
+                $qb->expr()->in('s.groupnameid', ':groupNameID')
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
@@ -154,7 +175,11 @@ class CardviewRepository extends EntityRepository
     }
 
 
-    //Add left join for additional sensors
+    /**
+     * Add left join for additional sensors
+     * @param array $criteria
+     * @return mixed
+     */
     public function getCardFormData(array $criteria)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -177,6 +202,10 @@ class CardviewRepository extends EntityRepository
         return $result[0];
     }
 
+    /**
+     * @param array $criteria
+     * @return mixed
+     */
     public function getUsersCurrentCardData(array $criteria)
     {
         $qb = $this->createQueryBuilder('cv');
@@ -191,7 +220,6 @@ class CardviewRepository extends EntityRepository
             ->setParameters(['id' => $criteria['id'], 'userid' => $criteria['userID']]);
 
         $result = $qb->getQuery()->getResult();
-        //dd($result);
 
         $sensorResults["cardView"] = $result[0];
         $sensorResults["temp"] = $result[1];

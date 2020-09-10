@@ -14,36 +14,39 @@ import NavbarContextProvider from "./contexts/NavbarContext";
 import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
+import AddNewSensor from './components/AddNewSensor';
+import AddNewDevice from './components/AddNewDevice';
 
 export default class App extends Component {
-    // @TODO PROFILE BAR NEEDS LOOKING ATc
     render() {
         return (                
         <Router>
             <Switch>
                 <Route exact path="/HomeApp/login" component={Login}/>
                 <Route exact path="/HomeApp/register"/>
-                <Route exact path="/HomeApp/logout" component={removeUserSession}/>
+                <Route exact path="/HomeApp/logout" onEnter={() => removeUserSession()}/>
                 <React.Fragment>
                     <div id="page-top">
                         <div id="wrapper">                     
-                            <NavbarContextProvider>
+                            <NavbarContextProvider>                                
                                 <Navbar/>
+                                <AddNewDevice/>
                             </NavbarContextProvider>                                               
                             <div id="content-wrapper" className="d-flex flex-column">
                                 <div id="content">  
-                                    <Route path="/HomeApp/index">                                                                 
-                                        <Profilebar></Profilebar>                                 
+                                <Profilebar></Profilebar>
+                                    <Route path="/HomeApp/index">                                                                                                                                         
                                             <CardContextProvider>
                                                 <Cards/>       
                                                 <CardModal/>                                 
                                             </CardContextProvider>                                        
                                     </Route>
-                                        <Route path="HomeApp/sensors/new-sensor">
-                                            <Profilebar></Profilebar>  
+
+                                    <Route path="/HomeApp/sensors/new-sensor">                                            
                                     </Route>
+                                    {/* <Route path="/HomeApp/sensor/:sensorname/" component={AddNewSensor}/>  */}
                                 </div>
-                            </div>                        
+                            </div>1                        
                         </div>
                     </div>
                 </React.Fragment>
