@@ -4,15 +4,11 @@ security:
         App\Entity\Core\User:
             algorithm: auto
 
-
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: App\Entity\Core\User
                 property: email
-        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -38,11 +34,6 @@ security:
                     - App\Security\UserAuthenticator
             logout:
                 path: app_logout
-
-
-#        main:
-#            anonymous: true
-
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
