@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1e791815-29e9-4b31-83d3-899edd0da3a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/Controller/RegistrationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/RegistrationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/HomeAppCore/HomeAppRoomAbstract.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/Card/CardviewRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Services/CardDataService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/CardDataService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Services/NavbarService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/NavbarService.php" afterDir="false" />
-    </list>
+    <list default="true" id="1e791815-29e9-4b31-83d3-899edd0da3a7" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +94,7 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="65">
+                <state relative-caret-position="119">
                   <caret line="53" column="48" selection-start-line="53" selection-start-column="48" selection-end-line="53" selection-end-column="48" />
                   <folding>
                     <element signature="e#34#67#0#PHP" expanded="true" />
@@ -555,18 +549,17 @@
       <workItem from="1598197880104" duration="1323000" />
       <workItem from="1598645157396" duration="1208000" />
       <workItem from="1598783148788" duration="2344000" />
-      <workItem from="1598790680468" duration="11794000" />
+      <workItem from="1598790680468" duration="12403000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="178443000" />
+    <option name="totallyTimeSpent" value="179052000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49790794" visible="true" weight="0.036247335" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49790794" visible="true" weight="0.036247335" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" sideWeight="0.50209206" side_tool="true" weight="0.20347957" />
@@ -581,7 +574,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.45720476" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.45720476" />
       <window_info anchor="bottom" id="TypeScript" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1004,7 +997,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
+        <state relative-caret-position="119">
           <caret line="53" column="48" selection-start-line="53" selection-start-column="48" selection-end-line="53" selection-end-column="48" />
           <folding>
             <element signature="e#34#67#0#PHP" expanded="true" />
