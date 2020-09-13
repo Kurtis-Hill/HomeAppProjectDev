@@ -26,16 +26,17 @@ const addNewDevice = () => {
                             {
                             newDeviceModalContent.errors.length > 0 ?                
                                 <div className="error-container">
-                                <div className="form-modal-error-box">
-                                    <ol>
-                                    {newDeviceModalContent.errors.map((error, index) => (
-                                    <li key={index} className="form-modal-error-text">{error}</li>
-                                    ))}
-                                    </ol>
-                                </div>
+                                    <div className="form-modal-error-box">
+                                        <ol>
+                                            {newDeviceModalContent.errors.map((error, index) => (
+                                                <li key={index} className="form-modal-error-text">{error}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
                                 </div>                
                             : null
                             }
+                            {console.log('context', newDeviceModalContent.errors)}
                             <div className="modal-body">
                                 {newDeviceModalContent.formSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                                 
@@ -56,7 +57,7 @@ const addNewDevice = () => {
                                     ))}
                                 </select>
                                 {
-                                    newDeviceModalContent.deviceSecret !== '' ?
+                                    newDeviceModalContent.deviceSecret !== null ?
                                     <div className="secret-container">
                                     <label className="modal-space large font-weight-bold">This is your devices secret, you will need this when doing an initial setup of yout device</label>                                
                                         <div className="secret-box">

@@ -91,12 +91,11 @@ class CardDataController extends AbstractController
                 'cardcolourid' => $request->get('cardColour'),
                 'cardiconid' => $request->get('icon'),
                 'cardstateid' => $request->get('cardViewState'),
-                ]
+            ]
         );
 
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
             $form = null;
-            $em = $this->getDoctrine()->getManager();
 
             if ($sensorType === 'DHT') {
                 $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
@@ -162,13 +161,14 @@ class CardDataController extends AbstractController
             return new JsonResponse(['errors' => $errors], 400);
         }
         else {
+            $em = $this->getDoctrine()->getManager();
             try {
                 $em->flush();
             } catch (\Exception $e) {
                 $e->getMessage();
             }
 
-            return new JsonResponse('sucess', 200);
+            return new JsonResponse('success', 200);
         }
     }
 }

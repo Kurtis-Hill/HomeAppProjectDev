@@ -24,7 +24,7 @@ class DevicesRepository extends EntityRepository
         )
         ->setParameters(['groupNameID' => $groupNameID]);
 
-        $result = $qb->getQuery()->getArrayResult();
+        $result = $qb->getQuery()->getScalarResult();
 //dd($result);
         return $result;
     }

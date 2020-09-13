@@ -6,7 +6,7 @@ import { getToken } from '../Utilities/Common';
 
 export const NavbarContext = createContext();
 
-const emptynewDeviceModalContent = {newDeviceName:'', deviceGroupNames:[], deviceRoom:[], deviceSecret:'', errors:[], formSubmit:false}
+const emptynewDeviceModalContent = {newDeviceName:'', deviceGroupNames:[], deviceRoom:[], deviceSecret:null, errors:[], formSubmit:false}
 
 export default class NavbarContextProvider extends Component {
     constructor(props) {
@@ -91,12 +91,20 @@ export default class NavbarContextProvider extends Component {
         .then(response => {
             console.log('submit response', response.data);
             this.setState({addNewDeviceModalSubmit: false});
-            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data}});    
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data, errors:[]}});    
             console.log('secret', this.state.newDeviceModalContent.deviceSecret);
         })
         .catch(error => {
-            if (error.status === 400) {
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.data}})
+            const status = error.response.status;
+            if (status === 400) {
+                console.log('FAILEDDD');
+                console.log('errors', error.response.data);
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.errors, formSubmit:false, deviceSecret: null}});
+                console.log(this.state.newDeviceModalContent.errors);
+            }
+            if (status === 500) {
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false, deviceSecret: null}});
+                alert('Something went wrong please try again');
             }
         })
     }

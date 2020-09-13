@@ -45,7 +45,7 @@ class Temp
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private $lowtemp = '12';
+    private $lowtemp;
 
     /**
      * @var bool

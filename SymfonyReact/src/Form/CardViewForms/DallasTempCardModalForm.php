@@ -18,9 +18,7 @@ class DallasTempCardModalForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //     dd($options['cardSensorState']);
         $builder
-
             ->add('hightemp', TextType::class, [
                 'required' => true,
                 'constraints' => [
