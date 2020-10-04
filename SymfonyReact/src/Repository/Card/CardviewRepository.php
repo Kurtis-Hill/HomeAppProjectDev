@@ -12,28 +12,19 @@ use function Doctrine\ORM\QueryBuilder;
 class CardviewRepository extends EntityRepository
 {
     /**
-     * @param $groupNameID
+     * @param $groupNameIDs
      * @param $userID
      * @param null $type
-     * @param null $room
+     * @param array $deviceDetails
      * @return array|mixed
-
      */
 
-    public function getAllCardReadings($groupNameIDs, $userID, $type = null, $room = null)
+    public function getAllCardReadings($groupNameIDs, $userID, $type = null, $deviceDetails = [])
     {
         $cardViewOne = Cardstate::ON;
 
-        switch ($room) {
-            case 'index':
-                $cardViewTwo = Cardstate::INDEX_ONLY;
-                break;
-            case 'room' :
-                $cardViewTwo = Cardstate::ROOM_ONLY;
-        }
-
         $qb = $this->createQueryBuilder('cv');
-         $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
+        $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
 
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
@@ -50,8 +41,21 @@ class CardviewRepository extends EntityRepository
              ),
              $qb->expr()->eq('cv.userid', ':userid'),
              $qb->expr()->in('s.groupnameid', ':groupNameID')
-         )
-             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+         );
+
+        if (empty($deviceDetails)) {
+            $cardViewTwo = Cardstate::INDEX_ONLY;
+            $qb->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+        }
+        else {
+            $cardViewTwo = Cardstate::ROOM_ONLY;
+            $qb->andWhere(
+                $qb->expr()->eq('s.sensorname', ':deviceName'),
+                $qb->expr()->eq('s.groupnameid', ':deviceGroup'),
+                $qb->expr()->eq('r.room', ':deviceRoom')
+            );
+            $qb->setParameters(['deviceName' => $deviceDetails[0], 'deviceGroup' => $deviceDetails[1], 'deviceRoom' => $deviceDetails[2], 'userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+        }
 
          $result = null;
 

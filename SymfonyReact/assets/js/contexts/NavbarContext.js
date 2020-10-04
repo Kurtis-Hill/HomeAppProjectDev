@@ -2,11 +2,11 @@ import React, { Component, createContext } from 'react';
 import ReactDOM from "react-dom";
 import axios from 'axios';
 
-import { getToken } from '../Utilities/Common';
+import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
 
 export const NavbarContext = createContext();
 
-const emptynewDeviceModalContent = {newDeviceName:'', deviceGroupNames:[], deviceRoom:[], deviceSecret:null, errors:[], formSubmit:false}
+const emptynewDeviceModalContent = {newDeviceName:'', newDeviceRoom:'', newDeviceGroup:'', deviceSecret:null, errors:[], formSubmit:false}
 
 export default class NavbarContextProvider extends Component {
     constructor(props) {
@@ -51,6 +51,16 @@ export default class NavbarContextProvider extends Component {
         }
     }
 
+    toggleOnNavTabElement = (navDropDownElement) => {       
+        if (navDropDownElement === 'room') {
+            this.setState({roomNavToggle: true});
+        }
+        
+        if (navDropDownElement === 'device-settings') {
+            this.setState({deviceSettingsNavToggle: true});
+        }
+    }
+
     navbarData = () => {
         axios.get('/HomeApp/navbar/navbar-data',
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
@@ -78,11 +88,17 @@ export default class NavbarContextProvider extends Component {
 
     handleNewDeviceFormSubmission = (event) => {
         event.preventDefault();
-
+        
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
+        
+        const roomNameElement = document.getElementById('device-room');
+        const deviceRoom = roomNameElement.options[roomNameElement.selectedIndex].text;
+
+        const groupNameElement = document.getElementById('group-name');
+        const deviceGroup = groupNameElement.options[groupNameElement.selectedIndex].value;
 
         const formData = new FormData(event.target);
-
+        
         const config = {     
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
@@ -91,8 +107,9 @@ export default class NavbarContextProvider extends Component {
         .then(response => {
             console.log('submit response', response.data);
             this.setState({addNewDeviceModalSubmit: false});
-            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data, errors:[]}});    
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data, errors:[], newDeviceRoom:deviceRoom, newDeviceGroup:deviceGroup}});    
             console.log('secret', this.state.newDeviceModalContent.deviceSecret);
+            // console.log('device room', this.state.newDeviceModalContent.deviceRoom);
         })
         .catch(error => {
             const status = error.response.status;
@@ -116,13 +133,13 @@ export default class NavbarContextProvider extends Component {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
 
-            case "group-name":
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, device: formInput}});
-                break;
+            // case "group-name":
+            //     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, device: formInput}});
+            //     break;
 
-            case "room-name":
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, deviceRoom: formInput}});
-                break;
+            // case "room-name":
+            //     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, deviceRoom: formInput}});
+            //     break;
         }
     }
 
@@ -141,6 +158,7 @@ export default class NavbarContextProvider extends Component {
                 roomNavToggle: this.state.roomNavToggle,
                 deviceSettingsNavToggle: this.state.deviceSettingsNavToggle,
                 toggleOffNavTabElement: this.toggleOffNavTabElement,
+                toggleOnNavTabElement:this.toggleOnNavTabElement,
                 toggleNewDeviceModal: this.toggleNewDeviceModal,
                 addNewDeviceModalToggle: this.state.addNewDeviceModalToggle,
                 newDeviceModalContent: this.state.newDeviceModalContent,

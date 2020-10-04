@@ -41,7 +41,7 @@ const Navbar = () => {
                     Interface
                 </div>
                              
-                <li className="nav-item" onClick={() => {{context.toggleNavElement('room')}}} onMouseEnter={() => {context.toggleNavElement('room')}} onMouseLeave={() => {context.toggleOffNavTabElement('room')}}>
+                <li className="nav-item" onClick={() => {{context.toggleNavElement('room')}}} onMouseEnter={() => {context.toggleOnNavTabElement('room')}}>
                     <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                         <i className="fas fa-fw fa-person-booth"/>
                         <span>Room</span>
@@ -56,7 +56,7 @@ const Navbar = () => {
                     </div>
                 </li>
             
-                <li className="nav-item" onClick={() => {{context.toggleNavElement('device-settings')}}} onMouseEnter={() => {context.toggleNavElement('device-settings')}} onMouseLeave={() => {context.toggleOffNavTabElement('device-settings')}}>
+                <li className="nav-item" onClick={() => {{context.toggleNavElement('device-settings')}}} onMouseEnter={() => {context.toggleOnNavTabElement('device-settings')}}>
                     <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                         <i className="fas fa-fw fa-microchip" />
                         <span>Device Settings</span>

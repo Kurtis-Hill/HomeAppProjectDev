@@ -19,11 +19,11 @@ class IndexController extends AbstractController
 {
 
     /**
-     * @Route("/index", name="index")
+     * @Route("/{route}", name="index")
      * @param Request $request
      * @return Response
      */
-    public function indexAction(Request $request) :Response
+    public function indexAction(Request $request, $route) :Response
     {
         return $this->render('index/index.html.twig', [
         ]);

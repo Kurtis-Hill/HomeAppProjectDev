@@ -9,7 +9,7 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = context.newDeviceModalContent;
 
-    const newSensorRoute = "/HomeApp/devices/"+newDeviceModalContent.newDeviceName;
+    const newSensorRoute = "/HomeApp/devices?device-name="+newDeviceModalContent.newDeviceName+"?device-group="+newDeviceModalContent.newDeviceGroup+"?device-room="+newDeviceModalContent.newDeviceRoom;
 
     return (
         <React.Fragment>
@@ -36,7 +36,6 @@ const addNewDevice = () => {
                                 </div>                
                             : null
                             }
-                            {console.log('context', newDeviceModalContent.errors)}
                             <div className="modal-body">
                                 {newDeviceModalContent.formSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                                 
@@ -44,14 +43,14 @@ const addNewDevice = () => {
                                 <input type="text" name="device-name" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {context.updateNewDeviceModalForm(e)}}></input>
                                 
                                 <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>                                
-                                <select name="group-name" className="form-control" onChange={(e) => {context.updateNewDeviceModalForm(e)}} >
+                                <select name="group-name" id="group-name" className="form-control" onChange={(e) => {context.updateNewDeviceModalForm(e)}} >
                                     {context.groupNames.map((groupNames) => (
                                         <option className="form-control" value={groupNames.groupnameid} key={groupNames.groupnameid}>{groupNames.groupname}</option>
                                     ))}
                                 </select> 
 
                                 <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>                                
-                                <select name="room-name" className="form-control" onChange={(e) => {context.updateNewDeviceModalForm(e)}} >
+                                <select name="room-name" id="device-room" className="form-control" onChange={(e) => {context.updateNewDeviceModalForm(e)}} >
                                     {context.userRooms.map((room) => (
                                         <option className="form-control" value={room.r_roomid} key={room.r_roomid}>{room.r_room}</option>
                                     ))}
@@ -63,8 +62,8 @@ const addNewDevice = () => {
                                         <div className="secret-box">
                                         <p className="font-weight-bold"> {newDeviceModalContent.deviceSecret}</p>
                                         </div>
-                                        <div className="center">
-                                        <a href={newSensorRoute} className="btn-primary" type="submit" value="submit">Got it!</a>
+                                        <div className="center" style={{paddingTop:"2%"}}>
+                                        <a href={newSensorRoute} className="btn-primary modal-submit-center" type="submit" value="submit">Got it!</a>
                                         </div>
                                     </div>
                                     : null

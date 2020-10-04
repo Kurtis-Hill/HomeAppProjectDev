@@ -148,6 +148,13 @@
   width: 40%;
 }
 
+.modal-submit-center {
+    display: block;
+    padding: 5%;
+    text-align: center;
+    border-radius: 20px;
+}
+
 @media only screen and (max-width: 700px) {
     
     .modal-body{

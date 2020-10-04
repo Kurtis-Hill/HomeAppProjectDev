@@ -34,19 +34,24 @@ export default class App extends Component {
                             </NavbarContextProvider>                                               
                             <div id="content-wrapper" className="d-flex flex-column">
                                 <div id="content">  
-                                <Profilebar></Profilebar>
-                                    <Route path="/HomeApp/index">                                                                                                                                         
+                                    <Profilebar></Profilebar>
+                                        <Route path="/HomeApp/index">                                                                                                                                         
                                             <CardContextProvider>
                                                 <Cards/>       
                                                 <CardModal/>                                 
                                             </CardContextProvider>                                        
-                                    </Route>
-
-                                    <Route path="/HomeApp/sensors/new-sensor">                                            
-                                    </Route>
+                                        </Route>                                   
+                                        <Route path="/HomeApp/devices">
+                                        {console.log(window.location.pathname)}                                          
+                                            <CardContextProvider>
+                                                <Cards/>     
+                                                <CardModal/>                                     
+                                            </CardContextProvider>
+                                            <AddNewSensor/>
+                                        </Route>
                                     {/* <Route path="/HomeApp/sensor/:sensorname/" component={AddNewSensor}/>  */}
                                 </div>
-                            </div>1                        
+                            </div>         
                         </div>
                     </div>
                 </React.Fragment>

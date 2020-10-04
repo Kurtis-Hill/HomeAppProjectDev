@@ -13,6 +13,9 @@ const emptyCardData = {t_timez: null, a_timez: null};
 class CardContextProvider extends Component {
     constructor(props) {
         super(props);
+
+        console.log(window.location.pathname);
+
         this.state = {
             refreshTimer: 4000,
             cardData: [],
@@ -23,8 +26,9 @@ class CardContextProvider extends Component {
     }
 
     componentDidMount() {    
+        console.log('mounted');
         this.cardRefreshTimerID = setInterval(
-            () => this.fetchIndexCardData(), 
+            () => this.fetchCardData(), 
             this.state.refreshTimer
         );
     }
@@ -39,12 +43,24 @@ class CardContextProvider extends Component {
       }
 
     //Fetches all the card data to be displayed on the index page
-    fetchIndexCardData = () => {
-        axios.get('/HomeApp/api/CardData/index', 
+    fetchCardData = () => {
+
+        if (window.location.pathname === '/HomeApp/index') {
+            var url = '/HomeApp/api/carddata/index';
+        }
+        else {
+            const deviceName = new URLSearchParams(window.location.search).get('device-name');
+            const deviceGroup = new URLSearchParams(window.location.search).get('device-group');
+            const deviceRoom = new URLSearchParams(window.location.search).get('device-room');
+            var url = "/HomeApp/api/carddata/room?device-name="+deviceName+"?device-group="+deviceGroup+"?device-room="+deviceRoom;
+        }
+
+        axios.get(url, 
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            this.setState({cardData:response.data.sensorData})
+            this.setState({cardData:response.data.sensorData});
+            console.log('requested card data', this.state.cardData);
         }).catch(error => {
             const err = error.response;
             if (err.status === 400) {
@@ -59,6 +75,10 @@ class CardContextProvider extends Component {
                 });
             }
         })
+    }
+
+    fetchDeviceCardData = () => {
+
     }
 
     //Changes the style of the card text if the reading is above or below high-low readings in DB

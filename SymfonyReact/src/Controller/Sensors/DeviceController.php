@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp/devices", name="navbar")
+ * @Route("/HomeApp", name="devices")
  */
 class DeviceController extends AbstractController
 {
     /**
-     * @Route("/new-device/modal-data", name="navbar-new-device-data")
+     * @Route("/devices/new-device/modal-data", name="navbar-new-device-data")
      */
     public function addNewDeviceModalData(DeviceService $deviceService, Request $request)
     {
@@ -38,28 +38,32 @@ class DeviceController extends AbstractController
                 array_push($errors, $value->getMessage());
             }
         }
-
         if (is_array($handledForm)) {
             array_push($errors, $handledForm);
         }
-        if (is_string($handledForm)) {
-            $secret = $handledForm;
-        }
-
         if (!empty($errors)) {
             return new JsonResponse(['errors' => $errors], 400);
         }
         else {
+            $secret = $handledForm;
             return new JsonResponse($secret, 200);
         }
     }
 
     /**
-     * @Route("/{deviceName}", name="navbar")
+     * @Route("/{groupName}/devices/{room}", name="device-page")
      */
-    public function showDeviceSettings(Request $request, $deviceName)
+    public function showDeviceSettings(Request $request, $groupName, $room)
     {
-        //query for device if no device redirect
-        return $this->render('index');
+        return $this->render('index/index.html.twig');
     }
+
+//    /**
+//     * @Route("/{deviceName}/data", name="get-device-settings")
+//     */
+//    public function getDeviceSettings(Request $request, $deviceName)
+//    {
+//
+//        return $this->render('index');
+//    }
 }

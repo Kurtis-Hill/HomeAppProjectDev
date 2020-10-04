@@ -27,19 +27,19 @@ use Symfony\Component\Validator\Constraints\Json;
 /**
  * Class CardDataController
  * @package App\Controller\CardData
- * @Route("/HomeApp/api/CardData")
+ * @Route("/HomeApp/api/carddata")
  */
 class CardDataController extends AbstractController
 {
     /**
-     * @Route("/index", name="cardData")
+     * @Route("/index", name="indexCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
-        $cardData = $cardDataService->returnAllCardSensorData('JSON', 'index');
+        $cardData = $cardDataService->returnAllCardSensorData('JSON');
 
         if (!$cardData) {
             return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
@@ -47,6 +47,31 @@ class CardDataController extends AbstractController
 
         return new JsonResponse($cardData);
     }
+
+    /**
+     * @Route("/room", name="roomCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @param $deviceName
+     * @return JsonResponse
+     */
+    public function returnAllDeviceCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    {
+        $deviceName = $request->query->get('device-name');
+        $deviceGroup = $request->query->get('device-group');
+        $deviceRoom = $request->query->get('device-room');
+
+        $deviceDetails = [$deviceName, $deviceGroup, $deviceRoom];
+
+        $cardData = $cardDataService->returnAllCardSensorData('JSON', $deviceDetails);
+
+        if (!$cardData) {
+            return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
+        }
+
+        return new JsonResponse($cardData);
+    }
+
 
     /**
      * @Route("/cardviewform&id={cardviewid}", name="cardViewForm")
