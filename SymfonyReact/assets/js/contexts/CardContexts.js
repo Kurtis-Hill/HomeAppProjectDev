@@ -45,7 +45,7 @@ class CardContextProvider extends Component {
     //Fetches all the card data to be displayed on the index page
     fetchCardData = () => {
 
-        if (window.location.pathname === '/HomeApp/index') {
+        if (window.location.pathname === '/HomeApp/WebApp/index') {
             var url = '/HomeApp/api/carddata/index';
         }
         else {
@@ -75,6 +75,7 @@ class CardContextProvider extends Component {
                 });
             }
         })
+        
     }
 
     fetchDeviceCardData = () => {

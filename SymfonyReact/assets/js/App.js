@@ -11,6 +11,7 @@ import CardModal from "./components/CardModal";
 
 import CardContextProvider from "./contexts/CardContexts";
 import NavbarContextProvider from "./contexts/NavbarContext";
+import AddNewDeviceContextProvider from "./contexts/AddNewDeviceContext";
 import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
@@ -30,12 +31,14 @@ export default class App extends Component {
                         <div id="wrapper">                     
                             <NavbarContextProvider>                                
                                 <Navbar/>
-                                <AddNewDevice/>
+                                <AddNewDeviceContextProvider>
+                                    <AddNewDevice/>
+                                </AddNewDeviceContextProvider>
                             </NavbarContextProvider>                                               
                             <div id="content-wrapper" className="d-flex flex-column">
                                 <div id="content">  
                                     <Profilebar></Profilebar>
-                                        <Route path="/HomeApp/index">                                                                                                                                         
+                                        <Route path="/HomeApp/WebApp/index">                                                                                                                                         
                                             <CardContextProvider>
                                                 <Cards/>       
                                                 <CardModal/>                                 

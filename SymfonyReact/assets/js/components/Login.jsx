@@ -43,7 +43,7 @@ function Login(props) {
 
         const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } });
 
-        window.location.replace('index');
+        window.location.replace('/HomeApp/WebApp/index');
     }
     
     return (

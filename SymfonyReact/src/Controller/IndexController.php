@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 
 /**
- * @Route("/HomeApp")
+ * @Route("/HomeApp/WebApp")
  */
 class IndexController extends AbstractController
 {
@@ -25,6 +25,8 @@ class IndexController extends AbstractController
      */
     public function indexAction(Request $request, $route) :Response
     {
+        $route = $route;
+
         return $this->render('index/index.html.twig', [
         ]);
     }
