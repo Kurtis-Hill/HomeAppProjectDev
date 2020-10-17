@@ -28,11 +28,18 @@ class HomeAppRoomAbstract
      */
     protected $userID;
 
+    /**
+     * @var User
+     */
+    protected $roles;
 
     /**
      * @var GroupMapping
      */
     protected $groupNameIDs = [];
+
+    protected $errors = [];
+
 
 
     /**
@@ -49,7 +56,7 @@ class HomeAppRoomAbstract
         try {
             $this->setUserVariables();
         } catch (\Exception $e) {
-            $e->getMessage();
+            $this->errors[] = $e->getMessage();
         }
     }
 
@@ -60,11 +67,11 @@ class HomeAppRoomAbstract
     {
         $this->userID = $this->user->getUser()->getUserid();
         $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
+        $this->roles = $this->user->getUser()->getRoles();
 
-        if (!$this->groupNameIDs || !$this->userID) {
+        if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
             throw new \Exception("The User Variables Cannot be set Please try again");
         }
-
     }
 
     public function getGroupNameID()
@@ -77,4 +84,13 @@ class HomeAppRoomAbstract
         return $this->userID;
     }
 
+    public function getUserRoles()
+    {
+        return $this->roles;
+    }
+
+    public function getUserErrors()
+    {
+        return $this->errors;
+    }
 }

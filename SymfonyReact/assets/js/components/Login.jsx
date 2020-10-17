@@ -1,7 +1,8 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { setUserSession } from '../Utilities/Common';
+import { setUserTokens, setUserSession } from '../Utilities/Common';
+import { cloneElement } from 'react';
 
 
 function Login(props) {
@@ -27,7 +28,7 @@ function Login(props) {
 
         const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})
             .then(response => {
-                setUserSession(response.data.token, response.data.refreshToken);
+                setUserTokens(response.data.token, response.data.refreshToken);
             })
             .catch(error => {
                 setLoading(false);
@@ -43,13 +44,22 @@ function Login(props) {
 
         const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } });
 
-        window.location.replace('/HomeApp/WebApp/index');
+        // const userSession = await axios.get('/HomeApp/WebApp/login/UserDetails');
+
+        // setUserSession(userSession.data.userID, userSession.data.roles);
+        
+        // console.log('user sessions', sessionStorage.getItem('userID'), sessionStorage.getItem('roles'));
+            console.log('status', loginCheckResponse);
+        if (loginCheckResponse.status === 200) {
+            window.location.replace('/HomeApp/WebApp/index');
+        }
+
     }
     
     return (
         <React.Fragment>
             <div className="bg-gradient-primary">
-                {/* <div className="container"> */}
+                <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-xl-5 col-lg-2 col-md-12">
                             <div className="card o-hidden border-0 shadow-lg my-5">
@@ -89,7 +99,7 @@ function Login(props) {
                             </div>
                         </div>
                     </div>
-                {/* </div> */}
+                </div>
             </div>
         </React.Fragment>
     );

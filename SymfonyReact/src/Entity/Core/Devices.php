@@ -20,14 +20,14 @@ class Devices
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    public $devicenameid;
+    private $devicenameid;
 
     /**
      * @var devices
      *
      * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
      */
-    public $devicename;
+    private $devicename;
 
     /**
      * @var groupname
@@ -37,7 +37,7 @@ class Devices
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    public $groupnameid;
+    private $groupnameid;
 
     /**
      * @var room
@@ -47,22 +47,16 @@ class Devices
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })
      */
-    public $roomid;
+    private $roomid;
 
     /**
      * @var string
      *
      * @ORM\Column(name="deviceSecret", type="string", length=32, nullable=false)
      */
-    public $secret;
+    private $secret;
 
     /**
-     * @return string
-     */
-    public function getSecret(): ?string
-    {
-        return $this->secret;
-    }/**
      * @param string $secret
      */
     public function setSecret(string $secret): void

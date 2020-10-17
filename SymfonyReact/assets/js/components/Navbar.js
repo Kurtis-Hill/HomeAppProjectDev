@@ -2,13 +2,15 @@ import React, { Component, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavbarContext } from '../contexts/NavbarContext';
 
+import { webappURL } from '../Utilities/Common';
+
 
 const Navbar = () => {
     const context = useContext(NavbarContext);
     
     const navbarCollapse = context.navbarSize ? 'toggled' : '';
     
-    const settingRoute = "settings/";
+    const deviceRoute = context.deviceNavURLS;
     const roomRoute = "rooms/";  
     const homeRoute = "/HomeApp/index/";  
     const newSensorRoute = "sensors/new-sensor";
@@ -18,7 +20,6 @@ const Navbar = () => {
     const roomNavShowToggle = context.roomNavToggle === true ? 'show' : null;
 
     return ( 
-        
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "+ navbarCollapse} id="accordionSidebar">
                 <a href={homeRoute} className="sidebar-brand d-flex align-items-center justify-content-center">
                     <div className="sidebar-brand-icon rotate-n-15">
@@ -30,17 +31,17 @@ const Navbar = () => {
                 <hr className="sidebar-divider my-0" />
               
                 <li className="nav-item">
-                    <a className="nav-link" href="index.html">
+                    <a className="nav-link" href={webappURL()+"index"}>
                         <i className="fas fa-fw fa-tachometer-alt" />
-                        <span>Dashboard</span></a>
+                        <span>Admin Dashboard</span></a>
                 </li>
-              
-                <hr className="sidebar-divider" />
-              
+
+                <hr className="sidebar-divider" /> 
+                            
                 <div className="sidebar-heading">
                     Interface
-                </div>
-                             
+                </div>   
+
                 <li className="nav-item" onClick={() => {{context.toggleNavElement('room')}}} onMouseEnter={() => {context.toggleOnNavTabElement('room')}}>
                     <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                         <i className="fas fa-fw fa-person-booth"/>
@@ -64,8 +65,8 @@ const Navbar = () => {
                     <div id="collapseTwo" className={'collapse '+deviceNavShowToggle} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Devices:</h6>
-                        {context.userDevices.map((devices) => (
-                            <a key={devices.devicename} className="collapse-item" href={settingRoute+devices.devicename}>{devices.devicename}</a>
+                        {context.userDevices.map((device) => (
+                            <a key={device.deviceid} className="collapse-item" href={webappURL()+"device?device-name="+device.devicenameid+"&device-group="+device.groupnameid+"&device-room="+device.roomid}>{device.devicename}</a>
                         ))}
                          <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
                     </div>
@@ -84,17 +85,17 @@ const Navbar = () => {
                         <span>Pages</span>
                     </a>
 
-                <div id="collapsePages" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div className="bg-white py-2 collapse-inner rounded">
-                        <h6 className="collapse-header">Login Screens:</h6>
-                        <a className="collapse-item" href="login.html">Login</a>
-                        <a className="collapse-item" href="register.html">Register</a>
-                        <a className="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div className="collapse-divider" />
-                        <h6 className="collapse-header">Other Pages:</h6>
-                        <a className="collapse-item" href="404.html">404 Page</a>
-                        <a className="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
+                    <div id="collapsePages" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div className="bg-white py-2 collapse-inner rounded">
+                            <h6 className="collapse-header">Login Screens:</h6>
+                            <a className="collapse-item" href="login.html">Login</a>
+                            <a className="collapse-item" href="register.html">Register</a>
+                            <a className="collapse-item" href="forgot-password.html">Forgot Password</a>
+                            <div className="collapse-divider" />
+                            <h6 className="collapse-header">Other Pages:</h6>
+                            <a className="collapse-item" href="404.html">404 Page</a>
+                            <a className="collapse-item" href="blank.html">Blank Page</a>
+                        </div>
                     </div>
                 </li>
           
@@ -116,9 +117,6 @@ const Navbar = () => {
                     <button className="rounded-circle border-0" id="sidebarToggle" onClick={() => {context.navbarSizeToggle()}}/>
                 </div>
             </ul>
-    
-            
-  
     );
 }
 

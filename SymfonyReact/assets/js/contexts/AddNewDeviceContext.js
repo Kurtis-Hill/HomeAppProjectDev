@@ -6,7 +6,7 @@ import { getToken } from '../Utilities/Common';
 
 export const AddNewDeviceContext = createContext();
 
-const emptynewDeviceModalContent = {newDeviceName:'', newDeviceRoom:'', newDeviceGroup:'', deviceSecret:null, errors:[], formSubmit:false};
+const emptynewDeviceModalContent = {newDeviceName:'', newDeviceRoom:'', newDeviceGroup:'', newDeviceID:'',  deviceSecret:null, errors:[], formSubmit:false};
 
 export default class AddNewDeviceContextProvider extends Component {
     constructor(props) {
@@ -23,7 +23,7 @@ export default class AddNewDeviceContextProvider extends Component {
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
         
         const roomNameElement = document.getElementById('device-room');
-        const deviceRoom = roomNameElement.options[roomNameElement.selectedIndex].text;
+        const deviceRoom = roomNameElement.options[roomNameElement.selectedIndex].value;
 
         const groupNameElement = document.getElementById('group-name');
         const deviceGroup = groupNameElement.options[groupNameElement.selectedIndex].value;
@@ -38,7 +38,7 @@ export default class AddNewDeviceContextProvider extends Component {
         .then(response => {
             console.log('submit response', response.data);
             this.setState({addNewDeviceModalSubmit: false});
-            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data, errors:[], newDeviceRoom:deviceRoom, newDeviceGroup:deviceGroup}});    
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data.secret, errors:[], newDeviceRoom:deviceRoom, newDeviceGroup:deviceGroup, newDeviceID: response.data.deviceID}});    
             console.log('secret', this.state.newDeviceModalContent.deviceSecret);
         })
         .catch(error => {

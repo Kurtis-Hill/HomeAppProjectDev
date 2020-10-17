@@ -44,8 +44,7 @@ export default class App extends Component {
                                                 <CardModal/>                                 
                                             </CardContextProvider>                                        
                                         </Route>                                   
-                                        <Route path="/HomeApp/devices">
-                                        {console.log(window.location.pathname)}                                          
+                                        <Route path="/HomeApp/WebApp/device">                                      
                                             <CardContextProvider>
                                                 <Cards/>     
                                                 <CardModal/>                                     

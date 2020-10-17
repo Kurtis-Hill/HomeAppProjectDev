@@ -32,7 +32,7 @@ class NavbarService extends HomeAppRoomAbstract
             $this->devices = $this->setUsersDevices();
         }
         catch (\Exception $e) {
-            dd($e->getMessage());
+            $this->errors[] = $e->getMessage();
         }
 
     }
@@ -75,6 +75,10 @@ class NavbarService extends HomeAppRoomAbstract
         return $this->groupNames;
     }
 
+    public function getErrors()
+    {
+        return $this->errors;
+    }
 
 }
 

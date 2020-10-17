@@ -17,6 +17,7 @@ use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
 
 use App\Services\CardDataService;
+use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,7 +53,35 @@ class CardDataController extends AbstractController
      * @Route("/room", name="roomCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
-     * @param $deviceName
+     * @return JsonResponse
+     */
+    public function returnAllRoomCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    {
+        $deviceName = $request->query->get('device-name');
+        $deviceGroup = $request->query->get('device-group');
+        $deviceRoom = $request->query->get('device-room');
+
+        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
+
+        try {
+            $cardData = $cardDataService->returnRoomCardSensorData('JSON', $deviceDetails);
+        } catch(DBALException $e){
+            $errorMessage[] = $e->getMessage();
+        } catch(\Exception $e){
+            $errorMessage[] = $e->getMessage();
+        }
+
+        if (!$errorMessage) {
+            return new JsonResponse(['errors' => $errorMessage], 400);
+        }
+
+        return new JsonResponse($cardData);
+    }
+
+    /**
+     * @Route("/device", name="roomCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
      * @return JsonResponse
      */
     public function returnAllDeviceCardData(CardDataService $cardDataService, Request $request): JsonResponse
@@ -61,9 +90,15 @@ class CardDataController extends AbstractController
         $deviceGroup = $request->query->get('device-group');
         $deviceRoom = $request->query->get('device-room');
 
-        $deviceDetails = [$deviceName, $deviceGroup, $deviceRoom];
+        $result = is_numeric($deviceName);
+        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
 
-        $cardData = $cardDataService->returnAllCardSensorData('JSON', $deviceDetails);
+        $cardData = $cardDataService->returnAllDeviceCardSensorData('JSON', $deviceDetails);
+
+        if ($cardData instanceof \Exception || $cardData instanceof \PDOException) {
+
+            return new JsonResponse($cardData, 500);
+        }
 
         if (!$cardData) {
             return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);

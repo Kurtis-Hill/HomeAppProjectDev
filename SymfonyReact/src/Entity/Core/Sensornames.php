@@ -5,6 +5,7 @@ namespace App\Entity\Core;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensortype;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -60,6 +61,32 @@ class Sensornames
      * })
      */
     private $sensortypeid;
+
+    /**
+     * @var Devices
+     *
+     * @ORM\ManyToOne(targetEntity="Devices")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
+     * })
+     */
+    private $devicenameid;
+
+    /**
+     * @return Devices
+     */
+    public function getDevicenameid(): Devices
+    {
+        return $this->devicenameid;
+    }
+
+    /**
+     * @param Devices $devicenameid
+     */
+    public function setDevicenameid(Devices $devicenameid): void
+    {
+        $this->devicenameid = $devicenameid;
+    }
 
     public function getSensornameid(): ?int
     {

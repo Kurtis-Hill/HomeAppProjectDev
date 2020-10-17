@@ -2,7 +2,8 @@ import React, { Component, createContext } from 'react';
 import ReactDOM from "react-dom";
 import axios from 'axios';
 
-import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
+import { getToken, webappURL, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
+import { array } from 'prop-types';
 
 export const NavbarContext = createContext();
 
@@ -17,13 +18,12 @@ export default class NavbarContextProvider extends Component {
             roomNavToggle: false,
             deviceSettingsNavToggle: false,
             showNavbarToggleSize: false,
+            addNewDeviceModalToggle: false,
         }
     }
-
-    
+ 
     componentDidMount() {
         this.navbarData();
-        // this.navbarDeviceLinks();
     }
 
     //BEGGINING OF TAB METHODS
@@ -58,17 +58,25 @@ export default class NavbarContextProvider extends Component {
     }
 
     navbarData = () => {
-        axios.get('/HomeApp/navbar/navbar-data',
+        axios.get('/HomeApp/WebApp/navbar/navbar-data',
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
+            console.log('navbar response', response.data.devices);
             this.setState({devices: response.data.devices, rooms: response.data.rooms, groupNames: response.data.groupNames});
+     
         }).catch(error => {
             console.log(error);
         })
+
     }
 
     navbarSizeToggle = () => {
         this.setState({showNavbarToggleSize: !this.state.showNavbarToggleSize});
+    }
+
+    toggleNewDeviceModal = () => {
+        console.log('clicked');
+        this.setState({addNewDeviceModalToggle: !this.state.addNewDeviceModalToggle});
     }
 //  END OF TAB METHODS
 
@@ -85,6 +93,7 @@ export default class NavbarContextProvider extends Component {
                 deviceSettingsNavToggle: this.state.deviceSettingsNavToggle,
                 toggleOffNavTabElement: this.toggleOffNavTabElement,
                 toggleOnNavTabElement:this.toggleOnNavTabElement,
+                toggleNewDeviceModal: this.toggleNewDeviceModal,
                 addNewDeviceModalToggle: this.state.addNewDeviceModalToggle,
             }}>
                 {this.props.children}

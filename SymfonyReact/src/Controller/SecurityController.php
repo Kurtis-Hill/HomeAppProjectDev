@@ -32,8 +32,9 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils)
     {
          if ($this->getUser()) {
-             return $this->redirectToRoute('index');
+             return $this->redirectToRoute('index', ['route' => 'index']);
          }
+         //@TODO get LastAuthentication error handle login errors
 
         return $this->render('index/index.html.twig');
     }

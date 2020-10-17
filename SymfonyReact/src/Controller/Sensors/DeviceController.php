@@ -14,18 +14,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp", name="devices")
+ * @Route("/HomeApp/devices", name="devices")
  */
 class DeviceController extends AbstractController
 {
     /**
-     * @Route("/devices/new-device/modal-data", name="navbar-new-device-data")
+     * @Route("/new-device/modal-data", name="navbar-new-device-data")
      */
-    public function addNewDeviceModalData(DeviceService $deviceService, Request $request)
+    public function addNewDeviceModalData(DeviceService $deviceService, Request $request): JsonResponse
     {
-
         $errors = [];
-
 
         $newDevice = new Devices();
 
@@ -46,24 +44,8 @@ class DeviceController extends AbstractController
         }
         else {
             $secret = $handledForm;
-            return new JsonResponse($secret, 200);
+
+            return new JsonResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()], 200);
         }
     }
-
-    /**
-     * @Route("/{groupName}/devices/{room}", name="device-page")
-     */
-    public function showDeviceSettings(Request $request, $groupName, $room)
-    {
-        return $this->render('index/index.html.twig');
-    }
-
-//    /**
-//     * @Route("/{deviceName}/data", name="get-device-settings")
-//     */
-//    public function getDeviceSettings(Request $request, $deviceName)
-//    {
-//
-//        return $this->render('index');
-//    }
 }
