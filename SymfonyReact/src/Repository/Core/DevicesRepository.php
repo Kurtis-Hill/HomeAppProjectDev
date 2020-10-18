@@ -18,14 +18,17 @@ class DevicesRepository extends EntityRepository
     public function returnAllUsersDevices($groupNameID)
     {
         $qb = $this->createQueryBuilder('dv');
-        $qb->select('dv.devicename');
+        $qb->select('dv.devicenameid, dv.devicenameid', 'dv.devicename', 'gn.groupnameid', 'r.roomid')
+            ->leftJoin('App\Entity\Core\Room', 'r', Join::WITH, 'dv.roomid = r.roomid')
+            ->leftJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid')
+        ;
         $qb->where(
             $qb->expr()->in('dv.groupnameid', ':groupNameID')
         )
         ->setParameters(['groupNameID' => $groupNameID]);
 
         $result = $qb->getQuery()->getArrayResult();
-//dd($result);
+
         return $result;
     }
 }

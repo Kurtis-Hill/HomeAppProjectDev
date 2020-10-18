@@ -17,6 +17,7 @@ use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
 
 use App\Services\CardDataService;
+use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +28,19 @@ use Symfony\Component\Validator\Constraints\Json;
 /**
  * Class CardDataController
  * @package App\Controller\CardData
- * @Route("/HomeApp/api/CardData")
+ * @Route("/HomeApp/api/carddata")
  */
 class CardDataController extends AbstractController
 {
     /**
-     * @Route("/index", name="cardData")
+     * @Route("/index", name="indexCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
-        $cardData = $cardDataService->returnAllCardSensorData('JSON', 'index');
+        $cardData = $cardDataService->returnAllCardSensorData('JSON');
 
         if (!$cardData) {
             return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
@@ -47,6 +48,65 @@ class CardDataController extends AbstractController
 
         return new JsonResponse($cardData);
     }
+
+    /**
+     * @Route("/room", name="roomCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
+     */
+    public function returnAllRoomCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    {
+        $deviceName = $request->query->get('device-name');
+        $deviceGroup = $request->query->get('device-group');
+        $deviceRoom = $request->query->get('device-room');
+
+        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
+
+        try {
+            $cardData = $cardDataService->returnRoomCardSensorData('JSON', $deviceDetails);
+        } catch(DBALException $e){
+            $errorMessage[] = $e->getMessage();
+        } catch(\Exception $e){
+            $errorMessage[] = $e->getMessage();
+        }
+
+        if (!$errorMessage) {
+            return new JsonResponse(['errors' => $errorMessage], 400);
+        }
+
+        return new JsonResponse($cardData);
+    }
+
+    /**
+     * @Route("/device", name="roomCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
+     */
+    public function returnAllDeviceCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    {
+        $deviceName = $request->query->get('device-name');
+        $deviceGroup = $request->query->get('device-group');
+        $deviceRoom = $request->query->get('device-room');
+
+        $result = is_numeric($deviceName);
+        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
+
+        $cardData = $cardDataService->returnAllDeviceCardSensorData('JSON', $deviceDetails);
+
+        if ($cardData instanceof \Exception || $cardData instanceof \PDOException) {
+
+            return new JsonResponse($cardData, 500);
+        }
+
+        if (!$cardData) {
+            return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
+        }
+
+        return new JsonResponse($cardData);
+    }
+
 
     /**
      * @Route("/cardviewform&id={cardviewid}", name="cardViewForm")
@@ -91,12 +151,11 @@ class CardDataController extends AbstractController
                 'cardcolourid' => $request->get('cardColour'),
                 'cardiconid' => $request->get('icon'),
                 'cardstateid' => $request->get('cardViewState'),
-                ]
+            ]
         );
 
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
             $form = null;
-            $em = $this->getDoctrine()->getManager();
 
             if ($sensorType === 'DHT') {
                 $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
@@ -162,13 +221,14 @@ class CardDataController extends AbstractController
             return new JsonResponse(['errors' => $errors], 400);
         }
         else {
+            $em = $this->getDoctrine()->getManager();
             try {
                 $em->flush();
             } catch (\Exception $e) {
                 $e->getMessage();
             }
 
-            return new JsonResponse('sucess', 200);
+            return new JsonResponse('success', 200);
         }
     }
 }

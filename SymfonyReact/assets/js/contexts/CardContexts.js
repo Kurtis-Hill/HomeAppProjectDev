@@ -24,7 +24,7 @@ class CardContextProvider extends Component {
 
     componentDidMount() {    
         this.cardRefreshTimerID = setInterval(
-            () => this.fetchIndexCardData(), 
+            () => this.fetchCardData(), 
             this.state.refreshTimer
         );
     }
@@ -39,12 +39,23 @@ class CardContextProvider extends Component {
       }
 
     //Fetches all the card data to be displayed on the index page
-    fetchIndexCardData = () => {
-        axios.get('/HomeApp/api/CardData/index', 
+    fetchCardData = () => {
+
+        if (window.location.pathname === '/HomeApp/WebApp/index') {
+            var url = '/HomeApp/api/carddata/index';
+        }
+        else {
+            const deviceName = new URLSearchParams(window.location.search).get('device-name');
+            const deviceGroup = new URLSearchParams(window.location.search).get('device-group');
+            const deviceRoom = new URLSearchParams(window.location.search).get('device-room');
+            var url = "/HomeApp/api/carddata/device?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom;
+        }
+
+        axios.get(url, 
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            this.setState({cardData:response.data.sensorData})
+            this.setState({cardData:response.data.sensorData});
         }).catch(error => {
             const err = error.response;
             if (err.status === 400) {
@@ -59,6 +70,11 @@ class CardContextProvider extends Component {
                 });
             }
         })
+        
+    }
+
+    fetchDeviceCardData = () => {
+
     }
 
     //Changes the style of the card text if the reading is above or below high-low readings in DB
@@ -69,7 +85,7 @@ class CardContextProvider extends Component {
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
         this.setState({modalLoading: true})
-        axios.get('/HomeApp/api/CardData/cardviewform&id='+cardViewID,
+        axios.get('/HomeApp/api/carddata/cardviewform&id='+cardViewID,
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             this.setState({modalLoading: false});
@@ -191,7 +207,7 @@ class CardContextProvider extends Component {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
         
-        axios.post('/HomeApp/api/CardData/updatecardview', formData, config)
+        axios.post('/HomeApp/api/carddata/updatecardview', formData, config)
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true}});
 

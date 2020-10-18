@@ -1,0 +1,4 @@
+Notes
+
+remove roomid from sensornames table
+devicenames table rename to devicename

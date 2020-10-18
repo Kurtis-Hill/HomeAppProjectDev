@@ -4,40 +4,48 @@
 namespace App\Controller\Sensors;
 
 
+use App\Entity\Core\Devices;
+use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp/devices", name="navbar")
+ * @Route("/HomeApp/devices", name="devices")
  */
 class DeviceController extends AbstractController
 {
     /**
      * @Route("/new-device/modal-data", name="navbar-new-device-data")
      */
-    public function addNewDeviceModalData(DeviceService $deviceService, Request $request)
+    public function addNewDeviceModalData(DeviceService $deviceService, Request $request): JsonResponse
     {
         $errors = [];
-        $deviceName = $request->get('device-name');
 
-        $deviceName .= time();
+        $newDevice = new Devices();
 
-        $secret = hash("md5", $deviceName);
+        $addNewDeviceForm = $this->createForm(AddNewDeviceForm::class, $newDevice);
 
-        if (empty($errors)) {
-            return new JsonResponse($secret, 200);
+        $handledForm = $deviceService->handleNewDeviceSubmission($request, $addNewDeviceForm);
+
+        if ($handledForm instanceof FormInterface) {
+            foreach ($handledForm->getErrors(true, true) as $value) {
+                array_push($errors, $value->getMessage());
+            }
         }
-    }
+        if (is_array($handledForm)) {
+            array_push($errors, $handledForm);
+        }
+        if (!empty($errors)) {
+            return new JsonResponse(['errors' => $errors], 400);
+        }
+        else {
+            $secret = $handledForm;
 
-    /**
-     * @Route("/{deviceName}", name="navbar")
-     */
-    public function showDeviceSettings($deviceName, Request $request)
-    {
-        //query for device if no device redirect
-        return $this->render('index');
+            return new JsonResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()], 200);
+        }
     }
 }

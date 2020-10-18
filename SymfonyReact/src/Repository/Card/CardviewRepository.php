@@ -12,29 +12,18 @@ use function Doctrine\ORM\QueryBuilder;
 class CardviewRepository extends EntityRepository
 {
     /**
-     * @param $groupNameID
+     * @param $groupNameIDs
      * @param $userID
      * @param null $type
-     * @param null $room
      * @return array|mixed
-
      */
 
-    public function getAllCardReadings($groupNameIDs, $userID, $type = null, $room = null)
+    public function getAllCardReadings($groupNameIDs, $userID, $type = null): array
     {
         $cardViewOne = Cardstate::ON;
-
-        switch ($room) {
-            case 'index':
-                $cardViewTwo = Cardstate::INDEX_ONLY;
-                break;
-            case 'room' :
-                $cardViewTwo = Cardstate::ROOM_ONLY;
-        }
-
+        $cardViewTwo = Cardstate::INDEX_ONLY;
         $qb = $this->createQueryBuilder('cv');
-         $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
-
+        $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -42,7 +31,6 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid');
-
          $qb->where(
              $qb->expr()->orX(
                  $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
@@ -50,10 +38,9 @@ class CardviewRepository extends EntityRepository
              ),
              $qb->expr()->eq('cv.userid', ':userid'),
              $qb->expr()->in('s.groupnameid', ':groupNameID')
-         )
-             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+         );
 
-         $result = null;
+        $qb->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
 
          if($type === "JSON") {
              $result = $qb->getQuery()->getScalarResult();
@@ -63,6 +50,68 @@ class CardviewRepository extends EntityRepository
          }
 
         return $result;
+    }
+
+    /**
+     * @param array $groupNameIDs
+     * @param int $userID
+     * @param null $type
+     * @param $deviceDetails
+     * @return array
+     */
+    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, $type = null, $deviceDetails): array
+    {
+        $cardViewOne = Cardstate::ON;
+        $cardViewTwo = Cardstate::ROOM_ONLY;
+
+        $qb = $this->createQueryBuilder('cv');
+        $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
+            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
+            ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Core\Devices', 'dv', Join::WITH,'s.sensornameid = dv.devicenameid')
+        ;
+        $qb->where(
+            $qb->expr()->orX(
+                $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
+                $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
+            ),
+            $qb->expr()->in('s.groupnameid', ':groupNameID'),
+            $qb->expr()->eq('s.devicenameid', ':deviceNameID'),
+            $qb->expr()->eq('cv.userid', ':userid'),
+            $qb->expr()->eq('s.groupnameid', ':deviceGroup'),
+            $qb->expr()->eq('cv.roomid', ':deviceRoom')
+        );
+        $qb->setParameters([
+            'deviceNameID' => $deviceDetails['deviceName'],
+            'deviceGroup' => $deviceDetails['deviceGroup'],
+            'deviceRoom' => $deviceDetails['deviceRoom'],
+            'userid' => $userID,
+            'groupNameID' => $groupNameIDs,
+            'cardviewOne' => $cardViewOne,
+            'cardviewTwo' => $cardViewTwo
+        ]);
+
+        try {
+            if($type === "JSON") {
+                $result = $qb->getQuery()->getScalarResult();
+            }
+            else {
+                $result = $qb->getQuery()->getResult();
+            }
+            return $result;
+
+        } catch(\PDOException $e){
+            $errorMessage['errors'] = $e->getMessage();
+        } catch(\Exception $e){
+            $errorMessage['errors'] = $e->getMessage();
+        }
+
+        return $errorMessage;
     }
 
     /**

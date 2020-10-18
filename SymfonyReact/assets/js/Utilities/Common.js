@@ -15,13 +15,20 @@ export const getRefreshToken = () => {
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');    
+    window.location.replace('/HomeApp/login');
+    return null;
 }
 
-export const setUserSession = (token, refreshToken) => {
+export const setUserTokens = (token, refreshToken) => {
     removeUserSession();
     sessionStorage.setItem('token' , token);
     sessionStorage.setItem('refreshToken' , refreshToken);
-    // sessionStorage.setItem('user' , JSON.stringify(user));
+}
+
+export const setUserSession = (userID, roles) => {
+    removeUserSession();
+    sessionStorage.setItem('userID' , userID);
+    sessionStorage.setItem('roles' , roles);
 }
 
 export const capitalizeFirstLetter = (string) => {
@@ -36,4 +43,8 @@ export const lowercaseFirstLetter = (string) => {
         return string.charAt(0).toLowerCase() + string.slice(1);
     }
     return null;
+}
+
+export const webappURL = (string) => {
+   return '/HomeApp/WebApp/';
 }

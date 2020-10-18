@@ -23,16 +23,16 @@ class Devices
     private $devicenameid;
 
     /**
-     * @var string
+     * @var devices
      *
      * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
      */
     private $devicename;
 
     /**
-     * @var int
+     * @var groupname
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Groupname")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
@@ -40,22 +40,75 @@ class Devices
     private $groupnameid;
 
     /**
-     * @return int
+     * @var room
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
+     * })
      */
-    public function getDevicenameid(): int
+    private $roomid;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="deviceSecret", type="string", length=32, nullable=false)
+     */
+    private $secret;
+
+    /**
+     * @param string $secret
+     */
+    public function setSecret(string $secret): void
     {
-        return $this->devicenameid;
+        $this->secret = $secret;
     }
 
-    public function getGroupNameid():int
+    /**
+     * @return Room
+     */
+    public function getRoomid()
+    {
+        return $this->roomid;
+    }
+
+    /**
+     * @param int $roomid
+     */
+    public function setRoomid($roomid): void
+    {
+        $this->roomid = $roomid;
+    }
+
+    /**
+     * @return groupname
+     */
+    public function getGroupnameid(): ?groupname
     {
         return $this->groupnameid;
     }
 
     /**
+     * @param groupname $groupnameid
+     */
+    public function setGroupnameid(groupname $groupnameid): void
+    {
+        $this->groupnameid = $groupnameid;
+    }
+
+    /**
+     * @return int
+     */
+
+    public function getDevicenameid()
+    {
+        return $this->devicenameid;
+    }
+
+    /**
      * @param int $devicenameid
      */
-    public function setDevicenameid(int $devicenameid): void
+    public function setDevicenameid($devicenameid): void
     {
         $this->devicenameid = $devicenameid;
     }
@@ -63,7 +116,7 @@ class Devices
     /**
      * @param string $devicename
      */
-    public function setDevicename(string $devicename): void
+    public function setDevicename($devicename): void
     {
         $this->devicename = $devicename;
     }
@@ -71,7 +124,7 @@ class Devices
     /**
      * @return string
      */
-    public function getDevicename(): string
+    public function getDevicename(): ?string
     {
         return $this->devicename;
     }
