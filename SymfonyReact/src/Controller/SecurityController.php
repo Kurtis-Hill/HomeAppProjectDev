@@ -32,13 +32,9 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
-        if ($request->isMethod('POST')) {
-            //gdd($authenticationUtils->getLastAuthenticationError());
-        }
          if ($this->getUser()) {
              return $this->redirectToRoute('index', ['route' => 'index']);
          }
-         //@TODO get LastAuthentication error handle login errors
 
         return $this->render('index/index.html.twig');
     }
@@ -53,10 +49,16 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/ssl", name="ssl")
+     * @Route("/HomeApp/api/ssl", name="ssl")
      */
     public function showSSLConfig()
     {
+        $ssl = $this->getDoctrine()->getRepository(User::class)->showSSL();
+
+        foreach ($ssl as $key => $value) {
+            echo 'ssl key ='.$key. 'key location'. $value. '<br/>';
+        }
+
         echo \PDO::MYSQL_ATTR_SSL_KEY;
         echo "<br>";
         echo \PDO::MYSQL_ATTR_SSL_CERT;
@@ -65,7 +67,7 @@ class SecurityController extends AbstractController
         echo "<br>";
         echo \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT;
         echo "<br>";
-        dd($this->getDoctrine()->getRepository(User::class)->showSSL());
+
 
     }
 }
