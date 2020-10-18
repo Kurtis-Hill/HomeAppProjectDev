@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -29,8 +30,11 @@ class SecurityController extends AbstractController
     /**
      * @Route("/HomeApp/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
+        if ($request->isMethod('POST')) {
+            //gdd($authenticationUtils->getLastAuthenticationError());
+        }
          if ($this->getUser()) {
              return $this->redirectToRoute('index', ['route' => 'index']);
          }

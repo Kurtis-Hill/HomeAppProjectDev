@@ -1,9 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { setUserTokens, setUserSession } from '../Utilities/Common';
-import { cloneElement } from 'react';
-
+import { setUserTokens, webappURL } from '../Utilities/Common';
 
 function Login(props) {
     const username = useFormInput('');
@@ -26,7 +24,13 @@ function Login(props) {
 
         const formToken = csrfTokenResponse.data.token;
 
-        const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value});
+
+        const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})        
+            .catch(error => {
+                setError('Invalid Credentials');
+                setLoading(false); 
+            });
+        
 
         const setUserData =  setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
 
@@ -36,10 +40,13 @@ function Login(props) {
 
         formData.append('_csrf_token', formToken);
 
-        const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } });
-   
-        window.location.replace('/HomeApp/WebApp/index');
+        const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } })
+            .catch(error => {
+                setError('Login Failed Please Try Again');
+                setLoading(false); 
+            });
 
+        window.location.replace(webappURL()+'index');
     }
     
     return (
@@ -56,7 +63,8 @@ function Login(props) {
                                             <div className="login-form">
                                                 <div className="text-center">
                                                     <h1 className="login-formn-container h2 text-gray-700 mb-4 login-banner">Welcome Back To The Home-App!</h1>
-                                                </div>                                            
+                                                </div>  
+                                                {error !== null ? <h2 className="text-center">{error}</h2> : null}                                          
                                                 <form className="user" id="login-form">
                                                     <div className="form-group">                                    
                                                         <input type="text" name="email" {...username} placeholder="E-mail" autoComplete="username" className="form-control form-control-user login-form-field" aria-describedby="emailHelp" />
