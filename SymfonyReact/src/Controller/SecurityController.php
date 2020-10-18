@@ -32,9 +32,6 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
-        if ($request->isMethod('POST')) {
-            //gdd($authenticationUtils->getLastAuthenticationError());
-        }
          if ($this->getUser()) {
              return $this->redirectToRoute('index', ['route' => 'index']);
          }

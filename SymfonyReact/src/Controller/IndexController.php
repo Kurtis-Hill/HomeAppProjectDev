@@ -35,7 +35,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/login/UserDetails", name="userDetails")
+     * @Route("/login/userdetails", name="userDetails")
      * @param Request $request
      * @return Response
      */
