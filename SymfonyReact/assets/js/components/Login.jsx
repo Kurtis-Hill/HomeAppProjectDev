@@ -16,14 +16,13 @@ function Login(props) {
     const handleLogin = async (event) => {
         setError(null);
         setLoading(true);
-
+        
         const csrfTokenResponse = await axios.get('csrfToken')
             .catch(error => {
                 alert('Please Fresher The Browser');
             });
 
         const formToken = csrfTokenResponse.data.token;
-
 
         const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})        
             .catch(error => {

@@ -20,13 +20,11 @@ export const removeUserSession = () => {
 }
 
 export const setUserTokens = (token, refreshToken) => {
-    removeUserSession();
     sessionStorage.setItem('token' , token);
     sessionStorage.setItem('refreshToken' , refreshToken);
 }
 
 export const setUserSession = (userID, roles) => {
-    removeUserSession();
     sessionStorage.setItem('userID' , userID);
     sessionStorage.setItem('roles' , roles);
 }

@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  *
- * @Route("/HomeApp/WebApp/navbar", name="navbar")
+ * @Route("/HomeApp/api/navbar", name="navbar")
  */
 class NavbarController extends AbstractController
 {

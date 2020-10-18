@@ -58,7 +58,7 @@ export default class NavbarContextProvider extends Component {
     }
 
     navbarData = () => {
-        axios.get('/HomeApp/WebApp/navbar/navbar-data',
+        axios.get('/HomeApp/api/navbar/navbar-data',
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             console.log('navbar response', response.data.devices);
