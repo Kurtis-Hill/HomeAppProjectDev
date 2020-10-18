@@ -27,7 +27,7 @@ security:
                 - lexik_jwt_authentication.jwt_token_authenticator
 
         main:
-            pattern:   ^/HomeApp/
+            pattern:   ^/HomeApp/WebApp
             anonymous: true
             guard:
                 authenticators:

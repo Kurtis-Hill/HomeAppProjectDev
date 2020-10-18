@@ -25,7 +25,7 @@ export default class App extends Component {
             <Switch>
                 <Route exact path="/HomeApp/login" component={Login}/>
                 <Route exact path="/HomeApp/register"/>
-                <Route exact path="/HomeApp/logout" onEnter={() => removeUserSession()}/>
+                <Route exact path="/HomeApp/logout" component={() => removeUserSession()}/>
                 <React.Fragment>
                     <div id="page-top">
                         <div id="wrapper">                     

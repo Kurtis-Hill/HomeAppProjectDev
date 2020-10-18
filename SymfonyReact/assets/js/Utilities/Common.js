@@ -15,6 +15,8 @@ export const getRefreshToken = () => {
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');    
+    window.location.replace('/HomeApp/login');
+    return null;
 }
 
 export const setUserTokens = (token, refreshToken) => {

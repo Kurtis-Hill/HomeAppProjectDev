@@ -26,15 +26,9 @@ function Login(props) {
 
         const formToken = csrfTokenResponse.data.token;
 
-        const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})
-            .then(response => {
-                setUserTokens(response.data.token, response.data.refreshToken);
-            })
-            .catch(error => {
-                setLoading(false);
-                console.log(error);
-            });
+        const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value});
 
+        const setUserData =  setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
 
         const loginForm = document.getElementById('login-form');
 
@@ -43,16 +37,8 @@ function Login(props) {
         formData.append('_csrf_token', formToken);
 
         const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } });
-
-        // const userSession = await axios.get('/HomeApp/WebApp/login/UserDetails');
-
-        // setUserSession(userSession.data.userID, userSession.data.roles);
-        
-        // console.log('user sessions', sessionStorage.getItem('userID'), sessionStorage.getItem('roles'));
-            console.log('status', loginCheckResponse);
-        if (loginCheckResponse.status === 200) {
-            window.location.replace('/HomeApp/WebApp/index');
-        }
+   
+        window.location.replace('/HomeApp/WebApp/index');
 
     }
     
