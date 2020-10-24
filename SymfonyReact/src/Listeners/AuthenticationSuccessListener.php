@@ -10,6 +10,7 @@ class AuthenticationSuccessListener
 {
     public function onAuthenticationListener(AuthenticationSuccessEvent $authenticationSuccessEvent)
     {
+    //    dd('fuyck');
 //       $data = $authenticationSuccessEvent
 //        echo "success";die;
     }

@@ -31,7 +31,7 @@ security:
             anonymous: true
             guard:
                 authenticators:
-                    - App\Security\UserAuthenticator
+                    - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
 
