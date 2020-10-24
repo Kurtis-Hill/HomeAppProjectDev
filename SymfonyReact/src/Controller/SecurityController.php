@@ -32,10 +32,9 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
-        //dd($authenticationUtils->getLastAuthenticationError());
-        //dd($this->getUser());
          if ($this->getUser()) {
-             return $this->redirectToRoute('index', ['route' => 'index']);
+             return new JsonResponse('hey!!!');
+             //return $this->redirectToRoute('index', ['route' => 'index']);
          }
 
         return $this->render('index/index.html.twig');

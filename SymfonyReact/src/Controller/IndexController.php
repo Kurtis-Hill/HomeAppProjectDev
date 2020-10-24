@@ -35,18 +35,21 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/login/userdetails", name="userDetails")
+     * @Route("/api/userdetails", name="userDetails")
      * @param Request $request
      * @return Response
      */
     public function getUserDetails(UserService $userService):  JsonResponse
     {
-        if (!empty($userService->getUserErrors())) {
-            return new JsonResponse(['userID' => $userService->getUserID(), 'roles' => $userService->getUserRoles()]);
+        if (!$this->getUser()) {
+            return new JsonResponse(['errors' => $userService->getUserErrors()]);
+        }
+        elseif (!empty($userService->getErrors())) {
+            return new JsonResponse(['errors' => $userService->getErrors()]);
         }
         else {
+            return new JsonResponse(['userID' => $userService->getUserID(), 'roles' => $userService->getUserRoles()]);
             dd('user errorsa');
-            return new JsonResponse(['errors' => $userService->getUserErrors()]);
         }
     }
 }

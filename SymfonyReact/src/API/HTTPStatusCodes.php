@@ -27,6 +27,8 @@ class HTTPStatusCodes
 
     public const HTTP_REQUEST_TIMEOUT = 407;
 
+    public const HTTP_INTERNAL_SERVER_ERROR = 500;
+
 }
 
 //    public const

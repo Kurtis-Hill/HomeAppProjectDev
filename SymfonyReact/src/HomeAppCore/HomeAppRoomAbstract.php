@@ -9,9 +9,10 @@ use App\Entity\Core\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Doctrine\ORM\ORMException;
 use Symfony\Component\Security\Core\Security;
 
-class HomeAppRoomAbstract
+abstract class HomeAppRoomAbstract
 {
     /**
      * @var Security
@@ -24,23 +25,24 @@ class HomeAppRoomAbstract
     protected $em;
 
     /**
-     * @var User
+     * @var int
      */
     protected $userID;
 
     /**
-     * @var User
+     * @var array
      */
     protected $roles;
 
     /**
-     * @var GroupMapping
+     * @var array
      */
     protected $groupNameIDs = [];
 
-    protected $errors = [];
-
-
+    /**
+     * @var array
+     */
+    protected $userErrors = [];
 
     /**
      * HomeAppRoomAbstract constructor.
@@ -55,42 +57,47 @@ class HomeAppRoomAbstract
 
         try {
             $this->setUserVariables();
+        } catch (\PDOException $e) {
+            $this->userErrors['userErrors'] = $e->getMessage();
+        }  catch (ORMException $e) {
+            $this->userErrors['userErrors'] = $e->getMessage();
         } catch (\Exception $e) {
-            $this->errors[] = $e->getMessage();
+            $this->userErrors['userErrors'] = $e->getMessage();
         }
     }
 
     /**
      * @throws \Exception
      */
-    private function setUserVariables()
+    private function setUserVariables(): void
     {
         $this->userID = $this->user->getUser()->getUserid();
         $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
-        $this->roles = $this->user->getUser()->getRoles();
+        $this->roles =  $this->user->getUser()->getRoles();
 
         if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
             throw new \Exception("The User Variables Cannot be set Please try again");
         }
     }
 
-    public function getGroupNameID()
+    protected function getGroupNameID(): ?array
     {
         return $this->groupNameIDs;
     }
 
-    public function getUserID()
+    public function getUserID(): ?int
     {
         return $this->userID;
     }
 
-    public function getUserRoles()
+    public function getUserRoles(): ?array
     {
         return $this->roles;
     }
 
     public function getUserErrors()
     {
-        return $this->errors;
+        return $this->userErrors;
     }
+
 }

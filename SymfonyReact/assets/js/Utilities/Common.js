@@ -43,6 +43,7 @@ export const lowercaseFirstLetter = (string) => {
     return null;
 }
 
-export const webappURL = (string) => {
-   return '/HomeApp/WebApp/';
-}
+export const webappURL = '/HomeApp/WebApp/';
+
+export const apiURL = '/HomeApp/api/'
+

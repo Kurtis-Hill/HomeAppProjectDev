@@ -35,19 +35,14 @@ class NavbarController extends AbstractController
 //        dd($navbarData);
 
         if (empty($navbarData['rooms'])){
-            $navbarData['rooms'] = 'No Rooms You May Need To Add A Room First';
+            $navbarData['rooms'] = 'No Rooms';
             dd('1');
         }
 
         if (empty($navbarData['devices'])){
-            $navbarData['devices'] = 'No Devices You May Need To Add A Room First';
+            $navbarData['devices'] = 'No Devices';
             dd('2');
         }
-
-//        if (!$errors) {
-//            dd($errors);
-//            return new JsonResponse($errors, 500);
-//        }
 
         return new JsonResponse($navbarData);
     }
