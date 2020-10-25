@@ -44,6 +44,8 @@ function Login(props) {
                 setError('Login Failed Please Try Again');
                 setLoading(false); 
             });
+
+        window.location.replace('/HomeApp/WebApp/index');
     }
     
     return (
