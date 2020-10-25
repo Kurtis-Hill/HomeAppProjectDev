@@ -9,10 +9,9 @@ use App\Entity\Core\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Doctrine\ORM\ORMException;
 use Symfony\Component\Security\Core\Security;
 
-abstract class HomeAppRoomAbstract
+class HomeAppRoomAbstract
 {
     /**
      * @var Security
@@ -25,24 +24,23 @@ abstract class HomeAppRoomAbstract
     protected $em;
 
     /**
-     * @var int
+     * @var User
      */
     protected $userID;
 
     /**
-     * @var array
+     * @var User
      */
     protected $roles;
 
     /**
-     * @var array
+     * @var GroupMapping
      */
     protected $groupNameIDs = [];
 
-    /**
-     * @var array
-     */
-    protected $userErrors = [];
+    protected $errors = [];
+
+
 
     /**
      * HomeAppRoomAbstract constructor.
@@ -57,47 +55,42 @@ abstract class HomeAppRoomAbstract
 
         try {
             $this->setUserVariables();
-        } catch (\PDOException $e) {
-            $this->userErrors['userErrors'] = $e->getMessage();
-        }  catch (ORMException $e) {
-            $this->userErrors['userErrors'] = $e->getMessage();
         } catch (\Exception $e) {
-            $this->userErrors['userErrors'] = $e->getMessage();
+            $this->errors[] = $e->getMessage();
         }
     }
 
     /**
      * @throws \Exception
      */
-    private function setUserVariables(): void
+    private function setUserVariables()
     {
         $this->userID = $this->user->getUser()->getUserid();
         $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
-        $this->roles =  $this->user->getUser()->getRoles();
+        $this->roles = $this->user->getUser()->getRoles();
 
         if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
             throw new \Exception("The User Variables Cannot be set Please try again");
         }
     }
 
-    protected function getGroupNameID(): ?array
+    public function getGroupNameID()
     {
         return $this->groupNameIDs;
     }
 
-    public function getUserID(): ?int
+    public function getUserID()
     {
         return $this->userID;
     }
 
-    public function getUserRoles(): ?array
+    public function getUserRoles()
     {
         return $this->roles;
     }
 
     public function getUserErrors()
     {
-        return $this->userErrors;
+        return $this->errors;
     }
-
 }

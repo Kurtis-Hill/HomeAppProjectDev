@@ -10,7 +10,6 @@ use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
 use App\HomeAppCore\HomeAppRoomAbstract;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use Symfony\Component\Security\Core\Security;
 
 class NavbarService extends HomeAppRoomAbstract
@@ -21,39 +20,38 @@ class NavbarService extends HomeAppRoomAbstract
 
     private $devices = [];
 
-    private $errors = [];
-
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         parent::__construct($em, $security);
 
         try {
             $this->usersRooms = $this->setUsersRooms();
+
             $this->groupNames = $this->setUsersGroupNames();
+
             $this->devices = $this->setUsersDevices();
-        } catch (\PDOException $e) {
-            $this->errors['errors'] = $e->getMessage();
-        }  catch (\Exception $e) {
-            $this->errors['errors'] = $e->getMessage();
         }
+        catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+        }
+
     }
 
-
-    private function setUsersRooms(): ?array
+    private function setUsersRooms()
     {
-        $userRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->groupNameIDs);
+        $roomRepository = $this->em->getRepository(Room::class);
 
-        return $userRooms;
+        return $roomRepository->getRoomsForUser($this->groupNameIDs);
     }
 
-    private function setUsersGroupNames(): ?array
+    private function setUsersGroupNames()
     {
         $groupNames = $this->em->getRepository(GroupMapping::class)->getGroupNamesAndIds($this->userID);
 
         return $groupNames;
     }
 
-    private function setUsersDevices(): ?array
+    private function setUsersDevices(): array
     {
         $devices = $this->em->getRepository(Devices::class)->returnAllUsersDevices($this->groupNameIDs);
 
@@ -61,26 +59,26 @@ class NavbarService extends HomeAppRoomAbstract
     }
 
 
-    public function getUserDevices(): ?array
+    public function getUserDevices()
     {
         return $this->devices;
     }
 
-    public function getUsersRooms(): ?array
+    public function getUsersRooms()
     {
         return $this->usersRooms;
     }
 
-    public function getUsersGroupNames(): ?array
+
+    public function getUsersGroupNames()
     {
         return $this->groupNames;
     }
 
-    public function getErrors(): ?array
+    public function getErrors()
     {
-        $this->errors['userErrors'] = $this->getErrors();
-
         return $this->errors;
     }
+
 }
 

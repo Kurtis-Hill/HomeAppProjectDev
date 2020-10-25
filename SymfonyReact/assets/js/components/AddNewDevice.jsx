@@ -11,7 +11,7 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = addNewDeviceContext.newDeviceModalContent;
 
-    const newSensorRoute = webappURL+"device?device-name="+newDeviceModalContent.newDeviceID+"&device-group="+newDeviceModalContent.newDeviceGroup+"&device-room="+newDeviceModalContent.newDeviceRoom;
+    const newSensorRoute = webappURL()+"device?device-name="+newDeviceModalContent.newDeviceID+"&device-group="+newDeviceModalContent.newDeviceGroup+"&device-room="+newDeviceModalContent.newDeviceRoom;
 
     return (
         <React.Fragment>

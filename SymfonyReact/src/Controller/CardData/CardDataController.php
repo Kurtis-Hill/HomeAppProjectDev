@@ -65,7 +65,7 @@ class CardDataController extends AbstractController
 
         try {
             $cardData = $cardDataService->returnRoomCardSensorData('JSON', $deviceDetails);
-        } catch(\DBALException $e){
+        } catch(DBALException $e){
             $errorMessage[] = $e->getMessage();
         } catch(\Exception $e){
             $errorMessage[] = $e->getMessage();

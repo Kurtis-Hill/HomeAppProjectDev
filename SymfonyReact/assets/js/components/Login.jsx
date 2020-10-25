@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { apiURL, setUserTokens, webappURL } from '../Utilities/Common';
+import { setUserTokens, webappURL } from '../Utilities/Common';
 
 function Login(props) {
     const username = useFormInput('');
@@ -44,17 +44,8 @@ function Login(props) {
                 setError('Login Failed Please Try Again');
                 setLoading(false); 
             });
-        
-        // const userData = await loginResponse.status === 200 
-        //     ? axios.get(apiURL+'userdetails', { headers: {"Authorization" : `BEARER ${getToken()}`} })
-        //     : setError('error with login');
 
-        // const settingUserData =  setUserData(userData.userID, userData.roles);
-
-        // console.log('rep', loginResponse.status);
-        // console.log('userData', userData);
-        // console.log('setting user data', settingUserData);
-        window.location.replace(webappURL+'index');
+        window.location.replace(webappURL()+'index');
     }
     
     return (
