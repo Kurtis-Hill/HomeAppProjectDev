@@ -4,7 +4,9 @@
     <bookmark url="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" line="98" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e3ff9239-272c-4490-910a-21761cd8910a" name="Default Changelist" comment="" />
+    <list default="true" id="e3ff9239-272c-4490-910a-21761cd8910a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -399,12 +401,12 @@
       <workItem from="1594771427890" duration="2701000" />
       <workItem from="1594895291452" duration="2544000" />
       <workItem from="1596278983776" duration="2604000" />
-      <workItem from="1603651481476" duration="258000" />
+      <workItem from="1603651481476" duration="881000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="153563000" />
+    <option name="totallyTimeSpent" value="154186000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
