@@ -29,7 +29,7 @@ The devices have multiple layers of security involved in there data exchange not
 Sensors currently supported so far: DS18B20 waterproof temperature sensor, DHT22 temperature and humidity sensor, BMP280 temperature humidity and air pressure sensor and Capacitive Soil Moisture Sensor 
 
 
-<h2>This project aims <h3>
+<h2>This project aims </h3>
 The current iteration of the project is not yet finished although a working alpha has been successfully working for a few moths but a fully working beta that can be deployed by any user is hoped to be completed before Decemeber 2020.
 
 When the project is finished one of the final steps will be to add the project to a docker container so the project can be brought up and down making it more flexible as a service
