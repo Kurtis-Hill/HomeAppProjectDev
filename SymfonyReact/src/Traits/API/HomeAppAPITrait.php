@@ -4,7 +4,6 @@
 namespace App\Traits;
 
 use App\API\HTTPStatusCodes;
-use App\HTTPStatusCodes;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 trait HomeAppAPIResponseTrait

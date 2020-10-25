@@ -5,7 +5,7 @@ doctrine:
       charset: utf8mb4
       collate: utf8mb4_unicode_ci
     driver: pdo_mysql
-    server_version: '10.1.44'
+    server_version: '5.7'
     host:     "klh17101990.asuscomm.com"
     port:     "3306"
     dbname:   "HomeApp"

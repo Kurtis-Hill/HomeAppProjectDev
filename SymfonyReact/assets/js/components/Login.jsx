@@ -45,7 +45,7 @@ function Login(props) {
                 setLoading(false); 
             });
 
-        window.location.replace(webappURL()+'index');
+        //window.location.replace(webappURL()+'index');
     }
     
     return (
