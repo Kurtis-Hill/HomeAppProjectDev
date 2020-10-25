@@ -51,7 +51,6 @@ export default class App extends Component {
                                             </CardContextProvider>
                                             <AddNewSensor/>
                                         </Route>
-                                    {/* <Route path="/HomeApp/sensor/:sensorname/" component={AddNewSensor}/>  */}
                                 </div>
                             </div>         
                         </div>

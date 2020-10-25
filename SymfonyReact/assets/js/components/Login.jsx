@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { setUserTokens, webappURL } from '../Utilities/Common';
+import { setUserTokens, setUserSession, webappURL, apiURL, getToken } from '../Utilities/Common';
 
 function Login(props) {
     const username = useFormInput('');
@@ -17,21 +17,21 @@ function Login(props) {
         setError(null);
         setLoading(true);
         
-        const csrfTokenResponse = await axios.get('csrfToken')
+        const csrfTokenResponse = await axios.get(apiURL+'csrfToken')
             .catch(error => {
                 alert('Please Fresher The Browser');
             });
 
         const formToken = csrfTokenResponse.data.token;
 
-        const loginCheckResponse = await axios.post('api/login_check', {username: username.value, password: password.value})        
+        const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})        
             .catch(error => {
                 setError('Invalid Credentials');
                 setLoading(false); 
             });
         
-
-        const setUserData =  setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
+        
+        setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
 
         const loginForm = document.getElementById('login-form');
 
@@ -39,13 +39,19 @@ function Login(props) {
 
         formData.append('_csrf_token', formToken);
 
-        const loginResponse = await axios.post('login', formData, { headers: { 'content-type': 'multipart/form-data' } })
+        const loginResponse = await axios.post('/HomeApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } })
             .catch(error => {
                 setError('Login Failed Please Try Again');
                 setLoading(false); 
             });
 
-        window.location.replace('/HomeApp/WebApp/index');
+        if (loginResponse.status === 200) {
+            const userDetailsResponse = await axios.get(apiURL+'user/account-details', { headers: {"Authorization" : `BEARER ${getToken()}`} });
+            const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
+            window.location.replace(webappURL+'index');
+        } else {
+            setError(loginResponse.data.errors)
+        }
     }
     
     return (

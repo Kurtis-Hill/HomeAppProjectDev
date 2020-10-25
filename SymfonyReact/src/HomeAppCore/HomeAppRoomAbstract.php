@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Security\Core\Security;
 
-class HomeAppRoomAbstract
+abstract class HomeAppRoomAbstract
 {
     /**
      * @var Security
@@ -24,23 +24,21 @@ class HomeAppRoomAbstract
     protected $em;
 
     /**
-     * @var User
+     * @var array
      */
     protected $userID;
 
     /**
-     * @var User
+     * @var array
      */
     protected $roles;
 
     /**
-     * @var GroupMapping
+     * @var array
      */
     protected $groupNameIDs = [];
 
-    protected $errors = [];
-
-
+    protected $userErrors = [];
 
     /**
      * HomeAppRoomAbstract constructor.
@@ -56,7 +54,7 @@ class HomeAppRoomAbstract
         try {
             $this->setUserVariables();
         } catch (\Exception $e) {
-            $this->errors[] = $e->getMessage();
+            $this->userErrors[] = $e->getMessage();
         }
     }
 

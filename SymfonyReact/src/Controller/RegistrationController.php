@@ -30,36 +30,45 @@ class RegistrationController extends AbstractController
             $groupName->setGroupname($form->get('groupNameID')->getData());
             $groupName->setTimez(new \DateTime());
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($groupName);
-            $entityManager->flush();
+            try {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($groupName);
+                $entityManager->flush();
 
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+                $user->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $user,
+                        $form->get('plainPassword')->getData()
+                    )
+                );
 
-            $user->setEmail($form->get('email')->getData());
-            $user->setFirstname($form->get('firstName')->getData());
-            $user->setLastname($form->get('lastName')->getData());
-            $user->setRoles($user->getRoles());
-            $user->setGroupnameid($groupName);
-            $user->setTimez(new \DateTime());
+                $user->setEmail($form->get('email')->getData());
+                $user->setFirstname($form->get('firstName')->getData());
+                $user->setLastname($form->get('lastName')->getData());
+                $user->setRoles($user->getRoles());
+                $user->setGroupnameid($groupName);
+                $user->setTimez(new \DateTime());
 
-            $groupNameMapping = new GroupMapping();
+                $groupNameMapping = new GroupMapping();
 
-            $groupNameMapping->setGroupnameid($groupName);
-            $groupNameMapping->setUserID($user);
+                $groupNameMapping->setGroupnameid($groupName);
+                $groupNameMapping->setUserID($user);
 
-            $entityManager->persist($user);
-            $entityManager->persist($groupNameMapping);
-            $entityManager->flush();
+                $entityManager->persist($user);
+                $entityManager->persist($groupNameMapping);
+                $entityManager->flush();
+            } catch (\PDOException $e) {
+                $errors['errors'] = $e->getMessage();
+            }  catch (ORMException $e) {
+                $errors['errors'] = $e->getMessage();
+            } catch (\Exception $e) {
+                $errors['errors'] = $e->getMessage();
+            }
+
 
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('index-view.html.twig');
+            return $this->redirectToRoute('index');
         }
 
         return $this->render('registration/register.html.twig', [

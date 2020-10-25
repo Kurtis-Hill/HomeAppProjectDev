@@ -34,19 +34,4 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig');
     }
 
-    /**
-     * @Route("/login/userdetails", name="userDetails")
-     * @param Request $request
-     * @return Response
-     */
-    public function getUserDetails(UserService $userService):  JsonResponse
-    {
-        if (!empty($userService->getUserErrors())) {
-            return new JsonResponse(['userID' => $userService->getUserID(), 'roles' => $userService->getUserRoles()]);
-        }
-        else {
-            dd('user errorsa');
-            return new JsonResponse(['errors' => $userService->getUserErrors()]);
-        }
-    }
 }

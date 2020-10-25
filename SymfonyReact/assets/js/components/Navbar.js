@@ -12,9 +12,7 @@ const Navbar = () => {
     
     const deviceRoute = context.deviceNavURLS;
     const roomRoute = "rooms/";  
-    const homeRoute = "/HomeApp/index/";  
-    const newSensorRoute = "sensors/new-sensor";
-
+    const homeRoute = webappURL+"index/";  
 
     const deviceNavShowToggle = context.deviceSettingsNavToggle === true ? 'show' : null;
     const roomNavShowToggle = context.roomNavToggle === true ? 'show' : null;
@@ -31,7 +29,7 @@ const Navbar = () => {
                 <hr className="sidebar-divider my-0" />
               
                 <li className="nav-item">
-                    <a className="nav-link" href={webappURL()+"index"}>
+                    <a className="nav-link" href={webappURL+"index"}>
                         <i className="fas fa-fw fa-tachometer-alt" />
                         <span>Admin Dashboard</span></a>
                 </li>
@@ -66,7 +64,7 @@ const Navbar = () => {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Devices:</h6>
                         {context.userDevices.map((device) => (
-                            <a key={device.deviceid} className="collapse-item" href={webappURL()+"device?device-name="+device.devicenameid+"&device-group="+device.groupnameid+"&device-room="+device.roomid}>{device.devicename}</a>
+                            <a key={device.deviceid} className="collapse-item" href={webappURL+"device?device-name="+device.devicenameid+"&device-group="+device.groupnameid+"&device-room="+device.roomid}>{device.devicename}</a>
                         ))}
                          <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
                     </div>

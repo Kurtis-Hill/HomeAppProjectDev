@@ -17,6 +17,7 @@ use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
 
 use App\Services\CardDataService;
+use Doctrine\DBAL\DBALException;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -65,8 +66,6 @@ class CardDataController extends AbstractController
 
         try {
             $cardData = $cardDataService->returnRoomCardSensorData('JSON', $deviceDetails);
-        } catch(DBALException $e){
-            $errorMessage[] = $e->getMessage();
         } catch(\Exception $e){
             $errorMessage[] = $e->getMessage();
         }

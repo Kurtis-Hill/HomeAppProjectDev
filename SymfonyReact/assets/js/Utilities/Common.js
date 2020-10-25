@@ -14,17 +14,23 @@ export const getRefreshToken = () => {
 
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
-    sessionStorage.removeItem('refreshToken');    
+    sessionStorage.removeItem('refreshToken');   
+    sessionStorage.removeItem('userID');   
+    sessionStorage.removeItem('roles');    
     window.location.replace('/HomeApp/login');
     return null;
 }
 
 export const setUserTokens = (token, refreshToken) => {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
     sessionStorage.setItem('token' , token);
     sessionStorage.setItem('refreshToken' , refreshToken);
 }
 
 export const setUserSession = (userID, roles) => {
+    sessionStorage.removeItem('userID');   
+    sessionStorage.removeItem('roles');
     sessionStorage.setItem('userID' , userID);
     sessionStorage.setItem('roles' , roles);
 }
@@ -43,6 +49,6 @@ export const lowercaseFirstLetter = (string) => {
     return null;
 }
 
-export const webappURL = (string) => {
-   return '/HomeApp/WebApp/';
-}
+export const webappURL = '/HomeApp/WebApp/';
+
+export const apiURL = '/HomeApp/api/'

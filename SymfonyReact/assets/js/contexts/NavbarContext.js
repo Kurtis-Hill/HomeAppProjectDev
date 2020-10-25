@@ -2,7 +2,7 @@ import React, { Component, createContext } from 'react';
 import ReactDOM from "react-dom";
 import axios from 'axios';
 
-import { getToken, webappURL, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
+import { getToken, webappURL, apiURL, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
 import { array } from 'prop-types';
 
 export const NavbarContext = createContext();
@@ -58,7 +58,7 @@ export default class NavbarContextProvider extends Component {
     }
 
     navbarData = () => {
-        axios.get('/HomeApp/api/navbar/navbar-data',
+        axios.get(apiURL+'navbar/navbar-data',
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             console.log('navbar response', response.data.devices);

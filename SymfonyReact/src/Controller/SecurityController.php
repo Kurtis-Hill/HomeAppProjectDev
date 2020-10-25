@@ -15,7 +15,7 @@ class SecurityController extends AbstractController
 {
 
     /**
-     * @Route("/HomeApp/csrfToken", name="csrf")
+     * @Route("/HomeApp/api/csrfToken", name="csrf")
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @return JsonResponse
      */
@@ -32,8 +32,6 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
-        //dd($authenticationUtils->getLastAuthenticationError());
-        //dd($this->getUser());
          if ($this->getUser()) {
              return $this->redirectToRoute('index', ['route' => 'index']);
          }
