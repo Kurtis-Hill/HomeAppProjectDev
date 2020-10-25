@@ -14,11 +14,12 @@ class DevicesRepository extends EntityRepository
 {
     /**
      * @param $groupNameID
+     * @return array
      */
-    public function returnAllUsersDevices($groupNameID)
+    public function getAllUsersDevices($groupNameID): array
     {
         $qb = $this->createQueryBuilder('dv');
-        $qb->select('dv.devicenameid, dv.devicenameid', 'dv.devicename', 'gn.groupnameid', 'r.roomid')
+        $qb->select('dv.devicenameid', 'dv.devicename', 'gn.groupnameid', 'r.roomid')
             ->leftJoin('App\Entity\Core\Room', 'r', Join::WITH, 'dv.roomid = r.roomid')
             ->leftJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid')
         ;

@@ -7,20 +7,23 @@ use Doctrine\ORM\EntityRepository;
 
 class RoomRepository extends EntityRepository
 {
-    public function getRoomsForUser($groupNameid)
+    /**
+     * @param $groupNameid
+     * @return array
+     */
+    public function getRoomsForUser($groupNameid): array
     {
         $qb = $this->createQueryBuilder('r');
 
-        $qb->select('r')
+        $qb->select('r.roomid, r.room')
             ->where(
                 $qb->expr()->in('r.groupnameid', ':groupnameid')
             )
             ->setParameter('groupnameid', $groupNameid);
 
-        $result = $qb->getQuery()->getScalarResult();
-       // dd($result);
+        $result = $qb->getQuery()->getArrayResult();
+
         return $result;
     }
 
 }
-//* @ORM\Entity(repositoryClass="App\Repository\RoomRepository")

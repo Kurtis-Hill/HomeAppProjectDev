@@ -10,7 +10,7 @@ use mysql_xdevapi\Exception;
 
 class GroupNameMappingTableRepository extends EntityRepository
 {
-    public function getGroupsForUser($userID)
+    public function getGroupsForUser($userID): array
     {
        //dd($userID);
         $qb = $this->createQueryBuilder('gmt');
@@ -34,7 +34,7 @@ class GroupNameMappingTableRepository extends EntityRepository
         return $groupNameIDs;
     }
 
-    public function getGroupNamesAndIds($userID)
+    public function getUserGroupNamesAndIds($userID): array
     {
         $qb = $this->createQueryBuilder('gmt');
         $qb->select('gn.groupname', 'gn.groupnameid')
@@ -45,9 +45,7 @@ class GroupNameMappingTableRepository extends EntityRepository
             )
             ->setParameter('userID', $userID);
 
-        $result = $qb->getQuery()->getResult();
-     //   dd($result);
+        return $qb->getQuery()->getArrayResult();
 
-        return $result;
     }
 }

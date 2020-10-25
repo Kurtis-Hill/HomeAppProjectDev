@@ -89,6 +89,6 @@ abstract class HomeAppRoomAbstract
 
     public function getUserErrors()
     {
-        return $this->errors;
+        return $this->userErrors;
     }
 }

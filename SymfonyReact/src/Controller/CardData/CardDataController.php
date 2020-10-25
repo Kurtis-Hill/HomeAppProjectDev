@@ -17,6 +17,7 @@ use App\Form\CardViewForms\SoilFormType;
 use App\Form\CardViewForms\TempHumidFormType;
 
 use App\Services\CardDataService;
+use App\Traits\API\HomeAppAPIResponseTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,6 +34,8 @@ use Symfony\Component\Validator\Constraints\Json;
  */
 class CardDataController extends AbstractController
 {
+    use HomeAppAPIResponseTrait;
+
     /**
      * @Route("/index", name="indexCardData")
      * @param Request $request

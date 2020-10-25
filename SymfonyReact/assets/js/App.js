@@ -37,20 +37,20 @@ export default class App extends Component {
                             </NavbarContextProvider>                                               
                             <div id="content-wrapper" className="d-flex flex-column">
                                 <div id="content">  
-                                    <Profilebar></Profilebar>
-                                        <Route path="/HomeApp/WebApp/index">                                                                                                                                         
-                                            <CardContextProvider>
-                                                <Cards/>       
-                                                <CardModal/>                                 
-                                            </CardContextProvider>                                        
-                                        </Route>                                   
-                                        <Route path="/HomeApp/WebApp/device">                                      
-                                            <CardContextProvider>
-                                                <Cards/>     
-                                                <CardModal/>                                     
-                                            </CardContextProvider>
-                                            <AddNewSensor/>
-                                        </Route>
+                                    <Profilebar/>
+                                    <Route path="/HomeApp/WebApp/index">                                                                                                                                         
+                                        <CardContextProvider>
+                                            <Cards/>       
+                                            <CardModal/>                                 
+                                        </CardContextProvider>                                        
+                                    </Route>                                   
+                                    <Route path="/HomeApp/WebApp/device">                                      
+                                        <CardContextProvider>
+                                            <Cards/>     
+                                            <CardModal/>                                     
+                                        </CardContextProvider>
+                                        <AddNewSensor/>
+                                    </Route>
                                 </div>
                             </div>         
                         </div>
@@ -62,9 +62,4 @@ export default class App extends Component {
     }
 }
                                             
-
 ReactDOM.render(<App/>, document.getElementById("root"));
-
-
-{/* <div className="d-sm-flex align-items-center justify-content-between mb-4">
-</div>      */}
