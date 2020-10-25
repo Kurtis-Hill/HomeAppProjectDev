@@ -3,8 +3,6 @@
 
 namespace App\Traits;
 
-
-
 use App\API\HTTPStatusCodes;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

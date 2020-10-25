@@ -18,8 +18,7 @@ yarn-error.log
 composer.lock
 /composer.lock
 
-symfony.lock
-/symfony.lock
+
 
 yarn.lock
 /yarn.lock
@@ -32,3 +31,7 @@ package.lock.json
 ###> lexik/jwt-authentication-bundle ###
 ##/config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+## .idea ##
+.idea/
+/.idea/
