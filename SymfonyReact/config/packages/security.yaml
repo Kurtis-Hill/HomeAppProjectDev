@@ -27,11 +27,11 @@ security:
                 - lexik_jwt_authentication.jwt_token_authenticator
 
         main:
-            pattern:   ^/HomeApp/WebApp
+            pattern:   ^/HomeApp
             anonymous: true
             guard:
                 authenticators:
-                    - App\Security\Lo
+                    - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
 
