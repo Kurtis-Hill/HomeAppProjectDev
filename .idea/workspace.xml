@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3bacd970-dbe7-4b7c-891c-c9976e15268d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/components/AddNewDevice.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/components/AddNewDevice.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Cards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Cards.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/components/Navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/assets/js/contexts/CardContexts.js" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/assets/js/contexts/CardContexts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SymfonyReact/src/Traits/API/HomeAppAPITrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/SymfonyReact/src/Traits/API/HomeAppAPITrait.php" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/SymfonyReact/node_modules/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/SymfonyReact/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Traits/API/HomeAppAPITrait.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1100">
+              <caret line="89" column="20" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
+              <folding>
+                <element signature="e#8#36#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SymfonyReact/src/API/HTTPStatusCodes.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="40" column="5" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+              <folding>
+                <element signature="e#44#75#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SymfonyReact/assets/js/contexts/CardContexts.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/NavbarController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="9" selection-start-line="9" selection-end-line="9" selection-end-column="47" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/SymfonyReact/src/API/HTTPStatusCodes.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/Sensors/DeviceController.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/NavbarController.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Traits/API/HomeAppAPITrait.php" />
+        <option value="$PROJECT_DIR$/SymfonyReact/config/services.yaml" />
+        <option value="$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php" />
+      </list>
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/twig-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/stopwatch" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/doctrine-bridge" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/security-csrf" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/webpack-encore-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/twig-pack" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/inflector" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/persistence" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/form" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/common" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/migrations" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/orm" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/doctrine-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/reflection" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/annotations" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/sql-formatter" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/doctrine-migrations-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/webimpress/safe-writer" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/laminas/laminas-code" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/ocramius/proxy-manager" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/namshi/jose" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/sensio/framework-extra-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/laminas/laminas-zendframework-bridge" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/laminas/laminas-eventmanager" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/twig/extra-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/lexik/jwt-authentication-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/property-access" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/profiler-pack" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/security-guard" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/web-profiler-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/flex" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/orm-pack" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/maker-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/doctrine/collections" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/twig-bridge" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/security-http" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/polyfill-intl-icu" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/security-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/composer" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/security-core" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/intl" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/asset" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/framework-bundle" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/SymfonyReact/vendor/symfony/polyfill-mbstring" />
+    </include_path>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/composerJson.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="3429" />
+    <option name="y" value="-1733" />
+    <option name="width" value="2178" />
+    <option name="height" value="3788" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
+              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
+              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
+              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="API" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
+              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Traits" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HomeAppProjectDev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HomeAppProjectDev" type="462c0819:PsiDirectoryNode" />
+              <item name="SymfonyReact" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Traits" type="462c0819:PsiDirectoryNode" />
+              <item name="API" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3bacd970-dbe7-4b7c-891c-c9976e15268d" name="Default Changelist" comment="" />
+      <created>1604758832327</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1604758832327</updated>
+      <workItem from="1604758833514" duration="16000" />
+      <workItem from="1604762566932" duration="2815000" />
+      <workItem from="1604766114173" duration="4367000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="7198000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="3433" y="-1733" width="1452" height="2525" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2571839" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32971165" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3309653" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/Sensors/DeviceController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/packages/security.yaml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/config/services.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="76" selection-start-line="17" selection-start-column="70" selection-end-line="17" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/API/HTTPStatusCodes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/NavbarController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" selection-start-line="9" selection-end-line="9" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/assets/js/contexts/CardContexts.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Traits/API/HomeAppAPITrait.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1100">
+          <caret line="89" column="20" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
+          <folding>
+            <element signature="e#8#36#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SymfonyReact/src/Controller/CardData/CardDataController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="40" column="5" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+          <folding>
+            <element signature="e#44#75#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

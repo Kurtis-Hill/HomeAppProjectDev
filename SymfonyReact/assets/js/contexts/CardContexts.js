@@ -19,15 +19,21 @@ class CardContextProvider extends Component {
             modalShow: false,
             modalLoading: false,
             modalContent: emptyModalContent,
+            url: '',
+            errors: [],
         };
     }
 
-    componentDidMount() {    
+    componentDidMount() {   
+        this.setURL();
         this.cardRefreshTimerID = setInterval(
             () => this.fetchCardData(), 
             this.state.refreshTimer
         );
     }
+
+        
+       
 
     componentDidUpdate(prevProps, preState) {
         // console.log('prev state', preState);
@@ -38,28 +44,32 @@ class CardContextProvider extends Component {
         clearInterval(this.cardRefreshTimerID);
       }
 
-    //Fetches all the card data to be displayed on the index page
-    fetchCardData = () => {
 
+    setURL = () => {
         if (window.location.pathname === '/HomeApp/WebApp/index') {
-            var url = '/HomeApp/api/carddata/index';
+            this.setState({url: '/HomeApp/api/carddata/index'});
         }
         else {
             const deviceName = new URLSearchParams(window.location.search).get('device-name');
             const deviceGroup = new URLSearchParams(window.location.search).get('device-group');
             const deviceRoom = new URLSearchParams(window.location.search).get('device-room');
-            var url = "/HomeApp/api/carddata/device?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom;
-        }
 
-        axios.get(url, 
+            this.setState({url: "/HomeApp/api/carddata/device?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
+        }
+    }
+
+
+    //Fetches all the card data to be displayed on the index page
+    fetchCardData = () => {
+        axios.get(this.state.url, 
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            this.setState({cardData:response.data.sensorData});
+            this.setState({cardData:response.data.responseData.sensorData});
         }).catch(error => {
             const err = error.response;
             if (err.status === 400) {
-                this.setState({cardData: err.data});
+                this.setState({cardData: err.data.responseData});
             }
             if (err.status === 401) {
                 axios.post('/HomeApp/api/token/refresh', 
@@ -251,6 +261,7 @@ class CardContextProvider extends Component {
                         modalIcon: this.state.modalIcon,
                         updateModalForm: this.updateModalForm,
                         handleModalFormInput: this.handleModalFormInput,
+                        errors: this.state.errors,
                     }}>
                         {this.props.children}
                     </CardContext.Provider>
