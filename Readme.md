@@ -29,11 +29,22 @@ The devices have multiple layers of security involved in there data exchange not
 Sensors currently supported so far: DS18B20 waterproof temperature sensor, DHT22 temperature and humidity sensor, BMP280 temperature humidity and air pressure sensor and Capacitive Soil Moisture Sensor 
 
 
-<h3>This project aims <h3>
+<h2>This project aims </h3>
 The current iteration of the project is not yet finished although a working alpha has been successfully working for a few moths but a fully working beta that can be deployed by any user is hoped to be completed before Decemeber 2020.
 
 When the project is finished one of the final steps will be to add the project to a docker container so the project can be brought up and down making it more flexible as a service
 
 
 
+<h2>Running the Program</h2>
+Master is always kept in a fully functioning conditions, to run the project locally clone down the repo and run these commands at the root of the dicretory;
+composer install
+npm install (migrating from currently)
+yarn install
 
+then running an instance of symfony php server with 'symfony serve'
+the login page can be accessed at '/HomeApp/login'
+and the user account 'admin' and password on 'HomeApp1234' can be used to see some test data.
+
+To have a visual view of the database phpmyadmin can be accessed on 'https://klh17101990.asuscomm.com/phpmyadmin'
+username 'HomeApp' password 'HomeApp1234'
