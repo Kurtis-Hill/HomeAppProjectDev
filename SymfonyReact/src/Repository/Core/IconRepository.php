@@ -18,7 +18,7 @@ class IconRepository extends EntityRepository
            ->orderBy('i.iconname', 'ASC');
 
        $result = $qb->getQuery()->getScalarResult();
-       //dd($result);
+
        return $result;
    }
 

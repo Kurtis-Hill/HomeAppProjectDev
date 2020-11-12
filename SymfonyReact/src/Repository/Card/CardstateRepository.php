@@ -26,8 +26,6 @@ class CardstateRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cs')
             ->orderBy('cs.cardstateid', 'ASC');
 
-        $result = $qb->getQuery()->getScalarResult();
-        //dd($result);
-        return $result;
+        return $qb->getQuery()->getScalarResult();
     }
 }

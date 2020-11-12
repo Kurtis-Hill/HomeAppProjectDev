@@ -35,9 +35,8 @@ class DeviceService extends HomeAppRoomAbstract
             return $errors;
         }
 
-        $processedForm = $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
+        return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
 
-        return $processedForm;
 
     }
 
@@ -69,7 +68,6 @@ class DeviceService extends HomeAppRoomAbstract
 
                 return $errors;
             }
-
         }
 
         return $addNewDeviceForm;

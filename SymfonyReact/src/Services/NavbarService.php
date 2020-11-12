@@ -80,9 +80,6 @@ class NavbarService extends HomeAppRoomAbstract
     {
         if (empty($this->devices)) {
             $this->devices['devicename'] = 'No devices';
-            $this->devices['devicenameid'] = 0;
-            $this->devices['roomid'] = 0;
-            $this->usersRooms['groupnameid'] = 0;
         }
         return $this->devices;
     }
@@ -93,8 +90,7 @@ class NavbarService extends HomeAppRoomAbstract
     public function getUsersRooms(): array
     {
         if (empty($this->usersRooms)) {
-            $this->usersRooms['room'] = 'No user rooms';
-            $this->usersRooms['roomid'] = 0;
+            $this->usersRooms = ['room' => 'No user rooms', 'roomid' => 0];
         }
         return $this->usersRooms;
     }
@@ -105,8 +101,7 @@ class NavbarService extends HomeAppRoomAbstract
     public function getUsersGroupNames(): array
     {
         if (empty($this->groupNames)) {
-            $this->usersRooms['groupname'] = 'No user groups';
-            $this->usersRooms['groupnameid'] = 0;
+            $this->usersRooms = ['groupname' => 'No user groups', 'groupnameid' => 0];
         }
         return $this->groupNames;
     }

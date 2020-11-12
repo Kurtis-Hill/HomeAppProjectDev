@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
 
+//All queries need to be refactored to just grab the data needed just passed full objects in for convenience
 class CardviewRepository extends EntityRepository
 {
     /**
@@ -42,14 +43,9 @@ class CardviewRepository extends EntityRepository
 
         $qb->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
 
-         if($type === "JSON") {
-             $result = $qb->getQuery()->getScalarResult();
-         }
-         else {
-             $result = $qb->getQuery()->getResult();
-         }
-
-        return $result;
+        return $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
     }
 
     /**
@@ -97,13 +93,9 @@ class CardviewRepository extends EntityRepository
         ]);
 
         try {
-            if($type === "JSON") {
-                $result = $qb->getQuery()->getScalarResult();
-            }
-            else {
-                $result = $qb->getQuery()->getResult();
-            }
-            return $result;
+            return $type === "JSON"
+                ? $qb->getQuery()->getScalarResult()
+                : $qb->getQuery()->getResult();
 
         } catch(\PDOException $e){
             $errorMessage['errors'] = $e->getMessage();
@@ -140,15 +132,16 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => Cardstate::ON, 'cardviewTwo' => Cardstate::INDEX_ONLY]);
 
-        $result = null;
-        if($type === "json") {
-            $result = $qb->getQuery()->getScalarResult();
-        }
-        else {
-            $result = $qb->getQuery()->getResult();
-        }
+        try {
+            return $type === "JSON"
+                ? $qb->getQuery()->getScalarResult()
+                : $qb->getQuery()->getResult();
 
-        return $result;
+        } catch(\PDOException $e){
+            $errorMessage['errors'] = $e->getMessage();
+        } catch(\Exception $e){
+            $errorMessage['errors'] = $e->getMessage();
+        }
     }
 
     /**
@@ -176,15 +169,16 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
-        $result = null;
-        if($type === "json") {
-            $result = $qb->getQuery()->getScalarResult();
-        }
-        else {
-            $result = $qb->getQuery()->getResult();
-        }
+        try {
+            return $type === "JSON"
+                ? $qb->getQuery()->getScalarResult()
+                : $qb->getQuery()->getResult();
 
-        return $result;
+        } catch(\PDOException $e){
+            $errorMessage['errors'] = $e->getMessage();
+        } catch(\Exception $e){
+            $errorMessage['errors'] = $e->getMessage();
+        }
     }
 
     /**
@@ -212,20 +206,22 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
-        $result = null;
-        if($type === "JSON") {
-            $result = $qb->getQuery()->getScalarResult();
-        }
-        if($type === "Object") {
-            $result = $qb->getQuery()->getResult();
-        }
+        try {
+            return $type === "JSON"
+                ? $qb->getQuery()->getScalarResult()
+                : $qb->getQuery()->getResult();
 
-        return $result;
+        } catch(\PDOException $e){
+            $errorMessage['errors'] = $e->getMessage();
+        } catch(\Exception $e){
+            $errorMessage['errors'] = $e->getMessage();
+        }
     }
 
 
     /**
      * Add left join for additional sensors
+     * needs refactor
      * @param array $criteria
      * @return mixed
      */

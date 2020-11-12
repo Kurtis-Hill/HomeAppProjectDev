@@ -21,9 +21,7 @@ class RoomRepository extends EntityRepository
             )
             ->setParameter('groupnameid', $groupNameid);
 
-        $result = $qb->getQuery()->getArrayResult();
-
-        return $result;
+        return $qb->getQuery()->getArrayResult();
     }
 
 }

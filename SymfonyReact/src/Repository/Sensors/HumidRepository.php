@@ -28,17 +28,13 @@ class HumidRepository extends EntityRepository
                 $qb->expr()->eq('h.groupnameid', ':groupname'),
                 $qb->expr()->neq('cshow.cardshowid', ':notshown'),
             )
-            ->setParameters([':notshown' => 2, ':groupname' => $groupName, 'userid' => $id])
-        ;
+            ->setParameters([':notshown' => 2, ':groupname' => $groupName, 'userid' => $id]
+            );
 
-        if ($type === 'json') {
-            $result = $qb->getQuery()->getScalarResult();
-        }
-        else {
-            $result = $qb->getQuery()->getResult();
-        }
+        return $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
 
-        return $result;
     }
 
 }

@@ -21,17 +21,15 @@ class DevicesRepository extends EntityRepository
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv.devicenameid', 'dv.devicename', 'gn.groupnameid', 'r.roomid')
             ->leftJoin('App\Entity\Core\Room', 'r', Join::WITH, 'dv.roomid = r.roomid')
-            ->leftJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid')
-        ;
+            ->leftJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid'
+            );
         $qb->where(
             $qb->expr()->in('dv.groupnameid', ':groupNameID')
         )
         ->setParameters(['groupNameID' => $groupNameID]);
 
-        $result = $qb->getQuery()->getArrayResult();
-
-        return $result;
+        return $qb->getQuery()->getArrayResult();
     }
 
-    
+
 }

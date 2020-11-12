@@ -20,8 +20,7 @@ class CardcolourRepository extends EntityRepository
         $qb = $this->createQueryBuilder('c')
               ->orderBy('c.colour', 'ASC');
 
-        $result = $qb->getQuery()->getScalarResult();
-        return $result;
+        return $qb->getQuery()->getScalarResult();
     }
 
     // /**
