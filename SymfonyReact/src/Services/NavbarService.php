@@ -12,6 +12,7 @@ use App\HomeAppCore\HomeAppRoomAbstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
+// class needs a slight refactor
 class NavbarService extends HomeAppRoomAbstract
 {
     private $usersRooms = [];
@@ -33,9 +34,7 @@ class NavbarService extends HomeAppRoomAbstract
 
         try {
             $this->usersRooms = $this->setUsersRooms();
-
             $this->groupNames = $this->setUsersGroupNames();
-
             $this->devices = $this->setUsersDevices();
         }
         catch (\Exception $e) {
@@ -83,7 +82,7 @@ class NavbarService extends HomeAppRoomAbstract
             $this->devices['devicename'] = 'No devices';
             $this->devices['devicenameid'] = 0;
             $this->devices['roomid'] = 0;
-            $this->userRooms['groupnameid'] = 0;
+            $this->usersRooms['groupnameid'] = 0;
         }
         return $this->devices;
     }
@@ -95,7 +94,7 @@ class NavbarService extends HomeAppRoomAbstract
     {
         if (empty($this->usersRooms)) {
             $this->usersRooms['room'] = 'No user rooms';
-            $this->userRooms['roomid'] = 0;
+            $this->usersRooms['roomid'] = 0;
         }
         return $this->usersRooms;
     }
@@ -107,7 +106,7 @@ class NavbarService extends HomeAppRoomAbstract
     {
         if (empty($this->groupNames)) {
             $this->usersRooms['groupname'] = 'No user groups';
-            $this->userRooms['groupnameid'] = 0;
+            $this->usersRooms['groupnameid'] = 0;
         }
         return $this->groupNames;
     }

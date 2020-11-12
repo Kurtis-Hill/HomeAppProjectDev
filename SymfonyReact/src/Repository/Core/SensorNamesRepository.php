@@ -5,6 +5,7 @@ namespace App\Repository\Core;
 use App\Entity\Core\Sensornames;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Sensornames|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,13 +13,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Sensornames[]    findAll()
  * @method Sensornames[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SensorNamesRepository extends ServiceEntityRepository
+class SensorNamesRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Sensornames::class);
-    }
-
     private function queryForUserSensors()
     {
 

@@ -24,9 +24,8 @@ class SecurityController extends AbstractController
     public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
-        $refreshToken = $csrfTokenManager;
 
-        return new JsonResponse(['token' => $token, 'refreshToken' => $refreshToken]);
+        return new JsonResponse(['token' => $token]);
     }
 
     /**

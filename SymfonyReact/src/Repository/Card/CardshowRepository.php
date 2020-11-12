@@ -7,12 +7,9 @@ namespace App\Repository\Card;
 use App\Entity\Card\Cardshow;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
-class CardshowRepository extends ServiceEntityRepository
+class CardshowRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Cardshow::class);
-    }
 
 }

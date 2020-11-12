@@ -8,14 +8,10 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Core\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
-class CardstateRepository extends ServiceEntityRepository
+class CardstateRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Cardstate::class);
-    }
-
     public function getAllCardStates()
     {
         $qb = $this->createQueryBuilder('cs');

@@ -65,9 +65,6 @@ class RegistrationController extends AbstractController
                 $errors['errors'] = $e->getMessage();
             }
 
-
-            // do anything else you need here, like send an email
-
             return $this->redirectToRoute('index');
         }
 

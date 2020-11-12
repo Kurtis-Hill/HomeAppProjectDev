@@ -7,6 +7,7 @@ namespace App\Controller\Sensors;
 use App\Entity\Core\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceService;
+use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DeviceController extends AbstractController
 {
+    use HomeAppAPIResponseTrait;
+
     /**
      * @Route("/new-device/modal-data", name="navbar-new-device-data")
      */
@@ -25,25 +28,30 @@ class DeviceController extends AbstractController
     {
         $errors = [];
 
+        $deviceData = [
+            'deviceName' => $request->get('device-name'),
+            'groupNameIds' => $request->get('group-name'),
+            'roomId' => $request->get('room-name')
+        ];
+
         $newDevice = new Devices();
 
         $addNewDeviceForm = $this->createForm(AddNewDeviceForm::class, $newDevice);
 
-        $handledForm = $deviceService->handleNewDeviceSubmission($request, $addNewDeviceForm);
+        $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
         if ($handledForm instanceof FormInterface) {
-            foreach ($handledForm->getErrors(true, true) as $value) {
-                array_push($errors, $value->getMessage());
+            if (!empty($handledForm->getErrors())) {
+                foreach ($handledForm->getErrors(true, true) as $value) {
+                    array_push($errors, $value->getMessage());
+                }
             }
-        }
-        if (is_array($handledForm)) {
-            array_push($errors, $handledForm);
         }
         if (!empty($errors)) {
             return new JsonResponse(['errors' => $errors], 400);
         }
         else {
-            $secret = $handledForm;
+            $secret = $handledForm->getData()->getSecret();
 
             return new JsonResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()], 200);
         }

@@ -12,7 +12,6 @@ class GroupNameMappingTableRepository extends EntityRepository
 {
     public function getGroupsForUser($userID): array
     {
-       //dd($userID);
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gn.groupnameid')

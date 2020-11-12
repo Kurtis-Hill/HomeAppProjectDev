@@ -9,9 +9,8 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class HumidRepository extends EntityRepository
 {
-    private function queryAllHumidReadings($type, $groupName, $id)
+    public function getHumidCardReadings($type, $groupName, $id)
     {
-        //   dd($groupName);
         $qb = $this->createQueryBuilder('h');
 
         $qb->select('h', 'cstate.state', 'sn.sensorname', 'i.iconname', 'cc.colour', 'u.userid', 'r.room')
@@ -29,7 +28,6 @@ class HumidRepository extends EntityRepository
                 $qb->expr()->eq('h.groupnameid', ':groupname'),
                 $qb->expr()->neq('cshow.cardshowid', ':notshown'),
             )
-
             ->setParameters([':notshown' => 2, ':groupname' => $groupName, 'userid' => $id])
         ;
 
@@ -40,12 +38,7 @@ class HumidRepository extends EntityRepository
             $result = $qb->getQuery()->getResult();
         }
 
-       // dd($result);
         return $result;
     }
 
-    public function getHumidCardReadings($type, $groupName, $id)
-    {
-        return $this->queryAllHumidReadings($type, $groupName, $id);
-    }
 }

@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Sensortype
 {
+    public const DHT_SENSOR = 'DHT';
+
+    public const BMP_SENSOR = 'BPM Weather Station';
+
+    public const DALLAS_TEMPERATURE = 'Dallas Temperature';
+
+    public const SOIL_SENSOR = 'Soil';
+
     /**
      * @var int
      *
