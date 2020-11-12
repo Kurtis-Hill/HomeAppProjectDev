@@ -21,12 +21,11 @@ class DeviceService extends HomeAppRoomAbstract
      */
     public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm)
     {
+        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['deviceName' => $deviceData['deviceName']]);
+
         if (!in_array($deviceData['groupNameIds'], $this->getGroupNameID())) {
             $errors[] = 'You are not part of this group';
         }
-
-        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['deviceName' => $deviceData['deviceName']]);
-
         if (!empty($currentUserDeviceCheck)) {
             $errors[] = 'Your group already has a device named'. $deviceData['deviceName'];
         }
@@ -71,8 +70,5 @@ class DeviceService extends HomeAppRoomAbstract
         }
 
         return $addNewDeviceForm;
-
-
-
     }
 }
