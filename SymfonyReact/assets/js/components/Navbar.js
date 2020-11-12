@@ -63,8 +63,8 @@ const Navbar = () => {
                     <div id="collapseTwo" className={'collapse '+deviceNavShowToggle} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Devices:</h6>
-                        {context.userDevices.map((device) => (
-                            <a key={device.deviceid} className="collapse-item" href={webappURL+"device?device-name="+device.devicenameid+"&device-group="+device.groupnameid+"&device-room="+device.roomid}>{device.devicename}</a>
+                        {context.userDevices.map((device, index) => (
+                            <a key={index} className="collapse-item" href={webappURL+"device?device-name="+device.devicenameid+"&device-group="+device.groupnameid+"&device-room="+device.roomid}>{device.devicename}</a>
                         ))}
                          <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
                     </div>

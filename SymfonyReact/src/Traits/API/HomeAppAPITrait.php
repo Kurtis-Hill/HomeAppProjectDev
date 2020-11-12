@@ -28,6 +28,10 @@ trait HomeAppAPIResponseTrait
         }
     }
 
+    /**
+     * @param array $data
+     * @return JsonResponse
+     */
     public function sendCreatedResourceResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -79,6 +83,10 @@ trait HomeAppAPIResponseTrait
 
     // 50x Server Error Response
 
+    /**
+     * @param array $data
+     * @return JsonResponse
+     */
     public function sendInternelServerErrorResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {

@@ -18,6 +18,8 @@ class SecurityController extends AbstractController
      * @Route("/HomeApp/api/csrfToken", name="csrf")
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @return JsonResponse
+     *
+     * Needs refactor, attach to axios headers
      */
     public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {

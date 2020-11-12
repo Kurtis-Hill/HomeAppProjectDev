@@ -53,8 +53,8 @@ const addNewDevice = () => {
 
                                 <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>                                
                                 <select name="room-name" id="device-room" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
-                                    {navBarContext.userRooms.map((room) => (
-                                        <option className="form-control" value={room.r_roomid} key={room.r_roomid}>{room.r_room}</option>
+                                    {navBarContext.userRooms.map((room, index) => (
+                                        <option className="form-control" value={room.r_roomid} key={index}>{room.r_room}</option>
                                     ))}
                                 </select>
                                 {

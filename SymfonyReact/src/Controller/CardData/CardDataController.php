@@ -7,15 +7,11 @@ use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
-use App\Form\CardViewForms\AnalogFormType;
 use App\Form\CardViewForms\CardViewModalFormType;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
-use App\Form\CardViewForms\DHTTempHumidCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
-use App\Form\CardViewForms\TempHumidFormType;
-
 use App\Services\CardDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Doctrine\DBAL\DBALException;
@@ -25,7 +21,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
 
 /**
  * Class CardDataController
@@ -47,10 +42,10 @@ class CardDataController extends AbstractController
         $cardData = $cardDataService->returnAllCardSensorData('JSON');
 
         if (!$cardData) {
-            return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
+            return $this->sendInternelServerErrorResponse(['errors' => 'No card data found query error please logout and back in again please']);
         }
 
-        return new JsonResponse($cardData);
+        return $this->sendSuccessfulResponse($cardData);
     }
 
     /**

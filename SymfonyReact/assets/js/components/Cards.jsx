@@ -10,7 +10,7 @@ const cardRender = () => {
   const context = useContext(CardContext);
   return ( 
     <React.Fragment>
-      {context.cardData.errors ? <h1>{context.cardData.errors}</h1> : 
+      {context.errors.length > 1 ? <h1>{context.cardData.errors}</h1> : 
         <React.Fragment>
           {context.cardData.map((cardData, index) => (
             <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(cardData.cardviewid)}} key={index}>
