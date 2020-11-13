@@ -7,6 +7,7 @@ use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
+use App\Entity\Core\Sensortype;
 use App\Form\CardViewForms\CardViewModalFormType;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
@@ -26,6 +27,8 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class CardDataController
  * @package App\Controller\CardData
  * @Route("/HomeApp/api/carddata")
+ *
+ * hyphenate urls
  */
 class CardDataController extends AbstractController
 {
@@ -87,7 +90,6 @@ class CardDataController extends AbstractController
         $deviceGroup = $request->query->get('device-group');
         $deviceRoom = $request->query->get('device-room');
 
-        $result = is_numeric($deviceName);
         $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
 
         $cardData = $cardDataService->returnAllDeviceCardSensorData('JSON', $deviceDetails);
@@ -128,6 +130,8 @@ class CardDataController extends AbstractController
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
+     *
+     * Refactor form into service
      */
     public function updateCardView(Request $request, CardDataService $cardDataService): JsonResponse
     {
@@ -154,7 +158,7 @@ class CardDataController extends AbstractController
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
             $form = null;
 
-            if ($sensorType === 'DHT') {
+            if ($sensorType === Sensortype::DHT_SENSOR) {
                 $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
                 $formData = [
                     'hightemp' => $request->get('tempHighReading'),
@@ -170,7 +174,7 @@ class CardDataController extends AbstractController
                 ];
             }
 
-            if ($sensorType === "Dallas Temperature") {
+            if ($sensorType === Sensortype::DALLAS_TEMPERATURE) {
                 $form = $this->createForm(DallasTempCardModalForm::class, $cardSensorData['temp']);
                 $formData = [
                     'hightemp' => $request->get('tempHighReading'),
@@ -179,7 +183,7 @@ class CardDataController extends AbstractController
                 ];
             }
 
-            if ($sensorType === "Soil") {
+            if ($sensorType === Sensortype::SOIL_SENSOR) {
                 $form = $this->createForm(SoilFormType::class, $cardSensorData['analog']);
                 $formData = [
                     'highanalog' => $request->get('analogHighReading'),

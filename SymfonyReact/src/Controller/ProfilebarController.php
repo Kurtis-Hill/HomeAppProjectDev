@@ -22,8 +22,6 @@ class ProfilebarController extends AbstractController
      */
     public function getUserData(ProfilebarService $profilebarService)
     {
-        $userData = [];
-
         $userData['name'] = $profilebarService->getFullUserName();
         $userData['profilePic'] = $profilebarService->getProfilePic();
         $userData['groupName'] = $profilebarService->getGroupName();

@@ -5,50 +5,48 @@ namespace App\Services\Devices;
 
 
 use App\Entity\Core\Devices;
+use App\Form\SensorForms\AddNewDeviceForm;
 use App\HomeAppCore\HomeAppRoomAbstract;
+use Doctrine\ORM\ORMException;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class DeviceService extends HomeAppRoomAbstract
 {
     /**
-     * @param Request $request
-     * @param $addNewDeviceForm
+     * @param array $deviceData
+     * @param FormInterface $addNewDeviceForm
+     * @return array|FormInterface
      */
-    public function handleNewDeviceSubmission(Request $request, $addNewDeviceForm)
+    public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm)
     {
-        $deviceName = $request->get('device-name');
-        $groupName = $request->get('group-name');
+        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['deviceName' => $deviceData['deviceName']]);
 
-        if (!in_array($groupName, $this->getGroupNameID())) {
+        if (!in_array($deviceData['groupNameIds'], $this->getGroupNameID())) {
             $errors[] = 'You are not part of this group';
         }
-
-        $currentUserDevices = $this->em->getRepository(Devices::class)->returnAllUsersDevices($this->getGroupNameID());
-
-        foreach ($currentUserDevices as $value) {
-            if ($value['devicename'] === $deviceName) {
-                $errors[] = 'Your group already has a device named'. $deviceName;
-            }
+        if (!empty($currentUserDeviceCheck)) {
+            $errors[] = 'Your group already has a device named'. $deviceData['deviceName'];
         }
 
         if (!empty($errors)) {
             return $errors;
         }
-        else {
-            $processedForm = $this->proccessNewDeviceForm($addNewDeviceForm, $request->get('device-name'), $request);
 
-            return $processedForm;
-        }
+        return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
+
+
     }
 
-    private function proccessNewDeviceForm(FormInterface $addNewDeviceForm, $deviceName, Request $request)
+    /**
+     * @param FormInterface $addNewDeviceForm
+     * @param array $deviceName
+     * @return array|FormInterface
+     */
+    private function processNewDeviceForm(FormInterface $addNewDeviceForm, array $deviceName)
     {
-        $addNewDeviceForm->submit([
-            'devicename' => $request->get('device-name'),
-            'groupnameid' => $request->get('group-name'),
-            'roomid' => $request->get('room-name'),
-        ]);
+        $addNewDeviceForm->submit([$deviceName]);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
             $deviceName .= time();
@@ -60,18 +58,17 @@ class DeviceService extends HomeAppRoomAbstract
             try {
                 $this->em->persist($validFormData);
                 $this->em->flush();
+            } catch (ORMException $e) {
+                $errors['errors'] = $e->getMessage();
+            } catch(\PDOException $e){
+                $errorMessage['errors'] = $e->getMessage();
             } catch (\Exception $e) {
                 $errors[] = $e->getMessage();
 
                 return $errors;
             }
-
-            return $secret;
-        }
-        else {
-            return $addNewDeviceForm;
         }
 
-
+        return $addNewDeviceForm;
     }
 }

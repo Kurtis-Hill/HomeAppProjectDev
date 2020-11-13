@@ -20,11 +20,10 @@ class ProfilebarService extends HomeAppRoomAbstract
 
     public function getFullUserName()
     {
-        $userName = ucfirst($this->user->getUser()->getFirstname());
-        $userName .= " ";
-        $userName .= ucfirst($this->user->getUser()->getLastname());
-
-        return $userName;
+        return sprintf("%s %s",
+            ucfirst($this->user->getUser()->getFirstname()),
+            ucfirst($this->user->getUser()->getLastname())
+            );
     }
 
 }

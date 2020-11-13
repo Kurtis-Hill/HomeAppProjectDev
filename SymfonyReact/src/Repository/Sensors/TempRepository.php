@@ -34,15 +34,9 @@ class TempRepository extends EntityRepository
             ->setParameters([':notshown' => 2, ':groupname' => $groupName, 'userid' => $id])
             ;
 
-        if ($type === 'json') {
-            $result = $qb->getQuery()->getScalarResult();
-        }
-        else {
-            $result = $qb->getQuery()->getResult();
-        }
-
-        //dd($result);
-        return $result;
+        return $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
     }
 
 }

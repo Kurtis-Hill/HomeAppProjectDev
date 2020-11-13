@@ -16,7 +16,7 @@ abstract class HomeAppRoomAbstract
     /**
      * @var Security
      */
-    private $user;
+    protected $user;
 
     /**
      * @var EntityManager|EntityManagerInterface
@@ -38,6 +38,9 @@ abstract class HomeAppRoomAbstract
      */
     protected $groupNameIDs = [];
 
+    /**
+     * @var array
+     */
     protected $userErrors = [];
 
     /**

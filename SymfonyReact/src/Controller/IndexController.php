@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/HomeApp/WebApp")
+ *
+ * whole app needs to handle exceptions and all the status codes properly, just getting the app on its feat first
  */
 class IndexController extends AbstractController
 {
