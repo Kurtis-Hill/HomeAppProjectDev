@@ -1,12 +1,34 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
-import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
+import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL, webappURL } from '../Utilities/Common';
 
 
 
 export const CardContext = createContext();
 
-const emptyModalContent = {submitSuccess: false, errors: [], secondSensorID: null, sensorHighReading: null, sensorLowReading: null, secondSensorHighReading: '', secondSensorLowReading: '', sensorType: '', secondSensorType: '', currentIcon: '', icons: [], iconID: '', currentColour: '', colours: [], states: [], currentState: '', constRecord: '', secondConstRecord: '', cardViewID: null, modalSubmit: false};
+const emptyModalContent = {
+    submitSuccess: false, 
+    errors: [],
+    sensorHighReading: null, 
+    sensorLowReading: null, 
+    sensorType: '', 
+    constRecord: '', 
+    secondSensorID: null, 
+    secondSensorHighReading: '', 
+    secondSensorLowReading: '', 
+    secondSensorType: '', 
+    secondConstRecord: '', 
+    currentIcon: '', 
+    icons: [], 
+    iconID: '', 
+    currentColour: '', 
+    colours: [], 
+    states: [], 
+    currentState: '', 
+    cardViewID: null, 
+    modalSubmit: false
+};
+
 const emptyCardData = {t_timez: null, a_timez: null};
 
 
@@ -36,6 +58,7 @@ class CardContextProvider extends Component {
        
 
     componentDidUpdate(prevProps, preState) {
+        //TODO compare states display up/down arrow for reading level
         // console.log('prev state', preState);
         // console.log('prev props', prevProps);
     }
@@ -46,16 +69,19 @@ class CardContextProvider extends Component {
 
 
     setURL = () => {
-        if (window.location.pathname === '/HomeApp/WebApp/index') {
-            this.setState({url: '/HomeApp/api/carddata/index'});
+        if (window.location.pathname === webappURL+'index') {
+            this.setState({url: apiURL+'card-data/index-view'});
         }
-        else {
+        if (window.location.pathname === apiURL+'card-data/device-view') {
             const deviceName = new URLSearchParams(window.location.search).get('device-name');
             const deviceGroup = new URLSearchParams(window.location.search).get('device-group');
             const deviceRoom = new URLSearchParams(window.location.search).get('device-room');
 
-            this.setState({url: "/HomeApp/api/carddata/device?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
+            this.setState({url: apiURL+"card-data/device?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
         }
+     
+            
+        
     }
 
 
@@ -65,14 +91,14 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            this.setState({cardData:response.data.responseData.sensorData});
+            this.setState({cardData:response.data.responseData});
         }).catch(error => {
             const err = error.response;
             if (err.status === 400) {
                 this.setState({cardData: err.data.responseData});
             }
             if (err.status === 401) {
-                axios.post('/HomeApp/api/token/refresh', 
+                axios.post(apiURL+'token/refresh', 
                     { refreshToken : getRefreshToken() } 
                 )
                 .then(response => {
@@ -95,7 +121,7 @@ class CardContextProvider extends Component {
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
         this.setState({modalLoading: true})
-        axios.get('/HomeApp/api/carddata/cardviewform&id='+cardViewID,
+        axios.get(apiURL+'card-data/card-state-view-form&id='+cardViewID,
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             this.setState({modalLoading: false});
@@ -217,7 +243,7 @@ class CardContextProvider extends Component {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
         
-        axios.post('/HomeApp/api/carddata/updatecardview', formData, config)
+        axios.post(apiURL+'card-data/update-card-view', formData, config)
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true}});
 

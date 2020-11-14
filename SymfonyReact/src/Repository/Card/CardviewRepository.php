@@ -19,11 +19,14 @@ class CardviewRepository extends EntityRepository
      * @return array|mixed
      */
 
-    public function getAllCardReadings($groupNameIDs, $userID, $type = null): array
+    public function getAllCardReadingsIndex($groupNameIDs, $userID, $type = null): array
     {
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
+
         $qb = $this->createQueryBuilder('cv');
+        $expr = $qb->expr();
+
         $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
@@ -33,15 +36,22 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid');
          $qb->where(
-             $qb->expr()->orX(
-                 $qb->expr()->eq('cv.cardstateid', ':cardviewOne'),
-                 $qb->expr()->eq('cv.cardstateid', ':cardviewTwo')
+             $expr->orX(
+                 $expr->eq('cv.cardstateid', ':cardviewOne'),
+                 $expr->eq('cv.cardstateid', ':cardviewTwo')
              ),
-             $qb->expr()->eq('cv.userid', ':userid'),
-             $qb->expr()->in('s.groupnameid', ':groupNameID')
+             $expr->eq('cv.userid', ':userid'),
+             $expr->in('s.groupnameid', ':groupNameID')
          );
 
-        $qb->setParameters(['userid' => $userID, 'groupNameID' => $groupNameIDs, 'cardviewOne' => $cardViewOne, 'cardviewTwo' => $cardViewTwo]);
+        $qb->setParameters(
+            [
+                'userid' => $userID,
+                'groupNameID' => $groupNameIDs,
+                'cardviewOne' => $cardViewOne,
+                'cardviewTwo' => $cardViewTwo
+            ]
+        );
 
         return $type === "JSON"
             ? $qb->getQuery()->getScalarResult()

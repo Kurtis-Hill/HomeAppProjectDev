@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class CardDataController
  * @package App\Controller\CardData
- * @Route("/HomeApp/api/carddata")
+ * @Route("/HomeApp/api/card-data")
  *
  * hyphenate urls
  */
@@ -35,24 +35,24 @@ class CardDataController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/index", name="indexCardData")
+     * @Route("/index-view", name="indexCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
-        $cardData = $cardDataService->returnAllCardSensorData('JSON');
+        $cardData = $cardDataService->prepareAllIndexCardData('JSON');
 
-        if (!$cardData) {
-            return $this->sendInternelServerErrorResponse(['errors' => 'No card data found query error please logout and back in again please']);
+        if (empty($cardData)) {
+            return $this->sendInternelServerErrorResponse();
         }
 
         return $this->sendSuccessfulResponse($cardData);
     }
 
     /**
-     * @Route("/room", name="roomCardData")
+     * @Route("/room-view", name="roomCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
@@ -66,20 +66,24 @@ class CardDataController extends AbstractController
         $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
 
         try {
-            $cardData = $cardDataService->returnRoomCardSensorData('JSON', $deviceDetails);
+            $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
         } catch(\Exception $e){
             $errorMessage[] = $e->getMessage();
         }
 
-        if (!$errorMessage) {
-            return new JsonResponse(['errors' => $errorMessage], 400);
+        if (empty($cardData)) {
+            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
         }
 
-        return new JsonResponse($cardData);
+        if (!empty($errorMessage)) {
+            return $this->sendInternelServerErrorResponse();
+        }
+
+        return $this->sendSuccessfulResponse($cardData);
     }
 
     /**
-     * @Route("/device", name="roomCardData")
+     * @Route("/device-view", name="roomCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
@@ -92,7 +96,7 @@ class CardDataController extends AbstractController
 
         $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
 
-        $cardData = $cardDataService->returnAllDeviceCardSensorData('JSON', $deviceDetails);
+        $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
 
         if ($cardData instanceof \Exception || $cardData instanceof \PDOException) {
 
@@ -108,7 +112,7 @@ class CardDataController extends AbstractController
 
 
     /**
-     * @Route("/cardviewform&id={cardviewid}", name="cardViewForm")
+     * @Route("/card-state-view-form&id={cardviewid}", name="cardViewForm")
      * @param Request $request
      * @return JsonResponse
      */
@@ -126,7 +130,7 @@ class CardDataController extends AbstractController
     }
 
     /**
-     * @Route("/updatecardview", name="updateCardView")
+     * @Route("/update-cardview", name="updateCardView")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse

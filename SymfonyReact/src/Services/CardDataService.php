@@ -7,6 +7,7 @@ use App\Entity\Card\Cardview;
 use App\Entity\Sensors\Humid;
 use App\Entity\Sensors\Temp;
 use App\HomeAppCore\HomeAppRoomAbstract;
+use mysql_xdevapi\Exception;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 
@@ -20,18 +21,16 @@ class CardDataService extends HomeAppRoomAbstract
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $tempCards = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
+        return $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
 
-        return $tempCards;
+
     }
 
     public function getAllHumidCards(string $type)
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $humidCards = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
-
-        return $humidCards;
+        return $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
     }
 
     public function getAllAnalogCards(string $type)
@@ -44,26 +43,35 @@ class CardDataService extends HomeAppRoomAbstract
     }
 
     //Add to this array if adding more sensors
-    public function returnAllCardSensorData(string $type): array
+    public function prepareAllIndexCardData(string $type): array
     {
-        $cardRepository = $this->em->getRepository(Cardview::class);
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
 
-        $cardReadings = $cardRepository->getAllCardReadings($this->groupNameIDs, $this->userID, $type);
+            $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
 
-        $cardData['sensorData'] = $cardReadings;
+        }  catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
 
-        return $cardData;
+        return (!empty($cardReadings)) ? $cardReadings : [];
+
+
     }
 
-    public function returnAllDeviceCardSensorData(string $type, array $deviceDetails): array
+    public function prepareAllDevicePageCardData(string $type, array $deviceDetails): array
     {
-        $cardRepository = $this->em->getRepository(Cardview::class);
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+        }  catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
 
-        $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $type, $deviceDetails);
-
-        $cardData['sensorData'] = $cardReadings;
-
-        return $cardData;
+        return $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $type, $deviceDetails);
     }
 
     public function processForm(FormInterface $form, $formData)
