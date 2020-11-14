@@ -45,7 +45,8 @@ class CardDataController extends AbstractController
         $cardData = $cardDataService->prepareAllIndexCardData('JSON');
 
         if (empty($cardData)) {
-            return $this->sendInternelServerErrorResponse();
+//            dd('hey');
+            return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
 
         return $this->sendSuccessfulResponse($cardData);
