@@ -64,9 +64,19 @@ trait HomeAppAPIResponseTrait
 
     // 40x Client Error Response
 
-    public function sendBadRequestResponse()
+    public function sendBadRequestResponse(array $data = []): JsonResponse
     {
-
+        if (!empty($data)) {
+            return new JsonResponse(
+                [
+                    'title' => 'Bad Request No Data Returned',
+                    'responseData' => $data
+                ],
+                HTTPStatusCodes::HTTP_BAD_REQUEST);
+        }
+        else {
+            return new JsonResponse(['title' => 'Bad Request No Data Returned', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+        }
     }
 
     public function sendUnauthorised()
