@@ -10,7 +10,6 @@ use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
 use App\HomeAppCore\HomeAppRoomAbstract;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -19,12 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CardDataService extends HomeAppRoomAbstract
 {
-    /**
-     * @var array
-     */
-    private $errors = [];
-
-
     /**
      * @param string $type
      * @return array
@@ -178,17 +171,16 @@ class CardDataService extends HomeAppRoomAbstract
      * @param string $sensorType
      * @return array
      */
-    public function prepareSensorFormData(Request $request, array $cardSensorData, string $sensorType)
+    public function prepareSensorFormData(Request $request, array $cardSensorData, string $sensorType): array
     {
+        $formData = [
+            'highSensorReading' => $request->get('firstSensorHighReading'),
+            'lowSensorReading' => $request->get('firstSensorLowReading'),
+            'constrecord' => $request->get('constRecord')
+        ];
 
         switch ($sensorType) {
             case Sensortype::DALLAS_TEMPERATURE:
-                $formData = [
-                    'hightemp' => $request->get('tempHighReading'),
-                    'lowtemp' => $request->get('tempLowReading'),
-                    'constrecord' => $request->get('constRecord')
-                ];
-
                 return [
                   'object' => $cardSensorData['temp'],
                   'formData' => $formData,
@@ -197,12 +189,6 @@ class CardDataService extends HomeAppRoomAbstract
                 break;
 
             case Sensortype::SOIL_SENSOR:
-                $formData = [
-                    'highanalog' => $request->get('analogHighReading'),
-                    'lowanalog' => $request->get('analogLowReading'),
-                    'constrecord' => $request->get('constRecord')
-                ];
-
                 return [
                     'object' => $cardSensorData['analog'],
                     'formData' => $formData,
@@ -211,15 +197,9 @@ class CardDataService extends HomeAppRoomAbstract
                 break;
 
             case Sensortype::DHT_SENSOR:
-                $formData = [
-                    'hightemp' => $request->get('tempHighReading'),
-                    'lowtemp' => $request->get('tempLowReading'),
-                    'constrecord' => $request->get('constRecord'),
-                ];
-
                 $secondFormData = [
-                    'highhumid' => $request->get('humidHighReading'),
-                    'lowhumid' => $request->get('humidLowReading'),
+                    'highSensorReading' => $request->get('secondSensorHighReading'),
+                    'lowSensorReading' => $request->get('secondSensorLowReading'),
                     'constrecord' => $request->get('secondConstRecord')
                 ];
                 return [
@@ -232,6 +212,8 @@ class CardDataService extends HomeAppRoomAbstract
                 ];
                 break;
         }
+
+        return [];
 
     }
 }

@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="analog", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="analog_ibfk_4", columns={"cardShowID"}), @ORM\Index(name="roomID", columns={"roomID"}), @ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_5", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
  */
-class Analog
+class Analog implements \StandardSensorInterface
 {
     /**
      * @var int
@@ -107,36 +107,36 @@ class Analog
         return $this->analogid;
     }
 
-    public function getAnalogreading(): ?float
+    public function getCurrentSensorReading(): ?float
     {
         return $this->analogreading;
     }
 
-    public function setAnalogreading(?float $analogreading): self
+    public function setCurrentSensorReading($analogreading = null): self
     {
         $this->analogreading = $analogreading;
 
         return $this;
     }
 
-    public function getHighanalog(): ?float
+    public function getHighSensorReading(): ?float
     {
         return $this->highanalog;
     }
 
-    public function setHighanalog($highanalog): self
+    public function setHighSensorReading($highanalog = null): self
     {
         $this->highanalog = $highanalog;
 
         return $this;
     }
 
-    public function getLowanalog(): ?float
+    public function getLowSensorReading(): ?float
     {
         return $this->lowanalog;
     }
 
-    public function setLowanalog($lowanalog): self
+    public function setLowSensorReading($lowanalog = null): self
     {
         $this->lowanalog = $lowanalog;
 
@@ -155,12 +155,12 @@ class Analog
         return $this;
     }
 
-    public function getTimez(): ?\DateTimeInterface
+    public function getTime(): ?\DateTimeInterface
     {
         return $this->timez;
     }
 
-    public function setTimez(\DateTimeInterface $timez): self
+    public function setTime(\DateTimeInterface $timez): self
     {
         $this->timez = $timez;
 

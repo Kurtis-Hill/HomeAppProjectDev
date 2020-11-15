@@ -7,18 +7,12 @@ use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
-use App\Entity\Core\Sensortype;
 use App\Form\CardViewForms\CardViewModalFormType;
-use App\Form\CardViewForms\DallasTempCardModalForm;
-use App\Form\CardViewForms\DHTHumidCardModalForm;
-use App\Form\CardViewForms\DHTTempCardModalForm;
-use App\Form\CardViewForms\SoilFormType;
 use App\Services\CardDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +48,7 @@ class CardDataController extends AbstractController
 
 
     /**
-     * @Route("/device-view", name="roomCardData")
+     * @Route("/device-view", name="deviceCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
@@ -65,7 +59,7 @@ class CardDataController extends AbstractController
         $deviceGroup = $request->query->get('device-group');
         $deviceRoom = $request->query->get('device-room');
 
-        if (!$deviceName || $deviceGroup || $deviceRoom) {
+        if (empty($deviceName || $deviceGroup || $deviceRoom)) {
             return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
         }
 
@@ -92,13 +86,13 @@ class CardDataController extends AbstractController
         $deviceGroup = $request->query->get('device-group');
         $deviceRoom = $request->query->get('device-room');
 
-        if (!$deviceName || $deviceGroup || $deviceRoom) {
+        if (empty($deviceName || $deviceGroup || $deviceRoom)) {
             return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
         }
 
         $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
 
-        $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
+        $cardData = $cardDataService->prepareAllRoomPageCardData('JSON', $deviceDetails);
 
         if (empty($cardData)) {
             return $this->sendInternelServerErrorResponse();
@@ -123,7 +117,7 @@ class CardDataController extends AbstractController
 
         $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
 
-        return new JsonResponse($cardFormData);
+        return $this->sendSuccessfulResponse($cardFormData);
     }
 
     /**
@@ -158,6 +152,10 @@ class CardDataController extends AbstractController
 
         $prepareSensorForm = $cardDataService->prepareSensorFormData($request, $cardSensorData, $sensorType);
 
+        if (!$prepareSensorForm['object'] instanceof \StandardSensorInterface) {
+            $errors[] = 'Sensor Not Recognised';
+        }
+
         $cardViewForm = $this->createForm(CardViewModalFormType::class, $cardSensorData['cardViewObject']);
 
         $sensorDataForm = $this->createForm($prepareSensorForm['formClass'], $prepareSensorForm['object']);
@@ -188,7 +186,6 @@ class CardDataController extends AbstractController
                 array_push($errors, $error->getMessage());
             }
         }
-
 
         if (!empty($errors)) {
             return $this->sendBadRequestResponse($errors);

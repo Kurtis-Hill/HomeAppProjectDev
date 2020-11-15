@@ -20,7 +20,7 @@ class DHTHumidCardModalForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('highhumid', TextType::class, [
+            ->add('highSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                    new DHTHumidityConstraint(),
@@ -28,7 +28,7 @@ class DHTHumidCardModalForm extends AbstractType
                 ],
             ])
 
-            ->add('lowhumid', TextType::class, [
+            ->add('lowSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DHTHumidityConstraint(),

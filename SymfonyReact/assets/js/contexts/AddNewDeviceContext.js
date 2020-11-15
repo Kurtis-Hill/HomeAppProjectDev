@@ -30,8 +30,7 @@ export default class AddNewDeviceContextProvider extends Component {
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
         const formData = new FormData(event.target);
-        
-        console.log('formdata', formData, event.target);
+ 
         const config = {     
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }

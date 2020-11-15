@@ -1,6 +1,7 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
 import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL, webappURL } from '../Utilities/Common';
+import { DallasTemp, DHT, Soil } from '../Utilities/SensorsCommon';
 
 
 
@@ -9,8 +10,8 @@ export const CardContext = createContext();
 const emptyModalContent = {
     submitSuccess: false, 
     errors: [],
-    sensorHighReading: null, 
-    sensorLowReading: null, 
+    sensorHighReading: '', 
+    sensorLowReading: '', 
     sensorType: '', 
     constRecord: '', 
     secondSensorID: null, 
@@ -72,12 +73,12 @@ class CardContextProvider extends Component {
         if (window.location.pathname === webappURL+'index') {
             this.setState({url: apiURL+'card-data/index-view'});
         }
-        if (window.location.pathname === apiURL+'card-data/device-view') {
+        if (window.location.pathname === webappURL+'device') {
             const deviceName = new URLSearchParams(window.location.search).get('device-name');
             const deviceGroup = new URLSearchParams(window.location.search).get('device-group');
             const deviceRoom = new URLSearchParams(window.location.search).get('device-room');
 
-            this.setState({url: apiURL+"card-data/device?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
+            this.setState({url: "/HomeApp/api/card-data/device-view?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
         }
      
             
@@ -91,6 +92,10 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
+            const cardData = response.data.responseData.length > 1 
+                ? response.data.responseData
+                : [];
+
             this.setState({cardData:response.data.responseData});
         }).catch(error => {
             const err = error.response;
@@ -125,8 +130,9 @@ class CardContextProvider extends Component {
         axios.get(apiURL+'card-data/card-state-view-form&id='+cardViewID,
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
+            console.log('get card response', response.data.responseData);
             this.setState({modalLoading: false});
-            this.modalContent(response.data);
+            this.modalContent(response.data.responseData);
             this.setState({modalShow: true});
         }).catch(error => {
             this.setState({modalLoading: false});
@@ -138,23 +144,23 @@ class CardContextProvider extends Component {
         const userData = response.cardSensorData;
         const sensorType = userData.st_sensortype;
 
-        if (userData.t_tempid !== null) {
-            var sensorHighReading = userData.t_hightemp;
-            var sensorLowReading = userData.t_lowtemp;
-            var constRecord = userData.t_constrecord;
+        if (sensorType === DHT || DallasTemp) {
+            var sensorHighReading = userData.t_highSensorReading;
+            var sensorLowReading = userData.t_lowSensorReading;
+            var constRecord = userData.constrecord;
             var sensorID = userData.t_tempid;
 
-            if (userData.h_humidid !== undefined) {
+            if (sensorType === DHT) {
                 var secondSensorHighReading = userData.h_highhumid;
                 var secondSensorLowReading = userData.h_lowhumid;
                 var secondConstRecord = userData.h_constrecord;
                 var secondSensorID = userData.h_humidid;  
             }
         }
-        if (userData.a_analogid !== null) {
+        if (sensorType === Soil) {
             var sensorHighReading = userData.a_highanalog;
             var sensorLowReading = userData.a_lowanalog;
-            var constRecord = userData.a_constrecord ? "Yes" : 'No';
+            var constRecord = userData.a_constrecord;
             var sensorID = userData.h_analogid;
         }
 
@@ -206,28 +212,20 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, secondConstRecord: value}});
                 break;
 
-            case "tempHighReading":
+            case "firstSensorHighReading":
                 this.setState({modalContent:{...this.state.modalContent, sensorHighReading: value}});
                 break;
 
-            case "tempLowReading":
+            case "firstSensorLowReading":
                 this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
                 break;
 
-            case "humidHighReading":
+            case "secondSensorHighReading":
                 this.setState({modalContent:{...this.state.modalContent, secondSensorHighReading: value}});
                 break;
 
-            case "humidLowReading":
+            case "secondSensorLowReading":
                 this.setState({modalContent:{...this.state.modalContent, secondSensorLowReading: value}});
-                break;
-
-            case "analogHighReading":
-                this.setState({modalContent:{...this.state.modalContent, sensorHighReading: value}});
-                break;
-
-            case "analogLowReading":
-                this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
                 break;
         }
     }

@@ -30,8 +30,9 @@ function Login(props) {
                 setLoading(false); 
             });
         
-        
-        setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
+        loginCheckResponse 
+            ? setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken)
+            : setError('Login check response error');
 
         const loginForm = document.getElementById('login-form');
 

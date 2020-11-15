@@ -19,7 +19,7 @@ class SoilFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('highanalog', TextType::class, [
+            ->add('highSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new SoilContraint(),
@@ -30,7 +30,7 @@ class SoilFormType extends AbstractType
                 ],
             ])
 
-            ->add('lowanalog', TextType::class, [
+            ->add('lowSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new SoilContraint(),

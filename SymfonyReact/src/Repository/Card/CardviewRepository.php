@@ -149,8 +149,6 @@ class CardviewRepository extends EntityRepository
             'deviceRoom' => $deviceDetails['deviceRoom'],
             'userid' => $userID,
             'groupNameID' => $groupNameIDs,
-            'cardviewOne' => $cardViewOne,
-            'cardviewTwo' => $cardViewTwo
         ]);
 
         $results =  $type === "JSON"

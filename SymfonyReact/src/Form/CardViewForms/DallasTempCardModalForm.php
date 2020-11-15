@@ -19,25 +19,19 @@ class DallasTempCardModalForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('hightemp', TextType::class, [
+            ->add('highSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DallasTemperatureConstraint(),
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 3,
-                        'minMessage' => 'You must enter a value',
-                        'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
 
-            ->add('lowtemp', TextType::class, [
+            ->add('lowSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DallasTemperatureConstraint(),
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 3,
-                        'minMessage' => 'You must enter a value',
-                        'maxMessage' => 'This number is too high {{ value }}']),
                 ],
             ])
 

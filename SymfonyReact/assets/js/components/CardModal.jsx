@@ -1,6 +1,7 @@
 import React, { Component, useContext } from 'react';
-import { capitalizeFirstLetter } from '../Utilities/Common';
 import { CardContext } from '../contexts/CardContexts';
+import { capitalizeFirstLetter } from '../Utilities/Common';
+import { DHT, DallasTemp, Soil } from '../Utilities/SensorsCommon';
 
 const cardModal = () => {
 
@@ -47,35 +48,35 @@ const cardModal = () => {
                   <React.Fragment>   
                   {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}   
 
-                    {modalContent.sensorType === "DHT" || modalContent.sensorType === "Dallas Temperature" ? 
+                    {modalContent.sensorType === DHT || modalContent.sensorType === DallasTemp ? 
                       <React.Fragment>
                         <label className="large font-weight-bold">{modalContent.sensorType} Temperature High Reading</label>
-                        <input type="text" name="tempHighReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                        <input type="text" name="firstSensorHighReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
 
                         <label className="modal-space large font-weight-bold">{modalContent.sensorType} Temperature Low Reading</label>
-                        <input type="text" name="tempLowReading" className="form-control" value={modalContent.sensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                        <input type="text" name="firstSensorLowReading" className="form-control" value={modalContent.sensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                       </React.Fragment> 
                       : null 
                     }
 
-                    {modalContent.sensorType === "DHT" ? 
+                    {modalContent.sensorType === DHT ? 
                       <React.Fragment>
                         <label className="large font-weight-bold">{modalContent.sensorType} Humidity High Reading</label>
-                        <input type="text" name="humidHighReading" className="form-control" value={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                        <input type="text" name="secondSensorHighReading" className="form-control" value={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
             
                         <label className="modal-space large font-weight-bold">{modalContent.sensorType} Humidity Low Reading</label>
-                        <input type="text" name="humidLowReading" className="form-control" value={modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                        <input type="text" name="secondSensorLowReading" className="form-control" value={modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                       </React.Fragment> 
                       : null 
                     }
 
-                      {modalContent.sensorType === "Soil" ? 
+                      {modalContent.sensorType === Soil ? 
                         <React.Fragment>
                           <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
-                          <input type="text" name="analogHighReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                          <input type="text" name="firstSensorHighReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
               
                           <label className="modal-space large font-weight-bold">{modalContent.sensorType} Low Reading</label>
-                          <input type="text" name="analogLowReading" className="form-control" value={modalContent.sensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
+                          <input type="text" name="firstSensorLowReading" className="form-control" value={modalContent.sensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                         </React.Fragment> 
                         : null 
                       }
