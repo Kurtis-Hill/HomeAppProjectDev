@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp/devices", name="devices")
+ * @Route("/HomeApp/api/devices", name="devices")
  */
 class DeviceController extends AbstractController
 {
@@ -23,25 +23,24 @@ class DeviceController extends AbstractController
 
     /**
      * @Route("/new-device/submit-form-data", name="navbar-new-device-data")
+     * @param Request $request
+     * @param DeviceService $deviceService
+     * @return JsonResponse
      */
-    public function addNewDeviceModalData(DeviceService $deviceService, Request $request): JsonResponse
+    public function addNewDeviceModalData(Request $request, DeviceService $deviceService): JsonResponse
     {
-        $errors = [];
+        $deviceGroup = $request->get('device-group');
+        $deviceRoom = $request->get('device-room');
 
-        $deviceName = $request->query->get('device-name');
-        $deviceGroup = $request->query->get('device-group');
-        $deviceRoom = $request->query->get('device-room');
-
-        if (!$deviceName || $deviceGroup || $deviceRoom) {
-            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
+        if (empty($deviceGroup) || empty($deviceRoom)) {
+            return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
 
         $deviceData = [
-            'deviceName' => $deviceName,
-            'groupNameIds' => $deviceGroup,
-            'roomId' => $deviceRoom
+            'devicename' => $request->get('device-name'),
+            'groupnameid' => $deviceGroup,
+            'roomid' => $deviceRoom
         ];
-
 
         $newDevice = new Devices();
 
@@ -49,19 +48,15 @@ class DeviceController extends AbstractController
 
         $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
-        if (!empty($handledForm->getErrors())) {
-            foreach ($handledForm->getErrors(true, true) as $value) {
-                array_push($errors, $value->getMessage());
-            }
-        }
+        $errors = $deviceService->returnAllErrors();
 
-        if (!empty($deviceService->returnAllErrors())) {
-            return new JsonResponse(['errors' => $errors], 400);
+        if (!empty($errors)) {
+            return $this->sendBadRequestResponse($errors);
         }
         else {
             $secret = $handledForm->getData()->getSecret();
 
-            return new JsonResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()], 200);
+            return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()]);
         }
     }
 }

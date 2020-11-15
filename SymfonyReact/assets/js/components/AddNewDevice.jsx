@@ -45,7 +45,7 @@ const addNewDevice = () => {
                                 <input type="text" name="device-name" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
                                 
                                 <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>                                
-                                <select name="device-group" id="group-name" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
+                                <select name="device-group" id="device-group" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {navBarContext.groupNames.map((groupNames) => (
                                         <option className="form-control" value={groupNames.groupnameid} key={groupNames.groupnameid}>{groupNames.groupname}</option>
                                     ))}
@@ -54,7 +54,7 @@ const addNewDevice = () => {
                                 <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>                                
                                 <select name="device-room" id="device-room" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {navBarContext.userRooms.map((room, index) => (
-                                        <option className="form-control" value={room.r_roomid} key={index}>{room.r_room}</option>
+                                        <option className="form-control" value={room.roomid} key={index}>{room.room}</option>
                                     ))}
                                 </select>
                                 {

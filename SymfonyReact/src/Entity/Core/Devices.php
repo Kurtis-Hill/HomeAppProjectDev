@@ -129,4 +129,12 @@ class Devices
         return $this->devicename;
     }
 
+    /**
+     * @return string
+     */
+    public function getSecret(): ?string
+    {
+        return $this->secret;
+    }
+
 }

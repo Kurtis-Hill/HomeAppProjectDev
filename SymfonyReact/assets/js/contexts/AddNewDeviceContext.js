@@ -2,7 +2,7 @@ import React, { Component, createContext, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
-import { getToken } from '../Utilities/Common';
+import { getToken, apiURL } from '../Utilities/Common';
 
 export const AddNewDeviceContext = createContext();
 
@@ -28,31 +28,23 @@ export default class AddNewDeviceContextProvider extends Component {
         event.preventDefault();
         
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
-        
-        const roomNameElement = document.getElementById('device-room');
-        const deviceRoom = roomNameElement.options[roomNameElement.selectedIndex].value;
-
-        const groupNameElement = document.getElementById('group-name');
-        const deviceGroup = groupNameElement.options[groupNameElement.selectedIndex].value;
 
         const formData = new FormData(event.target);
         
+        console.log('formdata', formData, event.target);
         const config = {     
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
 
-        axios.post('/HomeApp/devices/submit-form-data', formData, config)
+        axios.post(apiURL+'devices/new-device/submit-form-data', formData, config)
         .then(response => {
-            console.log('submit response', response.data);
             this.setState({addNewDeviceModalSubmit: false});
-            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data.secret, errors:[], newDeviceRoom:deviceRoom, newDeviceGroup:deviceGroup, newDeviceID: response.data.deviceID}});    
-            console.log('secret', this.state.newDeviceModalContent.deviceSecret);
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret:response.data.responseData.secret, errors:[], newDeviceID: response.data.deviceID}});    
         })
         .catch(error => {
             const status = error.response.status;
             if (status === 400) {
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.errors, formSubmit:false, deviceSecret: null}});
-                console.log(this.state.newDeviceModalContent.errors);
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData], formSubmit:false, deviceSecret: null}});
             }
             if (status === 500) {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false, deviceSecret: null}});
@@ -63,7 +55,21 @@ export default class AddNewDeviceContextProvider extends Component {
 
     updateNewDeviceModalForm = (event) => {
         const formInput = event.target.value;
-        this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
+
+        switch (event.target.name) {
+            case "device-room":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceModalContent: formInput}});
+                break;
+            
+            case "device-group":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceModalContent: formInput}});
+                break;
+
+            case "device-name":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
+                break;
+        }
+    
     }
 
     toggleNewDeviceLoading = () => {
@@ -71,7 +77,6 @@ export default class AddNewDeviceContextProvider extends Component {
     }
 
     toggleNewDeviceModal = () => {
-        console.log('clicked');
         this.setState({addNewDeviceModalToggle: !this.state.addNewDeviceModalToggle});
     }
 
@@ -83,7 +88,6 @@ export default class AddNewDeviceContextProvider extends Component {
                 newDeviceModalContent: this.state.newDeviceModalContent,
                 updateNewDeviceModalForm: this.updateNewDeviceModalForm,
                 handleNewDeviceFormSubmission: this.handleNewDeviceFormSubmission,
-                toggleNewDeviceModal: this.toggleNewDeviceModal,
                 toggleNewDeviceLoading: this.toggleNewDeviceLoading
             }}>
                 {this.props.children}

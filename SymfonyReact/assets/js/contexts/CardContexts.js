@@ -183,7 +183,7 @@ class CardContextProvider extends Component {
     updateModalForm = (event) => {
         const value = event.target.value;
 
-        switch(event.target.name) {
+        switch (event.target.name) {
             case "icon":
                 const selectText = document.getElementById('icon-select');
                 const option = selectText.options[selectText.selectedIndex];
@@ -237,7 +237,7 @@ class CardContextProvider extends Component {
         this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
 
         const formData = new FormData(event.target);
-
+        console.log('formdata', formData);
         formData.append('cardViewID', this.state.modalContent.cardViewID);
                 
         const config = {     
@@ -254,20 +254,30 @@ class CardContextProvider extends Component {
         })
         .catch(error => {
             const err = error.response;
+            const errors = err.data.responseData;
             
             if (err.status === 400) {
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: err.data.errors}});
+                const badRequestErrors = (!errors.length > 1) 
+                ? ['something went wrong']
+                : errors;
+
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: badRequestErrors}});
             }
 
             if (err.status === 404) {
-                this.setState({modalContent:{modalContent: emptyModalContent, modalSubmit: false}});
+                this.setState({modalContent:{...this.state.modalContent,  modalSubmit: false, modalContent: emptyModalContent}});
                 this.toggleModal();
                 alert('Could not handle request please try again');
             }
 
             if (err.status === 500) {
-                this.setState({modalContent:{modalSubmit: false}});
-                alert('Could not handle request server error'+error.response.data.responseData);
+                console.log('responsedata',err.data.responseData);
+                const alertMessage = err.data.responseData !== undefined
+                    ? err.data.responseData
+                    : 'please try again or log out and try again';
+
+                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+                alert('Could not handle request server error '+err.data.responseData);
             }
         })
     }

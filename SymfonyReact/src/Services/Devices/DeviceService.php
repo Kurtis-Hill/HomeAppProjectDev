@@ -27,13 +27,13 @@ class DeviceService extends HomeAppRoomAbstract
      */
     public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm): FormInterface
     {
-        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['deviceName' => $deviceData['deviceName']]);
+        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['devicename' => $deviceData['devicename']]);
 
         if (!empty($currentUserDeviceCheck)) {
-            $this->errors[] = 'Your group already has a device named'. $deviceData['device-name'];
+            $this->errors[] = 'Your group already has a device named'. $deviceData['devicename'];
         }
 
-        if (!in_array($deviceData['device-group'], $this->getGroupNameID())) {
+        if (!in_array($deviceData['groupnameid'], $this->getGroupNameID())) {
             $this->errors[] = 'You are not part of this group';
         }
 
@@ -42,16 +42,17 @@ class DeviceService extends HomeAppRoomAbstract
 
     /**
      * @param FormInterface $addNewDeviceForm
-     * @param array $deviceName
-     * @return array|FormInterface
+     * @param array $deviceData
+     * @return bool|FormInterface
      */
-    private function processNewDeviceForm(FormInterface $addNewDeviceForm, array $deviceName)
+    private function processNewDeviceForm(FormInterface $addNewDeviceForm, array $deviceData): FormInterface
     {
-        $addNewDeviceForm->submit([$deviceName]);
+        $addNewDeviceForm->submit($deviceData);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
-            $deviceName .= time();
-            $secret = hash("md5", $deviceName);
+            $secret = $deviceData['devicename'];
+            $secret .= time();
+            $secret = hash("md5", $secret);
 
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setSecret($secret);
@@ -60,13 +61,16 @@ class DeviceService extends HomeAppRoomAbstract
                 $this->em->persist($validFormData);
                 $this->em->flush();
             } catch (ORMException $e) {
-                $errors['errors'] = $e->getMessage();
+                error_log($e->getMessage());
             } catch(\PDOException $e){
                 $errorMessage['errors'] = $e->getMessage();
             } catch (\Exception $e) {
-                $errors[] = $e->getMessage();
-
-                return $errors;
+                error_log($e->getMessage());
+            }
+        }
+        else {
+            foreach ($addNewDeviceForm->getErrors(true, true) as $value) {
+                array_push($this->errors, $value->getMessage());
             }
         }
 
