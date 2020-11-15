@@ -22,17 +22,26 @@ class DeviceController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/new-device/modal-data", name="navbar-new-device-data")
+     * @Route("/new-device/submit-form-data", name="navbar-new-device-data")
      */
     public function addNewDeviceModalData(DeviceService $deviceService, Request $request): JsonResponse
     {
         $errors = [];
 
+        $deviceName = $request->query->get('device-name');
+        $deviceGroup = $request->query->get('device-group');
+        $deviceRoom = $request->query->get('device-room');
+
+        if (!$deviceName || $deviceGroup || $deviceRoom) {
+            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
+        }
+
         $deviceData = [
-            'deviceName' => $request->get('device-name'),
-            'groupNameIds' => $request->get('group-name'),
-            'roomId' => $request->get('room-name')
+            'deviceName' => $deviceName,
+            'groupNameIds' => $deviceGroup,
+            'roomId' => $deviceRoom
         ];
+
 
         $newDevice = new Devices();
 
@@ -40,14 +49,13 @@ class DeviceController extends AbstractController
 
         $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
-        if ($handledForm instanceof FormInterface) {
-            if (!empty($handledForm->getErrors())) {
-                foreach ($handledForm->getErrors(true, true) as $value) {
-                    array_push($errors, $value->getMessage());
-                }
+        if (!empty($handledForm->getErrors())) {
+            foreach ($handledForm->getErrors(true, true) as $value) {
+                array_push($errors, $value->getMessage());
             }
         }
-        if (!empty($errors)) {
+
+        if (!empty($deviceService->returnAllErrors())) {
             return new JsonResponse(['errors' => $errors], 400);
         }
         else {

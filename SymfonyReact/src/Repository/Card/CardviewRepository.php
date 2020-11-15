@@ -18,7 +18,6 @@ class CardviewRepository extends EntityRepository
      * @param null $type
      * @return array|mixed
      */
-
     public function getAllCardReadingsIndex($groupNameIDs, $userID, $type = null): array
     {
         $cardViewOne = Cardstate::ON;
@@ -53,19 +52,24 @@ class CardviewRepository extends EntityRepository
             ]
         );
 
-        return $type === "JSON"
+        $results =  $type === "JSON"
             ? $qb->getQuery()->getScalarResult()
             : $qb->getQuery()->getResult();
+
+        return (!empty($results))
+            ? $results
+            : [];
     }
+
 
     /**
      * @param array $groupNameIDs
      * @param int $userID
-     * @param null $type
      * @param $deviceDetails
+     * @param null $type
      * @return array
      */
-    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, $type = null, $deviceDetails): array
+    public function getAllCardReadingsForRoom(array $groupNameIDs, int $userID, $deviceDetails, $type = null): array
     {
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::ROOM_ONLY;
@@ -102,19 +106,62 @@ class CardviewRepository extends EntityRepository
             'cardviewTwo' => $cardViewTwo
         ]);
 
-        try {
-            return $type === "JSON"
-                ? $qb->getQuery()->getScalarResult()
-                : $qb->getQuery()->getResult();
+        $results =  $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
 
-        } catch(\PDOException $e){
-            $errorMessage['errors'] = $e->getMessage();
-        } catch(\Exception $e){
-            $errorMessage['errors'] = $e->getMessage();
-        }
-
-        return $errorMessage;
+        return (!empty($results))
+            ? $results
+            : [];
     }
+
+
+    /**
+     * @param array $groupNameIDs
+     * @param int $userID
+     * @param null $type
+     * @param $deviceDetails
+     * @return array
+     */
+    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, $deviceDetails, $type = null): array
+    {
+        $qb = $this->createQueryBuilder('cv');
+        $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
+            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
+            ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Core\Devices', 'dv', Join::WITH,'s.sensornameid = dv.devicenameid')
+        ;
+        $qb->where(
+            $qb->expr()->in('s.groupnameid', ':groupNameID'),
+            $qb->expr()->eq('s.devicenameid', ':deviceNameID'),
+            $qb->expr()->eq('cv.userid', ':userid'),
+            $qb->expr()->eq('s.groupnameid', ':deviceGroup'),
+            $qb->expr()->eq('cv.roomid', ':deviceRoom')
+        );
+        $qb->setParameters([
+            'deviceNameID' => $deviceDetails['deviceName'],
+            'deviceGroup' => $deviceDetails['deviceGroup'],
+            'deviceRoom' => $deviceDetails['deviceRoom'],
+            'userid' => $userID,
+            'groupNameID' => $groupNameIDs,
+            'cardviewOne' => $cardViewOne,
+            'cardviewTwo' => $cardViewTwo
+        ]);
+
+        $results =  $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
+
+        return (!empty($results))
+            ? $results
+            : [];
+    }
+
 
     /**
      * @param $groupNameID
@@ -124,7 +171,6 @@ class CardviewRepository extends EntityRepository
      */
     public function getAnalogCardReadings($groupNameID, $userID, $type = null)
     {
-
         $qb = $this->createQueryBuilder('cv');
         $qb->select('a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -142,16 +188,13 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => Cardstate::ON, 'cardviewTwo' => Cardstate::INDEX_ONLY]);
 
-        try {
-            return $type === "JSON"
-                ? $qb->getQuery()->getScalarResult()
-                : $qb->getQuery()->getResult();
+        $results =  $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
 
-        } catch(\PDOException $e){
-            $errorMessage['errors'] = $e->getMessage();
-        } catch(\Exception $e){
-            $errorMessage['errors'] = $e->getMessage();
-        }
+        return (!empty($results))
+            ? $results
+            : [];
     }
 
     /**
@@ -160,7 +203,7 @@ class CardviewRepository extends EntityRepository
      * @param null $type
      * @return array|mixed|null
      */
-    public function getTempCardReadings($groupNameID, $userID, $type = null)
+    public function getTempCardReadings($groupNameID, $userID, $type = null): array
     {
         $qb = $this->createQueryBuilder('cv');
         $qb->select('t', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
@@ -179,16 +222,13 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
-        try {
-            return $type === "JSON"
-                ? $qb->getQuery()->getScalarResult()
-                : $qb->getQuery()->getResult();
+        $results =  $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
 
-        } catch(\PDOException $e){
-            $errorMessage['errors'] = $e->getMessage();
-        } catch(\Exception $e){
-            $errorMessage['errors'] = $e->getMessage();
-        }
+        return (!empty($results))
+            ? $results
+            : [];
     }
 
     /**
@@ -197,7 +237,7 @@ class CardviewRepository extends EntityRepository
      * @param null $type
      * @return array|mixed|null
      */
-    public function getHumidCardReadings($groupNameID, $userID, $type = null)
+    public function getHumidCardReadings($groupNameID, $userID, $type = null): array
     {
         $qb = $this->createQueryBuilder('cv');
         $qb->select( 'h', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
@@ -216,16 +256,13 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['userid' => $userID, 'groupNameID' => $groupNameID, 'cardviewOne' => 1, 'cardviewTwo' => 6]);
 
-        try {
-            return $type === "JSON"
-                ? $qb->getQuery()->getScalarResult()
-                : $qb->getQuery()->getResult();
+        $results =  $type === "JSON"
+            ? $qb->getQuery()->getScalarResult()
+            : $qb->getQuery()->getResult();
 
-        } catch(\PDOException $e){
-            $errorMessage['errors'] = $e->getMessage();
-        } catch(\Exception $e){
-            $errorMessage['errors'] = $e->getMessage();
-        }
+        return (!empty($results))
+            ? $results
+            : [];
     }
 
 
@@ -235,7 +272,7 @@ class CardviewRepository extends EntityRepository
      * @param array $criteria
      * @return mixed
      */
-    public function getCardFormData(array $criteria)
+    public function getCardFormData(array $criteria): array
     {
         $qb = $this->createQueryBuilder('cv');
         $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's', 'cs', 'st')
@@ -261,7 +298,7 @@ class CardviewRepository extends EntityRepository
      * @param array $criteria
      * @return mixed
      */
-    public function getUsersCurrentCardData(array $criteria)
+    public function getUsersCurrentCardData(array $criteria): array
     {
         $qb = $this->createQueryBuilder('cv');
         $qb->select('cv', 't', 'h', 'a')
@@ -276,7 +313,7 @@ class CardviewRepository extends EntityRepository
 
         $result = $qb->getQuery()->getResult();
 
-        $sensorResults["cardView"] = $result[0];
+        $sensorResults["cardViewObject"] = $result[0];
         $sensorResults["temp"] = $result[1];
         $sensorResults["humid"] = $result[2];
         $sensorResults["analog"] = $result[3];

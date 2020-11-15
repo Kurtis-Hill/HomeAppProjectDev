@@ -6,14 +6,21 @@ import { getToken } from '../Utilities/Common';
 
 export const AddNewDeviceContext = createContext();
 
-const emptynewDeviceModalContent = {newDeviceName:'', newDeviceRoom:'', newDeviceGroup:'', newDeviceID:'',  deviceSecret:null, errors:[], formSubmit:false};
+const emptyNewDeviceModalContent = {
+    newDeviceName:'',
+    newDeviceRoom:'',
+    newDeviceGroup:'',
+    newDeviceID:'',
+    deviceSecret:null, 
+    errors:[], 
+    formSubmit:false};
 
 export default class AddNewDeviceContextProvider extends Component {
     constructor(props) {
         super(props);
         this.state = {
             addNewDeviceModalToggle: false,
-            newDeviceModalContent: emptynewDeviceModalContent,
+            newDeviceModalContent: emptyNewDeviceModalContent,
         }
     }
 
@@ -34,7 +41,7 @@ export default class AddNewDeviceContextProvider extends Component {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
 
-        axios.post('/HomeApp/devices/new-device/modal-data', formData, config)
+        axios.post('/HomeApp/devices/submit-form-data', formData, config)
         .then(response => {
             console.log('submit response', response.data);
             this.setState({addNewDeviceModalSubmit: false});
@@ -60,7 +67,7 @@ export default class AddNewDeviceContextProvider extends Component {
     }
 
     toggleNewDeviceLoading = () => {
-        this.setState({addNewDeviceModalLoading: !addNewDeviceModalLoading, newDeviceModalContent:emptynewDeviceModalContent});
+        this.setState({addNewDeviceModalLoading: !addNewDeviceModalLoading, newDeviceModalContent:emptyNewDeviceModalContent});
     }
 
     toggleNewDeviceModal = () => {

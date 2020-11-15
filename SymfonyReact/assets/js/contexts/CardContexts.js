@@ -267,7 +267,7 @@ class CardContextProvider extends Component {
 
             if (err.status === 500) {
                 this.setState({modalContent:{modalSubmit: false}});
-                alert('Could not handle request server error'+error.response.data.errors[0]);
+                alert('Could not handle request server error'+error.response.data.responseData);
             }
         })
     }

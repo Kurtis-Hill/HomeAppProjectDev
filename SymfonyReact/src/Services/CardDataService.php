@@ -4,12 +4,9 @@
 namespace App\Services;
 
 use App\Entity\Card\Cardview;
-use App\Entity\Sensors\Humid;
-use App\Entity\Sensors\Temp;
 use App\HomeAppCore\HomeAppRoomAbstract;
-use mysql_xdevapi\Exception;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class CardDataService
@@ -17,76 +14,174 @@ use Symfony\Component\Form\FormInterface;
  */
 class CardDataService extends HomeAppRoomAbstract
 {
-    public function getAllTemperatureCards(string $type)
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllTemperatureCards(string $type): array
     {
-        $cardRepository = $this->em->getRepository(Cardview::class);
+        $tempCardData = [];
 
-        return $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
 
+            $tempCardData = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
 
+        return $tempCardData;
     }
 
-    public function getAllHumidCards(string $type)
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllHumidCards(string $type): array
     {
-        $cardRepository = $this->em->getRepository(Cardview::class);
+        $humidCardData = [];
 
-        return $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $humidCardData = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $humidCardData;
     }
 
-    public function getAllAnalogCards(string $type)
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllAnalogCards(string $type): array
     {
-        $cardRepository = $this->em->getRepository(Cardview::class);
+        $analogCardData = [];
 
-        $analogCards = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
 
-        return $analogCards;
+            $analogCardData = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $analogCardData;
     }
 
-    //Add to this array if adding more sensors
+    /**
+     * @param string $type
+     * @return array
+     */
     public function prepareAllIndexCardData(string $type): array
     {
+        $cardReadings = [];
+
         try {
             $cardRepository = $this->em->getRepository(Cardview::class);
 
             $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
-
         }  catch(\PDOException $e){
             error_log($e->getMessage());
         } catch(\Exception $e){
             error_log($e->getMessage());
         }
 
-        return (!empty($cardReadings)) ? $cardReadings : [];
-
-
+        return $cardReadings;
     }
 
-    public function prepareAllDevicePageCardData(string $type, array $deviceDetails): array
+
+    /**
+     * @param string $type
+     * @param array $deviceDetails
+     * @return array
+     */
+    public function prepareAllRoomPageCardData(string $type, array $deviceDetails): array
     {
+        $cardReadings = [];
+
         try {
             $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsForRoom($this->groupNameIDs, $this->userID, $deviceDetails, $type);
         }  catch(\PDOException $e){
             error_log($e->getMessage());
         } catch(\Exception $e){
             error_log($e->getMessage());
         }
 
-        return $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $type, $deviceDetails);
+        return $cardReadings;
     }
 
-    public function processForm(FormInterface $form, $formData)
+
+    /**
+     * @param string $type
+     * @param array $deviceDetails
+     * @return array
+     */
+    public function prepareAllDevicePageCardData(string $type, array $deviceDetails): array
+    {
+        $cardReadings = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $deviceDetails, $type);
+        }  catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $cardReadings;
+    }
+
+
+    public function prepareUsersCurrentCardData(string $cardViewData): array
+    {
+        $usersCurrentCardData = [];
+
+        try {
+            $usersCurrentCardData = $this->em->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()]);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $usersCurrentCardData;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param $formData
+     * @return array
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function processForm(FormInterface $form, array $formData): FormInterface
     {
         $form->submit($formData);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $validFormData = $form->getData();
-            $this->em->persist($validFormData);
+            try {
+                $this->em->persist($validFormData);
+            } catch(\PDOException $e){
+                error_log($e->getMessage());
+            } catch(\Exception $e){
+                error_log($e->getMessage());
+            }
+        }
 
-            return false;
-        }
-        else {
-            return $form;
-        }
+        return $form;
     }
 
 }

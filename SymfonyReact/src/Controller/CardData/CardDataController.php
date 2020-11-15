@@ -45,43 +45,12 @@ class CardDataController extends AbstractController
         $cardData = $cardDataService->prepareAllIndexCardData('JSON');
 
         if (empty($cardData)) {
-//            dd('hey');
             return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
 
         return $this->sendSuccessfulResponse($cardData);
     }
 
-    /**
-     * @Route("/room-view", name="roomCardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
-     */
-    public function returnAllRoomCardData(CardDataService $cardDataService, Request $request): JsonResponse
-    {
-        $deviceName = $request->query->get('device-name');
-        $deviceGroup = $request->query->get('device-group');
-        $deviceRoom = $request->query->get('device-room');
-
-        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
-
-        try {
-            $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
-        } catch(\Exception $e){
-            $errorMessage[] = $e->getMessage();
-        }
-
-        if (empty($cardData)) {
-            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
-        }
-
-        if (!empty($errorMessage)) {
-            return $this->sendInternelServerErrorResponse();
-        }
-
-        return $this->sendSuccessfulResponse($cardData);
-    }
 
     /**
      * @Route("/device-view", name="roomCardData")
@@ -95,20 +64,46 @@ class CardDataController extends AbstractController
         $deviceGroup = $request->query->get('device-group');
         $deviceRoom = $request->query->get('device-room');
 
+        if (!$deviceName || $deviceGroup || $deviceRoom) {
+            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
+        }
+
         $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
 
         $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
 
-        if ($cardData instanceof \Exception || $cardData instanceof \PDOException) {
-
-            return new JsonResponse($cardData, 500);
+        if (empty($cardData)) {
+            return $this->sendInternelServerErrorResponse();
         }
 
-        if (!$cardData) {
-            return new JsonResponse(['errors' => 'No card data found query error please logout and back in again please'], 400);
+        return $this->sendSuccessfulResponse($cardData);
+    }
+
+    /**
+     * @Route("/room-view", name="roomCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
+     */
+    public function returnAllRoomDeviceCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    {
+        $deviceName = $request->query->get('device-name');
+        $deviceGroup = $request->query->get('device-group');
+        $deviceRoom = $request->query->get('device-room');
+
+        if (!$deviceName || $deviceGroup || $deviceRoom) {
+            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
         }
 
-        return new JsonResponse($cardData);
+        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
+
+        $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
+
+        if (empty($cardData)) {
+            return $this->sendInternelServerErrorResponse();
+        }
+
+        return $this->sendSuccessfulResponse($cardData);
     }
 
 
@@ -131,110 +126,124 @@ class CardDataController extends AbstractController
     }
 
     /**
-     * @Route("/update-cardview", name="updateCardView")
+     * @Route("/update-card-view", name="updateCardView")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return JsonResponse
      *
-     * Refactor form into service
      */
     public function updateCardView(Request $request, CardDataService $cardDataService): JsonResponse
     {
         $errors = [];
+
         $cardViewID = $request->get('cardViewID');
 
-        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewID, 'userID' =>  $cardDataService->getUserID()]);
-
-        if (!$cardSensorData) {
-            return new JsonResponse('No Sensor Found', 404);
+        if (empty($cardViewID)) {
+            return $this->sendBadRequestResponse();
         }
 
-        $sensorType = $cardSensorData['cardView']->getSensornameid()->getSensortypeid()->getSensortype();
+        $cardViewData = [
+            'cardcolourid' => $request->get('cardColour'),
+            'cardiconid' => $request->get('icon'),
+            'cardstateid' => $request->get('cardViewState'),
+        ];
 
-        $cardViewForm = $this->createForm(CardViewModalFormType::class, $cardSensorData['cardView']);
+        $cardViewID = $request->get('cardViewID');
 
-        $cardViewForm->submit([
-                'cardcolourid' => $request->get('cardColour'),
-                'cardiconid' => $request->get('icon'),
-                'cardstateid' => $request->get('cardViewState'),
-            ]
-        );
+        $cardSensorData = $cardDataService->prepareUsersCurrentCardData($cardViewID);
 
-        if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
-            $form = null;
+        if (empty($cardSensorData)) {
+            return $this->sendNotFoundResponse();
+        }
 
-            if ($sensorType === Sensortype::DHT_SENSOR) {
-                $form = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
-                $formData = [
-                    'hightemp' => $request->get('tempHighReading'),
-                    'lowtemp' => $request->get('tempLowReading'),
-                    'constrecord' => $request->get('constRecord'),
-                ];
+        $cardViewForm = $this->createForm(CardViewModalFormType::class, $cardSensorData['cardViewObject']);
 
-                $secondForm = $this->createForm(DHTHumidCardModalForm::class, $cardSensorData['humid']);
-                $secondFormData = [
-                    'highhumid' => $request->get('humidHighReading'),
-                    'lowhumid' => $request->get('humidLowReading'),
-                    'constrecord' => $request->get('secondConstRecord')
-                ];
+
+
+        $handledCardViewForm = $cardDataService->processForm($cardViewForm, $cardViewData);
+
+        if (!empty($handledCardViewForm->getErrors())) {
+            foreach ($handledCardViewForm->getErrors(true, true) as $value) {
+                array_push($errors, $value->getMessage());
             }
 
-            if ($sensorType === Sensortype::DALLAS_TEMPERATURE) {
-                $form = $this->createForm(DallasTempCardModalForm::class, $cardSensorData['temp']);
-                $formData = [
-                    'hightemp' => $request->get('tempHighReading'),
-                    'lowtemp' => $request->get('tempLowReading'),
-                    'constrecord' => $request->get('constRecord')
-                ];
-            }
+            return $this->sendBadRequestResponse([$errors]);
+        } elseif ($handledCardViewForm->isSubmitted() && $handledCardViewForm->isValid()) {
+            $sensorType = $cardSensorData['cardViewObject']->getSensornameid()->getSensortypeid()->getSensortype();
 
-            if ($sensorType === Sensortype::SOIL_SENSOR) {
-                $form = $this->createForm(SoilFormType::class, $cardSensorData['analog']);
-                $formData = [
-                    'highanalog' => $request->get('analogHighReading'),
-                    'lowanalog' => $request->get('analogLowReading'),
-                    'constrecord' => $request->get('constRecord')
-                ];
-            }
+            $cardDataService->handleSensorDataCardFormSubmission($request, $cardSensorData);
 
-            if ($form !== null) {
-                $processedForm = $cardDataService->processForm($form, $formData);
-                if ($processedForm instanceof FormInterface) {
-                    foreach ($processedForm->getErrors(true, true) as $value) {
-                        array_push($errors, $value->getMessage());
-                    }
-                }
+            switch ($sensorType) {
+                case Sensortype::DALLAS_TEMPERATURE:
+                    $firstSensorDataForm = $this->createForm(DallasTempCardModalForm::class, $cardSensorData['temp']);
 
-                if (isset($secondForm)) {
-                    $secondProcessedForm = $cardDataService->processForm($secondForm, $secondFormData);
-                    if ($secondProcessedForm instanceof FormInterface) {
-                        foreach ($secondProcessedForm->getErrors(true, true) as $value) {
-                            array_push($errors, $value->getMessage());
-                        }
-                    }
-                }
-            }
-            else {
-                return new JsonResponse($errors[] = 'Sensor Not Recognised', 500);
+                    $formData = [
+                        'hightemp' => $request->get('tempHighReading'),
+                        'lowtemp' => $request->get('tempLowReading'),
+                        'constrecord' => $request->get('constRecord')
+                    ];
+                    break;
+
+                case Sensortype::SOIL_SENSOR:
+                    $firstSensorDataForm = $this->createForm(SoilFormType::class, $cardSensorData['analog']);
+
+                    $formData = [
+                        'highanalog' => $request->get('analogHighReading'),
+                        'lowanalog' => $request->get('analogLowReading'),
+                        'constrecord' => $request->get('constRecord')
+                    ];
+                    break;
+
+                case Sensortype::DHT_SENSOR:
+                    $firstSensorDataForm = $this->createForm(DHTTempCardModalForm::class, $cardSensorData['temp']);
+                    $secondSensorDataForm = $this->createForm(DHTHumidCardModalForm::class, $cardSensorData['humid']);
+
+                    $formData = [
+                        'hightemp' => $request->get('tempHighReading'),
+                        'lowtemp' => $request->get('tempLowReading'),
+                        'constrecord' => $request->get('constRecord'),
+                    ];
+
+                    $secondFormData = [
+                        'highhumid' => $request->get('humidHighReading'),
+                        'lowhumid' => $request->get('humidLowReading'),
+                        'constrecord' => $request->get('secondConstRecord')
+                    ];
+                    break;
             }
         }
 
-        else {
-            $errors[] = "CardView Form Not Valid";
+        if (!empty($firstSensorDataForm && $formData)) {
+            $firstForm = $cardDataService->processForm($firstSensorDataForm, $formData);
+
+            if (!empty($firstForm->getErrors())) {
+                foreach ($firstForm->getErrors(true, true) as $value) {
+                    array_push($errors, $value->getMessage());
+                }
+
+                return $this->sendBadRequestResponse($errors);
+            }
+        }
+        if (!empty($secondFormData && $secondFormData)) {
+            $firstForm = $cardDataService->processForm($secondFormData, $secondFormData);
+
+            if (!empty($firstForm->getErrors())) {
+                foreach ($firstForm->getErrors(true, true) as $value) {
+                    array_push($errors, $value->getMessage());
+                }
+
+                return $this->sendBadRequestResponse($errors);
+            }
+
         }
 
         if (!empty($errors)) {
-            return new JsonResponse(['errors' => $errors], 400);
-        }
-        else {
+            return $this->sendBadRequestResponse($errors);
+        } else {
             $em = $this->getDoctrine()->getManager();
-            try {
-                $em->flush();
-            } catch (\Exception $e) {
-                $e->getMessage();
-            }
+            $em->flush();
 
-            return new JsonResponse('success', 200);
+            return $this->sendSuccessfulResponse();
         }
     }
 }

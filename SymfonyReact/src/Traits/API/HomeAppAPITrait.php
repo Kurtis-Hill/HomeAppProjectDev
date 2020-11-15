@@ -86,9 +86,24 @@ trait HomeAppAPIResponseTrait
 
 
 
-    public function sendNotFoundResponse()
+    public function sendNotFoundResponse(array $data = [])
     {
-
+        if (!empty($data)) {
+            return new JsonResponse(
+                [
+                    'title' => 'Nothing Found',
+                    'responseData' => $data
+                ],
+                HTTPStatusCodes::HTTP_NOT_FOUND);
+        }
+        else {
+            return new JsonResponse(
+                [
+                    'title' => 'Nothing Found',
+                    'responseData' => 'No Response Message'
+                ],
+                HTTPStatusCodes::HTTP_NOT_FOUND);
+        }
     }
 
     // 50x Server Error Response

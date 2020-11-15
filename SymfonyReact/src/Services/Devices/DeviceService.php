@@ -15,28 +15,29 @@ use Symfony\Component\HttpFoundation\Request;
 class DeviceService extends HomeAppRoomAbstract
 {
     /**
+     * @var array
+     */
+    private $errors = [];
+
+
+    /**
      * @param array $deviceData
      * @param FormInterface $addNewDeviceForm
      * @return array|FormInterface
      */
-    public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm)
+    public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm): FormInterface
     {
         $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['deviceName' => $deviceData['deviceName']]);
 
-        if (!in_array($deviceData['groupNameIds'], $this->getGroupNameID())) {
-            $errors[] = 'You are not part of this group';
-        }
         if (!empty($currentUserDeviceCheck)) {
-            $errors[] = 'Your group already has a device named'. $deviceData['deviceName'];
+            $this->errors[] = 'Your group already has a device named'. $deviceData['device-name'];
         }
 
-        if (!empty($errors)) {
-            return $errors;
+        if (!in_array($deviceData['device-group'], $this->getGroupNameID())) {
+            $this->errors[] = 'You are not part of this group';
         }
 
         return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
-
-
     }
 
     /**
@@ -70,5 +71,10 @@ class DeviceService extends HomeAppRoomAbstract
         }
 
         return $addNewDeviceForm;
+    }
+
+    public function returnAllErrors()
+    {
+        return $this->errors;
     }
 }
