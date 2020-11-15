@@ -178,7 +178,7 @@ class CardDataController extends AbstractController
         $handledSensorDataForm = $cardDataService->processForm($sensorDataForm, $prepareSensorForm['formData']);
 
         if ($handledCardViewForm instanceof FormInterface) {
-            foreach ($secondHandledSensorDataForm->getErrors(true, true) as $error) {
+            foreach ($handledCardViewForm->getErrors(true, true) as $error) {
                 array_push($errors, $error->getMessage());
             }
         }
