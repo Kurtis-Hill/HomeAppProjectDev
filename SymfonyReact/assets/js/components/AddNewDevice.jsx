@@ -11,6 +11,7 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = addNewDeviceContext.newDeviceModalContent;
 
+    //Refactor has broken link
     const newSensorRoute = webappURL+"device?device-name="+newDeviceModalContent.newDeviceID+"&device-group="+newDeviceModalContent.newDeviceGroup+"&device-room="+newDeviceModalContent.newDeviceRoom;
 
     return (
@@ -45,7 +46,7 @@ const addNewDevice = () => {
                                 <input type="text" name="device-name" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
                                 
                                 <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>                                
-                                <select name="device-group" id="device-group" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
+                                <select value={newDeviceModalContent.newDeviceGroup} name="device-group" id="device-group" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {navBarContext.groupNames.map((groupNames) => (
                                         <option className="form-control" value={groupNames.groupnameid} key={groupNames.groupnameid}>{groupNames.groupname}</option>
                                     ))}

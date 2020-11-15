@@ -155,6 +155,7 @@ class CardviewRepository extends EntityRepository
             ? $qb->getQuery()->getScalarResult()
             : $qb->getQuery()->getResult();
 
+//        dd('results', $deviceDetails);
         return (!empty($results))
             ? $results
             : [];

@@ -32,7 +32,7 @@ class DeviceController extends AbstractController
         $deviceGroup = $request->get('device-group');
         $deviceRoom = $request->get('device-room');
 
-        if (empty($deviceGroup) || empty($deviceRoom)) {
+        if (empty($deviceGroup || $deviceRoom)) {
             return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
 

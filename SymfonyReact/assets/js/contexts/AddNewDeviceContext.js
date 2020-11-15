@@ -47,7 +47,6 @@ export default class AddNewDeviceContextProvider extends Component {
             }
             if (status === 500) {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false, deviceSecret: null}});
-                alert('Something went wrong please try again');
             }
         })
     }
@@ -57,11 +56,11 @@ export default class AddNewDeviceContextProvider extends Component {
 
         switch (event.target.name) {
             case "device-room":
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceModalContent: formInput}});
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceRoom: formInput}});
                 break;
             
             case "device-group":
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceModalContent: formInput}});
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceGroup: formInput}});
                 break;
 
             case "device-name":

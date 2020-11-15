@@ -55,8 +55,6 @@ class CardContextProvider extends Component {
         );
     }
 
-        
-       
 
     componentDidUpdate(prevProps, preState) {
         //TODO compare states display up/down arrow for reading level
@@ -80,9 +78,6 @@ class CardContextProvider extends Component {
 
             this.setState({url: "/HomeApp/api/card-data/device-view?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
         }
-     
-            
-        
     }
 
 
@@ -101,7 +96,7 @@ class CardContextProvider extends Component {
             const err = error.response;
             if (err.status === 500) {
                 alert(err.data.responseData);
-                //window.location.replace('/HomeApp/logout');
+                window.location.replace('/HomeApp/logout');
             }
             if (err.status === 401) {
                 axios.post(apiURL+'token/refresh', 
@@ -115,14 +110,11 @@ class CardContextProvider extends Component {
         
     }
 
-    fetchDeviceCardData = () => {
-
-    }
-
     //Changes the style of the card text if the reading is above or below high-low readings in DB
     getSensorReadingStyle = (highReading, lowReading, currentReading) => {
         return currentReading >= highReading ? 'text-red' : currentReading <= lowReading ? 'text-blue' : 'text-gray-800';
     }
+
 
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
@@ -130,7 +122,6 @@ class CardContextProvider extends Component {
         axios.get(apiURL+'card-data/card-state-view-form&id='+cardViewID,
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            console.log('get card response', response.data.responseData);
             this.setState({modalLoading: false});
             this.modalContent(response.data.responseData);
             this.setState({modalShow: true});
@@ -139,6 +130,7 @@ class CardContextProvider extends Component {
             alert("Failed Getting Form Please Try Again or Contact System Admin");
         })
     }
+
 
     modalContent = (response) => {
         const userData = response.cardSensorData;
@@ -182,10 +174,12 @@ class CardContextProvider extends Component {
         this.setState({modalContent:{...this.state.modalContent, sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
     }
 
+
     toggleModal = () => {
         this.setState({modalContent: emptyModalContent, modalShow: !this.state.modalShow});
     }
 
+    
     updateModalForm = (event) => {
         const value = event.target.value;
 
@@ -275,7 +269,6 @@ class CardContextProvider extends Component {
                     : 'please try again or log out and try again';
 
                 this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
-                alert('Could not handle request server error '+err.data.responseData);
             }
         })
     }
