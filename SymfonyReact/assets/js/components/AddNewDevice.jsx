@@ -21,9 +21,9 @@ const addNewDevice = () => {
                     <div className="modal-content">
                         <form onSubmit={(e) => {addNewDeviceContext.handleNewDeviceFormSubmission(e)}} id="modal-form">
                             <div className="modal-header">
-                            <h5 className="modal-title">+Add a new device</h5>
+                                <h5 className="modal-title">+Add a new device</h5>
                                 <button className="close" onClick={() => {navBarContext.toggleNewDeviceModal()}} type="button" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
+                                    <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             {
