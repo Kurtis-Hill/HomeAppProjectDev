@@ -95,8 +95,7 @@ class CardContextProvider extends Component {
         }).catch(error => {
             const err = error.response;
             if (err.status === 500) {
-                alert(err.data.responseData);
-                window.location.replace('/HomeApp/logout');
+                // window.location.replace('/HomeApp/logout');
             }
             if (err.status === 401) {
                 axios.post(apiURL+'token/refresh', 

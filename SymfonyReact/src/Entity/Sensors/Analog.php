@@ -7,6 +7,7 @@ use App\Entity\Card\Cardview;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
+use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="analog", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="analog_ibfk_4", columns={"cardShowID"}), @ORM\Index(name="roomID", columns={"roomID"}), @ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_5", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
  */
-class Analog implements \StandardSensorInterface
+class Analog implements StandardSensorInterface
 {
     /**
      * @var int
