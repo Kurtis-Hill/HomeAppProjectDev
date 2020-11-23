@@ -8,6 +8,7 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
 use App\Form\CardViewForms\CardViewModalFormType;
+use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Doctrine\DBAL\DBALException;
@@ -152,12 +153,11 @@ class CardDataController extends AbstractController
 
         $prepareSensorForm = $cardDataService->prepareSensorFormData($request, $cardSensorData, $sensorType);
 
-        if (!$prepareSensorForm['object'] instanceof \StandardSensorInterface) {
+        if (!$prepareSensorForm['object'] instanceof StandardSensorInterface) {
             $errors[] = 'Sensor Not Recognised';
         }
 
         $cardViewForm = $this->createForm(CardViewModalFormType::class, $cardSensorData['cardViewObject']);
-
         $sensorDataForm = $this->createForm($prepareSensorForm['formClass'], $prepareSensorForm['object']);
 
         if (!empty($prepareSensorForm['secondObject'])) {

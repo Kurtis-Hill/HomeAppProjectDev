@@ -7,6 +7,7 @@ use App\Entity\Card\Cardview;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
+use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="SensorName", columns={"sensorNameID"}), @ORM\Index(name="temp_ibfk_5", columns={"cardViewID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\TempRepository")
  */
-class Temp implements \StandardSensorInterface
+class Temp implements StandardSensorInterface
 {
     /**
      * @var int

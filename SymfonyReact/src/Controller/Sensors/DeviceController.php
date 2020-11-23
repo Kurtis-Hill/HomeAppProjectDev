@@ -55,7 +55,7 @@ class DeviceController extends AbstractController
         }
         else {
             $secret = $handledForm->getData()->getSecret();
-
+dd($newDevice->getDevicenameid());
             return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()]);
         }
     }

@@ -1,5 +1,8 @@
 <?php
 
+namespace App\HomeAppCore\Interfaces;
+
+
 
 interface StandardSensorInterface
 {
