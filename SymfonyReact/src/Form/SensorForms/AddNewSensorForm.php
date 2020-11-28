@@ -4,24 +4,25 @@
 namespace App\Form\SensorForms;
 
 
-use App\Entity\Core\Devices;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
+use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensortype;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
+use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class AddNewDeviceForm extends AbstractType
+class AddNewSensorForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('devicename', TextType::class, [
+            ->add('sensorname', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersContraint(),
@@ -33,11 +34,15 @@ class AddNewDeviceForm extends AbstractType
             ])
 
             ->add('groupnameid', EntityType::class, [
-                'class' => Groupname::class,
+                'class' => Groupname::class
             ])
 
             ->add('roomid', EntityType::class, [
-                'class' => Room::class,
+                'class' => Room::class
+            ])
+
+            ->add('sensortype', EntityType::class, [
+                'class' => Sensortype::class
             ])
         ;
     }
@@ -45,7 +50,7 @@ class AddNewDeviceForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Devices::class,
+            'data_class' => Sensornames::class,
             'csrf_protection' => false,
         ]);
     }

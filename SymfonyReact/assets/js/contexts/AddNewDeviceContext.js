@@ -36,20 +36,20 @@ export default class AddNewDeviceContextProvider extends Component {
         }
 
         axios.post(apiURL+'devices/new-device/submit-form-data', formData, config)
-        .then(response => {
-            const responeData = response.data.responseData;
-            this.setState({addNewDeviceModalSubmit: false});
-            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responeData.secret, errors:[], newDeviceID: responeData.deviceID}});    
-        })
-        .catch(error => {
-            const status = error.response.status;
-            if (status === 400) {
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData], formSubmit:false, deviceSecret: null}});
-            }
-            if (status === 500) {
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false, deviceSecret: null}});
-            }
-        })
+            .then(response => {
+                const responeData = response.data.responseData;
+                this.setState({addNewDeviceModalSubmit: false});
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responeData.secret, errors:[], newDeviceID: responeData.deviceID}});    
+            })
+            .catch(error => {
+                const status = error.response.status;
+                if (status === 400) {
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData], formSubmit:false, deviceSecret: null}});
+                }
+                if (status === 500) {
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false, deviceSecret: null}});
+                }
+            })
     }
 
     updateNewDeviceModalForm = (event) => {
@@ -66,9 +66,10 @@ export default class AddNewDeviceContextProvider extends Component {
 
             case "device-name":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
-                console.log('inpuit', )
                 break;
         }
+
+        console.log('new device modal content', this.state.newDeviceModalContent);
     
     }
 

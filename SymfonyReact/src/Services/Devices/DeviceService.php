@@ -19,13 +19,19 @@ class DeviceService extends HomeAppRoomAbstract
      */
     private $errors = [];
 
-
     /**
      * @param array $deviceData
      * @param FormInterface $addNewDeviceForm
      * @return array|FormInterface
      */
     public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm): FormInterface
+    {
+        $this->userInputDataCheck($deviceData);
+
+        return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
+    }
+
+    private function userInputDataCheck(array $deviceData): void
     {
         $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['devicename' => $deviceData['devicename']]);
 
@@ -36,8 +42,6 @@ class DeviceService extends HomeAppRoomAbstract
         if (!in_array($deviceData['groupnameid'], $this->getGroupNameID())) {
             $this->errors[] = 'You are not part of this group';
         }
-
-        return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
     }
 
     /**
@@ -69,13 +73,15 @@ class DeviceService extends HomeAppRoomAbstract
             }
         }
         else {
-            foreach ($addNewDeviceForm->getErrors(true, true) as $value) {
-                array_push($this->errors, $value->getMessage());
+            foreach ($addNewDeviceForm->getErrors(true, true) as $error) {
+                array_push($this->errors, $error->getMessage());
             }
         }
 
         return $addNewDeviceForm;
     }
+
+
 
     public function returnAllErrors()
     {

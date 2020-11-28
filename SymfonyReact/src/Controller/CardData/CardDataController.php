@@ -7,7 +7,7 @@ use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
-use App\Form\CardViewForms\CardViewModalFormType;
+use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -157,7 +157,7 @@ class CardDataController extends AbstractController
             $errors[] = 'Sensor Not Recognised';
         }
 
-        $cardViewForm = $this->createForm(CardViewModalFormType::class, $cardSensorData['cardViewObject']);
+        $cardViewForm = $this->createForm(CardViewForm::class, $cardSensorData['cardViewObject']);
         $sensorDataForm = $this->createForm($prepareSensorForm['formClass'], $prepareSensorForm['object']);
 
         if (!empty($prepareSensorForm['secondObject'])) {

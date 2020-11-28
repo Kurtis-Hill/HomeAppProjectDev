@@ -9,7 +9,6 @@ use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,12 +21,12 @@ class DeviceController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/new-device/submit-form-data", name="navbar-new-device-data")
+     * @Route("/new-device/submit-form-data", name="add-new-device")
      * @param Request $request
      * @param DeviceService $deviceService
      * @return JsonResponse
      */
-    public function addNewDeviceModalData(Request $request, DeviceService $deviceService): JsonResponse
+    public function addNewDevice(Request $request, DeviceService $deviceService): JsonResponse
     {
         $deviceGroup = $request->get('device-group');
         $deviceRoom = $request->get('device-room');
@@ -55,8 +54,9 @@ class DeviceController extends AbstractController
         }
         else {
             $secret = $handledForm->getData()->getSecret();
-dd($newDevice->getDevicenameid());
-            return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()]);
+            $deviceID = $handledForm->getData()->getDevicenameid();
+
+            return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $deviceID]);
         }
     }
 }

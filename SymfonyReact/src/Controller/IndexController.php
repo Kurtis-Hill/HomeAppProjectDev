@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 
 /**
@@ -25,15 +25,19 @@ class IndexController extends AbstractController
     /**
      * @Route("/{route}", name="index")
      * @param Request $request
+     * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @param $route
      * @return Response
      */
-    public function indexAction(Request $request, $route) :Response
+    public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route) :Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('index/index.html.twig');
+        $token = $csrfTokenManager->getToken('authenticate')->getValue();
+
+        return $this->render('index/index.html.twig', ['csrfToken' => $token]);
     }
 
 }

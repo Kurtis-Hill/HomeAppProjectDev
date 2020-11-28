@@ -18,6 +18,7 @@ export const removeUserSession = () => {
     sessionStorage.removeItem('userID');   
     sessionStorage.removeItem('roles');    
     window.location.replace('/HomeApp/login');
+    
     return null;
 }
 

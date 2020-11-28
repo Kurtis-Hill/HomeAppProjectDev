@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 //CSRF tokens are off, there is an end point that kind of defeates the prupose of them, implenting better methods later
-class CardViewModalFormType extends AbstractType
+class CardViewForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
