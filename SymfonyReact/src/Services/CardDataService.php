@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\DTOs\Sensors\CardDataDTO;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Sensortype;
 use App\Form\CardViewForms\DallasTempCardModalForm;
@@ -87,19 +88,21 @@ class CardDataService extends HomeAppRoomAbstract
      */
     public function prepareAllIndexCardData(string $type): array
     {
-        $cardReadings = [];
+        $cardRepository = $this->em->getRepository(Cardview::class);
 
-        try {
-            $cardRepository = $this->em->getRepository(Cardview::class);
+        $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
 
-            $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
-        }  catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
-            error_log($e->getMessage());
+        if (!empty($cardReadings)) {
+            $cardDTOs = [];
+
+            foreach ($cardReadings as $cardData) {
+                $cardDTOs[] = new CardDataDTO($cardData);
+            }
+
+            return $cardDTOs;
         }
 
-        return $cardReadings;
+        return [];
     }
 
 

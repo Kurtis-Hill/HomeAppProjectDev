@@ -4,7 +4,7 @@
 namespace App\Controller;
 
 
-use App\PageData\LiveSensorData;
+
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

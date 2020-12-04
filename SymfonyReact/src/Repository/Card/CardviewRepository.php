@@ -26,31 +26,31 @@ class CardviewRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $qb->select('t', 'h', 'a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
-            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
-            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
-            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
+        $qb->select('t', 'h', 'a', 'r', 'i', 's', 'cc', 'cv')
             ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
-            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid');
-         $qb->where(
-             $expr->orX(
-                 $expr->eq('cv.cardstateid', ':cardviewOne'),
-                 $expr->eq('cv.cardstateid', ':cardviewTwo')
-             ),
-             $expr->eq('cv.userid', ':userid'),
-             $expr->in('s.groupnameid', ':groupNameID')
-         );
+            ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
+            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
+            ->where(
+                 $expr->orX(
+                     $expr->eq('cv.cardstateid', ':cardviewOne'),
+                     $expr->eq('cv.cardstateid', ':cardviewTwo')
+                 ),
+                 $expr->eq('cv.userid', ':userid'),
+                 $expr->in('s.groupnameid', ':groupNameID')
+            );
 
-        $qb->setParameters(
-            [
-                'userid' => $userID,
-                'groupNameID' => $groupNameIDs,
-                'cardviewOne' => $cardViewOne,
-                'cardviewTwo' => $cardViewTwo
-            ]
-        );
+            $qb->setParameters(
+                [
+                    'userid' => $userID,
+                    'groupNameID' => $groupNameIDs,
+                    'cardviewOne' => $cardViewOne,
+                    'cardviewTwo' => $cardViewTwo
+                ]
+            );
 
         $results =  $type === "JSON"
             ? $qb->getQuery()->getScalarResult()

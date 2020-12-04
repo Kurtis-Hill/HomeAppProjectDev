@@ -54,7 +54,7 @@ class CardDataController extends AbstractController
      * @param CardDataService $cardDataService
      * @return JsonResponse
      */
-    public function returnAllDeviceCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    public function returnAllDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
         $deviceName = $request->query->get('device-name');
         $deviceGroup = $request->query->get('device-group');
@@ -81,7 +81,7 @@ class CardDataController extends AbstractController
      * @param CardDataService $cardDataService
      * @return JsonResponse
      */
-    public function returnAllRoomDeviceCardData(CardDataService $cardDataService, Request $request): JsonResponse
+    public function returnAllRoomDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
         $deviceName = $request->query->get('device-name');
         $deviceGroup = $request->query->get('device-group');
