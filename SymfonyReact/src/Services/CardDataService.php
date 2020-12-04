@@ -4,11 +4,13 @@
 namespace App\Services;
 
 use App\Entity\Card\Cardview;
-use App\Entity\Sensors\Humid;
-use App\Entity\Sensors\Temp;
+use App\Entity\Core\Sensortype;
+use App\Form\CardViewForms\DallasTempCardModalForm;
+use App\Form\CardViewForms\DHTHumidCardModalForm;
+use App\Form\CardViewForms\DHTTempCardModalForm;
+use App\Form\CardViewForms\SoilFormType;
 use App\HomeAppCore\HomeAppRoomAbstract;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class CardDataService
@@ -16,69 +18,207 @@ use Symfony\Component\Form\FormInterface;
  */
 class CardDataService extends HomeAppRoomAbstract
 {
-    public function getAllTemperatureCards(string $type)
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllTemperatureCards(string $type): array
     {
-        $cardRepository = $this->em->getRepository(Cardview::class);
+        $tempCardData = [];
 
-        $tempCards = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
 
-        return $tempCards;
-    }
-
-    public function getAllHumidCards(string $type)
-    {
-        $cardRepository = $this->em->getRepository(Cardview::class);
-
-        $humidCards = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
-
-        return $humidCards;
-    }
-
-    public function getAllAnalogCards(string $type)
-    {
-        $cardRepository = $this->em->getRepository(Cardview::class);
-
-        $analogCards = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
-
-        return $analogCards;
-    }
-
-    //Add to this array if adding more sensors
-    public function returnAllCardSensorData(string $type): array
-    {
-        $cardRepository = $this->em->getRepository(Cardview::class);
-
-        $cardReadings = $cardRepository->getAllCardReadings($this->groupNameIDs, $this->userID, $type);
-
-        $cardData['sensorData'] = $cardReadings;
-
-        return $cardData;
-    }
-
-    public function returnAllDeviceCardSensorData(string $type, array $deviceDetails): array
-    {
-        $cardRepository = $this->em->getRepository(Cardview::class);
-
-        $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $type, $deviceDetails);
-
-        $cardData['sensorData'] = $cardReadings;
-
-        return $cardData;
-    }
-
-    public function processForm(FormInterface $form, $formData)
-    {
-        $form->submit($formData);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $validFormData = $form->getData();
-            $this->em->persist($validFormData);
-
-            return false;
+            $tempCardData = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
         }
-        else {
-            return $form;
-        }
+
+        return $tempCardData;
     }
 
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllHumidCards(string $type): array
+    {
+        $humidCardData = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $humidCardData = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $humidCardData;
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllAnalogCards(string $type): array
+    {
+        $analogCardData = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $analogCardData = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $analogCardData;
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function prepareAllIndexCardData(string $type): array
+    {
+        $cardReadings = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
+        }  catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $cardReadings;
+    }
+
+
+    /**
+     * @param string $type
+     * @param array $deviceDetails
+     * @return array
+     */
+    public function prepareAllRoomPageCardData(string $type, array $deviceDetails): array
+    {
+        $cardReadings = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsForRoom($this->groupNameIDs, $this->userID, $deviceDetails, $type);
+        }  catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $cardReadings;
+    }
+
+
+    /**
+     * @param string $type
+     * @param array $deviceDetails
+     * @return array
+     */
+    public function prepareAllDevicePageCardData(string $type, array $deviceDetails): array
+    {
+        $cardReadings = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(Cardview::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $deviceDetails, $type);
+        }  catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $cardReadings;
+    }
+
+
+    public function prepareUsersCurrentCardData(string $cardViewData): array
+    {
+        $usersCurrentCardData = [];
+
+        try {
+            $usersCurrentCardData = $this->em->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()]);
+        } catch(\PDOException $e){
+            error_log($e->getMessage());
+        } catch(\Exception $e){
+            error_log($e->getMessage());
+        }
+
+        return $usersCurrentCardData;
+    }
+
+
+    /**
+     * @param Request $request
+     * @param array $cardSensorData
+     * @param string $sensorType
+     * @return array
+     */
+    public function prepareSensorFormData(Request $request, array $cardSensorData, string $sensorType): array
+    {
+        $formData = [
+            'highSensorReading' => $request->get('firstSensorHighReading'),
+            'lowSensorReading' => $request->get('firstSensorLowReading'),
+            'constrecord' => $request->get('constRecord')
+        ];
+
+        switch ($sensorType) {
+            case Sensortype::DALLAS_TEMPERATURE:
+                return [
+                  'object' => $cardSensorData['temp'],
+                  'formData' => $formData,
+                  'formClass' => DallasTempCardModalForm::class
+                ];
+                break;
+
+            case Sensortype::SOIL_SENSOR:
+                return [
+                    'object' => $cardSensorData['analog'],
+                    'formData' => $formData,
+                    'formClass' => SoilFormType::class
+                ];
+                break;
+
+            case Sensortype::DHT_SENSOR:
+                $secondFormData = [
+                    'highSensorReading' => $request->get('secondSensorHighReading'),
+                    'lowSensorReading' => $request->get('secondSensorLowReading'),
+                    'constrecord' => $request->get('secondConstRecord')
+                ];
+                return [
+                    'object' => $cardSensorData['temp'],
+                    'secondObject' => $cardSensorData['humid'],
+                    'formData' => $formData,
+                    'secondFormData' => $secondFormData,
+                    'formClass' => DHTTempCardModalForm::class,
+                    'secondFormClass' => DHTHumidCardModalForm::class
+                ];
+                break;
+        }
+
+        return [];
+
+    }
+
+    private function processCardViewFormData()
+    {
+
+    }
 }

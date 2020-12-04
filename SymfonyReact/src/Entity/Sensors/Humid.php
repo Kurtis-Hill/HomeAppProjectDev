@@ -7,6 +7,7 @@ use App\Entity\Card\Cardview;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
+use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="humid", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_4"), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="humid_ibfk_5", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\HumidRepository")
  */
-class Humid
+class Humid implements StandardSensorInterface
 {
     /**
      * @var int
@@ -106,36 +107,36 @@ class Humid
         return $this->humidid;
     }
 
-    public function getHumidreading(): ?float
+    public function getCurrentSensorReading(): ?float
     {
         return $this->humidreading;
     }
 
-    public function setHumidreading(float $humidreading): self
+    public function setCurrentSensorReading($humidreading = null): self
     {
         $this->humidreading = $humidreading;
 
         return $this;
     }
 
-    public function getHighhumid(): ?float
+    public function getHighSensorReading(): ?float
     {
         return $this->highhumid;
     }
 
-    public function setHighhumid($highhumid): self
+    public function setHighSensorReading($highhumid = null): self
     {
         $this->highhumid = $highhumid;
 
         return $this;
     }
 
-    public function getLowhumid(): ?float
+    public function getLowSensorReading(): ?float
     {
         return $this->lowhumid;
     }
 
-    public function setLowhumid($lowhumid): self
+    public function setLowSensorReading($lowhumid = null): self
     {
         $this->lowhumid = $lowhumid;
 
@@ -155,12 +156,12 @@ class Humid
         return $this;
     }
 
-    public function getTimez(): ?\DateTimeInterface
+    public function getTime(): ?\DateTimeInterface
     {
         return $this->timez;
     }
 
-    public function setTimez(\DateTimeInterface $timez): self
+    public function setTime(\DateTimeInterface $timez): self
     {
         $this->timez = $timez;
 
@@ -215,6 +216,4 @@ class Humid
 
         return $this;
     }
-
-
 }

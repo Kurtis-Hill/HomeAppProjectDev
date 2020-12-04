@@ -7,45 +7,56 @@ namespace App\Controller\Sensors;
 use App\Entity\Core\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceService;
+use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/HomeApp/devices", name="devices")
+ * @Route("/HomeApp/api/devices", name="devices")
  */
 class DeviceController extends AbstractController
 {
+    use HomeAppAPIResponseTrait;
+
     /**
-     * @Route("/new-device/modal-data", name="navbar-new-device-data")
+     * @Route("/new-device/submit-form-data", name="add-new-device")
+     * @param Request $request
+     * @param DeviceService $deviceService
+     * @return JsonResponse
      */
-    public function addNewDeviceModalData(DeviceService $deviceService, Request $request): JsonResponse
+    public function addNewDevice(Request $request, DeviceService $deviceService): JsonResponse
     {
-        $errors = [];
+        $deviceGroup = $request->get('device-group');
+        $deviceRoom = $request->get('device-room');
+
+        if (empty($deviceGroup || $deviceRoom)) {
+            return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
+        }
+
+        $deviceData = [
+            'devicename' => $request->get('device-name'),
+            'groupnameid' => $deviceGroup,
+            'roomid' => $deviceRoom
+        ];
 
         $newDevice = new Devices();
 
         $addNewDeviceForm = $this->createForm(AddNewDeviceForm::class, $newDevice);
 
-        $handledForm = $deviceService->handleNewDeviceSubmission($request, $addNewDeviceForm);
+        $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
-        if ($handledForm instanceof FormInterface) {
-            foreach ($handledForm->getErrors(true, true) as $value) {
-                array_push($errors, $value->getMessage());
-            }
-        }
-        if (is_array($handledForm)) {
-            array_push($errors, $handledForm);
-        }
+        $errors = $deviceService->returnAllErrors();
+
         if (!empty($errors)) {
-            return new JsonResponse(['errors' => $errors], 400);
+            return $this->sendBadRequestResponse($errors);
         }
         else {
-            $secret = $handledForm;
+            $secret = $handledForm->getData()->getSecret();
+            $deviceID = $handledForm->getData()->getDevicenameid();
 
-            return new JsonResponse(['secret' => $secret, 'deviceID' => $newDevice->getDevicenameid()], 200);
+            return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $deviceID]);
         }
     }
 }

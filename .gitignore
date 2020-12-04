@@ -24,3 +24,9 @@ SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
 
 ###< symfony/webpack-encore-bundle ###
+
+.idea
+.idea/workspace.xml
+.vscode
+
+

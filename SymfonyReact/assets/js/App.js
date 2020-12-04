@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route, Switch, NavLink} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import { removeUserSession } from "./Utilities/Common";
 
@@ -26,45 +26,43 @@ export default class App extends Component {
                 <Route exact path="/HomeApp/login" component={Login}/>
                 <Route exact path="/HomeApp/register"/>
                 <Route exact path="/HomeApp/logout" component={() => removeUserSession()}/>
-                <React.Fragment>
-                    <div id="page-top">
-                        <div id="wrapper">                     
-                            <NavbarContextProvider>                                
-                                <Navbar/>
-                                <AddNewDeviceContextProvider>
-                                    <AddNewDevice/>
-                                </AddNewDeviceContextProvider>
-                            </NavbarContextProvider>                                               
-                            <div id="content-wrapper" className="d-flex flex-column">
-                                <div id="content">  
-                                    <Profilebar></Profilebar>
+                <Route path="/HomeApp/WebApp/">
+                    <React.Fragment>
+                        <div id="page-top">
+                            <div id="wrapper">                     
+                                <NavbarContextProvider>                                
+                                    <Navbar/>
+                                    <AddNewDeviceContextProvider>
+                                        <AddNewDevice/>
+                                    </AddNewDeviceContextProvider>
+                                </NavbarContextProvider>                                               
+                                <div id="content-wrapper" className="d-flex flex-column">
+                                    <div id="content">  
+                                        <Profilebar/>
                                         <Route path="/HomeApp/WebApp/index">                                                                                                                                         
                                             <CardContextProvider>
                                                 <Cards/>       
                                                 <CardModal/>                                 
                                             </CardContextProvider>                                        
                                         </Route>                                   
-                                        <Route path="/HomeApp/WebApp/device">                                      
+                                        <Route path="/HomeApp/WebApp/device">  
+                                        <h1>Device Name</h1>                                  
                                             <CardContextProvider>
                                                 <Cards/>     
                                                 <CardModal/>                                     
+                                                <AddNewSensor/>
                                             </CardContextProvider>
-                                            <AddNewSensor/>
                                         </Route>
-                                </div>
-                            </div>         
+                                    </div>
+                                </div>         
+                            </div>
                         </div>
-                    </div>
-                </React.Fragment>
+                    </React.Fragment>
+                </Route>
             </Switch>
         </Router>        
         );
     }
 }
                                             
-
 ReactDOM.render(<App/>, document.getElementById("root"));
-
-
-{/* <div className="d-sm-flex align-items-center justify-content-between mb-4">
-</div>      */}

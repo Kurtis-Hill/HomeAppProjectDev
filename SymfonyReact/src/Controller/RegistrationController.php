@@ -58,15 +58,12 @@ class RegistrationController extends AbstractController
                 $entityManager->persist($groupNameMapping);
                 $entityManager->flush();
             } catch (\PDOException $e) {
-                $errors['errors'] = $e->getMessage();
+                error_log($e->getMessage());
             }  catch (ORMException $e) {
-                $errors['errors'] = $e->getMessage();
+                error_log($e->getMessage());
             } catch (\Exception $e) {
-                $errors['errors'] = $e->getMessage();
+                error_log($e->getMessage());
             }
-
-
-            // do anything else you need here, like send an email
 
             return $this->redirectToRoute('index');
         }

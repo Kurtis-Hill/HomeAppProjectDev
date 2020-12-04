@@ -18,17 +18,21 @@ class SecurityController extends AbstractController
      * @Route("/HomeApp/api/csrfToken", name="csrf")
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @return JsonResponse
+     *
+     * Needs refactor, attach to axios headers
      */
     public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
-        $refreshToken = $csrfTokenManager;
 
-        return new JsonResponse(['token' => $token, 'refreshToken' => $refreshToken]);
+        return new JsonResponse(['token' => $token]);
     }
 
     /**
      * @Route("/HomeApp/login", name="app_login")
+     * @param AuthenticationUtils $authenticationUtils
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {

@@ -21,14 +21,14 @@ class DHTTempCardModalForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('hightemp', TextType::class, [
+            ->add('highSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DHTTemperatureConstraint(),
                     new NotBlank(['message' => 'High Temperature Cannot be Blank']),
                 ],
             ])
-            ->add('lowtemp', TextType::class, [
+            ->add('lowSensorReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DHTTemperatureConstraint(),

@@ -5,6 +5,7 @@ namespace App\Repository\Card;
 use App\Entity\Card\Cardcolour;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Cardcolour|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,20 +13,14 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Cardcolour[]    findAll()
  * @method Cardcolour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CardcolourRepository extends ServiceEntityRepository
+class CardcolourRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Cardcolour::class);
-    }
-
     public function getAllColours()
     {
         $qb = $this->createQueryBuilder('c')
               ->orderBy('c.colour', 'ASC');
 
-        $result = $qb->getQuery()->getScalarResult();
-        return $result;
+        return $qb->getQuery()->getScalarResult();
     }
 
     // /**

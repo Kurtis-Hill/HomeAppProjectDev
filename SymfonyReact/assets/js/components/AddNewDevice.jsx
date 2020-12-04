@@ -11,6 +11,7 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = addNewDeviceContext.newDeviceModalContent;
 
+    //Refactor has broken link
     const newSensorRoute = webappURL+"device?device-name="+newDeviceModalContent.newDeviceID+"&device-group="+newDeviceModalContent.newDeviceGroup+"&device-room="+newDeviceModalContent.newDeviceRoom;
 
     return (
@@ -20,9 +21,9 @@ const addNewDevice = () => {
                     <div className="modal-content">
                         <form onSubmit={(e) => {addNewDeviceContext.handleNewDeviceFormSubmission(e)}} id="modal-form">
                             <div className="modal-header">
-                            <h5 className="modal-title">+Add a new device</h5>
+                                <h5 className="modal-title">+Add a new device</h5>
                                 <button className="close" onClick={() => {navBarContext.toggleNewDeviceModal()}} type="button" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
+                                    <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             {
@@ -45,16 +46,16 @@ const addNewDevice = () => {
                                 <input type="text" name="device-name" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
                                 
                                 <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>                                
-                                <select name="group-name" id="group-name" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
+                                <select value={newDeviceModalContent.newDeviceGroup} name="device-group" id="device-group" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {navBarContext.groupNames.map((groupNames) => (
                                         <option className="form-control" value={groupNames.groupnameid} key={groupNames.groupnameid}>{groupNames.groupname}</option>
                                     ))}
                                 </select> 
 
                                 <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>                                
-                                <select name="room-name" id="device-room" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
-                                    {navBarContext.userRooms.map((room) => (
-                                        <option className="form-control" value={room.r_roomid} key={room.r_roomid}>{room.r_room}</option>
+                                <select name="device-room" id="device-room" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
+                                    {navBarContext.userRooms.map((room, index) => (
+                                        <option className="form-control" value={room.roomid} key={index}>{room.room}</option>
                                     ))}
                                 </select>
                                 {

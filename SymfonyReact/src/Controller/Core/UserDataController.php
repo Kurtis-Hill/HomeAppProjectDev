@@ -26,7 +26,7 @@ class UserDataController extends AbstractController
         if (!$this->getUser()) {
             return new JsonResponse(['errors' => $userService->getUserErrors()]);
         } elseif (!empty($userService->getUserErrors())) {
-            return new JsonResponse(['errors' => $userService->getErrors()]);
+            return new JsonResponse(['errors' => $userService->getUserErrors()]);
         } else {
             return new JsonResponse(['userID' => $userService->getUserID(), 'roles' => $userService->getUserRoles()]);
         }

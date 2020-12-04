@@ -30,8 +30,9 @@ function Login(props) {
                 setLoading(false); 
             });
         
-        
-        setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken);
+        loginCheckResponse 
+            ? setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken)
+            : setError('Login check response error');
 
         const loginForm = document.getElementById('login-form');
 
@@ -83,8 +84,8 @@ function Login(props) {
                                                     </div>
                                                 </div>
                                                 {loading 
-                                                ? <div className="center-item login-spinner fa-2x fas fa-spinner fa-spin"></div> 
-                                                : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
+                                                    ? <div className="center-item login-spinner fa-2x fas fa-spinner fa-spin"></div> 
+                                                    : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
                                                 <hr />        
                                             </form>                                               
                                             <div className="text-center">

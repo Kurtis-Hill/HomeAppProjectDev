@@ -5,54 +5,58 @@ namespace App\Services\Devices;
 
 
 use App\Entity\Core\Devices;
+use App\Form\SensorForms\AddNewDeviceForm;
 use App\HomeAppCore\HomeAppRoomAbstract;
+use Doctrine\ORM\ORMException;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class DeviceService extends HomeAppRoomAbstract
 {
     /**
-     * @param Request $request
-     * @param $addNewDeviceForm
+     * @var array
      */
-    public function handleNewDeviceSubmission(Request $request, $addNewDeviceForm)
+    private $errors = [];
+
+    /**
+     * @param array $deviceData
+     * @param FormInterface $addNewDeviceForm
+     * @return array|FormInterface
+     */
+    public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm): FormInterface
     {
-        $deviceName = $request->get('device-name');
-        $groupName = $request->get('group-name');
+        $this->userInputDataCheck($deviceData);
 
-        if (!in_array($groupName, $this->getGroupNameID())) {
-            $errors[] = 'You are not part of this group';
+        return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
+    }
+
+    private function userInputDataCheck(array $deviceData): void
+    {
+        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findOneBy(['devicename' => $deviceData['devicename']]);
+
+        if (!empty($currentUserDeviceCheck)) {
+            $this->errors[] = 'Your group already has a device named'. $deviceData['devicename'];
         }
 
-        $currentUserDevices = $this->em->getRepository(Devices::class)->returnAllUsersDevices($this->getGroupNameID());
-
-        foreach ($currentUserDevices as $value) {
-            if ($value['devicename'] === $deviceName) {
-                $errors[] = 'Your group already has a device named'. $deviceName;
-            }
-        }
-
-        if (!empty($errors)) {
-            return $errors;
-        }
-        else {
-            $processedForm = $this->proccessNewDeviceForm($addNewDeviceForm, $request->get('device-name'), $request);
-
-            return $processedForm;
+        if (!in_array($deviceData['groupnameid'], $this->getGroupNameID())) {
+            $this->errors[] = 'You are not part of this group';
         }
     }
 
-    private function proccessNewDeviceForm(FormInterface $addNewDeviceForm, $deviceName, Request $request)
+    /**
+     * @param FormInterface $addNewDeviceForm
+     * @param array $deviceData
+     * @return bool|FormInterface
+     */
+    private function processNewDeviceForm(FormInterface $addNewDeviceForm, array $deviceData): FormInterface
     {
-        $addNewDeviceForm->submit([
-            'devicename' => $request->get('device-name'),
-            'groupnameid' => $request->get('group-name'),
-            'roomid' => $request->get('room-name'),
-        ]);
+        $addNewDeviceForm->submit($deviceData);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
-            $deviceName .= time();
-            $secret = hash("md5", $deviceName);
+            $secret = $deviceData['devicename'];
+            $secret .= time();
+            $secret = hash("md5", $secret);
 
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setSecret($secret);
@@ -60,18 +64,27 @@ class DeviceService extends HomeAppRoomAbstract
             try {
                 $this->em->persist($validFormData);
                 $this->em->flush();
+            } catch (ORMException $e) {
+                error_log($e->getMessage());
+            } catch(\PDOException $e){
+                $errorMessage['errors'] = $e->getMessage();
             } catch (\Exception $e) {
-                $errors[] = $e->getMessage();
-
-                return $errors;
+                error_log($e->getMessage());
             }
-
-            return $secret;
         }
         else {
-            return $addNewDeviceForm;
+            foreach ($addNewDeviceForm->getErrors(true, true) as $error) {
+                array_push($this->errors, $error->getMessage());
+            }
         }
 
+        return $addNewDeviceForm;
+    }
 
+
+
+    public function returnAllErrors()
+    {
+        return $this->errors;
     }
 }

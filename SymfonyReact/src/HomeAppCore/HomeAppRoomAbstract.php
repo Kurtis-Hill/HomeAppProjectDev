@@ -9,6 +9,8 @@ use App\Entity\Core\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Security;
 
 abstract class HomeAppRoomAbstract
@@ -16,7 +18,7 @@ abstract class HomeAppRoomAbstract
     /**
      * @var Security
      */
-    private $user;
+    protected $user;
 
     /**
      * @var EntityManager|EntityManagerInterface
@@ -38,6 +40,9 @@ abstract class HomeAppRoomAbstract
      */
     protected $groupNameIDs = [];
 
+    /**
+     * @var array
+     */
     protected $userErrors = [];
 
     /**
@@ -55,6 +60,8 @@ abstract class HomeAppRoomAbstract
             $this->setUserVariables();
         } catch (\Exception $e) {
             $this->userErrors[] = $e->getMessage();
+
+            return new RedirectResponse('/HomeApp/logout');
         }
     }
 
@@ -70,6 +77,31 @@ abstract class HomeAppRoomAbstract
         if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
             throw new \Exception("The User Variables Cannot be set Please try again");
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param array $formData
+     * @return bool|FormInterface
+     */
+    public function processForm(FormInterface $form, array $formData)
+    {
+        $form->submit($formData);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $validFormData = $form->getData();
+            try {
+                $this->em->persist($validFormData);
+            } catch(\PDOException $e){
+                error_log($e->getMessage());
+            } catch(\Exception $e){
+                error_log($e->getMessage());
+            }
+
+            return true;
+        }
+
+        return $form;
     }
 
     public function getGroupNameID()
@@ -89,6 +121,6 @@ abstract class HomeAppRoomAbstract
 
     public function getUserErrors()
     {
-        return $this->errors;
+        return $this->userErrors;
     }
 }

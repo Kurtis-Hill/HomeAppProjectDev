@@ -7,6 +7,7 @@ use App\Entity\Card\Cardview;
 use App\Entity\Core\Groupname;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
+use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="SensorName", columns={"sensorNameID"}), @ORM\Index(name="temp_ibfk_5", columns={"cardViewID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\TempRepository")
  */
-class Temp
+class Temp implements StandardSensorInterface
 {
     /**
      * @var int
@@ -31,21 +32,21 @@ class Temp
      *
      * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private $tempreading;
+    private $currentReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
-    private $hightemp = '26';
+    private $highSensorReading = '26';
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private $lowtemp;
+    private $lowSensorReading;
 
     /**
      * @var bool
@@ -107,38 +108,38 @@ class Temp
         return $this->tempid;
     }
 
-    public function getTempreading(): ?float
+    public function getCurrentSensorReading(): ?float
     {
-        return $this->tempreading;
+        return $this->currentReading;
     }
 
-    public function setTempreading(float $tempreading): self
+    public function setCurrentSensorReading($currentReading = null): self
     {
-        $this->tempreading = $tempreading;
+        $this->currentReading = $currentReading;
 
         return $this;
     }
 
-    public function getHightemp(): ?float
+    public function getHighSensorReading(): ?float
     {
-        return $this->hightemp;
+        return $this->highSensorReading;
     }
 
-    public function setHightemp($hightemp): self
+    public function setHighSensorReading($highSensorReading = null): self
     {
-        $this->hightemp = $hightemp;
+        $this->highSensorReading = $highSensorReading;
 
         return $this;
     }
 
-    public function getLowtemp(): ?float
+    public function getLowSensorReading(): ?float
     {
-        return $this->lowtemp;
+        return $this->lowSensorReading;
     }
 
-    public function setLowtemp($lowtemp): self
+    public function setLowSensorReading($lowSensorReading = null): self
     {
-        $this->lowtemp = $lowtemp;
+        $this->lowSensorReading = $lowSensorReading;
 
         return $this;
     }
@@ -148,7 +149,7 @@ class Temp
         return $this->constrecord;
     }
 
-    public function setConstrecord($constrecord): self
+    public function setConstrecord(bool $constrecord): self
     {
         $constrecord = ($constrecord == "true") ? true : false;
 
@@ -157,12 +158,12 @@ class Temp
         return $this;
     }
 
-    public function getTimez(): ?\DateTimeInterface
+    public function getTime(): ?\DateTimeInterface
     {
         return $this->timez;
     }
 
-    public function setTimez(\DateTimeInterface $timez): self
+    public function setTime(\DateTimeInterface $timez): self
     {
         $this->timez = $timez;
 
