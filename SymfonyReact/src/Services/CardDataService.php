@@ -96,6 +96,12 @@ class CardDataService extends HomeAppRoomAbstract
 
         $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
 
+        $cardDTOs = [];
+
+        foreach ($cardReadings as $sensorData) {
+            $cardDTOs[] = new CardDataDTO($sensorData);
+        }
+
         return $cardReadings;
     }
 
