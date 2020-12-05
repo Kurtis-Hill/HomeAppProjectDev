@@ -10,13 +10,13 @@ interface StandardSensorInterface
 
     public function setCurrentSensorReading();
 
-    public function getLowSensorReading();
+    public function getLowReading();
 
-    public function setLowSensorReading();
+    public function setLowReading();
 
-    public function getHighSensorReading();
+    public function getHighReading();
 
-    public function setHighSensorReading();
+    public function setHighReading();
 
     public function getConstrecord();
 

@@ -88,12 +88,13 @@ class CardContextProvider extends Component {
         )
         .then(response => {
             const cardData = response.data.responseData.length > 1 
-                ? response.data.responseData
-                : [];
+            ? response.data.responseData
+            : [];
 
-            this.setState({cardData:response.data.responseData});
+            this.setState({cardData});
         }).catch(error => {
-            const err = error.response;
+            const err = error;
+            console.log(err);
             if (err.status === 500) {
                 // window.location.replace('/HomeApp/logout');
             }
@@ -107,11 +108,6 @@ class CardContextProvider extends Component {
             }
         })
         
-    }
-
-    //Changes the style of the card text if the reading is above or below high-low readings in DB
-    getSensorReadingStyle = (highReading, lowReading, currentReading) => {
-        return currentReading >= highReading ? 'text-red' : currentReading <= lowReading ? 'text-blue' : 'text-gray-800';
     }
 
 
@@ -279,7 +275,6 @@ class CardContextProvider extends Component {
                     <CardContext.Provider value={{
                         cardData: this.state.cardData,
                         getCardDataForm: this.getCardDataForm,
-                        getSensorReadingStyle: this.getSensorReadingStyle,
                         modalShow: this.state.modalShow,
                         modalLoading: this.state.modalLoading,
                         toggleModal: this.toggleModal,

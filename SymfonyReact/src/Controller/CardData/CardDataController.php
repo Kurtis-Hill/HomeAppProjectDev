@@ -43,7 +43,7 @@ class CardDataController extends AbstractController
         if (empty($cardData)) {
             return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
-
+//dd($cardData);
         return $this->sendSuccessfulResponse($cardData);
     }
 
@@ -108,17 +108,17 @@ class CardDataController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function showCardViewForm(Request $request, $cardviewid): JsonResponse
+    public function showCardViewForm(Request $request, CardDataService $cardDataService, $cardviewid): JsonResponse
     {
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
-        $icons = $this->getDoctrine()->getRepository(Icons::class)->getAllIcons();
-        $colours = $this->getDoctrine()->getRepository(Cardcolour::class)->getAllColours();
-        $states = $this->getDoctrine()->getRepository(Cardstate::class)->getAllStates();
+        if (empty($cardSensorData)) {
+            return $this->sendBadRequestResponse();
+        }
 
-        $cardFormData = ['cardSensorData' => $cardSensorData, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
+        $formData = $cardDataService->getFormData($cardSensorData);
 
-        return $this->sendSuccessfulResponse($cardFormData);
+        return $this->sendSuccessfulResponse($formData);
     }
 
     /**

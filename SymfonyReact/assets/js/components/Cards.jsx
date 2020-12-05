@@ -1,9 +1,13 @@
 import React, { Component, useContext } from 'react';
 import { CardContext } from '../contexts/CardContexts';
 
-
-
-
+const senorReadingStyle = (highReading, lowReading, currentReading) => {
+  return (currentReading >= highReading) 
+    ? 'text-red' 
+    : (currentReading <= lowReading) 
+      ? 'text-blue' 
+      : 'text-gray-800';
+}
 
 const cardRender = () => {
 
@@ -16,15 +20,17 @@ const cardRender = () => {
             <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(cardData.cardviewid)}} key={index}>
               <div className={"shadow h-100 py-2 card border-left-"+cardData.colour}>
                 <div className="card-body hover">
+                <div style={{ position: "absolute", top: '2%', right: '5%'}}>{cardData.sensortype}</div>
                   <div className="row no-gutters align-items-center">
                     <div className="col mr-2">
                       <div className="d-flex font-weight-bold text text-uppercase mb-1">{cardData.sensorname}</div>
-                      {cardData.t_tempreading !== null ? <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.t_hightemp, cardData.t_lowtemp, cardData.t_tempreading)}>Temperature: {cardData.t_tempreading}</div> : null}
-                      {cardData.a_analogreading !== null ? <div className="card-font mb-0 font-weight-bold text-gray-800">Reading: {cardData.a_analogreading}</div> : null}
-                      {cardData.h_humidreading !== null  ?  <div className={'card-font mb-0 font-weight-bold '+context.getSensorReadingStyle(cardData.h_highhumid, cardData.h_lowhumid, cardData.h_humidreading)}>Humidity: {cardData.h_humidreading}</div> : null}
-                      {cardData.t_timez !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.t_timez.date}</div> : null}
-                      {cardData.a_timez !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.a_timez.date}</div> : null}
-                    </div>
+                      <div className="d-flex text text-uppercase mb-1">{cardData.room}</div>
+                      {cardData.tempReading !== null ? <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(cardData.highTempReading, cardData.lowTempReading, cardData.tempReading)}>Temperature: {cardData.tempReading}</div> : null}
+                      {cardData.analogReading !== null ? <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(cardData.analogReading, cardData.lowAnalogReading, cardData.highAnalogReading)}>Analog Reading: {cardData.analogReading}</div> : null}
+                      {cardData.humidReading !== null  ?  <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(cardData.highHumidReading, cardData.lowHumidReading, cardData.humidReading)}>Humidity: {cardData.humidReading}</div> : null}
+                      {cardData.tempTime !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.tempTime.date}</div> : null}
+                      {cardData.analogTime !== null ? <div className="card-font mb-0 text-gray-400">@{cardData.analogTime.date}</div> : null}
+                    </div>                  
                     <div className="col-auto">
                       <i className={"fas fa-2x text-gray-300 fa-"+cardData.iconname}></i>
                     </div>

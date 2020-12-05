@@ -4,7 +4,11 @@
 namespace App\Services;
 
 use App\DTOs\Sensors\CardDataDTO;
+use App\DTOs\Sensors\CardSensorFormDTO;
+use App\Entity\Card\Cardcolour;
+use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
+use App\Entity\Core\Icons;
 use App\Entity\Core\Sensortype;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
@@ -92,17 +96,7 @@ class CardDataService extends HomeAppRoomAbstract
 
         $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
 
-        if (!empty($cardReadings)) {
-            $cardDTOs = [];
-
-            foreach ($cardReadings as $cardData) {
-                $cardDTOs[] = new CardDataDTO($cardData);
-            }
-
-            return $cardDTOs;
-        }
-
-        return [];
+        return $cardReadings;
     }
 
 
@@ -214,14 +208,20 @@ class CardDataService extends HomeAppRoomAbstract
                     'secondFormClass' => DHTHumidCardModalForm::class
                 ];
                 break;
+
+            default: return [];
         }
-
-        return [];
-
     }
 
-    private function processCardViewFormData()
-    {
 
+    public function getFormData(array $cardSensorFormData): array
+    {
+        $icons = $this->em->getRepository(Icons::class)->getAllIcons();
+        $colours = $this->em->getRepository(Cardcolour::class)->getAllColours();
+        $states = $this->em->getRepository(Cardstate::class)->getAllStates();
+
+        $formDTO = new CardSensorFormDTO($cardSensorFormData);
+
+        return ['cardSensorData' => $formDTO, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
     }
 }

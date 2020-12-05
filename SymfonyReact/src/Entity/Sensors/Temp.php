@@ -32,21 +32,21 @@ class Temp implements StandardSensorInterface
      *
      * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private $currentReading;
+    private $tempReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
-    private $highSensorReading = '26';
+    private $highTempReading = '26';
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private $lowSensorReading;
+    private $lowTempReading;
 
     /**
      * @var bool
@@ -60,7 +60,7 @@ class Temp implements StandardSensorInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $timez = 'CURRENT_TIMESTAMP';
+    private $tempTime = 'CURRENT_TIMESTAMP';
 
     /**
      * @var Groupname
@@ -110,36 +110,36 @@ class Temp implements StandardSensorInterface
 
     public function getCurrentSensorReading(): ?float
     {
-        return $this->currentReading;
+        return $this->tempReading;
     }
 
     public function setCurrentSensorReading($currentReading = null): self
     {
-        $this->currentReading = $currentReading;
+        $this->tempReading = $currentReading;
 
         return $this;
     }
 
-    public function getHighSensorReading(): ?float
+    public function getHighReading(): ?float
     {
-        return $this->highSensorReading;
+        return $this->highTempReading;
     }
 
-    public function setHighSensorReading($highSensorReading = null): self
+    public function setHighReading($highTempReading = null): self
     {
-        $this->highSensorReading = $highSensorReading;
+        $this->highTempReading = $highTempReading;
 
         return $this;
     }
 
-    public function getLowSensorReading(): ?float
+    public function getLowReading(): ?float
     {
-        return $this->lowSensorReading;
+        return $this->lowTempReading;
     }
 
-    public function setLowSensorReading($lowSensorReading = null): self
+    public function setLowReading($lowTempReading = null): self
     {
-        $this->lowSensorReading = $lowSensorReading;
+        $this->lowTempReading = $lowTempReading;
 
         return $this;
     }
@@ -160,12 +160,12 @@ class Temp implements StandardSensorInterface
 
     public function getTime(): ?\DateTimeInterface
     {
-        return $this->timez;
+        return $this->tempTime;
     }
 
     public function setTime(\DateTimeInterface $timez): self
     {
-        $this->timez = $timez;
+        $this->tempTime = $timez;
 
         return $this;
     }

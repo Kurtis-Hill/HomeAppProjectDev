@@ -26,11 +26,34 @@ class CardviewRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $qb->select('t', 'h', 'a', 'r', 'i', 's', 'cc', 'cv')
+        $qb->select(
+         't.tempid',
+                't.tempReading',
+                't.highTempReading',
+                't.lowTempReading',
+                't.tempTime',
+                'h.humidid',
+                'h.humidReading',
+                'h.highHumidReading',
+                'h.lowHumidReading',
+                'h.humidTime',
+                'a.analogid',
+                'a.analogReading',
+                'a.highAnalogReading',
+                'a.lowAnalogReading',
+                'a.analogTime',
+                'r.room',
+                'i.iconname',
+                's.sensorname',
+                'st.sensortype',
+                'cc.colour',
+                'cv.cardviewid'
+            )
             ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
             ->innerJoin('App\Entity\Core\Sensornames', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Core\Sensortype', 'st', Join::WITH,'st.sensortypeid = s.sensortypeid')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -52,13 +75,7 @@ class CardviewRepository extends EntityRepository
                 ]
             );
 
-        $results =  $type === "JSON"
-            ? $qb->getQuery()->getScalarResult()
-            : $qb->getQuery()->getResult();
-
-        return (!empty($results))
-            ? $results
-            : [];
+        return $qb->getQuery()->getResult();
     }
 
 
@@ -274,7 +291,7 @@ class CardviewRepository extends EntityRepository
     public function getCardFormData(array $criteria): array
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('cv', 't', 'h', 'a', 'i', 'cc', 's', 'cs', 'st')
+        $qb->select('t', 'h', 'a', 'cv', 'i', 'cc', 's', 'cs', 'st')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
@@ -288,9 +305,21 @@ class CardviewRepository extends EntityRepository
             )
             ->setParameters(['id' => $criteria['id']]);
 
-        $result = $qb->getQuery()->getScalarResult();
+        $result = $qb->getQuery()->getResult();
 
-        return $result[0];
+        $returnedResult = [];
+        if (!empty($result)) {
+            $returnedResult['temp'] = $result['1'];
+            $returnedResult['humid'] = $result['2'];
+            $returnedResult['analog'] = $result['3'];
+            $returnedResult['icons'] = $result['4'];
+            $returnedResult['cardColour'] = $result['5'];
+            $returnedResult['sensorNames'] = $result['6'];
+            $returnedResult['cardState'] = $result['7'];
+            $returnedResult['sensorType'] = $result['8'];
+        }
+
+        return $returnedResult;
     }
 
     /**

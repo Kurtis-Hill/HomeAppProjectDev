@@ -32,21 +32,21 @@ class Analog implements StandardSensorInterface
      *
      * @ORM\Column(name="analogReading", type="float", precision=10, scale=0, nullable=true)
      */
-    private $analogreading;
+    private $analogReading;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="highAnalog", type="float", precision=10, scale=0, nullable=true)
      */
-    private $highanalog;
+    private $highAnalogReading;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="lowAnalog", type="float", precision=10, scale=0, nullable=true)
      */
-    private $lowanalog;
+    private $lowAnalogReading;
 
     /**
      * @var bool|null
@@ -60,7 +60,7 @@ class Analog implements StandardSensorInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $timez = 'CURRENT_TIMESTAMP';
+    private $analogTime = 'CURRENT_TIMESTAMP';
 
     /**
      * @var Room
@@ -110,36 +110,36 @@ class Analog implements StandardSensorInterface
 
     public function getCurrentSensorReading(): ?float
     {
-        return $this->analogreading;
+        return $this->analogReading;
     }
 
     public function setCurrentSensorReading($analogreading = null): self
     {
-        $this->analogreading = $analogreading;
+        $this->analogReading = $analogreading;
 
         return $this;
     }
 
-    public function getHighSensorReading(): ?float
+    public function getHighReading(): ?float
     {
-        return $this->highanalog;
+        return $this->highAnalogReading;
     }
 
-    public function setHighSensorReading($highanalog = null): self
+    public function setHighReading($highanalog = null): self
     {
-        $this->highanalog = $highanalog;
+        $this->highAnalogReading = $highanalog;
 
         return $this;
     }
 
-    public function getLowSensorReading(): ?float
+    public function getLowReading(): ?float
     {
-        return $this->lowanalog;
+        return $this->lowAnalogReading;
     }
 
-    public function setLowSensorReading($lowanalog = null): self
+    public function setLowReading($lowanalog = null): self
     {
-        $this->lowanalog = $lowanalog;
+        $this->lowAnalogReading = $lowanalog;
 
         return $this;
     }
@@ -158,12 +158,12 @@ class Analog implements StandardSensorInterface
 
     public function getTime(): ?\DateTimeInterface
     {
-        return $this->timez;
+        return $this->analogTime;
     }
 
     public function setTime(\DateTimeInterface $timez): self
     {
-        $this->timez = $timez;
+        $this->analogTime = $timez;
 
         return $this;
     }

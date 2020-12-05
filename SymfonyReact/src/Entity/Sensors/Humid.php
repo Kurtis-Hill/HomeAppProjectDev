@@ -32,21 +32,21 @@ class Humid implements StandardSensorInterface
      *
      * @ORM\Column(name="humidReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private $humidreading;
+    private $humidReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
-    private $highhumid = '70';
+    private $highHumidReading = '70';
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
-    private $lowhumid = '15';
+    private $lowHumidReading = '15';
 
     /**
      * @var bool
@@ -60,7 +60,7 @@ class Humid implements StandardSensorInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $timez = 'CURRENT_TIMESTAMP';
+    private $humidTime = 'CURRENT_TIMESTAMP';
 
     /**
      * @var Groupname
@@ -109,36 +109,36 @@ class Humid implements StandardSensorInterface
 
     public function getCurrentSensorReading(): ?float
     {
-        return $this->humidreading;
+        return $this->humidReading;
     }
 
     public function setCurrentSensorReading($humidreading = null): self
     {
-        $this->humidreading = $humidreading;
+        $this->humidReading = $humidreading;
 
         return $this;
     }
 
-    public function getHighSensorReading(): ?float
+    public function getHighReading(): ?float
     {
-        return $this->highhumid;
+        return $this->highHumidReading;
     }
 
-    public function setHighSensorReading($highhumid = null): self
+    public function setHighReading($highhumid = null): self
     {
-        $this->highhumid = $highhumid;
+        $this->highHumidReading = $highhumid;
 
         return $this;
     }
 
-    public function getLowSensorReading(): ?float
+    public function getLowReading(): ?float
     {
-        return $this->lowhumid;
+        return $this->lowHumidReading;
     }
 
-    public function setLowSensorReading($lowhumid = null): self
+    public function setLowReading($lowhumid = null): self
     {
-        $this->lowhumid = $lowhumid;
+        $this->lowHumidReading = $lowhumid;
 
         return $this;
     }
@@ -158,12 +158,12 @@ class Humid implements StandardSensorInterface
 
     public function getTime(): ?\DateTimeInterface
     {
-        return $this->timez;
+        return $this->humidTime;
     }
 
     public function setTime(\DateTimeInterface $timez): self
     {
-        $this->timez = $timez;
+        $this->humidTime = $timez;
 
         return $this;
     }
