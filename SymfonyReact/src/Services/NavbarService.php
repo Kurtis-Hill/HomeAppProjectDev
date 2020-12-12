@@ -8,12 +8,12 @@ use App\Entity\Core\Devices;
 use App\Entity\Core\GroupMapping;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensornames;
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 // class needs a slight refactor
-class NavbarService extends HomeAppRoomAbstract
+class NavbarService extends HomeAppCoreAbstract
 {
     private $usersRooms = [];
 
@@ -115,4 +115,3 @@ class NavbarService extends HomeAppRoomAbstract
     }
 
 }
-

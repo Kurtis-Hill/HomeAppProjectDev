@@ -14,14 +14,14 @@ use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class CardDataService
  * @package App\Services
  */
-class CardDataService extends HomeAppRoomAbstract
+class CardDataService extends HomeAppCoreAbstract
 {
     /**
      * @param string $type

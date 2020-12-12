@@ -30,8 +30,6 @@ const emptyModalContent = {
     modalSubmit: false
 };
 
-const emptyCardData = {t_timez: null, a_timez: null};
-
 
 class CardContextProvider extends Component {
     constructor(props) {

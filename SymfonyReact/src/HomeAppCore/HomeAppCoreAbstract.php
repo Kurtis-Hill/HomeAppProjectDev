@@ -1,19 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHP CS Fixer.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *     Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\HomeAppCore;
 
-
 use App\Entity\Core\GroupMapping;
-use App\Entity\Core\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Security;
 
-abstract class HomeAppRoomAbstract
+abstract class HomeAppCoreAbstract
 {
     /**
      * @var Security
@@ -47,9 +51,6 @@ abstract class HomeAppRoomAbstract
 
     /**
      * HomeAppRoomAbstract constructor.
-     * @param EntityManagerInterface $em
-     * @param Security $security
-     *
      */
     public function __construct(EntityManagerInterface $em, Security $security)
     {
@@ -66,22 +67,6 @@ abstract class HomeAppRoomAbstract
     }
 
     /**
-     * @throws \Exception
-     */
-    private function setUserVariables()
-    {
-        $this->userID = $this->user->getUser()->getUserid();
-        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
-        $this->roles = $this->user->getUser()->getRoles();
-
-        if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
-            throw new \Exception("The User Variables Cannot be set Please try again");
-        }
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param array $formData
      * @return bool|FormInterface
      */
     public function processForm(FormInterface $form, array $formData)
@@ -90,11 +75,12 @@ abstract class HomeAppRoomAbstract
 
         if ($form->isSubmitted() && $form->isValid()) {
             $validFormData = $form->getData();
+
             try {
                 $this->em->persist($validFormData);
-            } catch(\PDOException $e){
+            } catch (\PDOException $e) {
                 error_log($e->getMessage());
-            } catch(\Exception $e){
+            } catch (\Exception $e) {
                 error_log($e->getMessage());
             }
 
@@ -122,5 +108,19 @@ abstract class HomeAppRoomAbstract
     public function getUserErrors()
     {
         return $this->userErrors;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function setUserVariables()
+    {
+        $this->userID = $this->user->getUser()->getUserid();
+        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
+        $this->roles = $this->user->getUser()->getRoles();
+
+        if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
+            throw new \Exception('The User Variables Cannot be set Please try again');
+        }
     }
 }

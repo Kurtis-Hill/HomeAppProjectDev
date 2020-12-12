@@ -4,9 +4,9 @@
 namespace App\Services;
 
 
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 
-class UserService extends HomeAppRoomAbstract
+class UserService extends HomeAppCoreAbstract
 {
 
 }

@@ -5,11 +5,11 @@ namespace App\Services;
 
 
 use App\Entity\Core\Sensornames;
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
 
-class SensorService extends HomeAppRoomAbstract
+class SensorService extends HomeAppCoreAbstract
 {
     /**
      * @var array

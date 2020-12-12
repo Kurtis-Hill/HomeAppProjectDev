@@ -5,13 +5,13 @@ namespace App\Services;
 
 
 use App\Entity\Core\Sensortype;
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
-class SensorsService extends HomeAppRoomAbstract
+class SensorsService extends HomeAppCoreAbstract
 {
     protected $currentSensorType;
 

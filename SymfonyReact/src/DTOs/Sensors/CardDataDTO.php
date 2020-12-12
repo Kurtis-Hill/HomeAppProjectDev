@@ -31,22 +31,9 @@ class CardDataDTO
      */
     public function __construct(array $sensorData)
     {
-        $this->prepareSensorReadingsData($sensorData['temp'], 'Temperature');
-        $this->prepareSensorReadingsData($sensorData['humid'], 'Humidity');
-        $this->prepareSensorReadingsData($sensorData['analog'], 'Soil');
+
     }
 
-
-  private function prepareSensorReadingsData(StandardSensorInterface $sensorData, string $type): void
-  {
-      $this->sensorData[] = [
-          'sensorType' => $type,
-          'highReading' => $sensorData->getHighReading(),
-          'lowReading' => $sensorData->getLowReading(),
-          'currentReading' => $sensorData->getCurrentSensorReading(),
-
-      ];
-  }
 
 
 

@@ -4,12 +4,12 @@
 namespace App\Services;
 
 
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
-class RoomService extends HomeAppRoomAbstract
+class CoreService extends HomeAppCoreAbstract
 {
     public function __construct(EntityManagerInterface $em, Security $security, Request $request)
     {
