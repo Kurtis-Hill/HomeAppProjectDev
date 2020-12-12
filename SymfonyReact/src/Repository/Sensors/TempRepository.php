@@ -9,7 +9,7 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class TempRepository extends EntityRepository
 {
-    private function getTempCardReadings($type, $groupName, $id)
+    public function getTempCardReadings($type, $groupName, $id)
     {
      //   dd($groupName);
         $qb = $this->createQueryBuilder('t');
@@ -27,7 +27,7 @@ class TempRepository extends EntityRepository
            // ->innerJoin('App\Entity\Card\Cardstate', 'c', Join::WITH, 't.sendornameid = h.sensornameid')
             ->where(
                 $qb->expr()->eq('u.userid', ':userid'),
-                $qb->expr()->eq('t.groupnameid', ':groupname'),
+                $qb->expr()->in('t.groupnameid', ':groupname'),
                 $qb->expr()->neq('cshow.cardshowid', ':notshown'),
             )
 

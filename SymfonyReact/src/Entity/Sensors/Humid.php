@@ -102,6 +102,8 @@ class Humid implements StandardSensorInterface
      */
     private $cardviewid;
 
+
+
     public function getHumidid(): ?int
     {
         return $this->humidid;

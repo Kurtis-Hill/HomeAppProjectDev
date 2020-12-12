@@ -10,6 +10,7 @@ use App\Entity\Core\Icons;
 use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
+use App\Services\SensorDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
@@ -108,7 +109,7 @@ class CardDataController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function showCardViewForm(Request $request, CardDataService $cardDataService, $cardviewid): JsonResponse
+    public function showCardViewForm(Request $request, SensorDataService $sensorDataService, $cardviewid): JsonResponse
     {
         $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
 
@@ -116,7 +117,7 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestResponse();
         }
 
-        $formData = $cardDataService->getFormData($cardSensorData);
+        $formData = $sensorDataService->getFormData($cardSensorData);
 
         return $this->sendSuccessfulResponse($formData);
     }
@@ -124,11 +125,10 @@ class CardDataController extends AbstractController
     /**
      * @Route("/update-card-view", name="updateCardView")
      * @param Request $request
-     * @param CardDataService $cardDataService
+     * @param SensorDataService $sensorDataService
      * @return JsonResponse
-     *
      */
-    public function updateCardView(Request $request, CardDataService $cardDataService): JsonResponse
+    public function updateCardView(Request $request, SensorDataService $sensorDataService): JsonResponse
     {
         $errors = [];
         $cardViewID = $request->get('cardViewID');
@@ -143,7 +143,7 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestResponse();
         }
 
-        $cardSensorData = $cardDataService->prepareUsersCurrentCardData($cardViewID);
+        $cardSensorData = $sensorDataService->prepareUsersCurrentCardData($cardViewID);
 
         if (empty($cardSensorData)) {
             return $this->sendNotFoundResponse();
@@ -151,7 +151,7 @@ class CardDataController extends AbstractController
 
         $sensorType = $cardSensorData['cardViewObject']->getSensornameid()->getSensortypeid()->getSensortype();
 
-        $prepareSensorForm = $cardDataService->prepareSensorFormData($request, $cardSensorData, $sensorType);
+        $prepareSensorForm = $sensorDataService->prepareSensorFormData($request, $cardSensorData, $sensorType);
 
         if (!$prepareSensorForm['object'] instanceof StandardSensorInterface) {
             $errors[] = 'Sensor Not Recognised';
@@ -163,7 +163,7 @@ class CardDataController extends AbstractController
         if (!empty($prepareSensorForm['secondObject'])) {
             $secondSensorDataForm = $this->createForm($prepareSensorForm['secondFormClass'], $prepareSensorForm['secondObject']);
 
-            $secondHandledSensorDataForm = $cardDataService->processForm($secondSensorDataForm, $prepareSensorForm['secondFormData']);
+            $secondHandledSensorDataForm = $sensorDataService->processForm($secondSensorDataForm, $prepareSensorForm['secondFormData']);
 
             if ($secondHandledSensorDataForm instanceof FormInterface) {
                 foreach ($secondHandledSensorDataForm->getErrors(true, true) as $error) {
@@ -172,8 +172,8 @@ class CardDataController extends AbstractController
             }
         }
 
-        $handledCardViewForm = $cardDataService->processForm($cardViewForm, $cardViewData);
-        $handledSensorDataForm = $cardDataService->processForm($sensorDataForm, $prepareSensorForm['formData']);
+        $handledCardViewForm = $sensorDataService->processForm($cardViewForm, $cardViewData);
+        $handledSensorDataForm = $sensorDataService->processForm($sensorDataForm, $prepareSensorForm['formData']);
 
         if ($handledCardViewForm instanceof FormInterface) {
             foreach ($handledCardViewForm->getErrors(true, true) as $error) {
