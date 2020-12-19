@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Entity\Core;
+namespace App\Entity\Sensors;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Sensortype
  *
- * @ORM\Table(name="sensortype")
+ * @ORM\Table(name="sensortype", uniqueConstraints={@ORM\UniqueConstraint(name="sensorType", columns={"sensorType"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\SensorTypeRepository")
  */
 class Sensortype
@@ -44,6 +44,38 @@ class Sensortype
     private $description;
 
     /**
+     * @return int
+     */
+    public function getSensortypeid(): int
+    {
+        return $this->sensortypeid;
+    }
+
+    /**
+     * @param int $sensortypeid
+     */
+    public function setSensortypeid(int $sensortypeid): void
+    {
+        $this->sensortypeid = $sensortypeid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSensortype(): string
+    {
+        return $this->sensortype;
+    }
+
+    /**
+     * @param string $sensortype
+     */
+    public function setSensortype(string $sensortype): void
+    {
+        $this->sensortype = $sensortype;
+    }
+
+    /**
      * @return string
      */
     public function getDescription(): string
@@ -57,23 +89,6 @@ class Sensortype
     public function setDescription(string $description): void
     {
         $this->description = $description;
-    }
-
-    public function getSensortypeid(): ?int
-    {
-        return $this->sensortypeid;
-    }
-
-    public function getSensortype(): ?string
-    {
-        return $this->sensortype;
-    }
-
-    public function setSensortype(string $sensortype): self
-    {
-        $this->sensortype = $sensortype;
-
-        return $this;
     }
 
 

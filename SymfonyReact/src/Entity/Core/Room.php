@@ -2,7 +2,6 @@
 
 namespace App\Entity\Core;
 
-use App\Entity\Core\Groupname;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -39,33 +38,52 @@ class Room
      */
     private $groupnameid;
 
-    public function getRoomid(): ?int
+    /**
+     * @return int
+     */
+    public function getRoomid(): int
     {
         return $this->roomid;
     }
 
-    public function getRoom(): ?string
+    /**
+     * @param int $roomid
+     */
+    public function setRoomid(int $roomid): void
+    {
+        $this->roomid = $roomid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRoom(): string
     {
         return $this->room;
     }
 
-    public function setRoom(string $room): self
+    /**
+     * @param string $room
+     */
+    public function setRoom(string $room): void
     {
         $this->room = $room;
-
-        return $this;
     }
 
-    public function getGroupnameid(): ?Groupname
+    /**
+     * @return Groupname
+     */
+    public function getGroupnameid(): Groupname
     {
         return $this->groupnameid;
     }
 
-    public function setGroupnameid(?Groupname $groupnameid): self
+    /**
+     * @param Groupname $groupnameid
+     */
+    public function setGroupnameid(Groupname $groupnameid): void
     {
         $this->groupnameid = $groupnameid;
-
-        return $this;
     }
 
 

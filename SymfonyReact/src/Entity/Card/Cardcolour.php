@@ -30,39 +30,57 @@ class Cardcolour
 
     /**
      * @var string
-     *
+     *I
      * @ORM\Column(name="shade", type="string", length=20, nullable=false)
      */
     private $shade;
 
-    public function getColourid(): ?int
+    /**
+     * @return int
+     */
+    public function getColourid(): int
     {
         return $this->colourid;
     }
 
-    public function getColour(): ?string
+    /**
+     * @param int $colourid
+     */
+    public function setColourid(int $colourid): void
+    {
+        $this->colourid = $colourid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColour(): string
     {
         return $this->colour;
     }
 
-    public function setColour(string $colour): self
+    /**
+     * @param string $colour
+     */
+    public function setColour(string $colour): void
     {
         $this->colour = $colour;
-
-        return $this;
     }
 
-    public function getShade(): ?string
+    /**
+     * @return string
+     */
+    public function getShade(): string
     {
-
+        return $this->shade;
     }
 
-    public function setShade(string $shade): self#
+    /**
+     * @param string $shade
+     */
+    public function setShade(string $shade): void
     {
         $this->shade = $shade;
-
-        return $this;
     }
-
 
 }

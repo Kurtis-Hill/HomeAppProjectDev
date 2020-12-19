@@ -19,7 +19,7 @@ class HumidRepository extends EntityRepository
             ->innerJoin('App\Entity\Card\Cardview', 'cv', Join::WITH, 'cv.cardviewid = h.cardviewid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH, 'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'gn.groupnameid = h.groupnameid')
-            ->innerJoin('App\Entity\Core\Sensornames', 'sn', Join::WITH, 'sn.sensornameid = h.sensornameid')
+            ->innerJoin('App\Entity\Core\Sensors', 'sn', Join::WITH, 'sn.sensornameid = h.sensornameid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH, 'cv.cardcolourid = cc.colourid')
             ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'u.groupnameid = gn.groupnameid')
             ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH, 'r.roomid = h.roomid')

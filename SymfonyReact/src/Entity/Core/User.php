@@ -4,6 +4,7 @@ namespace App\Entity\Core;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\Json;
 
 /**
  * User
@@ -103,7 +104,7 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = json_decode($this->roles);
 
         return array_unique($roles);
     }

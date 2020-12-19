@@ -4,7 +4,8 @@
 namespace App\Controller\Sensors;
 
 
-use App\Entity\Core\Devices;
+
+use App\Entity\Sensors\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;

@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Entity\Core\Devices;
 use App\Entity\Core\GroupMapping;
 use App\Entity\Core\Room;
-use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensors;
 use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;

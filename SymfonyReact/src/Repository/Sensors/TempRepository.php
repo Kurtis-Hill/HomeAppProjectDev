@@ -9,7 +9,7 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class TempRepository extends EntityRepository
 {
-    private function getTempCardReadings($type, $groupName, $id)
+    public function getTempCardReadings($type, $groupName, $id)
     {
      //   dd($groupName);
         $qb = $this->createQueryBuilder('t');
@@ -20,14 +20,14 @@ class TempRepository extends EntityRepository
             ->innerJoin('App\Entity\Card\Cardview', 'cv', Join::WITH, 'cv.cardviewid = t.cardviewid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH, 'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'gn.groupnameid = t.groupnameid')
-            ->innerJoin('App\Entity\Core\Sensornames', 'sn', Join::WITH, 'sn.sensornameid = t.sensornameid')
+            ->innerJoin('App\Entity\Core\Sensors', 'sn', Join::WITH, 'sn.sensornameid = t.sensornameid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH, 'cv.cardcolourid = cc.colourid')
             ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'u.groupnameid = gn.groupnameid')
             ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH, 'r.roomid = t.roomid')
            // ->innerJoin('App\Entity\Card\Cardstate', 'c', Join::WITH, 't.sendornameid = h.sensornameid')
             ->where(
                 $qb->expr()->eq('u.userid', ':userid'),
-                $qb->expr()->eq('t.groupnameid', ':groupname'),
+                $qb->expr()->in('t.groupnameid', ':groupname'),
                 $qb->expr()->neq('cshow.cardshowid', ':notshown'),
             )
 

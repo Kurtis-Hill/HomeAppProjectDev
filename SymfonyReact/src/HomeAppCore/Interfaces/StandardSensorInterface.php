@@ -3,30 +3,61 @@
 namespace App\HomeAppCore\Interfaces;
 
 
+use App\Entity\Core\Groupname;
+use App\Entity\Core\Room;
+use App\Entity\Sensors\Devices;
+use App\Entity\Sensors\Sensors;
 
 interface StandardSensorInterface
 {
-    public function getCurrentSensorReading();
+    public function getSensorID(): ?int;
 
-    public function setCurrentSensorReading();
+    public function setSensorID(int $id);
 
-    public function getLowReading();
+    /**
+     * Sensor relational Objects
+     */
+    public function getGroupNameID(): Groupname;
 
-    public function setLowReading();
+    public function getRoomID(): Room;
 
-    public function getHighReading();
+    public function getSensorNameID(): Sensors;
 
-    public function setHighReading();
+    public function getDeviceNameID(): Devices;
 
-    public function getConstrecord();
+    public function setGroupNameID(Groupname $id);
 
-    public function getTime();
+    public function setRoomID(Room $id);
 
-    public function getGroupnameid();
+    public function setSensorNameID(Sensors $id);
 
-    public function getRoomid();
+    /**
+     * Sensor Reading Methods
+     */
+    public function getCurrentSensorReading(): ?float;
 
-    public function getCardviewid();
+    public function getHighReading(): ?float;
 
-    public function getSensornameid();
+    public function getLowReading(): ?float;
+
+    public function getTime(): \DateTime;
+
+    public function setCurrentSensorReading(?float $reading): void;
+
+    public function setHighReading(?float $reading): void;
+
+    public function setLowReading(?float $reading): void;
+
+    public function setTime(\DateTime $dateTime): void;
+
+    /**
+     * Sensor Functional Methods
+     */
+    public function getConstrecord(): ?bool;
+
+    public function setConstrecord(?bool $constrecord);
+
+
+
+
 }

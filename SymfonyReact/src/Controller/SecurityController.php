@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -32,10 +33,11 @@ class SecurityController extends AbstractController
      * @Route("/HomeApp/login", name="app_login")
      * @param AuthenticationUtils $authenticationUtils
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return RedirectResponse|Response
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
+
          if ($this->getUser()) {
              return $this->redirectToRoute('index', ['route' => 'index']);
          }
@@ -53,7 +55,7 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/HomeApp/api/ssl", name="ssl")
+     * @Route("/HomeApp/ssl", name="ssl")
      */
     public function showSSLConfig()
     {
@@ -71,7 +73,26 @@ class SecurityController extends AbstractController
         echo "<br>";
         echo \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT;
         echo "<br>";
-
-
     }
+
+    /**
+     * FOR DEVELOPMENT ONLY
+     * @Route("/HomeApp/xdebug", name="xdebug")
+     */
+    public function showxDebug()
+    {
+        return new Response(xdebug_info());
+    }
+
+    /**
+     * FOR DEVELOPMENT ONLY
+     * @Route("/HomeApp/driver", name="driver")
+     */
+    public function driverCheck()
+    {
+        $driver = \PDO::getAvailableDrivers();
+
+        return new Response(print_r($driver));
+    }
+
 }

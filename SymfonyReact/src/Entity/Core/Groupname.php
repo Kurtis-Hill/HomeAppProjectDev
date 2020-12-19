@@ -31,38 +31,56 @@ class Groupname
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $timez = 'CURRENT_TIMESTAMP';
+    private $timez = 'current_timestamp()';
 
-    public function getGroupnameid()
+    /**
+     * @return int
+     */
+    public function getGroupnameid(): int
     {
         return $this->groupnameid;
     }
 
-    public function getGroupname(): ?string
+    /**
+     * @param int $groupnameid
+     */
+    public function setGroupnameid(int $groupnameid): void
+    {
+        $this->groupnameid = $groupnameid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupname(): string
     {
         return $this->groupname;
     }
 
-    public function setGroupname(string $groupname): self
+    /**
+     * @param string $groupname
+     */
+    public function setGroupname(string $groupname): void
     {
         $this->groupname = $groupname;
-
-        return $this;
     }
 
-    public function getTimez(): ?\DateTimeInterface
+    /**
+     * @return \DateTime
+     */
+    public function getTimez()
     {
         return $this->timez;
     }
 
-    public function setTimez(\DateTimeInterface $timez): self
+    /**
+     * @param \DateTime $timez
+     */
+    public function setTimez($timez): void
     {
         $this->timez = $timez;
-
-        return $this;
     }
-
 
 }

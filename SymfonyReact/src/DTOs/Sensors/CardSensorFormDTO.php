@@ -9,7 +9,7 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Card\Cardview;
 use App\Entity\Core\Icons;
 use App\Entity\Core\Room;
-use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensors;
 use App\Entity\Sensors\Temp;
 
 class CardSensorFormDTO

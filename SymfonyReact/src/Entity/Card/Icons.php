@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Entity\Core;
+namespace App\Entity\Card;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Icons
  *
- * @ORM\Table(name="icons", uniqueConstraints={@ORM\UniqueConstraint(name="iconName_2", columns={"iconName"})}, indexes={@ORM\Index(name="IconName", columns={"iconName"})})
+ * @ORM\Table(name="icons", uniqueConstraints={@ORM\UniqueConstraint(name="iconName_2", columns={"iconName"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\IconRepository")
  */
 class Icons
@@ -35,33 +35,52 @@ class Icons
      */
     private $description;
 
-    public function getIconid(): ?int
+    /**
+     * @return int
+     */
+    public function getIconid(): int
     {
         return $this->iconid;
     }
 
-    public function getIconname(): ?string
+    /**
+     * @param int $iconid
+     */
+    public function setIconid(int $iconid): void
+    {
+        $this->iconid = $iconid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIconname(): string
     {
         return $this->iconname;
     }
 
-    public function setIconname(string $iconname): self
+    /**
+     * @param string $iconname
+     */
+    public function setIconname(string $iconname): void
     {
         $this->iconname = $iconname;
-
-        return $this;
     }
 
-    public function getDescription(): ?string
+    /**
+     * @return string
+     */
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
     {
         $this->description = $description;
-
-        return $this;
     }
 
 

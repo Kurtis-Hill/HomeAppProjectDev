@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 25, 2020 at 02:41 PM
--- Server version: 10.3.23-MariaDB-0+deb10u1
+-- Generation Time: Dec 06, 2020 at 04:29 PM
+-- Server version: 10.3.25-MariaDB-0+deb10u1
 -- PHP Version: 7.3.19-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -46,7 +46,7 @@ CREATE TABLE `analog` (
 --
 
 INSERT INTO `analog` (`analogID`, `roomID`, `groupNameID`, `sensorNameID`, `analogReading`, `highAnalog`, `lowAnalog`, `constRecord`, `cardViewID`, `deviceNameID`, `timez`) VALUES
-(2, 3, 1, 3, 2444, 1245, 3214, 1, 6, 3, '2020-08-16 14:52:18');
+(2, 3, 1, 3, 2444, 1234, 4567, 1, 6, 3, '2020-08-16 14:52:18');
 
 -- --------------------------------------------------------
 
@@ -112,9 +112,9 @@ CREATE TABLE `cardview` (
 --
 
 INSERT INTO `cardview` (`cardViewID`, `sensorNameID`, `roomID`, `userID`, `cardIconID`, `cardColourID`, `cardStateID`) VALUES
-(4, 1, 2, 1, 2, 4, 1),
-(5, 2, 1, 1, 6, 3, 1),
-(6, 3, 3, 1, 1, 2, 1);
+(4, 1, 2, 1, 9, 3, 3),
+(5, 2, 1, 1, 15, 2, 1),
+(6, 3, 3, 1, 11, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -219,7 +219,25 @@ INSERT INTO `devicenames` (`deviceNameID`, `deviceName`, `deviceSecret`, `groupN
 (52, 'kkkjhjkhjkh', '3303aae01796511ddc30fe2fbd237208', 1, 1),
 (53, 'gggfdfgff', 'e54b2ff4b6a55bf951aa8ef1c383983e', 1, 1),
 (54, 'hhgfhgfggfggg', '57bce8280fc146122dc9557423f21185', 1, 1),
-(55, 'jjhg', 'cf36b3c1f2aa5ed79fa69e13a7148839', 1, 1);
+(55, 'jjhg', 'cf36b3c1f2aa5ed79fa69e13a7148839', 1, 1),
+(56, 'ghjk56545674567', '1d167327a60b14ad7c29c17f1c9eef8d', 1, 1),
+(57, 'cvbcv', '43543db3f42538883dd4f06867fe58db', 1, 1),
+(58, 'dfsg', 'ef3302fc751ca136f3093409fa79485d', 1, 1),
+(59, 'dfsg', 'e130caee0eb1dbfc09d7e1f159f4cad9', 1, 1),
+(60, 'dfsg', '3ea409a16d4d981358f5fb095feef72d', 1, 1),
+(61, 'dfsg', 'a218bf635ed2436a2127db6eb00ee93c', 1, 1),
+(62, 'dfsg', 'bf73270488004df48ee91f8c15555825', 1, 1),
+(63, 'sdfc', '6ca57a7461778a6601d8232d3dd0853b', 1, 1),
+(64, 'sdfc', '8ceec15a5f7c2faa28eeb9a814b78b61', 1, 1),
+(65, 'sdfcdsfadfasdf', '0abdd1ea61d3be6e6067cd2c2208ac69', 1, 1),
+(66, 'cxzvcvbcvbvcvv', '9c7e00af0932b54ea03ad5d7a7fc25a8', 1, 1),
+(67, 'zxcxx', '0ddf75e9792f5a4d53872b6d030590d8', 1, 1),
+(68, 'asdfdsff', '8f6eeda814dba238ee79fe27a2636ac1', 1, 1),
+(69, 'hereisone', 'c2bd9d866fb152e5c6fc006c8616dd12', 1, 1),
+(70, 'jelly', '4267b4fe4e34fbce8b94e7ff63ef59ab', 1, 1),
+(71, 'weqdas', '9112e31cbb55a2680c579bffee45e1e6', 1, 1),
+(72, 'jammy', '1691aa5130e759a8380dc410d997960f', 1, 1),
+(73, 'kjbkmmmmmm', 'cb783fc08c0570a5e9bf9c4a900982b9', 2, 2);
 
 -- --------------------------------------------------------
 
@@ -286,7 +304,7 @@ CREATE TABLE `humid` (
 --
 
 INSERT INTO `humid` (`humidID`, `roomID`, `groupNameID`, `sensorNameID`, `humidReading`, `highHumid`, `lowHumid`, `constRecord`, `cardViewID`, `deviceNameID`, `timez`) VALUES
-(2, 2, 1, 1, 10, 70, 15, 0, NULL, 2, '2020-08-16 14:43:18');
+(2, 2, 1, 1, 10, 3, 4, 0, NULL, 2, '2020-08-16 14:43:18');
 
 -- --------------------------------------------------------
 
@@ -894,7 +912,29 @@ INSERT INTO `refresh_tokens` (`id`, `refresh_token`, `username`, `valid`) VALUES
 (483, '88ba786ab0e3f517071d707faaafe64681bee0ff8d69d303ee071433ffdab8d10b993f84ecde9298fd9cd3e7bdfa63b9e8d26cc0da0c864c020349dc424b7ac2', 'admin', '2020-10-25 16:10:17'),
 (484, '10063ea0fd2618b66b5805e629dcb46a24490ce57eeac1192166ce8fb6f1cb8c457e28d0e7099cc84ff739bf2cef7aef2d75f6582b6cbbb66836fd9de04aae70', 'admin', '2020-10-25 16:12:23'),
 (485, '8f1e8fb72f54065d2a5004084f3cd3e427012204df3a2d9f29eb8e7093f3babff2cf1750db865d726499aeb988bbf4757c5aa56d1045ad94b1de04786a9314a9', 'admin', '2020-10-25 16:16:42'),
-(486, '9b8f3c52f52035c78dacdc59affd4ee31786a5bdedcc58e41e23babda8338e760552fb53aec584b3d47de14a770ed31b4701a671480b67969f443d8189053e93', 'admin', '2020-10-25 16:32:20');
+(486, '9b8f3c52f52035c78dacdc59affd4ee31786a5bdedcc58e41e23babda8338e760552fb53aec584b3d47de14a770ed31b4701a671480b67969f443d8189053e93', 'admin', '2020-10-25 16:32:20'),
+(487, 'c89f9d6a5500951376e8749a74894f657742b773a9a680e41b7d32b012f188ff014f9b2dacdc9591b0f67a3019f48fddb40a7bc92869524012636c1cc2593c6b', 'admin', '2020-10-25 16:43:08'),
+(488, 'c0081898c224d2ceddf26014b95be94373aa81c977ba0c6ae4b74ef0866a619f7818e4c38e3013e527ec3913efc1420acfede76a593fb808a6a15b36af0892a3', 'admin', '2020-10-25 17:36:40'),
+(489, '873427c20e7214005d567d1b950af2f29667c909b8c9d93226edd565f4cf6e409207bbe2fc143f26d02b0d78227f69903c5480c9629835cc35b4380f9b1adff8', 'admin', '2020-11-07 17:34:19'),
+(490, '6221b04877aa135e638e2c396dd61397ddd0fd4270ed3c0ff28145f0b8b563fa01301d277fe12ff3b3319d213ce8dba6c7e789d8e4cdf5bba0b39828a18f04f6', 'admin', '2020-11-07 18:37:43'),
+(491, '5c8ac92d557a93d46e7ff76f9f70559903df404a57d2bccd6cb56e665c0ea67e88635a16ec047db673240fa994b9ac47a5e315fa9cff384a00e21c2de8e3c121', 'admin', '2020-11-07 19:05:51'),
+(492, '63af287a99677edc25548eb05031449a2d62302b57c08464a34c57fe140c756dbdd26e7cf569f5526e0d471db49b8a3043c16b46e3075d6da049d3347586c54f', 'admin', '2020-11-07 20:21:59'),
+(493, '631f3c49a3d0ffc587911daf59a0359805aed7ef684159ea45203f766fc4e5d6cae95045df1d4f16f1ae64eb8814a426324c4d77ed24c79875ea091ed4f7d91d', 'admin', '2020-11-14 02:53:45'),
+(494, '2fba123ea17b82f4e5b57158c742437c69ea8b037ed7237f19df2cdd2d75b640cc3d7dd0a14508f5f14bd47124cf9e0c15d5d0a788cb312269842e5c2234bdc4', 'admin', '2020-11-14 15:05:08'),
+(495, 'db4d2641c8dd19a2de5a4f27e9feeebbb532dcb49278a05a06c23442ae4a0b1cc086cd5e3c50634eb27747125b4955e383f04413a9c396b47023ed68ddcc2997', 'admin', '2020-11-14 15:20:08'),
+(496, '16666f51fb0e11aa1e433253a1e00f55ed75dd0ff5d9720586d13f75a7110819eab2f50ef1217e04b659687ba36158034d7166319b431c7176c2b1724d176901', 'admin', '2020-11-15 04:20:22'),
+(497, 'b1588475d5248582d08c6742ab6e6796504155acd106ac19868eb3d4ce7bf067e33f924c8cb4b277e54eb35a18a4d72febb0bbc766296b8848ffa7094a43c02f', 'admin', '2020-11-15 13:45:08'),
+(498, 'deca5ea794f3239ebd89b6c101699975c328dd4f62fa281e6912305229fc70e921ff06e632ecd343ba4d79e0bf8d65f1d4f05c20bcabc4e3906e1a4e144fe4e3', 'admin', '2020-11-15 20:42:12'),
+(499, '35cd7ecae5237038db2ff9d15a73e4c11340b61092ac1153ea3b708440f94a4088a0ec2b559dc17b49f0db3a8827d19106f9bd4bdd9a087971fd7917b70fb289', 'admin', '2020-11-15 22:03:50'),
+(500, 'c5ee06277f713e03f754244e870789246e8af4e346414e39d23a9965bb07189232057c1a7aabd273047eba422588f11276f8c3bce72addb0f90d5d5f0ff47152', 'admin', '2020-11-15 23:38:06'),
+(501, '07c1ff52c9873d909736658244527d8277ed4b131f3b1a1108ba5dc0d5a2a3de68d4d0637875a7c8fafbbae2223d82c836462cc0f5c148ffe3561802a9cfa14a', 'admin', '2020-11-16 00:44:11'),
+(502, 'e879ab966300b4219b92db7007f0fa468570e4564ecf13c7dd6a008766b609aad4a2733a1cd12d0de085f30516552cc7aa0a22729e64644c37e567988b60ab18', 'admin', '2020-11-21 17:59:14'),
+(503, '54da1b62d38f4a3ea406017e912a9b084a746afacaac16c8d9416caaef64d4bd970f17bb51cc0b82d153f76bf999f361260c27bf3c2db11ee6d3068be81d00c2', 'admin', '2020-11-21 18:06:59'),
+(504, '391d2548fe45ae338b30ba8234b61d0765e68002f002bb489958e1a3912dc8f60ee37895d461f22502e744571efcd902d7d5678050627ccbc309407bfc5cd358', 'admin', '2020-11-21 18:10:40'),
+(505, '62fd46502d6d6d72fbf847589e1442db4eb9b6a2d4efee390920f7f1a9009e3b525ed50449be9ddb5773b1e5c9c553d6b82a73d02bfdf3579ab5b4e2591ba429', 'admin', '2020-11-23 21:27:50'),
+(506, '56547f647cf2f1a35f57b0838968183441bc68106a4558d6dbd79a59f788d34b1fbe106d7411c03b82d0167e1982fa308a4adbaac86e5ee766c0607b6c84e143', 'admin', '2020-11-24 21:40:32'),
+(507, 'c245a4cb0401a70b333383ead596e136c9263c7baa3a62c43f5df53581cc95147ec9aef8b8121ad9a3a933776df6f449052600129b7d0589f2b3c7e058493fd3', 'admin', '2020-12-05 00:49:27'),
+(508, '67496cc414a829e30b20c60a8d182cf7a0088b5510071da06a5bac4b25381a9368338cbb7030d4a4b6b482902c111ee955a4ab40c0d90b37273a31e3e86e0030', 'admin', '2020-12-05 00:53:47');
 
 -- --------------------------------------------------------
 
@@ -916,19 +956,6 @@ INSERT INTO `room` (`roomID`, `room`, `groupNameID`) VALUES
 (1, 'LivingRoom', 1),
 (2, 'Bedroom', 1),
 (3, 'Office', 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `sensordetails`
---
-
-CREATE TABLE `sensordetails` (
-  `sensorDetailsID` int(11) NOT NULL,
-  `sensorNameID` int(11) NOT NULL,
-  `cardViewID` int(11) NOT NULL,
-  `deviceNameID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1001,8 +1028,8 @@ CREATE TABLE `temp` (
 --
 
 INSERT INTO `temp` (`tempID`, `roomID`, `groupNameID`, `sensorNameID`, `tempReading`, `highTemp`, `lowTemp`, `constRecord`, `cardViewID`, `deviceNameID`, `timez`) VALUES
-(7, 1, 1, 2, 10, 26, 12, 0, 5, 1, '2020-08-16 14:45:07'),
-(8, 2, 1, 1, 10, 26, 5, 0, 4, 2, '2020-08-16 14:45:07');
+(7, 1, 1, 2, 10, 90, 100, 1, 5, 1, '2020-08-16 14:45:07'),
+(8, 2, 1, 1, 10, 1, 2, 1, 4, 2, '2020-08-16 14:45:07');
 
 -- --------------------------------------------------------
 
@@ -1178,15 +1205,6 @@ ALTER TABLE `room`
   ADD KEY `GroupName` (`groupNameID`);
 
 --
--- Indexes for table `sensordetails`
---
-ALTER TABLE `sensordetails`
-  ADD PRIMARY KEY (`sensorDetailsID`),
-  ADD KEY `cardViewID` (`cardViewID`),
-  ADD KEY `deviceNameID` (`deviceNameID`),
-  ADD KEY `sensorNameID` (`sensorNameID`);
-
---
 -- Indexes for table `sensornames`
 --
 ALTER TABLE `sensornames`
@@ -1264,7 +1282,7 @@ ALTER TABLE `consttemp`
 -- AUTO_INCREMENT for table `devicenames`
 --
 ALTER TABLE `devicenames`
-  MODIFY `deviceNameID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `deviceNameID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `groupname`
@@ -1312,19 +1330,13 @@ ALTER TABLE `outofrangetemp`
 -- AUTO_INCREMENT for table `refresh_tokens`
 --
 ALTER TABLE `refresh_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=487;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=509;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
   MODIFY `roomID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `sensordetails`
---
-ALTER TABLE `sensordetails`
-  MODIFY `sensorDetailsID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `sensornames`
@@ -1444,14 +1456,6 @@ ALTER TABLE `outofrangetemp`
 --
 ALTER TABLE `room`
   ADD CONSTRAINT `FK_729F519B2D8C0469` FOREIGN KEY (`groupNameID`) REFERENCES `groupname` (`groupNameID`);
-
---
--- Constraints for table `sensordetails`
---
-ALTER TABLE `sensordetails`
-  ADD CONSTRAINT `sensordetails_ibfk_1` FOREIGN KEY (`cardViewID`) REFERENCES `cardview` (`cardViewID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `sensordetails_ibfk_2` FOREIGN KEY (`deviceNameID`) REFERENCES `devicenames` (`deviceNameID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `sensordetails_ibfk_3` FOREIGN KEY (`sensorNameID`) REFERENCES `sensornames` (`sensorNameID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sensornames`
