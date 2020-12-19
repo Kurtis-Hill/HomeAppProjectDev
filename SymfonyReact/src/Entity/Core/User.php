@@ -45,7 +45,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @var json
+     * @var array
      *
      * @ORM\Column(name="roles", type="json", nullable=false)
      */
@@ -104,9 +104,7 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        $roles = json_decode($this->roles);
-
-        return array_unique($roles);
+        return array_unique($this->roles);
     }
 
     public function setRoles(array $roles): self

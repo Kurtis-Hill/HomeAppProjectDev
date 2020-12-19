@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Card;
 
-use App\Entity\Card\Cardcolour;
-use App\Entity\Card\Cardstate;
-use App\Entity\Card\Icons;
+
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
 use App\Entity\Sensors\Sensors;

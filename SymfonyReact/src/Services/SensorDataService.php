@@ -7,16 +7,17 @@ namespace App\Services;
 use App\DTOs\Sensors\CardSensorFormDTO;
 use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;
-use App\Entity\Card\Cardview;
-use App\Entity\Core\Icons;
-use App\Entity\Core\Sensortype;
+use App\Entity\Card\Icons;
+use App\Entity\Cardview;
+use App\Entity\Sensors\Sensortype;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Symfony\Component\HttpFoundation\Request;
 
-class SensorDataService
+class SensorDataService extends HomeAppCoreAbstract
 {
     /**
      * @param Request $request

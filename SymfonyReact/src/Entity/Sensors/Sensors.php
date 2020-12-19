@@ -29,7 +29,7 @@ class Sensors
     private $sensorname;
 
     /**
-     * @var \Sensortype
+     * @var Sensortype
      *
      * @ORM\ManyToOne(targetEntity="Sensortype")
      * @ORM\JoinColumns({
@@ -39,7 +39,7 @@ class Sensors
     private $sensortypeid;
 
     /**
-     * @var \Devices
+     * @var Devices
      *
      * @ORM\ManyToOne(targetEntity="Devices")
      * @ORM\JoinColumns({
@@ -81,33 +81,33 @@ class Sensors
     }
 
     /**
-     * @return \Sensortype
+     * @return Sensortype
      */
-    public function getSensortypeid(): \Sensortype
+    public function getSensortypeid(): Sensortype
     {
         return $this->sensortypeid;
     }
 
     /**
-     * @param \Sensortype $sensortypeid
+     * @param Sensortype $sensortypeid
      */
-    public function setSensortypeid(\Sensortype $sensortypeid): void
+    public function setSensortypeid(Sensortype $sensortypeid): void
     {
         $this->sensortypeid = $sensortypeid;
     }
 
     /**
-     * @return \Devicenames
+     * @return Devices
      */
-    public function getDevicenameid(): \Devicenames
+    public function getDevicenameid(): Devices
     {
         return $this->devicenameid;
     }
 
     /**
-     * @param \Devicenames $devicenameid
+     * @param Devices $devicenameid
      */
-    public function setDevicenameid(\Devicenames $devicenameid): void
+    public function setDevicenameid(Devices $devicenameid): void
     {
         $this->devicenameid = $devicenameid;
     }

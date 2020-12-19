@@ -10,7 +10,7 @@
 
 namespace App\HomeAppCore;
 
-use App\Entity\Core\GroupMapping;
+use App\Entity\Core\Groupnnamemapping;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -116,7 +116,7 @@ abstract class HomeAppCoreAbstract
     private function setUserVariables()
     {
         $this->userID = $this->user->getUser()->getUserid();
-        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupMapping::class)->getGroupsForUser($this->userID);
+        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(Groupnnamemapping::class)->getGroupsForUser($this->userID);
         $this->roles = $this->user->getUser()->getRoles();
 
         if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
