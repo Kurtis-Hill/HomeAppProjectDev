@@ -21,21 +21,21 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $userid;
+    private $userID;
 
     /**
      * @var string
      *
      * @ORM\Column(name="firstName", type="string", length=20, nullable=false)
      */
-    private $firstname;
+    private $firstName;
 
     /**
      * @var string
      *
      * @ORM\Column(name="lastName", type="string", length=20, nullable=false)
      */
-    private $lastname;
+    private $lastName;
 
     /**
      * @var string
@@ -56,7 +56,7 @@ class User implements UserInterface
      *
      * @ORM\Column(name="profilePic", type="string", length=100, nullable=true, options={"default"="/assets/pictures/guest.jpg"})
      */
-    private $profilepic = '/assets/pictures/guest.jpg';
+    private $profilePic = '/assets/pictures/guest.jpg';
 
     /**
      * @var string
@@ -77,17 +77,17 @@ class User implements UserInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $timez = 'CURRENT_TIMESTAMP';
+    private $time = 'CURRENT_TIMESTAMP';
 
     /**
      * @var int
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private $groupnameid;
+    private $groupNameID;
 
     /**
      * A visual identifier that represents this user.
@@ -146,31 +146,31 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getUserid(): ?int
+    public function getUserID(): ?int
     {
-        return $this->userid;
+        return $this->userID;
     }
 
-    public function getFirstname(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->firstname;
+        return $this->firstName;
     }
 
-    public function setFirstname(string $firstname): self
+    public function setFirstName(string $firstName): self
     {
-        $this->firstname = $firstname;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getLastname(): ?string
+    public function getLastName(): ?string
     {
-        return $this->lastname;
+        return $this->lastName;
     }
 
-    public function setLastname(string $lastname): self
+    public function setLastName(string $lastName): self
     {
-        $this->lastname = $lastname;
+        $this->lastName = $lastName;
 
         return $this;
     }
@@ -187,14 +187,14 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getProfilepic(): ?string
+    public function getProfilePic(): ?string
     {
-        return $this->profilepic;
+        return $this->profilePic;
     }
 
-    public function setProfilepic(string $profilepic): self
+    public function setProfilePic(string $profilePic): self
     {
-        $this->profilepic = $profilepic;
+        $this->profilePic = $profilePic;
 
         return $this;
     }
@@ -206,26 +206,26 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getGroupnameid()
+    public function getGroupNameID()
     {
-        return $this->groupnameid;
+        return $this->groupNameID;
     }
 
-    public function setGroupnameid($groupnameid)
+    public function setGroupNameID($groupNameID)
     {
-        $this->groupnameid = $groupnameid;
+        $this->groupNameID = $groupNameID;
 
         return $this;
     }
 
-    public function getTimez(): ?\DateTimeInterface
+    public function getTime(): ?\DateTimeInterface
     {
-        return $this->timez;
+        return $this->time;
     }
 
-    public function setTimez(\DateTime $timez): self
+    public function setTime(\DateTime $time): self
     {
-        $this->timez = $timez;
+        $this->time = $time;
 
         return $this;
     }

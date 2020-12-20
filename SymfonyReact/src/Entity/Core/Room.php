@@ -19,7 +19,7 @@ class Room
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $roomid;
+    private $roomID;
 
     /**
      * @var string
@@ -29,29 +29,29 @@ class Room
     private $room;
 
     /**
-     * @var Groupname
+     * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private $groupnameid;
+    private $groupnameID;
 
     /**
      * @return int
      */
-    public function getRoomid(): int
+    public function getRoomID(): int
     {
-        return $this->roomid;
+        return $this->roomID;
     }
 
     /**
-     * @param int $roomid
+     * @param int $roomID
      */
-    public function setRoomid(int $roomid): void
+    public function setRoomID(int $roomID): void
     {
-        $this->roomid = $roomid;
+        $this->roomID = $roomID;
     }
 
     /**
@@ -71,19 +71,19 @@ class Room
     }
 
     /**
-     * @return Groupname
+     * @return GroupNames
      */
-    public function getGroupnameid(): Groupname
+    public function getGroupnameID(): GroupNames
     {
-        return $this->groupnameid;
+        return $this->groupnameID;
     }
 
     /**
-     * @param Groupname $groupnameid
+     * @param GroupNames $groupnameID
      */
-    public function setGroupnameid(Groupname $groupnameid): void
+    public function setGroupnameID(GroupNames $groupnameID): void
     {
-        $this->groupnameid = $groupnameid;
+        $this->groupnameID = $groupnameID;
     }
 
 

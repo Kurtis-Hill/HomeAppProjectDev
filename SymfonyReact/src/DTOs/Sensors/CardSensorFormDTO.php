@@ -79,7 +79,7 @@ class CardSensorFormDTO
     private function setSensorRoom(Room $room): void
     {
         $this->sensorRoom = $room->getRoom();
-        $this->sensorRoomID = $room->getRoomid();
+        $this->sensorRoomID = $room->getRoomID();
     }
 
     private function setCardIconData(Icons $icons): void

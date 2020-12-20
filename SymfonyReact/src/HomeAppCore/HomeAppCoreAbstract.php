@@ -1,16 +1,9 @@
 <?php
 
-/*
- * This file is part of PHP CS Fixer.
- * (c) Fabien Potencier <fabien@symfony.com>
- *     Dariusz Rumiński <dariusz.ruminski@gmail.com>
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 namespace App\HomeAppCore;
 
-use App\Entity\Core\Groupnnamemapping;
+use App\Entity\Core\GroupnNameMapping;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -78,9 +71,7 @@ abstract class HomeAppCoreAbstract
 
             try {
                 $this->em->persist($validFormData);
-            } catch (\PDOException $e) {
-                error_log($e->getMessage());
-            } catch (\Exception $e) {
+            } catch (\PDOException | \Exception $e) {
                 error_log($e->getMessage());
             }
 
@@ -115,10 +106,11 @@ abstract class HomeAppCoreAbstract
      */
     private function setUserVariables()
     {
-        $this->userID = $this->user->getUser()->getUserid();
-        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(Groupnnamemapping::class)->getGroupsForUser($this->userID);
+        $this->userID = $this->user->getUser()->getUserID();
+        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
         $this->roles = $this->user->getUser()->getRoles();
 
+//        dd($this->groupNameIDs, $this->userID,$this->roles, 'heyy');
         if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
             throw new \Exception('The User Variables Cannot be set Please try again');
         }

@@ -1,12 +1,5 @@
 <?php
 
-/*
- * This file is part of PHP CS Fixer.
- * (c) Fabien Potencier <fabien@symfony.com>
- *     Dariusz Rumiński <dariusz.ruminski@gmail.com>
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 namespace App\Services;
 
@@ -47,7 +40,7 @@ class CardDataService extends HomeAppCoreAbstract
     public function prepareAllIndexCardData(string $type): array
     {
         $cardRepository = $this->em->getRepository(Cardview::class);
-
+//        dd('ety');
         return $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
     }
 
@@ -59,9 +52,7 @@ class CardDataService extends HomeAppCoreAbstract
             $cardRepository = $this->em->getRepository(Cardview::class);
 
             $cardReadings = $cardRepository->getAllCardReadingsForRoom($this->groupNameIDs, $this->userID, $deviceDetails, $type);
-        } catch (\PDOException $e) {
-            error_log($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
@@ -76,9 +67,7 @@ class CardDataService extends HomeAppCoreAbstract
             $cardRepository = $this->em->getRepository(Cardview::class);
 
             $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $deviceDetails, $type);
-        } catch (\PDOException $e) {
-            error_log($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
@@ -96,9 +85,7 @@ class CardDataService extends HomeAppCoreAbstract
             $cardRepository = $this->em->getRepository(Cardview::class);
 
             $tempCardData = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
-        } catch (\PDOException $e) {
-            error_log($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
@@ -116,9 +103,7 @@ class CardDataService extends HomeAppCoreAbstract
             $cardRepository = $this->em->getRepository(Cardview::class);
 
             $humidCardData = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
-        } catch (\PDOException $e) {
-            error_log($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
@@ -126,7 +111,7 @@ class CardDataService extends HomeAppCoreAbstract
     }
 
     /**
-     * @param string $type
+     * @return array
      */
     private function prepareAllAnalogCards(): array
     {
@@ -136,9 +121,7 @@ class CardDataService extends HomeAppCoreAbstract
             $cardRepository = $this->em->getRepository(Cardview::class);
 
             $analogCardData = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
-        } catch (\PDOException $e) {
-            error_log($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 

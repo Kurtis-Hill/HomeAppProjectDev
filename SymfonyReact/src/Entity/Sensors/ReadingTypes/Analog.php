@@ -2,7 +2,7 @@
 
 namespace App\Entity\Sensors\ReadingTypes;
 
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
@@ -62,9 +62,9 @@ class Analog implements StandardSensorInterface
     private $timez = 'current_timestamp()';
 
     /**
-     * @var Groupname
+     * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
@@ -85,7 +85,7 @@ class Analog implements StandardSensorInterface
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })
@@ -124,9 +124,9 @@ class Analog implements StandardSensorInterface
      */
 
     /**
-     * @return Groupname
+     * @return GroupNames
      */
-    public function getGroupNameID(): Groupname
+    public function getGroupNameID(): GroupNames
     {
         return $this->groupnameid;
     }
@@ -157,9 +157,9 @@ class Analog implements StandardSensorInterface
 
 
     /**
-     * @param Groupname $groupnameid
+     * @param GroupNames $groupnameid
      */
-    public function setGroupNameID(Groupname $groupnameid): void
+    public function setGroupNameID(GroupNames $groupnameid): void
     {
         $this->groupnameid = $groupnameid;
     }
@@ -264,7 +264,7 @@ class Analog implements StandardSensorInterface
     /**
      * @return bool|null
      */
-    public function getConstrecord(): ?bool
+    public function getConstRecord(): ?bool
     {
         return $this->constrecord;
     }
@@ -272,7 +272,7 @@ class Analog implements StandardSensorInterface
     /**
      * @param bool|null $constrecord
      */
-    public function setConstrecord(?bool $constrecord): void
+    public function setConstRecord(?bool $constrecord): void
     {
         $this->constrecord = $constrecord;
     }

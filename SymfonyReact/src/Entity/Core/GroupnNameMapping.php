@@ -5,12 +5,12 @@ namespace App\Entity\Core;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Groupnnamemapping
+ * GroupnNameMapping
  *
  * @ORM\Table(name="groupnnamemapping", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="userID", columns={"userID", "groupNameID"}), @ORM\Index(name="IDX_1C993DEE5FD86D04", columns={"userID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\GroupNameMappingTableRepository")
  */
-class Groupnnamemapping
+class GroupnNameMapping
 {
     /**
      * @var int
@@ -19,74 +19,74 @@ class Groupnnamemapping
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $groupnamemappingid;
+    private $groupNameMappingID;
 
     /**
-     * @var Groupname
+     * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private $groupnameid;
+    private $groupNameID;
 
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="userID", referencedColumnName="userID")
      * })
      */
-    private $userid;
+    private $userID;
 
     /**
      * @return int
      */
-    public function getGroupnamemappingid(): int
+    public function getGroupNameMappingID(): int
     {
-        return $this->groupnamemappingid;
+        return $this->groupNameMappingID;
     }
 
     /**
-     * @param int $groupnamemappingid
+     * @param int $groupNameMappingID
      */
-    public function setGroupnamemappingid(int $groupnamemappingid): void
+    public function setGroupNameMappingID(int $groupNameMappingID): void
     {
-        $this->groupnamemappingid = $groupnamemappingid;
+        $this->groupNameMappingID = $groupNameMappingID;
     }
 
     /**
-     * @return Groupname
+     * @return GroupNames
      */
-    public function getGroupnameid(): Groupname
+    public function getGroupNameID(): GroupNames
     {
-        return $this->groupnameid;
+        return $this->groupNameID;
     }
 
     /**
-     * @param Groupname $groupnameid
+     * @param GroupNames $groupNameID
      */
-    public function setGroupnameid(Groupname $groupnameid): void
+    public function setGroupNameID(GroupNames $groupNameID): void
     {
-        $this->groupnameid = $groupnameid;
+        $this->groupNameID = $groupNameID;
     }
 
     /**
      * @return User
      */
-    public function getUserid(): User
+    public function getUserID(): User
     {
-        return $this->userid;
+        return $this->userID;
     }
 
     /**
-     * @param User $userid
+     * @param User $userID
      */
-    public function setUserid(User $userid): void
+    public function setUserID(User $userID): void
     {
-        $this->userid = $userid;
+        $this->userID = $userID;
     }
 
 }

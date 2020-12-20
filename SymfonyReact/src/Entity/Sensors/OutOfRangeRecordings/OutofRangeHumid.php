@@ -1,27 +1,26 @@
 <?php
 
-namespace App\Entity\Sensors\ConstantRecording;
+namespace App\Entity\Sensors\OutOfRangeRecordings;
 
 use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\Temp;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Consttemp
+ * OutofRangeHumid
  *
- * @ORM\Table(name="consttemp", indexes={@ORM\Index(name="consttemp_ibfk_1", columns={"sensorID"})})
+ * @ORM\Table(name="outofrangehumid", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class Consttemp
+class OutofRangeHumid
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="tempID", type="integer", nullable=false)
+     * @ORM\Column(name="humidID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $tempid;
+    private $humidid;
 
     /**
      * @var float
@@ -38,11 +37,11 @@ class Consttemp
     private $timez = 'current_timestamp()';
 
     /**
-     * @var Temp
+     * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Temp")
+     * @ORM\ManyToOne(targetEntity="Sensors")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="tempID")
+     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="sensorNameID")
      * })
      */
     private $sensorid;
@@ -50,17 +49,17 @@ class Consttemp
     /**
      * @return int
      */
-    public function getTempid(): int
+    public function getHumidid(): int
     {
-        return $this->tempid;
+        return $this->humidid;
     }
 
     /**
-     * @param int $tempid
+     * @param int $humidid
      */
-    public function setTempid(int $tempid): void
+    public function setHumidid(int $humidid): void
     {
-        $this->tempid = $tempid;
+        $this->humidid = $humidid;
     }
 
     /**
@@ -96,17 +95,17 @@ class Consttemp
     }
 
     /**
-     * @return Sensors
+     * @return Sensornames
      */
-    public function getSensorid(): Temp
+    public function getSensorid(): Sensornames
     {
         return $this->sensorid;
     }
 
     /**
-     * @param Sensors $sensorid
+     * @param Sensornames $sensorid
      */
-    public function setSensorid(Temp $sensorid): void
+    public function setSensorid(Sensornames $sensorid): void
     {
         $this->sensorid = $sensorid;
     }

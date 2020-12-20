@@ -5,12 +5,12 @@ namespace App\Entity\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Sensortype
+ * SensorType
  *
  * @ORM\Table(name="sensortype", uniqueConstraints={@ORM\UniqueConstraint(name="sensorType", columns={"sensorType"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\SensorTypeRepository")
  */
-class Sensortype
+class SensorType
 {
     public const DHT_SENSOR = 'DHT';
 

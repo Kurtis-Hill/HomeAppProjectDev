@@ -5,6 +5,7 @@ namespace App\Entity\Card;
 
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
+
 use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,7 +29,7 @@ class Cardview
     /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Sensors")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
@@ -48,7 +49,7 @@ class Cardview
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="userID", referencedColumnName="userID")
      * })
@@ -68,7 +69,7 @@ class Cardview
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })

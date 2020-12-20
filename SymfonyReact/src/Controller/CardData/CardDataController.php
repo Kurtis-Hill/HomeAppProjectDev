@@ -38,6 +38,7 @@ class CardDataController extends AbstractController
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
+
         $cardData = $cardDataService->prepareAllIndexCardData('JSON');
 
         if (empty($cardData)) {

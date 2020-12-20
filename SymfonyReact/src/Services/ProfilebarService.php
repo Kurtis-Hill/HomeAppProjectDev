@@ -10,19 +10,19 @@ class ProfilebarService extends HomeAppCoreAbstract
 {
     public function getProfilePic()
     {
-        return $this->user->getUser()->getProfilepic();
+        return $this->user->getUser()->getProfilePic();
     }
 
     public function getGroupName()
     {
-        return $this->user->getUser()->getGroupNameId()->getGroupName();
+        return $this->user->getUser()->getGroupNameID()->getGroupName();
     }
 
     public function getFullUserName()
     {
         return sprintf("%s %s",
-            ucfirst($this->user->getUser()->getFirstname()),
-            ucfirst($this->user->getUser()->getLastname())
+            ucfirst($this->user->getUser()->getFirstName()),
+            ucfirst($this->user->getUser()->getLastName())
             );
     }
 

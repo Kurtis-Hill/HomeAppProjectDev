@@ -29,9 +29,9 @@ class Sensors
     private $sensorname;
 
     /**
-     * @var Sensortype
+     * @var SensorType
      *
-     * @ORM\ManyToOne(targetEntity="Sensortype")
+     * @ORM\ManyToOne(targetEntity="SensorType")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorTypeID", referencedColumnName="sensorTypeID")
      * })
@@ -81,17 +81,17 @@ class Sensors
     }
 
     /**
-     * @return Sensortype
+     * @return SensorType
      */
-    public function getSensortypeid(): Sensortype
+    public function getSensortypeid(): SensorType
     {
         return $this->sensortypeid;
     }
 
     /**
-     * @param Sensortype $sensortypeid
+     * @param SensorType $sensortypeid
      */
-    public function setSensortypeid(Sensortype $sensortypeid): void
+    public function setSensortypeid(SensorType $sensortypeid): void
     {
         $this->sensortypeid = $sensortypeid;
     }

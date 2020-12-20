@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Card\Cardview;
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,7 +24,7 @@ class Dallas
     private $dallasid;
 
     /**
-     * @var \Cardview
+     * @var Cardview
      *
      * @ORM\ManyToOne(targetEntity="Cardview")
      * @ORM\JoinColumns({
@@ -32,7 +34,7 @@ class Dallas
     private $cardviewid;
 
     /**
-     * @var \Temp
+     * @var Temperature
      *
      * @ORM\ManyToOne(targetEntity="Temp")
      * @ORM\JoinColumns({
@@ -58,33 +60,33 @@ class Dallas
     }
 
     /**
-     * @return \Cardview
+     * @return Cardview
      */
-    public function getCardviewid(): \Cardview
+    public function getCardviewid(): Cardview
     {
         return $this->cardviewid;
     }
 
     /**
-     * @param \Cardview $cardviewid
+     * @param Cardview $cardviewid
      */
-    public function setCardviewid(\Cardview $cardviewid): void
+    public function setCardviewid(Cardview $cardviewid): void
     {
         $this->cardviewid = $cardviewid;
     }
 
     /**
-     * @return \Temp
+     * @return Temperature
      */
-    public function getTempid(): \Temp
+    public function getTempid(): Temperature
     {
         return $this->tempid;
     }
 
     /**
-     * @param \Temp $tempid
+     * @param Temperature $tempid
      */
-    public function setTempid(\Temp $tempid): void
+    public function setTempid(Temperature $tempid): void
     {
         $this->tempid = $tempid;
     }

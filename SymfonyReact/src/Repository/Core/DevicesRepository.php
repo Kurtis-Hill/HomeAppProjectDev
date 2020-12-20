@@ -4,7 +4,7 @@
 namespace App\Repository\Core;
 
 
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -21,7 +21,7 @@ class DevicesRepository extends EntityRepository
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv.devicenameid', 'dv.devicename', 'gn.groupnameid', 'r.roomid')
             ->leftJoin('App\Entity\Core\Room', 'r', Join::WITH, 'dv.roomid = r.roomid')
-            ->leftJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid'
+            ->leftJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid'
             );
         $qb->where(
             $qb->expr()->in('dv.groupnameid', ':groupNameID')

@@ -4,7 +4,7 @@
 namespace App\Form\SensorForms;
 
 
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Core\Sensors;
 use App\Entity\Core\Sensortype;
@@ -34,7 +34,7 @@ class AddNewSensorForm extends AbstractType
             ])
 
             ->add('groupnameid', EntityType::class, [
-                'class' => Groupname::class
+                'class' => GroupNames::class
             ])
 
             ->add('roomid', EntityType::class, [

@@ -5,12 +5,12 @@ namespace App\Entity\Core;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Groupname
+ * GroupNames
  *
  * @ORM\Table(name="groupname", uniqueConstraints={@ORM\UniqueConstraint(name="groupName", columns={"groupName"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\GroupNameRepository")
  */
-class Groupname
+class GroupNames
 {
     /**
      * @var int
@@ -19,68 +19,68 @@ class Groupname
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $groupnameid;
+    private $groupNameID;
 
     /**
      * @var string
      *
      * @ORM\Column(name="groupName", type="string", length=50, nullable=false)
      */
-    private $groupname;
+    private $groupName;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $timez = 'current_timestamp()';
+    private $time = 'current_timestamp()';
 
     /**
      * @return int
      */
-    public function getGroupnameid(): int
+    public function getGroupNameID(): int
     {
-        return $this->groupnameid;
+        return $this->groupNameID;
     }
 
     /**
-     * @param int $groupnameid
+     * @param int $groupNameID
      */
-    public function setGroupnameid(int $groupnameid): void
+    public function setGroupNameID(int $groupNameID): void
     {
-        $this->groupnameid = $groupnameid;
+        $this->groupNameID = $groupNameID;
     }
 
     /**
      * @return string
      */
-    public function getGroupname(): string
+    public function getGroupName(): string
     {
-        return $this->groupname;
+        return $this->groupName;
     }
 
     /**
-     * @param string $groupname
+     * @param string $groupName
      */
-    public function setGroupname(string $groupname): void
+    public function setGroupName(string $groupName): void
     {
-        $this->groupname = $groupname;
+        $this->groupName = $groupName;
     }
 
     /**
      * @return \DateTime
      */
-    public function getTimez()
+    public function getTime()
     {
-        return $this->timez;
+        return $this->time;
     }
 
     /**
-     * @param \DateTime $timez
+     * @param \DateTime $time
      */
-    public function setTimez($timez): void
+    public function setTime($time): void
     {
-        $this->timez = $timez;
+        $this->time = $time;
     }
 
 }

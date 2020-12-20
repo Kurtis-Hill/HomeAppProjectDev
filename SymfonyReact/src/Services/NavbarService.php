@@ -4,10 +4,11 @@
 namespace App\Services;
 
 
-use App\Entity\Core\Devices;
-use App\Entity\Core\GroupMapping;
+
+use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
-use App\Entity\Core\Sensors;
+
+use App\Entity\Sensors\Devices;
 use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -58,7 +59,7 @@ class NavbarService extends HomeAppCoreAbstract
      */
     private function setUsersGroupNames(): array
     {
-        $groupNames = $this->em->getRepository(GroupMapping::class)->getUserGroupNamesAndIds($this->userID);
+        $groupNames = $this->em->getRepository(GroupnNameMapping::class)->getUserGroupNamesAndIds($this->userID);
 
         return $groupNames;
     }
@@ -101,7 +102,7 @@ class NavbarService extends HomeAppCoreAbstract
     public function getUsersGroupNames(): array
     {
         if (empty($this->groupNames)) {
-            $this->usersRooms = ['groupname' => 'No user groups', 'groupnameid' => 0];
+            $this->groupNames = ['groupname' => 'No user groups', 'groupnameid' => 0];
         }
         return $this->groupNames;
     }

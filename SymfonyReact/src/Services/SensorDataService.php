@@ -9,7 +9,7 @@ use App\Entity\Card\Cardcolour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Icons;
 use App\Entity\Cardview;
-use App\Entity\Sensors\Sensortype;
+use App\Entity\Sensors\SensorType;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
@@ -34,7 +34,7 @@ class SensorDataService extends HomeAppCoreAbstract
         ];
 
         switch ($sensorType) {
-            case Sensortype::DALLAS_TEMPERATURE:
+            case SensorType::DALLAS_TEMPERATURE:
                 return [
                     'object' => $cardSensorData['temp'],
                     'formData' => $formData,
@@ -42,7 +42,7 @@ class SensorDataService extends HomeAppCoreAbstract
                 ];
                 break;
 
-            case Sensortype::SOIL_SENSOR:
+            case SensorType::SOIL_SENSOR:
                 return [
                     'object' => $cardSensorData['analog'],
                     'formData' => $formData,
@@ -50,7 +50,7 @@ class SensorDataService extends HomeAppCoreAbstract
                 ];
                 break;
 
-            case Sensortype::DHT_SENSOR:
+            case SensorType::DHT_SENSOR:
                 $secondFormData = [
                     'highSensorReading' => $request->get('secondSensorHighReading'),
                     'lowSensorReading' => $request->get('secondSensorLowReading'),

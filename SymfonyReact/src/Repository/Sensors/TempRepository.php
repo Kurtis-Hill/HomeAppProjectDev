@@ -19,7 +19,7 @@ class TempRepository extends EntityRepository
             ->innerJoin('App\Entity\Card\Cardstate', 'cstate', Join::WITH, 'cstate.cardstateid = cshow.indexpage')
             ->innerJoin('App\Entity\Card\Cardview', 'cv', Join::WITH, 'cv.cardviewid = t.cardviewid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH, 'i.iconid = cv.cardiconid')
-            ->innerJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'gn.groupnameid = t.groupnameid')
+            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gn.groupnameid = t.groupnameid')
             ->innerJoin('App\Entity\Core\Sensors', 'sn', Join::WITH, 'sn.sensornameid = t.sensornameid')
             ->innerJoin('App\Entity\Card\Cardcolour', 'cc', Join::WITH, 'cv.cardcolourid = cc.colourid')
             ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'u.groupnameid = gn.groupnameid')

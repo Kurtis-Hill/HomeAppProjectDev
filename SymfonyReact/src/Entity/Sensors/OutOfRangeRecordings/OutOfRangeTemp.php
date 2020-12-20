@@ -6,12 +6,12 @@ use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Outofrangetemp
+ * OutOfRangeTemp
  *
  * @ORM\Table(name="outofrangetemp", indexes={@ORM\Index(name="outofrangetemp_ibfk_1", columns={"sensorID"})})
  * @ORM\Entity
  */
-class Outofrangetemp
+class OutOfRangeTemp
 {
     /**
      * @var int

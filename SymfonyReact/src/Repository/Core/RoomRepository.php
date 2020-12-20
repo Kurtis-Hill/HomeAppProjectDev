@@ -20,7 +20,7 @@ class RoomRepository extends EntityRepository
                 $qb->expr()->in('r.groupnameid', ':groupnameid')
             )
             ->setParameter('groupnameid', $groupNameid);
-
+//dd($qb->getQuery()->getArrayResult());
         return $qb->getQuery()->getArrayResult();
     }
 

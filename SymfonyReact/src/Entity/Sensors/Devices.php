@@ -2,7 +2,9 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Core\Room;
 use Doctrine\ORM\Mapping as ORM;
+use Proxies\__CG__\App\Entity\Core\Groupname;
 
 /**
  * Devices
@@ -43,9 +45,9 @@ class Devices
     private $createdby;
 
     /**
-     * @var \Groupname
+     * @var Groupname
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
@@ -53,9 +55,9 @@ class Devices
     private $groupnameid;
 
     /**
-     * @var \Room
+     * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })
@@ -127,33 +129,33 @@ class Devices
     }
 
     /**
-     * @return \Groupname
+     * @return Groupname
      */
-    public function getGroupnameid(): \Groupname
+    public function getGroupnameid(): Groupname
     {
         return $this->groupnameid;
     }
 
     /**
-     * @param \Groupname $groupnameid
+     * @param Groupname $groupnameid
      */
-    public function setGroupnameid(\Groupname $groupnameid): void
+    public function setGroupnameid(Groupname $groupnameid): void
     {
         $this->groupnameid = $groupnameid;
     }
 
     /**
-     * @return \Room
+     * @return Room
      */
-    public function getRoomid(): \Room
+    public function getRoomid(): Room
     {
         return $this->roomid;
     }
 
     /**
-     * @param \Room $roomid
+     * @param Room $roomid
      */
-    public function setRoomid(\Room $roomid): void
+    public function setRoomid(Room $roomid): void
     {
         $this->roomid = $roomid;
     }

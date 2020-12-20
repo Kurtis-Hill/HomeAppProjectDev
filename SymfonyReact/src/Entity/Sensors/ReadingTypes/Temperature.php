@@ -2,7 +2,7 @@
 
 namespace App\Entity\Sensors\ReadingTypes;
 
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="temp_ibfk_6", columns={"deviceNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\TempRepository")
  */
-class Temp implements StandardSensorInterface
+class Temperature implements StandardSensorInterface
 {
     /**
      * @var int
@@ -24,42 +24,42 @@ class Temp implements StandardSensorInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $tempid;
+    private $tempID;
 
     /**
      * @var float
      *
      * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private $tempreading;
+    private $tempReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
-    private $hightemp = '26';
+    private $highTemp;
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private $lowtemp = '12';
+    private $lowTemp;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="constRecord", type="boolean", nullable=false)
      */
-    private $constrecord;
+    private $constRecord;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $timez = 'current_timestamp()';
+    private $time = 'current_timestamp()';
 
     /**
      * @var Devices
@@ -69,17 +69,17 @@ class Temp implements StandardSensorInterface
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })
      */
-    private $devicenameid;
+    private $deviceNameID;
 
     /**
-     * @var Groupname
+     * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private $groupnameid;
+    private $groupNameID;
 
     /**
      * @var Sensors
@@ -89,24 +89,24 @@ class Temp implements StandardSensorInterface
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    private $sensornameid;
+    private $sensorNameID;
 
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="Room")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })
      */
-    private $roomid;
+    private $roomID;
 
     /**
      * @return int
      */
     public function getSensorID(): int
     {
-        return $this->tempid;
+        return $this->tempID;
     }
 
     /**
@@ -122,11 +122,11 @@ class Temp implements StandardSensorInterface
      */
 
     /**
-     * @return Groupname
+     * @return GroupNames
      */
-    public function getGroupNameID(): Groupname
+    public function getGroupNameID(): GroupNames
     {
-        return $this->groupnameid;
+        return $this->groupNameID;
     }
 
     /**
@@ -134,7 +134,7 @@ class Temp implements StandardSensorInterface
      */
     public function getRoomID(): Room
     {
-        return $this->roomid;
+        return $this->roomID;
     }
 
     /**
@@ -142,7 +142,7 @@ class Temp implements StandardSensorInterface
      */
     public function getSensorNameID(): Sensors
     {
-        return $this->sensornameid;
+        return $this->sensorNameID;
     }
 
     /**
@@ -150,23 +150,23 @@ class Temp implements StandardSensorInterface
      */
     public function getDeviceNameID(): Devices
     {
-        return $this->devicenameid;
+        return $this->deviceNameID;
     }
 
     /**
-     * @param Groupname $groupnameid
+     * @param GroupNames $groupNameID
      */
-    public function setGroupNameID(Groupname $groupnameid): void
+    public function setGroupNameID(GroupNames $groupNameID): void
     {
-        $this->groupnameid = $groupnameid;
+        $this->groupNameID = $groupNameID;
     }
 
     /**
-     * @param Room $roomid
+     * @param Room $roomID
      */
-    public function setRoomID(Room $roomid): void
+    public function setRoomID(Room $roomID): void
     {
-        $this->roomid = $roomid;
+        $this->roomID = $roomID;
     }
 
     /**
@@ -174,15 +174,15 @@ class Temp implements StandardSensorInterface
      */
     public function setSensorNameID(Sensors $id): void
     {
-        $this->sensornameid = $id;
+        $this->sensorNameID = $id;
     }
 
     /**
-     * @param Devices $devicenameid
+     * @param Devices $deviceNameID
      */
-    public function setDevicenameid(Devices $devicenameid): void
+    public function setDeviceNameID(Devices $deviceNameID): void
     {
-        $this->devicenameid = $devicenameid;
+        $this->deviceNameID = $deviceNameID;
     }
 
 
@@ -195,7 +195,7 @@ class Temp implements StandardSensorInterface
      */
     public function getCurrentSensorReading(): ?float
     {
-        return $this->tempreading;
+        return $this->tempReading;
     }
 
     /**
@@ -203,7 +203,7 @@ class Temp implements StandardSensorInterface
      */
     public function getHighReading(): ?float
     {
-        return $this->hightemp;
+        return $this->highTemp;
     }
 
     /**
@@ -211,7 +211,7 @@ class Temp implements StandardSensorInterface
      */
     public function getLowReading(): ?float
     {
-        return $this->lowtemp;
+        return $this->lowTemp;
     }
 
     /**
@@ -219,7 +219,7 @@ class Temp implements StandardSensorInterface
      */
     public function getTime(): \DateTime
     {
-        return $this->timez;
+        return $this->time;
     }
 
     /**
@@ -227,7 +227,7 @@ class Temp implements StandardSensorInterface
      */
     public function setCurrentSensorReading(?float $reading): void
     {
-        $this->tempreading = $reading;
+        $this->tempReading = $reading;
     }
 
     /**
@@ -235,7 +235,7 @@ class Temp implements StandardSensorInterface
      */
     public function setHighReading(?float $reading): void
     {
-        $this->hightemp = $reading;
+        $this->highTemp = $reading;
     }
 
     /**
@@ -243,7 +243,7 @@ class Temp implements StandardSensorInterface
      */
     public function setLowReading(?float $reading): void
     {
-        $this->lowtemp = $reading;
+        $this->lowTemp = $reading;
     }
 
     /**
@@ -251,7 +251,7 @@ class Temp implements StandardSensorInterface
      */
     public function setTime(\DateTime $dateTime): void
     {
-        $this->timez = $dateTime;
+        $this->time = $dateTime;
     }
 
     /**
@@ -261,16 +261,16 @@ class Temp implements StandardSensorInterface
     /**
      * @return bool|null
      */
-    public function getConstrecord(): ?bool
+    public function getConstRecord(): ?bool
     {
-        return $this->constrecord;
+        return $this->constRecord;
     }
 
     /**
-     * @param bool|null $constrecord
+     * @param bool|null $constRecord
      */
-    public function setConstrecord(?bool $constrecord): void
+    public function setConstRecord(?bool $constRecord): void
     {
-        $this->constrecord = $constrecord;
+        $this->constRecord = $constRecord;
     }
 }

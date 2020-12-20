@@ -2,16 +2,17 @@
 
 namespace App\Entity\Sensors\ConstantRecording;
 
-use App\Entity\Sensors\Analog;
+
+use App\Entity\Sensors\ReadingTypes\Analog;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Constanalog
+ * ConstAnalog
  *
  * @ORM\Table(name="constanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class Constanalog
+class ConstAnalog
 {
     /**
      * @var int
@@ -20,21 +21,21 @@ class Constanalog
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $analogid;
+    private $analogID;
 
     /**
      * @var float
      *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private $sensorreading;
+    private $sensorReading;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="timez", type="date", nullable=false)
      */
-    private $timez;
+    private $time;
 
     /**
      * @var Analog
@@ -44,70 +45,70 @@ class Constanalog
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="analogID")
      * })
      */
-    private $sensorid;
+    private $sensorID;
 
     /**
      * @return int
      */
-    public function getAnalogid(): int
+    public function getAnalogID(): int
     {
-        return $this->analogid;
+        return $this->analogID;
     }
 
     /**
-     * @param int $analogid
+     * @param int $analogID
      */
-    public function setAnalogid(int $analogid): void
+    public function setAnalogID(int $analogID): void
     {
-        $this->analogid = $analogid;
+        $this->analogID = $analogID;
     }
 
     /**
      * @return float
      */
-    public function getSensorreading(): float
+    public function getSensorReading(): float
     {
-        return $this->sensorreading;
+        return $this->sensorReading;
     }
 
     /**
-     * @param float $sensorreading
+     * @param float $sensorReading
      */
-    public function setSensorreading(float $sensorreading): void
+    public function setSensorReading(float $sensorReading): void
     {
-        $this->sensorreading = $sensorreading;
+        $this->sensorReading = $sensorReading;
     }
 
     /**
      * @return \DateTime
      */
-    public function getTimez(): \DateTime
+    public function getTime(): \DateTime
     {
-        return $this->timez;
+        return $this->time;
     }
 
     /**
-     * @param \DateTime $timez
+     * @param \DateTime $time
      */
-    public function setTimez(\DateTime $timez): void
+    public function setTime(\DateTime $time): void
     {
-        $this->timez = $timez;
+        $this->time = $time;
     }
 
     /**
      * @return Analog
      */
-    public function getSensorid(): Analog
+    public function getSensorID(): Analog
     {
-        return $this->sensorid;
+        return $this->sensorID;
     }
 
     /**
-     * @param Analog $sensorid
+     * @param Analog $sensorID
      */
-    public function setSensorid(Analog $sensorid): void
+    public function setSensorID(Analog $sensorID): void
     {
-        $this->sensorid = $sensorid;
+        $this->sensorID = $sensorID;
     }
 
 }

@@ -2,16 +2,16 @@
 
 namespace App\Entity\Sensors\OutOfRangeRecordings;
 
-use App\Entity\Sensors\Analog;
+use App\Entity\Sensors\ReadingTypes\Analog;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Outofrangeanalog
+ * OutOfRangeAnalog
  *
  * @ORM\Table(name="outofrangeanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class Outofrangeanalog
+class OutOfRangeAnalog
 {
     /**
      * @var int
@@ -20,21 +20,21 @@ class Outofrangeanalog
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $analogid;
+    private $analogID;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
-    private $sensorreading = 'NULL';
+    private $sensorReading = 'NULL';
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $timez = 'current_timestamp()';
+    private $time = 'current_timestamp()';
 
     /**
      * @var Analog
@@ -44,70 +44,70 @@ class Outofrangeanalog
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="analogID")
      * })
      */
-    private $sensorid;
+    private $sensorID;
 
     /**
      * @return int
      */
-    public function getAnalogid(): int
+    public function getAnalogID(): int
     {
-        return $this->analogid;
+        return $this->analogID;
     }
 
     /**
-     * @param int $analogid
+     * @param int $analogID
      */
-    public function setAnalogid(int $analogid): void
+    public function setAnalogID(int $analogID): void
     {
-        $this->analogid = $analogid;
+        $this->analogID = $analogID;
     }
 
     /**
      * @return float|null
      */
-    public function getSensorreading()
+    public function getSensorReading()
     {
-        return $this->sensorreading;
+        return $this->sensorReading;
     }
 
     /**
-     * @param float|null $sensorreading
+     * @param float|null $sensorReading
      */
-    public function setSensorreading($sensorreading): void
+    public function setSensorReading($sensorReading): void
     {
-        $this->sensorreading = $sensorreading;
+        $this->sensorReading = $sensorReading;
     }
 
     /**
      * @return \DateTime
      */
-    public function getTimez()
+    public function getTime()
     {
-        return $this->timez;
+        return $this->time;
     }
 
     /**
-     * @param \DateTime $timez
+     * @param \DateTime $time
      */
-    public function setTimez($timez): void
+    public function setTime($time): void
     {
-        $this->timez = $timez;
+        $this->time = $time;
     }
 
     /**
      * @return Analog
      */
-    public function getSensorid(): Analog
+    public function getSensorID(): Analog
     {
-        return $this->sensorid;
+        return $this->sensorID;
     }
 
     /**
-     * @param Analog $sensorid
+     * @param Analog $sensorID
      */
-    public function setSensorid(Analog $sensorid): void
+    public function setSensorID(Analog $sensorID): void
     {
-        $this->sensorid = $sensorid;
+        $this->sensorID = $sensorID;
     }
 
 

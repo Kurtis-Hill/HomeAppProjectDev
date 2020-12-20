@@ -3,7 +3,7 @@
 namespace App\HomeAppCore\Interfaces;
 
 
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
@@ -17,7 +17,7 @@ interface StandardSensorInterface
     /**
      * Sensor relational Objects
      */
-    public function getGroupNameID(): Groupname;
+    public function getGroupNameID(): GroupNames;
 
     public function getRoomID(): Room;
 
@@ -25,7 +25,7 @@ interface StandardSensorInterface
 
     public function getDeviceNameID(): Devices;
 
-    public function setGroupNameID(Groupname $id);
+    public function setGroupNameID(GroupNames $id);
 
     public function setRoomID(Room $id);
 
@@ -53,9 +53,9 @@ interface StandardSensorInterface
     /**
      * Sensor Functional Methods
      */
-    public function getConstrecord(): ?bool;
+    public function getConstRecord(): ?bool;
 
-    public function setConstrecord(?bool $constrecord);
+    public function setConstRecord(?bool $constrecord);
 
 
 
