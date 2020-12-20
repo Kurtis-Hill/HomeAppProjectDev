@@ -2,7 +2,6 @@
 
 namespace App\Entity\Core;
 
-use App\Entity\Core\Groupname;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,52 +19,71 @@ class Room
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $roomid;
+    private int $roomID;
 
     /**
      * @var string
      *
      * @ORM\Column(name="room", type="string", length=20, nullable=false)
      */
-    private $room;
+    private string $room;
 
     /**
-     * @var Groupname
+     * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="Groupname")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private $groupnameid;
+    private GroupNames $groupnameID;
 
-    public function getRoomid(): ?int
+    /**
+     * @return int
+     */
+    public function getRoomID(): int
     {
-        return $this->roomid;
+        return $this->roomID;
     }
 
-    public function getRoom(): ?string
+    /**
+     * @param int $roomID
+     */
+    public function setRoomID(int $roomID): void
+    {
+        $this->roomID = $roomID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRoom(): string
     {
         return $this->room;
     }
 
-    public function setRoom(string $room): self
+    /**
+     * @param string $room
+     */
+    public function setRoom(string $room): void
     {
         $this->room = $room;
-
-        return $this;
     }
 
-    public function getGroupnameid(): ?Groupname
+    /**
+     * @return GroupNames
+     */
+    public function getGroupnameID(): GroupNames
     {
-        return $this->groupnameid;
+        return $this->groupnameID;
     }
 
-    public function setGroupnameid(?Groupname $groupnameid): self
+    /**
+     * @param GroupNames $groupnameID
+     */
+    public function setGroupnameID(GroupNames $groupnameID): void
     {
-        $this->groupnameid = $groupnameid;
-
-        return $this;
+        $this->groupnameID = $groupnameID;
     }
 
 

@@ -1,19 +1,21 @@
 <?php
 
+/*
+ * This file is part of PHP CS Fixer.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *     Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Controller\CardData;
 
-use App\Entity\Card\Cardcolour;
-use App\Entity\Card\Cardstate;
-use App\Entity\Card\Cardview;
-use App\Entity\Core\Icons;
+use App\Entity\Cardview;
 use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Services\SensorDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use Doctrine\DBAL\DBALException;
-use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,8 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class CardDataController
- * @package App\Controller\CardData
+ * Class CardDataController.
+ *
  * @Route("/HomeApp/api/card-data")
  *
  * hyphenate urls
@@ -33,27 +35,21 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/index-view", name="indexCardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
+
         $cardData = $cardDataService->prepareAllIndexCardData('JSON');
 
         if (empty($cardData)) {
             return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
-//dd($cardData);
+        //dd($cardData);
         return $this->sendSuccessfulResponse($cardData);
     }
 
-
     /**
      * @Route("/device-view", name="deviceCardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
      */
     public function returnAllDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
@@ -78,9 +74,6 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/room-view", name="roomCardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
      */
     public function returnAllRoomDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
@@ -103,11 +96,10 @@ class CardDataController extends AbstractController
         return $this->sendSuccessfulResponse($cardData);
     }
 
-
     /**
      * @Route("/card-state-view-form&id={cardviewid}", name="cardViewForm")
-     * @param Request $request
-     * @return JsonResponse
+     *
+     * @param mixed $cardviewid
      */
     public function showCardViewForm(Request $request, SensorDataService $sensorDataService, $cardviewid): JsonResponse
     {
@@ -124,9 +116,6 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/update-card-view", name="updateCardView")
-     * @param Request $request
-     * @param SensorDataService $sensorDataService
-     * @return JsonResponse
      */
     public function updateCardView(Request $request, SensorDataService $sensorDataService): JsonResponse
     {
@@ -167,7 +156,7 @@ class CardDataController extends AbstractController
 
             if ($secondHandledSensorDataForm instanceof FormInterface) {
                 foreach ($secondHandledSensorDataForm->getErrors(true, true) as $error) {
-                    array_push($errors, $error->getMessage());
+                    $errors[] = $error->getMessage();
                 }
             }
         }
@@ -177,22 +166,21 @@ class CardDataController extends AbstractController
 
         if ($handledCardViewForm instanceof FormInterface) {
             foreach ($handledCardViewForm->getErrors(true, true) as $error) {
-                array_push($errors, $error->getMessage());
+                $errors[] = $error->getMessage();
             }
         }
 
         if ($handledSensorDataForm instanceof FormInterface) {
             foreach ($handledSensorDataForm->getErrors(true, true) as $error) {
-                array_push($errors, $error->getMessage());
+                $errors[] = $error->getMessage();
             }
         }
 
         if (!empty($errors)) {
             return $this->sendBadRequestResponse($errors);
-        } else {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->sendSuccessfulResponse();
         }
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->sendSuccessfulResponse();
     }
 }

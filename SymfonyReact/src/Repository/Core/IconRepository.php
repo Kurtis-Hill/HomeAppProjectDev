@@ -4,7 +4,7 @@
 namespace App\Repository\Core;
 
 
-use App\Entity\Card\Cardcolour;
+use App\Entity\Card\CardColour;
 use App\Entity\Core\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;

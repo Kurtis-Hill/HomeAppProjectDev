@@ -4,9 +4,9 @@
 namespace App\Form\SensorForms;
 
 
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
-use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensors;
 use App\Entity\Core\Sensortype;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Doctrine\DBAL\Types\TextType;
@@ -34,7 +34,7 @@ class AddNewSensorForm extends AbstractType
             ])
 
             ->add('groupnameid', EntityType::class, [
-                'class' => Groupname::class
+                'class' => GroupNames::class
             ])
 
             ->add('roomid', EntityType::class, [
@@ -50,7 +50,7 @@ class AddNewSensorForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Sensornames::class,
+            'data_class' => Sensors::class,
             'csrf_protection' => false,
         ]);
     }

@@ -2,16 +2,16 @@
 
 namespace App\Repository\Card;
 
-use App\Entity\Card\Cardcolour;
+use App\Entity\Card\CardColour;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Cardcolour|null find($id, $lockMode = null, $lockVersion = null)
- * @method Cardcolour|null findOneBy(array $criteria, array $orderBy = null)
- * @method Cardcolour[]    findAll()
- * @method Cardcolour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CardColour|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardColour|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardColour[]    findAll()
+ * @method CardColour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CardcolourRepository extends EntityRepository
 {

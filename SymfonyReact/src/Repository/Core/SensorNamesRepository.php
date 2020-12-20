@@ -2,16 +2,16 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensors;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Sensornames|null find($id, $lockMode = null, $lockVersion = null)
- * @method Sensornames|null findOneBy(array $criteria, array $orderBy = null)
- * @method Sensornames[]    findAll()
- * @method Sensornames[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Sensors|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Sensors|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Sensors[]    findAll()
+ * @method Sensors[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class SensorNamesRepository extends EntityRepository
 {

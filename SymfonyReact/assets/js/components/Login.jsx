@@ -48,10 +48,18 @@ function Login(props) {
 
         if (loginResponse.status === 200) {
             const userDetailsResponse = await axios.get(apiURL+'user/account-details', { headers: {"Authorization" : `BEARER ${getToken()}`} });
-            const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
-            window.location.replace(webappURL+'index');
+            
+            //const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
+            if (userDetailsResponse.status === 200) {
+                setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles);
+                window.location.replace(webappURL+'index');
+            }
+            else {
+                setLoading(false);
+            }
         } else {
-            setError(loginResponse.data.errors)
+            setError(loginResponse.data.errors);
+            setLoading(false);
         }
     }
     

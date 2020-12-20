@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Core\GroupMapping;
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\User;
 use App\Form\RegistrationFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,10 +25,10 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $groupName = new Groupname();
+            $groupName = new GroupNames();
 
-            $groupName->setGroupname($form->get('groupNameID')->getData());
-            $groupName->setTimez(new \DateTime());
+            $groupName->setGroupName($form->get('groupNameID')->getData());
+            $groupName->setTime(new \DateTime());
 
             try {
                 $entityManager = $this->getDoctrine()->getManager();
@@ -43,11 +43,11 @@ class RegistrationController extends AbstractController
                 );
 
                 $user->setEmail($form->get('email')->getData());
-                $user->setFirstname($form->get('firstName')->getData());
-                $user->setLastname($form->get('lastName')->getData());
+                $user->setFirstName($form->get('firstName')->getData());
+                $user->setLastName($form->get('lastName')->getData());
                 $user->setRoles($user->getRoles());
-                $user->setGroupnameid($groupName);
-                $user->setTimez(new \DateTime());
+                $user->setGroupNameID($groupName);
+                $user->setTime(new \DateTime());
 
                 $groupNameMapping = new GroupMapping();
 

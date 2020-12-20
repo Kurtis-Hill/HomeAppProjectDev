@@ -5,12 +5,12 @@ namespace App\Entity\Card;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Cardcolour
+ * Cardcolour.
  *
  * @ORM\Table(name="cardcolour", uniqueConstraints={@ORM\UniqueConstraint(name="colour", columns={"colour"})})
  * @ORM\Entity(repositoryClass="App\Repository\Card\CardcolourRepository")
  */
-class Cardcolour
+class CardColour
 {
     /**
      * @var int
@@ -19,50 +19,67 @@ class Cardcolour
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $colourid;
+    private int $colourID;
 
     /**
      * @var string
      *
      * @ORM\Column(name="colour", type="string", length=20, nullable=false)
      */
-    private $colour;
+    private string $colour;
 
     /**
      * @var string
-     *
+     *I
      * @ORM\Column(name="shade", type="string", length=20, nullable=false)
      */
-    private $shade;
+    private string $shade;
 
-    public function getColourid(): ?int
+    /**
+     * @return int
+     */
+    public function getColourID(): int
     {
-        return $this->colourid;
+        return $this->colourID;
     }
 
-    public function getColour(): ?string
+    /**
+     * @param int $colourID
+     */
+    public function setColourID(int $colourID): void
+    {
+        $this->colourID = $colourID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColour(): string
     {
         return $this->colour;
     }
 
-    public function setColour(string $colour): self
+    /**
+     * @param string $colour
+     */
+    public function setColour(string $colour): void
     {
         $this->colour = $colour;
-
-        return $this;
     }
 
-    public function getShade(): ?string
+    /**
+     * @return string
+     */
+    public function getShade(): string
     {
-
+        return $this->shade;
     }
 
-    public function setShade(string $shade): self#
+    /**
+     * @param string $shade
+     */
+    public function setShade(string $shade): void
     {
         $this->shade = $shade;
-
-        return $this;
     }
-
-
 }

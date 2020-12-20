@@ -4,12 +4,12 @@
 namespace App\Services;
 
 
-use App\Entity\Core\Sensornames;
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\Entity\Core\Sensors;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
 
-class SensorService extends HomeAppRoomAbstract
+class SensorService extends HomeAppCoreAbstract
 {
     /**
      * @var array
@@ -65,7 +65,7 @@ class SensorService extends HomeAppRoomAbstract
      */
     private function userInputDataCheck(array $sensorData)
     {
-        $currentUserSensorNameCheck = $this->em->getRepository(Sensornames::class)->findOneBy(['sensorname' => $sensorData['sensorname']]);
+        $currentUserSensorNameCheck = $this->em->getRepository(Sensors::class)->findOneBy(['sensorname' => $sensorData['sensorname']]);
 
         if (!empty($currentUserSensorNameCheck)) {
             $this->errors[] = 'You already have a sensor named '. $sensorData['sensorname'];

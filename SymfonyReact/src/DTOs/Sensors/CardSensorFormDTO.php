@@ -4,12 +4,12 @@
 namespace App\DTOs\Sensors;
 
 
-use App\Entity\Card\Cardcolour;
+use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
-use App\Entity\Card\Cardview;
+use App\Entity\Card\CardView;
 use App\Entity\Core\Icons;
 use App\Entity\Core\Room;
-use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensors;
 use App\Entity\Sensors\Temp;
 
 class CardSensorFormDTO
@@ -79,7 +79,7 @@ class CardSensorFormDTO
     private function setSensorRoom(Room $room): void
     {
         $this->sensorRoom = $room->getRoom();
-        $this->sensorRoomID = $room->getRoomid();
+        $this->sensorRoomID = $room->getRoomID();
     }
 
     private function setCardIconData(Icons $icons): void
@@ -88,14 +88,14 @@ class CardSensorFormDTO
         $this->cardIconName = $icons->getIconname();
     }
 
-    private function setCardColour(Cardcolour $cardcolour): void
+    private function setCardColour(CardColour $cardcolour): void
     {
         $this->cardColour = $cardcolour->getColour();
-        $this->carcColurID = $cardcolour->getColourid();
+        $this->carcColurID = $cardcolour->getColourID();
     }
 
     private function setCardViewID(Cardstate $cardview): void
     {
-        $this->cardViewID = $cardview->getCardstateid();
+        $this->cardViewID = $cardview->getCardstateID();
     }
 }

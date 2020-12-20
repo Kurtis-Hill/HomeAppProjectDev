@@ -12,15 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cardstate
 {
+    public const ON = 1;
 
-    const ON = 1;
+    public const OFF = 2;
 
-    const OFF = 2;
+    public const INDEX_ONLY = 3;
 
-    const INDEX_ONLY = 3;
-
-    const ROOM_ONLY = 4;
-
+    public const ROOM_ONLY = 4;
     /**
      * @var int
      *
@@ -28,41 +26,45 @@ class Cardstate
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $cardstateid;
+    private int $cardStateID;
 
     /**
      * @var string
      *
      * @ORM\Column(name="state", type="string", length=50, nullable=false)
      */
-    private $state;
+    private string $state;
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getCardstateid(): ?int
+    public function getCardstateID(): int
     {
-        return $this->cardstateid;
+        return $this->cardStateID;
     }
 
     /**
-     * @return string|null
+     * @param int $cardStateID
      */
-    public function getState(): ?string
+    public function setCardstateID(int $cardStateID): void
+    {
+        $this->cardStateID = $cardStateID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState(): string
     {
         return $this->state;
     }
 
     /**
      * @param string $state
-     * @return Cardstate
      */
-    public function setState(string $state): self
+    public function setState(string $state): void
     {
         $this->state = $state;
-
-        return $this;
     }
-
 
 }

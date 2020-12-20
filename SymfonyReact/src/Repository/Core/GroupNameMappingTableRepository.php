@@ -15,7 +15,7 @@ class GroupNameMappingTableRepository extends EntityRepository
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gn.groupnameid')
-            ->innerJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'gmt.groupnameid = gn.groupnameid')
+            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupnameid = gn.groupnameid')
             ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userid')
             ->where(
                 $qb->expr()->eq('gmt.userID', ':userID')
@@ -37,7 +37,7 @@ class GroupNameMappingTableRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('gmt');
         $qb->select('gn.groupname', 'gn.groupnameid')
-            ->innerJoin('App\Entity\Core\GroupName', 'gn', Join::WITH, 'gmt.groupnameid = gn.groupnameid')
+            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupnameid = gn.groupnameid')
             ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userid')
             ->where(
                 $qb->expr()->eq('gmt.userID', ':userID')

@@ -5,18 +5,19 @@ namespace App\Services;
 
 
 use App\DTOs\Sensors\CardSensorFormDTO;
-use App\Entity\Card\Cardcolour;
+use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
-use App\Entity\Card\Cardview;
-use App\Entity\Core\Icons;
-use App\Entity\Core\Sensortype;
+use App\Entity\Card\Icons;
+use App\Entity\Cardview;
+use App\Entity\Sensors\SensorType;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Symfony\Component\HttpFoundation\Request;
 
-class SensorDataService
+class SensorDataService extends HomeAppCoreAbstract
 {
     /**
      * @param Request $request
@@ -33,7 +34,7 @@ class SensorDataService
         ];
 
         switch ($sensorType) {
-            case Sensortype::DALLAS_TEMPERATURE:
+            case SensorType::DALLAS_TEMPERATURE:
                 return [
                     'object' => $cardSensorData['temp'],
                     'formData' => $formData,
@@ -41,7 +42,7 @@ class SensorDataService
                 ];
                 break;
 
-            case Sensortype::SOIL_SENSOR:
+            case SensorType::SOIL_SENSOR:
                 return [
                     'object' => $cardSensorData['analog'],
                     'formData' => $formData,
@@ -49,7 +50,7 @@ class SensorDataService
                 ];
                 break;
 
-            case Sensortype::DHT_SENSOR:
+            case SensorType::DHT_SENSOR:
                 $secondFormData = [
                     'highSensorReading' => $request->get('secondSensorHighReading'),
                     'lowSensorReading' => $request->get('secondSensorLowReading'),
@@ -77,7 +78,7 @@ class SensorDataService
     public function getFormData(array $cardSensorFormData): array
     {
         $icons = $this->em->getRepository(Icons::class)->getAllIcons();
-        $colours = $this->em->getRepository(Cardcolour::class)->getAllColours();
+        $colours = $this->em->getRepository(CardColour::class)->getAllColours();
         $states = $this->em->getRepository(Cardstate::class)->getAllStates();
 
         $formDTO = new CardSensorFormDTO($cardSensorFormData);

@@ -30,3 +30,5 @@ SymfonyReact/package-lock.json
 .vscode
 
 
+/.php_cs.cache
+/.php-version

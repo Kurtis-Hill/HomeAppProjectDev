@@ -4,28 +4,15 @@
 namespace App\Services;
 
 use App\DTOs\Sensors\CardDataDTO;
-use App\DTOs\Sensors\CardSensorFormDTO;
-use App\Entity\Card\Cardcolour;
-use App\Entity\Card\Cardstate;
-use App\Entity\Card\Cardview;
-use App\Entity\Core\Icons;
-use App\Entity\Core\Sensortype;
-use App\Form\CardViewForms\DallasTempCardModalForm;
-use App\Form\CardViewForms\DHTHumidCardModalForm;
-use App\Form\CardViewForms\DHTTempCardModalForm;
-use App\Form\CardViewForms\SoilFormType;
-use App\HomeAppCore\HomeAppRoomAbstract;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
+use App\Entity\Card\CardView;
+use App\HomeAppCore\HomeAppCoreAbstract;
+
 
 /**
- * Class CardDataService
- * @package App\Services
+ * Class CardDataService.
  */
-class CardDataService extends HomeAppRoomAbstract
+class CardDataService extends HomeAppCoreAbstract
 {
-
     public function prepareAllIndexCardsDTO()
     {
         $tempCardData = $this->prepareAllTemperatureCards();
@@ -34,23 +21,54 @@ class CardDataService extends HomeAppRoomAbstract
 
         $allCardSensorData = [];
 
-        array_push($allCardSensorData,
+        array_push(
+            $allCardSensorData,
             $tempCardData,
             $humidCardData,
             $analogCardData
         );
 
-
-
-
-
-
-
-
         $cardDTOs = [];
 
-        foreach ($cardReadings as $sensorData) {
+        foreach ($cardDTOs as $sensorData) {
             $cardDTOs[] = new CardDataDTO($sensorData);
+        }
+
+       // return $cardReadings;
+    }
+
+    public function prepareAllIndexCardData(string $type): array
+    {
+        $cardRepository = $this->em->getRepository(CardView::class);
+//        dd('ety');
+        return $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
+    }
+
+    public function prepareAllRoomPageCardData(string $type, array $deviceDetails): array
+    {
+        $cardReadings = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(CardView::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsForRoom($this->groupNameIDs, $this->userID, $deviceDetails, $type);
+        } catch (\PDOException | \Exception $e) {
+            error_log($e->getMessage());
+        }
+
+        return $cardReadings;
+    }
+
+    public function prepareAllDevicePageCardData(string $type, array $deviceDetails): array
+    {
+        $cardReadings = [];
+
+        try {
+            $cardRepository = $this->em->getRepository(CardView::class);
+
+            $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $deviceDetails, $type);
+        } catch (\PDOException | \Exception $e) {
+            error_log($e->getMessage());
         }
 
         return $cardReadings;
@@ -58,19 +76,16 @@ class CardDataService extends HomeAppRoomAbstract
 
     /**
      * @param string $type
-     * @return array
      */
     private function prepareAllTemperatureCards(): array
     {
         $tempCardData = [];
 
         try {
-            $cardRepository = $this->em->getRepository(Cardview::class);
+            $cardRepository = $this->em->getRepository(CardView::class);
 
             $tempCardData = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
-        } catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
@@ -79,19 +94,16 @@ class CardDataService extends HomeAppRoomAbstract
 
     /**
      * @param string $type
-     * @return array
      */
     private function prepareAllHumidCards(): array
     {
         $humidCardData = [];
 
         try {
-            $cardRepository = $this->em->getRepository(Cardview::class);
+            $cardRepository = $this->em->getRepository(CardView::class);
 
             $humidCardData = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
-        } catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
@@ -99,7 +111,6 @@ class CardDataService extends HomeAppRoomAbstract
     }
 
     /**
-     * @param string $type
      * @return array
      */
     private function prepareAllAnalogCards(): array
@@ -107,75 +118,13 @@ class CardDataService extends HomeAppRoomAbstract
         $analogCardData = [];
 
         try {
-            $cardRepository = $this->em->getRepository(Cardview::class);
+            $cardRepository = $this->em->getRepository(CardView::class);
 
             $analogCardData = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
-        } catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
+        } catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
         }
 
         return $analogCardData;
     }
-
-    /**
-     * @param string $type
-     * @return array
-     */
-    public function prepareAllIndexCardData(string $type): array
-    {
-        $cardRepository = $this->em->getRepository(Cardview::class);
-
-        $cardReadings = $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
-
-        return $cardReadings;
-    }
-
-
-    /**
-     * @param string $type
-     * @param array $deviceDetails
-     * @return array
-     */
-    public function prepareAllRoomPageCardData(string $type, array $deviceDetails): array
-    {
-        $cardReadings = [];
-
-        try {
-            $cardRepository = $this->em->getRepository(Cardview::class);
-
-            $cardReadings = $cardRepository->getAllCardReadingsForRoom($this->groupNameIDs, $this->userID, $deviceDetails, $type);
-        }  catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
-            error_log($e->getMessage());
-        }
-
-        return $cardReadings;
-    }
-
-
-    /**
-     * @param string $type
-     * @param array $deviceDetails
-     * @return array
-     */
-    public function prepareAllDevicePageCardData(string $type, array $deviceDetails): array
-    {
-        $cardReadings = [];
-
-        try {
-            $cardRepository = $this->em->getRepository(Cardview::class);
-
-            $cardReadings = $cardRepository->getAllCardReadingsForDevice($this->groupNameIDs, $this->userID, $deviceDetails, $type);
-        }  catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
-            error_log($e->getMessage());
-        }
-
-        return $cardReadings;
-    }
-
 }

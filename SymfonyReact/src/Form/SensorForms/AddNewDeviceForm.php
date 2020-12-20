@@ -5,7 +5,7 @@ namespace App\Form\SensorForms;
 
 
 use App\Entity\Core\Devices;
-use App\Entity\Core\Groupname;
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -33,7 +33,7 @@ class AddNewDeviceForm extends AbstractType
             ])
 
             ->add('groupnameid', EntityType::class, [
-                'class' => Groupname::class,
+                'class' => GroupNames::class,
             ])
 
             ->add('roomid', EntityType::class, [

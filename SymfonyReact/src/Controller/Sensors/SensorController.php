@@ -3,7 +3,7 @@
 
 namespace App\Controller\Sensors;
 
-use App\Entity\Core\Sensornames;
+use App\Entity\Core\Sensors;
 use App\Form\SensorForms\AddNewSensorForm;
 use App\Services\SensorService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -43,7 +43,7 @@ class SensorController extends AbstractController
             'sensortypeid' => $sensorType
         ];
 
-        $newSensor = new Sensornames();
+        $newSensor = new Sensors();
 
         $addNewSensorForm = $this->createForm(AddNewSensorForm::class, $newSensor);
 

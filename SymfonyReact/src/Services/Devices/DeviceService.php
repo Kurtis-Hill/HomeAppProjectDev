@@ -6,13 +6,13 @@ namespace App\Services\Devices;
 
 use App\Entity\Core\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\HomeAppCore\HomeAppRoomAbstract;
+use App\HomeAppCore\HomeAppCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class DeviceService extends HomeAppRoomAbstract
+class DeviceService extends HomeAppCoreAbstract
 {
     /**
      * @var array
