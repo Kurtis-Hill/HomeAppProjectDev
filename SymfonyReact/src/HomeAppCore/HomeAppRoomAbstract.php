@@ -60,8 +60,6 @@ abstract class HomeAppRoomAbstract
             $this->setUserVariables();
         } catch (\Exception $e) {
             $this->userErrors[] = $e->getMessage();
-
-            return new RedirectResponse('/HomeApp/logout');
         }
     }
 

@@ -31,6 +31,9 @@ class IndexController extends AbstractController
      */
     public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route) :Response
     {
+        $one = 1;
+        $two2 = 2;
+
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
