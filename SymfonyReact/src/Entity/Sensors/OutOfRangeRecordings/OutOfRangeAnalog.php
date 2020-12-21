@@ -20,7 +20,7 @@ class OutOfRangeAnalog
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $analogID;
+    private int $analogID;
 
     /**
      * @var float|null
@@ -44,7 +44,7 @@ class OutOfRangeAnalog
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="analogID")
      * })
      */
-    private $sensorID;
+    private Analog $sensorID;
 
     /**
      * @return int

@@ -34,19 +34,19 @@ interface StandardSensorInterface
     /**
      * Sensor Reading Methods
      */
-    public function getCurrentSensorReading(): int|float;
+    public function getCurrentSensorReading(): ?float;
 
-    public function getHighReading(): int|float;
+    public function getHighReading(): ?float;
 
-    public function getLowReading(): int|float;
+    public function getLowReading(): ?float;
 
     public function getTime(): \DateTime;
 
-    public function setCurrentSensorReading(int|float $reading): void;
+    public function setCurrentSensorReading(?float $reading): void;
 
-    public function setHighReading(int|float $reading): void;
+    public function setHighReading(?float $reading): void;
 
-    public function setLowReading(int|float $reading): void;
+    public function setLowReading(?float $reading): void;
 
     public function setTime(\DateTime $dateTime): void;
 

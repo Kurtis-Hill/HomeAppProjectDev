@@ -44,7 +44,7 @@ class CardviewRepository extends EntityRepository
                 'a.analogTime',
                 'r.room',
                 'i.iconname',
-                's.sensorname',
+//                's.sensorname',
                 'st.sensortype',
                 'cc.colour',
                 'cv.cardviewid'
@@ -52,8 +52,8 @@ class CardviewRepository extends EntityRepository
             ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
             ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
             ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
-            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
-            ->innerJoin('App\Entity\Core\Sensortype', 'st', Join::WITH,'st.sensortypeid = s.sensortypeid')
+//            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+            ->innerJoin('App\Entity\Core\SensorType', 'st', Join::WITH,'st.sensortypeid = s.sensortypeid')
             ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
             ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')

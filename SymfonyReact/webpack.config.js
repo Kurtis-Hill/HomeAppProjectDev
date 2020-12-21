@@ -25,7 +25,8 @@ Encore
      */
     //NEW REACT APP BITS
     .enableReactPreset()
-    .addEntry('react-app', './assets/js/App.js')
+    .addEntry('react-a' +
+        'pp', './assets/js/App.js')
    // .addEntry('appcss', './assets/css/app.css')
     //base.twig
 

@@ -31,21 +31,21 @@ class Humidity implements StandardSensorInterface
      *
      * @ORM\Column(name="humidReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private int|float $humidReading;
+    private ?float $humidReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
-    private int|float $highHumid;
+    private ?float $highHumid;
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
-    private int|float $lowHumid;
+    private ?float $lowHumid;
 
     /**
      * @var bool
@@ -189,9 +189,6 @@ class Humidity implements StandardSensorInterface
      * Sensor Reading Methods
      */
 
-    /**
-     * @return float|null
-     */
     public function getCurrentSensorReading(): ?float
     {
         return $this->humidReading;

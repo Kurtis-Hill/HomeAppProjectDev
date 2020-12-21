@@ -31,21 +31,21 @@ class Temperature implements StandardSensorInterface
      *
      * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private int|float $tempReading;
+    private ?float $tempReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
-    private int|float $highTemp;
+    private ?float $highTemp;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private int|float $lowTemp;
+    private ?float $lowTemp;
 
     /**
      * @var bool
@@ -193,7 +193,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getCurrentSensorReading(): int|float
+    public function getCurrentSensorReading(): ?float
     {
         return $this->tempReading;
     }
@@ -201,7 +201,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getHighReading(): int|float
+    public function getHighReading(): ?float
     {
         return $this->highTemp;
     }
@@ -209,7 +209,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getLowReading(): int|float
+    public function getLowReading(): ?float
     {
         return $this->lowTemp;
     }
@@ -225,7 +225,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @param float|null $reading
      */
-    public function setCurrentSensorReading(int|float $reading): void
+    public function setCurrentSensorReading(?float $reading): void
     {
         $this->tempReading = $reading;
     }
@@ -233,7 +233,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @param float|null $reading
      */
-    public function setHighReading(int|float $reading): void
+    public function setHighReading(?float $reading): void
     {
         $this->highTemp = $reading;
     }
@@ -241,7 +241,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @param float|null $reading
      */
-    public function setLowReading(int|float $reading): void
+    public function setLowReading(?float $reading): void
     {
         $this->lowTemp = $reading;
     }

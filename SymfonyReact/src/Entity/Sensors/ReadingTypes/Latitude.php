@@ -24,28 +24,28 @@ class Latitude implements StandardSensorInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int|float $latitudeID;
+    private ?float $latitudeID;
 
     /**
      * @var float
      *
      * @ORM\Column(name="latitude", type="integer", nullable=false)
      */
-    private int|float $latitude;
+    private ?float $latitude;
 
     /**
      * @var int
      *
      * @ORM\Column(name="highLatitude", type="integer", nullable=false)
      */
-    private int|float $highLatitude;
+    private ?float $highLatitude;
 
     /**
      * @var int
      *
      * @ORM\Column(name="lowLatitude", type="integer", nullable=false)
      */
-    private int|float $lowLatitude;
+    private ?float $lowLatitude;
 
     /**
      * @var bool
@@ -193,7 +193,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getCurrentSensorReading(): float
+    public function getCurrentSensorReading(): ?float
     {
         return $this->latitude;
     }
@@ -201,7 +201,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getHighReading(): float
+    public function getHighReading(): ?float
     {
         return $this->highLatitude;
     }
@@ -209,7 +209,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getLowReading(): float
+    public function getLowReading(): ?float
     {
         return $this->lowLatitude;
     }
@@ -263,14 +263,14 @@ class Latitude implements StandardSensorInterface
      */
     public function getConstRecord(): ?bool
     {
-        return $this->constrecord;
+        return $this->constRecord;
     }
 
     /**
      * @param bool|null $constrecord
      */
-    public function setConstRecord(?bool $constrecord): void
+    public function setConstRecord(?bool $constRecord): void
     {
-        $this->constrecord = $constrecord;
+        $this->constRecord = $constRecord;
     }
 }

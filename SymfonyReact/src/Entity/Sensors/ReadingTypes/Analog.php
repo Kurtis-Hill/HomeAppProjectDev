@@ -31,21 +31,21 @@ class Analog implements StandardSensorInterface
      *
      * @ORM\Column(name="analogReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
-    private int|float $analogReading;
+    private float $analogReading;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="highAnalog", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
-    private int|float $highAnalog;
+    private float $highAnalog;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="lowAnalog", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
-    private int|float $lowAnalog;
+    private float $lowAnalog;
 
     /**
      * @var bool|null

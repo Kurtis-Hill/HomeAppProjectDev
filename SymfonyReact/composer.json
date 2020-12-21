@@ -2,7 +2,7 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^8.0",
+        "php": "^7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.10",
@@ -22,13 +22,10 @@
         "symfony/orm-pack": "^1.0",
         "symfony/profiler-pack": "^1.0",
         "symfony/security-bundle": "5.0.*",
-        "symfony/serializer": "5.0.*",
         "symfony/twig-pack": "^1.0",
         "symfony/validator": "5.0.*",
         "symfony/webpack-encore-bundle": "^1.7",
-        "symfony/yaml": "5.0.*",
-      "ext-json": "*",
-      "ext-pdo": "*"
+        "symfony/yaml": "5.0.*"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.14"

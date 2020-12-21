@@ -32,3 +32,4 @@ SymfonyReact/package-lock.json
 
 /.php_cs.cache
 /.php-version
+/SymfonyReact/vendor/
