@@ -14,9 +14,9 @@ class GroupNameMappingTableRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('gmt');
 
-        $qb->select('gn.groupnameid')
-            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupnameid = gn.groupnameid')
-            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userid')
+        $qb->select('gn.groupNameID')
+            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
+            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userID')
             ->where(
                 $qb->expr()->eq('gmt.userID', ':userID')
             )
@@ -24,26 +24,22 @@ class GroupNameMappingTableRepository extends EntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
 
-        if (!$result) {
-            throw new \Exception('Get User Groups Has Failed');
-        }
+        if (!$result) throw new \Exception('Get User Groups Has Failed');
 
-        $groupNameIDs = array_map('current', $result);
-
-        return $groupNameIDs;
+        return array_map('current', $result);
     }
 
-    public function getUserGroupNamesAndIds($userID): array
+    public function getUserGroupNamesAndIDs($userID): array
     {
         $qb = $this->createQueryBuilder('gmt');
-        $qb->select('gn.groupname', 'gn.groupnameid')
-            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupnameid = gn.groupnameid')
-            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userid')
+        $qb->select('gn.groupName', 'gn.groupNameID')
+            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
+            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userUD')
             ->where(
                 $qb->expr()->eq('gmt.userID', ':userID')
             )
             ->setParameter('userID', $userID);
-
+//dd($qb->getQuery()->getArrayResult());
         return $qb->getQuery()->getArrayResult();
 
     }

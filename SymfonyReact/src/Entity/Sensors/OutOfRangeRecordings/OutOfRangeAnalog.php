@@ -6,7 +6,7 @@ use App\Entity\Sensors\ReadingTypes\Analog;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * OutOfRangeAnalog
+ * OutOfRangeAnalog.
  *
  * @ORM\Table(name="outofrangeanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
@@ -23,7 +23,7 @@ class OutOfRangeAnalog
     private int $analogID;
 
     /**
-     * @var float|null
+     * @var null|float
      *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
@@ -63,7 +63,7 @@ class OutOfRangeAnalog
     }
 
     /**
-     * @return float|null
+     * @return null|float
      */
     public function getSensorReading()
     {
@@ -71,7 +71,7 @@ class OutOfRangeAnalog
     }
 
     /**
-     * @param float|null $sensorReading
+     * @param null|float $sensorReading
      */
     public function setSensorReading($sensorReading): void
     {
@@ -109,6 +109,4 @@ class OutOfRangeAnalog
     {
         $this->sensorID = $sensorID;
     }
-
-
 }

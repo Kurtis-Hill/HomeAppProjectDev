@@ -15,12 +15,12 @@ class RoomRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('r');
 
-        $qb->select('r.roomid, r.room')
+        $qb->select('r.roomID, r.room')
             ->where(
-                $qb->expr()->in('r.groupnameid', ':groupnameid')
+                $qb->expr()->in('r.groupNameID', ':groupNameID')
             )
-            ->setParameter('groupnameid', $groupNameid);
-//dd($qb->getQuery()->getArrayResult());
+            ->setParameter('groupNameID', $groupNameid);
+
         return $qb->getQuery()->getArrayResult();
     }
 

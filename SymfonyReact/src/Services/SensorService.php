@@ -71,7 +71,7 @@ class SensorService extends HomeAppCoreAbstract
             $this->errors[] = 'You already have a sensor named '. $sensorData['sensorname'];
         }
 
-        if (!in_array($sensorData['groupnameid'], $this->getGroupNameID())) {
+        if (!in_array($sensorData['groupnameid'], $this->getGroupNameIDs())) {
             $this->errors[] = 'You are not part of this group';
         }
     }

@@ -39,7 +39,7 @@ class DeviceService extends HomeAppCoreAbstract
             $this->errors[] = 'Your group already has a device named'. $deviceData['devicename'];
         }
 
-        if (!in_array($deviceData['groupnameid'], $this->getGroupNameID())) {
+        if (!in_array($deviceData['groupnameid'], $this->getGroupNameIDs())) {
             $this->errors[] = 'You are not part of this group';
         }
     }

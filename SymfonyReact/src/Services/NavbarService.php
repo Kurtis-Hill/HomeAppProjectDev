@@ -16,13 +16,13 @@ use Symfony\Component\Security\Core\Security;
 // class needs a slight refactor
 class NavbarService extends HomeAppCoreAbstract
 {
-    private $usersRooms = [];
+    private array $usersRooms = [];
 
-    private $groupNames = [];
+    private array $groupNames = [];
 
-    private $devices = [];
+    private array $devices = [];
 
-    private $errors = [];
+    private array $errors = [];
 
     /**
      * NavbarService constructor.
@@ -39,7 +39,7 @@ class NavbarService extends HomeAppCoreAbstract
             $this->devices = $this->setUsersDevices();
         }
         catch (\Exception $e) {
-            $this->errors[] = $e->getMessage();
+           error_log($e->getMessage());
         }
 
     }
@@ -49,9 +49,14 @@ class NavbarService extends HomeAppCoreAbstract
      */
     private function setUsersRooms(): array
     {
-        $roomRepository = $this->em->getRepository(Room::class);
 
-        return $roomRepository->getRoomsForUser($this->groupNameIDs);
+        $userRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
+
+        if (empty($userRooms)) {
+            $this->errors[] = 'User rooms are empty';
+        }
+
+        return $userRooms;
     }
 
     /**
@@ -59,7 +64,11 @@ class NavbarService extends HomeAppCoreAbstract
      */
     private function setUsersGroupNames(): array
     {
-        $groupNames = $this->em->getRepository(GroupnNameMapping::class)->getUserGroupNamesAndIds($this->userID);
+        $groupNames = $this->em->getRepository(GroupnNameMapping::class)->getUserGroupNamesAndIDs($this->getUserID());
+dd($groupNames);
+        if (empty($groupNames)) {
+            $this->errors[] = 'User group names are empty';
+        }
 
         return $groupNames;
     }
@@ -69,7 +78,11 @@ class NavbarService extends HomeAppCoreAbstract
      */
     private function setUsersDevices(): array
     {
-        $devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->groupNameIDs);
+        $devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
+
+        if (empty($devices)) {
+            $this->errors[] = 'User devices names are empty';
+        }
 
         return $devices;
     }
@@ -79,9 +92,6 @@ class NavbarService extends HomeAppCoreAbstract
      */
     public function getUserDevices(): array
     {
-        if (empty($this->devices)) {
-            $this->devices['devicename'] = 'No devices';
-        }
         return $this->devices;
     }
 
@@ -90,9 +100,6 @@ class NavbarService extends HomeAppCoreAbstract
      */
     public function getUsersRooms(): array
     {
-        if (empty($this->usersRooms)) {
-            $this->usersRooms = ['room' => 'No user rooms', 'roomid' => 0];
-        }
         return $this->usersRooms;
     }
 
@@ -101,9 +108,6 @@ class NavbarService extends HomeAppCoreAbstract
      */
     public function getUsersGroupNames(): array
     {
-        if (empty($this->groupNames)) {
-            $this->groupNames = ['groupname' => 'No user groups', 'groupnameid' => 0];
-        }
         return $this->groupNames;
     }
 

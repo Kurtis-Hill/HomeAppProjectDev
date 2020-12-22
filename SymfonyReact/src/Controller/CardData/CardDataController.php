@@ -10,7 +10,7 @@
 
 namespace App\Controller\CardData;
 
-use App\Entity\Cardview;
+use App\Entity\Card\Cardview;
 use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
@@ -27,7 +27,6 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/HomeApp/api/card-data")
  *
- * hyphenate urls
  */
 class CardDataController extends AbstractController
 {

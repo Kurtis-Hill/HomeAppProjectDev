@@ -15,32 +15,32 @@ abstract class HomeAppCoreAbstract
     /**
      * @var Security
      */
-    protected $user;
+    private Security $user;
 
     /**
      * @var EntityManager|EntityManagerInterface
      */
-    protected $em;
+    protected EntityManager|EntityManagerInterface $em;
+
+    /**
+     * @var int
+     */
+    private int $userID;
 
     /**
      * @var array
      */
-    protected $userID;
+    private array $roles;
 
     /**
      * @var array
      */
-    protected $roles;
+    private array $groupNameIDs = [];
 
     /**
      * @var array
      */
-    protected $groupNameIDs = [];
-
-    /**
-     * @var array
-     */
-    protected $userErrors = [];
+    protected array $userErrors = [];
 
     /**
      * HomeAppRoomAbstract constructor.
@@ -61,9 +61,11 @@ abstract class HomeAppCoreAbstract
     }
 
     /**
+     * @param FormInterface $form
+     * @param array $formData
      * @return bool|FormInterface
      */
-    public function processForm(FormInterface $form, array $formData)
+    public function processForm(FormInterface $form, array $formData): bool|FormInterface
     {
         $form->submit($formData);
 
@@ -82,7 +84,7 @@ abstract class HomeAppCoreAbstract
         return $form;
     }
 
-    public function getGroupNameID()
+    public function getGroupNameIDs()
     {
         return $this->groupNameIDs;
     }
@@ -111,7 +113,7 @@ abstract class HomeAppCoreAbstract
         $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
         $this->roles = $this->user->getUser()->getRoles();
 
-//        dd($this->groupNameIDs, $this->userID,$this->roles, 'heyy');
+
         if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
             throw new \Exception('The User Variables Cannot be set Please try again');
         }

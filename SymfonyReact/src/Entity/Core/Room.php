@@ -36,7 +36,7 @@ class Room
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private GroupNames $groupnameID;
+    private GroupNames $groupNameID;
 
     /**
      * @return int
@@ -73,17 +73,17 @@ class Room
     /**
      * @return GroupNames
      */
-    public function getGroupnameID(): GroupNames
+    public function getGroupNameID(): GroupNames
     {
-        return $this->groupnameID;
+        return $this->groupNameID;
     }
 
     /**
-     * @param GroupNames $groupnameID
+     * @param GroupNames $groupNameID
      */
-    public function setGroupnameID(GroupNames $groupnameID): void
+    public function setGroupNameID(GroupNames $groupNameID): void
     {
-        $this->groupnameID = $groupnameID;
+        $this->groupNameID = $groupNameID;
     }
 
 

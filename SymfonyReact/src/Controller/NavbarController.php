@@ -31,7 +31,7 @@ class NavbarController extends AbstractController
         ];
 
         $errors = $navbarService->getErrors();
-//dd($errors);
+//dd($navbarData);
         if (!empty($errors)) {
             return $this->sendInternelServerErrorResponse($errors);
         }
