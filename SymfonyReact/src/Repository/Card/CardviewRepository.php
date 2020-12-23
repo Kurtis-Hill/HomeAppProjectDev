@@ -5,6 +5,7 @@ namespace App\Repository\Card;
 
 
 use App\Entity\Card\Cardstate;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
@@ -12,6 +13,50 @@ use function Doctrine\ORM\QueryBuilder;
 //All queries need to be refactored to just grab the data needed just passed full objects in for convenience
 class CardviewRepository extends EntityRepository
 {
+
+    public function getAllIndexCardObjects(int $userID, array $groupNameIDs): ArrayCollection
+    {
+        $cardViewOne = Cardstate::ON;
+        $cardViewTwo = Cardstate::INDEX_ONLY;
+
+        $qb = $this->createQueryBuilder('cv');
+        $expr = $qb->expr();
+
+        $qb->select(
+                    'dallas',
+                    'dht',
+                    'bmp',
+                    'soil'
+        )
+            ->leftJoin('App\Entity\Sensors\SensorTypes\DhtSensor', 'dht', Join::WITH,'cv.cardViewID = dht.cardViewID')
+            ->leftJoin('App\Entity\Sensors\SensorTypes\Dallas', 'dallas', Join::WITH,'cv.cardViewID = dallas.cardViewID')
+            ->leftJoin('App\Entity\Sensors\SensorTypes\Soil', 'soil', Join::WITH,'cv.cardViewID = soil.cardViewID')
+            ->leftJoin('App\Entity\Sensors\SensorTypes\Bmp', 'bmp', Join::WITH,'cv.cardViewID = bmp.cardViewID')
+            ->where(
+                $expr->orX(
+                    $expr->eq('cv.cardStateID', ':cardviewOne'),
+                    $expr->eq('cv.cardStateID', ':cardviewTwo')
+                ),
+                $expr->eq('cv.userID', ':userid'),
+                $expr->in('s.groupNameID', ':groupNameID')
+            );
+
+        $qb->setParameters(
+            [
+                'userid' => $userID,
+                'groupNameID' => $groupNameIDs,
+                'cardviewOne' => $cardViewOne,
+                'cardviewTwo' => $cardViewTwo
+            ]
+        );
+
+        $result = $qb->getQuery()->getResult();
+        dd($result);
+        return $qb->getQuery()->getResult();
+
+    }
+
+
     /**
      * @param $groupNameIDs
      * @param $userID

@@ -24,8 +24,6 @@ class GroupNameMappingTableRepository extends EntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
 
-        if (!$result) throw new \Exception('Get User Groups Has Failed');
-
         $groupData = [];
 
         foreach ($result as $userGroupData) {

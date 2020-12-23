@@ -38,12 +38,12 @@ class CardDataController extends AbstractController
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
 
-        $cardData = $cardDataService->prepareAllIndexCardData('JSON');
+        $cardData = $cardDataService->prepareAllIndexCardDTOs();
 
         if (empty($cardData)) {
             return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
-        //dd($cardData);
+        dd($cardData);
         return $this->sendSuccessfulResponse($cardData);
     }
 

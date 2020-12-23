@@ -13,28 +13,32 @@ use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
  */
 class CardDataService extends HomeAppSensorServiceCoreAbstract
 {
-    public function prepareAllIndexCardsDTO()
+    public function prepareAllIndexCardDTOs()
     {
-        $tempCardData = $this->prepareAllTemperatureCards();
-        $humidCardData = $this->prepareAllHumidCards();
-        $analogCardData = $this->prepareAllAnalogCards();
-
-        $allCardSensorData = [];
-
-        array_push(
-            $allCardSensorData,
-            $tempCardData,
-            $humidCardData,
-            $analogCardData
-        );
+        $sensorObjects = $this->getIndexCardDataObjects();
 
         $cardDTOs = [];
 
-        foreach ($cardDTOs as $sensorData) {
+        foreach ($sensorObjects as $sensorData) {
             $cardDTOs[] = new CardDataDTO($sensorData);
         }
 
-       // return $cardReadings;
+        return $cardDTOs;
+    }
+
+    private function getIndexCardDataObjects()
+    {
+        try {
+            $cardRepository = $this->em->getRepository(CardView::class);
+
+            return $cardRepository->getAllIndexCardObjects($this->getUserID(), $this->getGroupNameIDs());
+        }
+        catch (\PDOException | \Exception $e) {
+            error_log($e->getMessage());
+        }
+
+
+return $cardRepository->getAllIndexCardObjects($this->getUserID(), $this->getGroupNameIDs())
     }
 
     public function prepareAllIndexCardData(string $type): array

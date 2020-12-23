@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Sensors\SensorTypes;
 
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Humidity;
@@ -43,7 +43,7 @@ class Bmp
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
      */
-    private $tempID;
+    private Temperature $tempID;
 
     /**
      * @var Humidity
