@@ -122,22 +122,6 @@ class Latitude implements StandardSensorInterface
      */
 
     /**
-     * @return GroupNames
-     */
-    public function getGroupNameID(): GroupNames
-    {
-        return $this->groupNameID;
-    }
-
-    /**
-     * @return Room
-     */
-    public function getRoomID(): Room
-    {
-        return $this->roomID;
-    }
-
-    /**
      * @return Sensors
      */
     public function getSensorNameID(): Sensors
@@ -151,22 +135,6 @@ class Latitude implements StandardSensorInterface
     public function getDeviceNameID(): Devices
     {
         return $this->deviceNameID;
-    }
-
-    /**
-     * @param GroupNames $groupNameID
-     */
-    public function setGroupNameID(GroupNames $groupNameID): void
-    {
-        $this->groupNameID = $groupNameID;
-    }
-
-    /**
-     * @param Room $roomID
-     */
-    public function setRoomID(Room $roomID): void
-    {
-        $this->roomID = $roomID;
     }
 
     /**
