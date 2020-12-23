@@ -20,6 +20,7 @@ class SensorType
 
     public const SOIL_SENSOR = 'Soil';
 
+
     /**
      * @var int
      *

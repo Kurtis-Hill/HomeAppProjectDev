@@ -2,8 +2,7 @@ import React, { Component, createContext } from 'react';
 import ReactDOM from "react-dom";
 import axios from 'axios';
 
-import { getToken, webappURL, apiURL, getRefreshToken, setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
-import { array } from 'prop-types';
+import { getToken, apiURL} from '../Utilities/Common';
 
 export const NavbarContext = createContext();
 
@@ -63,7 +62,8 @@ export default class NavbarContextProvider extends Component {
         .then(response => {
             const navBarRepsonse = response.data.responseData;
             this.setState({devices: navBarRepsonse.devices, rooms: navBarRepsonse.rooms, groupNames: navBarRepsonse.groupNames});
-        }).catch(error => {     
+        }).catch(error => {   
+            console.log(error);  
             if (error.response.status === 500) {
                 alert('Failed Getting Navbar Data, '+error.response.data.title);
             }

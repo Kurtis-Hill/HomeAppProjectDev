@@ -8,6 +8,7 @@ use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Analog
@@ -27,28 +28,28 @@ class Analog implements StandardSensorInterface
     private int $analogID;
 
     /**
-     * @var float|null
+     * @var float
      *
-     * @ORM\Column(name="analogReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="analogReading", type="smallint", precision=10, scale=0, nullable=false, options={"default"="NULL"})
      */
-    private float $analogReading;
+    private int $analogReading;
 
     /**
-     * @var float|null
+     * @var float
      *
-     * @ORM\Column(name="highAnalog", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="highAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="NULL"})
      */
-    private float $highAnalog;
+    private int $highAnalog;
 
     /**
-     * @var float|null
+     * @var float
      *
-     * @ORM\Column(name="lowAnalog", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="lowAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="NULL"})
      */
-    private float $lowAnalog;
+    private int $lowAnalog;
 
     /**
-     * @var bool|null
+     * @var bool
      *
      * @ORM\Column(name="constRecord", type="boolean", nullable=true, options={"default"="1"})
      */
@@ -61,15 +62,6 @@ class Analog implements StandardSensorInterface
      */
     private \DateTime $time;
 
-    /**
-     * @var GroupNames
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
-    private GroupNames $groupNameID;
 
     /**
      * @var Sensors
@@ -81,16 +73,6 @@ class Analog implements StandardSensorInterface
      */
     private Sensors $sensorNameID;
 
-
-    /**
-     * @var Room
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
-    private Room $roomID;
 
     /**
      * @var Devices
@@ -123,21 +105,6 @@ class Analog implements StandardSensorInterface
      * Sensor relational Objects
      */
 
-    /**
-     * @return GroupNames
-     */
-    public function getGroupNameID(): GroupNames
-    {
-        return $this->groupNameID;
-    }
-
-    /**
-     * @return Room
-     */
-    public function getRoomID(): Room
-    {
-        return $this->roomID;
-    }
 
     /**
      * @return Sensors
@@ -155,22 +122,6 @@ class Analog implements StandardSensorInterface
         return $this->deviceNameID;
     }
 
-
-    /**
-     * @param GroupNames $groupNameID
-     */
-    public function setGroupNameID(GroupNames $groupNameID): void
-    {
-        $this->groupNameID = $groupNameID;
-    }
-
-    /**
-     * @param Room $roomID
-     */
-    public function setRoomID(Room $roomID): void
-    {
-        $this->roomID = $roomID;
-    }
 
     /**
      * @param Sensors $sensorNameID
@@ -194,25 +145,25 @@ class Analog implements StandardSensorInterface
      */
 
     /**
-     * @return float|null
+     * @return int|float
      */
-    public function getCurrentSensorReading(): ?float
+    public function getCurrentSensorReading(): int|float
     {
         return $this->analogReading;
     }
 
     /**
-     * @return float|null
+     * @return int|float
      */
-    public function getHighReading(): ?float
+    public function getHighReading(): int|float
     {
         return $this->highAnalog;
     }
 
     /**
-     * @return float|null
+     * @return float
      */
-    public function getLowReading(): ?float
+    public function getLowReading(): int|float
     {
         return $this->lowAnalog;
     }
@@ -226,25 +177,25 @@ class Analog implements StandardSensorInterface
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setCurrentSensorReading(?float $reading): void
+    public function setCurrentSensorReading(int|float $reading): void
     {
         $this->analogReading = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setHighReading(?float $reading): void
+    public function setHighReading(int|float $reading): void
     {
         $this->highAnalog = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setLowReading(?float $reading): void
+    public function setLowReading(int|float $reading): void
     {
         $this->lowAnalog = $reading;
     }
@@ -262,19 +213,28 @@ class Analog implements StandardSensorInterface
      */
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function getConstRecord(): ?bool
+    public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
 
     /**
-     * @param bool|null $constRecord
+     * @param bool $constRecord
      */
-    public function setConstRecord(?bool $constRecord): void
+    public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
     }
 
+    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
+    {
+        return $this->getHighReading() - $this->getCurrentSensorReading();
+    }
+
+    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
+    {
+        return $this->getLowReading() - $this->getCurrentSensorReading();
+    }
 }

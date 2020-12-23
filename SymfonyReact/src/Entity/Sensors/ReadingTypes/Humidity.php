@@ -8,6 +8,7 @@ use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Humidity
@@ -31,21 +32,21 @@ class Humidity implements StandardSensorInterface
      *
      * @ORM\Column(name="humidReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private ?float $humidReading;
+    private float $humidReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
-    private ?float $highHumid;
+    private float $highHumid;
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
-    private ?float $lowHumid;
+    private float $lowHumid;
 
     /**
      * @var bool
@@ -62,16 +63,6 @@ class Humidity implements StandardSensorInterface
     private \DateTime $timez;
 
     /**
-     * @var GroupNames
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
-    private GroupNames $groupNameID;
-
-    /**
      * @var Sensors
      *
      * @ORM\ManyToOne(targetEntity="Sensors")
@@ -80,16 +71,6 @@ class Humidity implements StandardSensorInterface
      * })
      */
     private Sensors $sensorNameID;
-
-    /**
-     * @var Room
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
-    private Room $roomID;
 
     /**
      * @var Devices
@@ -120,22 +101,6 @@ class Humidity implements StandardSensorInterface
      */
 
     /**
-     * @return GroupNames
-     */
-    public function getGroupNameID(): GroupNames
-    {
-        return $this->groupNameID;
-    }
-
-    /**
-     * @return Room
-     */
-    public function getRoomID(): Room
-    {
-        return $this->roomID;
-    }
-
-    /**
      * @return Sensors
      */
     public function getSensorNameID(): Sensors
@@ -149,23 +114,6 @@ class Humidity implements StandardSensorInterface
     public function getDeviceNameID(): Devices
     {
         return $this->deviceNameID;
-    }
-
-
-    /**
-     * @param GroupNames $groupNameID
-     */
-    public function setGroupNameID(GroupNames $groupNameID): void
-    {
-        $this->groupNameID = $groupNameID;
-    }
-
-    /**
-     * @param Room $roomID
-     */
-    public function setRoomID(Room $roomID): void
-    {
-        $this->roomID = $roomID;
     }
 
     /**
@@ -189,7 +137,7 @@ class Humidity implements StandardSensorInterface
      * Sensor Reading Methods
      */
 
-    public function getCurrentSensorReading(): ?float
+    public function getCurrentSensorReading(): int|float
     {
         return $this->humidReading;
     }
@@ -197,7 +145,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getHighReading(): ?float
+    public function getHighReading(): int|float
     {
         return $this->highHumid;
     }
@@ -205,7 +153,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getLowReading(): ?float
+    public function getLowReading(): int|float
     {
         return $this->lowHumid;
     }
@@ -219,25 +167,25 @@ class Humidity implements StandardSensorInterface
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setCurrentSensorReading(?float $reading): void
+    public function setCurrentSensorReading(int|float $reading): void
     {
         $this->humidReading = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setHighReading(?float $reading): void
+    public function setHighReading(int|float $reading): void
     {
         $this->highHumid = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setLowReading(?float $reading): void
+    public function setLowReading(int|float $reading): void
     {
         $this->lowHumid = $reading;
     }
@@ -255,18 +203,28 @@ class Humidity implements StandardSensorInterface
      */
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function getConstRecord(): ?bool
+    public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
 
     /**
-     * @param bool|null $constRecord
+     * @param bool $constRecord
      */
-    public function setConstRecord(?bool $constRecord): void
+    public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
+    }
+
+    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
+    {
+        return $this->getHighReading() - $this->getCurrentSensorReading();
+    }
+
+    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
+    {
+        return $this->getLowReading() - $this->getCurrentSensorReading();
     }
 }

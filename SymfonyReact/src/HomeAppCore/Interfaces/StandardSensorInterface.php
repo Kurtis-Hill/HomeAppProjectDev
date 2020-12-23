@@ -17,47 +17,43 @@ interface StandardSensorInterface
     /**
      * Sensor relational Objects
      */
-    public function getGroupNameID(): GroupNames;
-
-    public function getRoomID(): Room;
-
     public function getSensorNameID(): Sensors;
 
     public function getDeviceNameID(): Devices;
 
-    public function setGroupNameID(GroupNames $id);
-
-    public function setRoomID(Room $id);
-
     public function setSensorNameID(Sensors $id);
+
+    public function setDeviceNameID(Devices $id);
 
     /**
      * Sensor Reading Methods
      */
-    public function getCurrentSensorReading(): ?float;
+    public function getCurrentSensorReading(): int|float;
 
-    public function getHighReading(): ?float;
+    public function getHighReading(): int|float;
 
-    public function getLowReading(): ?float;
+    public function getLowReading(): int|float;
 
     public function getTime(): \DateTime;
 
-    public function setCurrentSensorReading(?float $reading): void;
+    public function setCurrentSensorReading(int|float $reading): void;
 
-    public function setHighReading(?float $reading): void;
+    public function setHighReading(int|float $reading): void;
 
-    public function setLowReading(?float $reading): void;
+    public function setLowReading(int|float $reading): void;
 
     public function setTime(\DateTime $dateTime): void;
 
     /**
      * Sensor Functional Methods
      */
-    public function getConstRecord(): ?bool;
+    public function getConstRecord(): bool;
 
-    public function setConstRecord(?bool $constrecord);
+    public function setConstRecord(bool $constrecord);
 
+    public function getMeasurementDifferenceHighReading(): int|float;
 
+    public function getMeasurementDifferenceLowReading(): int|float;
 
 
 }

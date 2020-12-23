@@ -5,11 +5,11 @@ namespace App\Services;
 
 
 use App\Entity\Core\Sensors;
-use App\HomeAppCore\HomeAppCoreAbstract;
+use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
 
-class SensorService extends HomeAppCoreAbstract
+class SensorService extends HomeAppSensorServiceCoreAbstract
 {
     /**
      * @var array
@@ -71,7 +71,7 @@ class SensorService extends HomeAppCoreAbstract
             $this->errors[] = 'You already have a sensor named '. $sensorData['sensorname'];
         }
 
-        if (!in_array($sensorData['groupnameid'], $this->getGroupNameIDs())) {
+        if (!in_array($sensorData['groupnameid'], $this->getGroupNameDetails())) {
             $this->errors[] = 'You are not part of this group';
         }
     }

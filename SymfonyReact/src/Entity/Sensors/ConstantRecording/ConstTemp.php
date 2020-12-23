@@ -98,7 +98,7 @@ class ConstTemp
     /**
      * @return Sensors
      */
-    public function getSensorID(): Temp
+    public function getSensorID(): Temperature
     {
         return $this->sensorID;
     }

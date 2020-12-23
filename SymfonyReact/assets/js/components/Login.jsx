@@ -57,7 +57,8 @@ function Login(props) {
             else {
                 setLoading(false);
             }
-        } else {
+        } 
+        else {
             setError(loginResponse.data.errors);
             setLoading(false);
         }

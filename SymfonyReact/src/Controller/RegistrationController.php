@@ -6,6 +6,7 @@ use App\Entity\Core\GroupMapping;
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\User;
 use App\Form\RegistrationFormType;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,11 +58,7 @@ class RegistrationController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->persist($groupNameMapping);
                 $entityManager->flush();
-            } catch (\PDOException $e) {
-                error_log($e->getMessage());
-            }  catch (ORMException $e) {
-                error_log($e->getMessage());
-            } catch (\Exception $e) {
+            } catch (\PDOException | \Exception $e) {
                 error_log($e->getMessage());
             }
 

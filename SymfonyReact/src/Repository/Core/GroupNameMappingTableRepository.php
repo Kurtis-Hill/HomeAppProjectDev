@@ -14,7 +14,7 @@ class GroupNameMappingTableRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('gmt');
 
-        $qb->select('gn.groupNameID')
+        $qb->select('gn.groupNameID, gn.groupName')
             ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
             ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userID')
             ->where(
@@ -26,21 +26,13 @@ class GroupNameMappingTableRepository extends EntityRepository
 
         if (!$result) throw new \Exception('Get User Groups Has Failed');
 
-        return array_map('current', $result);
+        $groupData = [];
+
+        foreach ($result as $userGroupData) {
+            $groupData[$userGroupData['groupNameID']] = $userGroupData['groupName'];
+        }
+
+        return $groupData;
     }
 
-    public function getUserGroupNamesAndIDs($userID): array
-    {
-        $qb = $this->createQueryBuilder('gmt');
-        $qb->select('gn.groupName', 'gn.groupNameID')
-            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
-            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userUD')
-            ->where(
-                $qb->expr()->eq('gmt.userID', ':userID')
-            )
-            ->setParameter('userID', $userID);
-//dd($qb->getQuery()->getArrayResult());
-        return $qb->getQuery()->getArrayResult();
-
-    }
 }

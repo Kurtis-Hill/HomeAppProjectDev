@@ -8,6 +8,7 @@ use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Temp
@@ -31,21 +32,21 @@ class Temperature implements StandardSensorInterface
      *
      * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
      */
-    private ?float $tempReading;
+    private float $tempReading;
 
     /**
      * @var float
      *
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
-    private ?float $highTemp;
+    private float $highTemp;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private ?float $lowTemp;
+    private float $lowTemp;
 
     /**
      * @var bool
@@ -72,16 +73,6 @@ class Temperature implements StandardSensorInterface
     private Devices $deviceNameID;
 
     /**
-     * @var GroupNames
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
-    private GroupNames $groupNameID;
-
-    /**
      * @var Sensors
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
@@ -92,16 +83,6 @@ class Temperature implements StandardSensorInterface
     private Sensors $sensorNameID;
 
     /**
-     * @var Room
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core0\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
-    private Room $roomID;
-
-    /**
      * @return int
      */
     public function getSensorID(): int
@@ -110,31 +91,11 @@ class Temperature implements StandardSensorInterface
     }
 
     /**
-     * @param int $analogid
+     * @param int $tempID
      */
-    public function setSensorID(int $analogid): void
+    public function setSensorID(int $tempID): void
     {
-        $this->analogid = $analogid;
-    }
-
-    /**
-     * Sensor relational Objects
-     */
-
-    /**
-     * @return GroupNames
-     */
-    public function getGroupNameID(): GroupNames
-    {
-        return $this->groupNameID;
-    }
-
-    /**
-     * @return Room
-     */
-    public function getRoomID(): Room
-    {
-        return $this->roomID;
+        $this->tempID = $tempID;
     }
 
     /**
@@ -151,22 +112,6 @@ class Temperature implements StandardSensorInterface
     public function getDeviceNameID(): Devices
     {
         return $this->deviceNameID;
-    }
-
-    /**
-     * @param GroupNames $groupNameID
-     */
-    public function setGroupNameID(GroupNames $groupNameID): void
-    {
-        $this->groupNameID = $groupNameID;
-    }
-
-    /**
-     * @param Room $roomID
-     */
-    public function setRoomID(Room $roomID): void
-    {
-        $this->roomID = $roomID;
     }
 
     /**
@@ -193,7 +138,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getCurrentSensorReading(): ?float
+    public function getCurrentSensorReading(): int|float
     {
         return $this->tempReading;
     }
@@ -201,7 +146,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getHighReading(): ?float
+    public function getHighReading(): int|float
     {
         return $this->highTemp;
     }
@@ -209,7 +154,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return float|null
      */
-    public function getLowReading(): ?float
+    public function getLowReading(): int|float
     {
         return $this->lowTemp;
     }
@@ -223,25 +168,25 @@ class Temperature implements StandardSensorInterface
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setCurrentSensorReading(?float $reading): void
+    public function setCurrentSensorReading(int|float $reading): void
     {
         $this->tempReading = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setHighReading(?float $reading): void
+    public function setHighReading(int|float $reading): void
     {
         $this->highTemp = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param int|float $reading
      */
-    public function setLowReading(?float $reading): void
+    public function setLowReading(int|float $reading): void
     {
         $this->lowTemp = $reading;
     }
@@ -259,18 +204,28 @@ class Temperature implements StandardSensorInterface
      */
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function getConstRecord(): ?bool
+    public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
 
     /**
-     * @param bool|null $constRecord
+     * @param bool $constRecord
      */
-    public function setConstRecord(?bool $constRecord): void
+    public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
+    }
+
+    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
+    {
+        return $this->getHighReading() - $this->getCurrentSensorReading();
+    }
+
+    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
+    {
+        return $this->getLowReading() - $this->getCurrentSensorReading();
     }
 }

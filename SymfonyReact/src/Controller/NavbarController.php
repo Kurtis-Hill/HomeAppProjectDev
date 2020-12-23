@@ -26,12 +26,12 @@ class NavbarController extends AbstractController
     {
         $navbarData = [
             'rooms' => $navbarService->getUsersRooms(),
-            'devices' => $navbarService->getUserDevices(),
-            'groupNames' => $navbarService->getUsersGroupNames()
+            'devices' => $navbarService->getUsersDevices(),
+            'groupNames' => $navbarService->getGroupNameDetails()
         ];
 
         $errors = $navbarService->getErrors();
-//dd($navbarData);
+
         if (!empty($errors)) {
             return $this->sendInternelServerErrorResponse($errors);
         }

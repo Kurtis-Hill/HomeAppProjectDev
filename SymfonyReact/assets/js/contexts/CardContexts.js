@@ -85,6 +85,7 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
+            console.log('res', response);
             const cardData = response.data.responseData.length > 1 
             ? response.data.responseData
             : [];

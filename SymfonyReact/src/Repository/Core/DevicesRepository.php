@@ -19,12 +19,12 @@ class DevicesRepository extends EntityRepository
     public function getAllUsersDevices($groupNameID): array
     {
         $qb = $this->createQueryBuilder('dv');
-        $qb->select('dv.devicenameid', 'dv.devicename', 'gn.groupnameid', 'r.roomid')
-            ->leftJoin('App\Entity\Core\Room', 'r', Join::WITH, 'dv.roomid = r.roomid')
-            ->leftJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'dv.groupnameid = gn.groupnameid'
+        $qb->select('dv.deviceNameID', 'dv.deviceName', 'gn.groupNameID', 'r.roomID')
+            ->leftJoin('App\Entity\Core\Room', 'r', Join::WITH, 'dv.roomID = r.roomID')
+            ->leftJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'dv.groupNameID = gn.groupNameID'
             );
         $qb->where(
-            $qb->expr()->in('dv.groupnameid', ':groupNameID')
+            $qb->expr()->in('dv.groupNameID', ':groupNameID')
         )
         ->setParameters(['groupNameID' => $groupNameID]);
 

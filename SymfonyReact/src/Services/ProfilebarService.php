@@ -4,9 +4,9 @@
 namespace App\Services;
 
 
-use App\HomeAppCore\HomeAppCoreAbstract;
+use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
 
-class ProfilebarService extends HomeAppCoreAbstract
+class ProfilebarService extends HomeAppSensorServiceCoreAbstract
 {
     public function getProfilePic()
     {

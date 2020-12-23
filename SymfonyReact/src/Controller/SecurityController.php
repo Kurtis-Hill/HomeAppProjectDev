@@ -53,14 +53,17 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/HomeApp/api/ssl", name="ssl")
+     * @Route("/HomeApp/ssl", name="ssl")
      */
     public function showSSLConfig()
     {
         $ssl = $this->getDoctrine()->getRepository(User::class)->showSSL();
 
-        foreach ($ssl as $key => $value) {
-            echo 'ssl key ='.$key. 'key location'. $value. '<br/>';
+        foreach ($ssl as $value) {
+            foreach ($value as $key => $sslConfig) {
+
+                echo $key. $sslConfig. '<br/>';
+            }
         }
 
         echo \PDO::MYSQL_ATTR_SSL_KEY;
@@ -93,4 +96,14 @@ class SecurityController extends AbstractController
 
         return new Response(print_r($driver));
     }
+
+    /**
+     * FOR DEVELOPMENT ONLY
+     * @Route("/HomeApp/JIT", name="JIT")
+     */
+    public function checkJITDriver()
+    {
+        dd(\opcache_get_status()['jit']);
+    }
+
 }

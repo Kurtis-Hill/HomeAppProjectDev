@@ -6,13 +6,13 @@ namespace App\Services\Devices;
 
 use App\Entity\Core\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\HomeAppCore\HomeAppCoreAbstract;
+use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class DeviceService extends HomeAppCoreAbstract
+class DeviceService extends HomeAppSensorServiceCoreAbstract
 {
     /**
      * @var array
@@ -39,7 +39,7 @@ class DeviceService extends HomeAppCoreAbstract
             $this->errors[] = 'Your group already has a device named'. $deviceData['devicename'];
         }
 
-        if (!in_array($deviceData['groupnameid'], $this->getGroupNameIDs())) {
+        if (!in_array($deviceData['groupnameid'], $this->getGroupNameDetails())) {
             $this->errors[] = 'You are not part of this group';
         }
     }

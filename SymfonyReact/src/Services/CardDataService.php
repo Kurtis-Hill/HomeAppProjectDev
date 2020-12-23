@@ -5,13 +5,13 @@ namespace App\Services;
 
 use App\DTOs\Sensors\CardDataDTO;
 use App\Entity\Card\CardView;
-use App\HomeAppCore\HomeAppCoreAbstract;
+use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
 
 
 /**
  * Class CardDataService.
  */
-class CardDataService extends HomeAppCoreAbstract
+class CardDataService extends HomeAppSensorServiceCoreAbstract
 {
     public function prepareAllIndexCardsDTO()
     {

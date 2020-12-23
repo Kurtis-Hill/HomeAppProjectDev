@@ -4,24 +4,17 @@
 namespace App\HomeAppCore;
 
 use App\Entity\Core\GroupnNameMapping;
+use App\Entity\Core\Room;
+use App\Entity\Sensors\Devices;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Security;
 
-abstract class HomeAppCoreAbstract
+abstract class HomeAppSensorServiceCoreAbstract
 {
-    /**
-     * @var Security
-     */
-    private Security $user;
-
-    /**
-     * @var EntityManager|EntityManagerInterface
-     */
-    protected EntityManager|EntityManagerInterface $em;
-
     /**
      * @var int
      */
@@ -35,12 +28,33 @@ abstract class HomeAppCoreAbstract
     /**
      * @var array
      */
-    private array $groupNameIDs = [];
+    private array $groupNameDetails = [];
 
     /**
      * @var array
      */
     protected array $userErrors = [];
+
+    /**
+     * @var array
+     */
+    private array $usersRooms = [];
+
+    /**
+     * @var array
+     */
+    private array $devices = [];
+
+    /**
+     * @var Security
+     */
+    private Security $user;
+
+    /**
+     * @var EntityManager|EntityManagerInterface
+     */
+    protected EntityManager|EntityManagerInterface $em;
+
 
     /**
      * HomeAppRoomAbstract constructor.
@@ -59,6 +73,7 @@ abstract class HomeAppCoreAbstract
             $this->userErrors[] = $e->getMessage();
         }
     }
+
 
     /**
      * @param FormInterface $form
@@ -84,9 +99,14 @@ abstract class HomeAppCoreAbstract
         return $form;
     }
 
-    public function getGroupNameIDs()
+    #[Pure] public function getGroupNameIDs()
     {
-        return $this->groupNameIDs;
+        return array_keys($this->groupNameDetails);
+    }
+
+    public function getGroupNameDetails()
+    {
+        return $this->groupNameDetails;
     }
 
     public function getUserID()
@@ -99,7 +119,23 @@ abstract class HomeAppCoreAbstract
         return $this->roles;
     }
 
-    public function getUserErrors()
+    /**
+     * @return array
+     */
+    public function getUsersRooms(): array
+    {
+        return $this->usersRooms;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUsersDevices(): array
+    {
+        return $this->devices;
+    }
+
+    public function getUserErrors(): array
     {
         return $this->userErrors;
     }
@@ -110,11 +146,13 @@ abstract class HomeAppCoreAbstract
     private function setUserVariables()
     {
         $this->userID = $this->user->getUser()->getUserID();
-        $this->groupNameIDs = $this->groupNameIDs = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
+        $this->groupNameDetails = $this->groupNameDetails = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
         $this->roles = $this->user->getUser()->getRoles();
+        $this->devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
+        $this->usersRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
 
 
-        if (!$this->groupNameIDs || !$this->userID || empty($this->roles)) {
+        if (!$this->groupNameDetails || !$this->userID || empty($this->roles || $this->devices || $this->userRooms)) {
             throw new \Exception('The User Variables Cannot be set Please try again');
         }
     }

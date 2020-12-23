@@ -14,10 +14,10 @@ use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
-use App\HomeAppCore\HomeAppCoreAbstract;
+use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
 use Symfony\Component\HttpFoundation\Request;
 
-class SensorDataService extends HomeAppCoreAbstract
+class SensorDataService extends HomeAppSensorServiceCoreAbstract
 {
     /**
      * @param Request $request

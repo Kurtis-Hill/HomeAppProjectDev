@@ -5,6 +5,7 @@ namespace App\Entity\Sensors;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
+use App\Entity\Core\User;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -40,9 +41,11 @@ class Devices
     private string $deviceSecret;
 
     /**
-     * @var int
+     * @var User
      *
-     * @ORM\Column(name="createdBy", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      */
     private int $createdBy;
 
