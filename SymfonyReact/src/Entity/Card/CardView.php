@@ -67,16 +67,6 @@ class CardView
     private Icons $cardIconID;
 
     /**
-     * @var Room
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
-    private Room $roomID;
-
-    /**
      * @var CardColour
      *
      * @ORM\ManyToOne(targetEntity="CardColour")
@@ -164,22 +154,6 @@ class CardView
     public function setCardIconID(Icons $cardIconID): void
     {
         $this->cardIconID = $cardIconID;
-    }
-
-    /**
-     * @return Room
-     */
-    public function getRoomID(): Room
-    {
-        return $this->roomID;
-    }
-
-    /**
-     * @param Room $roomID
-     */
-    public function setRoomID(Room $roomID): void
-    {
-        $this->roomID = $roomID;
     }
 
     /**
