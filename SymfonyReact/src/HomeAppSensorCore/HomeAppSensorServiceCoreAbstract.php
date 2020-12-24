@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\HomeAppCore;
+namespace App\HomeAppSensorCore;
 
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;

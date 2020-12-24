@@ -7,16 +7,11 @@ use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
-use App\HomeAppCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 
 class CardDataDTO
 {
-    /**
-     * @var array
-     */
-    private array $sensorData = [];
-
     /**
      * @var string
      */
@@ -47,37 +42,42 @@ class CardDataDTO
      */
     private int $cardViewID;
 
+    /**
+     * @var array
+     */
+    private array $sensorData = [];
+
 
     /**
      * CardDataDTO constructor
-     * @param StandardSensorTypeInterface $sensorData
+     * @param StandardSensorTypeInterface $cardDTO
      */
-    public function __construct(StandardSensorTypeInterface $sensorData)
+    public function __construct(StandardSensorTypeInterface $cardDTO)
     {
-        if ($sensorData instanceof Dht || $sensorData instanceof Bmp || $sensorData instanceof Dallas) {
-            $this->setSensorData($sensorData->getTempObject(), 'Temperature');
+        if ($cardDTO instanceof Dht || $cardDTO instanceof Bmp || $cardDTO instanceof Dallas) {
+            $this->setSensorData($cardDTO->getTempObject(), 'Temperature');
         }
-        if ($sensorData instanceof Dht || $sensorData instanceof Bmp) {
-            $this->setSensorData($sensorData->getHumidObject(), 'Humidity');
+        if ($cardDTO instanceof Dht || $cardDTO instanceof Bmp) {
+            $this->setSensorData($cardDTO->getHumidObject(), 'Humidity');
         }
-        if ($sensorData instanceof Bmp) {
-            $this->setSensorData($sensorData->getLatitudeObject(), 'Soil');
+        if ($cardDTO instanceof Bmp) {
+            $this->setSensorData($cardDTO->getLatitudeObject(), 'Soil');
         }
-        if ($sensorData instanceof Soil) {
-            $this->setSensorData($sensorData->getAnalogObject(), 'Analog');
+        if ($cardDTO instanceof Soil) {
+            $this->setSensorData($cardDTO->getAnalogObject(), 'Analog');
         }
 
-        $this->setCardViewID($sensorData->getCardViewObject()->getCardViewID());
+        $this->setCardViewID($cardDTO->getCardViewObject()->getCardViewID());
 
-        $this->setSensorName($sensorData->getCardViewObject()->getSensorObject()->getSensorName());
+        $this->setSensorName($cardDTO->getCardViewObject()->getSensorObject()->getSensorName());
 
-        $this->setCardIcon($sensorData->getCardViewObject()->getCardIconObject()->getIconName());
+        $this->setCardIcon($cardDTO->getCardViewObject()->getCardIconObject()->getIconName());
 
-        $this->setSensorType($sensorData->getCardViewObject()->getSensorObject()->getSensorTypeID()->getSensorType());
+        $this->setSensorType($cardDTO->getCardViewObject()->getSensorObject()->getSensorTypeID()->getSensorType());
 
-        $this->setSensorRoom($sensorData->getCardViewObject()->getSensorObject()->getDeviceNameID()->getRoomID()->getRoom());
+        $this->setSensorRoom($cardDTO->getCardViewObject()->getSensorObject()->getDeviceNameID()->getRoomID()->getRoom());
 
-        $this->setCardColour($sensorData->getCardViewObject()->getCardColourObject()->getColour());
+        $this->setCardColour($cardDTO->getCardViewObject()->getCardColourObject()->getColour());
     }
 
     /**

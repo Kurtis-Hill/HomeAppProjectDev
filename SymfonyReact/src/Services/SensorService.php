@@ -5,7 +5,7 @@ namespace App\Services;
 
 
 use App\Entity\Core\Sensors;
-use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
 

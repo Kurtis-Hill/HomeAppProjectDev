@@ -1,18 +1,11 @@
 <?php
 
-/*
- * This file is part of PHP CS Fixer.
- * (c) Fabien Potencier <fabien@symfony.com>
- *     Dariusz Rumiński <dariusz.ruminski@gmail.com>
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
 
 namespace App\Controller\CardData;
 
 use App\Entity\Card\Cardview;
 use App\Form\CardViewForms\CardViewForm;
-use App\HomeAppCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Services\SensorDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -20,8 +13,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+
 
 /**
  * Class CardDataController.
@@ -37,10 +34,9 @@ class CardDataController extends AbstractController
      * @Route("/index-view", name="indexCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
-     * @param Serializer $serializer
-     * @return JsonResponse
+     * @return Response|JsonResponse
      */
-    public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
+    public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): Response|JsonResponse
     {
 
         $cardData = $cardDataService->prepareAllIndexCardDTOs();
@@ -48,12 +44,21 @@ class CardDataController extends AbstractController
         if (empty($cardData)) {
             return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
-//        dd($serializer->serialize($cardData, 'json'));
-        return $this->sendSuccessfulResponse($cardData);
+
+        $encoders = [new JsonEncoder()];
+        $normaliser = [new ObjectNormalizer()];
+
+        $serializer = new Serializer($normaliser, $encoders);
+        return $this->sendSuccessfulResponse($serializer->serialize($cardData, 'json'));
+        //dd($cardData);
+        return $this->sendSuccessfulJsonResponse($cardData);
     }
 
     /**
      * @Route("/device-view", name="deviceCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
      */
     public function returnAllDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
@@ -73,11 +78,14 @@ class CardDataController extends AbstractController
             return $this->sendInternelServerErrorResponse();
         }
 
-        return $this->sendSuccessfulResponse($cardData);
+        return $this->sendSuccessfulJsonResponse($cardData);
     }
 
     /**
      * @Route("/room-view", name="roomCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @return JsonResponse
      */
     public function returnAllRoomDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
@@ -97,7 +105,7 @@ class CardDataController extends AbstractController
             return $this->sendInternelServerErrorResponse();
         }
 
-        return $this->sendSuccessfulResponse($cardData);
+        return $this->sendSuccessfulJsonResponse($cardData);
     }
 
     /**
@@ -115,7 +123,7 @@ class CardDataController extends AbstractController
 
         $formData = $sensorDataService->getFormData($cardSensorData);
 
-        return $this->sendSuccessfulResponse($formData);
+        return $this->sendSuccessfulJsonResponse($formData);
     }
 
     /**
@@ -185,6 +193,6 @@ class CardDataController extends AbstractController
         }
         $this->getDoctrine()->getManager()->flush();
 
-        return $this->sendSuccessfulResponse();
+        return $this->sendSuccessfulJsonResponse();
     }
 }

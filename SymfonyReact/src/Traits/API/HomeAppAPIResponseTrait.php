@@ -5,6 +5,7 @@ namespace App\Traits\API;
 
 use App\API\HTTPStatusCodes;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 trait HomeAppAPIResponseTrait
 {
@@ -13,7 +14,7 @@ trait HomeAppAPIResponseTrait
      * @param $data
      * @return JsonResponse
      */
-    public function sendSuccessfulResponse(array $data = []): JsonResponse
+    public function sendSuccessfulJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {
             return new JsonResponse(
@@ -25,6 +26,24 @@ trait HomeAppAPIResponseTrait
         }
         else {
             return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
+        }
+    }
+
+    // 20x Successfull
+    /**
+     * @param $data
+     * @return JsonResponse
+     */
+    public function sendSuccessfulResponse(string $data): Response
+    {
+        if (!empty($data)) {
+            return new Response(
+                    $data,
+                HTTPStatusCodes::HTTP_OK
+            );
+        }
+        else {
+            return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
         }
     }
 

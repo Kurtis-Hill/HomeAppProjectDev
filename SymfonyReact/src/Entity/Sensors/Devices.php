@@ -45,7 +45,7 @@ class Devices
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
+     *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
      * })
      */
     private User $createdBy;

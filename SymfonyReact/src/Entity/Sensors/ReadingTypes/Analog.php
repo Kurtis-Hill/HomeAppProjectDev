@@ -6,14 +6,14 @@ use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
-use App\HomeAppCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
 /**
  * Analog
  *
- * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="roomID", columns={"roomID"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="analog_ibfk_6", columns={"deviceNameID"})})
+ * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_6", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
  */
 class Analog implements StandardSensorInterface

@@ -6,7 +6,7 @@ namespace App\Services\Devices;
 
 use App\Entity\Core\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;

@@ -52,7 +52,7 @@ class CardviewRepository extends EntityRepository
                 'cardviewTwo' => $cardViewTwo
             ]
         );
-dd( array_filter($qb->getQuery()->getResult()));
+//dd( array_filter($qb->getQuery()->getResult()));
         return array_filter($qb->getQuery()->getResult());
     }
 

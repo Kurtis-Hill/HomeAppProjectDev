@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\DTOs\Sensors\CardDataDTO;
 use App\Entity\Card\CardView;
-use App\HomeAppCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
 
 
 /**
@@ -19,10 +19,10 @@ class CardDataService extends HomeAppSensorServiceCoreAbstract
 
         $cardDTOs = [];
 
-        foreach ($sensorObjects as $sensorData) {
-            $cardDTOs[] = new CardDataDTO($sensorData);
+        foreach ($sensorObjects as $cardDTO) {
+            $cardDTOs[] = new CardDataDTO($cardDTO);
         }
-dd($cardDTOs);
+//dd($cardDTOs);
         return $cardDTOs;
     }
 

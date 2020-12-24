@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\HomeAppCore\Interfaces\SensorTypes;
+namespace App\HomeAppSensorCore\Interfaces\SensorTypes;
 
 
 use App\Entity\Card\CardView;

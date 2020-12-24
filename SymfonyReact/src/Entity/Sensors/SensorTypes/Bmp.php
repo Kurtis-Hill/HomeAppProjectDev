@@ -6,6 +6,7 @@ use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="bmp", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="latitudeID", columns={"latitudeID"})})
  * @ORM\Entity
  */
-class Bmp
+class Bmp implements StandardSensorTypeInterface
 {
     /**
      * @var int
@@ -68,7 +69,7 @@ class Bmp
     /**
      * @return int
      */
-    public function getBmpID(): int
+    public function getSensorTypeID(): int
     {
         return $this->bmpID;
     }
@@ -76,7 +77,7 @@ class Bmp
     /**
      * @param int $bmpID
      */
-    public function setBmpID(int $bmpID): void
+    public function setSensorTypeID(int $bmpID): void
     {
         $this->bmpID = $bmpID;
     }
@@ -144,6 +145,5 @@ class Bmp
     {
         $this->latitudeID = $latitudeID;
     }
-
 
 }

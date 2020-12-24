@@ -6,7 +6,7 @@ use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
-use App\HomeAppCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -140,7 +140,7 @@ class Temperature implements StandardSensorInterface
      */
     public function getCurrentSensorReading(): int|float
     {
-        return $this->tempReading;
+        return round($this->tempReading, 2);
     }
 
     /**

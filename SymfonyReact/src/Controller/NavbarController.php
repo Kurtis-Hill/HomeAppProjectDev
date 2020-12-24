@@ -36,7 +36,7 @@ class NavbarController extends AbstractController
             return $this->sendInternelServerErrorResponse($errors);
         }
 
-        return $this->sendSuccessfulResponse($navbarData);
+        return $this->sendSuccessfulJsonResponse($navbarData);
     }
 
 }

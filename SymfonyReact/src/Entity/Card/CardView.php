@@ -2,18 +2,14 @@
 
 namespace App\Entity\Card;
 
-
-use App\Entity\Core\Room;
 use App\Entity\Core\User;
-
-
 use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Cardview
  *
- * @ORM\Table(name="cardview", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="cardColour", columns={"cardColourID"}), @ORM\Index(name="cardState", columns={"cardStateID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="cardIcon", columns={"cardIconID"}), @ORM\Index(name="UserID", columns={"userID"}), @ORM\Index(name="cardview_show", columns={"cardViewID"})})
+ * @ORM\Table(name="cardview", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="cardColour", columns={"cardColourID"}), @ORM\Index(name="cardState", columns={"cardStateID"}), @ORM\Index(name="cardIcon", columns={"cardIconID"}), @ORM\Index(name="UserID", columns={"userID"}), @ORM\Index(name="cardview_show", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Card\CardviewRepository")
  */
 class CardView
