@@ -21,6 +21,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class CardDataController.
@@ -34,6 +35,10 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/index-view", name="indexCardData")
+     * @param Request $request
+     * @param CardDataService $cardDataService
+     * @param Serializer $serializer
+     * @return JsonResponse
      */
     public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): JsonResponse
     {
@@ -43,7 +48,7 @@ class CardDataController extends AbstractController
         if (empty($cardData)) {
             return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
         }
-        dd($cardData);
+//        dd($serializer->serialize($cardData, 'json'));
         return $this->sendSuccessfulResponse($cardData);
     }
 

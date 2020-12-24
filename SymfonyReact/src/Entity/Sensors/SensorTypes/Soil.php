@@ -4,6 +4,7 @@ namespace App\Entity\Sensors\SensorTypes;
 
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Analog;
+use App\HomeAppCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity
  */
-class Soil
+class Soil implements StandardSensorTypeInterface
 {
     /**
      * @var int
@@ -46,7 +47,7 @@ class Soil
     /**
      * @return int
      */
-    public function getSoilID(): int
+    public function getSensorTypeID(): int
     {
         return $this->soilID;
     }
@@ -54,7 +55,7 @@ class Soil
     /**
      * @param int $soilID
      */
-    public function setSoilID(int $soilID): void
+    public function setSensorTypeID(int $soilID): void
     {
         $this->soilID = $soilID;
     }
@@ -62,7 +63,7 @@ class Soil
     /**
      * @return Analog
      */
-    public function getAnalogID(): Analog
+    public function getAnalogObject(): Analog
     {
         return $this->analogID;
     }
@@ -70,7 +71,7 @@ class Soil
     /**
      * @param Analog $analogID
      */
-    public function setAnalogID(Analog $analogID): void
+    public function setAnalogObject(Analog $analogID): void
     {
         $this->analogID = $analogID;
     }
@@ -78,7 +79,7 @@ class Soil
     /**
      * @return Cardview
      */
-    public function getCardViewID(): Cardview
+    public function getCardViewObject(): Cardview
     {
         return $this->cardViewID;
     }
@@ -86,7 +87,7 @@ class Soil
     /**
      * @param Cardview $cardViewID
      */
-    public function setCardViewID(Cardview $cardViewID): void
+    public function setCardViewObject(Cardview $cardViewID): void
     {
         $this->cardViewID = $cardViewID;
     }

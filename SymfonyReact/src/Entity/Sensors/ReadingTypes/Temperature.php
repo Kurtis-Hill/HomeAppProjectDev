@@ -101,7 +101,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return Sensors
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorObject(): Sensors
     {
         return $this->sensorNameID;
     }
@@ -109,7 +109,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return Devices
      */
-    public function getDeviceNameID(): Devices
+    public function getDeviceObject(): Devices
     {
         return $this->deviceNameID;
     }
@@ -212,11 +212,11 @@ class Temperature implements StandardSensorInterface
     }
 
     /**
-     * @param bool $constRecord
+     * @param bool $constrecord
      */
-    public function setConstRecord(bool $constRecord): void
+    public function setConstRecord(bool $constrecord): void
     {
-        $this->constRecord = $constRecord;
+        $this->constRecord = $constrecord;
     }
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float

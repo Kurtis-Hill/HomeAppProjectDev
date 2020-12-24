@@ -28,7 +28,7 @@ class Bmp
     /**
      * @var CardView
      *
-     * @ORM\ManyToOne(targetEntity="Cardview")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardview")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
      * })
@@ -38,7 +38,7 @@ class Bmp
     /**
      * @var Temperature
      *
-     * @ORM\ManyToOne(targetEntity="Temp")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
@@ -48,7 +48,7 @@ class Bmp
     /**
      * @var Humidity
      *
-     * @ORM\ManyToOne(targetEntity="Humid")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
      * })
@@ -58,7 +58,7 @@ class Bmp
     /**
      * @var Latitude
      *
-     * @ORM\ManyToOne(targetEntity="Latitude")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Latitude")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="latitudeID", referencedColumnName="latitudeID")
      * })
@@ -84,7 +84,7 @@ class Bmp
     /**
      * @return CardView
      */
-    public function getCardViewID(): CardView
+    public function getCardViewObject(): CardView
     {
         return $this->cardViewID;
     }
@@ -92,7 +92,7 @@ class Bmp
     /**
      * @param CardView $cardViewID
      */
-    public function setCardViewID(CardView $cardViewID): void
+    public function setCardViewObject(CardView $cardViewID): void
     {
         $this->cardViewID = $cardViewID;
     }
@@ -100,7 +100,7 @@ class Bmp
     /**
      * @return Temperature
      */
-    public function getTempID(): Temperature
+    public function getTempObject(): Temperature
     {
         return $this->tempID;
     }
@@ -108,7 +108,7 @@ class Bmp
     /**
      * @param Temperature $tempID
      */
-    public function setTempID(Temperature $tempID): void
+    public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }
@@ -116,7 +116,7 @@ class Bmp
     /**
      * @return Humidity
      */
-    public function getHumidID(): Humidity
+    public function getHumidObject(): Humidity
     {
         return $this->humidID;
     }
@@ -124,7 +124,7 @@ class Bmp
     /**
      * @param Humidity $humidID
      */
-    public function setHumidID(Humidity $humidID): void
+    public function setHumidObject(Humidity $humidID): void
     {
         $this->humidID = $humidID;
     }
@@ -132,7 +132,7 @@ class Bmp
     /**
      * @return Latitude
      */
-    public function getLatitudeID(): Latitude
+    public function getLatitudeObject(): Latitude
     {
         return $this->latitudeID;
     }
@@ -140,7 +140,7 @@ class Bmp
     /**
      * @param Latitude $latitudeID
      */
-    public function setLatitudeID(Latitude $latitudeID): void
+    public function setLatitudeObject(Latitude $latitudeID): void
     {
         $this->latitudeID = $latitudeID;
     }

@@ -17,9 +17,9 @@ interface StandardSensorInterface
     /**
      * Sensor relational Objects
      */
-    public function getSensorNameID(): Sensors;
+    public function getSensorObject(): Sensors;
 
-    public function getDeviceNameID(): Devices;
+    public function getDeviceObject(): Devices;
 
     public function setSensorNameID(Sensors $id);
 

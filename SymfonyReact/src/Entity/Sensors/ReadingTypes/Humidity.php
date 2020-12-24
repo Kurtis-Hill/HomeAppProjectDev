@@ -65,7 +65,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
@@ -75,7 +75,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="Devices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Devices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })
@@ -103,7 +103,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @return Sensors
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorObject(): Sensors
     {
         return $this->sensorNameID;
     }
@@ -111,7 +111,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @return Devices
      */
-    public function getDeviceNameID(): Devices
+    public function getDeviceObject(): Devices
     {
         return $this->deviceNameID;
     }
@@ -211,11 +211,11 @@ class Humidity implements StandardSensorInterface
     }
 
     /**
-     * @param bool $constRecord
+     * @param bool $constrecord
      */
-    public function setConstRecord(bool $constRecord): void
+    public function setConstRecord(bool $constrecord): void
     {
-        $this->constRecord = $constRecord;
+        $this->constRecord = $constrecord;
     }
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float

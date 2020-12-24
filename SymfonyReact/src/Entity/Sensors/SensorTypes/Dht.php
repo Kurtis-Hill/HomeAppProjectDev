@@ -5,15 +5,16 @@ namespace App\Entity\Sensors\SensorTypes;
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\HomeAppCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Dhtsensor
+ * Dht
  *
  * @ORM\Table(name="dhtsensor", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="cardviewID", columns={"cardviewID"})})
  * @ORM\Entity
  */
-class Dhtsensor
+class Dht implements StandardSensorTypeInterface
 {
     /**
      * @var int
@@ -57,7 +58,7 @@ class Dhtsensor
     /**
      * @return int
      */
-    public function getDhtID(): int
+    public function getSensorTypeID(): int
     {
         return $this->dhtID;
     }
@@ -65,7 +66,7 @@ class Dhtsensor
     /**
      * @param int $dhtID
      */
-    public function setDhtID(int $dhtID): void
+    public function setSensorTypeID(int $dhtID): void
     {
         $this->dhtID = $dhtID;
     }
@@ -73,7 +74,7 @@ class Dhtsensor
     /**
      * @return int
      */
-    public function getTemp(): Temperature
+    public function getTempObject(): Temperature
     {
         return $this->tempID;
     }
@@ -81,7 +82,7 @@ class Dhtsensor
     /**
      * @param Temperature $tempID
      */
-    public function setTemp(Temperature $tempID): void
+    public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }
@@ -89,7 +90,7 @@ class Dhtsensor
     /**
      * @return CardView
      */
-    public function getCardViewID(): Cardview
+    public function getCardViewObject(): Cardview
     {
         return $this->cardViewID;
     }
@@ -97,7 +98,7 @@ class Dhtsensor
     /**
      * @param Cardview $cardViewID
      */
-    public function setCardViewID(Cardview $cardViewID): void
+    public function setCardViewObject(Cardview $cardViewID): void
     {
         $this->cardViewID = $cardViewID;
     }
@@ -105,7 +106,7 @@ class Dhtsensor
     /**
      * @return Humidity
      */
-    public function getHumid(): Humidity
+    public function getHumidObject(): Humidity
     {
         return $this->humidID;
     }
@@ -113,7 +114,7 @@ class Dhtsensor
     /**
      * @param Humidity $humidID
      */
-    public function setHumidID(Humidity $humidID): void
+    public function setHumidObject(Humidity $humidID): void
     {
         $this->humidID = $humidID;
     }

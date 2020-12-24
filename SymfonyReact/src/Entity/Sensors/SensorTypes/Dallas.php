@@ -4,6 +4,7 @@ namespace App\Entity\Sensors\SensorTypes;
 
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\HomeAppCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity
  */
-class Dallas
+class Dallas implements StandardSensorTypeInterface
 {
     /**
      * @var int
@@ -46,7 +47,7 @@ class Dallas
     /**
      * @return int
      */
-    public function getDallasID(): int
+    public function getSensorTypeID(): int
     {
         return $this->dallasID;
     }
@@ -54,7 +55,7 @@ class Dallas
     /**
      * @param int $dallasID
      */
-    public function setDallasID(int $dallasID): void
+    public function setSensorTypeID(int $dallasID): void
     {
         $this->dallasID = $dallasID;
     }
@@ -62,7 +63,7 @@ class Dallas
     /**
      * @return CardView
      */
-    public function getCardViewID(): CardView
+    public function getCardViewObject(): CardView
     {
         return $this->cardViewID;
     }
@@ -70,7 +71,7 @@ class Dallas
     /**
      * @param CardView $cardViewID
      */
-    public function setCardViewID(CardView $cardViewID): void
+    public function setCardViewObject(CardView $cardViewID): void
     {
         $this->cardViewID = $cardViewID;
     }
@@ -78,7 +79,7 @@ class Dallas
     /**
      * @return Temperature
      */
-    public function getTempID(): Temperature
+    public function getTempObject(): Temperature
     {
         return $this->tempID;
     }
@@ -86,7 +87,7 @@ class Dallas
     /**
      * @param Temperature $tempID
      */
-    public function setTempID(Temperature $tempID): void
+    public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }

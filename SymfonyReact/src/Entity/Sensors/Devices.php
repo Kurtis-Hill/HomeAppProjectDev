@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Devices
  *
- * @ORM\Table(name="devicenames", uniqueConstraints={@ORM\UniqueConstraint(name="deviceSecret", columns={"deviceSecret"})}, indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
+ * @ORM\Table(name="devicenames", uniqueConstraints={@ORM\UniqueConstraint(name="deviceSecret", columns={"deviceSecret"})}, indexes={@ORM\Index(name="createdBy", columns={"createdBy"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\DevicesRepository")
  */
 class Devices
@@ -46,8 +46,9 @@ class Devices
      * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
+     * })
      */
-    private int $createdBy;
+    private User $createdBy;
 
     /**
      * @var GroupNames

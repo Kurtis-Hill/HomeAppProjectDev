@@ -22,23 +22,20 @@ class CardDataService extends HomeAppSensorServiceCoreAbstract
         foreach ($sensorObjects as $sensorData) {
             $cardDTOs[] = new CardDataDTO($sensorData);
         }
-
+dd($cardDTOs);
         return $cardDTOs;
     }
 
     private function getIndexCardDataObjects()
     {
-        try {
+        //try {
             $cardRepository = $this->em->getRepository(CardView::class);
 
             return $cardRepository->getAllIndexCardObjects($this->getUserID(), $this->getGroupNameIDs());
-        }
-        catch (\PDOException | \Exception $e) {
-            error_log($e->getMessage());
-        }
-
-
-return $cardRepository->getAllIndexCardObjects($this->getUserID(), $this->getGroupNameIDs())
+//        }
+//        catch (\PDOException | \Exception $e) {
+//            error_log($e->getMessage());
+//        }
     }
 
     public function prepareAllIndexCardData(string $type): array

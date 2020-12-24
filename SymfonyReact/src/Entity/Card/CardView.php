@@ -6,6 +6,7 @@ namespace App\Entity\Card;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
 
+
 use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,7 +30,7 @@ class CardView
     /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
@@ -95,7 +96,7 @@ class CardView
     /**
      * @return Sensors
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorObject(): Sensors
     {
         return $this->sensorNameID;
     }
@@ -103,7 +104,7 @@ class CardView
     /**
      * @param Sensors $sensorNameID
      */
-    public function setSensorNameID(Sensors $sensorNameID): void
+    public function setSensorObject(Sensors $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
     }
@@ -111,7 +112,7 @@ class CardView
     /**
      * @return Cardstate
      */
-    public function getCardStateID(): Cardstate
+    public function getCardStateObject(): Cardstate
     {
         return $this->cardStateID;
     }
@@ -119,7 +120,7 @@ class CardView
     /**
      * @param Cardstate $cardStateID
      */
-    public function setCardStateID(Cardstate $cardStateID): void
+    public function setCardStateObject(Cardstate $cardStateID): void
     {
         $this->cardStateID = $cardStateID;
     }
@@ -127,7 +128,7 @@ class CardView
     /**
      * @return User
      */
-    public function getUserID(): User
+    public function getUserObject(): User
     {
         return $this->userID;
     }
@@ -135,7 +136,7 @@ class CardView
     /**
      * @param User $userID
      */
-    public function setUserID(User $userID): void
+    public function setUserObject(User $userID): void
     {
         $this->userID = $userID;
     }
@@ -143,7 +144,7 @@ class CardView
     /**
      * @return Icons
      */
-    public function getCardIconID(): Icons
+    public function getCardIconObject(): Icons
     {
         return $this->cardIconID;
     }
@@ -151,7 +152,7 @@ class CardView
     /**
      * @param Icons $cardIconID
      */
-    public function setCardIconID(Icons $cardIconID): void
+    public function setCardIconObject(Icons $cardIconID): void
     {
         $this->cardIconID = $cardIconID;
     }
@@ -159,7 +160,7 @@ class CardView
     /**
      * @return CardColour
      */
-    public function getCardColourID(): CardColour
+    public function getCardColourObject(): CardColour
     {
         return $this->cardColourID;
     }
@@ -167,7 +168,7 @@ class CardView
     /**
      * @param CardColour $cardColourID
      */
-    public function setCardColourID(CardColour $cardColourID): void
+    public function setCardColourObject(CardColour $cardColourID): void
     {
         $this->cardColourID = $cardColourID;
     }

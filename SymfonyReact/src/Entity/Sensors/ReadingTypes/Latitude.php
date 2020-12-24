@@ -8,11 +8,12 @@ use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Latitude
  *
- * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})}, indexes={@ORM\Index(name="roomID", columns={"roomID"}), @ORM\Index(name="groupNameID", columns={"groupNameID"})})
+ * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\LatitudeRepository")
  */
 class Latitude implements StandardSensorInterface
@@ -24,28 +25,28 @@ class Latitude implements StandardSensorInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private ?float $latitudeID;
+    private int $latitudeID;
 
     /**
-     * @var float
+     * @var int|float
      *
      * @ORM\Column(name="latitude", type="integer", nullable=false)
      */
-    private ?float $latitude;
+    private int|float $latitude;
 
     /**
-     * @var int
+     * @var int|float
      *
      * @ORM\Column(name="highLatitude", type="integer", nullable=false)
      */
-    private ?float $highLatitude;
+    private int|float $highLatitude;
 
     /**
-     * @var int
+     * @var int|float
      *
      * @ORM\Column(name="lowLatitude", type="integer", nullable=false)
      */
-    private ?float $lowLatitude;
+    private int|float $lowLatitude;
 
     /**
      * @var bool
@@ -57,7 +58,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="Devices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Devices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })
@@ -65,29 +66,9 @@ class Latitude implements StandardSensorInterface
     private Devices $deviceNameID;
 
     /**
-     * @var GroupNames
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
-    private GroupNames $groupNameID;
-
-    /**
-     * @var Room
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
-    private Room $roomID;
-
-    /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
@@ -124,7 +105,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return Sensors
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorObject(): Sensors
     {
         return $this->sensorNameID;
     }
@@ -132,7 +113,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return Devices
      */
-    public function getDeviceNameID(): Devices
+    public function getDeviceObject(): Devices
     {
         return $this->deviceNameID;
     }
@@ -159,25 +140,25 @@ class Latitude implements StandardSensorInterface
      */
 
     /**
-     * @return float|null
+     * @return float|int
      */
-    public function getCurrentSensorReading(): ?float
+    public function getCurrentSensorReading(): int|float
     {
         return $this->latitude;
     }
 
     /**
-     * @return float|null
+     * @return float|int
      */
-    public function getHighReading(): ?float
+    public function getHighReading(): int|float
     {
         return $this->highLatitude;
     }
 
     /**
-     * @return float|null
+     * @return float|int
      */
-    public function getLowReading(): ?float
+    public function getLowReading(): int|float
     {
         return $this->lowLatitude;
     }
@@ -191,25 +172,25 @@ class Latitude implements StandardSensorInterface
     }
 
     /**
-     * @param float|null $reading
+     * @param float|int $reading
      */
-    public function setCurrentSensorReading(?float $reading): void
+    public function setCurrentSensorReading(int|float $reading): void
     {
         $this->latitude = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param float|int $reading
      */
-    public function setHighReading(?float $reading): void
+    public function setHighReading(int|float $reading): void
     {
         $this->highLatitude = $reading;
     }
 
     /**
-     * @param float|null $reading
+     * @param float|int $reading
      */
-    public function setLowReading(?float $reading): void
+    public function setLowReading(int|float $reading): void
     {
         $this->lowLatitude = $reading;
     }
@@ -229,16 +210,26 @@ class Latitude implements StandardSensorInterface
     /**
      * @return bool|null
      */
-    public function getConstRecord(): ?bool
+    public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
 
     /**
-     * @param bool|null $constrecord
+     * @param bool $constrecord
      */
-    public function setConstRecord(?bool $constRecord): void
+    public function setConstRecord(bool $constrecord): void
     {
-        $this->constRecord = $constRecord;
+        $this->constRecord = $constrecord;
+    }
+
+    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
+    {
+        return $this->getCurrentSensorReading() - $this->getHighReading();
+    }
+
+    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
+    {
+        return $this->getCurrentSensorReading() - $this->getLowReading();
     }
 }
