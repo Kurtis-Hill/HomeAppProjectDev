@@ -48,7 +48,7 @@ const cardModal = () => {
                   <React.Fragment>   
                   {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}   
 
-                    {modalContent.sensorType === DHT || modalContent.sensorType === DallasTemp ? 
+                    {/* {modalContent.sensorType === DHT || modalContent.sensorType === DallasTemp ? 
                       <React.Fragment>
                         <label className="large font-weight-bold">{modalContent.sensorType} Temperature High Reading</label>
                         <input type="text" name="firstSensorHighReading" className="form-control" value={modalContent.sensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
@@ -61,10 +61,10 @@ const cardModal = () => {
 
                     {modalContent.sensorType === DHT ? 
                       <React.Fragment>
-                        <label className="large font-weight-bold">{modalContent.sensorType} Humidity High Reading</label>
+                        <label className="large font-weight-bold">{modalContent.sensorType} High Reading</label>
                         <input type="text" name="secondSensorHighReading" className="form-control" value={modalContent.secondSensorHighReading} onChange={(e) => {context.updateModalForm(e)}}></input>
             
-                        <label className="modal-space large font-weight-bold">{modalContent.sensorType} Humidity Low Reading</label>
+                        <label className="modal-space large font-weight-bold">{modalContent.sensorType}Low Reading</label>
                         <input type="text" name="secondSensorLowReading" className="form-control" value={modalContent.secondSensorLowReading} onChange={(e) => {context.updateModalForm(e)}}></input>
                       </React.Fragment> 
                       : null 
@@ -120,7 +120,7 @@ const cardModal = () => {
                           </select>
                         </React.Fragment>
                         : null
-                      }    
+                      }     */}
                   </React.Fragment>
                 </div>
                 <div className="modal-footer">          

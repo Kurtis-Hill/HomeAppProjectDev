@@ -35,7 +35,7 @@ class DallasTempCardModalForm extends AbstractType
                 ],
             ])
 
-            ->add('constrecord', TextType::class, [
+            ->add('constRecord', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),

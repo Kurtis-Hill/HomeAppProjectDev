@@ -4,7 +4,7 @@ namespace App\HomeAppSensorCore\Interfaces\SensorTypes;
 
 use App\Entity\Sensors\ReadingTypes\Temperature;
 
-interface TemperatureSensorType
+interface TemperatureSensorTypeInterface
 {
     public function getTempObject(): Temperature;
 

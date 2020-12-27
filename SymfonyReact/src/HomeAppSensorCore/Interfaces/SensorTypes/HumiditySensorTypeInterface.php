@@ -6,7 +6,7 @@ namespace App\HomeAppSensorCore\Interfaces\SensorTypes;
 
 use App\Entity\Sensors\ReadingTypes\Humidity;
 
-interface HumiditySensorType
+interface HumiditySensorTypeInterface
 {
     public function getHumidObject(): Humidity;
 

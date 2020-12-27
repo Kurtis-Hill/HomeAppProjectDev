@@ -153,7 +153,7 @@ class Devices
     /**
      * @return Room
      */
-    public function getRoomID(): Room
+    public function getRoomObject(): Room
     {
         return $this->roomID;
     }

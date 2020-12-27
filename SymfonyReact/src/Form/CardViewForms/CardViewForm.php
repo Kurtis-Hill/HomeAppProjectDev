@@ -13,7 +13,7 @@ namespace App\Form\CardViewForms;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
-use App\Entity\Core\Icons;
+use App\Entity\Card\Icons;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,19 +26,19 @@ class CardViewForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('cardcolourid', EntityType::class, [
+            ->add('cardColourID', EntityType::class, [
                 'class' => CardColour::class,
                 'constraints' => [
                     new NotBlank(),
                 ],
             ])
-            ->add('cardiconid', EntityType::class, [
+            ->add('cardIconID', EntityType::class, [
                 'class' => Icons::class,
                 'constraints' => [
                     new NotBlank(),
                 ],
             ])
-            ->add('cardstateid', EntityType::class, [
+            ->add('cardStateID', EntityType::class, [
                 'class' => Cardstate::class,
                 'constraints' => [
                     new NotBlank(),

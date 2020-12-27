@@ -7,27 +7,41 @@ import { DallasTemp, DHT, Soil } from '../Utilities/SensorsCommon';
 
 export const CardContext = createContext();
 
+// const emptyModalContent = {
+//     submitSuccess: false, 
+//     errors: [],
+//     sensorHighReading: '', 
+//     sensorLowReading: '', 
+//     sensorType: '', 
+//     constRecord: '', 
+//     secondSensorID: null, 
+//     secondSensorHighReading: '', 
+//     secondSensorLowReading: '', 
+//     secondSensorType: '', 
+//     secondConstRecord: '', 
+//     currentIcon: '', 
+//     icons: [], 
+//     iconID: '', 
+//     currentColour: '', 
+//     colours: [], 
+//     states: [], 
+//     currentState: '', 
+//     cardViewID: null, 
+//     modalSubmit: false
+// };
+
 const emptyModalContent = {
     submitSuccess: false, 
     errors: [],
-    sensorHighReading: '', 
-    sensorLowReading: '', 
-    sensorType: '', 
-    constRecord: '', 
-    secondSensorID: null, 
-    secondSensorHighReading: '', 
-    secondSensorLowReading: '', 
-    secondSensorType: '', 
-    secondConstRecord: '', 
-    currentIcon: '', 
-    icons: [], 
-    iconID: '', 
-    currentColour: '', 
-    colours: [], 
-    states: [], 
-    currentState: '', 
+    modalSubmit: false,
     cardViewID: null, 
-    modalSubmit: false
+    sensorData: [],
+    cardIcon: [],
+    cardColour: [],
+    currentViewState: [],
+    userIconSelections: [],
+    userColourSelections: [],
+    userCardViewSelections: [],
 };
 
 
@@ -66,15 +80,19 @@ class CardContextProvider extends Component {
 
 
     setURL = () => {
+        const cardAPI = apiURL+'card-data/cards';
         if (window.location.pathname === webappURL+'index') {
-            this.setState({url: apiURL+'card-data/index-view'});
+            this.setState({url: cardAPI});
         }
         if (window.location.pathname === webappURL+'device') {
-            const deviceName = new URLSearchParams(window.location.search).get('device-name');
-            const deviceGroup = new URLSearchParams(window.location.search).get('device-group');
-            const deviceRoom = new URLSearchParams(window.location.search).get('device-room');
+            const windowLocation = window.location.search;
+            const urlParam = new URLSearchParams(windowLocation);
 
-            this.setState({url: "/HomeApp/api/card-data/device-view?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom});        
+            const deviceName = urlParam.get('device-name');
+            const deviceGroup = urlParam.get('device-group');
+            const deviceRoom = urlParam.get('device-room');
+
+            this.setState({url: cardAPI+"?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom+"&view=device"});        
         }
     }
 
@@ -85,18 +103,14 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            console.log('res', response);
-            const cardData = response.data.responseData.length > 1 
-            ? response.data.responseData
-            : [];
-
-            this.setState({cardData});
+            // console.log('card response', response.data);
+            if (response.data.length >= 1 ) {
+                this.setState({cardData: response.data});
+            }
+            //console.log('card state', this.state.cardData);
         }).catch(error => {
             const err = error;
             console.log(err);
-            if (err.status === 500) {
-                // window.location.replace('/HomeApp/logout');
-            }
             if (err.status === 401) {
                 axios.post(apiURL+'token/refresh', 
                     { refreshToken : getRefreshToken() } 
@@ -104,6 +118,8 @@ class CardContextProvider extends Component {
                 .then(response => {
                     setUserSession(response.data.token, response.data.refreshToken);
                 });
+            } else {
+              //  window.location.replace('/HomeApp/logout');
             }
         })
         
@@ -112,12 +128,14 @@ class CardContextProvider extends Component {
 
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
+        console.log('card view id', cardViewID);
         this.setState({modalLoading: true})
-        axios.get(apiURL+'card-data/card-state-view-form&id='+cardViewID,
-        { headers: {"Authorization" : `Bearer ${getToken()}`} })
+        axios.get(apiURL+'card-data/card-state-view-form?cardViewID='+cardViewID,
+            { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
             this.setState({modalLoading: false});
-            this.modalContent(response.data.responseData);
+            this.modalContent(response.data);
+            console.log('modal state', this.state.modalContent);
             this.setState({modalShow: true});
         }).catch(error => {
             this.setState({modalLoading: false});
@@ -126,46 +144,78 @@ class CardContextProvider extends Component {
     }
 
 
-    modalContent = (response) => {
-        const userData = response.cardSensorData;
-        const sensorType = userData.st_sensortype;
+    modalContent = (cardData) => {
+        const cardColour = cardData.cardColour;
+        const cardIcon = cardData.cardIcon;
+        const cardViewID = cardData.cardViewID;
+        const currentViewState = cardData.currentViewState;
+        const sensorData = cardData.sensorData;;
 
-        if (sensorType === DHT || DallasTemp) {
-            var sensorHighReading = userData.t_highSensorReading;
-            var sensorLowReading = userData.t_lowSensorReading;
-            var constRecord = userData.constrecord;
-            var sensorID = userData.t_tempid;
+        const userCardViewSelections = cardData.userCardViewSelections;
+        const userColourSelections = cardData.userColourSelections;
+        const userIconSelections = userIconSelections;
 
-            if (sensorType === DHT) {
-                var secondSensorHighReading = userData.h_highhumid;
-                var secondSensorLowReading = userData.h_lowhumid;
-                var secondConstRecord = userData.h_constrecord;
-                var secondSensorID = userData.h_humidid;  
+        console.log( 'yep1', cardColour,
+            cardIcon,
+            cardViewID,
+            currentViewState,
+            sensorData,
+            userCardViewSelections,
+            userColourSelections,
+            userIconSelections);
+
+        this.setState({
+            modalContent:{...this.state.modalContent, 
+                cardColour,
+                cardIcon,
+                cardViewID,
+                currentViewState,
+                sensorData,
+                userCardViewSelections,
+                userColourSelections,
+                userIconSelections,
             }
-        }
-        if (sensorType === Soil) {
-            var sensorHighReading = userData.a_highanalog;
-            var sensorLowReading = userData.a_lowanalog;
-            var constRecord = userData.a_constrecord;
-            var sensorID = userData.h_analogid;
-        }
+        });
+        console.log('ye[');
+        // const userData = response.cardSensorData;
+        // const sensorType = userData.st_sensortype;
 
-        const cardViewID = userData.cv_cardviewid;
+        // if (sensorType === DHT || DallasTemp) {
+        //     var sensorHighReading = userData.t_highSensorReading;
+        //     var sensorLowReading = userData.t_lowSensorReading;
+        //     var constRecord = userData.constrecord;
+        //     var sensorID = userData.t_tempid;
 
-        const sensorName = userData.sensorname;
+        //     if (sensorType === DHT) {
+        //         var secondSensorHighReading = userData.h_highhumid;
+        //         var secondSensorLowReading = userData.h_lowhumid;
+        //         var secondConstRecord = userData.h_constrecord;
+        //         var secondSensorID = userData.h_humidid;  
+        //     }
+        // }
+        // if (sensorType === Soil) {
+        //     var sensorHighReading = userData.a_highanalog;
+        //     var sensorLowReading = userData.a_lowanalog;
+        //     var constRecord = userData.a_constrecord;
+        //     var sensorID = userData.h_analogid;
+        // }
 
-        const currentIcon = userData.i_iconname;
-        const iconID = userData.i_iconid;
-        const icons = response.icons;
+        // const cardViewID = userData.cv_cardviewid;
+
+        // const sensorName = userData.sensorname;
+
+        // const currentIcon = userData.i_iconname;
+        // const iconID = userData.i_iconid;
+        // const icons = response.icons;
         
 
-        const currentColour = userData.cc_colourid;
-        const colours = response.colours;
+        // const currentColour = userData.cc_colourid;
+        // const colours = response.colours;
 
-        const currentState = userData.cs_cardstateid;
-        const states = response.states;
+        // const currentState = userData.cs_cardstateid;
+        // const states = response.states;
 
-        this.setState({modalContent:{...this.state.modalContent, sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
+        // this.setState({modalContent:{...this.state.modalContent, sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
     }
 
 

@@ -12,20 +12,11 @@ use Doctrine\ORM\EntityRepository;
 
 class CardstateRepository extends EntityRepository
 {
-    public function getAllCardStates()
-    {
-        $qb = $this->createQueryBuilder('cs');
-
-        $result = $qb->getQuery()->getScalarResult();
-
-        return $result;
-    }
-
     public function getAllStates()
     {
         $qb = $this->createQueryBuilder('cs')
-            ->orderBy('cs.cardstateid', 'ASC');
+            ->orderBy('cs.cardStateID', 'ASC');
 
-        return $qb->getQuery()->getScalarResult();
+        return $qb->getQuery()->getArrayResult();
     }
 }

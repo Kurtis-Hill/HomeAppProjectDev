@@ -15,11 +15,9 @@ class IconRepository extends EntityRepository
    public function getAllIcons()
    {
        $qb = $this->createQueryBuilder('i')
-           ->orderBy('i.iconname', 'ASC');
+           ->orderBy('i.iconName', 'ASC');
 
-       $result = $qb->getQuery()->getScalarResult();
-
-       return $result;
+       return $qb->getQuery()->getArrayResult();
    }
 
 

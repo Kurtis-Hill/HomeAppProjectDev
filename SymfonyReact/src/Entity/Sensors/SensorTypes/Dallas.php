@@ -5,6 +5,7 @@ namespace App\Entity\Sensors\SensorTypes;
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity
  */
-class Dallas implements StandardSensorTypeInterface
+class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
     /**
      * @var int

@@ -3,14 +3,11 @@
 
 namespace App\DTOs\Sensors;
 
-use App\Entity\Sensors\SensorTypes\Bmp;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\Entity\Sensors\SensorTypes\Dht;
-use App\Entity\Sensors\SensorTypes\Soil;
+use App\DTOs\CardDTOAbstract;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 
-class CardDataDTO
+class CardDataDTO extends CardDTOAbstract
 {
     /**
      * @var string
@@ -50,98 +47,44 @@ class CardDataDTO
 
     /**
      * CardDataDTO constructor
-     * @param StandardSensorTypeInterface $cardDTO
+     * @param StandardSensorTypeInterface $cardDTOData
      */
-    public function __construct(StandardSensorTypeInterface $cardDTO)
+    public function __construct(StandardSensorTypeInterface $cardDTOData)
     {
-        if ($cardDTO instanceof Dht || $cardDTO instanceof Bmp || $cardDTO instanceof Dallas) {
-            $this->setSensorData($cardDTO->getTempObject(), 'Temperature');
-        }
-        if ($cardDTO instanceof Dht || $cardDTO instanceof Bmp) {
-            $this->setSensorData($cardDTO->getHumidObject(), 'Humidity');
-        }
-        if ($cardDTO instanceof Bmp) {
-            $this->setSensorData($cardDTO->getLatitudeObject(), 'Soil');
-        }
-        if ($cardDTO instanceof Soil) {
-            $this->setSensorData($cardDTO->getAnalogObject(), 'Analog');
-        }
+        $this->filterSensorTypes($cardDTOData);
+        $this->setCardViewData($cardDTOData);
+    }
 
-        $this->setCardViewID($cardDTO->getCardViewObject()->getCardViewID());
+    protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void
+    {
+        $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
 
-        $this->setSensorName($cardDTO->getCardViewObject()->getSensorObject()->getSensorName());
+        $this->sensorName =$cardDTOData->getCardViewObject()->getSensorObject()->getSensorName();
 
-        $this->setCardIcon($cardDTO->getCardViewObject()->getCardIconObject()->getIconName());
+        $this->cardIcon = $cardDTOData->getCardViewObject()->getCardIconObject()->getIconName();
 
-        $this->setSensorType($cardDTO->getCardViewObject()->getSensorObject()->getSensorTypeID()->getSensorType());
+        $this->sensorType = $cardDTOData->getCardViewObject()->getSensorObject()->getSensorTypeID()->getSensorType();
 
-        $this->setSensorRoom($cardDTO->getCardViewObject()->getSensorObject()->getDeviceNameID()->getRoomID()->getRoom());
+        $this->sensorRoom = $cardDTOData->getCardViewObject()->getSensorObject()->getDeviceNameID()->getRoomObject()->getRoom();
 
-        $this->setCardColour($cardDTO->getCardViewObject()->getCardColourObject()->getColour());
+        $this->cardColour = $cardDTOData->getCardViewObject()->getCardColourObject()->getColour();
     }
 
     /**
      * @param StandardSensorInterface $sensorTypeObject
      * @param string $type
      */
-    private function setSensorData(StandardSensorInterface $sensorTypeObject, string $type): void
+    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type): void
     {
         $this->sensorData[] = [
             'sensorType' => $type,
-            'highReading' => $sensorTypeObject->getHighReading(),
-            'lowReading' => $sensorTypeObject->getLowReading(),
-            'currentReading' => $sensorTypeObject->getCurrentSensorReading(),
-            'getCurrentHighDifference' => $sensorTypeObject->getMeasurementDifferenceHighReading(),
-            'getCurrentLowDifference' => $sensorTypeObject->getMeasurementDifferenceLowReading()
+            'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
+            'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
+            'currentReading' => is_float($sensorTypeObject->getCurrentSensorReading()) ?  number_format($sensorTypeObject->getCurrentSensorReading(), 2) : $sensorTypeObject->getCurrentSensorReading(),
+            'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),
+            'getCurrentLowDifference' => is_float($sensorTypeObject->getMeasurementDifferenceLowReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2) : $sensorTypeObject->getMeasurementDifferenceLowReading(),
+            'time' => $sensorTypeObject->getTime()->format('d-m H:i:s')
         ];
-    }
-
-    /**
-     * @param string $sensorName
-     */
-    private function setSensorName(string $sensorName): void
-    {
-        $this->sensorName = $sensorName;
-    }
-
-    /**
-     * @param string $cardIcon
-     */
-    private function setCardIcon(string $cardIcon): void
-    {
-        $this->cardIcon = $cardIcon;
-    }
-
-    /**
-     * @param string $sensorType
-     */
-    private function setSensorType(string $sensorType): void
-    {
-        $this->sensorType = $sensorType;
-    }
-
-    /**
-     * @param string $sensorRoom
-     */
-    private function setSensorRoom(string $sensorRoom): void
-    {
-        $this->sensorRoom = $sensorRoom;
-    }
-
-    /**
-     * @param int $cardViewID
-     */
-    private function setCardViewID(int $cardViewID): void
-    {
-        $this->cardViewID = $cardViewID;
-    }
-
-    /**
-     * @param string $cardColour
-     */
-    private function setCardColour(string $cardColour): void
-    {
-        $this->cardColour = $cardColour;
     }
 
     /**

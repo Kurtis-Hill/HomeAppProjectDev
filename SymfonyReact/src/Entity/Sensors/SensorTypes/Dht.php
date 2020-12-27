@@ -5,9 +5,9 @@ namespace App\Entity\Sensors\SensorTypes;
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorType;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorType;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="dhtsensor", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="cardviewID", columns={"cardviewID"})})
  * @ORM\Entity
  */
-class Dht implements StandardSensorTypeInterface, TemperatureSensorType, HumiditySensorType
+class Dht implements StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
 {
     /**
      * @var int

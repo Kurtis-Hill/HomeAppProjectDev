@@ -4,21 +4,23 @@
 namespace App\Services;
 
 
-use App\DTOs\Sensors\CardSensorFormDTO;
+use App\DTOs\Sensors\CardViewSensorFormDTO;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
+use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
-use App\Entity\Cardview;
 use App\Entity\Sensors\SensorType;
 use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
 use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class SensorDataService extends HomeAppSensorServiceCoreAbstract
 {
+    protected array $serverErrors;
     /**
      * @param Request $request
      * @param array $cardSensorData
@@ -72,18 +74,28 @@ class SensorDataService extends HomeAppSensorServiceCoreAbstract
 
 
     /**
-     * @param array $cardSensorFormData
+     * @param array $cardViewID
      * @return array
      */
-    public function getFormData(array $cardSensorFormData): array
+    public function getCardViewFormData(string $cardViewID): ?CardViewSensorFormDTO
     {
-        $icons = $this->em->getRepository(Icons::class)->getAllIcons();
-        $colours = $this->em->getRepository(CardColour::class)->getAllColours();
-        $states = $this->em->getRepository(Cardstate::class)->getAllStates();
+        $cardData = $this->em->getRepository(CardView::class)->getCardSensorFormData(['id' => $cardViewID]);
 
-        $formDTO = new CardSensorFormDTO($cardSensorFormData);
+        if ($cardData instanceof StandardSensorTypeInterface) {
+            $icons = $this->em->getRepository(Icons::class)->getAllIcons();
+            $colours = $this->em->getRepository(CardColour::class)->getAllColours();
+            $states = $this->em->getRepository(Cardstate::class)->getAllStates();
 
-        return ['cardSensorData' => $formDTO, 'icons' => $icons, 'colours' => $colours, 'states' => $states];
+            $formOptions = ['icons' => $icons, 'colours' => $colours, 'states' => $states];
+
+            $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $formOptions);
+        }
+        else {
+            $this->serverErrors[] = 'Query error for card view form';
+        }
+
+        return $cardViewFormDTO ?? null;
+
     }
 
 
@@ -96,13 +108,16 @@ class SensorDataService extends HomeAppSensorServiceCoreAbstract
         $usersCurrentCardData = [];
 
         try {
-            $usersCurrentCardData = $this->em->getRepository(Cardview::class)->getUsersCurrentCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()]);
-        } catch(\PDOException $e){
-            error_log($e->getMessage());
-        } catch(\Exception $e){
+            $usersCurrentCardData = $this->em->getRepository(CardView::class)->getUsersCurrentCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()]);
+        } catch(\PDOException | \Exception $e){
             error_log($e->getMessage());
         }
 
         return $usersCurrentCardData;
+    }
+
+    public function getServerErrors()
+    {
+        return array_merge($this->getUserErrors(), $this->serverErrors);
     }
 }

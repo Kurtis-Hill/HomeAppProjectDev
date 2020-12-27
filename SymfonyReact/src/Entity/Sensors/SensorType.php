@@ -2,6 +2,12 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Sensors\SensorTypes\Bmp;
+use App\Entity\Sensors\SensorTypes\Dallas;
+use App\Entity\Sensors\SensorTypes\Dht;
+use App\Entity\Sensors\SensorTypes\Soil;
+use App\Form\CardViewForms\DHTHumidCardModalForm;
+use App\Form\CardViewForms\DHTTempCardModalForm;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,6 +25,19 @@ class SensorType
     public const DALLAS_TEMPERATURE = 'Dallas Temperature';
 
     public const SOIL_SENSOR = 'Soil';
+
+    public const SENSOR_TYPES = [
+        'DHT' => [
+            'class' => Dht::class,
+            'forms' => [
+                DHTHumidCardModalForm::class,
+                DHTTempCardModalForm::class
+            ]
+        ],
+        'Dallas' => Dallas::class,
+        'Soil' => Soil::class,
+        'Bmp' => Bmp::class
+    ];
 
 
     /**

@@ -3,7 +3,8 @@
 
 namespace App\Controller\CardData;
 
-use App\Entity\Card\Cardview;
+
+use App\Entity\Card\CardView;
 use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
@@ -23,7 +24,7 @@ use Symfony\Component\Serializer\Serializer;
 /**
  * Class CardDataController.
  *
- * @Route("/HomeApp/api/card-data")
+ * @Route("/HomeApp/api/card-data",  methods={"GET"})
  *
  */
 class CardDataController extends AbstractController
@@ -31,100 +32,64 @@ class CardDataController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/index-view", name="indexCardData")
+     * @Route("/cards", name="indexCardData")
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return Response|JsonResponse
      */
-    public function returnIndexAllCardData(Request $request, CardDataService $cardDataService): Response|JsonResponse
+    public function returnCardDataDTOs(Request $request, CardDataService $cardDataService): Response|JsonResponse
     {
+        $cardData = $cardDataService->prepareAllCardDTOs($request);
 
-        $cardData = $cardDataService->prepareAllIndexCardDTOs();
+        if (!empty($cardDataService->getServerErrors())) {
+            return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong we are logging you out']);
+        }
+
+        if (!empty($cardDataService->getUserInputErrors())) {
+            return $this->sendBadRequestResponse(['errors' => 'No card data found for query if you have devices please logout and back in again please']);
+        }
 
         if (empty($cardData)) {
-            return $this->sendInternelServerErrorResponse(['Something went wrong we are logging you out']);
+            return $this->sendSuccessfulResponse('No Sensors Found');
         }
 
         $encoders = [new JsonEncoder()];
         $normaliser = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normaliser, $encoders);
+
         return $this->sendSuccessfulResponse($serializer->serialize($cardData, 'json'));
-        //dd($cardData);
-        return $this->sendSuccessfulJsonResponse($cardData);
     }
 
     /**
-     * @Route("/device-view", name="deviceCardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
-     */
-    public function returnAllDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
-    {
-        $deviceName = $request->query->get('device-name');
-        $deviceGroup = $request->query->get('device-group');
-        $deviceRoom = $request->query->get('device-room');
-
-        if (empty($deviceName || $deviceGroup || $deviceRoom)) {
-            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
-        }
-
-        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
-
-        $cardData = $cardDataService->prepareAllDevicePageCardData('JSON', $deviceDetails);
-
-        if (empty($cardData)) {
-            return $this->sendInternelServerErrorResponse();
-        }
-
-        return $this->sendSuccessfulJsonResponse($cardData);
-    }
-
-    /**
-     * @Route("/room-view", name="roomCardData")
-     * @param Request $request
-     * @param CardDataService $cardDataService
-     * @return JsonResponse
-     */
-    public function returnAllRoomDeviceCardData(Request $request, CardDataService $cardDataService): JsonResponse
-    {
-        $deviceName = $request->query->get('device-name');
-        $deviceGroup = $request->query->get('device-group');
-        $deviceRoom = $request->query->get('device-room');
-
-        if (empty($deviceName || $deviceGroup || $deviceRoom)) {
-            return $this->sendBadRequestResponse(['errors' => 'No card data found query if you have devices please logout and back in again please']);
-        }
-
-        $deviceDetails = ['deviceName' => $deviceName, 'deviceGroup' => $deviceGroup, 'deviceRoom' => $deviceRoom];
-
-        $cardData = $cardDataService->prepareAllRoomPageCardData('JSON', $deviceDetails);
-
-        if (empty($cardData)) {
-            return $this->sendInternelServerErrorResponse();
-        }
-
-        return $this->sendSuccessfulJsonResponse($cardData);
-    }
-
-    /**
-     * @Route("/card-state-view-form&id={cardviewid}", name="cardViewForm")
+     * @Route("/card-state-view-form", name="cardViewForm")
      *
-     * @param mixed $cardviewid
+     * @param Request $request
+     * @param SensorDataService $sensorDataService
+     * @return Response|JsonResponse
      */
-    public function showCardViewForm(Request $request, SensorDataService $sensorDataService, $cardviewid): JsonResponse
+    public function showCardViewForm(Request $request, SensorDataService $sensorDataService): Response|JsonResponse
     {
-        $cardSensorData = $this->getDoctrine()->getRepository(Cardview::class)->getCardFormData(['id' => $cardviewid]);
+        $cardViewID = $request->query->get('cardViewID');
 
-        if (empty($cardSensorData)) {
+        if (empty($cardViewID)) {
             return $this->sendBadRequestResponse();
         }
 
-        $formData = $sensorDataService->getFormData($cardSensorData);
+        $cardFormDTO = $sensorDataService->getCardViewFormData($cardViewID);
 
-        return $this->sendSuccessfulJsonResponse($formData);
+        if (empty($cardFormDTO)) {
+            return $this->sendBadRequestResponse();
+        }
+
+        $encoders = [new JsonEncoder()];
+        $normaliser = [new ObjectNormalizer()];
+
+        $serializer = new Serializer($normaliser, $encoders);
+//dd($serializer->serialize($cardFormDTO, 'json'));
+        return $this->sendSuccessfulResponse($serializer->serialize($cardFormDTO, 'json'));
     }
+
 
     /**
      * @Route("/update-card-view", name="updateCardView")

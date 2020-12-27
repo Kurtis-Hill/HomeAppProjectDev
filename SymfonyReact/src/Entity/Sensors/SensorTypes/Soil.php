@@ -4,7 +4,7 @@ namespace App\Entity\Sensors\SensorTypes;
 
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Analog;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorType;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity
  */
-class Soil implements StandardSensorTypeInterface, AnalogSensorType
+class Soil implements StandardSensorTypeInterface, AnalogSensorTypeInterface
 {
     /**
      * @var int
