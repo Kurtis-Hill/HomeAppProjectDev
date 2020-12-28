@@ -78,15 +78,15 @@ class CardDataController extends AbstractController
 
         $cardFormDTO = $sensorDataService->getCardViewFormData($cardViewID);
 
-        if (empty($cardFormDTO)) {
-            return $this->sendBadRequestResponse();
+        if (empty($cardFormDTO) || !empty($sensorDataService->getServerErrors())) {
+            return $this->sendInternelServerErrorResponse();
         }
 
         $encoders = [new JsonEncoder()];
         $normaliser = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normaliser, $encoders);
-//dd($serializer->serialize($cardFormDTO, 'json'));
+
         return $this->sendSuccessfulResponse($serializer->serialize($cardFormDTO, 'json'));
     }
 
