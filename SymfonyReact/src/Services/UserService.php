@@ -4,9 +4,9 @@
 namespace App\Services;
 
 
-use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 
-class UserService extends HomeAppSensorServiceCoreAbstract
+class UserService extends AbstractHomeAppSensorServiceCore
 {
 
 }

@@ -101,7 +101,7 @@ class CardviewRepository extends EntityRepository
             'userID' => $userID,
             'groupNameID' => $groupNameIDs,
         ]);
-//dd()
+
         return array_filter($qb->getQuery()->getResult());
     }
 
@@ -140,6 +140,33 @@ class CardviewRepository extends EntityRepository
     }
 
 
+    /**
+     * @param array $criteria
+     * @return mixed
+     */
+    public function getUsersCurrentCardData(array $criteria): array
+    {
+        $qb = $this->createQueryBuilder('cv');
+        $qb->select('cv', 't', 'h', 'a')
+            ->leftJoin(Temperature::class, 't', Join::WITH,'t.sensorNameID = cv.sensorNameID')
+            ->leftJoin(Humidity::class, 'h', Join::WITH,'h.sensorNameID = cv.sensorNameID')
+            ->leftJoin(Analog::class, 'a', Join::WITH,'a.sensorNameID = cv.sensorNameID')
+            ->where(
+                $qb->expr()->eq('cv.cardViewID', ':id'),
+                $qb->expr()->eq('cv.userID', ':userID')
+            )
+            ->setParameters(['id' => $criteria['id'], 'userID' => $criteria['userID']]);
+
+        $result = $qb->getQuery()->getResult();
+
+        $sensorResults["cardViewObject"] = $result[0];
+        $sensorResults["temp"] = $result[1];
+        $sensorResults["humid"] = $result[2];
+        $sensorResults["analog"] = $result[3];
+
+
+        return $sensorResults;
+    }
 //    /**
 //     * @param $groupNameIDs
 //     * @param $userID
@@ -368,33 +395,7 @@ class CardviewRepository extends EntityRepository
 //
 //
 //
-//    /**
-//     * @param array $criteria
-//     * @return mixed
-//     */
-//    public function getUsersCurrentCardData(array $criteria): array
-//    {
-//        $qb = $this->createQueryBuilder('cv');
-//        $qb->select('cv', 't', 'h', 'a')
-//            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
-//            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
-//            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
-//            ->where(
-//                $qb->expr()->eq('cv.cardviewid', ':id'),
-//                $qb->expr()->eq('cv.userid', ':userid')
-//            )
-//            ->setParameters(['id' => $criteria['id'], 'userid' => $criteria['userID']]);
-//
-//        $result = $qb->getQuery()->getResult();
-//
-//        $sensorResults["cardViewObject"] = $result[0];
-//        $sensorResults["temp"] = $result[1];
-//        $sensorResults["humid"] = $result[2];
-//        $sensorResults["analog"] = $result[3];
-//
-//
-//        return $sensorResults;
-//    }
+
 
 
 

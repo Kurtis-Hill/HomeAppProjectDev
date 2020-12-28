@@ -14,12 +14,16 @@ use App\Form\CardViewForms\DallasTempCardModalForm;
 use App\Form\CardViewForms\DHTHumidCardModalForm;
 use App\Form\CardViewForms\DHTTempCardModalForm;
 use App\Form\CardViewForms\SoilFormType;
-use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class SensorDataService extends HomeAppSensorServiceCoreAbstract
+class SensorDataService extends AbstractHomeAppSensorServiceCore
 {
+
+    /**
+     * @var array
+     */
     protected array $serverErrors;
     /**
      * @param Request $request
@@ -29,53 +33,73 @@ class SensorDataService extends HomeAppSensorServiceCoreAbstract
      */
     public function prepareSensorFormData(Request $request, array $cardSensorData, string $sensorType): array
     {
-        $formData = [
-            'highSensorReading' => $request->get('firstSensorHighReading'),
-            'lowSensorReading' => $request->get('firstSensorLowReading'),
-            'constrecord' => $request->get('constRecord')
-        ];
+        $sensorFormsData = [];
 
-        switch ($sensorType) {
-            case SensorType::DALLAS_TEMPERATURE:
-                return [
-                    'object' => $cardSensorData['temp'],
-                    'formData' => $formData,
-                    'formClass' => DallasTempCardModalForm::class
-                ];
-                break;
+        foreach (self::SENSOR_PROCESSING_DATA as $sensorName => $sensorComponents) {
+            if ($sensorType === $sensorName) {
+                foreach ($sensorComponents as $componentKeys => $values) {
+                    $sensorFormsData['forms'] = $componentKeys['forms'];
 
-            case SensorType::SOIL_SENSOR:
-                return [
-                    'object' => $cardSensorData['analog'],
-                    'formData' => $formData,
-                    'formClass' => SoilFormType::class
-                ];
-                break;
+                    foreach ($componentKeys['readingTypes'] as $readingType) {
+                        $sensorFormsData['sensorReadings'] = [
+                            $readingType => [
+                                'highSensorReading' => $request->get($readingType. 'HighReading'),
+                                'lowSensorReading' => $request->get($readingType. 'LowReading'),
+                                'constRecord' => $request->get($readingType. 'costRecord'),
+                            ]
+                        ];
+                    }
+                }
+        }
 
-            case SensorType::DHT_SENSOR:
-                $secondFormData = [
-                    'highSensorReading' => $request->get('secondSensorHighReading'),
-                    'lowSensorReading' => $request->get('secondSensorLowReading'),
-                    'constrecord' => $request->get('secondConstRecord')
-                ];
-                return [
-                    'object' => $cardSensorData['temp'],
-                    'secondObject' => $cardSensorData['humid'],
-                    'formData' => $formData,
-                    'secondFormData' => $secondFormData,
-                    'formClass' => DHTTempCardModalForm::class,
-                    'secondFormClass' => DHTHumidCardModalForm::class
-                ];
-                break;
+//        $formData = [
+//            'highSensorReading' => $request->get('firstSensorHighReading'),
+//            'lowSensorReading' => $request->get('firstSensorLowReading'),
+//            'constrecord' => $request->get('constRecord')
+//        ];
 
-            default: return [];
+//        switch ($sensorType) {
+//            case SensorType::DALLAS_TEMPERATURE:
+//                return [
+//                    'object' => $cardSensorData['temp'],
+//                    'formData' => $formData,
+//                    'formClass' => DallasTempCardModalForm::class
+//                ];
+//                break;
+//
+//            case SensorType::SOIL_SENSOR:
+//                return [
+//                    'object' => $cardSensorData['analog'],
+//                    'formData' => $formData,
+//                    'formClass' => SoilFormType::class
+//                ];
+//                break;
+//
+//            case SensorType::DHT_SENSOR:
+//                $secondFormData = [
+//                    'highSensorReading' => $request->get('secondSensorHighReading'),
+//                    'lowSensorReading' => $request->get('secondSensorLowReading'),
+//                    'constrecord' => $request->get('secondConstRecord')
+//                ];
+//                return [
+//                    'object' => $cardSensorData['temp'],
+//                    'secondObject' => $cardSensorData['humid'],
+//                    'formData' => $formData,
+//                    'secondFormData' => $secondFormData,
+//                    'formClass' => DHTTempCardModalForm::class,
+//                    'secondFormClass' => DHTHumidCardModalForm::class
+//                ];
+//                break;
+//
+//            default: return [];
         }
     }
 
 
+
     /**
-     * @param array $cardViewID
-     * @return array
+     * @param string $cardViewID
+     * @return CardViewSensorFormDTO|null
      */
     public function getCardViewFormData(string $cardViewID): ?CardViewSensorFormDTO
     {
@@ -83,6 +107,7 @@ class SensorDataService extends HomeAppSensorServiceCoreAbstract
 
         if ($cardData instanceof StandardSensorTypeInterface) {
             $icons = $this->em->getRepository(Icons::class)->getAllIcons();
+
             $colours = $this->em->getRepository(CardColour::class)->getAllColours();
             $states = $this->em->getRepository(Cardstate::class)->getAllStates();
 
@@ -110,6 +135,7 @@ class SensorDataService extends HomeAppSensorServiceCoreAbstract
         try {
             $usersCurrentCardData = $this->em->getRepository(CardView::class)->getUsersCurrentCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()]);
         } catch(\PDOException | \Exception $e){
+            $this->serverErrors[] = 'Query error trying to find user card';
             error_log($e->getMessage());
         }
 
@@ -120,4 +146,75 @@ class SensorDataService extends HomeAppSensorServiceCoreAbstract
     {
         return array_merge($this->getUserErrors(), $this->serverErrors);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //    /**
+//     * @var array
+//     */
+//    protected array $serverErrors;
+//    /**
+//     * @param Request $request
+//     * @param array $cardSensorData
+//     * @param string $sensorType
+//     * @return array
+//     */
+//    public function prepareSensorFormData(Request $request, array $cardSensorData, string $sensorType): array
+//    {
+//        $formData = [
+//            'highSensorReading' => $request->get('firstSensorHighReading'),
+//            'lowSensorReading' => $request->get('firstSensorLowReading'),
+//            'constrecord' => $request->get('constRecord')
+//        ];
+//
+//        switch ($sensorType) {
+//            case SensorType::DALLAS_TEMPERATURE:
+//                return [
+//                    'object' => $cardSensorData['temp'],
+//                    'formData' => $formData,
+//                    'formClass' => DallasTempCardModalForm::class
+//                ];
+//                break;
+//
+//            case SensorType::SOIL_SENSOR:
+//                return [
+//                    'object' => $cardSensorData['analog'],
+//                    'formData' => $formData,
+//                    'formClass' => SoilFormType::class
+//                ];
+//                break;
+//
+//            case SensorType::DHT_SENSOR:
+//                $secondFormData = [
+//                    'highSensorReading' => $request->get('secondSensorHighReading'),
+//                    'lowSensorReading' => $request->get('secondSensorLowReading'),
+//                    'constrecord' => $request->get('secondConstRecord')
+//                ];
+//                return [
+//                    'object' => $cardSensorData['temp'],
+//                    'secondObject' => $cardSensorData['humid'],
+//                    'formData' => $formData,
+//                    'secondFormData' => $secondFormData,
+//                    'formClass' => DHTTempCardModalForm::class,
+//                    'secondFormClass' => DHTHumidCardModalForm::class
+//                ];
+//                break;
+//
+//            default: return [];
+//        }
+//    }
 }

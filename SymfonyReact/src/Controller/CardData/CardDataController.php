@@ -79,7 +79,7 @@ class CardDataController extends AbstractController
         $cardFormDTO = $sensorDataService->getCardViewFormData($cardViewID);
 
         if (empty($cardFormDTO)) {
-            return $this->sendBadRequestResponse();
+            return $this->sendInternelServerErrorResponse();
         }
 
         $encoders = [new JsonEncoder()];
@@ -93,8 +93,11 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/update-card-view", name="updateCardView")
+     * @param Request $request
+     * @param SensorDataService $sensorDataService
+     * @return Response|JsonResponse
      */
-    public function updateCardView(Request $request, SensorDataService $sensorDataService): JsonResponse
+    public function updateCardView(Request $request, SensorDataService $sensorDataService): Response|JsonResponse
     {
         $errors = [];
         $cardViewID = $request->get('cardViewID');
@@ -105,7 +108,7 @@ class CardDataController extends AbstractController
             'cardstateid' => $request->get('cardViewState'),
         ];
 
-        if (empty($cardViewID || $cardViewData['cardcolourid'] || $cardViewData['cardiconid'] || $cardViewData['cardstateid'])) {
+        if (empty($cardViewID || $cardViewData['cardColourID'] || $cardViewData['cardIconID'] || $cardViewData['cardStateID'])) {
             return $this->sendBadRequestResponse();
         }
 

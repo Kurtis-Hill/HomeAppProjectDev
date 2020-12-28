@@ -56,6 +56,7 @@ class CardContextProvider extends Component {
             modalContent: emptyModalContent,
             url: '',
             errors: [],
+            alternativeDisplayMessage: 'Loading...'
         };
     }
 
@@ -135,10 +136,9 @@ class CardContextProvider extends Component {
         .then(response => {
             this.setState({modalLoading: false});
             this.modalContent(response.data);
-            console.log('modal state', this.state.modalContent);
             this.setState({modalShow: true});
         }).catch(error => {
-            this.setState({modalLoading: false});
+            this.setState({modalLoading: false, alternativeDisplayMessage: 'Failed To Get Data'});
             alert("Failed Getting Form Please Try Again or Contact System Admin");
         })
     }
@@ -149,11 +149,13 @@ class CardContextProvider extends Component {
         const cardIcon = cardData.cardIcon;
         const cardViewID = cardData.cardViewID;
         const currentViewState = cardData.currentViewState;
-        const sensorData = cardData.sensorData;;
+        const sensorData = cardData.sensorData;
 
         const userCardViewSelections = cardData.userCardViewSelections;
         const userColourSelections = cardData.userColourSelections;
-        const userIconSelections = userIconSelections;
+        const userIconSelections = cardData.userIconSelections;
+        const iconPreview = cardIcon;
+
 
         console.log( 'yep1', cardColour,
             cardIcon,
@@ -174,48 +176,11 @@ class CardContextProvider extends Component {
                 userCardViewSelections,
                 userColourSelections,
                 userIconSelections,
+                iconPreview,
             }
         });
-        console.log('ye[');
-        // const userData = response.cardSensorData;
-        // const sensorType = userData.st_sensortype;
-
-        // if (sensorType === DHT || DallasTemp) {
-        //     var sensorHighReading = userData.t_highSensorReading;
-        //     var sensorLowReading = userData.t_lowSensorReading;
-        //     var constRecord = userData.constrecord;
-        //     var sensorID = userData.t_tempid;
-
-        //     if (sensorType === DHT) {
-        //         var secondSensorHighReading = userData.h_highhumid;
-        //         var secondSensorLowReading = userData.h_lowhumid;
-        //         var secondConstRecord = userData.h_constrecord;
-        //         var secondSensorID = userData.h_humidid;  
-        //     }
-        // }
-        // if (sensorType === Soil) {
-        //     var sensorHighReading = userData.a_highanalog;
-        //     var sensorLowReading = userData.a_lowanalog;
-        //     var constRecord = userData.a_constrecord;
-        //     var sensorID = userData.h_analogid;
-        // }
-
-        // const cardViewID = userData.cv_cardviewid;
-
-        // const sensorName = userData.sensorname;
-
-        // const currentIcon = userData.i_iconname;
-        // const iconID = userData.i_iconid;
-        // const icons = response.icons;
         
-
-        // const currentColour = userData.cc_colourid;
-        // const colours = response.colours;
-
-        // const currentState = userData.cs_cardstateid;
-        // const states = response.states;
-
-        // this.setState({modalContent:{...this.state.modalContent, sensorType, sensorName, sensorHighReading, sensorLowReading, secondSensorHighReading, secondSensorLowReading, secondSensorID, constRecord, secondConstRecord, sensorID, icons, currentIcon, iconID, currentColour, colours, cardViewID, currentState, states}});
+        console.log('modal state', this.state.modalContent);
     }
 
 
@@ -224,14 +189,20 @@ class CardContextProvider extends Component {
     }
 
     
-    updateModalForm = (event) => {
+    updateModalForm = (event, sensorType = null) => {
         const value = event.target.value;
 
         switch (event.target.name) {
-            case "icon":
+            case "cardIcon":
                 const selectText = document.getElementById('icon-select');
                 const option = selectText.options[selectText.selectedIndex];
-                this.setState({modalContent:{...this.state.modalContent, currentIcon: lowercaseFirstLetter(option.text), iconID: value}});
+
+                const currentModalData = this.state.modalContent;
+                currentModalData.cardIcon.iconID = value;
+                currentModalData.cardIcon.iconName = lowercaseFirstLetter(option.text);
+
+                this.setState({modalContent:{...this.state.modalContent}});
+                console.log('modalContent', this.state.modalContent);
                 break;
 
             case "cardColour":
@@ -242,28 +213,34 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent, currentState: value}});
                 break;
 
-            case "constRecord":
-                this.setState({modalContent:{...this.state.modalContent, constRecord: value}});
+            case sensorType+"HighReading":
+                for (const currentModalData of this.state.modalContent.sensorData) {
+                    if (currentModalData.sensorType === sensorType) {
+                        currentModalData.highReading = value;
+                        this.setState({modalContent:{...this.state.modalContent}});
+                        break;
+                    }
+                  }
                 break;
 
-            case "secondConstRecord":
-                this.setState({modalContent:{...this.state.modalContent, secondConstRecord: value}});
+            case sensorType+"LowReading":
+                for (const currentModalData of this.state.modalContent.sensorData) {
+                    if (currentModalData.sensorType === sensorType) {
+                        currentModalData.lowReading = value;
+                        this.setState({modalContent:{...this.state.modalContent}});                    
+                        break;
+                    }
+                  }
                 break;
 
-            case "firstSensorHighReading":
-                this.setState({modalContent:{...this.state.modalContent, sensorHighReading: value}});
-                break;
-
-            case "firstSensorLowReading":
-                this.setState({modalContent:{...this.state.modalContent, sensorLowReading: value}});
-                break;
-
-            case "secondSensorHighReading":
-                this.setState({modalContent:{...this.state.modalContent, secondSensorHighReading: value}});
-                break;
-
-            case "secondSensorLowReading":
-                this.setState({modalContent:{...this.state.modalContent, secondSensorLowReading: value}});
+            case sensorType+"ConstRecord":
+                for (const currentModalData of this.state.modalContent.sensorData) {
+                    if (currentModalData.sensorType === sensorType) {
+                        currentModalData.constRecord = value;
+                        this.setState({modalContent:{...this.state.modalContent}});                    
+                        break;
+                    }
+                  }
                 break;
         }
     }
@@ -329,10 +306,10 @@ class CardContextProvider extends Component {
                         toggleModal: this.toggleModal,
                         modalContent: this.state.modalContent,
                         handleSubmissionModalForm: this.handleSubmissionModalForm,
-                        modalIcon: this.state.modalIcon,
                         updateModalForm: this.updateModalForm,
                         handleModalFormInput: this.handleModalFormInput,
                         errors: this.state.errors,
+                        alternativeDisplayMessage: this.state.alternativeDisplayMessage,
                     }}>
                         {this.props.children}
                     </CardContext.Provider>

@@ -16,16 +16,16 @@ abstract class CardDTOAbstract
     protected function filterSensorTypes(StandardSensorTypeInterface $cardDTOData): void
     {
         if ($cardDTOData instanceof TemperatureSensorTypeInterface) {
-            $this->setSensorData($cardDTOData->getTempObject(), 'Temperature');
+            $this->setSensorData($cardDTOData->getTempObject(), 'temperature');
         }
         if ($cardDTOData instanceof HumiditySensorTypeInterface) {
-            $this->setSensorData($cardDTOData->getHumidObject(), 'Humidity');
+            $this->setSensorData($cardDTOData->getHumidObject(), 'humidity');
         }
         if ($cardDTOData instanceof LatitudeSensorTypeInterface) {
-            $this->setSensorData($cardDTOData->getLatitudeObject(), 'Latitude');
+            $this->setSensorData($cardDTOData->getLatitudeObject(), 'latitude');
         }
         if ($cardDTOData instanceof AnalogSensorTypeInterface) {
-            $this->setSensorData($cardDTOData->getAnalogObject(), 'Analog');
+            $this->setSensorData($cardDTOData->getAnalogObject(), 'analog');
         }
     }
 

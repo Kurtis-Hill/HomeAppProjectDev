@@ -6,14 +6,59 @@ namespace App\HomeAppSensorCore;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
+use App\Entity\Sensors\SensorType;
+use App\Entity\Sensors\SensorTypes\Bmp;
+use App\Entity\Sensors\SensorTypes\Dallas;
+use App\Entity\Sensors\SensorTypes\Dht;
+use App\Entity\Sensors\SensorTypes\Soil;
+use App\Form\CardViewForms\DallasTempCardModalForm;
+use App\Form\CardViewForms\DHTHumidCardModalForm;
+use App\Form\CardViewForms\DHTTempCardModalForm;
+use App\Form\CardViewForms\SoilFormType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Security;
 
-abstract class HomeAppSensorServiceCoreAbstract
+abstract class AbstractHomeAppSensorServiceCore
 {
+
+    protected const SENSOR_DATA = [
+            SensorType::DHT_SENSOR => [
+                'alias' => 'dht',
+                'object' => Dht::class,
+                'forms' =>  [
+                    'temperature' =>  DHTTempCardModalForm::class,
+                    'humidity' => DHTHumidCardModalForm::class,
+                ],
+            ],
+
+             SensorType::DALLAS_TEMPERATURE => [
+                'alias' => 'dallas',
+                'object' => Dallas::class,
+                'forms' =>  [
+                    'temperature' => DallasTempCardModalForm::class
+                ],
+            ],
+
+            SensorType::SOIL_SENSOR => [
+                'alias' => 'soil',
+                'object' => Soil::class,
+                'forms' => [
+                    SoilFormType::class
+                ],
+            ],
+
+            SensorType::BMP_SENSOR => [
+                'alias' => 'bmp',
+                'object' => Bmp::class,
+                'forms' => [
+                    'empty'
+                ],
+            ],
+    ];
+
     /**
      * @var int
      */
