@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\DTOs\Sensors\CardDataDTO;
 use App\Entity\Card\CardView;
-use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Route;
 /**
  * Class CardDataService.
  */
-class CardDataService extends HomeAppSensorServiceCoreAbstract
+class CardDataService extends AbstractHomeAppSensorServiceCore
 {
     /**
      * @var array
@@ -62,7 +62,7 @@ class CardDataService extends HomeAppSensorServiceCoreAbstract
         }
         catch (\PDOException | \Exception $e) {
             error_log($e->getMessage());
-            $this->serverErrors[] = 'Query Failure';
+            $this->serverErrors[] = 'Card Data Query Failure';
         }
 
         return $cardData ?? [];

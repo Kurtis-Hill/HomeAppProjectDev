@@ -12,7 +12,6 @@ Interface StandardSensorTypeInterface
 
     public function getSensorTypeID(): int;
 
-
     public function setSensorTypeID(int $id): void;
 
     public function setCardViewObject(CardView $cardView);

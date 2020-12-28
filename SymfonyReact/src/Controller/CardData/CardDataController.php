@@ -5,7 +5,16 @@ namespace App\Controller\CardData;
 
 
 use App\Entity\Card\CardView;
+use App\Entity\Sensors\SensorType;
+use App\Entity\Sensors\SensorTypes\Bmp;
+use App\Entity\Sensors\SensorTypes\Dallas;
+use App\Entity\Sensors\SensorTypes\Dht;
+use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\CardViewForms\CardViewForm;
+use App\Form\CardViewForms\DallasTempCardModalForm;
+use App\Form\CardViewForms\DHTHumidCardModalForm;
+use App\Form\CardViewForms\DHTTempCardModalForm;
+use App\Form\CardViewForms\SoilFormType;
 use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Services\SensorDataService;
@@ -30,6 +39,41 @@ use Symfony\Component\Serializer\Serializer;
 class CardDataController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
+
+    protected const SENSOR_DATA = [
+        SensorType::DHT_SENSOR => [
+            'alias' => 'dht',
+            'object' => Dht::class,
+            'forms' =>  [
+                'temperature' =>  DHTTempCardModalForm::class,
+                'humidity' => DHTHumidCardModalForm::class,
+            ],
+        ],
+
+        SensorType::DALLAS_TEMPERATURE => [
+            'alias' => 'dallas',
+            'object' => Dallas::class,
+            'forms' =>  [
+                'temperature' => DallasTempCardModalForm::class
+            ],
+        ],
+
+        SensorType::SOIL_SENSOR => [
+            'alias' => 'soil',
+            'object' => Soil::class,
+            'forms' => [
+                SoilFormType::class
+            ],
+        ],
+
+        SensorType::BMP_SENSOR => [
+            'alias' => 'bmp',
+            'object' => Bmp::class,
+            'forms' => [
+                'empty'
+            ],
+        ],
+    ];
 
     /**
      * @Route("/cards", name="indexCardData")
@@ -78,7 +122,7 @@ class CardDataController extends AbstractController
 
         $cardFormDTO = $sensorDataService->getCardViewFormData($cardViewID);
 
-        if (empty($cardFormDTO) || !empty($sensorDataService->getServerErrors())) {
+        if ($cardFormDTO === null || !empty($sensorDataService->getServerErrors())) {
             return $this->sendInternelServerErrorResponse();
         }
 
@@ -93,8 +137,11 @@ class CardDataController extends AbstractController
 
     /**
      * @Route("/update-card-view", name="updateCardView")
+     * @param Request $request
+     * @param SensorDataService $sensorDataService
+     * @return Response|JsonResponse
      */
-    public function updateCardView(Request $request, SensorDataService $sensorDataService): JsonResponse
+    public function updateCardView(Request $request, SensorDataService $sensorDataService): Response|JsonResponse
     {
         $errors = [];
         $cardViewID = $request->get('cardViewID');
@@ -105,7 +152,7 @@ class CardDataController extends AbstractController
             'cardstateid' => $request->get('cardViewState'),
         ];
 
-        if (empty($cardViewID || $cardViewData['cardcolourid'] || $cardViewData['cardiconid'] || $cardViewData['cardstateid'])) {
+        if (empty($cardViewID || $cardViewData['cardColourID'] || $cardViewData['cardIconID'] || $cardViewData['cardStateID'])) {
             return $this->sendBadRequestResponse();
         }
 

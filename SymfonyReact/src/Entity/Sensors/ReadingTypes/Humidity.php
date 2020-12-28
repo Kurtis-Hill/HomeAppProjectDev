@@ -30,21 +30,21 @@ class Humidity implements StandardSensorInterface
     /**
      * @var float
      *
-     * @ORM\Column(name="humidReading", type="float", precision=10, scale=0, nullable=false)
+     * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
     private float $humidReading;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="highHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="70"})
+     * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
     private float $highHumid;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="lowHumid", type="float", precision=10, scale=0, nullable=false, options={"default"="15"})
+     * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
     private float $lowHumid;
 

@@ -7,7 +7,7 @@ namespace App\Controller\Sensors;
 
 use App\Entity\Sensors\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\Services\Devices\DeviceService;
+use App\Services\Devices\DeviceServiceHomeAppSensorServiceCore;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,10 +24,10 @@ class DeviceController extends AbstractController
     /**
      * @Route("/new-device/submit-form-data", name="add-new-device")
      * @param Request $request
-     * @param DeviceService $deviceService
+     * @param DeviceServiceHomeAppSensorServiceCore $deviceService
      * @return JsonResponse
      */
-    public function addNewDevice(Request $request, DeviceService $deviceService): JsonResponse
+    public function addNewDevice(Request $request, DeviceServiceHomeAppSensorServiceCore $deviceService): JsonResponse
     {
         $deviceGroup = $request->get('device-group');
         $deviceRoom = $request->get('device-room');

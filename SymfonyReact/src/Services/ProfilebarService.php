@@ -4,26 +4,26 @@
 namespace App\Services;
 
 
-use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 
-class ProfilebarService extends HomeAppSensorServiceCoreAbstract
+class ProfilebarService extends AbstractHomeAppSensorServiceCore
 {
-    public function getProfilePic()
-    {
-        return $this->user->getUser()->getProfilePic();
-    }
-
-    public function getGroupName()
-    {
-        return $this->user->getUser()->getGroupNameID()->getGroupName();
-    }
-
-    public function getFullUserName()
-    {
-        return sprintf("%s %s",
-            ucfirst($this->user->getUser()->getFirstName()),
-            ucfirst($this->user->getUser()->getLastName())
-            );
-    }
+//    public function getProfilePic()
+//    {
+//        return $this->user->getUser()->getProfilePic();
+//    }
+//
+//    public function getGroupName()
+//    {
+//        return $this->user->getUser()->getGroupNameID()->getGroupName();
+//    }
+//
+//    public function getFullUserName()
+//    {
+//        return sprintf("%s %s",
+//            ucfirst($this->getFirstName()),
+//            ucfirst($this->user->getUser()->getLastName())
+//            );
+//    }
 
 }

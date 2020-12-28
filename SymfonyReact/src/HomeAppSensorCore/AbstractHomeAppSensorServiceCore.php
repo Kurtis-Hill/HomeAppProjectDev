@@ -6,13 +6,22 @@ namespace App\HomeAppSensorCore;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
+use App\Entity\Sensors\SensorType;
+use App\Entity\Sensors\SensorTypes\Bmp;
+use App\Entity\Sensors\SensorTypes\Dallas;
+use App\Entity\Sensors\SensorTypes\Dht;
+use App\Entity\Sensors\SensorTypes\Soil;
+use App\Form\CardViewForms\DallasTempCardModalForm;
+use App\Form\CardViewForms\DHTHumidCardModalForm;
+use App\Form\CardViewForms\DHTTempCardModalForm;
+use App\Form\CardViewForms\SoilFormType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Security;
 
-abstract class HomeAppSensorServiceCoreAbstract
+abstract class AbstractHomeAppSensorServiceCore
 {
     /**
      * @var int

@@ -4,12 +4,12 @@
 namespace App\Services;
 
 
-use App\HomeAppSensorCore\HomeAppSensorServiceCoreAbstract;
+use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 
-class NavbarService extends HomeAppSensorServiceCoreAbstract
+class NavbarService extends AbstractHomeAppSensorServiceCore
 {
     private array $errors;
 

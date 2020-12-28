@@ -43,17 +43,8 @@ class CardViewSensorFormDTO extends CardDTOAbstract
     /**
      * @var array
      */
-    private array $userIconSelections = [];
+    private array $userSelections = [];
 
-    /**
-     * @var array
-     */
-    private array $userColourSelections = [];
-
-    /**
-     * @var array
-     */
-    private array $userCardViewSelections = [];
 
 
     /**
@@ -87,20 +78,14 @@ class CardViewSensorFormDTO extends CardDTOAbstract
      */
     protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void
     {
-        $this->cardIcon[] = [
-            'iconID' => $cardDTOData->getCardViewObject()->getCardIconObject()->getIconID(),
-            'iconName' => $cardDTOData->getCardViewObject()->getCardIconObject()->getIconName()
-        ];
+        $this->cardIcon['iconID'] = $cardDTOData->getCardViewObject()->getCardIconObject()->getIconID();
+        $this->cardIcon['iconName'] = $cardDTOData->getCardViewObject()->getCardIconObject()->getIconName();
 
-        $this->cardColour[] = [
-                'ID' => $cardDTOData->getCardViewObject()->getCardColourObject()->getColourID(),
-                'colour' => $cardDTOData->getCardViewObject()->getCardColourObject()->getColour()
-        ];
+        $this->cardColour['colourID'] = $cardDTOData->getCardViewObject()->getCardColourObject()->getColourID();
+        $this->cardColour['colour'] = $cardDTOData->getCardViewObject()->getCardColourObject()->getColour();
 
-        $this->currentViewState[] = [
-            'ID' => $cardDTOData->getCardViewObject()->getCardStateObject()->getCardstateID(),
-            'state' => $cardDTOData->getCardViewObject()->getCardStateObject()->getState()
-        ];
+        $this->currentViewState['stateID'] = $cardDTOData->getCardViewObject()->getCardStateObject()->getCardstateID();
+        $this->currentViewState['state'] = $cardDTOData->getCardViewObject()->getCardStateObject()->getState();
 
         $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
     }
@@ -110,10 +95,9 @@ class CardViewSensorFormDTO extends CardDTOAbstract
      */
     private function setUserSelections(array $formOptions): void
     {
-        //dd($formOptions['icons']);
-        $this->userIconSelections[] = $formOptions['icons'];
-        $this->userColourSelections[] = $formOptions['colours'];
-        $this->userCardViewSelections[] = $formOptions['states'];
+        $this->userSelections['icons'] = $formOptions['icons'];
+        $this->userSelections['colours'] = $formOptions['colours'];
+        $this->userSelections['states'] = $formOptions['states'];
     }
 
     /**
@@ -161,7 +145,7 @@ class CardViewSensorFormDTO extends CardDTOAbstract
      */
     public function getUserIconSelections(): array
     {
-        return $this->userIconSelections;
+        return $this->userSelections['icons'];
     }
 
     /**
@@ -169,7 +153,7 @@ class CardViewSensorFormDTO extends CardDTOAbstract
      */
     public function getUserColourSelections(): array
     {
-        return $this->userColourSelections;
+        return $this->userSelections['colours'];
     }
 
     /**
@@ -177,7 +161,7 @@ class CardViewSensorFormDTO extends CardDTOAbstract
      */
     public function getUserCardViewSelections(): array
     {
-        return $this->userCardViewSelections;
+        return $this->userSelections['states'];
     }
 
 }
