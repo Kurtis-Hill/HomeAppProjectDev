@@ -7,8 +7,9 @@ namespace App\Controller\Sensors;
 
 use App\Entity\Sensors\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\Services\Devices\DeviceServiceHomeAppSensorServiceCore;
+use App\Services\Devices\DeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,23 +25,26 @@ class DeviceController extends AbstractController
     /**
      * @Route("/new-device/submit-form-data", name="add-new-device")
      * @param Request $request
-     * @param DeviceServiceHomeAppSensorServiceCore $deviceService
+     * @param DeviceService $deviceService
      * @return JsonResponse
      */
-    public function addNewDevice(Request $request, DeviceServiceHomeAppSensorServiceCore $deviceService): JsonResponse
+    public function addNewDevice(Request $request, DeviceService $deviceService): JsonResponse
     {
-        $deviceGroup = $request->get('device-group');
-        $deviceRoom = $request->get('device-room');
+        $deviceName = $request->get('deviceName');
+        $deviceGroup = $request->get('deviceGroup');
+        $deviceRoom = $request->get('deviceRoom');
 
-        if (empty($deviceGroup || $deviceRoom)) {
+
+        if (!isset($deviceGroup, $deviceRoom, $deviceName)) {
             return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
 
         $deviceData = [
-            'devicename' => $request->get('device-name'),
-            'groupnameid' => $deviceGroup,
-            'roomid' => $deviceRoom
+            'deviceName' => $deviceName,
+            'groupNameObject' => $deviceGroup,
+            'roomObject' => $deviceRoom
         ];
+
 
         $newDevice = new Devices();
 
@@ -48,16 +52,17 @@ class DeviceController extends AbstractController
 
         $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
-        $errors = $deviceService->returnAllErrors();
 
-        if (!empty($errors)) {
-            return $this->sendBadRequestResponse($errors);
+        if (!empty($deviceService->getAllServerErrors())) {
+            return $this->sendBadRequestResponse($deviceService->getAllServerErrors());
         }
-        else {
-            $secret = $handledForm->getData()->getSecret();
-            $deviceID = $handledForm->getData()->getDevicenameid();
+        if (!empty($deviceService->getAllUserErrors())) {
+            return $this->sendBadRequestResponse($deviceService->getAllUserErrors());
+        }
 
-            return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $deviceID]);
-        }
+        $secret = $handledForm->getData()->getSecret();
+        $deviceID = $handledForm->getData()->getDevicenameid();
+
+        return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $deviceID]);
     }
 }

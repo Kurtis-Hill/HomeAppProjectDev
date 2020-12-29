@@ -13,7 +13,8 @@ const emptyNewDeviceModalContent = {
     newDeviceID:'',
     deviceSecret:null, 
     errors:[], 
-    formSubmit:false};
+    formSubmit:false
+};
 
 export default class AddNewDeviceContextProvider extends Component {
     constructor(props) {
@@ -44,10 +45,11 @@ export default class AddNewDeviceContextProvider extends Component {
             .catch(error => {
                 const status = error.response.status;
                 if (status === 400) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData], formSubmit:false, deviceSecret: null}});
+                    console.log('400 error', error.response.data.responseData);
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData.errors], formSubmit:false}});
                 }
                 if (status === 500) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false, deviceSecret: null}});
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false}});
                 }
             })
     }
@@ -56,15 +58,15 @@ export default class AddNewDeviceContextProvider extends Component {
         const formInput = event.target.value;
 
         switch (event.target.name) {
-            case "device-room":
+            case "deviceRoom":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceRoom: formInput}});
                 break;
             
-            case "device-group":
+            case "deviceGroup":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceGroup: formInput}});
                 break;
 
-            case "device-name":
+            case "deviceName":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
         }

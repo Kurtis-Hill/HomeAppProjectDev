@@ -16,6 +16,7 @@ use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +39,8 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
         Sensors::LATITUDE => [
             'alias' => 'lat',
             'object' => Latitude::class
-        ]
+        ],
+
     ];
 
     /**
@@ -52,13 +54,16 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     protected array $userInputErrors = [];
 
 
-    private function getUserSelectionData(): ?array
+    /**
+     * @return array|null
+     */
+    private function getUserCardSelectionData(): ?array
     {
         try {
             $icons = $this->em->getRepository(Icons::class)->getAllIcons();
             $colours = $this->em->getRepository(CardColour::class)->getAllColours();
             $states = $this->em->getRepository(Cardstate::class)->getAllStates();
-        } catch (\PDOException | \Exception $e) {
+        } catch (ORMException | \Exception $e) {
             error_log($e->getMessage());
             $this->serverErrors['Failed to process user selection queries'];
         }
@@ -108,7 +113,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
             }
         } catch (\Exception $e) {
             error_log($e->getMessage());
-            $this->serverErrors[] = 'Failed to find object for the type of sensor requested, this reading type may be unsupported';
+            $this->serverErrors[] = $e->getMessage();
         }
 
         return $sensorFormsData ?? [];
@@ -124,13 +129,13 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     {
         $cardData = $this->em->getRepository(CardView::class)->getCardSensorFormData(['id' => $cardViewID], self::STANDARD_SENSOR_TYPE_DATA);
 
-        if ($cardData instanceof StandardSensorTypeInterface) {
-            $userSelectionData = $this->getUserSelectionData();
+            $userSelectionData = $this->getUserCardSelectionData();
 
             if ($userSelectionData === null) {
                 return null;
             }
 
+        if ($cardData instanceof StandardSensorTypeInterface) {
             $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
         }
         else {
@@ -149,7 +154,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     {
         try {
             $usersCurrentCardData = $this->em->getRepository(CardView::class)->getUsersCurrentlySelectedCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()], self::SENSOR_DATA);
-        } catch(\PDOException | \Exception $e){
+        } catch(ORMException | \Exception $e){
             $this->serverErrors[] = 'Query error trying to find users card data';
             error_log($e->getMessage());
         }
@@ -172,7 +177,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
 
             try {
                 $this->em->persist($validFormData);
-            } catch (\PDOException | \Exception $e) {
+            } catch (ORMException | \Exception $e) {
                 error_log($e->getMessage());
                 $this->serverErrors[] = 'Object persistence failed';
             }

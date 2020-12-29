@@ -58,7 +58,7 @@ class RegistrationController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->persist($groupNameMapping);
                 $entityManager->flush();
-            } catch (\PDOException | \Exception $e) {
+            } catch (ORMException | \Exception $e) {
                 error_log($e->getMessage());
             }
 

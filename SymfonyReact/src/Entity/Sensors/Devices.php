@@ -137,7 +137,7 @@ class Devices
     /**
      * @return GroupNames
      */
-    public function getGroupNameID(): GroupNames
+    public function getGroupNameObject(): GroupNames
     {
         return $this->groupNameID;
     }
@@ -145,7 +145,7 @@ class Devices
     /**
      * @param GroupNames $groupNameID
      */
-    public function setGroupNameID(GroupNames $groupNameID): void
+    public function setGroupNameObject(GroupNames $groupNameID): void
     {
         $this->groupNameID = $groupNameID;
     }

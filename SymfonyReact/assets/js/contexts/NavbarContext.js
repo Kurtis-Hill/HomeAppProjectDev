@@ -60,12 +60,14 @@ export default class NavbarContextProvider extends Component {
         axios.get(apiURL+'navbar/navbar-data',
         { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
-            const navBarRepsonse = response.data.responseData;
-            this.setState({devices: navBarRepsonse.devices, rooms: navBarRepsonse.rooms, groupNames: navBarRepsonse.groupNames});
+            const navBarResponse = response.data.responseData;
+            this.setState({devices: navBarResponse.devices, rooms: navBarResponse.rooms, groupNames: navBarResponse.groupNames});
+            console.log('nav bar11', navBarResponse);
+            console.log('nav bar states', this.state.groupNames, this.state.rooms);
         }).catch(error => {   
             console.log(error);  
             if (error.response.status === 500) {
-                alert('Failed Getting Navbar Data, '+error.response.data.title);
+                alert('Failed Getting Navbar Data, '+error.response.data.responseData.title);
             }
         })
     }
@@ -88,7 +90,7 @@ export default class NavbarContextProvider extends Component {
                 navbarSizeToggle: this.navbarSizeToggle,
                 navbarSize: this.state.showNavbarToggleSize,
                 userDevices: this.state.devices,
-                groupNames: this.state.groupNames,
+                userGroupNames: this.state.groupNames,
                 roomNavToggle: this.state.roomNavToggle,
                 deviceSettingsNavToggle: this.state.deviceSettingsNavToggle,
                 toggleOffNavTabElement: this.toggleOffNavTabElement,

@@ -4,9 +4,9 @@
 namespace App\Form\SensorForms;
 
 
-use App\Entity\Core\Devices;
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
+use App\Entity\Sensors\Devices;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -21,7 +21,7 @@ class AddNewDeviceForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('devicename', TextType::class, [
+            ->add('deviceName', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersContraint(),
@@ -32,11 +32,11 @@ class AddNewDeviceForm extends AbstractType
                 ]
             ])
 
-            ->add('groupnameid', EntityType::class, [
+            ->add('groupNameObject', EntityType::class, [
                 'class' => GroupNames::class,
             ])
 
-            ->add('roomid', EntityType::class, [
+            ->add('roomObject', EntityType::class, [
                 'class' => Room::class,
             ])
         ;

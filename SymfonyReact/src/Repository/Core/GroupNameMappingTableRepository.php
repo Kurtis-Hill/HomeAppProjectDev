@@ -24,13 +24,7 @@ class GroupNameMappingTableRepository extends EntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
 
-        $groupData = [];
-
-        foreach ($result as $userGroupData) {
-            $groupData[$userGroupData['groupNameID']] = $userGroupData['groupName'];
-        }
-
-        return $groupData;
+        return $result;
     }
 
 }

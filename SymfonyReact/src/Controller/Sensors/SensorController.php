@@ -3,7 +3,7 @@
 
 namespace App\Controller\Sensors;
 
-use App\Entity\Core\Sensors;
+use App\Entity\Sensors\Sensors;
 use App\Form\SensorForms\AddNewSensorForm;
 use App\Services\SensorService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -54,11 +54,10 @@ class SensorController extends AbstractController
         if (!empty($errors)) {
             return $this->sendBadRequestResponse($errors);
         }
-        else {
-            $sensorID = $handledSensorForm->getData()->getSensornameid();
 
-            return $this->sendCreatedResourceResponse(['sensorNameID' => $sensorID]);
-        }
+        $sensorID = $handledSensorForm->getData()->getSensornameid();
+
+        return $this->sendCreatedResourceResponse(['sensorNameID' => $sensorID]);
 
 
     }

@@ -4,7 +4,7 @@
 namespace App\Services;
 
 
-use App\Entity\Core\Sensors;
+use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
@@ -44,7 +44,7 @@ class SensorService extends AbstractHomeAppSensorServiceCore
                 $this->em->flush();
             } catch (ORMException $e) {
                 error_log($e->getMessage());
-            } catch (\PDOException $e) {
+            } catch (ORMException $e) {
                 $errorMessage['errors'] = $e->getMessage();
             } catch (\Exception $e) {
                 error_log($e->getMessage());

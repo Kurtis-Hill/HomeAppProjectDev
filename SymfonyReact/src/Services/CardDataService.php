@@ -6,6 +6,7 @@ namespace App\Services;
 use App\DTOs\Sensors\CardDataDTO;
 use App\Entity\Card\CardView;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,7 +62,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
 
             $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::STANDARD_SENSOR_TYPE_DATA);
         }
-        catch (\PDOException | \Exception $e) {
+        catch (\ORMException | \Exception $e) {
             error_log($e->getMessage());
             $this->serverErrors[] = 'Card Data Query Failure';
         }
@@ -92,7 +93,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
 
             try {
                 $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::STANDARD_SENSOR_TYPE_DATA);
-            } catch (\PDOException | \Exception $e) {
+            } catch (ORMException | \Exception $e) {
                 error_log($e->getMessage());
                 $this->serverErrors[] = 'Query Failure';
             }

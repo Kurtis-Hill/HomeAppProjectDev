@@ -121,10 +121,25 @@ abstract class AbstractHomeAppSensorServiceCore
         }
     }
 
+    /**
+     * @throws \Exception
+     */
+    private function setUserVariables()
+    {
+        $this->userID = $this->user->getUser()->getUserID();
+        $this->groupNameDetails = $this->groupNameDetails = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
+        $this->roles = $this->user->getUser()->getRoles();
+        $this->devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
+        $this->usersRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
+
+        if (empty($this->groupNameDetails) || !isset($this->userID) || empty($this->roles)) {
+            throw new \Exception('The User Variables Cannot be set Please try again');
+        }
+    }
 
     #[Pure] public function getGroupNameIDs()
     {
-        return array_keys($this->groupNameDetails);
+        return array_column($this->groupNameDetails, 'groupNameID');
     }
 
     public function getGroupNameDetails()
@@ -163,20 +178,4 @@ abstract class AbstractHomeAppSensorServiceCore
         return $this->userErrors;
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function setUserVariables()
-    {
-        $this->userID = $this->user->getUser()->getUserID();
-        $this->groupNameDetails = $this->groupNameDetails = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
-        $this->roles = $this->user->getUser()->getRoles();
-        $this->devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
-        $this->usersRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
-
-
-        if (!$this->groupNameDetails || !$this->userID || empty($this->roles || $this->devices || $this->userRooms)) {
-            throw new \Exception('The User Variables Cannot be set Please try again');
-        }
-    }
 }

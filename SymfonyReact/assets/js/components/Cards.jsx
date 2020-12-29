@@ -21,20 +21,20 @@ const cardRender = () => {
           <React.Fragment>
             {
               context.cardData.length >= 1 ?
-                context.cardData.map((cardData) => (
+                context.cardData.map((cardData, index) => (
                   <div className="col-xl-3 col-md-6 mb-4" onClick={() => {context.getCardDataForm(cardData.cardViewID)}} key={cardData.cardViewID}>
                     <div className={"shadow h-100 py-2 card border-left-"+cardData.cardColour}>
                       <div className="card-body hover">
                         <div style={{ position: "absolute", top: '2%', right: '5%'}}>{cardData.sensorType}</div>
                           <div className="row no-gutters align-items-center">
                             <div className="col mr-2">
-                              <div className="d-flex font-weight-bold text text-uppercase mb-1">{cardData.sensorName}</div>
-                              <div className="d-flex text text-uppercase mb-1">{cardData.sensorRoom}</div>
+                              <div className="d-flex font-weight-bold text text-uppercase mb-1">Sensor Name: {cardData.sensorName}</div>
+                              <div className="d-flex text text-uppercase mb-1">Room: {cardData.sensorRoom}</div>
                               {
                               cardData.sensorData.length >= 1 
                                 ? cardData.sensorData.map((sensorData, index) => (
-                                    <React.Fragment>
-                                      <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)} key={index}>
+                                    <React.Fragment key={index}>
+                                      <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)}>
                                         {sensorData.sensorType}: {sensorData.currentReading}{sensorData.readingSymbol}
                                       </div>
                                       <div className="card-font mb-0 text-gray-400">@{sensorData.time}</div>
