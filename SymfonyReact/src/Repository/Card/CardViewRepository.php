@@ -12,7 +12,7 @@ use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
@@ -23,11 +23,24 @@ use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Soil;
 use App\Entity\Sensors\SensorTypes\Bmp;
 
-//All queries need to be refactored to just grab the data needed just passed full objects in for convenience
-class CardviewRepository extends EntityRepository
-{
 
-    public function getAllCardObjects(int $userID, array $groupNameIDs)
+class CardViewRepository extends EntityRepository
+{
+    private function prepareSensorDataForQuery($sensors, $qb, array $joinCondition): string
+    {
+        $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
+
+        $sensorAlias = [];
+        foreach ($sensors as $sensorNames => $sensorData) {
+            $sensorAlias[] = $sensorData['alias'];
+            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH,$sensorData['alias'].$joinConditionString);
+        }
+
+        return implode(', ', $sensorAlias);
+    }
+
+
+    public function getAllCardObjects(int $userID, array $groupNameIDs, array $sensors)
     {
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
@@ -35,30 +48,24 @@ class CardviewRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $qb->select(
-                    'dallas',
-                    'dht',
-                    'bmp',
-                    'soil'
-        )
-            ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
-            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
-            ->leftJoin(Dht::class, 'dht', Join::WITH,'dht.cardViewID = cv.cardViewID')
-            ->leftJoin(Dallas::class, 'dallas', Join::WITH,'dallas.cardViewID = cv.cardViewID')
-            ->leftJoin(Soil::class, 'soil', Join::WITH,'soil.cardViewID = cv.cardViewID')
-            ->leftJoin(Bmp::class, 'bmp', Join::WITH,'bmp.cardViewID = cv.cardViewID')
-            ->where(
-                $expr->orX(
-                    $expr->eq('cv.cardStateID', ':cardviewOne'),
-                    $expr->eq('cv.cardStateID', ':cardviewTwo')
-                ),
-                $expr->eq('cv.userID', ':userid'),
-                $expr->in('devices.groupNameID', ':groupNameID')
-            );
+        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
+
+        $qb->select($sensorAlias)
+        ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
+        ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
+
+        $qb->where(
+            $expr->orX(
+                $expr->eq('cv.cardStateID', ':cardviewOne'),
+                $expr->eq('cv.cardStateID', ':cardviewTwo')
+            ),
+            $expr->eq('cv.userID', ':userID'),
+            $expr->in('devices.groupNameID', ':groupNameID')
+        );
 
         $qb->setParameters(
             [
-                'userid' => $userID,
+                'userID' => $userID,
                 'groupNameID' => $groupNameIDs,
                 'cardviewOne' => $cardViewOne,
                 'cardviewTwo' => $cardViewTwo
@@ -69,31 +76,31 @@ class CardviewRepository extends EntityRepository
     }
 
 
-
-        /**
+    /**
      * @param array $groupNameIDs
      * @param int $userID
-     * @param null $type
-     * @param $deviceDetails
+     * @param array $deviceDetails
+     * @param array $sensors
      * @return array
      */
-    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, $deviceDetails, $type = null): array
+    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, array $deviceDetails, array $sensors): array
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('dallas', 'dht', 'bmp', 'soil')
-            ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
-            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
-            ->leftJoin(Dht::class, 'dht', Join::WITH,'dht.cardViewID =cv.cardViewID')
-            ->leftJoin(Dallas::class, 'dallas', Join::WITH,'dallas.cardViewID =cv.cardViewID')
-            ->leftJoin(Soil::class, 'soil', Join::WITH,'soil.cardViewID =cv.cardViewID')
-            ->leftJoin(Bmp::class, 'bmp', Join::WITH,'bmp.cardViewID =cv.cardViewID')
-            ->where(
+        $expr = $qb->expr();
+
+        $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
+
+        $qb
+        ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
+        ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
+        ->where(
             $qb->expr()->in('s.groupNameID', ':groupNameID'),
-            $qb->expr()->eq('cv.userID', ':userID'),
-            $qb->expr()->eq('s.deviceNameID', ':deviceNameID'),
-            $qb->expr()->eq('s.groupNameID', ':deviceGroup'),
-            $qb->expr()->eq('cv.roomID', ':deviceRoom')
+            $expr->eq('cv.userID', ':userID'),
+            $expr->eq('s.deviceNameID', ':deviceNameID'),
+            $expr->eq('s.groupNameID', ':deviceGroup'),
+            $expr->eq('cv.roomID', ':deviceRoom')
         );
+
         $qb->setParameters([
             'deviceNameID' => $deviceDetails['deviceName'],
             'deviceGroup' => $deviceDetails['deviceGroup'],
@@ -106,27 +113,25 @@ class CardviewRepository extends EntityRepository
     }
 
 
-
-
     /**
      * Add left join for additional sensors
      * needs refactor
      * @param array $criteria
+     * @param $sensorData
      * @return mixed
      */
-    public function getCardSensorFormData(array $criteria): StandardSensorTypeInterface
+    public function getCardSensorFormData(array $criteria, $sensorData): StandardSensorTypeInterface
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('dallas', 'dht', 'bmp', 'soil')
+
+        $sensorAlias = $this->prepareSensorDataForQuery($sensorData, $qb, ['cv', 'cardViewID']);
+
+        $qb->select($sensorAlias)
             ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
             ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
             ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
             ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
             ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
-            ->leftJoin(Dht::class, 'dht', Join::WITH,'dht.cardViewID = cv.cardViewID')
-            ->leftJoin(Dallas::class, 'dallas', Join::WITH,'dallas.cardViewID =cv.cardViewID')
-            ->leftJoin(Soil::class, 'soil', Join::WITH,'soil.cardViewID =cv.cardViewID')
-            ->leftJoin(Bmp::class, 'bmp', Join::WITH,'bmp.cardViewID =cv.cardViewID')
             ->where(
                 $qb->expr()->eq('cv.cardViewID', ':id')
             )
@@ -142,30 +147,27 @@ class CardviewRepository extends EntityRepository
 
     /**
      * @param array $criteria
+     * @param array $sensorData
      * @return mixed
      */
-    public function getUsersCurrentCardData(array $criteria): array
+    public function getUsersCurrentlySelectedCardData(array $criteria, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('cv');
-        $qb->select('cv', 't', 'h', 'a')
-            ->leftJoin(Temperature::class, 't', Join::WITH,'t.sensorNameID = cv.sensorNameID')
-            ->leftJoin(Humidity::class, 'h', Join::WITH,'h.sensorNameID = cv.sensorNameID')
-            ->leftJoin(Analog::class, 'a', Join::WITH,'a.sensorNameID = cv.sensorNameID')
+
+        $sensorAlias = $this->prepareSensorDataForQuery($sensorData, $qb, ['cv', 'sensorNameID']);
+
+        $qb->select('cv, ' .$sensorAlias)
             ->where(
                 $qb->expr()->eq('cv.cardViewID', ':id'),
                 $qb->expr()->eq('cv.userID', ':userID')
             )
             ->setParameters(['id' => $criteria['id'], 'userID' => $criteria['userID']]);
 
-        $result = $qb->getQuery()->getResult();
+        $result = array_filter($qb->getQuery()->getResult());
 
-        $sensorResults["cardViewObject"] = $result[0];
-        $sensorResults["temp"] = $result[1];
-        $sensorResults["humid"] = $result[2];
-        $sensorResults["analog"] = $result[3];
+        $result = array_values($result);
 
-
-        return $sensorResults;
+        return $result;
     }
 //    /**
 //     * @param $groupNameIDs

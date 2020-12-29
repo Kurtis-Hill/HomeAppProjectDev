@@ -28,25 +28,25 @@ class Humidity implements StandardSensorInterface
     private int $humidID;
 
     /**
-     * @var float
+     * @var int
      *
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
-    private float $humidReading;
+    private int $humidReading;
 
     /**
-     * @var float
+     * @var int
      *
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
-    private float $highHumid;
+    private int $highHumid;
 
     /**
-     * @var float
+     * @var int
      *
      * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
-    private float $lowHumid;
+    private int $lowHumid;
 
     /**
      * @var bool

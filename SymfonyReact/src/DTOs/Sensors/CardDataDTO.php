@@ -63,7 +63,7 @@ class CardDataDTO extends CardDTOAbstract
 
         $this->cardIcon = $cardDTOData->getCardViewObject()->getCardIconObject()->getIconName();
 
-        $this->sensorType = $cardDTOData->getCardViewObject()->getSensorObject()->getSensorTypeID()->getSensorType();
+        $this->sensorType = $cardDTOData->getCardViewObject()->getSensorObject()->getSensorTypeObject()->getSensorType();
 
         $this->sensorRoom = $cardDTOData->getCardViewObject()->getSensorObject()->getDeviceNameID()->getRoomObject()->getRoom();
 
@@ -73,8 +73,9 @@ class CardDataDTO extends CardDTOAbstract
     /**
      * @param StandardSensorInterface $sensorTypeObject
      * @param string $type
+     * @param string|null $symbol
      */
-    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type): void
+    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
     {
         $this->sensorData[] = [
             'sensorType' => $type,
@@ -83,6 +84,7 @@ class CardDataDTO extends CardDTOAbstract
             'currentReading' => is_float($sensorTypeObject->getCurrentSensorReading()) ?  number_format($sensorTypeObject->getCurrentSensorReading(), 2) : $sensorTypeObject->getCurrentSensorReading(),
             'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),
             'getCurrentLowDifference' => is_float($sensorTypeObject->getMeasurementDifferenceLowReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2) : $sensorTypeObject->getMeasurementDifferenceLowReading(),
+            'readingSymbol' => $symbol,
             'time' => $sensorTypeObject->getTime()->format('d-m H:i:s')
         ];
     }

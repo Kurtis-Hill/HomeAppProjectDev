@@ -3,19 +3,7 @@
 
 namespace App\Controller\CardData;
 
-
-use App\Entity\Card\CardView;
-use App\Entity\Sensors\SensorType;
-use App\Entity\Sensors\SensorTypes\Bmp;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\Entity\Sensors\SensorTypes\Dht;
-use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\CardViewForms\CardViewForm;
-use App\Form\CardViewForms\DallasTempCardModalForm;
-use App\Form\CardViewForms\DHTHumidCardModalForm;
-use App\Form\CardViewForms\DHTTempCardModalForm;
-use App\Form\CardViewForms\SoilFormType;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Services\SensorDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -33,50 +21,15 @@ use Symfony\Component\Serializer\Serializer;
 /**
  * Class CardDataController.
  *
- * @Route("/HomeApp/api/card-data",  methods={"GET"})
+ * @Route("/HomeApp/api/card-data")
  *
  */
 class CardDataController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-    protected const SENSOR_DATA = [
-        SensorType::DHT_SENSOR => [
-            'alias' => 'dht',
-            'object' => Dht::class,
-            'forms' =>  [
-                'temperature' =>  DHTTempCardModalForm::class,
-                'humidity' => DHTHumidCardModalForm::class,
-            ],
-        ],
-
-        SensorType::DALLAS_TEMPERATURE => [
-            'alias' => 'dallas',
-            'object' => Dallas::class,
-            'forms' =>  [
-                'temperature' => DallasTempCardModalForm::class
-            ],
-        ],
-
-        SensorType::SOIL_SENSOR => [
-            'alias' => 'soil',
-            'object' => Soil::class,
-            'forms' => [
-                SoilFormType::class
-            ],
-        ],
-
-        SensorType::BMP_SENSOR => [
-            'alias' => 'bmp',
-            'object' => Bmp::class,
-            'forms' => [
-                'empty'
-            ],
-        ],
-    ];
-
     /**
-     * @Route("/cards", name="indexCardData")
+     * @Route("/cards", name="indexCardData", methods={"GET"})
      * @param Request $request
      * @param CardDataService $cardDataService
      * @return Response|JsonResponse
@@ -105,8 +58,9 @@ class CardDataController extends AbstractController
         return $this->sendSuccessfulResponse($serializer->serialize($cardData, 'json'));
     }
 
+
     /**
-     * @Route("/card-state-view-form", name="cardViewForm")
+     * @Route("/card-state-view-form", name="cardViewForm", methods={"GET"})
      *
      * @param Request $request
      * @param SensorDataService $sensorDataService
@@ -136,75 +90,73 @@ class CardDataController extends AbstractController
 
 
     /**
-     * @Route("/update-card-view", name="updateCardView")
+     * @Route("/update-card-view", name="updateCardView", methods={"POST"})
      * @param Request $request
      * @param SensorDataService $sensorDataService
      * @return Response|JsonResponse
      */
     public function updateCardView(Request $request, SensorDataService $sensorDataService): Response|JsonResponse
     {
-        $errors = [];
         $cardViewID = $request->get('cardViewID');
 
         $cardViewData = [
-            'cardcolourid' => $request->get('cardColour'),
-            'cardiconid' => $request->get('icon'),
-            'cardstateid' => $request->get('cardViewState'),
+            'cardColourObject' => $request->get('cardColour'),
+            'cardIconObject' => $request->get('cardIcon'),
+            'cardStateObject' => $request->get('cardViewState'),
         ];
 
-        if (empty($cardViewID || $cardViewData['cardColourID'] || $cardViewData['cardIconID'] || $cardViewData['cardStateID'])) {
-            return $this->sendBadRequestResponse();
+        foreach ($cardViewData as $data) {
+            if ($data === null) {
+                return $this->sendBadRequestResponse(['errors' => 'empty form data']);
+            }
         }
 
         $cardSensorData = $sensorDataService->prepareUsersCurrentCardData($cardViewID);
+        $cardViewObject = array_shift($cardSensorData);
 
-        if (empty($cardSensorData)) {
-            return $this->sendNotFoundResponse();
+        $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
+
+        $handledCardViewForm = $sensorDataService->processForm($cardViewForm, $cardViewData);
+
+        if ($handledCardViewForm instanceof FormInterface) {
+            $sensorDataService->processSensorFormErrors($handledCardViewForm);
+
+            return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
         }
 
-        $sensorType = $cardSensorData['cardViewObject']->getSensornameid()->getSensortypeid()->getSensortype();
+        $sensorType = $cardViewObject->getSensorObject()->getSensorTypeObject()->getSensorType();
+        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorType);
 
-        $prepareSensorForm = $sensorDataService->prepareSensorFormData($request, $cardSensorData, $sensorType);
-
-        if (!$prepareSensorForm['object'] instanceof StandardSensorInterface) {
-            $errors[] = 'Sensor Not Recognised';
+        if (empty($sensorFormData)) {
+            return $this->sendInternelServerErrorResponse($sensorDataService->getServerErrors());
         }
 
-        $cardViewForm = $this->createForm(CardViewForm::class, $cardSensorData['cardViewObject']);
-        $sensorDataForm = $this->createForm($prepareSensorForm['formClass'], $prepareSensorForm['object']);
+        foreach ($sensorFormData as $sensorType => $sensorData) {
+            foreach ($cardSensorData as $sensorObjects) {
+                if ($sensorData['object'] === $sensorObjects::class) {
+                    $sensorForm = $this->createForm($sensorData['form'], $sensorObjects);
+                    $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
 
-        if (!empty($prepareSensorForm['secondObject'])) {
-            $secondSensorDataForm = $this->createForm($prepareSensorForm['secondFormClass'], $prepareSensorForm['secondObject']);
+                    if ($handledSensorForm instanceof FormInterface) {
+                        $sensorDataService->processSensorFormErrors($handledSensorForm);
 
-            $secondHandledSensorDataForm = $sensorDataService->processForm($secondSensorDataForm, $prepareSensorForm['secondFormData']);
+                    }
 
-            if ($secondHandledSensorDataForm instanceof FormInterface) {
-                foreach ($secondHandledSensorDataForm->getErrors(true, true) as $error) {
-                    $errors[] = $error->getMessage();
                 }
             }
         }
 
-        $handledCardViewForm = $sensorDataService->processForm($cardViewForm, $cardViewData);
-        $handledSensorDataForm = $sensorDataService->processForm($sensorDataForm, $prepareSensorForm['formData']);
-
-        if ($handledCardViewForm instanceof FormInterface) {
-            foreach ($handledCardViewForm->getErrors(true, true) as $error) {
-                $errors[] = $error->getMessage();
-            }
+        if (!empty($sensorDataService->getUserInputErrors())) {
+            return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
         }
 
-        if ($handledSensorDataForm instanceof FormInterface) {
-            foreach ($handledSensorDataForm->getErrors(true, true) as $error) {
-                $errors[] = $error->getMessage();
-            }
+        if (!empty($sensorDataService->getServerErrors())) {
+            return $this->sendBadRequestResponse($sensorDataService->getServerErrors());
         }
 
-        if (!empty($errors)) {
-            return $this->sendBadRequestResponse($errors);
-        }
         $this->getDoctrine()->getManager()->flush();
 
         return $this->sendSuccessfulJsonResponse();
     }
+
 }

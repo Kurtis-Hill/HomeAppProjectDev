@@ -23,6 +23,45 @@ use Symfony\Component\Security\Core\Security;
 
 abstract class AbstractHomeAppSensorServiceCore
 {
+    //make sure to add a lowercase version of the sensor type name thats store in the DB
+
+    protected const STANDARD_SENSOR_TYPE_DATA = [
+        SensorType::DHT_SENSOR => [
+            'alias' => 'dht',
+            'object' => Dht::class,
+            'forms' =>  [
+                'temperature' =>  DHTTempCardModalForm::class,
+                'humidity' => DHTHumidCardModalForm::class,
+            ],
+        ],
+
+        SensorType::DALLAS_TEMPERATURE => [
+            'alias' => 'dallas',
+            'object' => Dallas::class,
+            'forms' =>  [
+                'temperature' => DallasTempCardModalForm::class
+            ],
+        ],
+
+        SensorType::SOIL_SENSOR => [
+            'alias' => 'soil',
+            'object' => Soil::class,
+            'forms' => [
+                'analog' => SoilFormType::class
+            ],
+        ],
+
+        SensorType::BMP_SENSOR => [
+            'alias' => 'bmp',
+            'object' => Bmp::class,
+            'forms' => [
+                'latitude',
+                'temperature',
+                'humidity'
+            ],
+        ],
+    ];
+
     /**
      * @var int
      */
@@ -82,30 +121,6 @@ abstract class AbstractHomeAppSensorServiceCore
         }
     }
 
-
-    /**
-     * @param FormInterface $form
-     * @param array $formData
-     * @return bool|FormInterface
-     */
-    public function processForm(FormInterface $form, array $formData): bool|FormInterface
-    {
-        $form->submit($formData);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $validFormData = $form->getData();
-
-            try {
-                $this->em->persist($validFormData);
-            } catch (\PDOException | \Exception $e) {
-                error_log($e->getMessage());
-            }
-
-            return true;
-        }
-
-        return $form;
-    }
 
     #[Pure] public function getGroupNameIDs()
     {

@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Sensors
 {
+
+    public const TEMPERATURE = 'Temperature';
+
+    public const HUMIDITY = 'Humidity';
+
+    public const ANALOG = 'Analog';
+
+    public const LATITUDE = 'Latitude';
+
     /**
      * @var int
      *
@@ -74,7 +83,7 @@ class Sensors
         $this->sensorName = $sensorName;
     }
 
-    public function getSensorTypeID(): SensorType
+    public function getSensorTypeObject(): SensorType
     {
         return $this->sensorTypeID;
     }

@@ -62,13 +62,15 @@ class CardViewSensorFormDTO extends CardDTOAbstract
     /**
      * @param StandardSensorInterface $sensorTypeObject
      * @param string $type
+     * @param string|null $symbol
      */
-    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type): void
+    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
     {
         $this->sensorData[] = [
             'sensorType' => $type,
             'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
             'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
+            'readingSymbol' => $symbol,
             'constRecord' => $sensorTypeObject->getConstRecord(),
         ];
     }

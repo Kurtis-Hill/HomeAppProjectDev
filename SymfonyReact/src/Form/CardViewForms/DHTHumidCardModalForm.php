@@ -4,7 +4,8 @@
 namespace App\Form\CardViewForms;
 
 
-use App\Entity\Sensors\Humid;
+
+use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Form\CustomFormValidators\DHTHumidityConstraint;
 use Symfony\Component\Form\AbstractType;
 
@@ -20,7 +21,7 @@ class DHTHumidCardModalForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('highSensorReading', TextType::class, [
+            ->add('highReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                    new DHTHumidityConstraint(),
@@ -28,7 +29,7 @@ class DHTHumidCardModalForm extends AbstractType
                 ],
             ])
 
-            ->add('lowSensorReading', TextType::class, [
+            ->add('lowReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DHTHumidityConstraint(),
@@ -36,7 +37,7 @@ class DHTHumidCardModalForm extends AbstractType
                 ],
             ])
 
-            ->add('constrecord', TextType::class, [
+            ->add('constRecord', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(['message' => 'Const Record Cannot be Blank']),
@@ -49,7 +50,7 @@ class DHTHumidCardModalForm extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => Humid::class,
+            'data_class' => Humidity::class,
         ]);
     }
 }

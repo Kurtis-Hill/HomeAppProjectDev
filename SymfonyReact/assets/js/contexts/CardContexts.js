@@ -1,34 +1,8 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
 import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL, webappURL } from '../Utilities/Common';
-import { DallasTemp, DHT, Soil } from '../Utilities/SensorsCommon';
-
-
 
 export const CardContext = createContext();
-
-// const emptyModalContent = {
-//     submitSuccess: false, 
-//     errors: [],
-//     sensorHighReading: '', 
-//     sensorLowReading: '', 
-//     sensorType: '', 
-//     constRecord: '', 
-//     secondSensorID: null, 
-//     secondSensorHighReading: '', 
-//     secondSensorLowReading: '', 
-//     secondSensorType: '', 
-//     secondConstRecord: '', 
-//     currentIcon: '', 
-//     icons: [], 
-//     iconID: '', 
-//     currentColour: '', 
-//     colours: [], 
-//     states: [], 
-//     currentState: '', 
-//     cardViewID: null, 
-//     modalSubmit: false
-// };
 
 const emptyModalContent = {
     submitSuccess: false, 
@@ -44,12 +18,11 @@ const emptyModalContent = {
     userCardViewSelections: [],
 };
 
-
 class CardContextProvider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            refreshTimer: 4000,
+            refreshTimer: 6000,
             cardData: [],
             modalShow: false,
             modalLoading: false,
@@ -104,15 +77,12 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            // console.log('card response', response.data);
             if (response.data.length >= 1 ) {
                 this.setState({cardData: response.data});
             }
-            //console.log('card state', this.state.cardData);
         }).catch(error => {
-            const err = error;
-            console.log(err);
-            if (err.status === 401) {
+            console.log('failed', error);
+            if (error.data.status === 401) {
                 axios.post(apiURL+'token/refresh', 
                     { refreshToken : getRefreshToken() } 
                 )
@@ -156,16 +126,6 @@ class CardContextProvider extends Component {
         const userIconSelections = cardData.userIconSelections;
         const iconPreview = cardIcon;
 
-
-        console.log( 'yep1', cardColour,
-            cardIcon,
-            cardViewID,
-            currentViewState,
-            sensorData,
-            userCardViewSelections,
-            userColourSelections,
-            userIconSelections);
-
         this.setState({
             modalContent:{...this.state.modalContent, 
                 cardColour,
@@ -179,8 +139,6 @@ class CardContextProvider extends Component {
                 iconPreview,
             }
         });
-        
-        console.log('modal state', this.state.modalContent);
     }
 
 
@@ -196,13 +154,11 @@ class CardContextProvider extends Component {
             case "cardIcon":
                 const selectText = document.getElementById('icon-select');
                 const option = selectText.options[selectText.selectedIndex];
-
                 const currentModalData = this.state.modalContent;
+
                 currentModalData.cardIcon.iconID = value;
                 currentModalData.cardIcon.iconName = lowercaseFirstLetter(option.text);
-
                 this.setState({modalContent:{...this.state.modalContent}});
-                console.log('modalContent', this.state.modalContent);
                 break;
 
             case "cardColour":
@@ -250,7 +206,7 @@ class CardContextProvider extends Component {
         this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
 
         const formData = new FormData(event.target);
-        console.log('formdata', formData);
+
         formData.append('cardViewID', this.state.modalContent.cardViewID);
                 
         const config = {     
@@ -259,7 +215,7 @@ class CardContextProvider extends Component {
         
         axios.post(apiURL+'card-data/update-card-view', formData, config)
         .then(response => {
-            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true}});
+            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true, errors:[]}});
 
             setTimeout(() => 
                 this.toggleModal(), 1500

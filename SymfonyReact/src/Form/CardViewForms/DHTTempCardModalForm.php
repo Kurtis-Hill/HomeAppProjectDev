@@ -5,6 +5,7 @@ namespace App\Form\CardViewForms;
 
 
 
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Temp;
 
 
@@ -21,21 +22,21 @@ class DHTTempCardModalForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('highSensorReading', TextType::class, [
+            ->add('highReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DHTTemperatureConstraint(),
                     new NotBlank(['message' => 'High Temperature Cannot be Blank']),
                 ],
             ])
-            ->add('lowSensorReading', TextType::class, [
+            ->add('lowReading', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new DHTTemperatureConstraint(),
                     new NotBlank(['message' => 'Low Temperature Cannot be Blank']),
                 ],
             ])
-            ->add('constrecord', TextType::class, [
+            ->add('constRecord', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(['message' => 'Const Record Cannot be Blank']),
@@ -48,7 +49,7 @@ class DHTTempCardModalForm extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => Temp::class,
+            'data_class' => Temperature::class,
         ]);
     }
 }

@@ -35,7 +35,7 @@ const cardRender = () => {
                                 ? cardData.sensorData.map((sensorData, index) => (
                                     <React.Fragment>
                                       <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)} key={index}>
-                                        {sensorData.sensorType}: {sensorData.currentReading}
+                                        {sensorData.sensorType}: {sensorData.currentReading}{sensorData.readingSymbol}
                                       </div>
                                       <div className="card-font mb-0 text-gray-400">@{sensorData.time}</div>
                                     </React.Fragment>

@@ -55,11 +55,13 @@ const cardModal = () => {
                       modalContent.sensorData.map((sensorData) => (                        
                         <div style={{paddingBottom: "10%"}}>
                           <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
-                          <input type="text" name={sensorData.sensorType+"HighReading"} className="form-control" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input>
-    
+                          <br />
+                          <input type="text" name={sensorData.sensorType+"HighReading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
+                          <br />
                           <label className="modal-space large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} Low Reading</label>
-                          <input type="text" name={sensorData.sensorType+"LowReading"} className="form-control" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input>
-
+                          <br />
+                          <input type="text" name={sensorData.sensorType+"LowReading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
+                          <br />
                           <label className="modal-space large font-weight-bold">{modalSensorType} Temperature Constantly Record Data</label>
                           <select name={sensorData.sensorType+"ConstRecord"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control">
                             <option value={false} key="no">No</option>
@@ -79,7 +81,7 @@ const cardModal = () => {
                         <br />
                         <select id="icon-select" name="cardIcon" value={modalContent.cardIcon.iconID} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
                           {modalContent.userIconSelections.map((icons) => (
-                            <option key={icons.iconID}>{capitalizeFirstLetter(icons.iconName)}</option>
+                            <option value={icons.iconID}>{capitalizeFirstLetter(icons.iconName)}</option>
                           ))}
                         </select>
                         <i className={"fas fa-2x text-gray-300 modal-icon fa-"+modalContent.cardIcon.iconName}></i>
@@ -109,9 +111,9 @@ const cardModal = () => {
                     ?
                     <React.Fragment>
                       <label className="modal-space large font-weight-bold">Card View</label>
-                      <select name="cardViewState" value={modalContent.currentState} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
-                        {modalContent.userCardViewSelections.map((states, index) => (
-                          <option value={states.stateID} key={states.stateID}>{capitalizeFirstLetter(states.state)}</option>
+                      <select name="cardViewState" value={modalContent.currentViewState.cardStateID} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
+                        {modalContent.userCardViewSelections.map((states) => (
+                          <option value={states.cardStateID} key={states.cardStateID}>{capitalizeFirstLetter(states.state)}</option>
                         ))}
                       </select>
                     </React.Fragment>
