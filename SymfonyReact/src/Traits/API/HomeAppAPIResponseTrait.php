@@ -34,9 +34,9 @@ trait HomeAppAPIResponseTrait
      * @param $data
      * @return JsonResponse
      */
-    public function sendSuccessfulResponse(string $data): Response
+    public function sendSuccessfulResponse(string $data = null): Response
     {
-        if (!empty($data)) {
+        if ($data !== null) {
             return new Response(
                     $data,
                 HTTPStatusCodes::HTTP_OK
@@ -66,7 +66,7 @@ trait HomeAppAPIResponseTrait
         }
     }
 
-    public function sendPartialContentResponse(array $data = []): JsonResponse
+    public function sendPartialContentJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {
             return new JsonResponse(
@@ -81,6 +81,18 @@ trait HomeAppAPIResponseTrait
         }
     }
 
+
+    public function sendPartialContentResponse(string $data = null): Response
+    {
+        if ($data !== null) {
+            return new Response(
+                $data,
+                HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+        }
+        else {
+            return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+        }
+    }
     // 40x Client Error Response
 
     public function sendBadRequestResponse(array $data = []): JsonResponse
@@ -94,7 +106,7 @@ trait HomeAppAPIResponseTrait
                 HTTPStatusCodes::HTTP_BAD_REQUEST);
         }
         else {
-            return new JsonResponse(['title' => 'Bad Request No Data Returned', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+            return new JsonResponse(['title' => 'Bad Request No Data Returned', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
         }
     }
 

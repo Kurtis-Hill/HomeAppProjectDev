@@ -31,7 +31,6 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
         try {
             $this->userInputDataCheck($deviceData);
 
-            return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
         }
         catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
@@ -44,6 +43,10 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
             $this->serverErrors[] = 'Something went wrong';
             error_log($e->getMessage());
         }
+
+        $processedForm = $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
+
+        return $processedForm;
     }
 
     private function userInputDataCheck(array $deviceData): void
@@ -81,15 +84,11 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
             $secret = hash("md5", $secret);
 
             $validFormData = $addNewDeviceForm->getData();
-            $validFormData->setSecret($secret);
+            $validFormData->setDeviceSecret($secret);
+            $validFormData->setCreatedBy($this->getUser());
 
-            try {
-                $this->em->persist($validFormData);
-                $this->em->flush();
-            } catch (ORMException | \Exception $e) {
-                error_log($e->getMessage());
-                $this->serverErrors[] = 'Error persisting new device form';
-            }
+            $this->em->persist($validFormData);
+            $this->em->flush();
         }
         else {
             foreach ($addNewDeviceForm->getErrors(true, true) as $error) {

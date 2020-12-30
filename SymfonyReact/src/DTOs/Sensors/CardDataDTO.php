@@ -6,6 +6,7 @@ namespace App\DTOs\Sensors;
 use App\DTOs\CardDTOAbstract;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class CardDataDTO extends CardDTOAbstract
 {
@@ -53,6 +54,10 @@ class CardDataDTO extends CardDTOAbstract
     {
         $this->filterSensorTypes($cardDTOData);
         $this->setCardViewData($cardDTOData);
+
+        if (empty($this->cardViewID) || empty($this->sensorName) || empty($this->cardIcon) || empty($this->sensorType) || empty($this->sensorRoom) || empty($this->cardColour)) {
+            throw new \RuntimeException('Some card data is missing');
+        }
     }
 
     protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void

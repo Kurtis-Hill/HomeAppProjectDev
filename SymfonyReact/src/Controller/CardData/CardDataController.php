@@ -42,18 +42,19 @@ class CardDataController extends AbstractController
             return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong we are logging you out']);
         }
 
-        if (!empty($cardDataService->getUserInputErrors())) {
-            return $this->sendBadRequestResponse(['errors' => 'No card data found for query if you have devices please logout and back in again please']);
-        }
-
         if (empty($cardData)) {
-            return $this->sendSuccessfulResponse('No Sensors Found');
+            return $this->sendSuccessfulResponse();
         }
 
         $encoders = [new JsonEncoder()];
         $normaliser = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normaliser, $encoders);
+
+        if (!empty($cardDataService->getCardErrors())) {
+
+            return $this->sendPartialContentResponse($serializer->serialize($cardData, 'json'));
+        }
 
         return $this->sendSuccessfulResponse($serializer->serialize($cardData, 'json'));
     }

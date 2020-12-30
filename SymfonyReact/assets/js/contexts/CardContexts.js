@@ -77,21 +77,31 @@ class CardContextProvider extends Component {
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            if (response.data.length >= 1 ) {
+            if (response.data.length >= 1 && Array.isArray(response.data) ) {                
                 this.setState({cardData: response.data});
+            } 
+            else {
+                this.setState({alternativeDisplayMessage: "No Card Data"});
             }
         }).catch(error => {
-            console.log('failed', error);
-            if (error.data.status === 401) {
-                axios.post(apiURL+'token/refresh', 
-                    { refreshToken : getRefreshToken() } 
-                )
-                .then(response => {
-                    setUserSession(response.data.token, response.data.refreshToken);
-                });
-            } else {
-              //  window.location.replace('/HomeApp/logout');
-            }
+            if (error.data == undefined) {
+                this.setState({alternativeDisplayMessage: "No Card Data server errors"});
+            } 
+            else {
+                if (error.data.status === 401) {
+                    axios.post(apiURL+'token/refresh', 
+                        { refreshToken : getRefreshToken() } 
+                    )
+                    .then(response => {                        
+                        setUserSession(response.data.token, response.data.refreshToken);
+                    }).catch((error) => {
+                        this.setState({alternativeDisplayMessage: "No Card Data"});
+                    });
+                } 
+                else {
+                  //  window.location.replace('/HomeApp/logout');
+                }
+            }      
         })
         
     }

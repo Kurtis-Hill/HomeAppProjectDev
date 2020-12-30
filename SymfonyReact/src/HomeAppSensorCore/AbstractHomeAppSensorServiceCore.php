@@ -142,25 +142,30 @@ abstract class AbstractHomeAppSensorServiceCore
         return array_column($this->groupNameDetails, 'groupNameID');
     }
 
-    public function getGroupNameDetails()
+    protected function getGroupNameDetails()
     {
         return $this->groupNameDetails;
     }
 
-    public function getUserID()
+    protected function getUserID()
     {
         return $this->userID;
     }
 
-    public function getUserRoles()
+    protected function getUserRoles()
     {
         return $this->roles;
+    }
+
+    protected function getUser(): ?\Symfony\Component\Security\Core\User\UserInterface
+    {
+        return $this->user->getUser();
     }
 
     /**
      * @return array
      */
-    public function getUsersRooms(): array
+    protected function getUsersRooms(): array
     {
         return $this->usersRooms;
     }
@@ -168,12 +173,12 @@ abstract class AbstractHomeAppSensorServiceCore
     /**
      * @return array
      */
-    public function getUsersDevices(): array
+    protected function getUsersDevices(): array
     {
         return $this->devices;
     }
 
-    public function getUserErrors(): array
+    protected function getUserErrors(): array
     {
         return $this->userErrors;
     }

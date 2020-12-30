@@ -17,6 +17,7 @@ use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\ORMException;
+use http\Exception\RuntimeException;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,12 +47,12 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     /**
      * @var array
      */
-    protected array $serverErrors = [];
+    private array $serverErrors = [];
 
     /**
      * @var array
      */
-    protected array $userInputErrors = [];
+    private array $userInputErrors = [];
 
 
     /**
@@ -59,17 +60,12 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
      */
     private function getUserCardSelectionData(): ?array
     {
-        try {
-            $icons = $this->em->getRepository(Icons::class)->getAllIcons();
-            $colours = $this->em->getRepository(CardColour::class)->getAllColours();
-            $states = $this->em->getRepository(Cardstate::class)->getAllStates();
-        } catch (ORMException | \Exception $e) {
-            error_log($e->getMessage());
-            $this->serverErrors['Failed to process user selection queries'];
-        }
+        $icons = $this->em->getRepository(Icons::class)->getAllIcons();
+        $colours = $this->em->getRepository(CardColour::class)->getAllColours();
+        $states = $this->em->getRepository(Cardstate::class)->getAllStates();
 
         if (empty($icons) || empty($colours) || empty($states)) {
-            return null;
+            throw new \RuntimeException('user selection data has failed to process');
         }
 
         return ['icons' => $icons, 'colours' => $colours, 'states' => $states];
@@ -111,7 +107,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
                     $sensorFormsData[$sensorTypeKey]['object'] = $typeData['object'];
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $e) {
             error_log($e->getMessage());
             $this->serverErrors[] = $e->getMessage();
         }
@@ -120,26 +116,35 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     }
 
 
-
     /**
      * @param string $cardViewID
      * @return CardViewSensorFormDTO|null
      */
     public function getCardViewFormData(string $cardViewID): ?CardViewSensorFormDTO
     {
-        $cardData = $this->em->getRepository(CardView::class)->getCardSensorFormData(['id' => $cardViewID], self::STANDARD_SENSOR_TYPE_DATA);
+        try {
+            $cardData = $this->em->getRepository(CardView::class)->getCardSensorFormData(['id' => $cardViewID], self::STANDARD_SENSOR_TYPE_DATA);
 
-            $userSelectionData = $this->getUserCardSelectionData();
+                $userSelectionData = $this->getUserCardSelectionData();
 
-            if ($userSelectionData === null) {
-                return null;
+                if ($userSelectionData === null) {
+                    return null;
+                }
+
+            if ($cardData instanceof StandardSensorTypeInterface) {
+                $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
             }
-
-        if ($cardData instanceof StandardSensorTypeInterface) {
-            $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
-        }
-        else {
-            $this->serverErrors[] = 'Query error for card view form';
+            else {
+                $this->serverErrors[] = 'Query error for card view form';
+            }
+        } catch (\RuntimeException $e) {
+            $this->serverErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Failed to prepare card data';
         }
 
         return $cardViewFormDTO ?? null;

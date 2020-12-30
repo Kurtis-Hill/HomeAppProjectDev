@@ -127,9 +127,9 @@ class Devices
     }
 
     /**
-     * @param int $createdBy
+     * @param User $createdBy
      */
-    public function setCreatedBy(int $createdBy): void
+    public function setCreatedBy(User $createdBy): void
     {
         $this->createdBy = $createdBy;
     }
@@ -161,7 +161,7 @@ class Devices
     /**
      * @param Room $roomID
      */
-    public function setRoomID(Room $roomID): void
+    public function setRoomObject(Room $roomID): void
     {
         $this->roomID = $roomID;
     }

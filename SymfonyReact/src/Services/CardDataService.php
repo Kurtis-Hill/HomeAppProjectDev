@@ -7,8 +7,9 @@ use App\DTOs\Sensors\CardDataDTO;
 use App\Entity\Card\CardView;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query\Expr\Join;
+use http\Exception\RuntimeException;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
@@ -21,12 +22,13 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
     /**
      * @var array
      */
-    private array $userInputErrors = [];
+    private array $cardErrors = [];
 
     /**
      * @var array
      */
     private array $serverErrors = [];
+
 
     /**
      * @param Request $request
@@ -34,17 +36,32 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
      */
     public function prepareAllCardDTOs(Request $request): array
     {
-        $route = $request->request->get('view');
+        $route = $request->get('view');
 
-        $sensorObjects = match ($route) {
-            "room" => $this->getRoomCardDataObjects($request),
-            "device" => $this->getDeviceCardDataObjects($request),
-            default => $this->getIndexCardDataObjects()
-        };
+        try {
+            $sensorObjects = match ($route) {
+                "room" => $this->getRoomCardDataObjects($request),
+                "device" => $this->getDeviceCardDataObjects($request),
+                default => $this->getIndexCardDataObjects()
+            };
+        } catch (\RuntimeException $e) {
+            $this->serverErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Failed to prepare card data';
+        }
 
         if (!empty($sensorObjects)) {
             foreach ($sensorObjects as $cardDTO) {
-                $cardDTOs[] = new CardDataDTO($cardDTO);
+                try {
+                    $cardDTOs[] = new CardDataDTO($cardDTO);
+
+                } catch (\RuntimeException $e) {
+                    $this->cardErrors[] = $e->getMessage();
+                }
             }
         }
 
@@ -57,14 +74,15 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
      */
     private function getIndexCardDataObjects(): array
     {
-        try {
-            $cardRepository = $this->em->getRepository(CardView::class);
 
-            $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::STANDARD_SENSOR_TYPE_DATA);
-        }
-        catch (\ORMException | \Exception $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = 'Card Data Query Failure';
+        $cardRepository = $this->em->getRepository(CardView::class);
+
+        $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::STANDARD_SENSOR_TYPE_DATA);
+
+        if (empty($cardData)) {
+            throw new \RuntimeException(
+                'No sensors found'
+            );
         }
 
         return $cardData ?? [];
@@ -82,7 +100,9 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         $deviceRoom = $request->query->get('device-room');
 
         if (empty($deviceName || $deviceGroup || $deviceRoom)) {
-            $this->userInputErrors [] = 'No card data found query if you have devices please logout and back in again please';
+            throw new BadRequestException(
+                'No card data found query if you have sensors on the device please logout and back in again please'
+            );
         }
         else {
             $deviceDetails = [
@@ -91,12 +111,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
                 'deviceRoom' => $deviceRoom
             ];
 
-            try {
-                $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::STANDARD_SENSOR_TYPE_DATA);
-            } catch (ORMException | \Exception $e) {
-                error_log($e->getMessage());
-                $this->serverErrors[] = 'Query Failure';
-            }
+            $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::STANDARD_SENSOR_TYPE_DATA);
         }
 
         return $cardData ?? [];
@@ -112,9 +127,9 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
     }
 
 
-    public function getUserInputErrors(): array
+    public function getCardErrors(): array
     {
-        return $this->userErrors;
+        return $this->cardErrors;
     }
 
     /**
@@ -125,97 +140,4 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         return array_merge($this->getUserErrors(), $this->serverErrors);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//    public function prepareAllIndexCardData(string $type): array
-//    {
-//        $cardRepository = $this->em->getRepository(CardView::class);
-//
-//        return $cardRepository->getAllCardReadingsIndex($this->groupNameIDs, $this->userID, $type);
-//    }
-//
-//    public function prepareAllRoomPageCardData(string $type, array $deviceDetails): array
-//    {
-//        $cardReadings = [];
-//
-//        try {
-//            $cardRepository = $this->em->getRepository(CardView::class);
-//
-//            $cardReadings = $cardRepository->getAllCardReadingsForRoom($this->groupNameIDs, $this->userID, $deviceDetails, $type);
-//        } catch (\PDOException | \Exception $e) {
-//            error_log($e->getMessage());
-//        }
-//
-//        return $cardReadings;
-//    }
-//
-//
-//    /**
-//     * @param string $type
-//     */
-//    private function prepareAllTemperatureCards(): array
-//    {
-//        $tempCardData = [];
-//
-//        try {
-//            $cardRepository = $this->em->getRepository(CardView::class);
-//
-//            $tempCardData = $cardRepository->getTempCardReadings($this->groupNameIDs, $this->userID, $type);
-//        } catch (\PDOException | \Exception $e) {
-//            error_log($e->getMessage());
-//        }
-//
-//        return $tempCardData;
-//    }
-//
-//    /**
-//     * @param string $type
-//     */
-//    private function prepareAllHumidCards(): array
-//    {
-//        $humidCardData = [];
-//
-//        try {
-//            $cardRepository = $this->em->getRepository(CardView::class);
-//
-//            $humidCardData = $cardRepository->getHumidCardReadings($this->groupNameIDs, $this->userID, $type);
-//        } catch (\PDOException | \Exception $e) {
-//            error_log($e->getMessage());
-//        }
-//
-//        return $humidCardData;
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    private function prepareAllAnalogCards(): array
-//    {
-//        $analogCardData = [];
-//
-//        try {
-//            $cardRepository = $this->em->getRepository(CardView::class);
-//
-//            $analogCardData = $cardRepository->getAnalogCardReadings($this->groupNameIDs, $this->userID, $type);
-//        } catch (\PDOException | \Exception $e) {
-//            error_log($e->getMessage());
-//        }
-//
-//        return $analogCardData;
-//    }
 }

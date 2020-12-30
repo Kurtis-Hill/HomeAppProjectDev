@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { CardContext } from '../contexts/CardContexts';
+import { capitalizeFirstLetter } from '../Utilities/Common'
 
 const senorReadingStyle = (highReading, lowReading, currentReading) => {
   return (currentReading >= highReading) 
@@ -35,7 +36,7 @@ const cardRender = () => {
                                 ? cardData.sensorData.map((sensorData, index) => (
                                     <React.Fragment key={index}>
                                       <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)}>
-                                        {sensorData.sensorType}: {sensorData.currentReading}{sensorData.readingSymbol}
+                                        {capitalizeFirstLetter(sensorData.sensorType)}: {sensorData.currentReading}{sensorData.readingSymbol}
                                       </div>
                                       <div className="card-font mb-0 text-gray-400">@{sensorData.time}</div>
                                     </React.Fragment>
