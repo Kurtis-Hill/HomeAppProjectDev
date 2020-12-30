@@ -24,11 +24,7 @@ class NavbarController extends AbstractController
      */
     public function navBarData(NavbarService $navbarService)
     {
-        $navbarData = [
-            'rooms' => $navbarService->getUsersRooms(),
-            'devices' => $navbarService->getUsersDevices(),
-            'groupNames' => $navbarService->getGroupNameDetails()
-        ];
+        $navbarData = $navbarService->getNavBarData();
 
         $errors = $navbarService->getErrors();
 

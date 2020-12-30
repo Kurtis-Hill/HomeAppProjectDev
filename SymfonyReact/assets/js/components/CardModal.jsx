@@ -50,7 +50,7 @@ const cardModal = () => {
 
                   {
               
-                    modalContent.sensorData.length >=1 
+                    modalContent.sensorData.length >= 1 
                     ? 
                       modalContent.sensorData.map((sensorData) => (                        
                         <div style={{paddingBottom: "10%"}}>

@@ -13,6 +13,15 @@ class NavbarService extends AbstractHomeAppSensorServiceCore
 {
     private array $errors;
 
+    public function getNavBarData(): array
+    {
+        return  [
+            'rooms' => $this->getUsersRooms(),
+            'devices' => $this->getUsersDevices(),
+            'groupNames' => $this->getGroupNameDetails()
+        ];
+    }
+
     public function getErrors()
     {
         return $this->getUserErrors();
