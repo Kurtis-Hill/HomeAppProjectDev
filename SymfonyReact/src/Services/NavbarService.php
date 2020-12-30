@@ -24,6 +24,6 @@ class NavbarService extends AbstractHomeAppSensorServiceCore
 
     public function getErrors()
     {
-        return $this->getUserErrors();
+        return $this->getFatalErrors();
     }
 }

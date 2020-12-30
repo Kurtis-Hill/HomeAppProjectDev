@@ -118,15 +118,15 @@ class CardDataController extends AbstractController
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
 
         $handledCardViewForm = $sensorDataService->processForm($cardViewForm, $cardViewData);
-
         if ($handledCardViewForm instanceof FormInterface) {
             $sensorDataService->processSensorFormErrors($handledCardViewForm);
 
             return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
         }
 
-        $sensorType = $cardViewObject->getSensorObject()->getSensorTypeObject()->getSensorType();
-        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorType);
+        $sensorTypeObject = $cardViewObject->getSensorObject()->getSensorTypeObject();
+        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject);
+        //dd('first');
 
         if (empty($sensorFormData)) {
             return $this->sendInternelServerErrorResponse($sensorDataService->getServerErrors());

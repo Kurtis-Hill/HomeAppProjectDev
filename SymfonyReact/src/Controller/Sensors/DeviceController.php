@@ -45,7 +45,6 @@ class DeviceController extends AbstractController
             'roomObject' => $deviceRoom
         ];
 
-
         $newDevice = new Devices();
 
         $addNewDeviceForm = $this->createForm(AddNewDeviceForm::class, $newDevice);

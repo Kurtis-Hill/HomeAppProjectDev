@@ -7,7 +7,6 @@ namespace App\Services\Devices;
 use App\Entity\Sensors\Devices;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use Doctrine\ORM\ORMException;
-use http\Exception\RuntimeException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
@@ -44,9 +43,7 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
             error_log($e->getMessage());
         }
 
-        $processedForm = $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
-
-        return $processedForm;
+        return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
     }
 
     private function userInputDataCheck(array $deviceData): void

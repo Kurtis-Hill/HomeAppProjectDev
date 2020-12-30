@@ -51,7 +51,7 @@ class SensorService extends AbstractHomeAppSensorServiceCore
             }
         } else {
             foreach ($addNewSensorForm->getErrors(true, true) as $error) {
-                array_push($this->errors, $error->getMessage());
+                $this->errors[] = $error->getMessage();
             }
         }
 

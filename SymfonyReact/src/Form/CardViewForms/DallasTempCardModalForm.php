@@ -4,7 +4,8 @@
 namespace App\Form\CardViewForms;
 
 
-use App\Entity\Sensors\Temp;
+
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Form\CustomFormValidators\DallasTemperatureConstraint;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Symfony\Component\Form\AbstractType;
@@ -39,7 +40,7 @@ class DallasTempCardModalForm extends AbstractType
             ])
 
             ->add('constRecord', TextType::class, [
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new NotBlank(),
                 ],
@@ -51,7 +52,7 @@ class DallasTempCardModalForm extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => Temp::class,
+//            'data_class' => Temperature::class,
         ]);
     }
 }

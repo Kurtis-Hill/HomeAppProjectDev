@@ -51,7 +51,7 @@ function Login(props) {
             
             //const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
             if (userDetailsResponse.status === 200) {
-                setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles);
+                setUserSession(userDetailsResponse.data.responseData.userID, userDetailsResponse.data.responseData.roles);
                 window.location.replace(webappURL+'index');
             }
             else {
@@ -81,7 +81,7 @@ function Login(props) {
                                             {error !== null ? <h2 className="text-center">{error}</h2> : null}                                          
                                             <form className="user" id="login-form">
                                                 <div className="form-group">                                    
-                                                    <input type="text" name="email" {...username} placeholder="E-mail" autoComplete="username" className="form-control form-control-user login-form-field" aria-describedby="emailHelp" />
+                                                    <input type="text" autoFocus name="email" {...username} placeholder="E-mail" autoComplete="username" className="form-control form-control-user login-form-field" aria-describedby="emailHelp" />
                                                 </div>
                                                 <div className="form-group">
                                                     <input type="password" name="password" {...password} placeholder="Password" autoComplete="new-password" className="form-control form-control-user login-form-field" />

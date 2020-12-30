@@ -6,6 +6,10 @@ namespace App\HomeAppSensorCore;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Sensors\Devices;
+use App\Entity\Sensors\ReadingTypes\Analog;
+use App\Entity\Sensors\ReadingTypes\Humidity;
+use App\Entity\Sensors\ReadingTypes\Latitude;
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
@@ -62,6 +66,45 @@ abstract class AbstractHomeAppSensorServiceCore
         ],
     ];
 
+
+    protected const STANDARD_SENSOR_TYPE_DATA_TWO = [
+        SensorType::DHT_SENSOR => [
+            'alias' => 'dht',
+            'object' => Dht::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' => Humidity::class,
+            ],
+        ],
+
+        SensorType::DALLAS_TEMPERATURE => [
+            'alias' => 'dallas',
+            'object' => Dallas::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+            ],
+        ],
+
+        SensorType::SOIL_SENSOR => [
+            'alias' => 'soil',
+            'object' => Soil::class,
+            'readingTypes' => [
+                'analog' =>  Analog::class,
+            ],
+        ],
+
+        SensorType::BMP_SENSOR => [
+            'alias' => 'bmp',
+            'object' => Bmp::class,
+            'readingTypes' => [
+                'latitude' => Latitude::class,
+                'temperature' => Temperature::class,
+                'humidity' => Humidity::class,
+            ],
+        ],
+    ];
+
+
     /**
      * @var int
      */
@@ -80,7 +123,7 @@ abstract class AbstractHomeAppSensorServiceCore
     /**
      * @var array
      */
-    protected array $userErrors = [];
+    protected array $fatalErrors = [];
 
     /**
      * @var array
@@ -117,7 +160,7 @@ abstract class AbstractHomeAppSensorServiceCore
         try {
             $this->setUserVariables();
         } catch (\Exception $e) {
-            $this->userErrors[] = $e->getMessage();
+            $this->fatalErrors[] = $e->getMessage();
         }
     }
 
@@ -178,9 +221,9 @@ abstract class AbstractHomeAppSensorServiceCore
         return $this->devices;
     }
 
-    protected function getUserErrors(): array
+    public function getFatalErrors(): array
     {
-        return $this->userErrors;
+        return $this->fatalErrors;
     }
 
 }

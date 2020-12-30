@@ -137,7 +137,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
      */
     #[Pure] public function getServerErrors(): array
     {
-        return array_merge($this->getUserErrors(), $this->serverErrors);
+        return array_merge($this->getFatalErrors(), $this->serverErrors);
     }
 
 }
