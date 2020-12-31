@@ -21,6 +21,8 @@ class DHTTempCardModalForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+
         $builder
             ->add('highReading', TextType::class, [
                 'required' => true,
@@ -43,13 +45,15 @@ class DHTTempCardModalForm extends AbstractType
                 ],
             ])
         ;
+
+//        dd($builder->getData());
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => Temperature::class,
+//            'data_class' => Temperature::class,
         ]);
     }
 }

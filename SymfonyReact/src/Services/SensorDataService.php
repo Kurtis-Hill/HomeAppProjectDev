@@ -70,81 +70,54 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
 
         return ['icons' => $icons, 'colours' => $colours, 'states' => $states];
     }
+
     /**
      * @param Request $request
-     * @param int $sensorType
+     * @param SensorType $sensorType
+     * @param string $formToProcess
      * @return array
      */
-    public function prepareSensorFormData(Request $request, SensorType $sensorType): array
+    public function prepareSensorFormData(Request $request, SensorType $sensorType, string $formToProcess): array
     {
+        $currentSensorType = $sensorType->getSensorType();
 
-//            foreach (self::STANDARD_SENSOR_TYPE_DATA as $sensorComponents) {
-//                if (strtolower($sensorType) === $sensorComponents['alias']) {
-//                    foreach ($sensorComponents['forms'] as $readingType => $form) {
-//                        $sensorFormsData[$readingType] = [
-//                            'form' => $form,
-//                            'formData' => [
-//                                'highReading' => $request->get($readingType.'HighReading')
-//                                    ?? $this->fatalErrors[] = ucfirst($readingType). ' HighReading Failed',
-//                                'lowReading' => $request->get($readingType.'LowReading')
-//                                    ?? $this->fatalErrors[] = ucfirst($readingType). ' LowReading Failed',
-//                                'constRecord' => $request->get($readingType.'ConstRecord')
-//                                    ?? $this->fatalErrors[] = ucfirst($readingType). ' CurrentReading Failed',
-//                            ],
-//                        ];
-//                    }
-//                }
-//                // When adding new sensor types other than the standard add the new sensor type const array to
-//                // this method here to get the form data processed use the str comparison against the new array
-//            }
+//dd($sensorsToProcess);
+        foreach (self::STANDARD_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
+            if ($sensorName === $currentSensorType) {
+                foreach ($sensorDataArrays['forms'] as $formType => $formObject) {
+                    if ($formType === $formToProcess) {
+                        if ($formToProcess === SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY) {
+                            foreach ($sensorDataArrays['readingTypes'] as $readingType => $readingTypeClass) {
+                                $sensorFormsData[$readingTypeClass] = [
+                                    'formToProcess' => $formObject,
+                                    'formData' => [
+                                        'highReading' => $request->get($readingType . 'HighReading')
+                                            ?? $this->userErrors[] = ucfirst($readingType) . 'High Reading Failed',
+                                        'lowReading' => $request->get($readingType . 'LowReading')
+                                            ?? $this->userErrors[] = ucfirst($readingType) . 'Low Reading Failed',
+                                        'constRecord' => $request->get($readingType . 'ConstRecord')
+                                    ]
+                                ];
+                            }
+                        }
+                        if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
+                            foreach ($sensorDataArrays['readingTypes'] as $readingType => $readingTypeClass) {
+                                $sensorFormsData[$formObject] = [
+                                    'formToProcess' => $formObject,
+                                    'formData' => [
+                                        'currentReading' => $request->get($readingType . 'CurrentReading')
+                                            ?? $this->userErrors[] = ucfirst($readingType) . 'CurrentReading Failed',
+                                    ]
+                                ];
+                            }
+                        }
+                        //Any other forms can be added here
 
-
-//            dd($sensorType->);
-        //$this->em->getRepository()
-
-
-            foreach (self::STANDARD_SENSOR_TYPE_DATA as $sensorComponents) {
-                //$this->em->getRepository($se)
-                if (strtolower($sensorType->getSensorType()) === $sensorComponents['alias']) {
-                    foreach ($sensorComponents as $sensorKey => $sensorValues) {
-
-                    }
-
-
-                    foreach ($sensorComponents['forms'] as $readingType => $form) {
-                        $sensorFormsData[$readingType] = [
-                            'form' => $form, //make the new standard form
-                            'formData' => [
-                                'highReading' => $request->get($readingType.'HighReading')
-                                    ?? $this->fatalErrors[] = ucfirst($readingType). ' HighReading Failed',
-                                'lowReading' => $request->get($readingType.'LowReading')
-                                    ?? $this->fatalErrors[] = ucfirst($readingType). ' LowReading Failed',
-                                'constRecord' => $request->get($readingType.'ConstRecord')
-                                    ?? $this->fatalErrors[] = ucfirst($readingType). ' CurrentReading Failed',
-                            ],
-                        ];
                     }
                 }
-                // When adding new sensor types other than the standard add the new sensor type const array to
-                // this method here to get the form data processed use the str comparison against the new array
             }
-
-
-
-        try {
-            foreach (self::SENSOR_DATA as $sensorTypeKey => $typeData) {
-                $sensorTypeKey = lcfirst($sensorTypeKey);
-                if (!empty($sensorFormsData[$sensorTypeKey])) {
-                    if (empty($typeData['object'])) {
-                        throw new \RuntimeException('failed to find object for '. $sensorTypeKey . 'the form failed to process');
-                    }
-                    $sensorFormsData[$sensorTypeKey]['object'] = $typeData['object'];
-                }
-            }
-        } catch (\RuntimeException $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = $e->getMessage();
         }
+
 
         return $sensorFormsData ?? [];
     }

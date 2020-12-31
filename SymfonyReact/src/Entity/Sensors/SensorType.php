@@ -12,9 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SensorType
 {
+    public const OUT_OF_BOUND_FORM_ARRAY_KEY = 'outOfBounds';
+
+    public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
+
     public const DHT_SENSOR = 'DHT';
 
-    public const BMP_SENSOR = 'BPM Weather Station';
+    public const BMP_SENSOR = 'BMP';
 
     public const DALLAS_TEMPERATURE = 'Dallas Temperature';
 

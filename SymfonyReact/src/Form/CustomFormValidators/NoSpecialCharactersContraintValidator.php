@@ -20,7 +20,7 @@ class NoSpecialCharactersContraintValidator extends ConstraintValidator
             return;
         }
 
-        if (preg_match("/[^A-Za-z0-9]/", $value)) {
+        if (preg_match("/[^A-Za-z0-9.]/", $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

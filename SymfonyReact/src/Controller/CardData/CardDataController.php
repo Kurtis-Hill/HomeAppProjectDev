@@ -4,6 +4,7 @@
 namespace App\Controller\CardData;
 
 use App\Form\CardViewForms\CardViewForm;
+use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use App\Services\CardDataService;
 use App\Services\SensorDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -125,8 +126,7 @@ class CardDataController extends AbstractController
         }
 
         $sensorTypeObject = $cardViewObject->getSensorObject()->getSensorTypeObject();
-        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject);
-        //dd('first');
+        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject,'outOfBounds');
 
         if (empty($sensorFormData)) {
             return $this->sendInternelServerErrorResponse($sensorDataService->getServerErrors());
@@ -134,13 +134,12 @@ class CardDataController extends AbstractController
 
         foreach ($sensorFormData as $sensorType => $sensorData) {
             foreach ($cardSensorData as $sensorObjects) {
-                if ($sensorData['object'] === $sensorObjects::class) {
-                    $sensorForm = $this->createForm($sensorData['form'], $sensorObjects);
+                if ($sensorType === $sensorObjects::class) {
+                    $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObjects);
                     $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
 
                     if ($handledSensorForm instanceof FormInterface) {
                         $sensorDataService->processSensorFormErrors($handledSensorForm);
-
                     }
 
                 }
