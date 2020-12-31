@@ -6,8 +6,7 @@ namespace App\Form\SensorForms;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
-use App\Entity\Core\Sensors;
-use App\Entity\Core\Sensortype;
+use App\Entity\Sensors\SensorType;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -42,7 +41,7 @@ class AddNewSensorForm extends AbstractType
             ])
 
             ->add('sensortype', EntityType::class, [
-                'class' => Sensortype::class
+                'class' => SensorType::class
             ])
         ;
     }

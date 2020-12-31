@@ -18,6 +18,7 @@ use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +59,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     /**
      * @return array|null
      */
-    private function getUserCardSelectionData(): ?array
+    #[ArrayShape(['icons' => "mixed", 'colours' => "mixed", 'states' => "mixed"])] private function getUserCardSelectionData(): ?array
     {
         $icons = $this->em->getRepository(Icons::class)->getAllIcons();
         $colours = $this->em->getRepository(CardColour::class)->getAllColours();
@@ -81,7 +82,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     {
         $currentSensorType = $sensorType->getSensorType();
 
-        foreach (self::STANDARD_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
+        foreach (self::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $currentSensorType) {
                 foreach ($sensorDataArrays['forms'] as $formType => $formData) {
                     if ($formType === $formToProcess) {
@@ -100,7 +101,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
                                     ]
                                 ];
                             }
-                            break;
+                            continue;
                         }
 
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
@@ -113,7 +114,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
                                     ]
                                 ];
                             }
-                            break;
+                            continue;
                         }
                         //Any other forms can be added here
 
@@ -121,7 +122,6 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
                 }
             }
         }
-//dd($sensorFormsData);
 
         return $sensorFormsData ?? [];
     }
@@ -134,7 +134,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     public function getCardViewFormData(string $cardViewID): ?CardViewSensorFormDTO
     {
         try {
-            $cardData = $this->em->getRepository(CardView::class)->getCardSensorFormData(['id' => $cardViewID], self::STANDARD_SENSOR_TYPE_DATA);
+            $cardData = $this->em->getRepository(CardView::class)->getCardSensorFormData(['id' => $cardViewID], self::SENSOR_TYPE_DATA);
 
                 $userSelectionData = $this->getUserCardSelectionData();
 

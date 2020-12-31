@@ -85,7 +85,7 @@ class CardContextProvider extends Component {
             }
         }).catch(error => {
             if (error.data == undefined) {
-                this.setState({alternativeDisplayMessage: "No Card Data server errors"});
+                this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
             } 
             else {
                 if (error.data.status === 401) {
@@ -95,7 +95,7 @@ class CardContextProvider extends Component {
                     .then(response => {                        
                         setUserSession(response.data.token, response.data.refreshToken);
                     }).catch((error) => {
-                        this.setState({alternativeDisplayMessage: "No Card Data"});
+                        this.setState({alternativeDisplayMessage: "No Card Data", modalContent: emptyModalContent});
                     });
                 } 
                 else {

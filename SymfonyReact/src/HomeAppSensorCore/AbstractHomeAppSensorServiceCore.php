@@ -16,9 +16,6 @@ use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\CardViewForms\StandardSensorOutOFBoundsForm;
-use App\Form\CardViewForms\DHTHumidCardModalForm;
-use App\Form\CardViewForms\DHTTempCardModalForm;
-use App\Form\CardViewForms\SoilFormType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
@@ -27,7 +24,8 @@ use Symfony\Component\Security\Core\Security;
 
 abstract class AbstractHomeAppSensorServiceCore
 {
-    protected const STANDARD_SENSOR_TYPE_DATA = [
+    // should work with none standard sensors aswell make sure to find usages and update the new sensor interface to see results
+    protected const SENSOR_TYPE_DATA = [
         SensorType::DHT_SENSOR => [
             'alias' => 'dht',
             'object' => Dht::class,

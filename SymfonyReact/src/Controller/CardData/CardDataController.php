@@ -142,7 +142,7 @@ class CardDataController extends AbstractController
                     if ($handledSensorForm instanceof FormInterface) {
                         $sensorDataService->processSensorFormErrors($handledSensorForm);
                     }
-                    break;
+                    continue;
                 }
             }
         }

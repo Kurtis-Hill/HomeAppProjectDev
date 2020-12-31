@@ -3,9 +3,11 @@
 
 namespace App\Services;
 
-use App\DTOs\Sensors\CardDataDTO;
+use App\DTOs\Sensors\StandardSensorCardDataDTO;
 use App\Entity\Card\CardView;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\ORMException;
 use http\Exception\RuntimeException;
 use JetBrains\PhpStorm\Pure;
@@ -55,12 +57,14 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         }
 
         if (!empty($sensorObjects)) {
-            foreach ($sensorObjects as $cardDTO) {
-                try {
-                    $cardDTOs[] = new CardDataDTO($cardDTO);
+            if ($sensorObjects instanceof StandardSensorTypeInterface) {
+                foreach ($sensorObjects as $cardDTO) {
+                    try {
+                        $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
 
-                } catch (\RuntimeException $e) {
-                    $this->cardErrors[] = $e->getMessage();
+                    } catch (\RuntimeException $e) {
+                        $this->cardErrors[] = $e->getMessage();
+                    }
                 }
             }
         }
@@ -77,7 +81,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
 
         $cardRepository = $this->em->getRepository(CardView::class);
 
-        $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::STANDARD_SENSOR_TYPE_DATA);
+        $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::SENSOR_TYPE_DATA);
 
         if (empty($cardData)) {
             throw new \RuntimeException(
@@ -111,7 +115,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
                 'deviceRoom' => $deviceRoom
             ];
 
-            $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::STANDARD_SENSOR_TYPE_DATA);
+            $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::SENSOR_TYPE_DATA);
         }
 
         return $cardData ?? [];
