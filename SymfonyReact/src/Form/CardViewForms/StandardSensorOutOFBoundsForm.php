@@ -20,8 +20,8 @@ class StandardSensorOutOFBoundsForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $formObject = $builder->getData();
-
+//        $formObject = $builder->getData();
+//dd($options['formSensorType'], $builder->getData());
 //        if ($formObject instanceof )
         $builder
             ->add('highReading', TextType::class, [
@@ -55,6 +55,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
+            'formSensorType' => false,
         ]);
     }
 }

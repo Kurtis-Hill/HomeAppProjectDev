@@ -36,8 +36,20 @@ abstract class AbstractHomeAppSensorServiceCore
                 'humidity' => Humidity::class,
             ],
             'forms' => [
-                'outOfBounds' => StandardSensorOutOFBoundsForm::class,
-                'updateCurrentReading' => 'StandardSensorUpdateForm PlaceHolder'
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' => Humidity::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => 'PlaceHolder',
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' => Humidity::class,
+                    ],
+                ]
             ]
         ],
 
@@ -48,8 +60,18 @@ abstract class AbstractHomeAppSensorServiceCore
                 'temperature' =>  Temperature::class,
             ],
             'forms' => [
-                'outOfBounds' => StandardSensorOutOFBoundsForm::class,
-                'updateCurrentReading' => 'StandardSensorUpdateForm PlaceHolder'
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => 'PlaceHolder',
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                    ],
+                ]
             ]
         ],
 
@@ -60,23 +82,40 @@ abstract class AbstractHomeAppSensorServiceCore
                 'analog' =>  Analog::class,
             ],
             'forms' => [
-                'outOfBounds' => StandardSensorOutOFBoundsForm::class,
-                'updateCurrentReading' =>  'StandardSensorUpdateForm PlaceHolder'
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'analog' =>  Analog::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => 'PlaceHolder',
+                    'readingTypes' => [
+                        'analog' =>  Analog::class,
+                    ],
+                ]
             ]
         ],
 
         SensorType::BMP_SENSOR => [
             'alias' => 'bmp',
             'object' => Bmp::class,
-            'readingTypes' => [
-                'latitude' => Latitude::class,
-                'temperature' => Temperature::class,
-                'humidity' => Humidity::class,
-            ],
             'forms' => [
-                'outOfBounds' => StandardSensorOutOFBoundsForm::class,
-                'updateCurrentReading' => 'StandardSensorOutOFBoundsForm::class',
-            ],
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' =>  Humidity::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => 'PlaceHolder',
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' =>  Humidity::class,
+                    ],
+                ]
+            ]
         ],
     ];
 

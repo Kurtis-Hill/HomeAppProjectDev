@@ -81,35 +81,39 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     {
         $currentSensorType = $sensorType->getSensorType();
 
-//dd($sensorsToProcess);
         foreach (self::STANDARD_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $currentSensorType) {
-                foreach ($sensorDataArrays['forms'] as $formType => $formObject) {
+                foreach ($sensorDataArrays['forms'] as $formType => $formData) {
                     if ($formType === $formToProcess) {
+
                         if ($formToProcess === SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY) {
-                            foreach ($sensorDataArrays['readingTypes'] as $readingType => $readingTypeClass) {
+                            foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
                                 $sensorFormsData[$readingTypeClass] = [
-                                    'formToProcess' => $formObject,
+                                    'formToProcess' => $formData['form'],
+                                    'object' => $sensorDataArrays['object'],
                                     'formData' => [
                                         'highReading' => $request->get($readingType . 'HighReading')
-                                            ?? $this->userErrors[] = ucfirst($readingType) . 'High Reading Failed',
+                                            ?? $this->userInputErrors[] = ucfirst($readingType) . 'High Reading Failed',
                                         'lowReading' => $request->get($readingType . 'LowReading')
-                                            ?? $this->userErrors[] = ucfirst($readingType) . 'Low Reading Failed',
+                                            ?? $this->userInputErrors[] = ucfirst($readingType) . ' Low Reading Failed',
                                         'constRecord' => $request->get($readingType . 'ConstRecord')
                                     ]
                                 ];
                             }
+                            break;
                         }
+
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
-                            foreach ($sensorDataArrays['readingTypes'] as $readingType => $readingTypeClass) {
-                                $sensorFormsData[$formObject] = [
-                                    'formToProcess' => $formObject,
+                            foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
+                                $sensorFormsData[$readingTypeClass] = [
+                                    'formToProcess' => $formData['form'],
                                     'formData' => [
                                         'currentReading' => $request->get($readingType . 'CurrentReading')
-                                            ?? $this->userErrors[] = ucfirst($readingType) . 'CurrentReading Failed',
+                                            ?? $this->userInputErrors[] = ucfirst($readingType) . ' Current Reading Failed',
                                     ]
                                 ];
                             }
+                            break;
                         }
                         //Any other forms can be added here
 
@@ -117,7 +121,7 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
                 }
             }
         }
-
+//dd($sensorFormsData);
 
         return $sensorFormsData ?? [];
     }

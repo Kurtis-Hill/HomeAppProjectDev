@@ -133,15 +133,16 @@ class CardDataController extends AbstractController
         }
 
         foreach ($sensorFormData as $sensorType => $sensorData) {
-            foreach ($cardSensorData as $sensorObjects) {
-                if ($sensorType === $sensorObjects::class) {
-                    $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObjects);
+            foreach ($cardSensorData as $sensorObject) {
+                if ($sensorType === $sensorObject::class) {
+                   // dd($sensorData['object']);
+                    $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
 
                     if ($handledSensorForm instanceof FormInterface) {
                         $sensorDataService->processSensorFormErrors($handledSensorForm);
                     }
-
+                    break;
                 }
             }
         }
