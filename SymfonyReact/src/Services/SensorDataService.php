@@ -59,7 +59,13 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     /**
      * @return array|null
      */
-    #[ArrayShape(['icons' => "mixed", 'colours' => "mixed", 'states' => "mixed"])] private function getUserCardSelectionData(): ?array
+    #[ArrayShape(
+        [
+            'icons' => "mixed",
+            'colours' => "mixed",
+            'states' => "mixed"
+        ]
+    )] private function getUserCardSelectionData(): ?array
     {
         $icons = $this->em->getRepository(Icons::class)->getAllIcons();
         $colours = $this->em->getRepository(CardColour::class)->getAllColours();

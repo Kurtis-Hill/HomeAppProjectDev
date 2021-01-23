@@ -78,16 +78,9 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
      */
     private function getIndexCardDataObjects(): array
     {
-
         $cardRepository = $this->em->getRepository(CardView::class);
 
         $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::SENSOR_TYPE_DATA);
-
-        if (empty($cardData)) {
-            throw new \RuntimeException(
-                'No sensors found'
-            );
-        }
 
         return $cardData ?? [];
     }
@@ -108,15 +101,15 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
                 'No card data found query if you have sensors on the device please logout and back in again please'
             );
         }
-        else {
-            $deviceDetails = [
-                'deviceName' => $deviceName,
-                'deviceGroup' => $deviceGroup,
-                'deviceRoom' => $deviceRoom
-            ];
 
-            $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::SENSOR_TYPE_DATA);
-        }
+        $deviceDetails = [
+            'deviceName' => $deviceName,
+            'deviceGroup' => $deviceGroup,
+            'deviceRoom' => $deviceRoom
+        ];
+
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::SENSOR_TYPE_DATA);
+
 
         return $cardData ?? [];
     }

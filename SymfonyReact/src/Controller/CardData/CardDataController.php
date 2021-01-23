@@ -40,6 +40,7 @@ class CardDataController extends AbstractController
         $cardData = $cardDataService->prepareAllCardDTOs($request);
 
         if (!empty($cardDataService->getServerErrors())) {
+//            dd($cardDataService->getServerErrors());
             return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong we are logging you out']);
         }
 
@@ -157,7 +158,7 @@ class CardDataController extends AbstractController
 
         $this->getDoctrine()->getManager()->flush();
 
-        return $this->sendSuccessfulJsonResponse();
+        return $this->sendSuccessfulUpdateJsonResponse();
     }
 
 }

@@ -47,12 +47,12 @@ class CardViewRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
-
+//dd('hry');
         $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-
+//dd($sensorAlias, $groupNameIDs, $sensors);
         $qb->select($sensorAlias)
-        ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
-        ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
+            ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
+            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
 
         $qb->where(
             $expr->orX(
@@ -62,7 +62,7 @@ class CardViewRepository extends EntityRepository
             $expr->eq('cv.userID', ':userID'),
             $expr->in('devices.groupNameID', ':groupNameID')
         );
-
+       // dd($sensorAlias, $groupNameIDs, $sensors, $qb);
         $qb->setParameters(
             [
                 'userID' => $userID,
@@ -71,6 +71,7 @@ class CardViewRepository extends EntityRepository
                 'cardviewTwo' => $cardViewTwo
             ]
         );
+//        dd($qb->getQuery()->getResult());
 
         return array_filter($qb->getQuery()->getResult());
     }

@@ -29,6 +29,25 @@ trait HomeAppAPIResponseTrait
         }
     }
 
+    /**
+     * @param $data
+     * @return JsonResponse
+     */
+    public function sendSuccessfulUpdateJsonResponse(array $data = []): JsonResponse
+    {
+        if (!empty($data)) {
+            return new JsonResponse(
+                [
+                    'title' => 'Request Successful',
+                    'responseData' => $data
+                ],
+                HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
+        }
+        else {
+            return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
+        }
+    }
+
     // 20x Successfull
     /**
      * @param $data
@@ -40,6 +59,23 @@ trait HomeAppAPIResponseTrait
             return new Response(
                     $data,
                 HTTPStatusCodes::HTTP_OK
+            );
+        }
+        else {
+            return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
+        }
+    }
+
+    /**
+     * @param $data
+     * @return JsonResponse
+     */
+    public function sendSuccessfulUpdatedResponse(string $data = null): Response
+    {
+        if ($data !== null) {
+            return new Response(
+                $data,
+                HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY
             );
         }
         else {

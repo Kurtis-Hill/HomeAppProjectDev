@@ -56,7 +56,7 @@ export default class AddNewDeviceContextProvider extends Component {
 
     updateNewDeviceModalForm = (event) => {
         const formInput = event.target.value;
-
+console.log('event', e);
         switch (event.target.name) {
             case "deviceRoom":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceRoom: formInput}});
@@ -69,6 +69,8 @@ export default class AddNewDeviceContextProvider extends Component {
             case "deviceName":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
+
+            console.log('new device update', this.state.newDeviceModalContent);
         }
 
         console.log('new device modal content', this.state.newDeviceModalContent);

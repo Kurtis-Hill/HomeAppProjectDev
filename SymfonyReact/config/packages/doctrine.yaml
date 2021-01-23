@@ -10,7 +10,7 @@ doctrine:
     port:     "3306"
     dbname:   "HomeAppNew"
     user:     "HomeApp"
-    password: "HomeApp1234"
+    password: "warhammer222"
     options:
 #      1007  : '%env(PRIV_KEY)%'
 #      1008  : '%env(CLIENT_CERT)%'

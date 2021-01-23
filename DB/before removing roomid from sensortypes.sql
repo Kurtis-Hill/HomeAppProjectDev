@@ -1433,7 +1433,7 @@ ALTER TABLE `consttemp`
 --
 ALTER TABLE `dallas`
   ADD CONSTRAINT `dallas_ibfk_1` FOREIGN KEY (`cardViewID`) REFERENCES `cardview` (`cardViewID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `dallas_ibfk_2` FOREIGN KEY (`tempID`) REFERENCES `HomeApp`.`temp` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `dallas_ibfk_2` FOREIGN KEY (`tempID`) REFERENCES `temp` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `devicenames`

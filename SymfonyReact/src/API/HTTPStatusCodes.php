@@ -12,6 +12,8 @@ class HTTPStatusCodes
 
     public const HTTP_ACCEPTED = 202;
 
+    public const HTTP_UPDATED_SUCCESSFULLY = 204;
+
     public const HTTP_PARTIAL_CONTENT = 206;
 
     public const HTTP_BAD_REQUEST = 400;
