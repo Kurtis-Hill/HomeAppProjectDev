@@ -36,8 +36,6 @@ class SensorService extends AbstractHomeAppSensorServiceCore
         try {
             $this->userInputDataCheck($sensorData);
 
-//            $this->userInputErrors[] = 'No Device Recognised';
-
             return $this->processNewSensorForm($addNewSensorForm, $sensorData);
         } catch (BadRequestException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
@@ -194,7 +192,6 @@ class SensorService extends AbstractHomeAppSensorServiceCore
      */
     private function userInputDataCheck(array $sensorData)
     {
-       // throw new BadRequestException('You already have a sensor named '. $sensorData['sensorName']);
         $currentUserSensorNameCheck = $this->em->getRepository(Sensors::class)->findOneBy(['sensorName' => $sensorData['sensorName']]);
 
         if ($currentUserSensorNameCheck instanceof Sensors) {

@@ -50,9 +50,9 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
      */
     #[ArrayShape(
         [
-            'icons' => "mixed",
-            'colours' => "mixed",
-            'states' => "mixed"
+            'icons' => Icons::class,
+            'colours' => CardColour::class,
+            'states' => Cardstate::class
         ]
     )] private function getUserCardSelectionData(): ?array
     {

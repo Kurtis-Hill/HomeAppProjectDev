@@ -55,7 +55,7 @@ class CardViewRepository extends EntityRepository
             $expr->eq('cv.userID', ':userID'),
             $expr->in('devices.groupNameID', ':groupNameID')
         );
-       // dd($sensorAlias, $groupNameIDs, $sensors, $qb);
+
         $qb->setParameters(
             [
                 'userID' => $userID,

@@ -54,8 +54,8 @@ const cardModal = () => {
               
                     modalContent.sensorData.length >= 1 
                     ? 
-                      modalContent.sensorData.map((sensorData) => (                        
-                        <div style={{paddingBottom: "10%"}}>
+                      modalContent.sensorData.map((sensorData, index) => (                        
+                        <div key={index} style={{paddingBottom: "10%"}}>
                           <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
                           <br />
                           <input type="text" name={sensorData.sensorType+"HighReading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
@@ -83,7 +83,7 @@ const cardModal = () => {
                         <br />
                         <select id="icon-select" name="cardIcon" value={modalContent.cardIcon.iconID} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
                           {modalContent.userIconSelections.map((icons) => (
-                            <option value={icons.iconID}>{capitalizeFirstLetter(icons.iconName)}</option>
+                            <option key={icons.iconID} value={icons.iconID}>{capitalizeFirstLetter(icons.iconName)}</option>
                           ))}
                         </select>
                         <i className={"fas fa-2x text-gray-300 modal-icon fa-"+modalContent.cardIcon.iconName}></i>
