@@ -46,17 +46,6 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
     ];
 
     /**
-     * @var array
-     */
-    private array $serverErrors = [];
-
-    /**
-     * @var array
-     */
-    private array $userInputErrors = [];
-
-
-    /**
      * @return array|null
      */
     #[ArrayShape(
@@ -184,7 +173,6 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
         return $usersCurrentCardData ?? [];
     }
 
-
     /**
      * @param FormInterface $form
      * @param array $formData
@@ -218,21 +206,5 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
         foreach ($form->getErrors(true, true) as $error) {
             $this->userInputErrors[] = $error->getMessage();
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getUserInputErrors(): array
-    {
-        return $this->userInputErrors;
-    }
-
-    /**
-     * @return array
-     */
-    #[Pure] public function getServerErrors(): array
-    {
-        return array_merge($this->getFatalErrors(), $this->serverErrors);
     }
 }

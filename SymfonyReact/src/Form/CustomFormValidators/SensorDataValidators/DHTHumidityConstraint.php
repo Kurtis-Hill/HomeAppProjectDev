@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\CustomFormValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators;
+namespace App\Form\CustomFormValidators\SensorDataValidators;
 
 use Symfony\Component\Validator\Constraint;
 

@@ -64,7 +64,7 @@ const Navbar = () => {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Devices:</h6>
                         {context.userDevices.map((device) => (
-                            <a key={device.deviceNameID} className="collapse-item" href={webappURL+"device?device-name="+device.deviceNameID+"&device-group="+device.groupNameID+"&device-room="+device.roomID}>{device.deviceName}</a>
+                            <a key={device.deviceNameID} className="collapse-item" href={webappURL+"device?device-name="+device.deviceNameID+"&device-group="+device.groupNameID+"&device-room="+device.roomID+"?view=device"}>{device.deviceName}</a>
                         ))}
                          <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
                     </div>

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\CustomFormValidators\SensorDataValidators\SensorDataValidators;
+namespace App\Form\CustomFormValidators\SensorDataValidators;
 
 
 use App\Form\CustomFormValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\DHTTemperatureConstraint;

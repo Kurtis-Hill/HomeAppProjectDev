@@ -39,28 +39,28 @@ class Humidity implements StandardSensorInterface
      *
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
-    private int $highHumid;
+    private int $highHumid = 80;
 
     /**
      * @var int
      *
      * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
-    private int $lowHumid;
+    private int $lowHumid = 10;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="constRecord", type="boolean", nullable=false)
+     * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
      */
-    private bool $constRecord;
+    private bool $constRecord = false;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTime $timez;
+    private \DateTimeInterface $timez;
 
     /**
      * @var Sensors
@@ -161,7 +161,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @return \DateTime
      */
-    public function getTime(): \DateTime
+    public function getTime(): \DateTimeInterface
     {
         return $this->timez;
     }
@@ -193,7 +193,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @param \DateTime $dateTime
      */
-    public function setTime(\DateTime $dateTime): void
+    public function setTime(\DateTimeInterface $dateTime): void
     {
         $this->timez = $dateTime;
     }

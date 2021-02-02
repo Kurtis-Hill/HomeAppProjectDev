@@ -52,11 +52,11 @@ class DeviceController extends AbstractController
         $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
 //dd($handledForm);
-        if (!empty($deviceService->getAllServerErrors())) {
-            return $this->sendBadRequestResponse($deviceService->getAllServerErrors());
+        if (!empty($deviceService->getServerErrors())) {
+            return $this->sendBadRequestResponse($deviceService->getServerErrors());
         }
-        if (!empty($deviceService->getAllUserErrors())) {
-            return $this->sendBadRequestResponse($deviceService->getAllUserErrors());
+        if (!empty($deviceService->getUserInputErrors())) {
+            return $this->sendBadRequestResponse($deviceService->getUserInputErrors());
         }
 
         $secret = $handledForm->getData()->getDeviceSecret();

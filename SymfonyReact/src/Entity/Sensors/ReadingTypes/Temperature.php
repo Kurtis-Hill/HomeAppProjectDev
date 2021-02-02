@@ -39,28 +39,28 @@ class Temperature implements StandardSensorInterface
      *
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
-    private float $highTemp;
+    private float $highTemp = 50;
 
     /**
      * @var float|null
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
-    private float $lowTemp;
+    private float $lowTemp = 10;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="constRecord", type="boolean", nullable=false)
+     * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
      */
-    private bool $constRecord;
+    private bool $constRecord = false;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTime $time;
+    private \DateTimeInterface $time;
 
     /**
      * @var Devices
@@ -136,7 +136,7 @@ class Temperature implements StandardSensorInterface
      */
 
     /**
-     * @return float|null
+     * @return int|float
      */
     public function getCurrentSensorReading(): int|float
     {
@@ -144,7 +144,7 @@ class Temperature implements StandardSensorInterface
     }
 
     /**
-     * @return float|null
+     * @return int|float
      */
     public function getHighReading(): int|float
     {
@@ -152,7 +152,7 @@ class Temperature implements StandardSensorInterface
     }
 
     /**
-     * @return float|null
+     * @return int|float
      */
     public function getLowReading(): int|float
     {
@@ -162,7 +162,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @return \DateTime
      */
-    public function getTime(): \DateTime
+    public function getTime(): \DateTimeInterface
     {
         return $this->time;
     }
@@ -194,7 +194,7 @@ class Temperature implements StandardSensorInterface
     /**
      * @param \DateTime $dateTime
      */
-    public function setTime(\DateTime $dateTime): void
+    public function setTime(\DateTimeInterface $dateTime): void
     {
         $this->time = $dateTime;
     }

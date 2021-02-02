@@ -109,7 +109,6 @@ class CardContextProvider extends Component {
 
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
-        console.log('card view id', cardViewID);
         this.setState({modalLoading: true})
         axios.get(apiURL+'card-data/card-state-view-form?cardViewID='+cardViewID,
             { headers: {"Authorization" : `Bearer ${getToken()}`} })
@@ -250,7 +249,6 @@ class CardContextProvider extends Component {
             }
 
             if (err.status === 500) {
-                console.log('responsedata',err.data.responseData);
                 const alertMessage = err.data.responseData !== undefined
                     ? err.data.responseData
                     : 'please try again or log out and try again';

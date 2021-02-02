@@ -19,7 +19,7 @@ class Sensors
 
     public const ANALOG = 'Analog';
 
-    public const LATITUDE = 'Latitude';
+    public const LATITUDE   = 'Latitude';
 
     /**
      * @var int
@@ -83,7 +83,7 @@ class Sensors
         $this->sensorName = $sensorName;
     }
 
-    public function getSensorTypeObject(): SensorType
+    public function getSensorTypeID(): SensorType
     {
         return $this->sensorTypeID;
     }

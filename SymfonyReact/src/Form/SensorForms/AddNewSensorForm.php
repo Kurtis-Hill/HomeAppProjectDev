@@ -6,11 +6,14 @@ namespace App\Form\SensorForms;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
+use App\Entity\Sensors\Devices;
+use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
-use Doctrine\DBAL\Types\TextType;
+//use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
@@ -21,7 +24,7 @@ class AddNewSensorForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('sensorname', TextType::class, [
+            ->add('sensorName', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersContraint(),
@@ -31,17 +34,11 @@ class AddNewSensorForm extends AbstractType
                         'maxMessage' => 'Device name too long'])
                 ]
             ])
-
-            ->add('groupnameid', EntityType::class, [
-                'class' => GroupNames::class
-            ])
-
-            ->add('roomid', EntityType::class, [
-                'class' => Room::class
-            ])
-
-            ->add('sensortype', EntityType::class, [
+            ->add('sensorTypeID', EntityType::class, [
                 'class' => SensorType::class
+            ])
+            ->add('deviceNameID', EntityType::class, [
+                'class' => Devices::class
             ])
         ;
     }

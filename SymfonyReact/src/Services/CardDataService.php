@@ -9,7 +9,6 @@ use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
 use Doctrine\ORM\ORMException;
-use http\Exception\RuntimeException;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,12 +26,6 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
     private array $cardErrors = [];
 
     /**
-     * @var array
-     */
-    private array $serverErrors = [];
-
-
-    /**
      * @param Request $request
      * @return array
      */
@@ -46,6 +39,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
                 "device" => $this->getDeviceCardDataObjects($request),
                 default => $this->getIndexCardDataObjects()
             };
+//            dd($sensorObjects);
         } catch (\RuntimeException $e) {
             $this->serverErrors[] = $e->getMessage();
         } catch (ORMException $e) {
@@ -55,18 +49,18 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
             error_log($e->getMessage());
             $this->serverErrors[] = 'Failed to prepare card data';
         }
+//        dd($sensorObjects);
 
         if (!empty($sensorObjects)) {
-            if ($sensorObjects instanceof StandardSensorTypeInterface) {
                 foreach ($sensorObjects as $cardDTO) {
                     try {
-                        $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
-
+                        if ($cardDTO instanceof StandardSensorTypeInterface) {
+                            $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
+                        }
                     } catch (\RuntimeException $e) {
                         $this->cardErrors[] = $e->getMessage();
                     }
                 }
-            }
         }
 
         return $cardDTOs ?? [];
@@ -80,7 +74,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
     {
         $cardRepository = $this->em->getRepository(CardView::class);
 
-        $cardData = $cardRepository->getAllCardObjects($this->getUserID(), $this->getGroupNameIDs(), self::SENSOR_TYPE_DATA);
+        $cardData = $cardRepository->getAllCardObjectsForUser($this->getUserID(), $this->getGroupNameIDs(), self::SENSOR_TYPE_DATA);
 
         return $cardData ?? [];
     }
@@ -92,25 +86,16 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
      */
     private function getDeviceCardDataObjects(Request $request): array
     {
-        $deviceName = $request->query->get('device-name');
-        $deviceGroup = $request->query->get('device-group');
-        $deviceRoom = $request->query->get('device-room');
+        $deviceId = $request->get('device-name');
 
-        if (empty($deviceName || $deviceGroup || $deviceRoom)) {
+        if (empty($deviceId)) {
             throw new BadRequestException(
                 'No card data found query if you have sensors on the device please logout and back in again please'
             );
         }
 
-        $deviceDetails = [
-            'deviceName' => $deviceName,
-            'deviceGroup' => $deviceGroup,
-            'deviceRoom' => $deviceRoom
-        ];
-
-        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceDetails, self::SENSOR_TYPE_DATA);
-
-
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceId, self::SENSOR_TYPE_DATA);
+        //dd($cardData);
         return $cardData ?? [];
     }
 
@@ -123,18 +108,11 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
 
     }
 
-
+    /**
+     * @return array
+     */
     public function getCardErrors(): array
     {
         return $this->cardErrors;
     }
-
-    /**
-     * @return array
-     */
-    #[Pure] public function getServerErrors(): array
-    {
-        return array_merge($this->getFatalErrors(), $this->serverErrors);
-    }
-
 }

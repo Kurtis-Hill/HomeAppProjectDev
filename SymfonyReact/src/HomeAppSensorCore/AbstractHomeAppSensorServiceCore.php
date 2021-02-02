@@ -5,6 +5,7 @@ namespace App\HomeAppSensorCore;
 
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
+use App\Entity\Core\User;
 use App\Entity\Sensors\Devices;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
@@ -21,6 +22,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractHomeAppSensorServiceCore
 {
@@ -119,9 +121,9 @@ abstract class AbstractHomeAppSensorServiceCore
 
 
     /**
-     * @var int
+     * @var int|null
      */
-    private int $userID;
+    private int|null $userID;
 
     /**
      * @var array
@@ -136,11 +138,6 @@ abstract class AbstractHomeAppSensorServiceCore
     /**
      * @var array
      */
-    protected array $fatalErrors = [];
-
-    /**
-     * @var array
-     */
     private array $usersRooms = [];
 
     /**
@@ -149,15 +146,29 @@ abstract class AbstractHomeAppSensorServiceCore
     private array $devices = [];
 
     /**
-     * @var Security
+     * @var ?UserInterface
      */
-    private Security $user;
+    private ?UserInterface $user;
 
     /**
      * @var EntityManager|EntityManagerInterface
      */
     protected EntityManager|EntityManagerInterface $em;
 
+    /**
+     * @var array
+     */
+    protected array $fatalErrors = [];
+
+    /**
+     * @var array
+     */
+    protected array $serverErrors = [];
+
+    /**
+     * @var array
+     */
+    protected array $userInputErrors = [];
 
     /**
      * HomeAppRoomAbstract constructor.
@@ -168,11 +179,11 @@ abstract class AbstractHomeAppSensorServiceCore
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
-        $this->user = $security;
+        $this->user = $security->getUser();
 
         try {
             $this->setUserVariables();
-        } catch (\Exception $e) {
+        } catch (\Exception | \RuntimeException $e) {
             $this->fatalErrors[] = $e->getMessage();
         }
     }
@@ -182,14 +193,19 @@ abstract class AbstractHomeAppSensorServiceCore
      */
     private function setUserVariables()
     {
-        $this->userID = $this->user->getUser()->getUserID();
-        $this->groupNameDetails = $this->groupNameDetails = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
-        $this->roles = $this->user->getUser()->getRoles();
-        $this->devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
-        $this->usersRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
+        $userCredentials = [$this->user, 'getUserID'];
 
-        if (empty($this->groupNameDetails) || !isset($this->userID) || empty($this->roles)) {
-            throw new \Exception('The User Variables Cannot be set Please try again');
+        if (is_callable($userCredentials, true)) {
+            $this->userID = $this->user->getUserID();
+            $this->groupNameDetails = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
+            $this->roles = $this->user->getRoles() ?? [];
+            $this->devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
+            $this->usersRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
+            if (empty($this->groupNameDetails) || empty($this->roles)) {
+                throw new \RuntimeException('The User Variables Cannot be set Please try again');
+            }
+        } else {
+            throw new \RuntimeException('Could not find user');
         }
     }
 
@@ -213,9 +229,9 @@ abstract class AbstractHomeAppSensorServiceCore
         return $this->roles;
     }
 
-    protected function getUser(): ?\Symfony\Component\Security\Core\User\UserInterface
+    protected function getUser(): ?UserInterface
     {
-        return $this->user->getUser();
+        return $this->user;
     }
 
     /**
@@ -237,6 +253,19 @@ abstract class AbstractHomeAppSensorServiceCore
     public function getFatalErrors(): array
     {
         return $this->fatalErrors;
+    }
+
+    public function getUserInputErrors(): array
+    {
+        return $this->userInputErrors;
+    }
+
+    /**
+     * @return array
+     */
+    #[Pure] public function getServerErrors(): array
+    {
+        return array_merge($this->getFatalErrors(), $this->serverErrors);
     }
 
 }

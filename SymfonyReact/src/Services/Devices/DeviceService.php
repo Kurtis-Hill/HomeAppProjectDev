@@ -13,12 +13,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class DeviceService extends AbstractHomeAppSensorServiceCore
 {
-    /**
-     * @var array
-     */
-    private array $serverErrors = [];
 
-    private array $userInputErrors = [];
 
     /**
      * @param array $deviceData
@@ -29,7 +24,6 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
     {
         try {
             $this->userInputDataCheck($deviceData);
-
         }
         catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
@@ -94,15 +88,5 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
         }
 
         return $addNewDeviceForm;
-    }
-
-    public function getAllUserErrors(): array
-    {
-        return $this->userInputErrors;
-    }
-
-    public function getAllServerErrors(): array
-    {
-        return $this->serverErrors;
     }
 }

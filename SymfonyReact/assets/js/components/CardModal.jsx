@@ -33,9 +33,11 @@ const cardModal = () => {
                 <div className="error-container">
                   <div className="form-modal-error-box">
                     <ol>
-                    {modalContent.errors.map((error, index) => (
-                      <li key={index} className="form-modal-error-text">{error}</li>
-                    ))}
+                    {
+                      modalContent.errors.map((error, index) => (
+                        <li key={index} className="form-modal-error-text">{error}</li>
+                      ))
+                    }
                     </ol>
                   </div>
                 </div>                

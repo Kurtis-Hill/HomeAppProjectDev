@@ -25,6 +25,18 @@ export default class AddNewDeviceContextProvider extends Component {
         }
     }
 
+    componentDidMount() {
+        const newDeviceGroup = document.getElementById("deviceGroup");
+        const newDeviceRoom = document.getElementById("deviceRoom");
+
+        this.setState({
+            emptyNewDeviceModalContent: {...this.state.emptyNewDeviceModalContent,
+                newDeviceGroup: newDeviceGroup,
+                newDeviceRoom: newDeviceRoom,
+            }
+        });
+    }
+
     handleNewDeviceFormSubmission = (event) => {
         event.preventDefault();
         
@@ -45,7 +57,6 @@ export default class AddNewDeviceContextProvider extends Component {
             .catch(error => {
                 const status = error.response.status;
                 if (status === 400) {
-                    console.log('400 error', error.response.data.responseData);
                     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData.errors], formSubmit:false}});
                 }
                 if (status === 500) {
@@ -56,7 +67,6 @@ export default class AddNewDeviceContextProvider extends Component {
 
     updateNewDeviceModalForm = (event) => {
         const formInput = event.target.value;
-console.log('event', e);
         switch (event.target.name) {
             case "deviceRoom":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceRoom: formInput}});
@@ -69,12 +79,7 @@ console.log('event', e);
             case "deviceName":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
-
-            console.log('new device update', this.state.newDeviceModalContent);
-        }
-
-        console.log('new device modal content', this.state.newDeviceModalContent);
-    
+        }    
     }
 
     toggleNewDeviceLoading = () => {

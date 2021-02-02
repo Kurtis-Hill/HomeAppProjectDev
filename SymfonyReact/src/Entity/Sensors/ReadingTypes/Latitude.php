@@ -39,21 +39,21 @@ class Latitude implements StandardSensorInterface
      *
      * @ORM\Column(name="highLatitude", type="integer", nullable=false)
      */
-    private int|float $highLatitude;
+    private int|float $highLatitude = 66.932045;
 
     /**
      * @var int|float
      *
      * @ORM\Column(name="lowLatitude", type="integer", nullable=false)
      */
-    private int|float $lowLatitude;
+    private int|float $lowLatitude = 58.008098;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="constRecord", type="boolean", nullable=false)
+     * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
      */
-    private bool $constRecord;
+    private bool $constRecord = false;
 
     /**
      * @var Devices
@@ -80,7 +80,7 @@ class Latitude implements StandardSensorInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTime $timez;
+    private \DateTimeInterface $timez;
 
     /**
      * @return int
@@ -166,7 +166,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return \DateTime
      */
-    public function getTime(): \DateTime
+    public function getTime(): \DateTimeInterface
     {
         return $this->timez;
     }
@@ -198,7 +198,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @param \DateTime $dateTime
      */
-    public function setTime(\DateTime $dateTime): void
+    public function setTime(\DateTimeInterface $dateTime): void
     {
         $this->timez = $dateTime;
     }

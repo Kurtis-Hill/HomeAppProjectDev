@@ -64,15 +64,15 @@ class StandardSensorCardDataDTO extends CardDTOAbstract
     {
         $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
 
-        $this->sensorName =$cardDTOData->getCardViewObject()->getSensorObject()->getSensorName();
+        $this->sensorName =$cardDTOData->getCardViewObject()->getSensorNameID()->getSensorName();
 
-        $this->cardIcon = $cardDTOData->getCardViewObject()->getCardIconObject()->getIconName();
+        $this->cardIcon = $cardDTOData->getCardViewObject()->getCardIconID()->getIconName();
 
-        $this->sensorType = $cardDTOData->getCardViewObject()->getSensorObject()->getSensorTypeObject()->getSensorType();
+        $this->sensorType = $cardDTOData->getCardViewObject()->getSensorNameID()->getSensorTypeID()->getSensorType();
 
-        $this->sensorRoom = $cardDTOData->getCardViewObject()->getSensorObject()->getDeviceNameID()->getRoomObject()->getRoom();
+        $this->sensorRoom = $cardDTOData->getCardViewObject()->getSensorNameID()->getDeviceNameID()->getRoomObject()->getRoom();
 
-        $this->cardColour = $cardDTOData->getCardViewObject()->getCardColourObject()->getColour();
+        $this->cardColour = $cardDTOData->getCardViewObject()->getCardColourID()->getColour();
     }
 
     /**

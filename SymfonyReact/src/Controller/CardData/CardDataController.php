@@ -40,7 +40,6 @@ class CardDataController extends AbstractController
         $cardData = $cardDataService->prepareAllCardDTOs($request);
 
         if (!empty($cardDataService->getServerErrors())) {
-//            dd($cardDataService->getServerErrors());
             return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong we are logging you out']);
         }
 
@@ -54,7 +53,6 @@ class CardDataController extends AbstractController
         $serializer = new Serializer($normaliser, $encoders);
 
         if (!empty($cardDataService->getCardErrors())) {
-
             return $this->sendPartialContentResponse($serializer->serialize($cardData, 'json'));
         }
 
@@ -103,9 +101,9 @@ class CardDataController extends AbstractController
         $cardViewID = $request->get('cardViewID');
 
         $cardViewData = [
-            'cardColourObject' => $request->get('cardColour'),
-            'cardIconObject' => $request->get('cardIcon'),
-            'cardStateObject' => $request->get('cardViewState'),
+            'cardColourID' => $request->get('cardColour'),
+            'cardIconID' => $request->get('cardIcon'),
+            'cardStateID' => $request->get('cardViewState'),
         ];
 
         foreach ($cardViewData as $data) {
@@ -126,7 +124,7 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
         }
 
-        $sensorTypeObject = $cardViewObject->getSensorObject()->getSensorTypeObject();
+        $sensorTypeObject = $cardViewObject->getSensorNameID()->getSensorTypeID();
         $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject,'outOfBounds');
 
         if (empty($sensorFormData)) {
@@ -136,7 +134,6 @@ class CardDataController extends AbstractController
         foreach ($sensorFormData as $sensorType => $sensorData) {
             foreach ($cardSensorData as $sensorObject) {
                 if ($sensorType === $sensorObject::class) {
-                   // dd($sensorData['object']);
                     $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
 

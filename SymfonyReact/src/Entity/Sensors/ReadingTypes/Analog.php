@@ -30,37 +30,37 @@ class Analog implements StandardSensorInterface
     /**
      * @var float
      *
-     * @ORM\Column(name="analogReading", type="smallint", precision=10, scale=0, nullable=false, options={"default"="NULL"})
+     * @ORM\Column(name="analogReading", type="smallint", precision=10, scale=0, nullable=false)
      */
     private int $analogReading;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="highAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="NULL"})
+     * @ORM\Column(name="highAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="1111"})
      */
     private int $highAnalog;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="lowAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="NULL"})
+     * @ORM\Column(name="lowAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="2222"})
      */
     private int $lowAnalog;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="constRecord", type="boolean", nullable=true, options={"default"="1"})
+     * @ORM\Column(name="constRecord", type="boolean", nullable=true, options={"default"="0"})
      */
-    private bool $constRecord = true;
+    private bool $constRecord = false;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTime $time;
+    private \DateTimeInterface $time;
 
 
     /**
@@ -171,7 +171,7 @@ class Analog implements StandardSensorInterface
     /**
      * @return \DateTime
      */
-    public function getTime(): \DateTime
+    public function getTime(): \DateTimeInterface
     {
         return $this->time;
     }
@@ -201,9 +201,9 @@ class Analog implements StandardSensorInterface
     }
 
     /**
-     * @param \DateTime $dateTime
+     * @param \DateTimeInterface $dateTime
      */
-    public function setTime(\DateTime $dateTime): void
+    public function setTime(\DateTimeInterface $dateTime): void
     {
         $this->time = $dateTime;
     }

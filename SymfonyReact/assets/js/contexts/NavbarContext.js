@@ -62,10 +62,7 @@ export default class NavbarContextProvider extends Component {
         .then(response => {
             const navBarResponse = response.data.responseData;
             this.setState({devices: navBarResponse.devices, rooms: navBarResponse.rooms, groupNames: navBarResponse.groupNames});
-            console.log('nav bar11', navBarResponse);
-            console.log('nav bar states', this.state.groupNames, this.state.rooms);
         }).catch(error => {   
-            console.log(error);  
             if (error.response.status === 500) {
                 alert('Failed Getting Navbar Data, '+error.response.data.responseData.title);
             }
@@ -77,7 +74,6 @@ export default class NavbarContextProvider extends Component {
     }
 
     toggleNewDeviceModal = () => {
-        console.log('clicked');
         this.setState({addNewDeviceModalToggle: !this.state.addNewDeviceModalToggle});
     }
 //  END OF TAB METHODS

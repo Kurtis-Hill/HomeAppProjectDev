@@ -11,8 +11,7 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = addNewDeviceContext.newDeviceModalContent;
 
-    //Refactor has broken link
-    const newSensorRoute = webappURL+"device?device-name="+newDeviceModalContent.newDeviceID+"&device-group="+newDeviceModalContent.newDeviceGroup+"&device-room="+newDeviceModalContent.newDeviceRoom;
+    const newSensorRoute = webappURL+"device?device-name="+newDeviceModalContent.newDeviceID+"&view=device";
 
     return (
         <React.Fragment>
@@ -27,17 +26,17 @@ const addNewDevice = () => {
                                 </button>
                             </div>
                             {
-                            newDeviceModalContent.errors.length > 0 ?                
-                                <div className="error-container">
-                                    <div className="form-modal-error-box">
-                                        <ol>
-                                            {newDeviceModalContent.errors.map((error, index) => (
-                                                <li key={index} className="form-modal-error-text">{error}</li>
-                                            ))}
-                                        </ol>
-                                    </div>
-                                </div>                
-                            : null
+                                newDeviceModalContent.errors.length > 0 ?                
+                                    <div className="error-container">
+                                        <div className="form-modal-error-box">
+                                            <ol>
+                                                {newDeviceModalContent.errors.map((error, index) => (
+                                                    <li key={index} className="form-modal-error-text">{error}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                    </div>                
+                                : null
                             }
                             <div className="modal-body">
                                 {newDeviceModalContent.formSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}

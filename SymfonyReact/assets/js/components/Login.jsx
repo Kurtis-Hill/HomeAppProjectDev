@@ -19,6 +19,7 @@ function Login(props) {
         
         const csrfTokenResponse = await axios.get(apiURL+'csrfToken')
             .catch(error => {
+                setLoading(false);
                 alert('Please Fresher The Browser');
             });
 

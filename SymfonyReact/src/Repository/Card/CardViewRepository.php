@@ -7,21 +7,14 @@ namespace App\Repository\Card;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Icons;
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\Devices;
-use App\Entity\Sensors\SensorTypes\Dht;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\Entity\Sensors\SensorTypes\Soil;
-use App\Entity\Sensors\SensorTypes\Bmp;
+
 
 
 class CardViewRepository extends EntityRepository
@@ -40,16 +33,16 @@ class CardViewRepository extends EntityRepository
     }
 
 
-    public function getAllCardObjects(int $userID, array $groupNameIDs, array $sensors)
+    public function getAllCardObjectsForUser(int $userID, array $groupNameIDs, array $sensors)
     {
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
 
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
-//dd('hry');
+
         $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-//dd($sensorAlias, $groupNameIDs, $sensors);
+
         $qb->select($sensorAlias)
             ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
@@ -71,7 +64,6 @@ class CardViewRepository extends EntityRepository
                 'cardviewTwo' => $cardViewTwo
             ]
         );
-//        dd($qb->getQuery()->getResult());
 
         return array_filter($qb->getQuery()->getResult());
     }
@@ -80,36 +72,70 @@ class CardViewRepository extends EntityRepository
     /**
      * @param array $groupNameIDs
      * @param int $userID
-     * @param array $deviceDetails
+     * @param integer $deviceDetails
      * @param array $sensors
      * @return array
      */
-    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, array $deviceDetails, array $sensors): array
+    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, int $deviceDetails, array $sensors): array
     {
+//        dd($deviceDetails);
+        $cardViewOne = Cardstate::ON;
+        $cardViewTwo = Cardstate::INDEX_ONLY;
+
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
+        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
 
-        $qb
-        ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
-        ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
-        ->where(
-            $qb->expr()->in('s.groupNameID', ':groupNameID'),
+        $qb->select($sensorAlias)
+            ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
+            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
+
+        $qb->where(
+            $expr->orX(
+                $expr->eq('cv.cardStateID', ':cardviewOne'),
+                $expr->eq('cv.cardStateID', ':cardviewTwo')
+            ),
             $expr->eq('cv.userID', ':userID'),
-            $expr->eq('s.deviceNameID', ':deviceNameID'),
-            $expr->eq('s.groupNameID', ':deviceGroup'),
-            $expr->eq('cv.roomID', ':deviceRoom')
+            $expr->in('devices.groupNameID', ':groupNameID'),
+            $expr->eq('devices.deviceNameID', ':deviceNameID'),
+        );
+        // dd($sensorAlias, $groupNameIDs, $sensors, $qb);
+        $qb->setParameters(
+            [
+                'userID' => $userID,
+                'groupNameID' => $groupNameIDs,
+                'deviceNameID' => $deviceDetails,
+                'cardviewOne' => $cardViewOne,
+                'cardviewTwo' => $cardViewTwo
+            ]
         );
 
-        $qb->setParameters([
-            'deviceNameID' => $deviceDetails['deviceName'],
-            'deviceGroup' => $deviceDetails['deviceGroup'],
-            'deviceRoom' => $deviceDetails['deviceRoom'],
-            'userID' => $userID,
-            'groupNameID' => $groupNameIDs,
-        ]);
-
+//        dd(array_filter($qb->getQuery()->getResult()));
+        return array_filter($qb->getQuery()->getResult());
+        //dd($groupNameIDs, $userID, $deviceDetails, $sensors);
+//        $qb = $this->createQueryBuilder('cv');
+//        $expr = $qb->expr();
+//
+//        $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
+//
+//        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
+//
+//        $qb->select($sensorAlias)
+//        ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
+//        ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
+//        ->where(
+//            $qb->expr()->in('devices.groupNameID', ':groupNameID'),
+//            $expr->eq('cv.userID', ':userID'),
+//            $expr->eq('devices.deviceNameID', ':deviceNameID'),
+//        );
+//
+//        $qb->setParameters([
+//            'deviceNameID' => $deviceDetails,
+//            'userID' => $userID,
+//            'groupNameID' => $groupNameIDs,
+//        ]);
+//
         return array_filter($qb->getQuery()->getResult());
     }
 
@@ -170,6 +196,33 @@ class CardViewRepository extends EntityRepository
 
         return $result;
     }
+
+//    public function getRandomCardViewDefaultData()
+//    {
+//        $qb = $this->createQueryBuilder('cv');
+//        $expr = $qb->expr();
+//
+//        $qb->select('i', 'cc')
+//            ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
+//            ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
+//            ->where(
+//                $expr->eq(
+//                    'i.iconID', ':iconID',
+//                ),
+//                $expr->eq(
+//                    'cc.colourID', ':colourID'
+//                )
+//            )
+//            ->setParameters(
+//                [
+//                    'iconID' => random_int(1, 28),
+//                    'colourID' => random_int(1, 4)
+//                ]
+//            );
+//
+//        dd($qb->getQuery()->getResult());
+//        return $qb->getQuery()->getResult();
+//    }
 //    /**
 //     * @param $groupNameIDs
 //     * @param $userID
