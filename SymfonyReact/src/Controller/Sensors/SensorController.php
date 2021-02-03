@@ -25,6 +25,19 @@ class SensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
+
+    /**
+     * @Route("/submitted-data/temperature", name="temperature-data-recieve")
+     * @param Request $request
+     * @param SensorService $sensorService
+     * @return Response
+     */
+    public function processTemperatureSensorData(Request $request, ): Response
+    {
+
+    }
+
+
     /**
      * @Route("/submit-form-data", name="add-new-sensor")
      * @param Request $request

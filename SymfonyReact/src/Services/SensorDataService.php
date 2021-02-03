@@ -54,7 +54,8 @@ class SensorDataService extends AbstractHomeAppSensorServiceCore
             'colours' => CardColour::class,
             'states' => Cardstate::class
         ]
-    )] private function getUserCardSelectionData(): ?array
+    )]
+    private function getUserCardSelectionData(): ?array
     {
         $icons = $this->em->getRepository(Icons::class)->getAllIcons();
         $colours = $this->em->getRepository(CardColour::class)->getAllColours();

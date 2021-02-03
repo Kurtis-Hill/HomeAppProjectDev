@@ -43,9 +43,8 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
         }
-        else {
-            return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
-        }
+
+        return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
     }
 
     // 20x Successfull
@@ -61,9 +60,8 @@ trait HomeAppAPIResponseTrait
                 HTTPStatusCodes::HTTP_OK
             );
         }
-        else {
-            return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
-        }
+
+        return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
     }
 
     /**
@@ -78,9 +76,8 @@ trait HomeAppAPIResponseTrait
                 HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY
             );
         }
-        else {
-            return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
-        }
+
+        return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
     }
 
     /**
@@ -97,9 +94,8 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_CREATED);
         }
-        else {
-            return new JsonResponse(['title' => 'Request Accepted Successfully Updated', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_CREATED);
-        }
+
+        return new JsonResponse(['title' => 'Request Accepted Successfully Updated', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_CREATED);
     }
 
     public function sendPartialContentJsonResponse(array $data = []): JsonResponse
@@ -112,9 +108,8 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
         }
-        else {
-            return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
-        }
+
+        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
     }
 
 
@@ -125,9 +120,8 @@ trait HomeAppAPIResponseTrait
                 $data,
                 HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
         }
-        else {
-            return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
-        }
+
+        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
     }
     // 40x Client Error Response
 
@@ -141,9 +135,8 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_BAD_REQUEST);
         }
-        else {
-            return new JsonResponse(['title' => 'Bad Request No Data Returned', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
-        }
+
+        return new JsonResponse(['title' => 'Bad Request No Data Returned', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
     }
 
     public function sendUnauthorised()
@@ -163,14 +156,13 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_NOT_FOUND);
         }
-        else {
-            return new JsonResponse(
-                [
-                    'title' => 'Nothing Found',
-                    'responseData' => 'No Response Message'
-                ],
-                HTTPStatusCodes::HTTP_NOT_FOUND);
-        }
+
+        return new JsonResponse(
+            [
+                'title' => 'Nothing Found',
+                'responseData' => 'No Response Message'
+            ],
+            HTTPStatusCodes::HTTP_NOT_FOUND);
     }
 
     // 50x Server Error Response
@@ -189,13 +181,12 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
         }
-        else {
-            return new JsonResponse(
-                [
-                    'title' => 'Server Error Please Try Again',
-                    'responseData' => 'No Response Message'
-                ],
-                HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
-        }
+
+        return new JsonResponse(
+            [
+                'title' => 'Server Error Please Try Again',
+                'responseData' => 'No Response Message'
+            ],
+            HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

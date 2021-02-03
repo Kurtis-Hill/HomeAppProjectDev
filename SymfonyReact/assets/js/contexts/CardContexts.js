@@ -23,7 +23,7 @@ class CardContextProvider extends Component {
         super(props);
         this.state = {
             refreshTimer: 6000,
-            cardData: [],
+            cardData: null,
             modalShow: false,
             modalLoading: false,
             modalContent: emptyModalContent,
@@ -81,7 +81,7 @@ class CardContextProvider extends Component {
                 this.setState({cardData: response.data});
             } 
             else {
-                this.setState({alternativeDisplayMessage: "No Card Data"});
+                this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
             }
         }).catch(error => {
             if (error.data == undefined) {
