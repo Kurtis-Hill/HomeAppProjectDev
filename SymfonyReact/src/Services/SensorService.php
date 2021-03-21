@@ -8,7 +8,7 @@ use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;

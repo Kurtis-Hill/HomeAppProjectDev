@@ -70,7 +70,7 @@ class User implements UserInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $time = 'CURRENT_TIMESTAMP';
+    private $time;
 
     /**
      * @var GroupNames
@@ -214,9 +214,14 @@ class User implements UserInterface
         return $this->time;
     }
 
-    public function setTime(\DateTime $time): self
+    public function setTime(?\DateTime $time = null): self
     {
-        $this->time = $time;
+        if ($this->time === null) {
+            $this->time = new \DateTime('now');
+        }
+        else {
+            $this->time = $time;
+        }
 
         return $this;
     }

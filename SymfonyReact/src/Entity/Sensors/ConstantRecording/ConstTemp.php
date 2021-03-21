@@ -2,7 +2,6 @@
 
 namespace App\Entity\Sensors\ConstantRecording;
 
-use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -35,17 +34,17 @@ class ConstTemp
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time = 'current_timestamp()';
+    private $time;
 
     /**
-     * @var Temperature
+     * @var Sensors
      *
      * @ORM\ManyToOne(targetEntity="Temp")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="tempID")
      * })
      */
-    private Temperature $sensorID;
+    private Sensors $sensorID;
 
     /**
      * @return int
@@ -90,15 +89,19 @@ class ConstTemp
     /**
      * @param \DateTime $time
      */
-    public function setTime($time): void
+    public function setTime(?\DateTime $time = null): void
     {
+        if ($time === null) {
+            $time = new \DateTime('now');
+        }
+
         $this->time = $time;
     }
 
     /**
      * @return Sensors
      */
-    public function getSensorID(): Temperature
+    public function getSensorID(): Sensors
     {
         return $this->sensorID;
     }
@@ -106,7 +109,7 @@ class ConstTemp
     /**
      * @param Sensors $sensorID
      */
-    public function setSensorID(Temp $sensorID): void
+    public function setSensorID(Sensors $sensorID): void
     {
         $this->sensorID = $sensorID;
     }

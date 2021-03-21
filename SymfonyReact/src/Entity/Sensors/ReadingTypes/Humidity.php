@@ -4,9 +4,9 @@ namespace App\Entity\Sensors\ReadingTypes;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -16,7 +16,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="humid", uniqueConstraints={@ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"}), @ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_6", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\HumidRepository")
  */
-class Humidity implements StandardSensorInterface
+class Humidity implements StandardReadingSensorInterface
 {
     /**
      * @var int
@@ -60,7 +60,7 @@ class Humidity implements StandardSensorInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTimeInterface $timez;
+    private ?\DateTime $time;
 
     /**
      * @var Sensors
@@ -75,7 +75,7 @@ class Humidity implements StandardSensorInterface
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Devices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })
@@ -137,7 +137,7 @@ class Humidity implements StandardSensorInterface
      * Sensor Reading Methods
      */
 
-    public function getCurrentSensorReading(): int|float
+    public function getCurrentReading(): int|float
     {
         return $this->humidReading;
     }
@@ -163,7 +163,7 @@ class Humidity implements StandardSensorInterface
      */
     public function getTime(): \DateTimeInterface
     {
-        return $this->timez;
+        return $this->time;
     }
 
     /**
@@ -193,9 +193,13 @@ class Humidity implements StandardSensorInterface
     /**
      * @param \DateTime $dateTime
      */
-    public function setTime(\DateTimeInterface $dateTime): void
+    public function setTime(?\DateTime $time = null): void
     {
-        $this->timez = $dateTime;
+        if ($time === null) {
+            $time = new \DateTime('now');
+        }
+
+        $this->time = $time;
     }
 
     /**
@@ -220,11 +224,23 @@ class Humidity implements StandardSensorInterface
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float
     {
-        return $this->getHighReading() - $this->getCurrentSensorReading();
+        return $this->getHighReading() - $this->getCurrentReading();
     }
 
     #[Pure] public function getMeasurementDifferenceLowReading(): int|float
     {
-        return $this->getLowReading() - $this->getCurrentSensorReading();
+        return $this->getLowReading() - $this->getCurrentReading();
+    }
+
+    public function isReadingOutOfBounds(): bool
+    {
+        if ($this->getCurrentReading() <= $this->getHighReading()) {
+            return true;
+        }
+        if ($this->getCurrentReading() <= $this->getLowReading()) {
+            return true;
+        }
+
+        return false;
     }
 }

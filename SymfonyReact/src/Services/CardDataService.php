@@ -3,12 +3,22 @@
 
 namespace App\Services;
 
+use App\DTOs\Sensors\CardViewSensorFormDTO;
 use App\DTOs\Sensors\StandardSensorCardDataDTO;
+use App\Entity\Card\CardColour;
+use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
+use App\Entity\Card\Icons;
+use App\Entity\Sensors\ReadingTypes\Analog;
+use App\Entity\Sensors\ReadingTypes\Humidity;
+use App\Entity\Sensors\ReadingTypes\Latitude;
+use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +30,26 @@ use Symfony\Component\Routing\Route;
  */
 class CardDataService extends AbstractHomeAppSensorServiceCore
 {
+    protected const SENSOR_DATA = [
+        Sensors::TEMPERATURE => [
+            'alias' => 'temp',
+            'object' => Temperature::class
+        ],
+        Sensors::HUMIDITY => [
+            'alias' => 'humid',
+            'object' => Humidity::class
+        ],
+        Sensors::ANALOG => [
+            'alias' => 'analog',
+            'object' => Analog::class
+        ],
+        Sensors::LATITUDE => [
+            'alias' => 'lat',
+            'object' => Latitude::class
+        ],
+
+    ];
+
     /**
      * @var array
      */
@@ -66,6 +96,22 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         return $cardDTOs ?? [];
     }
 
+    /**
+     * @param string $cardViewData
+     * @return array
+     */
+    public function editSelectedCardData(string $cardViewData): array
+    {
+        try {
+            $usersCurrentCardData = $this->em->getRepository(CardView::class)->getUsersCurrentlySelectedSensorsCardData(['id' => $cardViewData, 'userID' =>  $this->getUserID()], self::SENSOR_DATA);
+        } catch(ORMException | \Exception $e){
+            $this->serverErrors[] = 'Query error trying to find users card data';
+            error_log($e->getMessage());
+        }
+
+        return $usersCurrentCardData ?? [];
+    }
+
 
     /**
      * @return array
@@ -97,6 +143,65 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceId, self::SENSOR_TYPE_DATA);
         //dd($cardData);
         return $cardData ?? [];
+    }
+
+    /**
+     * @return array|null
+     */
+    #[ArrayShape(
+        [
+            'icons' => Icons::class,
+            'colours' => CardColour::class,
+            'states' => Cardstate::class
+        ]
+    )]
+    private function getUserSensorCardSelectionData(): ?array
+    {
+        $icons = $this->em->getRepository(Icons::class)->getAllIcons();
+        $colours = $this->em->getRepository(CardColour::class)->getAllColours();
+        $states = $this->em->getRepository(Cardstate::class)->getAllStates();
+
+        if (empty($icons) || empty($colours) || empty($states)) {
+            throw new \RuntimeException('user selection data has failed to process');
+        }
+
+        return ['icons' => $icons, 'colours' => $colours, 'states' => $states];
+    }
+
+
+
+    /**
+     * @param string $cardViewID
+     * @return CardViewSensorFormDTO|null
+     */
+    public function getCardViewFormDTO(string $cardViewID): ?CardViewSensorFormDTO
+    {
+        try {
+            $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], self::SENSOR_TYPE_DATA);
+
+            $userSelectionData = $this->getUserSensorCardSelectionData();
+
+            if ($userSelectionData === null) {
+                return null;
+            }
+
+            if ($cardData instanceof StandardSensorTypeInterface) {
+                $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
+            }
+            else {
+                $this->serverErrors[] = 'Query error for card view form';
+            }
+        } catch (\RuntimeException $e) {
+            $this->serverErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Failed to prepare card data';
+        }
+
+        return $cardViewFormDTO ?? null;
     }
 
     /**

@@ -6,7 +6,7 @@ namespace App\DTOs\Sensors;
 
 use App\DTOs\CardDTOAbstract;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 
 
 /**
@@ -60,11 +60,11 @@ class CardViewSensorFormDTO extends CardDTOAbstract
     }
 
     /**
-     * @param StandardSensorInterface $sensorTypeObject
+     * @param StandardReadingSensorInterface $sensorTypeObject
      * @param string $type
      * @param string|null $symbol
      */
-    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
+    protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
     {
         $this->sensorData[] = [
             'sensorType' => $type,

@@ -5,10 +5,10 @@ namespace App\HomeAppSensorCore\Interfaces;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 
-interface StandardSensorInterface
+interface StandardReadingSensorInterface
 {
     public function getSensorID(): int;
 
@@ -28,7 +28,7 @@ interface StandardSensorInterface
     /**
      * Sensor Reading Methods
      */
-    public function getCurrentSensorReading(): int|float;
+    public function getCurrentReading(): int|float;
 
     public function getHighReading(): int|float;
 
@@ -42,7 +42,7 @@ interface StandardSensorInterface
 
     public function setLowReading(int|float $reading): void;
 
-    public function setTime(\DateTimeInterface $dateTime): void;
+    public function setTime(?\DateTime $time = null): void;
 
     /**
      * Sensor Functional Methods
@@ -54,6 +54,8 @@ interface StandardSensorInterface
     public function getMeasurementDifferenceHighReading(): int|float;
 
     public function getMeasurementDifferenceLowReading(): int|float;
+
+    public function isReadingOutOfBounds(): bool;
 
 
 }

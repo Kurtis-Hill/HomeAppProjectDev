@@ -9,7 +9,7 @@ use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 
 abstract class CardDTOAbstract
 {
@@ -38,7 +38,7 @@ abstract class CardDTOAbstract
         }
     }
 
-    abstract protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type, string $symbol = null): void;
+    abstract protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void;
 
     abstract protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void;
 

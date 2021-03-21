@@ -2,13 +2,14 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Devices\Devices;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Sensors.
  *
  * @ORM\Table(name="sensornames", indexes={@ORM\Index(name="SensorTypes", columns={"sensorTypeID"}), @ORM\Index(name="sensornames_ibfk_1", columns={"deviceNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\SensorNamesRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Core\SensorsRepository")
  */
 class Sensors
 {
@@ -50,7 +51,7 @@ class Sensors
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Devices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })

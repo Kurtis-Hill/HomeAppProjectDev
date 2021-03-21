@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 
 
 
@@ -147,7 +147,7 @@ class CardViewRepository extends EntityRepository
      * @param $sensorData
      * @return mixed
      */
-    public function getCardSensorFormData(array $criteria, $sensorData): StandardSensorTypeInterface
+    public function getSensorCardFormData(array $criteria, $sensorData): StandardSensorTypeInterface
     {
         $qb = $this->createQueryBuilder('cv');
 
@@ -177,7 +177,7 @@ class CardViewRepository extends EntityRepository
      * @param array $sensorData
      * @return mixed
      */
-    public function getUsersCurrentlySelectedCardData(array $criteria, array $sensorData): array
+    public function getUsersCurrentlySelectedSensorsCardData(array $criteria, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('cv');
 

@@ -6,7 +6,7 @@ namespace App\Form\SensorForms;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

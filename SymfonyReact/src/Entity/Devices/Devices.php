@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Entity\Sensors;
-
+namespace App\Entity\Device0s;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 /**
@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="devicenames", uniqueConstraints={@ORM\UniqueConstraint(name="deviceSecret", columns={"deviceSecret"})}, indexes={@ORM\Index(name="createdBy", columns={"createdBy"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\DevicesRepository")
  */
-class Devices
+class Devices implements UserInterface
 {
     /**
      * @var int
@@ -38,7 +38,7 @@ class Devices
      *
      * @ORM\Column(name="deviceSecret", type="string", length=32, nullable=false)
      */
-    private string $deviceSecret;
+    private string $secret;
 
     /**
      * @var User
@@ -69,6 +69,13 @@ class Devices
      * })
      */
     private Room $roomID;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="roles", type="json", nullable=false)
+     */
+    private array $roles;
 
     /**
      * @return int
@@ -105,23 +112,23 @@ class Devices
     /**
      * @return string
      */
-    public function getDeviceSecret(): string
+    public function getPassword(): string
     {
-        return $this->deviceSecret;
+        return $this->secret;
     }
 
     /**
-     * @param string $deviceSecret
+     * @param string $secret
      */
-    public function setDeviceSecret(string $deviceSecret): void
+    public function setPassword(string $secret): void
     {
-        $this->deviceSecret = $deviceSecret;
+        $this->secret = $secret;
     }
 
     /**
-     * @return int
+     * @return User
      */
-    public function getCreatedBy(): int
+    public function getCreatedBy(): User
     {
         return $this->createdBy;
     }
@@ -164,6 +171,41 @@ class Devices
     public function setRoomObject(Room $roomID): void
     {
         $this->roomID = $roomID;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return array_unique($this->roles);
+    }
+
+    /**
+     * @param array $roles
+     * @return $this
+     */
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function getUsername()
+    {
+        return $this->deviceName;
+    }
+
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 
 }

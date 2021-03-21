@@ -38,7 +38,7 @@ class Soil implements StandardSensorTypeInterface, AnalogSensorTypeInterface
     /**
      * @var CardView
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardview")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
      * })

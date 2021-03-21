@@ -4,10 +4,11 @@
 namespace App\Controller\CardData;
 
 use App\Form\CardViewForms\CardViewForm;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use App\Services\CardDataService;
 use App\Services\SensorDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use Proxies\__CG__\App\Entity\Sensors\SensorType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -64,10 +65,10 @@ class CardDataController extends AbstractController
      * @Route("/card-state-view-form", name="cardViewForm", methods={"GET"})
      *
      * @param Request $request
-     * @param SensorDataService $sensorDataService
+     * @param CardDataService $cardDataService
      * @return Response|JsonResponse
      */
-    public function showCardViewForm(Request $request, SensorDataService $sensorDataService): Response|JsonResponse
+    public function showCardViewForm(Request $request, CardDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->query->get('cardViewID');
 
@@ -75,9 +76,9 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestResponse();
         }
 
-        $cardFormDTO = $sensorDataService->getCardViewFormData($cardViewID);
+        $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewID);
 
-        if ($cardFormDTO === null || !empty($sensorDataService->getServerErrors())) {
+        if ($cardFormDTO === null || !empty($cardDataService->getServerErrors())) {
             return $this->sendInternelServerErrorResponse();
         }
 
@@ -94,11 +95,20 @@ class CardDataController extends AbstractController
      * @Route("/update-card-view", name="updateCardView", methods={"POST"})
      * @param Request $request
      * @param SensorDataService $sensorDataService
+     * @param CardDataService $cardDataService
      * @return Response|JsonResponse
      */
-    public function updateCardView(Request $request, SensorDataService $sensorDataService): Response|JsonResponse
+    public function updateCardView(Request $request, SensorDataService $sensorDataService, CardDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->get('cardViewID');
+
+        $cardColourID = $request->get('cardColour');
+        $cardIconID = $request->get('cardIcon');
+        $cardStateID = $request->get('cardViewState');
+
+        if (empty($cardColourID) || empty($cardIconID) || empty($cardStateID) || empty($cardViewID)) {
+            return $this->sendBadRequestResponse(['errors' => 'empty form data']);
+        }
 
         $cardViewData = [
             'cardColourID' => $request->get('cardColour'),
@@ -106,15 +116,9 @@ class CardDataController extends AbstractController
             'cardStateID' => $request->get('cardViewState'),
         ];
 
-        foreach ($cardViewData as $data) {
-            if ($data === null) {
-                return $this->sendBadRequestResponse(['errors' => 'empty form data']);
-            }
-        }
-
-        $cardSensorData = $sensorDataService->prepareUsersCurrentCardData($cardViewID);
-        $cardViewObject = array_shift($cardSensorData);
-
+        $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
+        $cardViewObject = array_shift($cardSensorReadingObject);
+//        dd($cardViewObject);
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
 
         $handledCardViewForm = $sensorDataService->processForm($cardViewForm, $cardViewData);
@@ -125,15 +129,21 @@ class CardDataController extends AbstractController
         }
 
         $sensorTypeObject = $cardViewObject->getSensorNameID()->getSensorTypeID();
-        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject,'outOfBounds');
+
+        //put this in service and swap request for sensor details array
+//        $sensorFormData = $sensorDataService->prepareUpdateForOutOfBoundsForm($request, $sensorTypeObject);
+        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject,SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
 
         if (empty($sensorFormData)) {
             return $this->sendInternelServerErrorResponse($sensorDataService->getServerErrors());
         }
 
         foreach ($sensorFormData as $sensorType => $sensorData) {
-            foreach ($cardSensorData as $sensorObject) {
+            foreach ($cardSensorReadingObject as $sensorObject) {
+//                dd($sensorFormData, $cardSensorReadingObject);
+//                dd($sensorType, $sensorObject, $cardSensorReadingObject,  $sensorType == $sensorObject::class);
                 if ($sensorType === $sensorObject::class) {
+                                      //  dd('success', $sensorData);
                     $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
 

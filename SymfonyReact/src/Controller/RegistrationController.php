@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Core\GroupMapping;
+
 use App\Entity\Core\GroupNames;
+use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\ORMException;
@@ -17,6 +18,9 @@ class RegistrationController extends AbstractController
 {
     /**
      * @Route("/HomeApp/register", name="app_register")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return Response
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
@@ -50,7 +54,7 @@ class RegistrationController extends AbstractController
                 $user->setGroupNameID($groupName);
                 $user->setTime(new \DateTime());
 
-                $groupNameMapping = new GroupMapping();
+                $groupNameMapping = new GroupnNameMapping();
 
                 $groupNameMapping->setGroupnameid($groupName);
                 $groupNameMapping->setUserID($user);

@@ -2,11 +2,9 @@
 
 namespace App\Entity\Sensors\ReadingTypes;
 
-use App\Entity\Core\GroupNames;
-use App\Entity\Core\Room;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -16,7 +14,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_6", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
  */
-class Analog implements StandardSensorInterface
+class Analog implements StandardReadingSensorInterface
 {
     /**
      * @var int
@@ -56,11 +54,11 @@ class Analog implements StandardSensorInterface
     private bool $constRecord = false;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTimeInterface $time;
+    private ?\DateTime $time;
 
 
     /**
@@ -77,7 +75,7 @@ class Analog implements StandardSensorInterface
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Devices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })
@@ -147,7 +145,7 @@ class Analog implements StandardSensorInterface
     /**
      * @return int|float
      */
-    public function getCurrentSensorReading(): int|float
+    public function getCurrentReading(): int|float
     {
         return $this->analogReading;
     }
@@ -201,11 +199,15 @@ class Analog implements StandardSensorInterface
     }
 
     /**
-     * @param \DateTimeInterface $dateTime
+     * @param \DateTime|null $time
      */
-    public function setTime(\DateTimeInterface $dateTime): void
+    public function setTime(?\DateTime $time = null): void
     {
-        $this->time = $dateTime;
+        if ($time === null) {
+            $time = new \DateTime('now');
+        }
+
+        $this->time = $time;
     }
 
     /**
@@ -230,11 +232,23 @@ class Analog implements StandardSensorInterface
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float
     {
-        return $this->getHighReading() - $this->getCurrentSensorReading();
+        return $this->getHighReading() - $this->getCurrentReading();
     }
 
     #[Pure] public function getMeasurementDifferenceLowReading(): int|float
     {
-        return $this->getLowReading() - $this->getCurrentSensorReading();
+        return $this->getLowReading() - $this->getCurrentReading();
+    }
+
+    public function isReadingOutOfBounds(): bool
+    {
+        if ($this->getCurrentReading() <= $this->getHighReading()) {
+            return true;
+        }
+        if ($this->getCurrentReading() <= $this->getLowReading()) {
+            return true;
+        }
+
+        return false;
     }
 }

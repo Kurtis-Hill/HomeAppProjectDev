@@ -38,16 +38,6 @@ class Dht implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
     private Temperature $tempID;
 
     /**
-     * @var CardView
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardview")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardviewID", referencedColumnName="cardViewID")
-     * })
-     */
-    private CardView $cardViewID;
-
-    /**
      * @var Humidity
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Humidity")
@@ -56,6 +46,16 @@ class Dht implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
      * })
      */
     private Humidity $humidID;
+
+    /**
+     * @var CardView
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
+     * })
+     */
+    private CardView $cardViewID;
 
     /**
      * @return int

@@ -11,7 +11,7 @@ class DallasTemperatureConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof DallasTemperatureConstraintValidator) {
+        if (!$constraint instanceof DallasTemperatureConstraint) {
             throw new UnexpectedTypeException($constraint, DallasTemperatureConstraint::class);
         }
 

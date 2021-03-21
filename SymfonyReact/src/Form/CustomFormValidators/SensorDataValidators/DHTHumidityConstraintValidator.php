@@ -3,7 +3,7 @@
 
 namespace App\Form\CustomFormValidators\SensorDataValidators;
 
-use App\Form\CustomFormValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\DHTHumidityConstraint;
+use App\Form\CustomFormValidators\SensorDataValidators\DHTHumidityConstraint;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -12,7 +12,7 @@ class DHTHumidityConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof DHTHumidityConstraint) {
+        if (!$constraint instanceof HumidityConstraint) {
             throw new UnexpectedTypeException($constraint,DHTHumidityConstraint::class);
         }
 

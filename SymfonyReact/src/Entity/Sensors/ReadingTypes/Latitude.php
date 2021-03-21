@@ -4,9 +4,9 @@ namespace App\Entity\Sensors\ReadingTypes;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -16,7 +16,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\LatitudeRepository")
  */
-class Latitude implements StandardSensorInterface
+class Latitude implements StandardReadingSensorInterface
 {
     /**
      * @var int
@@ -58,7 +58,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @var Devices
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Devices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
      * })
@@ -80,7 +80,7 @@ class Latitude implements StandardSensorInterface
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private \DateTimeInterface $timez;
+    private ?\DateTime $time;
 
     /**
      * @return int
@@ -142,7 +142,7 @@ class Latitude implements StandardSensorInterface
     /**
      * @return float|int
      */
-    public function getCurrentSensorReading(): int|float
+    public function getCurrentReading(): int|float
     {
         return $this->latitude;
     }
@@ -168,7 +168,7 @@ class Latitude implements StandardSensorInterface
      */
     public function getTime(): \DateTimeInterface
     {
-        return $this->timez;
+        return $this->time;
     }
 
     /**
@@ -196,11 +196,15 @@ class Latitude implements StandardSensorInterface
     }
 
     /**
-     * @param \DateTime $dateTime
+     * @param \DateTime|null $time
      */
-    public function setTime(\DateTimeInterface $dateTime): void
+    public function setTime(?\DateTime $time = null): void
     {
-        $this->timez = $dateTime;
+        if ($time === null) {
+            $time = new \DateTime('now');
+        }
+
+        $this->time = $time;
     }
 
     /**
@@ -225,11 +229,23 @@ class Latitude implements StandardSensorInterface
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float
     {
-        return $this->getCurrentSensorReading() - $this->getHighReading();
+        return $this->getCurrentReading() - $this->getHighReading();
     }
 
     #[Pure] public function getMeasurementDifferenceLowReading(): int|float
     {
-        return $this->getCurrentSensorReading() - $this->getLowReading();
+        return $this->getCurrentReading() - $this->getLowReading();
+    }
+
+    public function isReadingOutOfBounds(): bool
+    {
+        if ($this->getCurrentReading() <= $this->getHighReading()) {
+            return true;
+        }
+        if ($this->getCurrentReading() <= $this->getLowReading()) {
+            return true;
+        }
+
+        return false;
     }
 }

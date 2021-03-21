@@ -34,12 +34,12 @@ class OutofRangeHumid
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time = 'current_timestamp()';
+    private $time;
 
     /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="sensorNameID")
      * })
@@ -89,8 +89,12 @@ class OutofRangeHumid
     /**
      * @param \DateTime $time
      */
-    public function setTime($time): void
+    public function setTime(?\DateTime $time = null): void
     {
+        if ($time === null) {
+            $time = new \DateTime('now');
+        }
+
         $this->time = $time;
     }
 

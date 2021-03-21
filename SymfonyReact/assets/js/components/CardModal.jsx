@@ -56,6 +56,7 @@ const cardModal = () => {
                     ? 
                       modalContent.sensorData.map((sensorData, index) => (                        
                         <div key={index} style={{paddingBottom: "10%"}}>
+                          
                           <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
                           <br />
                           <input type="text" name={sensorData.sensorType+"HighReading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
@@ -64,6 +65,8 @@ const cardModal = () => {
                           <br />
                           <input type="text" name={sensorData.sensorType+"LowReading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
                           <br />
+                          <input type="radio" name={sensorData.sensorType+"ConstRecord"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control"></input>
+                          <input type="radio" name={sensorData.sensorType+"ConstRecord212"} value={2} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control"></input>
                           <label className="modal-space large font-weight-bold">{modalSensorType} Temperature Constantly Record Data</label>
                           <select name={sensorData.sensorType+"ConstRecord"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control">
                             <option value={false} key="no">No</option>
@@ -72,7 +75,7 @@ const cardModal = () => {
                         </div>
                       ))                
                     : 
-                      null                      
+                    null                      
                   }
 
                   {

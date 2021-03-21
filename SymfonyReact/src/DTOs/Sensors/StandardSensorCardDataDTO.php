@@ -5,7 +5,7 @@ namespace App\DTOs\Sensors;
 
 use App\DTOs\CardDTOAbstract;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardSensorInterface;
+use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class StandardSensorCardDataDTO extends CardDTOAbstract
@@ -76,17 +76,17 @@ class StandardSensorCardDataDTO extends CardDTOAbstract
     }
 
     /**
-     * @param StandardSensorInterface $sensorTypeObject
+     * @param StandardReadingSensorInterface $sensorTypeObject
      * @param string $type
      * @param string|null $symbol
      */
-    protected function setSensorData(StandardSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
+    protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
     {
         $this->sensorData[] = [
             'sensorType' => $type,
             'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
             'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
-            'currentReading' => is_float($sensorTypeObject->getCurrentSensorReading()) ?  number_format($sensorTypeObject->getCurrentSensorReading(), 2) : $sensorTypeObject->getCurrentSensorReading(),
+            'currentReading' => is_float($sensorTypeObject->getCurrentReading()) ?  number_format($sensorTypeObject->getCurrentReading(), 2) : $sensorTypeObject->getCurrentReading(),
             'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),
             'getCurrentLowDifference' => is_float($sensorTypeObject->getMeasurementDifferenceLowReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2) : $sensorTypeObject->getMeasurementDifferenceLowReading(),
             'readingSymbol' => $symbol,

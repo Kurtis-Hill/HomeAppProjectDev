@@ -4,7 +4,7 @@ namespace App\Entity\Sensors\OutOfRangeRecordings;
 
 use App\Entity\Sensors\ReadingTypes\Analog;
 use Doctrine\ORM\Mapping as ORM;
-
+//@todo needs sensor FK adding
 /**
  * OutOfRangeAnalog.
  *
@@ -34,7 +34,7 @@ class OutOfRangeAnalog
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time = 'current_timestamp()';
+    private $time;
 
     /**
      * @var Analog
@@ -89,8 +89,12 @@ class OutOfRangeAnalog
     /**
      * @param \DateTime $time
      */
-    public function setTime($time): void
+    public function setTime(?\DateTime $time = null): void
     {
+        if ($time === null) {
+            $time = new \DateTime('now');
+        }
+
         $this->time = $time;
     }
 

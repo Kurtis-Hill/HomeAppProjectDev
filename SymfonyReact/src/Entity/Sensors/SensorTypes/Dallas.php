@@ -4,6 +4,7 @@ namespace App\Entity\Sensors\SensorTypes;
 
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,10 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
  * Dallas
  *
  * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\ReadingType\DallasRepository")
  */
 class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
+    public const MAX_POSSIBLE_SENSORS = 8;
     /**
      * @var int
      *
@@ -26,16 +28,6 @@ class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterf
     private int $dallasID;
 
     /**
-     * @var CardView
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardview")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
-     * })
-     */
-    private CardView $cardViewID;
-
-    /**
      * @var Temperature
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
@@ -44,6 +36,29 @@ class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterf
      * })
      */
     private Temperature $tempID;
+
+    /**
+     * @var Sensors
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
+     * })
+     */
+    private Sensors $sensor;
+
+
+    /**
+     * @var CardView
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
+     * })
+     */
+    private CardView $cardViewID;
+
+
 
     /**
      * @return int
@@ -92,6 +107,24 @@ class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterf
     {
         $this->tempID = $tempID;
     }
+
+    /**
+     * @return Sensors
+     */
+    public function getSensor(): Sensors
+    {
+        return $this->sensor;
+    }
+
+    /**
+     * @param Sensors $sensor
+     */
+    public function setSensor(Sensors $sensor): void
+    {
+        $this->sensor = $sensor;
+    }
+
+
 
 
 }

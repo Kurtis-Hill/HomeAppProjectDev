@@ -3,21 +3,41 @@ security:
     encoders:
         App\Entity\Core\User:
             algorithm: auto
+        App\Entity\Devices\Devices:
+            algorithm: auto
 
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\Core\User
                 property: email
+        api_device_provider:
+            entity:
+                class: App\Entity\Devices\Devices
+                property: deviceName
+        user_and_device:
+            chain:
+                providers: [ 'app_user_provider', 'api_device_provider' ]
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        main:
+            pattern: ^/HomeApp
+            anonymous: true
+            provider: 'app_user_provider'
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+
         api:
             pattern:   ^/HomeApp/api
             stateless: true
             anonymous: true
+            provider: 'app_user_provider'
             json_login:
                 check_path:               /HomeApp/api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
@@ -26,14 +46,18 @@ security:
                 authenticators:
                 - lexik_jwt_authentication.jwt_token_authenticator
 
-        main:
-            pattern:   ^/HomeApp
+        sensor_update:
+            pattern: ^/HomeApp/Sensor
+            stateless: true
             anonymous: true
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
-            logout:
-                path: app_logout
+            provider: 'user_and_device'
+            json_login:
+                check_path: /HomeApp/api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                guard:
+                    authenticators:
+                        - lexik_jwt_authentication.jwt_token_authenticator
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
@@ -45,7 +69,10 @@ security:
         - { path: ^/HomeApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#        DEV
         - { path: ^/HomeApp/ssl, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/csrfToken, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/api/sensors/update/current-reading, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
         - { path: ^/HomeApp/WebApp, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/HomeApp/api, roles: IS_AUTHENTICATED_FULLY }

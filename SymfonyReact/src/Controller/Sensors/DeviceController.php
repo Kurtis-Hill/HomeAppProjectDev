@@ -5,7 +5,7 @@ namespace App\Controller\Sensors;
 
 
 
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -14,13 +14,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 
 /**
- * @Route("/HomeApp/api/devices", name="devices")
+ * @Route("/HomeApp/api/devices")
  */
 class DeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
+
+    /**
+     * @var UserPasswordEncoder
+     */
+    private $userPasswordEncoder;
+
+    public function __construct(UserPasswordEncoder $userPasswordEncoder)
+    {
+        $this->userPasswordEncoder = $userPasswordEncoder;
+    }
 
     /**
      * @Route("/new-device/submit-form-data", name="add-new-device")
@@ -51,9 +62,9 @@ class DeviceController extends AbstractController
 
         $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
-//dd($handledForm);
         if (!empty($deviceService->getServerErrors())) {
-            return $this->sendBadRequestResponse($deviceService->getServerErrors());
+            //dd()
+            return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
         }
         if (!empty($deviceService->getUserInputErrors())) {
             return $this->sendBadRequestResponse($deviceService->getUserInputErrors());

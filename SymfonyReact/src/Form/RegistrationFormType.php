@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Core\User;
 
+use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -17,7 +18,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RegistrationFormType extends AbstractType
 {
-    //@TODO Create regex validation class to stop naughty strings
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -27,6 +27,7 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
+                    new NoSpecialCharactersContraint(),
                 ],
                 'error_bubbling' => true,
             ])
@@ -55,6 +56,7 @@ class RegistrationFormType extends AbstractType
                 new NotBlank([
                     'message' => 'Please enter your first name',
                     ]),
+                    new NoSpecialCharactersContraint(),
                 ],
                 'error_bubbling' => true,
             ])
@@ -64,6 +66,7 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
+                    new NoSpecialCharactersContraint(),
                 ],
                 'error_bubbling' => true,
             ])

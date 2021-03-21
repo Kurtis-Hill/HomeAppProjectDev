@@ -32,7 +32,7 @@ class Bmp implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
     /**
      * @var CardView
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\Cardview")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
      * })

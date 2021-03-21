@@ -34,7 +34,7 @@ class ConstHumid
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time = 'current_timestamp()';
+    private $time;
 
     /**
      * @var Humidity
@@ -89,9 +89,14 @@ class ConstHumid
     /**
      * @param \DateTime $time
      */
-    public function setTime($time): void
+    public function setTime(?\DateTime $time): void
     {
-        $this->time = $time;
+        if ($this->time === null) {
+            $this->time = new \DateTime('now');
+        }
+        else {
+            $this->time = $time;
+        }
     }
 
     /**

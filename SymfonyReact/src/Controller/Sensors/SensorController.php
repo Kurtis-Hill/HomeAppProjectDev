@@ -10,6 +10,9 @@ use App\Services\SensorDataService;
 use App\Services\SensorService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,15 +28,38 @@ class SensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-
     /**
-     * @Route("/submitted-data/temperature", name="temperature-data-recieve")
+     * @Route("/update/current-reading", name="update-current-reading")
      * @param Request $request
-     * @param SensorService $sensorService
+     * @param SensorDataService $sensorDataService
      * @return Response
      */
-    public function processTemperatureSensorData(Request $request, ): Response
+    public function updateSensorsCurrentReading(Request $request, SensorDataService $sensorDataService): Response
     {
+        if (empty($request->request->get('secret')) || empty($request->request->get('sensor-type'))) {
+            dd($request->request->get('secret'), $request->request->get('sensor-type'));
+            return $this->sendBadRequestResponse();
+        }
+
+        $sensorFormData = $sensorDataService->processSensorReadingUpdateRequest($request);
+
+        if (empty($sensorFormData)) {
+            return $this->sendInternelServerErrorResponse();
+        }
+
+//        foreach ($sensorFormData as $sensorType => $sensorData) {
+//            foreach ($cardSensorData as $sensorObject) {
+//                if ($sensorType === $sensorObject::class) {
+//                    $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
+//                    $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
+//
+//                    if ($handledSensorForm instanceof FormInterface) {
+//                        $sensorDataService->processSensorFormErrors($handledSensorForm);
+//                    }
+//                    continue;
+//                }
+//            }
+//        }
 
     }
 

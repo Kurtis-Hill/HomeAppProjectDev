@@ -90,7 +90,7 @@ class ConstAnalog
     /**
      * @param \DateTime $time
      */
-    public function setTime(\DateTime $time): void
+    public function setTime(?\DateTime $time): void
     {
         $this->time = $time;
     }

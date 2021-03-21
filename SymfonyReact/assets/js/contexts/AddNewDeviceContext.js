@@ -11,8 +11,8 @@ const emptyNewDeviceModalContent = {
     newDeviceRoom:'',
     newDeviceGroup:'',
     newDeviceID:'',
-    deviceSecret:null, 
-    errors:[], 
+    deviceSecret:null,
+    errors:[],
     formSubmit:false
 };
 
@@ -39,25 +39,28 @@ export default class AddNewDeviceContextProvider extends Component {
 
     handleNewDeviceFormSubmission = (event) => {
         event.preventDefault();
-        
+
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
         const formData = new FormData(event.target);
- 
-        const config = {     
+
+        const config = {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
 
         axios.post(apiURL+'devices/new-device/submit-form-data', formData, config)
             .then(response => {
-                const responeData = response.data.responseData;
+                const responseData = response.data.responseData;
                 this.setState({addNewDeviceModalSubmit: false});
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responeData.secret, errors:[], newDeviceID: responeData.deviceID}});    
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responseData.secret, errors:[], newDeviceID: responseData.deviceID}});
             })
             .catch(error => {
                 const status = error.response.status;
+               // const responseData = error.data.responseData;
+
+                console.log(error.response.data.responseData);
                 if (status === 400) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: [error.response.data.responseData.errors], formSubmit:false}});
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.responseData, formSubmit:false}});
                 }
                 if (status === 500) {
                     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false}});
@@ -71,7 +74,7 @@ export default class AddNewDeviceContextProvider extends Component {
             case "deviceRoom":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceRoom: formInput}});
                 break;
-            
+
             case "deviceGroup":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceGroup: formInput}});
                 break;
@@ -79,7 +82,7 @@ export default class AddNewDeviceContextProvider extends Component {
             case "deviceName":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
-        }    
+        }
     }
 
     toggleNewDeviceLoading = () => {

@@ -6,7 +6,7 @@ namespace App\HomeAppSensorCore;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -17,6 +17,7 @@ use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\CardViewForms\StandardSensorOutOFBoundsForm;
+use App\Form\SensorForms\UpdateReadingForm;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
@@ -44,7 +45,7 @@ abstract class AbstractHomeAppSensorServiceCore
                     ],
                 ],
                 'updateCurrentReading' => [
-                    'form' => 'PlaceHolder',
+                    'form' => UpdateReadingForm::class,
                     'readingTypes' => [
                         'temperature' =>  Temperature::class,
                         'humidity' => Humidity::class,
@@ -67,7 +68,7 @@ abstract class AbstractHomeAppSensorServiceCore
                     ],
                 ],
                 'updateCurrentReading' => [
-                    'form' => 'PlaceHolder',
+                    'form' => UpdateReadingForm::class,
                     'readingTypes' => [
                         'temperature' =>  Temperature::class,
                     ],
@@ -89,7 +90,7 @@ abstract class AbstractHomeAppSensorServiceCore
                     ],
                 ],
                 'updateCurrentReading' => [
-                    'form' => 'PlaceHolder',
+                    'form' => UpdateReadingForm::class,
                     'readingTypes' => [
                         'analog' =>  Analog::class,
                     ],
@@ -109,16 +110,16 @@ abstract class AbstractHomeAppSensorServiceCore
                     ],
                 ],
                 'updateCurrentReading' => [
-                    'form' => 'PlaceHolder',
+                    'form' => UpdateReadingForm::class,
                     'readingTypes' => [
                         'temperature' =>  Temperature::class,
                         'humidity' =>  Humidity::class,
+                        'latitude' => Latitude::class,
                     ],
                 ]
             ]
         ],
     ];
-
 
     /**
      * @var int|null
@@ -200,6 +201,7 @@ abstract class AbstractHomeAppSensorServiceCore
             $this->groupNameDetails = $this->em->getRepository(GroupnNameMapping::class)->getGroupsForUser($this->userID);
             $this->roles = $this->user->getRoles() ?? [];
             $this->devices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->getGroupNameIDs());
+           // dd($this->devices);
             $this->usersRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->getGroupNameIDs());
             if (empty($this->groupNameDetails) || empty($this->roles)) {
                 throw new \RuntimeException('The User Variables Cannot be set Please try again');

@@ -4,7 +4,7 @@
 namespace App\Services\Devices;
 
 
-use App\Entity\Sensors\Devices;
+use App\Entity\Devices\Devices;
 use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
@@ -28,14 +28,14 @@ class DeviceService extends AbstractHomeAppSensorServiceCore
         catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
         }
-        catch (ORMException $e) {
-            $this->serverErrors[] = 'Failed to process device query';
-            error_log($e->getMessage());
-        }
-        catch (\Exception $e) {
-            $this->serverErrors[] = 'Something went wrong';
-            error_log($e->getMessage());
-        }
+//        catch (ORMException $e) {
+//            $this->serverErrors[] = 'Failed to process device query';
+//            error_log($e->getMessage());
+//        }
+//        catch (\Exception $e) {
+//            $this->serverErrors[] = 'Something went wrong';
+//            error_log($e->getMessage());
+//        }
 
         return $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
     }

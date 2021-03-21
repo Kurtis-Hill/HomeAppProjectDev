@@ -15,7 +15,7 @@ use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
 use App\Form\CustomFormValidators\SensorDataValidators\DHTTemperatureConstraint;
-use App\Form\CustomFormValidators\SensorDataValidators\DHTHumidityConstraint;
+use App\Form\CustomFormValidators\SensorDataValidators\HumidityConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\DallasTemperatureConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\SoilContraint;
 use Symfony\Component\Form\AbstractType;
@@ -92,44 +92,23 @@ class StandardSensorOutOFBoundsForm extends AbstractType
         }
 
         if ($builder->getData() instanceof Humidity) {
-            if ($options['formSensorType'] instanceof Dht) {
-                $builder
-                    ->add('highReading', TextType::class, [
-                        'required' => true,
-                        'constraints' => [
-                            new DHTHumidityConstraint(),
-                            new NoSpecialCharactersContraint(),
-                            new NotBlank(),
-                        ],
-                    ])
-                    ->add('lowReading', TextType::class, [
-                        'required' => true,
-                        'constraints' => [
-                            new DHTHumidityConstraint(),
-                            new NoSpecialCharactersContraint(),
-                            new NotBlank(),
-                        ],
-                    ]);
-            }
-
-            if ($options['formSensorType'] instanceof Bmp) {
-                $builder
-                    ->add('highReading', TextType::class, [
-                        'required' => true,
-                        'constraints' => [
-                            new NoSpecialCharactersContraint(),
-                            new NotBlank(),
-                        ],
-                    ])
-
-                    ->add('lowReading', TextType::class, [
-                        'required' => true,
-                        'constraints' => [
-                            new NoSpecialCharactersContraint(),
-                            new NotBlank(),
-                        ],
-                    ]);
-            }
+            $builder
+                ->add('highReading', TextType::class, [
+                    'required' => true,
+                    'constraints' => [
+                        new HumidityConstraint(),
+                        new NoSpecialCharactersContraint(),
+                        new NotBlank(),
+                    ],
+                ])
+                ->add('lowReading', TextType::class, [
+                    'required' => true,
+                    'constraints' => [
+                        new HumidityConstraint(),
+                        new NoSpecialCharactersContraint(),
+                        new NotBlank(),
+                    ],
+                ]);
         }
 
         if ($builder->getData() instanceof Analog) {
