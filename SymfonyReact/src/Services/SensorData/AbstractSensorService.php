@@ -275,6 +275,7 @@ class AbstractSensorService implements APIErrorInterface
      */
     public function processForm(Form|FormFactoryInterface $form, array $formData): ?FormInterface
     {
+
         $form->submit($formData);
 
         if ($form->isSubmitted() && $form->isValid()) {
