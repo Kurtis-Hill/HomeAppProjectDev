@@ -9,7 +9,7 @@ use App\Entity\Core\Room;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
-use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
+use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 //use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -27,7 +27,7 @@ class AddNewSensorForm extends AbstractType
             ->add('sensorName', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                    new NoSpecialCharactersContraint(),
+                    new NoSpecialCharactersConstraint(),
                     new NotBlank(),
                     new Length(['min' => 1, 'max' => 20,
                         'minMessage' => 'Device name too short',

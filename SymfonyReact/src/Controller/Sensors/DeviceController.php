@@ -7,7 +7,7 @@ namespace App\Controller\Sensors;
 
 use App\Entity\Devices\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\Services\Devices\DeviceService;
+use App\Services\Devices\DeviceServiceUser;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/HomeApp/api/devices")
@@ -28,18 +29,18 @@ class DeviceController extends AbstractController
      */
     private $userPasswordEncoder;
 
-    public function __construct(UserPasswordEncoder $userPasswordEncoder)
+    public function __construct(UserPasswordEncoderInterface $userPasswordEncoder)
     {
         $this->userPasswordEncoder = $userPasswordEncoder;
     }
 
     /**
-     * @Route("/new-device/submit-form-data", name="add-new-device")
+     * @Route("/add-new-device", name="add-new-device")
      * @param Request $request
-     * @param DeviceService $deviceService
+     * @param DeviceServiceUser $deviceService
      * @return JsonResponse
      */
-    public function addNewDevice(Request $request, DeviceService $deviceService): JsonResponse
+    public function addNewDevice(Request $request, DeviceServiceUser $deviceService): JsonResponse
     {
         $deviceName = $request->get('deviceName');
         $deviceGroup = $request->get('deviceGroup');

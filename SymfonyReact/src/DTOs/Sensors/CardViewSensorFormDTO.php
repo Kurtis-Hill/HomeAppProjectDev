@@ -46,7 +46,6 @@ class CardViewSensorFormDTO extends CardDTOAbstract
     private array $userSelections = [];
 
 
-
     /**
      * CardDataDTO constructor.
      * @param StandardSensorTypeInterface $sensorData

@@ -26,14 +26,14 @@ class DallasTemperatureConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 125) {
+        if (is_numeric($value) && $value > 125) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < -55) {
+        if (is_numeric($value) && $value < -55) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

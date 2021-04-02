@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Device0s;
+namespace App\Entity\Devices;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
@@ -107,6 +107,22 @@ class Devices implements UserInterface
     public function setDeviceName(string $deviceName): void
     {
         $this->deviceName = $deviceName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeviceSecret(): string
+    {
+        return $this->secret;
+    }
+
+    /**
+     * @param string $secret
+     */
+    public function setDeviceSecret(string $secret): void
+    {
+        $this->secret = $secret;
     }
 
     /**

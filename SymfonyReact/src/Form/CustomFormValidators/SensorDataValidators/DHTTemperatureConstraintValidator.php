@@ -4,7 +4,7 @@
 namespace App\Form\CustomFormValidators\SensorDataValidators;
 
 
-use App\Form\CustomFormValidators\SensorDataValidators\SensorDataValidators\SensorDataValidators\DHTTemperatureConstraint;
+
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -28,14 +28,14 @@ class DHTTemperatureConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 80) {
+        if (is_numeric($value) && $value > 80) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < -40) {
+        if (is_numeric($value) && $value < -40) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

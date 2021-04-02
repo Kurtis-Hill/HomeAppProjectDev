@@ -27,14 +27,14 @@ class SoilContraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 9999) {
+        if (is_numeric($value) && $value > 9999) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < 1111) {
+        if (is_numeric($value) && $value < 1111) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

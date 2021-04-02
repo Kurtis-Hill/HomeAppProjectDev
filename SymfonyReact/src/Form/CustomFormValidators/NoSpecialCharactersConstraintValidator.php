@@ -8,12 +8,12 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class NoSpecialCharactersContraintValidator extends ConstraintValidator
+class NoSpecialCharactersConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof NoSpecialCharactersContraint) {
-            throw new UnexpectedTypeException($constraint, NoSpecialCharactersContraint::class);
+        if (!$constraint instanceof NoSpecialCharactersConstraint) {
+            throw new UnexpectedTypeException($constraint, NoSpecialCharactersConstraint::class);
         }
 
         if ($value === null || $value === '') {

@@ -14,9 +14,10 @@ use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\AbstractHomeAppSensorServiceCore;
+use App\Services\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use App\Services\SensorData\AbstractSensorService;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
@@ -28,7 +29,7 @@ use Symfony\Component\Routing\Route;
 /**
  * Class CardDataService.
  */
-class CardDataService extends AbstractHomeAppSensorServiceCore
+class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
 {
     protected const SENSOR_DATA = [
         Sensors::TEMPERATURE => [
@@ -66,8 +67,8 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         try {
             $sensorObjects = match ($route) {
                 "room" => $this->getRoomCardDataObjects($request),
-                "device" => $this->getDeviceCardDataObjects($request),
-                default => $this->getIndexCardDataObjects()
+                "device" => $this->getDevicePageCardDataObjects($request),
+                default => $this->getIndexPageCardDataObjects()
             };
 //            dd($sensorObjects);
         } catch (\RuntimeException $e) {
@@ -116,11 +117,11 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
     /**
      * @return array
      */
-    private function getIndexCardDataObjects(): array
+    private function getIndexPageCardDataObjects(): array
     {
         $cardRepository = $this->em->getRepository(CardView::class);
 
-        $cardData = $cardRepository->getAllCardObjectsForUser($this->getUserID(), $this->getGroupNameIDs(), self::SENSOR_TYPE_DATA);
+        $cardData = $cardRepository->getAllCardObjectsForUser($this->getUserID(), $this->getGroupNameIDs(), AbstractSensorService::SENSOR_TYPE_DATA);
 
         return $cardData ?? [];
     }
@@ -130,7 +131,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
      * @param Request $request
      * @return array
      */
-    private function getDeviceCardDataObjects(Request $request): array
+    private function getDevicePageCardDataObjects(Request $request): array
     {
         $deviceId = $request->get('device-name');
 
@@ -140,8 +141,8 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
             );
         }
 
-        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getGroupNameIDs(), $this->getUserID(), $deviceId, self::SENSOR_TYPE_DATA);
-        //dd($cardData);
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUserID(), $this->getGroupNameIDs(), AbstractSensorService::SENSOR_TYPE_DATA, $deviceId);
+//        dd($cardData, 'card data');
         return $cardData ?? [];
     }
 
@@ -177,7 +178,7 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
     public function getCardViewFormDTO(string $cardViewID): ?CardViewSensorFormDTO
     {
         try {
-            $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], self::SENSOR_TYPE_DATA);
+            $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], AbstractSensorService::SENSOR_TYPE_DATA);
 
             $userSelectionData = $this->getUserSensorCardSelectionData();
 
@@ -202,6 +203,43 @@ class CardDataService extends AbstractHomeAppSensorServiceCore
         }
 
         return $cardViewFormDTO ?? null;
+    }
+
+    /**
+     * @param Sensors $sensorObject
+     * @return CardView
+     * @throws ORMException
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function createNewSensorCard(Sensors $sensorObject): CardView
+    {
+        try {
+            $maxIconNumer = $this->em->createQueryBuilder()
+                ->select('count(icons.iconID)')
+                ->from(Icons::class, 'icons')
+                ->getQuery()->getSingleScalarResult();
+
+            $randomIcon = $this->em->getRepository(Icons::class)->findOneBy(['iconID' => random_int(1, $maxIconNumer)]);
+            $randomColour = $this->em->getRepository(CardColour::class)->findOneBy(['colourID' => random_int(1, 4)]);
+            $onCardState = $this->em->getRepository(Cardstate::class)->findOneBy(['cardStateID' => Cardstate::ON]);
+
+            $newCard = new CardView();
+            $newCard->setSensorNameID($sensorObject);
+            $newCard->setUserID($this->getUser());
+            $newCard->setCardIconID($randomIcon);
+            $newCard->setCardColourID($randomColour);
+            $newCard->setCardStateID($onCardState);
+
+            $this->em->persist($newCard);
+            $this->em->flush();
+
+            return $newCard;
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        }
     }
 
     /**

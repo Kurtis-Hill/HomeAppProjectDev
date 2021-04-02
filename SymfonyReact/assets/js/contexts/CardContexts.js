@@ -160,7 +160,7 @@ class CardContextProvider extends Component {
         const value = event.target.value;
 
         switch (event.target.name) {
-            case "cardIcon":
+            case "card-icon":
                 const selectText = document.getElementById('icon-select');
                 const option = selectText.options[selectText.selectedIndex];
                 const currentModalData = this.state.modalContent;
@@ -170,15 +170,15 @@ class CardContextProvider extends Component {
                 this.setState({modalContent:{...this.state.modalContent}});
                 break;
 
-            case "cardColour":
+            case "card-colour":
                 this.setState({modalContent:{...this.state.modalContent, currentColour: value}});
                 break;
 
-            case "cardViewState":
+            case "card-view-state":
                 this.setState({modalContent:{...this.state.modalContent, currentState: value}});
                 break;
 
-            case sensorType+"HighReading":
+            case sensorType+"-high-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
                         currentModalData.highReading = value;
@@ -188,7 +188,7 @@ class CardContextProvider extends Component {
                   }
                 break;
 
-            case sensorType+"LowReading":
+            case sensorType+"-low-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
                         currentModalData.lowReading = value;
@@ -198,7 +198,7 @@ class CardContextProvider extends Component {
                   }
                 break;
 
-            case sensorType+"ConstRecord":
+            case sensorType+"-const-record":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
                         currentModalData.constRecord = value;
@@ -212,11 +212,11 @@ class CardContextProvider extends Component {
 
     handleSubmissionModalForm = (event) => {
         event.preventDefault();
-        this.setState({modalContent:{...this.state.modalContent, modalSubmit: true}});
+        this.setState({modalContent:{...this.state.modalContent, modalSubmit: true, errors: []}});
 
         const formData = new FormData(event.target);
 
-        formData.append('cardViewID', this.state.modalContent.cardViewID);
+        formData.append('card-view-id', this.state.modalContent.cardViewID);
                 
         const config = {     
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }

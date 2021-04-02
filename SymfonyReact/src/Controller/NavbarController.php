@@ -3,7 +3,7 @@
 
 namespace App\Controller;
 
-use App\Services\NavbarService;
+use App\Services\UserInterfaceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,16 +19,17 @@ class NavbarController extends AbstractController
 
     /**
      * @Route("/navbar-data", name="navbar-data")
-     * @param NavbarService $navbarService
+     * @param UserInterfaceService $navbarService
      * @return JsonResponse
      */
-    public function navBarData(NavbarService $navbarService)
+    public function navBarData(UserInterfaceService $navbarService)
     {
         $navbarData = $navbarService->getNavBarData();
 
         $errors = $navbarService->getErrors();
 
         if (!empty($errors)) {
+            dd($errors);
             return $this->sendInternelServerErrorResponse($errors);
         }
 

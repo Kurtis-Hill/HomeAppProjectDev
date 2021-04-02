@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Core\User;
 
-use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
+use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -27,7 +27,7 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
-                    new NoSpecialCharactersContraint(),
+                    new NoSpecialCharactersConstraint(),
                 ],
                 'error_bubbling' => true,
             ])
@@ -56,7 +56,7 @@ class RegistrationFormType extends AbstractType
                 new NotBlank([
                     'message' => 'Please enter your first name',
                     ]),
-                    new NoSpecialCharactersContraint(),
+                    new NoSpecialCharactersConstraint(),
                 ],
                 'error_bubbling' => true,
             ])
@@ -66,7 +66,7 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
-                    new NoSpecialCharactersContraint(),
+                    new NoSpecialCharactersConstraint(),
                 ],
                 'error_bubbling' => true,
             ])

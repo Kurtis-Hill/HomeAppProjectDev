@@ -185,17 +185,21 @@ class Analog implements StandardReadingSensorInterface
     /**
      * @param int|float $reading
      */
-    public function setHighReading(int|float $reading): void
+    public function setHighReading(int|float|string $reading): void
     {
-        $this->highAnalog = $reading;
+        if (is_numeric($reading)) {
+            $this->highAnalog = $reading;
+        }
     }
 
     /**
      * @param int|float $reading
      */
-    public function setLowReading(int|float $reading): void
+    public function setLowReading(int|float|string $reading): void
     {
-        $this->lowAnalog = $reading;
+        if (is_numeric($reading)) {
+            $this->lowAnalog = $reading;
+        }
     }
 
     /**

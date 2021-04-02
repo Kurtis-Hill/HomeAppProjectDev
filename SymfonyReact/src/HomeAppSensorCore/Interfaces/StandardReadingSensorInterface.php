@@ -38,9 +38,9 @@ interface StandardReadingSensorInterface
 
     public function setCurrentSensorReading(int|float $reading): void;
 
-    public function setHighReading(int|float $reading): void;
+    public function setHighReading(int|float|string $reading): void;
 
-    public function setLowReading(int|float $reading): void;
+    public function setLowReading(int|float|string $reading): void;
 
     public function setTime(?\DateTime $time = null): void;
 

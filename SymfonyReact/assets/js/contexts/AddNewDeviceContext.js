@@ -48,7 +48,7 @@ export default class AddNewDeviceContextProvider extends Component {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
 
-        axios.post(apiURL+'devices/new-device/submit-form-data', formData, config)
+        axios.post(apiURL+'devices/add-new-device', formData, config)
             .then(response => {
                 const responseData = response.data.responseData;
                 this.setState({addNewDeviceModalSubmit: false});

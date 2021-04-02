@@ -63,7 +63,7 @@ export default class NavbarContextProvider extends Component {
             const navBarResponse = response.data.responseData;
             this.setState({devices: navBarResponse.devices, rooms: navBarResponse.rooms, groupNames: navBarResponse.groupNames});
         }).catch(error => {   
-            if (error.response.status === 500) {
+            if (error.data.status === 500) {
                 alert('Failed Getting Navbar Data, '+error.response.data.responseData.title);
             }
         })

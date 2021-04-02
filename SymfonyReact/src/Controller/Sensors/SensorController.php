@@ -6,8 +6,10 @@ namespace App\Controller\Sensors;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\SensorForms\AddNewSensorForm;
-use App\Services\SensorDataService;
-use App\Services\SensorService;
+use App\Services\CardDataServiceUser;
+use App\Services\SensorData\SensorDeviceDataService;
+use App\Services\SensorData\SensorUserDataService;
+use App\Services\UserSensorService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactory;
@@ -31,13 +33,13 @@ class SensorController extends AbstractController
     /**
      * @Route("/update/current-reading", name="update-current-reading")
      * @param Request $request
-     * @param SensorDataService $sensorDataService
+     * @param SensorDeviceDataService $sensorDataService
      * @return Response
      */
-    public function updateSensorsCurrentReading(Request $request, SensorDataService $sensorDataService): Response
+    public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
     {
         if (empty($request->request->get('secret')) || empty($request->request->get('sensor-type'))) {
-            dd($request->request->get('secret'), $request->request->get('sensor-type'));
+           // dd($request->request->get('secret'), $request->request->get('sensor-type'));
             return $this->sendBadRequestResponse();
         }
 
@@ -65,12 +67,12 @@ class SensorController extends AbstractController
 
 
     /**
-     * @Route("/submit-form-data", name="add-new-sensor")
+     * @Route("/add-new-sensor", name="add-new-sensor")
      * @param Request $request
-     * @param SensorService $sensorService
+     * @param UserSensorService $sensorService
      * @return JsonResponse
      */
-    public function addNewSensor(Request $request, SensorService $sensorService): JsonResponse
+    public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardDataServiceUser $cardDataService): JsonResponse
     {
         $sensorName = $request->get('sensor-name');
         $sensorType = $request->get('sensor-type');
@@ -92,17 +94,22 @@ class SensorController extends AbstractController
 
         $handledSensorForm = $sensorService->handleNewSensorFormSubmission($addNewSensorForm, $sensorData);
 
-        if (!empty($sensorService->getUserInputErrors() || $handledSensorForm === null)) {
-            return $this->sendBadRequestResponse($sensorService->getUserInputErrors() );
+        if (!empty($sensorService->getUserInputErrors())) {
+            return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
         }
-
 
         if (!empty($sensorService->getServerErrors())) {
             return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
         }
 
         if ($handledSensorForm->getData() instanceof Sensors) {
+            $newSensorCard = $cardDataService->createNewSensorCard($handledSensorForm->getData());
             $sensorID = $handledSensorForm->getData()->getSensorNameID();
+            $sensorService->handleSensorCreation($newSensor, $newSensorCard, $sensorData);
+
+            if (!empty($sensorService->getUserInputErrors())) {
+                return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
+            }
 
             return $this->sendCreatedResourceResponse(['sensorNameID' => $sensorID]);
         }
@@ -112,11 +119,9 @@ class SensorController extends AbstractController
 
     /**
      * @Route("/types", name="get-sensor-types")
-     * @param Request $request
-     * @param SensorDataService $sensorDataService
      * @return JsonResponse
      */
-    public function returnAllSensorTypes(Request $request, SensorDataService $sensorDataService): Response
+    public function returnAllSensorTypes(): Response
     {
         $sensorTypes = $this->getDoctrine()->getManager()->getRepository(SensorType::class)->findAll();
 
@@ -124,10 +129,6 @@ class SensorController extends AbstractController
         $normaliser = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normaliser, $encoders);
-
-        if (!empty($sensorDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorResponse();
-        }
 
         return $this->sendSuccessfulResponse($serializer->serialize($sensorTypes, 'json'));
     }

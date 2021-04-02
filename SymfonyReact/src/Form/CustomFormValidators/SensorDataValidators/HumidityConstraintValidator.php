@@ -3,17 +3,17 @@
 
 namespace App\Form\CustomFormValidators\SensorDataValidators;
 
-use App\Form\CustomFormValidators\SensorDataValidators\DHTHumidityConstraint;
+
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class DHTHumidityConstraintValidator extends ConstraintValidator
+class HumidityConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof HumidityConstraint) {
-            throw new UnexpectedTypeException($constraint,DHTHumidityConstraint::class);
+            throw new UnexpectedTypeException($constraint,HumidityConstraint::class);
         }
 
         if ($value === null || $value === '') {
@@ -27,14 +27,14 @@ class DHTHumidityConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 100) {
+        if (is_numeric($value) && $value > 100) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < 0) {
+        if (is_numeric($value) && $value < 0) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

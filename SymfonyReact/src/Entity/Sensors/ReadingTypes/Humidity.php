@@ -177,17 +177,21 @@ class Humidity implements StandardReadingSensorInterface
     /**
      * @param int|float $reading
      */
-    public function setHighReading(int|float $reading): void
+    public function setHighReading(int|float|string $reading): void
     {
-        $this->highHumid = $reading;
+        if (is_numeric($reading)) {
+            $this->highHumid = $reading;
+        }
     }
 
     /**
      * @param int|float $reading
      */
-    public function setLowReading(int|float $reading): void
+    public function setLowReading(int|float|string $reading): void
     {
-        $this->lowHumid = $reading;
+        if (is_numeric($reading)) {
+            $this->lowHumid = $reading;
+        }
     }
 
     /**

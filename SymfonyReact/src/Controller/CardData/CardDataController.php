@@ -5,10 +5,11 @@ namespace App\Controller\CardData;
 
 use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-use App\Services\CardDataService;
-use App\Services\SensorDataService;
+use App\Services\CardDataServiceUser;
+use App\Services\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use Proxies\__CG__\App\Entity\Sensors\SensorType;
+use App\Entity\Sensors\SensorType;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,12 +32,12 @@ class CardDataController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/cards", name="indexCardData", methods={"GET"})
+     * @Route("/cards", name="card-data", methods={"GET"})
      * @param Request $request
-     * @param CardDataService $cardDataService
+     * @param CardDataServiceUser $cardDataService
      * @return Response|JsonResponse
      */
-    public function returnCardDataDTOs(Request $request, CardDataService $cardDataService): Response|JsonResponse
+    public function returnCardDataDTOs(Request $request, CardDataServiceUser $cardDataService): Response|JsonResponse
     {
         $cardData = $cardDataService->prepareAllCardDTOs($request);
 
@@ -65,10 +66,10 @@ class CardDataController extends AbstractController
      * @Route("/card-state-view-form", name="cardViewForm", methods={"GET"})
      *
      * @param Request $request
-     * @param CardDataService $cardDataService
+     * @param CardDataServiceUser $cardDataService
      * @return Response|JsonResponse
      */
-    public function showCardViewForm(Request $request, CardDataService $cardDataService): Response|JsonResponse
+    public function showCardViewForm(Request $request, CardDataServiceUser $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->query->get('cardViewID');
 
@@ -94,73 +95,64 @@ class CardDataController extends AbstractController
     /**
      * @Route("/update-card-view", name="updateCardView", methods={"POST"})
      * @param Request $request
-     * @param SensorDataService $sensorDataService
-     * @param CardDataService $cardDataService
+     * @param SensorUserDataService $sensorDataService
+     * @param CardDataServiceUser $cardDataService
      * @return Response|JsonResponse
      */
-    public function updateCardView(Request $request, SensorDataService $sensorDataService, CardDataService $cardDataService): Response|JsonResponse
+    public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardDataServiceUser $cardDataService): Response|JsonResponse
     {
-        $cardViewID = $request->get('cardViewID');
+        $cardViewID = $request->get('card-view-id');
 
-        $cardColourID = $request->get('cardColour');
-        $cardIconID = $request->get('cardIcon');
-        $cardStateID = $request->get('cardViewState');
+        $cardColourID = $request->get('card-colour');
+        $cardIconID = $request->get('card-icon');
+        $cardStateID = $request->get('card-view-state');
 
         if (empty($cardColourID) || empty($cardIconID) || empty($cardStateID) || empty($cardViewID)) {
             return $this->sendBadRequestResponse(['errors' => 'empty form data']);
         }
 
         $cardViewData = [
-            'cardColourID' => $request->get('cardColour'),
-            'cardIconID' => $request->get('cardIcon'),
-            'cardStateID' => $request->get('cardViewState'),
+            'cardColourID' => $cardColourID,
+            'cardIconID' => $cardIconID,
+            'cardStateID' => $cardStateID,
         ];
 
         $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
         $cardViewObject = array_shift($cardSensorReadingObject);
-//        dd($cardViewObject);
+
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
 
-        $handledCardViewForm = $sensorDataService->processForm($cardViewForm, $cardViewData);
-        if ($handledCardViewForm instanceof FormInterface) {
-            $sensorDataService->processSensorFormErrors($handledCardViewForm);
+//        $sensorDataService->processForm($cardViewForm, $cardViewData);
 
-            return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
-        }
+        $cardViewForm->submit($cardViewData);
 
-        $sensorTypeObject = $cardViewObject->getSensorNameID()->getSensorTypeID();
-
-        //put this in service and swap request for sensor details array
-//        $sensorFormData = $sensorDataService->prepareUpdateForOutOfBoundsForm($request, $sensorTypeObject);
-        $sensorFormData = $sensorDataService->prepareSensorFormData($request, $sensorTypeObject,SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
-
-        if (empty($sensorFormData)) {
-            return $this->sendInternelServerErrorResponse($sensorDataService->getServerErrors());
-        }
-
-        foreach ($sensorFormData as $sensorType => $sensorData) {
-            foreach ($cardSensorReadingObject as $sensorObject) {
-//                dd($sensorFormData, $cardSensorReadingObject);
-//                dd($sensorType, $sensorObject, $cardSensorReadingObject,  $sensorType == $sensorObject::class);
-                if ($sensorType === $sensorObject::class) {
-                                      //  dd('success', $sensorData);
-                    $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
-                    $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
-
-                    if ($handledSensorForm instanceof FormInterface) {
-                        $sensorDataService->processSensorFormErrors($handledSensorForm);
-                    }
-                    continue;
-                }
+        if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
+            $validFormData = $cardViewForm->getData();
+            try {
+                $this->getDoctrine()->getManager()->persist($validFormData);
+            } catch (ORMException | \Exception $e) {
+                return $this->sendBadRequestResponse();
             }
         }
+        //        $sensorDataService->processForm($cardViewForm, $this->getDoctrine()->getManager(), $cardViewData);
+//        if (!empty($sensorDataService->returnAllFormInputErrors())) {
+//            return $this->sendBadRequestResponse($sensorDataService->returnAllFormInputErrors());
+//        }
+
+        $sensorTypeObject = $cardViewObject->getSensorNameID();
+
+        $sensorDataService->handleSensorReadingBoundary($request, $sensorTypeObject, $cardSensorReadingObject);
 
         if (!empty($sensorDataService->getUserInputErrors())) {
             return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
         }
 
+//        if (!empty($sensorDataService->returnAllFormInputErrors())) {
+//            return $this->sendBadRequestResponse($sensorDataService->returnAllFormInputErrors());
+//        }
+
         if (!empty($sensorDataService->getServerErrors())) {
-            return $this->sendBadRequestResponse($sensorDataService->getServerErrors());
+            return $this->sendInternelServerErrorResponse();
         }
 
         $this->getDoctrine()->getManager()->flush();

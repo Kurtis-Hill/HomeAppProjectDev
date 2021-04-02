@@ -39,6 +39,7 @@ function AddNewSensor(props) {
     const handleFormSubmission = e => {
         e.preventDefault();
 
+        setErrors([])
         setLoading(true);
 
         const deviceName = new URLSearchParams(window.location.search).get('device-name');
@@ -47,16 +48,15 @@ function AddNewSensor(props) {
 
         formData.append('device-name', deviceName);
         
-        axios.post(apiURL+'sensors/submit-form-data', formData, { headers: {"Authorization" : `BEARER ${getToken()}`} })
+        axios.post(apiURL+'sensors/add-new-sensor', formData, { headers: {"Authorization" : `BEARER ${getToken()}`} })
         .then(response => {
             setLoading(false);
             setSuccessMessage(true);
-            setErrors([]);
         })
         .catch(err => {
             const status = err.response.status
             const data = err.response.data.responseData;
-            
+
             if (status === 400) {
                 setErrors(data);
             }

@@ -6,6 +6,7 @@ use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * @method Sensors|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,26 +21,26 @@ class SensorsRepository extends EntityRepository
 
     }
 
-//    public function getAllSensorsForUser($rooms, $groupNameid)
-//    {
-//        $qb = $this->createQueryBuilder('sn');
-//
-//        $sensorByRoom = [];
-//        foreach ($rooms as $value) {
-//            $qb->select('sn')
-//            ->where(
-//                $qb->expr()->eq('sn.roomid', ':roomid'),
-//                $qb->expr()->eq('sn.groupnameid', ':groupnameid')
-//            )
-//            ->setParameters(['roomid' => $value['r_roomid'], 'groupnameid' => $groupNameid]);
-//
-//            $result = $qb->getQuery()->getScalarResult();
-//            $sensorByRoom[$value['r_room']] = $result;
-//        }
-//       // dd($sensorByRoom);
-//
-//        return $sensorByRoom;
-//
-//    }
+    public function checkForDuplicateSensor(Sensors $sensorData)
+    {
+        $qb = $this->createQueryBuilder('sensor');
+        $expr = $qb->expr();
+
+        $qb->select('sensor')
+            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->where(
+                $expr->eq('sensor.sensorName', ':sensorName'),
+                $expr->eq('device.groupNameID', ':groupName')
+            )
+            ->setParameters(
+                [
+                    'sensorName' => $sensorData->getSensorName(),
+                    'groupName' => $sensorData->getDeviceNameID()->getGroupNameObject()
+                ]
+            );
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
 
 }

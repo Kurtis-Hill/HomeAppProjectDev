@@ -80,7 +80,7 @@ class DevicesRepository extends EntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findUsersDeviceAPIRequestCheckUser(string $deviceName, string $deviceSecret, array $groupNameIds): ?Devices
+    public function findUsersDeviceAPIRequestCheckUser(string $deviceName, string $deviceSecret): ?Devices
     {
         //dd($deviceName, $deviceSecret);
         $qb = $this->createQueryBuilder('devices');
@@ -95,7 +95,6 @@ class DevicesRepository extends EntityRepository
             ->setParameters([
                     'deviceSecret' => $deviceSecret,
                     'deviceName' => $deviceName,
-                    'groupNameIds' => $groupNameIds
                 ]
             );
 

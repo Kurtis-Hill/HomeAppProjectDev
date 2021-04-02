@@ -182,17 +182,21 @@ class Latitude implements StandardReadingSensorInterface
     /**
      * @param float|int $reading
      */
-    public function setHighReading(int|float $reading): void
+    public function setHighReading(int|float|string $reading): void
     {
-        $this->highLatitude = $reading;
+        if (is_numeric($reading)) {
+            $this->highLatitude = $reading;
+        }
     }
 
     /**
      * @param float|int $reading
      */
-    public function setLowReading(int|float $reading): void
+    public function setLowReading(int|float|string $reading): void
     {
-        $this->lowLatitude = $reading;
+        if (is_numeric($reading)) {
+            $this->lowLatitude = $reading;
+        }
     }
 
     /**

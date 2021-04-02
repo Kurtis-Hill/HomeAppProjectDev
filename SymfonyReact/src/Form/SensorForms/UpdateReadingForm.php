@@ -11,7 +11,7 @@ use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
-use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
+use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\DallasTemperatureConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\HumidityConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\DHTTemperatureConstraint;
@@ -33,7 +33,7 @@ class UpdateReadingForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new DHTTemperatureConstraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -45,7 +45,7 @@ class UpdateReadingForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new DallasTemperatureConstraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -55,7 +55,7 @@ class UpdateReadingForm extends AbstractType
                     ->add('currentReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -68,7 +68,7 @@ class UpdateReadingForm extends AbstractType
                     'required' => true,
                     'constraints' => [
                         new HumidityConstraint(),
-                        new NoSpecialCharactersContraint(),
+                        new NoSpecialCharactersConstraint(),
                         new NotBlank(),
                     ],
                 ]);
@@ -81,7 +81,7 @@ class UpdateReadingForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new SoilContraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);

@@ -9,7 +9,9 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Card\Icons;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Sensors\Sensors;
@@ -19,12 +21,13 @@ use App\Entity\Devices\Devices;
 
 class CardViewRepository extends EntityRepository
 {
-    private function prepareSensorDataForQuery($sensors, $qb, array $joinCondition): string
+    private function prepareSensorDataForQuery(array $sensors, $qb, array $joinCondition): string
     {
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
 
         $sensorAlias = [];
         foreach ($sensors as $sensorNames => $sensorData) {
+//            dd($sensorData['object'], $sensorData['alias']);
             $sensorAlias[] = $sensorData['alias'];
             $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH,$sensorData['alias'].$joinConditionString);
         }
@@ -76,9 +79,9 @@ class CardViewRepository extends EntityRepository
      * @param array $sensors
      * @return array
      */
-    public function getAllCardReadingsForDevice(array $groupNameIDs, int $userID, int $deviceDetails, array $sensors): array
+    public function getAllCardReadingsForDevice(int $userID, array $groupNameIDs, array $sensors, int $deviceDetails): array
     {
-//        dd($deviceDetails);
+//        dd($deviceDetails, $groupNameIDs, $userID, $sensors);
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
 
@@ -86,7 +89,7 @@ class CardViewRepository extends EntityRepository
         $expr = $qb->expr();
 
         $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-
+//dd($sensorAlias);
         $qb->select($sensorAlias)
             ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
@@ -111,7 +114,7 @@ class CardViewRepository extends EntityRepository
             ]
         );
 
-//        dd(array_filter($qb->getQuery()->getResult()));
+//        dd($qb->getQuery()->getSQL());
         return array_filter($qb->getQuery()->getResult());
         //dd($groupNameIDs, $userID, $deviceDetails, $sensors);
 //        $qb = $this->createQueryBuilder('cv');

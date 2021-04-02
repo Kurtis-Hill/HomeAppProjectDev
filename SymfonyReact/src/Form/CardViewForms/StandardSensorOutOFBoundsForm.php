@@ -13,7 +13,7 @@ use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
-use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
+use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\DHTTemperatureConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\HumidityConstraint;
 use App\Form\CustomFormValidators\SensorDataValidators\DallasTemperatureConstraint;
@@ -22,29 +22,44 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class StandardSensorOutOFBoundsForm extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $highLowCheck = new Callback(function($lowReading, ExecutionContextInterface $context) {
+            $highReading = $context->getRoot()->getData()->getLowReading();
+            if (is_numeric($highReading) && is_numeric($lowReading)) {
+                if ($lowReading - $highReading < 0) {
+                    $context
+                        ->buildViolation('High reading cannot be lower than low reading')
+                        ->addViolation();
+                }
+            }
+        });
+
         if ($builder->getData() instanceof Temperature) {
             if ($options['formSensorType'] instanceof Dht) {
+
                 $builder
                     ->add('highReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
                             new DHTTemperatureConstraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
+                            $highLowCheck,
                         ],
                     ])
                     ->add('lowReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
                             new DHTTemperatureConstraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -56,8 +71,9 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new DallasTemperatureConstraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
+                            $highLowCheck,
                         ],
                     ])
 
@@ -65,7 +81,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new DallasTemperatureConstraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ]
                     ]);
@@ -76,15 +92,16 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                     ->add('highReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
+                            $highLowCheck,
                         ],
                     ])
 
                     ->add('lowReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -97,15 +114,16 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                     'required' => true,
                     'constraints' => [
                         new HumidityConstraint(),
-                        new NoSpecialCharactersContraint(),
+                        new NoSpecialCharactersConstraint(),
                         new NotBlank(),
+                        $highLowCheck,
                     ],
                 ])
                 ->add('lowReading', TextType::class, [
                     'required' => true,
                     'constraints' => [
                         new HumidityConstraint(),
-                        new NoSpecialCharactersContraint(),
+                        new NoSpecialCharactersConstraint(),
                         new NotBlank(),
                     ],
                 ]);
@@ -118,8 +136,9 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new SoilContraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
+                            $highLowCheck,
                         ],
                     ])
 
@@ -127,7 +146,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                         'required' => true,
                         'constraints' => [
                             new SoilContraint(),
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -140,38 +159,20 @@ class StandardSensorOutOFBoundsForm extends AbstractType
                     ->add('highReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
+                            $highLowCheck,
                         ],
                     ])
 
                     ->add('lowReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new NoSpecialCharactersContraint(),
+                            new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],
                     ]);
             }
-        }
-        else {
-            $builder
-                ->add('highReading', TextType::class, [
-                    'required' => true,
-                    'constraints' => [
-                        new NoSpecialCharactersContraint(),
-                        new NotBlank(),
-                    ],
-                ])
-
-                ->add('lowReading', TextType::class, [
-                    'required' => true,
-                    'constraints' => [
-                        new NoSpecialCharactersContraint(),
-                        new NotBlank(),
-                    ],
-                ])
-            ;
         }
 
         $builder

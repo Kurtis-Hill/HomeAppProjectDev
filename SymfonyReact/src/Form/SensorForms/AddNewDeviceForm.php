@@ -8,7 +8,7 @@ use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Devices\Devices;
 
-use App\Form\CustomFormValidators\NoSpecialCharactersContraint;
+use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,7 +25,7 @@ class AddNewDeviceForm extends AbstractType
             ->add('deviceName', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                    new NoSpecialCharactersContraint(),
+                    new NoSpecialCharactersConstraint(),
                     new NotBlank(),
                     new Length(['min' => 1, 'max' => 20,
                         'minMessage' => 'Device name too short',

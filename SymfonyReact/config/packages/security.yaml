@@ -23,6 +23,32 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        api:
+            pattern: ^/HomeApp/api
+            stateless: true
+            anonymous: true
+            provider: 'app_user_provider'
+            json_login:
+                check_path: /HomeApp/api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
+        sensor_update:
+            pattern: ^/HomeApp/sensor
+            stateless: true
+            anonymous: true
+            provider: 'user_and_device'
+            json_login:
+                check_path: /HomeApp/sensor/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
         main:
             pattern: ^/HomeApp
             anonymous: true
@@ -33,31 +59,6 @@ security:
             logout:
                 path: app_logout
 
-        api:
-            pattern:   ^/HomeApp/api
-            stateless: true
-            anonymous: true
-            provider: 'app_user_provider'
-            json_login:
-                check_path:               /HomeApp/api/login_check
-                success_handler:          lexik_jwt_authentication.handler.authentication_success
-                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
-            guard:
-                authenticators:
-                - lexik_jwt_authentication.jwt_token_authenticator
-
-        sensor_update:
-            pattern: ^/HomeApp/Sensor
-            stateless: true
-            anonymous: true
-            provider: 'user_and_device'
-            json_login:
-                check_path: /HomeApp/api/login_check
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-                guard:
-                    authenticators:
-                        - lexik_jwt_authentication.jwt_token_authenticator
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER

@@ -4,7 +4,7 @@
 namespace App\Controller\Core;
 
 
-use App\Services\UserService;
+use App\Services\UserServiceUser;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,10 +21,10 @@ class UserDataController extends AbstractController
     use HomeAppAPIResponseTrait;
     /**
      * @Route("/account-details", name="userDetails")
-     * @param UserService $userService
+     * @param UserServiceUser $userService
      * @return JsonResponse
      */
-    public function getUserDetails(UserService $userService):  JsonResponse
+    public function getUserDetails(UserServiceUser $userService):  JsonResponse
     {
         $userData = $userService->getAppUserDataForLocalStorage();
 
