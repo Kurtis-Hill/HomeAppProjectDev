@@ -106,6 +106,11 @@ class AbstractSensorService implements APIErrorInterface
         SensorType::BMP_SENSOR => [
             'alias' => 'bmp',
             'object' => Bmp::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' =>  Humidity::class,
+                'latitude' => Latitude::class,
+            ],
             'forms' => [
                 'outOfBounds' => [
                     'form' => StandardSensorOutOFBoundsForm::class,
@@ -159,6 +164,8 @@ class AbstractSensorService implements APIErrorInterface
         $this->formFactory = $formFactory;
 
     }
+
+    protected abstract function setUserVariables(Security $security);
 
     protected function findSensorForRequest(Devices $device, string $sensorName): ?Sensors
     {

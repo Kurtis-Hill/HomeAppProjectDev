@@ -80,7 +80,6 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
             error_log($e->getMessage());
             $this->serverErrors[] = 'Failed to prepare card data';
         }
-//        dd($sensorObjects);
 
         if (!empty($sensorObjects)) {
                 foreach ($sensorObjects as $cardDTO) {

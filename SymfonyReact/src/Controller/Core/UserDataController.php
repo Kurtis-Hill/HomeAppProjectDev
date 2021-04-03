@@ -28,8 +28,8 @@ class UserDataController extends AbstractController
     {
         $userData = $userService->getAppUserDataForLocalStorage();
 
-        if (!empty($userService->getFatalErrors())) {
-            return $this->sendInternelServerErrorResponse($userService->getFatalErrors());
+        if (!empty($userService->getServerErrors())) {
+            return $this->sendInternelServerErrorResponse($userService->getServerErrors());
        }
 
         return $this->sendSuccessfulJsonResponse($userData);

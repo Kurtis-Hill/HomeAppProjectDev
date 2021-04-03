@@ -5,16 +5,11 @@ namespace App\Controller\Sensors;
 
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
-use App\Form\SensorForms\AddNewSensorForm;
 use App\Services\CardDataServiceUser;
 use App\Services\SensorData\SensorDeviceDataService;
 use App\Services\SensorData\SensorUserDataService;
-use App\Services\UserSensorService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,30 +64,27 @@ class SensorController extends AbstractController
     /**
      * @Route("/add-new-sensor", name="add-new-sensor")
      * @param Request $request
-     * @param UserSensorService $sensorService
+     * @param SensorUserDataService $sensorService
+     * @param CardDataServiceUser $cardDataService
      * @return JsonResponse
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardDataServiceUser $cardDataService): JsonResponse
     {
-        $sensorName = $request->get('sensor-name');
-        $sensorType = $request->get('sensor-type');
-        $deviceNameID = $request->get('device-name');
+        $sensorData = [
+            'sensorName' => $request->get('sensor-name'),
+            'sensorTypeID' => $request->get('sensor-type'),
+            'deviceNameID' => $request->get('device-name')
+        ];
 
-        if (empty($sensorName || $sensorType)) {
+        if (empty($sensorData['sensorName'] || $sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
             return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
 
-        $sensorData = [
-            'sensorName' => $sensorName,
-            'sensorTypeID' => $sensorType,
-            'deviceNameID' => $deviceNameID
-        ];
-
-        $newSensor = new Sensors();
-
-        $addNewSensorForm = $this->createForm(AddNewSensorForm::class, $newSensor);
-
-        $handledSensorForm = $sensorService->handleNewSensorFormSubmission($addNewSensorForm, $sensorData);
+        $newSensorForm = $sensorService->createNewSensor($sensorData);
 
         if (!empty($sensorService->getUserInputErrors())) {
             return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
@@ -102,13 +94,19 @@ class SensorController extends AbstractController
             return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
         }
 
-        if ($handledSensorForm->getData() instanceof Sensors) {
-            $newSensorCard = $cardDataService->createNewSensorCard($handledSensorForm->getData());
-            $sensorID = $handledSensorForm->getData()->getSensorNameID();
-            $sensorService->handleSensorCreation($newSensor, $newSensorCard, $sensorData);
+        $sensor = $newSensorForm->getData() ?: null;
+
+        if ($sensor instanceof Sensors) {
+            $newSensorCard = $cardDataService->createNewSensorCard($newSensorForm->getData());
+            $sensorID = $newSensorForm->getData()->getSensorNameID();
+            $sensorService->handleSensorCreation($newSensorForm->getData(), $newSensorCard, $sensorData);
 
             if (!empty($sensorService->getUserInputErrors())) {
                 return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
+            }
+
+            if (!empty($sensorService->getServerErrors())) {
+                return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
             }
 
             return $this->sendCreatedResourceResponse(['sensorNameID' => $sensorID]);

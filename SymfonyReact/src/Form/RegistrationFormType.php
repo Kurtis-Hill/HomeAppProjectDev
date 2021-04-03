@@ -27,7 +27,6 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
-                    new NoSpecialCharactersConstraint(),
                 ],
                 'error_bubbling' => true,
             ])

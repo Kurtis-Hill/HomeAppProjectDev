@@ -22,9 +22,7 @@ class GroupNameMappingTableRepository extends EntityRepository
             )
             ->setParameter('userID', $userID);
 
-        $result = $qb->getQuery()->getScalarResult();
-
-        return $result;
+        return $qb->getQuery()->getScalarResult();
     }
 
 }

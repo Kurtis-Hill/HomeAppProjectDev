@@ -20,6 +20,7 @@ class SecurityController extends AbstractController
      * @return JsonResponse
      *
      * Needs refactor, attach to axios headers
+     * DEV USE ONLY
      */
     public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {

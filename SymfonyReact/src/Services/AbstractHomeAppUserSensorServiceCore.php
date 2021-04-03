@@ -48,10 +48,10 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
      */
     private array $groupNameDetails = [];
 
-    /**
-     * @var array
-     */
-    protected array $fatalErrors = [];
+//    /**
+//     * @var array
+//     */
+//    protected array $fatalErrors = [];
 
     /**
      * @var array
@@ -77,7 +77,7 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
         try {
             $this->setUserVariables();
         } catch (\Exception | \RuntimeException $e) {
-            $this->fatalErrors[] = $e->getMessage();
+            $this->serverErrors[] = $e->getMessage();
         }
     }
 
@@ -131,13 +131,13 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
         return $this->user;
     }
 
-    /**
-     * @return array
-     */
-    public function getFatalErrors(): array
-    {
-        return $this->fatalErrors;
-    }
+//    /**
+//     * @return array
+//     */
+//    public function getFatalErrors(): array
+//    {
+//        return $this->fatalErrors;
+//    }
 
     /**
      * @return array

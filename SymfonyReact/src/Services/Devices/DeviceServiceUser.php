@@ -43,7 +43,7 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
 
     private function userInputDataCheck(array $deviceData): void
     {
-        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDeviceInUsersGroup($deviceData);
+        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDuplicateDeviceNewDeviceCheck($deviceData);
 
         if ($currentUserDeviceCheck instanceof Devices) {
             throw new BadRequestException(

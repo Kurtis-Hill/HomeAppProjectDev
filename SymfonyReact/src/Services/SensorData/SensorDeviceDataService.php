@@ -4,6 +4,7 @@
 namespace App\Services\SensorData;
 
 
+use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ConstantRecording\ConstAnalog;
 use App\Entity\Sensors\ConstantRecording\ConstHumid;
@@ -32,14 +33,16 @@ class SensorDeviceDataService extends AbstractSensorService
     {
         parent::__construct($em, $security, $formFactory);
 
-        $this->setUserSettings($security);
+        try {
+            $this->setUserVariables($security);
+        } catch (\Exception $exception) {
+
+        }
     }
 
-    protected function setUserSettings(Security $security)
+    protected function setUserVariables(Security $security)
     {
-        if (!$security->getUser() instanceof Devices) {
-            $this->serverErrors[] = 'Logged in user is not a device';
-        }
+
     }
 
     public function processSensorReadingUpdateRequest(Request $request): ?array

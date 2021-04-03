@@ -9,7 +9,6 @@ use App\Entity\Devices\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\Devices\DeviceServiceUser;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,15 +23,15 @@ class DeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-    /**
-     * @var UserPasswordEncoder
-     */
-    private $userPasswordEncoder;
-
-    public function __construct(UserPasswordEncoderInterface $userPasswordEncoder)
-    {
-        $this->userPasswordEncoder = $userPasswordEncoder;
-    }
+//    /**
+//     * @var UserPasswordEncoder
+//     */
+//    private $userPasswordEncoder;
+//
+//    public function __construct(UserPasswordEncoderInterface $userPasswordEncoder)
+//    {
+//        $this->userPasswordEncoder = $userPasswordEncoder;
+//    }
 
     /**
      * @Route("/add-new-device", name="add-new-device")
@@ -42,20 +41,15 @@ class DeviceController extends AbstractController
      */
     public function addNewDevice(Request $request, DeviceServiceUser $deviceService): JsonResponse
     {
-        $deviceName = $request->get('deviceName');
-        $deviceGroup = $request->get('deviceGroup');
-        $deviceRoom = $request->get('deviceRoom');
+        $deviceData = [
+            'deviceName' => $request->get('deviceName'),
+            'groupNameObject' => $request->get('deviceGroup'),
+            'roomObject' => $request->get('deviceRoom')
+        ];
 
-
-        if (!isset($deviceGroup, $deviceRoom, $deviceName)) {
+        if (!isset($deviceData['deviceGroup'], $deviceData['deviceRoom'], $deviceData['deviceName'])) {
             return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
-
-        $deviceData = [
-            'deviceName' => $deviceName,
-            'groupNameObject' => $deviceGroup,
-            'roomObject' => $deviceRoom
-        ];
 
         $newDevice = new Devices();
 

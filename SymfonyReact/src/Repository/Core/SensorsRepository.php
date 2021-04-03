@@ -21,7 +21,7 @@ class SensorsRepository extends EntityRepository
 
     }
 
-    public function checkForDuplicateSensor(Sensors $sensorData)
+    public function checkForDuplicateSensor(Sensors $sensorData, array $usersGroups)
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -30,12 +30,14 @@ class SensorsRepository extends EntityRepository
             ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                $expr->eq('device.groupNameID', ':groupName')
+                $expr->eq('device.groupNameID', ':groupName'),
+                $expr->in('device.groupNameID', ':groupNameIDs')
             )
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
-                    'groupName' => $sensorData->getDeviceNameID()->getGroupNameObject()
+                    'groupName' => $sensorData->getDeviceNameID()->getGroupNameObject(),
+                    'groupNameIDs' => $usersGroups
                 ]
             );
 

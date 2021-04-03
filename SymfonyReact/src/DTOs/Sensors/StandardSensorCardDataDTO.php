@@ -82,16 +82,21 @@ class StandardSensorCardDataDTO extends CardDTOAbstract
      */
     protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
     {
-        $this->sensorData[] = [
-            'sensorType' => $type,
-            'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
-            'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
-            'currentReading' => is_float($sensorTypeObject->getCurrentReading()) ?  number_format($sensorTypeObject->getCurrentReading(), 2) : $sensorTypeObject->getCurrentReading(),
-            'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),
-            'getCurrentLowDifference' => is_float($sensorTypeObject->getMeasurementDifferenceLowReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2) : $sensorTypeObject->getMeasurementDifferenceLowReading(),
-            'readingSymbol' => $symbol,
-            'time' => $sensorTypeObject->getTime()->format('d-m H:i:s')
-        ];
+        try {
+            $this->sensorData[] = [
+                'sensorType' => $type,
+                'highReading' => $sensorTypeObject->getHighReading() !== null ? is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading() : '0',
+                'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
+                'currentReading' => is_float($sensorTypeObject->getCurrentReading()) ?  number_format($sensorTypeObject->getCurrentReading(), 2) : $sensorTypeObject->getCurrentReading(),
+                'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),
+                'getCurrentLowDifference' => is_float($sensorTypeObject->getMeasurementDifferenceLowReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2) : $sensorTypeObject->getMeasurementDifferenceLowReading(),
+                'readingSymbol' => $symbol,
+                'time' => $sensorTypeObject->getTime()->format('d-m H:i:s')
+            ];
+        } catch (\Exception $exception) {
+            error_log($exception);
+
+        }
     }
 
     /**
