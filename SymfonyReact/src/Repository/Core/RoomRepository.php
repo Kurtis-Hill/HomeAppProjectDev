@@ -11,7 +11,7 @@ class RoomRepository extends EntityRepository
      * @param $groupNameid
      * @return array
      */
-    public function getRoomsForUser($groupNameid): array
+    public function getAllUserRoomsByGroupId($groupNameid): array
     {
         $qb = $this->createQueryBuilder('r');
 

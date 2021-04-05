@@ -10,13 +10,13 @@ const cardModal = () => {
   const modalSensorType = context.modalContent.sensorType;
 
   const secondModalSensorType = context.modalContent.secondSensorType;
-  
+
   const modalContent = context.modalContent;
 
   return (
   <React.Fragment>
     {/* {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null} */}
-    
+
     <div id="" style={context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div className="modal-dialog" role="document">
         <div className="modal-content">
@@ -29,7 +29,7 @@ const cardModal = () => {
             </div>
 
             {
-              modalContent.errors.length > 0 ?                
+              modalContent.errors.length > 0 ?
                 <div className="error-container">
                   <div className="form-modal-error-box">
                     <ol>
@@ -40,23 +40,23 @@ const cardModal = () => {
                     }
                     </ol>
                   </div>
-                </div>                
+                </div>
             : null
           }
-                  
-            {modalContent.submitSuccess === true ? <div className="modal-success"><h4>Submission Made Successfully</h4> </div> :
-              <React.Fragment>   
+
+            {modalContent.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
+              <React.Fragment>
                 <div className="modal-body">
-                  <React.Fragment>   
-                  {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}   
+                  <React.Fragment>
+                  {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
                   {
-              
-                    modalContent.sensorData.length >= 1 
-                    ? 
-                      modalContent.sensorData.map((sensorData, index) => (                        
+
+                    modalContent.sensorData.length >= 1
+                    ?
+                      modalContent.sensorData.map((sensorData, index) => (
                         <div key={index} style={{paddingBottom: "10%"}}>
-                          
+
                           <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
                           <br />
                           <input type="text" name={sensorData.sensorType+"-high-reading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
@@ -64,16 +64,16 @@ const cardModal = () => {
                           <label className="modal-space large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} Low Reading</label>
                           <br />
                           <input type="text" name={sensorData.sensorType+"-low-reading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
-                          <br />                      
+                          <br />
                           <label className="modal-space large font-weight-bold">{modalSensorType} Temperature Constantly Record Data</label>
                           <select name={sensorData.sensorType+"-const-record"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control">
                             <option value={false} key="no">No</option>
                             <option value={true} key="yes">Yes</option>
                           </select>
                         </div>
-                      ))                
-                    : 
-                    null                      
+                      ))
+                    :
+                    null
                   }
 
                   {
@@ -89,7 +89,7 @@ const cardModal = () => {
                         </select>
                         <i className={"fas fa-2x text-gray-300 modal-icon fa-"+modalContent.cardIcon.iconName}></i>
                         <br />
-                      </React.Fragment>                   
+                      </React.Fragment>
                     :
                       null
                   }
@@ -122,16 +122,16 @@ const cardModal = () => {
                     </React.Fragment>
                     :
                       null
-                  }      
+                  }
                   </React.Fragment>
                 </div>
-                <div className="modal-footer">          
+                <div className="modal-footer">
                   <button className="btn btn-secondary" type="button" onClick={() => {context.toggleModal()}} data-dismiss="modal">Cancel</button>
                   <button className="btn btn-primary" type="submit" value="submit">Submit</button>
                 </div>
               </React.Fragment>
-            }   
-          </form>       
+            }
+          </form>
         </div>
       </div>
     </div>

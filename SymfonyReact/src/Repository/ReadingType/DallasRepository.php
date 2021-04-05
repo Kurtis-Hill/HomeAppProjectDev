@@ -17,7 +17,7 @@ class DallasRepository extends EntityRepository
      * @return Dallas|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findDallasSensor(Sensors $sensor): ?Temperature
+    public function findDallasSensorBySensor(Sensors $sensor): ?Temperature
     {
         $qb = $this->createQueryBuilder('d');
         $expr = $qb->expr();

@@ -35,7 +35,7 @@ class DeviceController extends AbstractController
         if (!empty($deviceService->getFatalErrors())) {
             $this->sendForbiddenAccessJsonResponse();
         }
-
+//dd('dfg');
         $deviceName = $request->get('deviceName');
         $deviceGroup = $request->get('deviceGroup');
         $deviceRoom = $request->get('deviceRoom');
@@ -64,9 +64,7 @@ class DeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($deviceService->getUserInputErrors() ?? ['form is not an instance of device']);
         }
 
-        $newDevice = $handledForm->getData();
-
-        $newDevice->setPassword(
+        $newDevice->setPashsword(
             $passwordEncoder->encodePassword(
                 $newDevice,
                 $newDevice->getDeviceSecret()
@@ -75,7 +73,6 @@ class DeviceController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $em->persist($newDevice);
         $em->flush();
-//dd('hi');
 
         $secret = $handledForm->getData()->getDeviceSecret();
 //        dd($newDevice->getUserID());

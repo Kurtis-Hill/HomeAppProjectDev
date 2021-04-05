@@ -24,19 +24,20 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
     {
         try {
             $this->userInputDataCheck($deviceData);
+
             $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
         }
         catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
         }
-//        catch (ORMException $e) {
-//            $this->serverErrors[] = 'Failed to process device query';
-//            error_log($e->getMessage());
-//        }
-//        catch (\Exception $e) {
-//            $this->serverErrors[] = 'Something went wrong';
-//            error_log($e->getMessage());
-//        }
+        catch (ORMException $e) {
+            $this->serverErrors[] = 'Failed to process device query';
+            error_log($e->getMessage());
+        }
+        catch (\Exception $e) {
+            $this->serverErrors[] = 'Something went wrong';
+            error_log($e->getMessage());
+        }
 
         return $addNewDeviceForm;
     }
@@ -54,14 +55,22 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             );
         }
 
+        $groupId = $deviceData['groupNameObject'];
+
+        if (!is_numeric($groupId)) {
+            throw new BadRequestException('Bad group name');
+        }
+
         $isCallableCheck = [$this->getUser(), 'getGroupNameIds'];
 
         if (is_callable($isCallableCheck)) {
-            if (!in_array($deviceData['groupNameObject'], $this->getUser()->getGroupNameIds(), true)) {
-                throw new BadRequestException(
-                    'You are not part of this group'
-                );
+            $groupIdCheck = $this->checkIfUserIsPartOfGroup($groupId);
+//            dd($groupIdCheck);
+            if ($groupIdCheck !== true) {
+                throw new BadRequestException('You are not part of this group');
             }
+//            dd('here', $deviceData['groupNameObject'], array_merge_recursive($this->getUser()->getGroupNameIds()));
+
         }
 
     }
@@ -84,9 +93,6 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             $validFormData->setDeviceSecret($secret);
             $validFormData->setCreatedBy($this->getUser());
             $validFormData->setRoles(['ROLE_DEVICE']);
-
-//            $this->em->persist($validFormData);
-//            $this->em->flush();
         }
         else {
             foreach ($addNewDeviceForm->getErrors(true, true) as $error) {

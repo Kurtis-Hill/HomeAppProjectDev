@@ -203,7 +203,7 @@ class Temperature implements StandardReadingSensorInterface
      */
     public function setTime(?\DateTime $time = null): void
     {
-        $this->time = $time === null ?  new \DateTime('now') : $time;
+        $this->time = $time ?? new \DateTime('now');
     }
 
     /**

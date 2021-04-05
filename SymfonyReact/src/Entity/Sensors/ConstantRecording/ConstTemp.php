@@ -39,7 +39,7 @@ class ConstTemp
     /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Temp")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="tempID")
      * })
@@ -91,7 +91,7 @@ class ConstTemp
      */
     public function setTime(?\DateTime $time = null): void
     {
-        $this->time = $time === null ?  new \DateTime('now') : $time;
+        $this->time = $time ?? new \DateTime('now');
     }
 
     /**

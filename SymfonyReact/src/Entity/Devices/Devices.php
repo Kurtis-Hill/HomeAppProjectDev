@@ -5,6 +5,7 @@ namespace App\Entity\Devices;
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
+use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -15,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Table(name="devicenames", uniqueConstraints={@ORM\UniqueConstraint(name="deviceSecret", columns={"deviceSecret"})}, indexes={@ORM\Index(name="createdBy", columns={"createdBy"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\DevicesRepository")
  */
-class Devices implements UserInterface
+class Devices implements UserInterface, APISensorUserInterface
 {
     /**
      * @var int
@@ -39,13 +40,6 @@ class Devices implements UserInterface
      * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
     private string $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="deviceSecret", type="text", length=100, nullable=false)
-     */
-    private string $deviceSecret = 'hey';
 
     /**
      * @var User
@@ -89,6 +83,40 @@ class Devices implements UserInterface
      */
     private string $secret;
 
+    /**
+     * @var array
+     */
+    private array $userGroupMappingEntities = [];
+
+
+    /**
+     * @return array
+     */
+    public function getUserGroupMappingEntities(): array
+    {
+        return $this->userGroupMappingEntities;
+    }
+
+    /**
+     * @param array $userGroupMappingEntities
+     */
+    public function setUserGroupMappingEntities(array $userGroupMappingEntities): void
+    {
+        $this->userGroupMappingEntities = $userGroupMappingEntities;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroupNameIds(): array
+    {
+        $groupNames = [];
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
+        }
+
+        return $groupNames;
+    }
     /**
      * @return int
      */

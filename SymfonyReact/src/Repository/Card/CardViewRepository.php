@@ -37,7 +37,7 @@ class CardViewRepository extends EntityRepository
     }
 
 
-    public function getAllIndexCardObjectsForUser(UserInterface $user, array $sensors)
+    public function getAllIndexCardObjectsForUser(?User $user, array $sensors)
     {
         $userID = $user->getUserID();
         $groupNameIDs = $user->getUserGroupMappingEntities();
@@ -77,10 +77,9 @@ class CardViewRepository extends EntityRepository
 
 
     /**
-     * @param array $groupNameIDs
-     * @param int $userID
-     * @param integer $deviceDetails
+     * @param UserInterface $user
      * @param array $sensors
+     * @param integer $deviceDetails
      * @return array
      */
     public function getAllCardReadingsForDevice(UserInterface $user, array $sensors, int $deviceDetails): array

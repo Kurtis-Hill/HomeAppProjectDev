@@ -4,7 +4,7 @@
 namespace App\Services\ESPDeviceSensor\SensorData;
 
 
-use App\Entity\Core\GroupnNameMapping;
+use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ConstantRecording\ConstAnalog;
 use App\Entity\Sensors\ConstantRecording\ConstHumid;
@@ -19,18 +19,23 @@ use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Dallas;
+use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-use App\Traits\FormProcessorTrait;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+
 
 class SensorDeviceDataService extends AbstractSensorService
 {
+    /**
+     * @var Devices
+     */
+    private Devices $sensorUser;
 
+    /**
+     * @param Request $request
+     * @return array|null
+     */
     public function processSensorReadingUpdateRequest(Request $request): ?array
     {
         $sensorType = $request->request->get('sensor-type');
@@ -60,65 +65,79 @@ class SensorDeviceDataService extends AbstractSensorService
 //        }
     }
 
+    protected function setServiceUserSession()
+    {
+        if ($this->getUser() instanceof Devices) {
+            $this->sensorUser = $this->getUser();
+        }
+        else {
+            throw new \InvalidArgumentException('Wrong Entity Provided');
+        }
+
+
+    }
+
+    /**
+     * @param Request $request
+     */
     private function handleDallasUpdateRequest(Request $request): void
     {
         $sensorReadings = $this->multipleSensorsWithSingularReading($request, Dallas::MAX_POSSIBLE_SENSORS);
 
         foreach ($sensorReadings as $sensorReading) {
-            // try {
+             try {
+                $sensor = $this->findSensorForAPIRequestByUserAndSensorName($this->getUser(), $sensorReading['sensorName']);
 
-            $sensor = $this->findSensorForAPIRequest($this->getUser(), $sensorReading['sensorName']);
+                if ($sensor === null) {
+                    throw new BadRequestException('sensor not recognised ' .$sensorReading['sensorName']);
+                }
+                if (empty($sensorReading['sensorReading'])) {
+                    throw new BadRequestException('sensor reading is empty for' .$sensor->getSensorName() ?: $sensorReading['sensorName']);
+                }
 
-            if ($sensor === null) {
-                throw new BadRequestException('sensor not recognised ' .$sensorReading['sensorName']);
+                $temperatureObject = $this->em->getRepository(Dallas::class)->findDallasSensorBySensor($sensor);
+
+                if (!$temperatureObject instanceof Temperature) {
+                    throw new BadRequestException('No temperature sensor can be found for '.$sensor->getSensorName());
+                }
+
+                $sensorFormData = $this->prepareSensorFormData(
+                    $request,
+                    $temperatureObject->getSensorObject()->getSensorTypeID(),
+                    SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY,
+                    ['currentReading' => $sensorReading['sensorReading']]
+                );
+
+                if (!empty($sensorFormData)) {
+                    $this->processSensorForm($sensorFormData, [$temperatureObject]);
+                }
+                if (!empty($this->userInputErrors)) {
+                    throw new BadRequestException('Sensor Data is not in line with the outlined specification');
+                }
+
+                $this->checkAndProcessConstRecord($temperatureObject, $sensor);
+
+                $this->checkTemperatureOutOfBounds($temperatureObject, $sensor);
+
+                $this->em->persist($temperatureObject);
+                // here intentionally so if any sensor fails to persist other sensor data can still be processed
+                $this->em->flush();
+            } catch (BadRequestException $exception) {
+                $this->userInputErrors[] = $exception->getMessage();
+            } catch (\RuntimeException $exception) {
+                $this->userInputErrors[] = 0;
+            } catch (ORMException $exception) {
+                $this->serverErrors[] = $exception->getMessage();
+            } catch (\Exception $exception) {
+                $this->serverErrors[] = $exception->getMessage();
             }
-            if (empty($sensorReading['sensorReading'])) {
-                throw new BadRequestException('sensor reading is empty for' .$sensor->getSensorName() ?: $sensorReading['sensorName']);
-            }
-
-            $temperatureObject = $this->em->getRepository(Dallas::class)->findDallasSensor($sensor);
-
-            if (!$temperatureObject instanceof Temperature) {
-                throw new BadRequestException('No temperature sensor can be found for '.$sensor->getSensorName());
-            }
-
-            $sensorFormData = $this->prepareSensorFormData(
-                $request,
-                $temperatureObject->getSensorObject()->getSensorTypeID(),
-                SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY,
-                ['currentReading' => $sensorReading['sensorReading']]
-            );
-
-            if (!empty($sensorFormData)) {
-                $this->processSensorForm($sensorFormData, [$temperatureObject]);
-                dd('here', $this->userInputErrors);
-            }
-            if (!empty($this->userInputErrors)) {
-                throw new BadRequestException('Sensor Data is not in line with the outlined specification');
-            }
-
-            $this->checkAndProcessConstRecord($temperatureObject, $sensor);
-
-            $this->checkTemperatureOutOfBounds($temperatureObject, $sensor);
-
-            $this->em->persist($temperatureObject);
-            // here intentionally so if any sensor fails to persist other sensor data can still be processed
-            $this->em->flush();
-
-
-//            } catch (BadRequestException $exception) {
-//                $this->userInputErrors[] = $exception->getMessage();
-//            } catch (\RuntimeException $exception) {
-//                $this->userInputErrors[] = 0;
-//            } catch (ORMException $exception) {
-//                $this->serverErrors[] = $exception->getMessage();
-//            } catch (\Exception $exception) {
-//                $this->serverErrors[] = $exception->getMessage();
-//            }
-
         }
     }
 
+    /**
+     * @param StandardReadingSensorInterface $readingTypeTypeObject
+     * @param Sensors $sensor
+     */
     private function checkTemperatureOutOfBounds(StandardReadingSensorInterface $readingTypeTypeObject, Sensors $sensor): void
     {
         if ($readingTypeTypeObject->isReadingOutOfBounds() === true) {
@@ -147,6 +166,10 @@ class SensorDeviceDataService extends AbstractSensorService
         }
     }
 
+    /**
+     * @param StandardReadingSensorInterface $readingTypeObject
+     * @param Sensors $sensor
+     */
     private function checkAndProcessConstRecord(StandardReadingSensorInterface $readingTypeObject, Sensors $sensor)
     {
         if ($readingTypeObject->getConstRecord() === true) {
@@ -190,6 +213,27 @@ class SensorDeviceDataService extends AbstractSensorService
 
     }
 
+    /**
+     * @param APISensorUserInterface $device
+     * @param string $sensorName
+     * @return Sensors|null
+     */
+    private function findSensorForAPIRequestByUserAndSensorName(APISensorUserInterface $device, string $sensorName): ?Sensors
+    {
+        $sensor = $this->em->getRepository(Sensors::class)->findOneBy(
+            [
+                'sensorName' => $sensorName,
+                'deviceNameID' => $device
+            ]
+        );
+
+        if (!$sensor instanceof Sensors) {
+            throw new BadRequestException('no sensor named ' .$sensorName. ' exists');
+        }
+
+        return $sensor;
+    }
+
 
     /**
      * Methods that handle different variety of sensor update requests
@@ -219,21 +263,5 @@ class SensorDeviceDataService extends AbstractSensorService
         }
 
         return $sensorUpdateDetails;
-    }
-
-    protected function findSensorForAPIRequest(UserInterface $device, string $sensorName): ?Sensors
-    {
-        $sensor = $this->em->getRepository(Sensors::class)->findOneBy(
-            [
-                'sensorName' => $sensorName,
-                'deviceNameID' => $device
-            ]
-        );
-
-        if (!$sensor instanceof Sensors) {
-            throw new BadRequestException('no sensor named ' .$sensorName. ' exists');
-        }
-
-        return $sensor;
     }
 }

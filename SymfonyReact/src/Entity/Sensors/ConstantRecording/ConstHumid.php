@@ -39,7 +39,7 @@ class ConstHumid
     /**
      * @var Humidity
      *
-     * @ORM\ManyToOne(targetEntity="Humid")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="humidID")
      * })

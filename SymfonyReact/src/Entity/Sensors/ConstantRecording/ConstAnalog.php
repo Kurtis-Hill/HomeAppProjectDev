@@ -40,7 +40,7 @@ class ConstAnalog
     /**
      * @var Analog
      *
-     * @ORM\ManyToOne(targetEntity="Analog")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Analog")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="analogID")
      * })

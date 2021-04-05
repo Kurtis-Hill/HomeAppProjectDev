@@ -13,7 +13,6 @@ use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 
 class UserInterfaceService implements APIErrorInterface
@@ -24,9 +23,9 @@ class UserInterfaceService implements APIErrorInterface
     private EntityManagerInterface $em;
 
     /**
-     * @var User|UserInterface|null
+     * @var User|null
      */
-    private User|UserInterface|null $user;
+    private ?User $user;
 
     /**
      * @var array
@@ -65,16 +64,18 @@ class UserInterfaceService implements APIErrorInterface
 
         try {
             if ($this->user instanceof User) {
-                $this->userRooms = $this->em->getRepository(Room::class)->getRoomsForUser($this->user->getGroupNameIDs());
-                $this->userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevices($this->user->getGroupNameAndIds());
+                $this->userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->user->getGroupNameIDs());
+                $this->userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->user->getGroupNameAndIds());
             }
             else {
-                throw new BadRequestException('This type of user is not expected now');
+                throw new BadRequestException('This type of user is not expected');
             }
         } catch (BadRequestException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
-        } catch (\RuntimeException | ORMException $exception) {
+        } catch (\RuntimeException $exception) {
             $this->serverErrors[] = $exception->getMessage();
+        } catch (ORMException $exception) {
+            $this->serverErrors[] = 'Query Failed';
         } catch (\Exception $exception) {
             $this->fatalErrors[] = 'Something Happened Please log what you were doing and send a crash report';
         }

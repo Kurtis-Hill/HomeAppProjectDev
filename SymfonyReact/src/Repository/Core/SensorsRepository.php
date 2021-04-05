@@ -31,13 +31,11 @@ class SensorsRepository extends EntityRepository
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
                 $expr->eq('device.groupNameID', ':groupName'),
-                $expr->in('device.groupNameID', ':groupNameIDs')
             )
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
                     'groupName' => $sensorData->getDeviceNameID()->getGroupNameObject(),
-                    'groupNameIDs' => $usersGroups
                 ]
             );
 

@@ -18,7 +18,6 @@ function AddNewSensor(props) {
     const toggleModal = () => {
         setModalToggle(!modalToggle);
         setSuccessMessage(false);
-        sensorName = '';
     }
 
     const toggleModalOn = async () => {

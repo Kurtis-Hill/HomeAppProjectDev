@@ -19,15 +19,15 @@ class NavbarController extends AbstractController
 
     /**
      * @Route("/navbar-data", name="navbar-data")
-     * @param UserInterfaceService $navbarService
+     * @param UserInterfaceService $userInterfaceService
      * @return JsonResponse
      */
-    public function navBarData(UserInterfaceService $navbarService)
+    public function navBarData(UserInterfaceService $userInterfaceService)
     {
-        $navbarData = $navbarService->getNavBarData();
+        $navbarData = $userInterfaceService->getNavBarData();
 
-        if (!empty($navbarService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($navbarService->getServerErrors());
+        if (!empty($userInterfaceService->getServerErrors() || $userInterfaceService->getFatalErrors())) {
+            return $this->sendInternelServerErrorJsonResponse(array_merge($userInterfaceService->getServerErrors(), $userInterfaceService->getFatalErrors()));
         }
 
         return $this->sendSuccessfulJsonResponse($navbarData);

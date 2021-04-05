@@ -2,6 +2,7 @@
 
 namespace App\Entity\Core;
 
+use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\Json;
@@ -12,7 +13,7 @@ use Symfony\Component\Validator\Constraints\Json;
  * @ORM\Table(name="user", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\UserRepository")
  */
-class User implements UserInterface
+class User implements UserInterface, APISensorUserInterface
 {
     /**
      * @var int
@@ -92,14 +93,13 @@ class User implements UserInterface
      */
     public function getUserGroupMappingEntities(): array
     {
-
         return $this->userGroupMappingEntities;
     }
 
     /**
      * @param array $userGroupMappingEntities
      */
-    public function setUserGroupMappingEntities(array $userGroupMappingEntities)
+    public function setUserGroupMappingEntities(array $userGroupMappingEntities): void
     {
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
@@ -110,9 +110,12 @@ class User implements UserInterface
     public function getGroupNameIds(): array
     {
         $groupNames = [];
+
         foreach ($this->userGroupMappingEntities as $entity) {
+//            dd($entity->getGroupNameID()->getGroupNameID());
             $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
         }
+//        dd($groupNames);
 
         return $groupNames;
     }
@@ -264,7 +267,7 @@ class User implements UserInterface
 
     public function setTime(?\DateTime $time = null): self
     {
-        $this->time = $time === null ?  new \DateTime('now') : $time;
+        $this->time = $time ?? new \DateTime('now');
 
         return $this;
     }

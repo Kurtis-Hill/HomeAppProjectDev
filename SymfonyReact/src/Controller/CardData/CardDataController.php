@@ -124,8 +124,6 @@ class CardDataController extends AbstractController
 
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
 
-//        $sensorDataService->processForm($cardViewForm, $cardViewData);
-
         $cardViewForm->submit($cardViewData);
 
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
@@ -136,10 +134,6 @@ class CardDataController extends AbstractController
                 return $this->sendBadRequestJsonResponse();
             }
         }
-        //        $sensorDataService->processForm($cardViewForm, $this->getDoctrine()->getManager(), $cardViewData);
-//        if (!empty($sensorDataService->returnAllFormInputErrors())) {
-//            return $this->sendBadRequestResponse($sensorDataService->returnAllFormInputErrors());
-//        }
 
         $sensorTypeObject = $cardViewObject->getSensorNameID();
 

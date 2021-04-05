@@ -3,6 +3,8 @@
 
 namespace App\Services\ESPDeviceSensor\SensorData;
 
+use App\Entity\Core\User;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,12 +14,17 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
-class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
+abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
 {
     /**
      * @var FormFactoryInterface
      */
     protected FormFactoryInterface $formFactory;
+
+    /**
+     * @var User|Devices
+     */
+//    protected User|Devices $sensorUser;
 
     /**
      * AbstractSensorService constructor.
@@ -31,6 +38,8 @@ class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
 
         $this->formFactory = $formFactory;
     }
+
+    abstract protected function setServiceUserSession();
 
     /**
      * @param array $sensorFormData

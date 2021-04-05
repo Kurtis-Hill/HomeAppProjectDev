@@ -7,7 +7,7 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
-use App\Services\SensorData\SensorUserDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +34,6 @@ class SensorController extends AbstractController
     public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
     {
         if (empty($request->request->get('secret')) || empty($request->request->get('sensor-type'))) {
-           // dd($request->request->get('secret'), $request->request->get('sensor-type'));
             return $this->sendBadRequestJsonResponse();
         }
 
@@ -44,41 +43,22 @@ class SensorController extends AbstractController
             return $this->sendInternelServerErrorJsonResponse();
         }
 
-//        foreach ($sensorFormData as $sensorType => $sensorData) {
-//            foreach ($cardSensorData as $sensorObject) {
-//                if ($sensorType === $sensorObject::class) {
-//                    $sensorForm = $this->createForm($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
-//                    $handledSensorForm = $sensorDataService->processForm($sensorForm, $sensorData['formData']);
-//
-//                    if ($handledSensorForm instanceof FormInterface) {
-//                        $sensorDataService->processSensorFormErrors($handledSensorForm);
-//                    }
-//                    continue;
-//                }
-//            }
-//        }
 
     }
-
 
     /**
      * @Route("/add-new-sensor", name="add-new-sensor")
      * @param Request $request
      * @param SensorUserDataService $sensorService
-     * @param SensorUserDataService $sensorService
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         $sensorData = [
             'sensorName' => $request->get('sensor-name'),
             'sensorTypeID' => $request->get('sensor-type'),
-            'deviceNameID' => $request->get('device-name')
+            'deviceNameID' => $request->get('device-id')
         ];
 
         if (empty($sensorData['sensorName'] || $sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
@@ -94,9 +74,7 @@ class SensorController extends AbstractController
         if (!empty($sensorService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
         }
-
-        $sensor = $newSensorForm->getData() ?: null;
-
+        $sensor = $newSensorForm->getData();
         if ($sensor instanceof Sensors) {
             $newSensorCard = $cardDataService->createNewSensorCard($newSensorForm->getData());
             $sensorID = $newSensorForm->getData()->getSensorNameID();

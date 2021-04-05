@@ -17,8 +17,14 @@ class IconRepository extends EntityRepository
        $qb = $this->createQueryBuilder('i')
            ->orderBy('i.iconName', 'ASC');
 
-//       dd($qb->getQuery()->getArrayResult());
        return $qb->getQuery()->getArrayResult();
+   }
+
+   public function countAllIcons()
+   {
+       return $this->createQueryBuilder('icons')
+           ->select('count(icons.iconID)')
+           ->getQuery()->getSingleScalarResult();
    }
 
 

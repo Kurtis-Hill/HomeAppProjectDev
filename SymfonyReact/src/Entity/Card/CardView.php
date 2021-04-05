@@ -45,14 +45,14 @@ class CardView
     private Cardstate $cardStateID;
 
     /**
-     * @var UserInterface
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="userID", referencedColumnName="userID")
      * })
      */
-    private UserInterface $userID;
+    private User $userID;
 
     /**
      * @var Icons
@@ -125,17 +125,19 @@ class CardView
     /**
      * @return User
      */
-    public function getUserID(): UserInterface
+    public function getUserID(): User
     {
         return $this->userID;
     }
 
     /**
-     * @param UserInterface $userID
+     * @param User $userID
      */
-    public function setUserID(UserInterface $userID): void
+    public function setUserID(?User $userID): void
     {
-        $this->userID = $userID;
+        if ($userID !== null) {
+            $this->userID = $userID;
+        }
     }
 
     /**

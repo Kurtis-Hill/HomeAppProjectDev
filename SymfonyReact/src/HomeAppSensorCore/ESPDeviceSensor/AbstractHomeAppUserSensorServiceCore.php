@@ -3,9 +3,6 @@
 
 namespace App\HomeAppSensorCore\ESPDeviceSensor;
 
-use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -18,16 +15,11 @@ use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\CardViewForms\StandardSensorOutOFBoundsForm;
 use App\Form\SensorForms\UpdateReadingForm;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
-use Doctrine\ORM\EntityManager;
+use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
-use JetBrains\PhpStorm\Pure;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+
 
 abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
 {
@@ -104,6 +96,11 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
         SensorType::BMP_SENSOR => [
             'alias' => 'bmp',
             'object' => Bmp::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' => Humidity::class,
+                'latitude' => Latitude::class,
+            ],
             'forms' => [
                 'outOfBounds' => [
                     'form' => StandardSensorOutOFBoundsForm::class,
@@ -125,19 +122,14 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     ];
 
     /**
-     * @var ?UserInterface
+     * @var ?APISensorUserInterface
      */
-    private ?UserInterface $user;
+    private ?APISensorUserInterface $user;
 
     /**
      * @var EntityManagerInterface
      */
     protected EntityManagerInterface $em;
-
-    /**
-     * @var array
-     */
-    private array $groupNameDetails = [];
 
     /**
      * @var array
@@ -164,37 +156,39 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
-        $this->user = $security->getUser();
+        $this->user = $security->getUser() instanceof APISensorUserInterface ? $security->getUser() : null;
 
         try {
-         //   $this->setUserVariables();
+            $this->checkUserInstance();
         } catch (\Exception | \RuntimeException $e) {
             $this->fatalErrors[] = $e->getMessage();
         }
     }
 
-//    /**
-//     * @throws \Exception
-//     */
-//    private function setUserVariables()
-//    {
-//        $userCredentials = [$this->user, 'getUserID'];
-//
-//        if (is_callable($userCredentials, true)) {
-//            if ($this->user instanceof User) {
-//               $this->groupNameDetails = $this->user->getUserGroupMappingEntities();
-//            }
-//            if ($this->user instanceof Devices) {
-//                $this->groupNameDetails[] = ['groupNameID' => $this->user->getGroupNameID()];
-//            }
-//            if (empty($this->groupNameDetails)) {
-//                throw new BadRequestException('The User Groups Cannot Be Set');
-//            }
-//        } else {
-//            throw new \RuntimeException('Could not find user');
-//        }
-//    }
+    /**
+     * @throws \Exception
+     */
+    private function checkUserInstance(): void
+    {
+        if (!$this->user instanceof APISensorUserInterface) {
+            throw new BadRequestException('Wrong Entity Provided');
+        }
+    }
 
+    /**
+     * @param int|string $groupRequest
+     * @return bool
+     */
+    public function checkIfUserIsPartOfGroup(int|string $groupRequest): bool
+    {
+        if (!is_numeric($groupRequest)) {
+            throw new BadRequestException('the group provided is not correct');
+        }
+
+        $groupRequest = (int) $groupRequest;
+
+        return in_array($groupRequest, $this->user->getGroupNameIds(), true);
+    }
 
     /**
      * @return int|null
@@ -205,10 +199,11 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     }
 
     /**
-     * @return UserInterface|null
+     * @return APISensorUserInterface
      */
-    protected function getUser(): ?UserInterface
+    protected function getUser(): APISensorUserInterface
     {
+
         return $this->user;
     }
 
