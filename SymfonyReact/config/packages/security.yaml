@@ -67,7 +67,7 @@ security:
     access_control:
         - { path: ^/HomeApp/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/device/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/WebAplogin, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
