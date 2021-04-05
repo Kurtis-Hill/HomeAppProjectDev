@@ -5,10 +5,10 @@ import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL
 export const CardContext = createContext();
 
 const emptyModalContent = {
-    submitSuccess: false, 
+    submitSuccess: false,
     errors: [],
     modalSubmit: false,
-    cardViewID: null, 
+    cardViewID: null,
     sensorData: [],
     cardIcon: [],
     cardColour: [],
@@ -22,7 +22,7 @@ class CardContextProvider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            refreshTimer: 6000,
+            refreshTimer: 16000,
             cardData: null,
             modalShow: false,
             modalLoading: false,
@@ -33,10 +33,10 @@ class CardContextProvider extends Component {
         };
     }
 
-    componentDidMount() {   
+    componentDidMount() {
         this.setURL();
         this.cardRefreshTimerID = setInterval(
-            () => this.fetchCardData(), 
+            () => this.fetchCardData(),
             this.state.refreshTimer
         );
     }
@@ -62,54 +62,54 @@ class CardContextProvider extends Component {
             const windowLocation = window.location.search;
             const urlParam = new URLSearchParams(windowLocation);
 
-            const deviceName = urlParam.get('device-name');
+            const deviceName = urlParam.get('device-id');
             const deviceGroup = urlParam.get('device-group');
             const deviceRoom = urlParam.get('device-room');
 
-            this.setState({url: cardAPI+"?device-name="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom+"&view=device"});        
+            this.setState({url: cardAPI+"?device-id="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom+"&view=device"});
         }
     }
 
 
     //Fetches all the card data to be displayed on the index page
     fetchCardData = () => {
-        axios.get(this.state.url, 
+        axios.get(this.state.url,
             { headers: {"Authorization" : `BEARER ${getToken()}`} }
         )
         .then(response => {
-            if (response.data.length >= 1 && Array.isArray(response.data) ) {                
+            if (response.data.length >= 1 && Array.isArray(response.data) ) {
                 this.setState({cardData: response.data});
-            } 
+            }
             else {
                 this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
             }
         }).catch(error => {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
-            } 
+            }
             else {
                 if (error.data.status === 401) {
-                    axios.post(apiURL+'token/refresh', 
-                        { refreshToken : getRefreshToken() } 
+                    axios.post(apiURL+'token/refresh',
+                        { refreshToken : getRefreshToken() }
                     )
-                    .then(response => {                        
+                    .then(response => {
                         setUserSession(response.data.token, response.data.refreshToken);
                     }).catch((error) => {
                         this.setState({alternativeDisplayMessage: "No Card Data", modalContent: emptyModalContent});
                     });
-                } 
+                }
                 else {
                   //  window.location.replace('/HomeApp/logout');
                 }
-            }      
+            }
         })
-        
+
     }
 
 
     //gets the card form data so users can customize cards
     getCardDataForm = (cardViewID) => {
-        this.setState({modalLoading: true})
+        this.setState({modalLoading: cardViewID})
         axios.get(apiURL+'card-data/card-state-view-form?cardViewID='+cardViewID,
             { headers: {"Authorization" : `Bearer ${getToken()}`} })
         .then(response => {
@@ -136,7 +136,7 @@ class CardContextProvider extends Component {
         const iconPreview = cardIcon;
 
         this.setState({
-            modalContent:{...this.state.modalContent, 
+            modalContent:{...this.state.modalContent,
                 cardColour,
                 cardIcon,
                 cardViewID,
@@ -155,7 +155,7 @@ class CardContextProvider extends Component {
         this.setState({modalContent: emptyModalContent, modalShow: !this.state.modalShow});
     }
 
-    
+
     updateModalForm = (event, sensorType = null) => {
         const value = event.target.value;
 
@@ -192,7 +192,7 @@ class CardContextProvider extends Component {
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
                         currentModalData.lowReading = value;
-                        this.setState({modalContent:{...this.state.modalContent}});                    
+                        this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
                   }
@@ -202,7 +202,7 @@ class CardContextProvider extends Component {
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
                         currentModalData.constRecord = value;
-                        this.setState({modalContent:{...this.state.modalContent}});                    
+                        this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
                   }
@@ -217,25 +217,25 @@ class CardContextProvider extends Component {
         const formData = new FormData(event.target);
 
         formData.append('card-view-id', this.state.modalContent.cardViewID);
-                
-        const config = {     
+
+        const config = {
             headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
         }
-        
+
         axios.post(apiURL+'card-data/update-card-view', formData, config)
         .then(response => {
             this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true, errors:[]}});
 
-            setTimeout(() => 
+            setTimeout(() =>
                 this.toggleModal(), 1500
             );
         })
         .catch(error => {
             const err = error.response;
             const errors = err.data.responseData;
-            
+
             if (err.status === 400) {
-                const badRequestErrors = (!errors.length > 1) 
+                const badRequestErrors = (!errors.length > 1)
                 ? ['something went wrong']
                 : errors;
 
@@ -277,8 +277,8 @@ class CardContextProvider extends Component {
                     }}>
                         {this.props.children}
                     </CardContext.Provider>
-                </div>  
-            </div> 
+                </div>
+            </div>
         )
     }
 }

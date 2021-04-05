@@ -22,15 +22,15 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
-#
-#    App\Traits\:
-#        autowire: false
-#        resource: '../src/*'
-#        exclude: '../src/Traits'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Listeners\AuthenticationSuccessListener:
+    App\EventListeners\AuthenticationSuccessListener:
+#        class: App\EventListener\AuthenticationSuccessListener
         tags:
-             - { name: kernel.event_listener, event: lexik_jwt_authentication.handler.authentication_success, method: onAuthenticationListener }
+             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+
+    App\EventListeners\JWTAuthenticatedListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }

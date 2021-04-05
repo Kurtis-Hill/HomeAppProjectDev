@@ -1,16 +1,16 @@
 <?php
 
 
-namespace App\Services\Devices;
+namespace App\Services\ESPDeviceSensor\Devices;
 
 
 use App\Entity\Devices\Devices;
-use App\Services\AbstractHomeAppUserSensorServiceCore;
+
+use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\Security\Core\Security;
 
 
 class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
@@ -78,9 +78,10 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setDeviceSecret($secret);
             $validFormData->setCreatedBy($this->getUser());
+            $validFormData->setRoles(['ROLE_DEVICE']);
 
-            $this->em->persist($validFormData);
-            $this->em->flush();
+//            $this->em->persist($validFormData);
+//            $this->em->flush();
         }
         else {
             foreach ($addNewDeviceForm->getErrors(true, true) as $error) {

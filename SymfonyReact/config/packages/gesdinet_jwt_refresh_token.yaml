@@ -1,6 +1,5 @@
-#define the ttl of the token here
 gesdinet_jwt_refresh_token:
 #  ttl: 7200
   ttl: 14400
-  user_identity_field: email
+  user_provider: 'user_and_device'
   token_parameter_name: refreshToken

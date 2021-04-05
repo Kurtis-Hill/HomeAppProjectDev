@@ -36,9 +36,16 @@ class Devices implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="deviceSecret", type="string", length=32, nullable=false)
+     * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
-    private string $secret;
+    private string $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="deviceSecret", type="text", length=100, nullable=false)
+     */
+    private string $deviceSecret = 'hey';
 
     /**
      * @var User
@@ -78,9 +85,22 @@ class Devices implements UserInterface
     private array $roles;
 
     /**
+     * @var string
+     */
+    private string $secret;
+
+    /**
      * @return int
      */
     public function getDeviceNameID(): int
+    {
+        return $this->deviceNameID;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserID(): int
     {
         return $this->deviceNameID;
     }
@@ -130,15 +150,17 @@ class Devices implements UserInterface
      */
     public function getPassword(): string
     {
-        return $this->secret;
+        return $this->password;
     }
 
     /**
      * @param string $secret
      */
-    public function setPassword(string $secret): void
+    public function setPassword(string $secret): self
     {
-        $this->secret = $secret;
+        $this->password = $secret;
+
+        return $this;
     }
 
     /**

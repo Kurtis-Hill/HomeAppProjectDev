@@ -7,7 +7,7 @@ namespace App\Controller\Sensors;
 
 use App\Entity\Devices\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
-use App\Services\Devices\DeviceServiceUser;
+use App\Services\ESPDeviceSensor\Devices\DeviceServiceUser;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,33 +23,33 @@ class DeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-//    /**
-//     * @var UserPasswordEncoder
-//     */
-//    private $userPasswordEncoder;
-//
-//    public function __construct(UserPasswordEncoderInterface $userPasswordEncoder)
-//    {
-//        $this->userPasswordEncoder = $userPasswordEncoder;
-//    }
-
     /**
      * @Route("/add-new-device", name="add-new-device")
      * @param Request $request
      * @param DeviceServiceUser $deviceService
+     * @param UserPasswordEncoderInterface $passwordEncoder
      * @return JsonResponse
      */
-    public function addNewDevice(Request $request, DeviceServiceUser $deviceService): JsonResponse
+    public function addNewDevice(Request $request, DeviceServiceUser $deviceService, UserPasswordEncoderInterface $passwordEncoder): JsonResponse
     {
-        $deviceData = [
-            'deviceName' => $request->get('deviceName'),
-            'groupNameObject' => $request->get('deviceGroup'),
-            'roomObject' => $request->get('deviceRoom')
-        ];
-
-        if (!isset($deviceData['deviceGroup'], $deviceData['deviceRoom'], $deviceData['deviceName'])) {
-            return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
+        if (!empty($deviceService->getFatalErrors())) {
+            $this->sendForbiddenAccessJsonResponse();
         }
+
+        $deviceName = $request->get('deviceName');
+        $deviceGroup = $request->get('deviceGroup');
+        $deviceRoom = $request->get('deviceRoom');
+
+
+        if (!isset($deviceGroup, $deviceRoom, $deviceName)) {
+            return $this->sendBadRequestJsonResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
+        }
+
+        $deviceData = [
+            'deviceName' => $deviceName,
+            'groupNameObject' => $deviceGroup,
+            'roomObject' => $deviceRoom
+        ];
 
         $newDevice = new Devices();
 
@@ -58,16 +58,30 @@ class DeviceController extends AbstractController
         $handledForm = $deviceService->handleNewDeviceSubmission($deviceData, $addNewDeviceForm);
 
         if (!empty($deviceService->getServerErrors())) {
-            //dd()
-            return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
+            return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
         }
-        if (!empty($deviceService->getUserInputErrors())) {
-            return $this->sendBadRequestResponse($deviceService->getUserInputErrors());
+        if (!empty($deviceService->getUserInputErrors()) || !$handledForm->getData() instanceof Devices) {
+            return $this->sendBadRequestJsonResponse($deviceService->getUserInputErrors() ?? ['form is not an instance of device']);
         }
+
+        $newDevice = $handledForm->getData();
+
+        $newDevice->setPassword(
+            $passwordEncoder->encodePassword(
+                $newDevice,
+                $newDevice->getDeviceSecret()
+            )
+        );
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($newDevice);
+        $em->flush();
+//dd('hi');
 
         $secret = $handledForm->getData()->getDeviceSecret();
-        $deviceID = $handledForm->getData()->getDeviceNameID();
+//        dd($newDevice->getUserID());
+        $deviceID = $newDevice->getDeviceNameID();
 
-        return $this->sendCreatedResourceResponse(['secret' => $secret, 'deviceID' => $deviceID]);
+
+        return $this->sendCreatedResourceJsonResponse(['secret' => $secret, 'deviceID' => $deviceID]);
     }
 }

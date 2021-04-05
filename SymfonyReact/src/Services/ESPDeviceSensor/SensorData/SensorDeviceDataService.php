@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\SensorData;
+namespace App\Services\ESPDeviceSensor\SensorData;
 
 
 use App\Entity\Core\GroupnNameMapping;
@@ -26,6 +26,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SensorDeviceDataService extends AbstractSensorService
 {
@@ -50,10 +51,10 @@ class SensorDeviceDataService extends AbstractSensorService
         $sensorType = $request->request->get('sensor-type');
 
         //  try {
-        if (empty($checkIfLegitimateUser)) {
-            throw new BadRequestException('user is probably false');
+//        if (empty($checkIfLegitimateUser)) {
+//            throw new BadRequestException('user is probably false');
             //log ip and ban
-        }
+//        }
 
         if ($sensorType === SensorType::DHT_SENSOR) {
             $this->handleDhtUpdateRequest($request);
@@ -85,7 +86,8 @@ class SensorDeviceDataService extends AbstractSensorService
 
         foreach ($sensorReadings as $sensorReading) {
             // try {
-            $sensor = $this->findSensorForRequest($this->user, $sensorReading['sensorName']);
+
+            $sensor = $this->findSensorForAPIRequest($this->getUser(), $sensorReading['sensorName']);
 
             if ($sensor === null) {
                 throw new BadRequestException('sensor not recognised ' .$sensorReading['sensorName']);
@@ -237,5 +239,21 @@ class SensorDeviceDataService extends AbstractSensorService
         }
 
         return $sensorUpdateDetails;
+    }
+
+    protected function findSensorForAPIRequest(UserInterface $device, string $sensorName): ?Sensors
+    {
+        $sensor = $this->em->getRepository(Sensors::class)->findOneBy(
+            [
+                'sensorName' => $sensorName,
+                'deviceNameID' => $device
+            ]
+        );
+
+        if (!$sensor instanceof Sensors) {
+            throw new BadRequestException('no sensor named ' .$sensorName. ' exists');
+        }
+
+        return $sensor;
     }
 }

@@ -6,7 +6,7 @@ namespace App\Controller\CardData;
 use App\Form\CardViewForms\CardViewForm;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use App\Services\CardDataServiceUser;
-use App\Services\SensorData\SensorUserDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Entity\Sensors\SensorType;
 use Doctrine\ORM\ORMException;
@@ -39,10 +39,13 @@ class CardDataController extends AbstractController
      */
     public function returnCardDataDTOs(Request $request, CardDataServiceUser $cardDataService): Response|JsonResponse
     {
-        $cardData = $cardDataService->prepareAllCardDTOs($request);
+        $route = $request->get('view');
+        $deviceId = $request->get('device-id');
+
+        $cardData = $cardDataService->prepareAllCardDTOs($route, $deviceId);
 
         if (!empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong we are logging you out']);
+            return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong']);
         }
 
         if (empty($cardData)) {
@@ -74,13 +77,13 @@ class CardDataController extends AbstractController
         $cardViewID = $request->query->get('cardViewID');
 
         if (empty($cardViewID)) {
-            return $this->sendBadRequestResponse();
+            return $this->sendBadRequestJsonResponse();
         }
 
         $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewID);
 
         if ($cardFormDTO === null || !empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorResponse();
+            return $this->sendInternelServerErrorJsonResponse();
         }
 
         $encoders = [new JsonEncoder()];
@@ -108,7 +111,7 @@ class CardDataController extends AbstractController
         $cardStateID = $request->get('card-view-state');
 
         if (empty($cardColourID) || empty($cardIconID) || empty($cardStateID) || empty($cardViewID)) {
-            return $this->sendBadRequestResponse(['errors' => 'empty form data']);
+            return $this->sendBadRequestJsonResponse(['errors' => 'empty form data']);
         }
 
         $cardViewData = [
@@ -131,7 +134,7 @@ class CardDataController extends AbstractController
             try {
                 $this->getDoctrine()->getManager()->persist($validFormData);
             } catch (ORMException | \Exception $e) {
-                return $this->sendBadRequestResponse();
+                return $this->sendBadRequestJsonResponse();
             }
         }
         //        $sensorDataService->processForm($cardViewForm, $this->getDoctrine()->getManager(), $cardViewData);
@@ -144,7 +147,7 @@ class CardDataController extends AbstractController
         $sensorDataService->handleSensorReadingBoundary($request, $sensorTypeObject, $cardSensorReadingObject);
 
         if (!empty($sensorDataService->getUserInputErrors())) {
-            return $this->sendBadRequestResponse($sensorDataService->getUserInputErrors());
+            return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
         }
 
 //        if (!empty($sensorDataService->returnAllFormInputErrors())) {
@@ -152,7 +155,7 @@ class CardDataController extends AbstractController
 //        }
 
         if (!empty($sensorDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorResponse();
+            return $this->sendInternelServerErrorJsonResponse();
         }
 
         $this->getDoctrine()->getManager()->flush();

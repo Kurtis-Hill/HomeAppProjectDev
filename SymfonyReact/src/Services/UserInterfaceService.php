@@ -6,15 +6,16 @@ namespace App\Services;
 
 use App\Entity\Core\Room;
 use App\Entity\Devices\Devices;
+use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 
 class UserInterfaceService extends AbstractHomeAppUserSensorServiceCore
 {
-    private array $userRooms = [];
+    private array $userRooms;
 
-    private array $userDevices = [];
+    private array $userDevices;
 
     public function __construct(EntityManagerInterface $em, Security $security)
     {
@@ -33,4 +34,17 @@ class UserInterfaceService extends AbstractHomeAppUserSensorServiceCore
         ];
     }
 
+    public function getAppUserDataForLocalStorage()
+    {
+        return [
+            'userID' => $this->getUserID(),
+            'roles' => $this->getUser()->getRoles(),
+            'groups' => $this->getGroupNameDetails(),
+        ];
+    }
+
+    public function getErrors()
+    {
+        return $this->getFatalErrors();
+    }
 }

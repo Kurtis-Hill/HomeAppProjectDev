@@ -85,7 +85,7 @@ class StandardSensorCardDataDTO extends CardDTOAbstract
         try {
             $this->sensorData[] = [
                 'sensorType' => $type,
-                'highReading' => $sensorTypeObject->getHighReading() !== null ? is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading() : '0',
+                'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
                 'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
                 'currentReading' => is_float($sensorTypeObject->getCurrentReading()) ?  number_format($sensorTypeObject->getCurrentReading(), 2) : $sensorTypeObject->getCurrentReading(),
                 'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),

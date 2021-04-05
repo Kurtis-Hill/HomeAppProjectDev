@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\SensorData;
+namespace App\Services\ESPDeviceSensor\SensorData;
 
 use App\Entity\Card\CardView;
 use App\Entity\Core\GroupnNameMapping;
@@ -64,8 +64,6 @@ class SensorUserDataService extends AbstractSensorService
             $this->em->flush();
             $this->userInputErrors[] = $exception->getMessage();
         } catch (\Exception | ORMException $e) {
-            $this->em->remove($sensor);
-            $this->em->flush();
             error_log($e->getMessage());
             $this->serverErrors[] = $e->getMessage();
         }
@@ -127,7 +125,6 @@ class SensorUserDataService extends AbstractSensorService
                         }
                         if ($newObject instanceof Analog) {
                             $newSensorTypeObject->setAnalogObject($newObject);
-
                         }
                         if ($newObject instanceof Latitude) {
                             $newSensorTypeObject->setLatitudeObject($newObject);
@@ -152,7 +149,6 @@ class SensorUserDataService extends AbstractSensorService
                 $this->em->remove($newObject);
             }
             $this->em->remove($sensor);
-            $this->em->remove($cardView);
             $this->em->flush();
 
             throw new BadRequestException('Sensor Type Not Recognised Your App May Need Updating');

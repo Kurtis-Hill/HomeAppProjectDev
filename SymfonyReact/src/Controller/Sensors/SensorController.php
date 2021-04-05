@@ -6,7 +6,7 @@ namespace App\Controller\Sensors;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Services\CardDataServiceUser;
-use App\Services\SensorData\SensorDeviceDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
 use App\Services\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,13 +35,13 @@ class SensorController extends AbstractController
     {
         if (empty($request->request->get('secret')) || empty($request->request->get('sensor-type'))) {
            // dd($request->request->get('secret'), $request->request->get('sensor-type'));
-            return $this->sendBadRequestResponse();
+            return $this->sendBadRequestJsonResponse();
         }
 
         $sensorFormData = $sensorDataService->processSensorReadingUpdateRequest($request);
 
         if (empty($sensorFormData)) {
-            return $this->sendInternelServerErrorResponse();
+            return $this->sendInternelServerErrorJsonResponse();
         }
 
 //        foreach ($sensorFormData as $sensorType => $sensorData) {
@@ -65,6 +65,7 @@ class SensorController extends AbstractController
      * @Route("/add-new-sensor", name="add-new-sensor")
      * @param Request $request
      * @param SensorUserDataService $sensorService
+     * @param SensorUserDataService $sensorService
      * @param CardDataServiceUser $cardDataService
      * @return JsonResponse
      * @throws \Doctrine\ORM\NoResultException
@@ -81,17 +82,17 @@ class SensorController extends AbstractController
         ];
 
         if (empty($sensorData['sensorName'] || $sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
-            return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
+            return $this->sendBadRequestJsonResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
 
         $newSensorForm = $sensorService->createNewSensor($sensorData);
 
         if (!empty($sensorService->getUserInputErrors())) {
-            return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
+            return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
         }
 
         if (!empty($sensorService->getServerErrors())) {
-            return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
+            return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
         }
 
         $sensor = $newSensorForm->getData() ?: null;
@@ -102,17 +103,17 @@ class SensorController extends AbstractController
             $sensorService->handleSensorCreation($newSensorForm->getData(), $newSensorCard, $sensorData);
 
             if (!empty($sensorService->getUserInputErrors())) {
-                return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
+                return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
             }
 
             if (!empty($sensorService->getServerErrors())) {
-                return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
+                return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
             }
 
-            return $this->sendCreatedResourceResponse(['sensorNameID' => $sensorID]);
+            return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
         }
 
-        return $this->sendBadRequestResponse();
+        return $this->sendBadRequestJsonResponse();
     }
 
     /**

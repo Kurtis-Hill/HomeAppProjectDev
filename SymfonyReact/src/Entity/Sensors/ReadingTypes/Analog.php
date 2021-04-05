@@ -37,14 +37,14 @@ class Analog implements StandardReadingSensorInterface
      *
      * @ORM\Column(name="highAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="1111"})
      */
-    private int $highAnalog = 9999;
+    private int $highAnalog;
 
     /**
      * @var float
      *
      * @ORM\Column(name="lowAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="2222"})
      */
-    private int $lowAnalog = 1111;
+    private int $lowAnalog;
 
     /**
      * @var bool
