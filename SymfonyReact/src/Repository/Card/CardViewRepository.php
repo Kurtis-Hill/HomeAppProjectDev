@@ -7,12 +7,14 @@ namespace App\Repository\Card;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Icons;
+use App\Entity\Core\User;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Symfony\Component\Security\Core\User\UserInterface;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Devices\Devices;
@@ -27,7 +29,6 @@ class CardViewRepository extends EntityRepository
 
         $sensorAlias = [];
         foreach ($sensors as $sensorNames => $sensorData) {
-//            dd($sensorData['object'], $sensorData['alias']);
             $sensorAlias[] = $sensorData['alias'];
             $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH,$sensorData['alias'].$joinConditionString);
         }
@@ -36,8 +37,11 @@ class CardViewRepository extends EntityRepository
     }
 
 
-    public function getAllCardObjectsForUser(int $userID, array $groupNameIDs, array $sensors)
+    public function getAllIndexCardObjectsForUser(UserInterface $user, array $sensors)
     {
+        $userID = $user->getUserID();
+        $groupNameIDs = $user->getUserGroupMappingEntities();
+
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
 
@@ -79,9 +83,11 @@ class CardViewRepository extends EntityRepository
      * @param array $sensors
      * @return array
      */
-    public function getAllCardReadingsForDevice(int $userID, array $groupNameIDs, array $sensors, int $deviceDetails): array
+    public function getAllCardReadingsForDevice(UserInterface $user, array $sensors, int $deviceDetails): array
     {
-//        dd($deviceDetails, $groupNameIDs, $userID, $sensors);
+        $userID = $user->getUserID();
+        $groupNameIDs = $user->getUserGroupMappingEntities();
+
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
 
@@ -89,7 +95,7 @@ class CardViewRepository extends EntityRepository
         $expr = $qb->expr();
 
         $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-//dd($sensorAlias);
+
         $qb->select($sensorAlias)
             ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
@@ -103,7 +109,7 @@ class CardViewRepository extends EntityRepository
             $expr->in('devices.groupNameID', ':groupNameID'),
             $expr->eq('devices.deviceNameID', ':deviceNameID'),
         );
-        // dd($sensorAlias, $groupNameIDs, $sensors, $qb);
+
         $qb->setParameters(
             [
                 'userID' => $userID,
@@ -114,31 +120,6 @@ class CardViewRepository extends EntityRepository
             ]
         );
 
-//        dd($qb->getQuery()->getSQL());
-        return array_filter($qb->getQuery()->getResult());
-        //dd($groupNameIDs, $userID, $deviceDetails, $sensors);
-//        $qb = $this->createQueryBuilder('cv');
-//        $expr = $qb->expr();
-//
-//        $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-//
-//        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-//
-//        $qb->select($sensorAlias)
-//        ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
-//        ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
-//        ->where(
-//            $qb->expr()->in('devices.groupNameID', ':groupNameID'),
-//            $expr->eq('cv.userID', ':userID'),
-//            $expr->eq('devices.deviceNameID', ':deviceNameID'),
-//        );
-//
-//        $qb->setParameters([
-//            'deviceNameID' => $deviceDetails,
-//            'userID' => $userID,
-//            'groupNameID' => $groupNameIDs,
-//        ]);
-//
         return array_filter($qb->getQuery()->getResult());
     }
 
@@ -454,9 +435,4 @@ class CardViewRepository extends EntityRepository
 //
 //
 //
-
-
-
-
-
 }

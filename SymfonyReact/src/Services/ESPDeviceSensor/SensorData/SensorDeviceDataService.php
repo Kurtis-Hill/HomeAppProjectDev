@@ -30,31 +30,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SensorDeviceDataService extends AbstractSensorService
 {
-    public function __construct(EntityManagerInterface $em, Security $security, FormFactoryInterface $formFactory)
-    {
-        parent::__construct($em, $security, $formFactory);
-
-        try {
-            $this->setUserVariables($security);
-        } catch (\Exception $exception) {
-
-        }
-    }
-
-    protected function setUserVariables(Security $security)
-    {
-
-    }
 
     public function processSensorReadingUpdateRequest(Request $request): ?array
     {
         $sensorType = $request->request->get('sensor-type');
 
-        //  try {
-//        if (empty($checkIfLegitimateUser)) {
-//            throw new BadRequestException('user is probably false');
-            //log ip and ban
-//        }
 
         if ($sensorType === SensorType::DHT_SENSOR) {
             $this->handleDhtUpdateRequest($request);

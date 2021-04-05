@@ -5,7 +5,7 @@ namespace App\Controller\Sensors;
 
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
-use App\Services\CardDataServiceUser;
+use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
 use App\Services\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -66,14 +66,14 @@ class SensorController extends AbstractController
      * @param Request $request
      * @param SensorUserDataService $sensorService
      * @param SensorUserDataService $sensorService
-     * @param CardDataServiceUser $cardDataService
+     * @param CardUserDataService $cardDataService
      * @return JsonResponse
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardDataServiceUser $cardDataService): JsonResponse
+    public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         $sensorData = [
             'sensorName' => $request->get('sensor-name'),

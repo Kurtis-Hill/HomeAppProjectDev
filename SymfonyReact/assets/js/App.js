@@ -23,8 +23,8 @@ export default class App extends Component {
         return (                
         <Router>
             <Switch>
-                <Route exact path="/HomeApp/login" component={Login}/>
                 <Route exact path="/HomeApp/register"/>
+                <Route exact path="/HomeApp/login" component={Login}/>
                 <Route exact path="/HomeApp/logout" component={() => removeUserSession()}/>
                 <Route path="/HomeApp/WebApp/">
                     <React.Fragment>

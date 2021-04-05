@@ -20,7 +20,6 @@ class IndexController extends AbstractController
      * @param Request $request
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @param $route
-     * @return Response
      */
     public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route): Response
     {

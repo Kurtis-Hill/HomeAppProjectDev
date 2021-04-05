@@ -82,18 +82,54 @@ class User implements UserInterface
      */
     private GroupNames $groupNameID;
 
-    private array $groupTest = [];
+    /**
+     * @var array
+     */
+    private array $userGroupMappingEntities = [];
 
-    public function getGroupTest()
+    /**
+     * @return array
+     */
+    public function getUserGroupMappingEntities(): array
     {
 
-        return $this->groupTest;
+        return $this->userGroupMappingEntities;
     }
 
-    public function setGroupTest($groupTest)
+    /**
+     * @param array $userGroupMappingEntities
+     */
+    public function setUserGroupMappingEntities(array $userGroupMappingEntities)
     {
-        $this->groupTest = $groupTest;
-//        dd('test', $this->groupTest);
+        $this->userGroupMappingEntities = $userGroupMappingEntities;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroupNameIds(): array
+    {
+        $groupNames = [];
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
+        }
+
+        return $groupNames;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroupNameAndIds(): array
+    {
+        /** @var GroupnNameMapping $entity */
+        $groupNames = [];
+        foreach ($this->userGroupMappingEntities as $entity) {
+            /** @var GroupnNameMapping $entity */
+            $groupNames[] = ['groupNameID' => $entity->getGroupNameID()->getGroupNameID(), 'groupName' => $entity->getGroupNameID()->getGroupName()];
+        }
+
+        return $groupNames;
     }
 
     /**
@@ -126,7 +162,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
     public function setPassword(string $password): self
@@ -208,8 +244,6 @@ class User implements UserInterface
 
     public function setSalt(string $salt): self
     {
-        $salt1 = $salt;
-
         return $this;
     }
 
@@ -230,14 +264,8 @@ class User implements UserInterface
 
     public function setTime(?\DateTime $time = null): self
     {
-        if ($this->time === null) {
-            $this->time = new \DateTime('now');
-        }
-        else {
-            $this->time = $time;
-        }
+        $this->time = $time === null ?  new \DateTime('now') : $time;
 
         return $this;
     }
-
 }

@@ -4,14 +4,11 @@
 namespace App\Controller\CardData;
 
 use App\Form\CardViewForms\CardViewForm;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-use App\Services\CardDataServiceUser;
+use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use App\Entity\Sensors\SensorType;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,10 +31,10 @@ class CardDataController extends AbstractController
     /**
      * @Route("/cards", name="card-data", methods={"GET"})
      * @param Request $request
-     * @param CardDataServiceUser $cardDataService
+     * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
-    public function returnCardDataDTOs(Request $request, CardDataServiceUser $cardDataService): Response|JsonResponse
+    public function returnCardDataDTOs(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $route = $request->get('view');
         $deviceId = $request->get('device-id');
@@ -57,11 +54,13 @@ class CardDataController extends AbstractController
 
         $serializer = new Serializer($normaliser, $encoders);
 
+        $serializedCards = $serializer->serialize($cardData, 'json');
+
         if (!empty($cardDataService->getCardErrors())) {
-            return $this->sendPartialContentResponse($serializer->serialize($cardData, 'json'));
+            return $this->sendPartialContentResponse($serializedCards);
         }
 
-        return $this->sendSuccessfulResponse($serializer->serialize($cardData, 'json'));
+        return $this->sendSuccessfulResponse($serializedCards);
     }
 
 
@@ -69,10 +68,10 @@ class CardDataController extends AbstractController
      * @Route("/card-state-view-form", name="cardViewForm", methods={"GET"})
      *
      * @param Request $request
-     * @param CardDataServiceUser $cardDataService
+     * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
-    public function showCardViewForm(Request $request, CardDataServiceUser $cardDataService): Response|JsonResponse
+    public function showCardViewForm(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->query->get('cardViewID');
 
@@ -99,10 +98,10 @@ class CardDataController extends AbstractController
      * @Route("/update-card-view", name="updateCardView", methods={"POST"})
      * @param Request $request
      * @param SensorUserDataService $sensorDataService
-     * @param CardDataServiceUser $cardDataService
+     * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
-    public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardDataServiceUser $cardDataService): Response|JsonResponse
+    public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->get('card-view-id');
 
@@ -150,10 +149,6 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
         }
 
-//        if (!empty($sensorDataService->returnAllFormInputErrors())) {
-//            return $this->sendBadRequestResponse($sensorDataService->returnAllFormInputErrors());
-//        }
-
         if (!empty($sensorDataService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse();
         }
@@ -162,5 +157,6 @@ class CardDataController extends AbstractController
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }
+
 
 }

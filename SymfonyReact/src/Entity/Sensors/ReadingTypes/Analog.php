@@ -207,11 +207,7 @@ class Analog implements StandardReadingSensorInterface
      */
     public function setTime(?\DateTime $time = null): void
     {
-        if ($time === null) {
-            $time = new \DateTime('now');
-        }
-
-        $this->time = $time;
+        $this->time = $time === null ?  new \DateTime('now') : $time;
     }
 
     /**

@@ -36,6 +36,18 @@ export const setUserSession = (userID, roles) => {
     sessionStorage.setItem('roles' , roles);
 }
 
+export const setUserSessionData = (token, refreshToken, userData) => {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('userID');   
+    sessionStorage.removeItem('roles');
+
+    sessionStorage.setItem('token' , token);
+    sessionStorage.setItem('refreshToken' , refreshToken);
+    sessionStorage.setItem('userID' , userData.userID);
+    sessionStorage.setItem('roles' , userData.roles);
+}
+
 export const capitalizeFirstLetter = (string) => {
     if (string != undefined) {
         return string.charAt(0).toUpperCase() + string.slice(1);

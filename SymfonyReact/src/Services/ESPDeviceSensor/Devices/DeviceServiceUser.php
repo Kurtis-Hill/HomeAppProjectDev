@@ -54,11 +54,16 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             );
         }
 
-        if (!in_array($deviceData['groupNameObject'], $this->getGroupNameIDs(), true)) {
-            throw new BadRequestException(
-                'You are not part of this group'
-            );
+        $isCallableCheck = [$this->getUser(), 'getGroupNameIds'];
+
+        if (is_callable($isCallableCheck)) {
+            if (!in_array($deviceData['groupNameObject'], $this->getUser()->getGroupNameIds(), true)) {
+                throw new BadRequestException(
+                    'You are not part of this group'
+                );
+            }
         }
+
     }
 
     /**
