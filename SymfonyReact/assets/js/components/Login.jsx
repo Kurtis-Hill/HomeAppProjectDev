@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { setUserTokens, setUserSession, webappURL, apiURL, getToken } from '../Utilities/Common';
+import { setUserTokens, setUserSession, webappURL, apiURL, getToken, setUserSessionData } from '../Utilities/Common';
 
 function Login(props) {
     const username = useFormInput('');
@@ -31,9 +31,14 @@ function Login(props) {
                 setLoading(false); 
             });
         
+        // loginCheckResponse 
+        //     ? setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken)
+        //     : setError('Login check response error');
+
+        console.log(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData, loginCheckResponse.data);
         loginCheckResponse 
-            ? setUserTokens(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken)
-            : setError('Login check response error');
+        ? setUserSessionData(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
+        : setError('Login check response error');
 
         const loginForm = document.getElementById('login-form');
 
@@ -47,28 +52,58 @@ function Login(props) {
                 setLoading(false); 
             });
 
+        
         if (loginResponse.status === 200) {
-            const userDetailsResponse = await axios.get(apiURL+'user/account-details', { headers: {"Authorization" : `BEARER ${getToken()}`} });
-            console.log('status account', userDetailsResponse.status);
-            //const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
-            if (userDetailsResponse.status === 200) {
-                if (userDetailsResponse.data.responseData.userID !== undefined || userDetailsResponse.data.responseData.roles !== undefined) {
-                    setLoading(false);
-                    alert('setting user data failed');
-                }
-                else {
-                    setUserSession(userDetailsResponse.data.responseData.userID, userDetailsResponse.data.responseData.roles);
-                    window.location.replace(webappURL+'index');
-                }
-            }
-            else {
-                setLoading(false);
-            }
-        } 
-        else {
-            setError(loginResponse.data.errors);
             setLoading(false);
+            window.location.replace(webappURL+'index');
+        } else {
+            setLoading(false);
+            alert('setting user data failed');
         }
+           //     const userDetailsResponse = await axios.get(apiURL+'user/account-details', { headers: {"Authorization" : `BEARER ${getToken()}`} });
+           //     console.log('status account', userDetailsResponse.status);
+                //const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
+              //  if (userDetailsResponse.status === 200) {
+                //    if (userDetailsResponse.data.responseData.userID !== undefined || userDetailsResponse.data.responseData.roles !== undefined) {
+                      //  setLoading(false);
+                    //    alert('setting user data failed');
+                  //  }
+                    //else {
+                      //  setUserSession(userDetailsResponse.data.responseData.userID, userDetailsResponse.data.responseData.roles);
+                     //   window.location.replace(webappURL+'index');
+                    //}
+                //}
+                // else {
+                //     setLoading(false);
+                // }
+         //   } 
+            // else {
+            //     setError(loginResponse.data.errors);
+            //     setLoading(false);
+            // }    
+
+        // if (loginResponse.status === 200) {
+        //     const userDetailsResponse = await axios.get(apiURL+'user/account-details', { headers: {"Authorization" : `BEARER ${getToken()}`} });
+        //     console.log('status account', userDetailsResponse.status);
+        //     //const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);
+        //     if (userDetailsResponse.status === 200) {
+        //         if (userDetailsResponse.data.responseData.userID !== undefined || userDetailsResponse.data.responseData.roles !== undefined) {
+        //             setLoading(false);
+        //             alert('setting user data failed');
+        //         }
+        //         else {
+        //             setUserSession(userDetailsResponse.data.responseData.userID, userDetailsResponse.data.responseData.roles);
+        //          //   window.location.replace(webappURL+'index');
+        //         }
+        //     }
+        //     else {
+        //         setLoading(false);
+        //     }
+        // } 
+        // else {
+        //     setError(loginResponse.data.errors);
+        //     setLoading(false);
+        // }
     }
     
     return (

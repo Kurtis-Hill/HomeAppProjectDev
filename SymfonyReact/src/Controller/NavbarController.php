@@ -26,11 +26,8 @@ class NavbarController extends AbstractController
     {
         $navbarData = $navbarService->getNavBarData();
 
-        $errors = $navbarService->getErrors();
-
-        if (!empty($errors)) {
-//            dd($errors);
-            return $this->sendInternelServerErrorJsonResponse($errors);
+        if (!empty($navbarService->getServerErrors())) {
+            return $this->sendInternelServerErrorJsonResponse($navbarService->getServerErrors());
         }
 
         return $this->sendSuccessfulJsonResponse($navbarData);

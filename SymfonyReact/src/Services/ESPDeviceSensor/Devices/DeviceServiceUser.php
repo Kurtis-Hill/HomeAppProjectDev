@@ -22,15 +22,15 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
      */
     public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm): FormInterface
     {
-     //   try {
+        try {
             $this->userInputDataCheck($deviceData);
             $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
-//        }
-//        catch (BadRequestException $e) {
-//            $this->userInputErrors[] = $e->getMessage();
-//        }
+        }
+        catch (BadRequestException $e) {
+            $this->userInputErrors[] = $e->getMessage();
+        }
 //        catch (ORMException $e) {
-//            $this->serverErrors[] = $e->getMessage();
+//            $this->serverErrors[] = 'Failed to process device query';
 //            error_log($e->getMessage());
 //        }
 //        catch (\Exception $e) {
@@ -43,7 +43,7 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
 
     private function userInputDataCheck(array $deviceData): void
     {
-        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDeviceInUsersGroup($deviceData);
+        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDuplicateDeviceNewDeviceCheck($deviceData);
 
         if ($currentUserDeviceCheck instanceof Devices) {
             throw new BadRequestException(
@@ -54,11 +54,16 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             );
         }
 
-        if (!in_array($deviceData['groupNameObject'], $this->getGroupNameIDs(), true)) {
-            throw new BadRequestException(
-                'You are not part of this group'
-            );
+        $isCallableCheck = [$this->getUser(), 'getGroupNameIds'];
+
+        if (is_callable($isCallableCheck)) {
+            if (!in_array($deviceData['groupNameObject'], $this->getUser()->getGroupNameIds(), true)) {
+                throw new BadRequestException(
+                    'You are not part of this group'
+                );
+            }
         }
+
     }
 
     /**
@@ -73,10 +78,7 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
             $secret = $deviceData['deviceName'];
             $secret .= time();
-            $secret .= $deviceData['groupNameObject'];
-            $secret .= $deviceData['roomObject'];
-
-//            $secret = hash("md5", $secret);
+            $secret = hash("md5", $secret);
 
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setDeviceSecret($secret);

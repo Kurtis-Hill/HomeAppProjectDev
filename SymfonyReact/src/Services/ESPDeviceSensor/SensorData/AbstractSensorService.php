@@ -6,6 +6,7 @@ namespace App\Services\ESPDeviceSensor\SensorData;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,30 +38,18 @@ class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
      */
     protected function processSensorForm(array $sensorFormData, array $readingTypeObject): void
     {
-//        dd($sensorFormData, $readingTypeObject);
         foreach ($sensorFormData as $sensorType => $sensorData) {
             foreach ($readingTypeObject as $sensorObject) {
-//                dd($sensorType, $sensorObject, $sensorType == $sensorObject::class);
                 if ($sensorType === $sensorObject::class) {
-//                    dd('success', $sensorData, $sensorFormData);
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
-//                    dd($sensorData['formToProcess'], $sensorObject, $sensorData['object'], $sensorData['formData']);
                     $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
 
-                   //     dd($handledForm);
                     if ($handledForm instanceof FormInterface) {
                         $this->processFormErrors($handledForm);
                     }
-
-//                    $this->processForm($sensorForm, $this->em, $sensorData['formData']);
-//                    if (!empty($this->returnAllFormInputErrors())) {
-//                        $this->userInputErrors[] = $this->returnAllFormInputErrors();
-//                    }
-                    continue;
                 }
             }
         }
-        // dd($handledSensorForm, $this->userInputErrors);
     }
 
     /**
@@ -72,7 +61,6 @@ class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
      */
     protected function prepareSensorFormData(Request $request, SensorType $sensorType, string $formToProcess, array $readingNameOverRide = []): array
     {
-        // change req5uest to array
         $currentSensorType = $sensorType->getSensorType();
 
         foreach (self::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
@@ -129,5 +117,40 @@ class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
         }
 
         return $sensorFormsData ?? [];
+    }
+
+    /**
+     * @param FormInterface|FormFactoryInterface $form
+     * @param array $formData
+     * @return bool|FormInterface
+     */
+    private function processForm(FormInterface|FormFactoryInterface $form, array $formData): ?FormInterface
+    {
+        $form->submit($formData);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $validFormData = $form->getData();
+
+            try {
+                $this->em->persist($validFormData);
+            } catch (ORMException | \Exception $e) {
+                error_log($e->getMessage());
+                $this->serverErrors[] = 'Object persistence failed';
+            }
+
+            return null;
+        }
+
+        return $form;
+    }
+
+    /**
+     * @param FormInterface $form
+     */
+    private function processFormErrors(FormInterface $form): void
+    {
+        foreach ($form->getErrors(true, true) as $error) {
+            $this->userInputErrors[] = $error->getMessage();
+        }
     }
 }

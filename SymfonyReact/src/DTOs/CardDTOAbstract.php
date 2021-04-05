@@ -32,7 +32,6 @@ abstract class CardDTOAbstract
             $this->setSensorData($cardDTOData->getAnalogObject(), 'analog');
             $processed = true;
         }
-
         if ($processed === false) {
             throw new \RuntimeException('Sensor type not recognised, the app needs updating to support the new feature');
         }

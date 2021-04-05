@@ -91,12 +91,7 @@ class ConstHumid
      */
     public function setTime(?\DateTime $time): void
     {
-        if ($this->time === null) {
-            $this->time = new \DateTime('now');
-        }
-        else {
-            $this->time = $time;
-        }
+        $this->time = $time === null ?  new \DateTime('now') : $time;
     }
 
     /**

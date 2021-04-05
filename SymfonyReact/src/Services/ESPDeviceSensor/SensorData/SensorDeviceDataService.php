@@ -4,6 +4,7 @@
 namespace App\Services\ESPDeviceSensor\SensorData;
 
 
+use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ConstantRecording\ConstAnalog;
 use App\Entity\Sensors\ConstantRecording\ConstHumid;
@@ -29,22 +30,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SensorDeviceDataService extends AbstractSensorService
 {
-//    protected function setUserSettings(Security $security)
-//    {
-//        if (!$security->getUser() instanceof Devices) {
-//            $this->serverErrors[] = 'Logged in user is not a device';
-//        }
-//    }
 
     public function processSensorReadingUpdateRequest(Request $request): ?array
     {
         $sensorType = $request->request->get('sensor-type');
 
-        //  try {
-//        if (empty($checkIfLegitimateUser)) {
-//            throw new BadRequestException('user is probably false');
-            //log ip and ban
-//        }
 
         if ($sensorType === SensorType::DHT_SENSOR) {
             $this->handleDhtUpdateRequest($request);

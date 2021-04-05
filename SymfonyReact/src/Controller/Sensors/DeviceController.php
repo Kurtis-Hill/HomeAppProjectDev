@@ -9,7 +9,6 @@ use App\Entity\Devices\Devices;
 use App\Form\SensorForms\AddNewDeviceForm;
 use App\Services\ESPDeviceSensor\Devices\DeviceServiceUser;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

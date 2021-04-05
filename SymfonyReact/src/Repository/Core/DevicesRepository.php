@@ -37,7 +37,7 @@ class DevicesRepository extends EntityRepository
      * @param $deviceDetails
      * @return int|mixed|string
      */
-    public function findDeviceInUsersGroup($deviceDetails): ?Devices
+    public function findDuplicateDeviceNewDeviceCheck($deviceDetails): ?Devices
     {
         $qb = $this->createQueryBuilder('devices');
         $expr = $qb->expr();
@@ -54,6 +54,28 @@ class DevicesRepository extends EntityRepository
                     'deviceName' => $deviceDetails['deviceName'],
                     'groupNameID' => $deviceDetails['groupNameObject'],
                     'roomID' => $deviceDetails['roomObject']
+                ]
+            );
+        // use this after db clean
+//dd($qb->getQuery()->getOneOrNullResult());
+        return $qb->getQuery()->getResult()[0] ?? null;
+    }
+
+    public function findDeviceByIdAndGroupNameIds($deviceDetails)
+    {
+        $qb = $this->createQueryBuilder('devices');
+        $expr = $qb->expr();
+
+        $qb->select('devices')
+            ->innerJoin(Room::class, 'room')
+            ->where(
+                $expr->eq('devices.deviceNameID', ':deviceName'),
+                $expr->in('devices.groupNameID', ':groupNameID'),
+            )
+            ->setParameters(
+                [
+                    'deviceNameID' => $deviceDetails['deviceNameID'],
+                    'groupNameID' => $deviceDetails['groupNameIDs'],
                 ]
             );
 //dd($qb->getQuery()->getSingleResult());
