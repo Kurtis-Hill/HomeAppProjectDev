@@ -15,7 +15,7 @@ const cardModal = () => {
 
   return (
   <React.Fragment>
-    {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+    {/* {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null} */}
     
     <div id="" style={context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div className="modal-dialog" role="document">
@@ -44,7 +44,7 @@ const cardModal = () => {
             : null
           }
                   
-              {modalContent.submitSuccess === true ? <div className="modal-success"><h4 style={{textAlign:"center"}}>Submission Made Successfully</h4> </div> :
+            {modalContent.submitSuccess === true ? <div className="modal-success"><h4>Submission Made Successfully</h4> </div> :
               <React.Fragment>   
                 <div className="modal-body">
                   <React.Fragment>   

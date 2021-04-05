@@ -4,17 +4,43 @@
 namespace App\Services;
 
 
-use App\Services\AbstractHomeAppUserSensorServiceCore;
-use http\Exception\RuntimeException;
+use App\Entity\Core\User;
+use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
+use Namshi\JOSE\JWT;
+use Symfony\Component\Security\Core\Security;
 
-class UserServiceUser extends AbstractHomeAppUserSensorServiceCore
+class UserServiceUser
 {
-    public function getAppUserDataForLocalStorage()
+    private $user;
+
+    public function __construct(Security $security)
     {
-        return [
-            'userID' => $this->getUserID(),
-            'roles' => $this->getUser()->getRoles(),
-            'groups' => $this->getGroupNameDetails(),
-        ];
+        $this->user = $security->getUser();
+//        dd($security, $JWTUser, 'user service construct');
     }
+
+    public function setUserGroups(array $groupMappings)
+    {
+
+        if ($this->user instanceof User) {
+            $this->user->setGroupTest($groupMappings);
+//            dd($groupMappings, 'mappings user service', $this->user);
+        }
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+//    public function getAppUserDataForLocalStorage()
+//    {
+//        return [
+//            'userID' => $this->getUserID(),
+//            'roles' => $this->getUser()->getRoles(),
+//            'groups' => $this->getGroupNameDetails(),
+//        ];
+//    }
 }

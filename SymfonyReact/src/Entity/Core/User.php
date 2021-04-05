@@ -82,6 +82,20 @@ class User implements UserInterface
      */
     private GroupNames $groupNameID;
 
+    private array $groupTest = [];
+
+    public function getGroupTest()
+    {
+
+        return $this->groupTest;
+    }
+
+    public function setGroupTest($groupTest)
+    {
+        $this->groupTest = $groupTest;
+//        dd('test', $this->groupTest);
+    }
+
     /**
      * A visual identifier that represents this user.
      *

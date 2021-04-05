@@ -14,16 +14,13 @@ use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
-use App\Services\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-use App\Services\SensorData\AbstractSensorService;
+use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Route;
 
 
 /**
@@ -48,7 +45,6 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
             'alias' => 'lat',
             'object' => Latitude::class
         ],
-
     ];
 
     /**
@@ -60,17 +56,14 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
      * @param Request $request
      * @return array
      */
-    public function prepareAllCardDTOs(Request $request): array
+    public function prepareAllCardDTOs(?string $route, $deviceId): array
     {
-        $route = $request->get('view');
-
         try {
             $sensorObjects = match ($route) {
-                "room" => $this->getRoomCardDataObjects($request),
-                "device" => $this->getDevicePageCardDataObjects($request),
+                "room" => $this->getRoomCardDataObjects($deviceId),
+                "device" => $this->getDevicePageCardDataObjects($deviceId),
                 default => $this->getIndexPageCardDataObjects()
             };
-//            dd($sensorObjects);
         } catch (\RuntimeException $e) {
             $this->serverErrors[] = $e->getMessage();
         } catch (ORMException $e) {
@@ -121,33 +114,31 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
     {
         $cardRepository = $this->em->getRepository(CardView::class);
 
-        $cardData = $cardRepository->getAllCardObjectsForUser($this->getUserID(), $this->getGroupNameIDs(), AbstractSensorService::SENSOR_TYPE_DATA);
+        $cardData = $cardRepository->getAllCardObjectsForUser($this->getUserID(), $this->getGroupNameIDs(), AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA);
 
         return $cardData ?? [];
     }
 
 
     /**
-     * @param Request $request
+     * @param string|null $deviceId
      * @return array
      */
-    private function getDevicePageCardDataObjects(Request $request): array
+    private function getDevicePageCardDataObjects(?string $deviceId): array
     {
-        $deviceId = $request->get('device-name');
-
         if (empty($deviceId)) {
             throw new BadRequestException(
                 'No card data found query if you have sensors on the device please logout and back in again please'
             );
         }
 
-        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUserID(), $this->getGroupNameIDs(), AbstractSensorService::SENSOR_TYPE_DATA, $deviceId);
-//        dd($cardData, 'card data');
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUserID(), $this->getGroupNameIDs(), AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA, $deviceId);
+
         return $cardData ?? [];
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     #[ArrayShape(
         [
@@ -156,7 +147,7 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
             'states' => Cardstate::class
         ]
     )]
-    private function getUserSensorCardSelectionData(): ?array
+    private function getUserCardSelectionData(): array
     {
         $icons = $this->em->getRepository(Icons::class)->getAllIcons();
         $colours = $this->em->getRepository(CardColour::class)->getAllColours();
@@ -178,9 +169,9 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
     public function getCardViewFormDTO(string $cardViewID): ?CardViewSensorFormDTO
     {
         try {
-            $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], AbstractSensorService::SENSOR_TYPE_DATA);
+            $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA);
 
-            $userSelectionData = $this->getUserSensorCardSelectionData();
+            $userSelectionData = $this->getUserCardSelectionData();
 
             if ($userSelectionData === null) {
                 return null;
@@ -190,7 +181,7 @@ class CardDataServiceUser extends AbstractHomeAppUserSensorServiceCore
                 $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
             }
             else {
-                $this->serverErrors[] = 'Query error for card view form';
+                $this->serverErrors[] = 'Sensor Not Recognised, You May Need To Update Your App';
             }
         } catch (\RuntimeException $e) {
             $this->serverErrors[] = $e->getMessage();

@@ -11,7 +11,7 @@ const addNewDevice = () => {
 
     const newDeviceModalContent = addNewDeviceContext.newDeviceModalContent;
 
-    const newSensorRoute = webappURL+"device?device-name="+newDeviceModalContent.newDeviceID+"&view=device";
+    const newSensorRoute = webappURL+"device?device-id="+newDeviceModalContent.newDeviceID+"&view=device";
 
     return (
         <React.Fragment>
@@ -26,7 +26,7 @@ const addNewDevice = () => {
                                 </button>
                             </div>
                             {
-                                newDeviceModalContent.errors.length > 0 ?                
+                                newDeviceModalContent.errors.length > 0 ?
                                     <div className="error-container">
                                         <div className="form-modal-error-box">
                                             <ol>
@@ -35,33 +35,33 @@ const addNewDevice = () => {
                                                 ))}
                                             </ol>
                                         </div>
-                                    </div>                
+                                    </div>
                                 : null
                             }
                             <div className="modal-body">
                                 {newDeviceModalContent.formSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-                                
+
                                 <label className="large font-weight-bold">Device Name</label>
                                 <input type="text" name="deviceName" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
-                                
-                                <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>                                
+
+                                <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>
                                 <select value={newDeviceModalContent.newDeviceGroup} name="deviceGroup" id="deviceGroup" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
-                                    {   
+                                    {
                                         navBarContext.userGroupNames.length >= 1
                                         ? navBarContext.userGroupNames.map((groupNames) => (
-                                            <option className="form-control" value={groupNames.groupNameID} key={groupNames.groupNameID}>{groupNames.groupName}</option>    
+                                            <option className="form-control" value={groupNames.groupNameID} key={groupNames.groupNameID}>{groupNames.groupName}</option>
                                             ))
-                                        : 
+                                        :
                                         <option>No group names available try to Log Out then back in again</option>
                                     }
-                                </select> 
+                                </select>
 
-                                <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>                                
+                                <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>
                                 <select value={newDeviceModalContent.newDeviceRoom} name="deviceRoom" id="deviceRoom" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {
-                                    navBarContext.userRooms.length >= 0 
+                                    navBarContext.userRooms.length >= 0
                                     ? navBarContext.userRooms.map((room, index) => (
-                                        <option className="form-control" value={room.roomID} key={index}>{room.room}</option>    
+                                        <option className="form-control" value={room.roomID} key={index}>{room.room}</option>
                                         ))
                                     : <option>No Rooms</option>
                                     }
@@ -69,7 +69,7 @@ const addNewDevice = () => {
                                 {
                                     newDeviceModalContent.deviceSecret !== null ?
                                     <div className="secret-container">
-                                    <label className="modal-space large font-weight-bold">This is your devices secret, you will need this when doing an initial setup of your device</label>                                
+                                    <label className="modal-space large font-weight-bold">This is your devices secret, you will need this when doing an initial setup of your device</label>
                                         <div className="secret-box">
                                         <p className="font-weight-bold"> {newDeviceModalContent.deviceSecret}</p>
                                         </div>
@@ -84,7 +84,7 @@ const addNewDevice = () => {
                             <button className="btn btn-secondary" type="button" onClick={() => {navBarContext.toggleNewDeviceModal()}} data-dismiss="modal">Cancel</button>
                                 <button className="btn btn-primary" type="submit" value="submit">Submit</button>
                             </div>
-                        </form>            
+                        </form>
                     </div>
                 </div>
             </div>

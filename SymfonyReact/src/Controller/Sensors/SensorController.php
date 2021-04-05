@@ -7,14 +7,10 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\SensorForms\AddNewSensorForm;
 use App\Services\CardDataServiceUser;
-use App\Services\SensorData\SensorDeviceDataService;
-use App\Services\SensorData\SensorUserDataService;
-use App\Services\UserSensorService;
+use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,13 +36,13 @@ class SensorController extends AbstractController
     {
         if (empty($request->request->get('secret')) || empty($request->request->get('sensor-type'))) {
            // dd($request->request->get('secret'), $request->request->get('sensor-type'));
-            return $this->sendBadRequestResponse();
+            return $this->sendBadRequestJsonResponse();
         }
 
         $sensorFormData = $sensorDataService->processSensorReadingUpdateRequest($request);
 
         if (empty($sensorFormData)) {
-            return $this->sendInternelServerErrorResponse();
+            return $this->sendInternelServerErrorJsonResponse();
         }
 
 //        foreach ($sensorFormData as $sensorType => $sensorData) {
@@ -69,17 +65,17 @@ class SensorController extends AbstractController
     /**
      * @Route("/add-new-sensor", name="add-new-sensor")
      * @param Request $request
-     * @param UserSensorService $sensorService
+     * @param SensorUserDataService $sensorService
      * @return JsonResponse
      */
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardDataServiceUser $cardDataService): JsonResponse
     {
         $sensorName = $request->get('sensor-name');
         $sensorType = $request->get('sensor-type');
-        $deviceNameID = $request->get('device-name');
+        $deviceNameID = $request->get('device-id');
 
         if (empty($sensorName || $sensorType)) {
-            return $this->sendBadRequestResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
+            return $this->sendBadRequestJsonResponse(['errors' => 'Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
         }
 
         $sensorData = [
@@ -95,11 +91,11 @@ class SensorController extends AbstractController
         $handledSensorForm = $sensorService->handleNewSensorFormSubmission($addNewSensorForm, $sensorData);
 
         if (!empty($sensorService->getUserInputErrors())) {
-            return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
+            return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
         }
 
         if (!empty($sensorService->getServerErrors())) {
-            return $this->sendInternelServerErrorResponse(['errors' => 'Something went wrong please try again']);
+            return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
         }
 
         if ($handledSensorForm->getData() instanceof Sensors) {
@@ -108,13 +104,13 @@ class SensorController extends AbstractController
             $sensorService->handleSensorCreation($newSensor, $newSensorCard, $sensorData);
 
             if (!empty($sensorService->getUserInputErrors())) {
-                return $this->sendBadRequestResponse($sensorService->getUserInputErrors());
+                return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
             }
 
-            return $this->sendCreatedResourceResponse(['sensorNameID' => $sensorID]);
+            return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
         }
 
-        return $this->sendBadRequestResponse();
+        return $this->sendBadRequestJsonResponse();
     }
 
     /**

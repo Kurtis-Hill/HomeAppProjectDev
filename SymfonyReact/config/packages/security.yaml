@@ -23,6 +23,19 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        device:
+            pattern: ^/HomeApp/device
+            stateless: true
+            anonymous: true
+            provider: 'api_device_provider'
+            json_login:
+                check_path: /HomeApp/device/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
         api:
             pattern: ^/HomeApp/api
             stateless: true
@@ -35,22 +48,8 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-
-        sensor_update:
-            pattern: ^/HomeApp/sensor
-            stateless: true
-            anonymous: true
-            provider: 'user_and_device'
-            json_login:
-                check_path: /HomeApp/sensor/login_check
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
-
         main:
-            pattern: ^/HomeApp
+            pattern: ^/HomeApp/WebApp
             anonymous: true
             provider: 'app_user_provider'
             guard:
@@ -67,7 +66,10 @@ security:
 
     access_control:
         - { path: ^/HomeApp/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/device/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        DEV
