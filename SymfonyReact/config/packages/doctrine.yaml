@@ -5,25 +5,21 @@ doctrine:
       charset: utf8mb4
       collate: utf8mb4_unicode_ci
     driver: pdo_mysql
-    server_version: '5.7'
-    host:     "klh17101990.asuscomm.com"
-    port:     "3306"
-    dbname:   "HomeAppNew"
-    user:     "HomeApp"
-    password: "warhammer222"
+    server_version: "%env(DB_SERVER_V)%"
+    host:     "%env(DB_HOST)%"
+    port:     "%env(DB_PORT)%"
+    dbname:   "%env(DB_NAME)%"
+    user:     "%env(DB_USER)%"
+    password: "%env(DB_PASSWORD)%"
     options:
-#      1007  : '%env(PRIV_KEY)%'
-#      1008  : '%env(CLIENT_CERT)%'
-#      1009  : '%env(CA_CERT)%'
-#      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
-      1007  : ../SSL/client-key.pem
-      1008  : ../SSL/client-cert.pem
-      1009  : ../SSL/ca-cert.pem
-      1014  : false
+      1007  : '%env(PRIVATE_KEY)%'
+      1008  : '%env(CLIENT_CERT)%'
+      1009  : '%env(CA_CERT)%'
+      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
 
   orm:
     auto_generate_proxy_classes: '%kernel.debug%'
-    naming_strategy: doctrine.orm.naming_strategy.underscore
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
     auto_mapping: true
     filters:
       softdeleteable: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter

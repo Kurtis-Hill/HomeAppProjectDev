@@ -22,7 +22,7 @@ class CardContextProvider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            refreshTimer: 16000,
+            refreshTimer: 8000,
             cardData: null,
             modalShow: false,
             modalLoading: false,

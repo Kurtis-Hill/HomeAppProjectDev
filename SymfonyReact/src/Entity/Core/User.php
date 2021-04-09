@@ -255,7 +255,7 @@ class User implements UserInterface, APISensorUserInterface
         return $this->groupNameID;
     }
 
-    public function setGroupNameID($groupNameID): void
+    public function setGroupNameID(int|GroupNames $groupNameID): void
     {
         $this->groupNameID = $groupNameID;
     }
