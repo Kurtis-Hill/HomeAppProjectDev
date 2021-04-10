@@ -81,7 +81,7 @@ class User implements UserInterface, APISensorUserInterface
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
-    private GroupNames $groupNameID;
+    private GroupNames|int $groupNameID;
 
     /**
      * @var array
@@ -112,10 +112,8 @@ class User implements UserInterface, APISensorUserInterface
         $groupNames = [];
 
         foreach ($this->userGroupMappingEntities as $entity) {
-//            dd($entity->getGroupNameID()->getGroupNameID());
             $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
         }
-//        dd($groupNames);
 
         return $groupNames;
     }
@@ -153,9 +151,9 @@ class User implements UserInterface, APISensorUserInterface
         return array_unique($this->roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(?array $roles): self
     {
-        $this->roles = $roles;
+        $this->roles = $roles ?? ['ROLE_USER'];
 
         return $this;
     }

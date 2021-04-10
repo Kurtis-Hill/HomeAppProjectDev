@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\DataFixtures\Sensors\ReadingTypes;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class GroupNameMappingFixtures extends Fixture
+class LatitudeFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {

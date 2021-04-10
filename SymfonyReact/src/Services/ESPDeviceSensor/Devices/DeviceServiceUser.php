@@ -92,7 +92,7 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setDeviceSecret($secret);
             $validFormData->setCreatedBy($this->getUser());
-            $validFormData->setRoles(['ROLE_DEVICE']);
+            $validFormData->setRoles([Devices::ROLE]);
         }
         else {
             foreach ($addNewDeviceForm->getErrors(true, true) as $error) {

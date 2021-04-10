@@ -198,6 +198,10 @@ class SensorUserDataService extends AbstractSensorService
         $addNewSensorForm->submit($sensorData);
 
         $device = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
+
+        if (!$device instanceof Devices) {
+            throw new BadRequestException('Device not recognised');
+        }
         $addNewSensorForm->getData()->setDeviceNameID($device);
 
         $this->userInputDataCheck($addNewSensorForm->getData());

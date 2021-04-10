@@ -3,6 +3,7 @@
 namespace App\Entity\Sensors\OutOfRangeRecordings;
 
 use App\Entity\Sensors\ReadingTypes\Analog;
+use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 //@todo needs sensor FK adding
 /**
@@ -37,14 +38,14 @@ class OutOfRangeAnalog
     private $time;
 
     /**
-     * @var Analog
+     * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="Analog")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="analogID")
+     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="sensorNameID")
      * })
      */
-    private Analog $sensorID;
+    private Sensors $sensorID;
 
     /**
      * @return int

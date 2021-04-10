@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\DataFixtures\Sensors\OutOfRangeRecordings;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class GroupNameFixtures extends Fixture
+class OutOfRangeLatitudeFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {

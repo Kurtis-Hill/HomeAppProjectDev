@@ -54,12 +54,12 @@ function Login(props) {
 
         
         if (loginResponse.status === 200) {
-            setLoading(false);
             window.location.replace(webappURL+'index');
         } else {
-            setLoading(false);
             alert('setting user data failed');
         }
+
+        setLoading(false);
            //     const userDetailsResponse = await axios.get(apiURL+'user/account-details', { headers: {"Authorization" : `BEARER ${getToken()}`} });
            //     console.log('status account', userDetailsResponse.status);
                 //const userSession = userDetailsResponse.status === 200 ? setUserSession(userDetailsResponse.data.userID, userDetailsResponse.data.roles) : setError(userDetailsResponse.data.error);

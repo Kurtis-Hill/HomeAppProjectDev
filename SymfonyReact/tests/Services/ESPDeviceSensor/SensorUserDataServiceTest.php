@@ -11,6 +11,7 @@ use App\Repository\Core\DevicesRepository;
 use App\Repository\Core\UserRepository;
 use App\Services\ESPDeviceSensor\Devices\DeviceServiceUser;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SensorUserDataServiceTest extends WebTestCase
@@ -21,44 +22,23 @@ class SensorUserDataServiceTest extends WebTestCase
 
     private const TEST_DEVICE = 101;
 
-    private $token = null;
+    /**
+     * @var KernelBrowser|null
+     */
+    private static ?string $token = null;
 
-    private function getAPIUserData()
-    {
-        $client = static::createClient();
-        $user = static::$container->get(UserRepository::class)->findAdminUserForTests();
-
-        $client->loginUser($user);
-
-        $client->request(
-            'POST',
-            self::API_LOGIN_USER,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"admin","password":"HomeApp1234"}'
-        );
-
-        $this->tearDown();
-
-        $requestResponse = $client->getResponse();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $this->userApiToken = $requestData['token'];
-
-        return $client->getResponse();
-    }
 
     public function test_user_login()
     {
-//        dd($this->getAPIUserData()->getStatusCode());
-        $this->assertEquals(HTTPStatusCodes::HTTP_OK, $this->getAPIUserData()->getStatusCode());
+        self::$token = null;
+
+        self::getToken(static::createClient());
+
+        $this->assertNotNull(self::$token);
     }
 
     public function test_creating_new_valid_sensor()
     {
-        $requestResponse = $this->getAPIUserData();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
         $formData = [
             'sensor-name' => 'apitesting',
             'device-id' => self::TEST_DEVICE,
@@ -72,18 +52,16 @@ class SensorUserDataServiceTest extends WebTestCase
             self::ADD_NEW_SENSOR_PATH,
             $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$requestData['token']],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.self::getToken($client)],
             'sensor-name=apitesting&device-id='.self::TEST_DEVICE.'&sensor-type='.Dht::SENSOR_TYPE_ID.''
         );
 
         $this->assertEquals(HTTPStatusCodes::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    public function test_creating_new_invalid_sensor()
-    {
-        $requestResponse = $this->getAPIUserData();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
+    public function test_creating_new_invalid_sensor_by_duplicate_sensor_name()
+    {
         $formData = [
             'sensor-name' => 'apitesting',
             'device-id' => self::TEST_DEVICE,
@@ -97,11 +75,34 @@ class SensorUserDataServiceTest extends WebTestCase
             '/HomeApp/api/sensors/add-new-sensor',
             $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$requestData['token']],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.self::getToken($client)],
             'sensor-name=apitesting&device-id='.self::TEST_DEVICE.'&sensor-type='.Dht::SENSOR_TYPE_ID.''
         );
 
-        $this->assertNotEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    }
+
+
+    public function test_creating_new_invalid_sensor_by_wrong_sensor_type()
+    {
+        $formData = [
+            'sensor-name' => 'apitesting',
+            'device-id' => self::TEST_DEVICE,
+            'sensor-type' => 1000
+        ];
+
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            '/HomeApp/api/sensors/add-new-sensor',
+            $formData,
+            [],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.self::getToken($client)],
+            'sensor-name=apitesting&device-id='.self::TEST_DEVICE.'&sensor-type='.Dht::SENSOR_TYPE_ID.''
+        );
+
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
 
@@ -123,76 +124,26 @@ class SensorUserDataServiceTest extends WebTestCase
 
     }
 
+    private static function getToken(KernelBrowser $client)
+    {
+        if (self::$token === null) {
+            $client->request(
+                'POST',
+                self::API_LOGIN_USER,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"admin-test-email@testing.com","password":"admin1234"}'
+            );
 
-//    public function test()
-//    {
-//        $client = static::createClient();
-//        $user = static::$container->get(UserRepository::class)->findAdminUserForTests();
-//
-//        $client->loginUser($user);
-//
-//        $client->request(
-//            'POST',
-//            '/HomeApp/api/login_check',
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json'],
-//            '{"username":"admin","password":"HomeApp1234"}'
-//        );
-//
-//        $requestResponse = $client->getResponse();
-//        $logingRequestStatusCode = $requestResponse->getStatusCode();
-//        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//
-//        $this->assertEquals(200, $logingRequestStatusCode);
-//
-//        $formData = [
-//          'sensor-name' => 'apitesting',
-//          'device-id' => self::TEST_DEVICE,
-//          'sensor-type' => Dht::SENSOR_TYPE_ID
-//        ];
-//
-//        $client->request(
-//            'POST',
-//            '/HomeApp/api/sensors/add-new-sensor',
-//            $formData,
-//            [],
-//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$requestData['token']],
-//            'sensor-name=apitesting&device-id='.self::TEST_DEVICE.'&sensor-type='.Dht::SENSOR_TYPE_ID.''
-//        );
-//
-//        dd($client->getResponse()->getStatusCode(), 'new one!!', $requestData['token'], $client->getResponse()->getContent());
+            $requestResponse = $client->getResponse();
+            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-//        $sensorId = $requestResponse->get
-//        $client = static::createClient();
-//        $user = static::$container->get(UserRepository::class)->findAdminUserForTests();
-//
-//        $client->loginUser($user);
-//
-//        $container = $client->getContainer();
-//
-//        $sensorUserService = $container->get(SensorUserDataService::class)->handleNewDeviceSubmission();
+            self::$token = $requestData['token'];
 
-//        $deviceServiceUser = $container->get(DeviceServiceUser::class);
+            return self::$token;
+        }
 
-
-//        $device = static::$container->get(DevicesRepository::class)->findAdminUserForTests();
-
-//        dd($sensorUserService);
-//        dd('hey', $this->user);
-//        $client = static::createClient();
-//        $userRepository = static::$container->get(UserRepository::class);
-//
-//        $user = $userRepository->findUserById(1);
-//
-//        $client->loginUser($user);
-//
-//        dd($user);
-//        $container = self::$kernel->getContainer();
-
-//        $container = self::$container;
-
-       // $userSensorService = self::$container->get(SensorUserDataService::class);
-//        dd('heyy0', $userSensorService);
-//    }
+        return self::$token;
+    }
 }

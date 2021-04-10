@@ -16,8 +16,12 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
-  <!-- Run `composer require symfony/phpunit-bridge` before enabling this extension -->
 
+  <extensions>
+    <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+  </extensions>
+
+  <!-- Run `composer require symfony/phpunit-bridge` before enabling this extension -->
   <listeners>
       <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
   </listeners>

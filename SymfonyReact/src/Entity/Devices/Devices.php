@@ -18,6 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Devices implements UserInterface, APISensorUserInterface
 {
+    public const ROLE = 'ROLE_DEVICE';
     /**
      * @var int
      *

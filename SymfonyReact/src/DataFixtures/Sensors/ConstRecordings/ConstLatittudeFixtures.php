@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\DataFixtures\Sensors\ConstRecordings;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class UserFixtures extends Fixture
+class ConstLatittudeFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
