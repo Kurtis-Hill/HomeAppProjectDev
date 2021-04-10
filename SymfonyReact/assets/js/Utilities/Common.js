@@ -22,21 +22,21 @@ export const removeUserSession = () => {
     return null;
 }
 
-export const setUserTokens = (token, refreshToken) => {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('refreshToken');
-    sessionStorage.setItem('token' , token);
-    sessionStorage.setItem('refreshToken' , refreshToken);
-}
+// export const setUserTokens = (token, refreshToken) => {
+//     sessionStorage.removeItem('token');
+//     sessionStorage.removeItem('refreshToken');
+//     sessionStorage.setItem('token' , token);
+//     sessionStorage.setItem('refreshToken' , refreshToken);
+// }
 
-export const setUserSession = (userID, roles) => {
-    sessionStorage.removeItem('userID');   
-    sessionStorage.removeItem('roles');
-    sessionStorage.setItem('userID' , userID);
-    sessionStorage.setItem('roles' , roles);
-}
+// export const setUserSession = (userID, roles) => {
+//     sessionStorage.removeItem('userID');   
+//     sessionStorage.removeItem('roles');
+//     sessionStorage.setItem('userID' , userID);
+//     sessionStorage.setItem('roles' , roles);
+// }
 
-export const setUserSessionData = (token, refreshToken, userData) => {
+export const setUserSession = (token, refreshToken, userData) => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');
     sessionStorage.removeItem('userID');   

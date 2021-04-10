@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { setUserTokens, setUserSession, webappURL, apiURL, getToken, setUserSessionData } from '../Utilities/Common';
+import { setUserTokens, setUserSession, webappURL, apiURL, getToken, setUserSession } from '../Utilities/Common';
 
 function Login(props) {
     const username = useFormInput('');
@@ -37,7 +37,7 @@ function Login(props) {
 
         console.log(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData, loginCheckResponse.data);
         loginCheckResponse 
-        ? setUserSessionData(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
+        ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
         : setError('Login check response error');
 
         const loginForm = document.getElementById('login-form');

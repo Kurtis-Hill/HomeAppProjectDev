@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\DTOs;
+namespace App\DTOs\Sensors;
 
 
 use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
@@ -11,7 +11,7 @@ use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 
-abstract class CardDTOAbstract
+abstract class AbstractCardSensorDTO
 {
     protected function filterSensorTypes(StandardSensorTypeInterface $cardDTOData): void
     {

@@ -40,7 +40,6 @@ class SensorDeviceDataService extends AbstractSensorService
     {
         $sensorType = $request->request->get('sensor-type');
 
-
         if ($sensorType === SensorType::DHT_SENSOR) {
             $this->handleDhtUpdateRequest($request);
         }
@@ -148,7 +147,7 @@ class SensorDeviceDataService extends AbstractSensorService
                 $outOfBounds = new OutofRangeHumid();
             }
             if ($readingTypeTypeObject instanceof Latitude) {
-                //to do make table
+                //@Todo make table
             }
             if ($readingTypeTypeObject instanceof Analog) {
                 $outOfBounds = new OutOfRangeAnalog();

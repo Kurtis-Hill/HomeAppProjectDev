@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Security;
 class SensorUserDataService extends AbstractSensorService
 {
     private User $sensorUser;
+
     /**
      * SensorUserDataService constructor.
      * @param EntityManagerInterface $em
@@ -38,11 +39,11 @@ class SensorUserDataService extends AbstractSensorService
     {
         parent::__construct($em, $security, $formFactory);
 
-        try {
-            $this->setServiceUserSession();
-        } catch (\Exception $exception) {
-            error_log($exception->getMessage());
-        }
+//        try {
+//            $this->setServiceUserSession();
+//        } catch (\Exception $exception) {
+//            error_log($exception->getMessage());
+//        }
     }
 
     /**
@@ -92,7 +93,7 @@ class SensorUserDataService extends AbstractSensorService
      */
     private function createNewSensorReadingTypeData(Sensors $sensor, CardView $cardView, array $sensorData): void
     {
-        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getUserGroupMappingEntities()]);
+        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getUserGroupMappingEntities()]);
         if (!$deviceObject instanceof Devices) {
             $this->em->remove($sensor);
             $this->em->flush();
@@ -196,7 +197,7 @@ class SensorUserDataService extends AbstractSensorService
     {
         $addNewSensorForm->submit($sensorData);
 
-        $device = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
+        $device = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
         $addNewSensorForm->getData()->setDeviceNameID($device);
 
         $this->userInputDataCheck($addNewSensorForm->getData());

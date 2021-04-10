@@ -25,7 +25,10 @@ class SensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
+
     /**
+     * UPDATE SENSOR METHODS
+     *
      * @Route("/update/current-reading", name="update-current-reading")
      * @param Request $request
      * @param SensorDeviceDataService $sensorDataService
@@ -33,7 +36,7 @@ class SensorController extends AbstractController
      */
     public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
     {
-        if (empty($request->request->get('secret')) || empty($request->request->get('sensor-type'))) {
+        if (empty($request->request->get('sensor-type'))) {
             return $this->sendBadRequestJsonResponse();
         }
 
@@ -56,7 +59,7 @@ class SensorController extends AbstractController
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         $sensorData = [
-            'sensorName' => $request->get('sensor-name'),
+            'sensorName' => $request->request->get('sensor-name'),
             'sensorTypeID' => $request->get('sensor-type'),
             'deviceNameID' => $request->get('device-id')
         ];
@@ -70,10 +73,10 @@ class SensorController extends AbstractController
         if (!empty($sensorService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
         }
-
         if (!empty($sensorService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
         }
+
         $sensor = $newSensorForm->getData();
         if ($sensor instanceof Sensors) {
             $newSensorCard = $cardDataService->createNewSensorCard($newSensorForm->getData());

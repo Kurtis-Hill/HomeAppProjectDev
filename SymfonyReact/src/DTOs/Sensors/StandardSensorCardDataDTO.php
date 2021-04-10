@@ -3,12 +3,12 @@
 
 namespace App\DTOs\Sensors;
 
-use App\DTOs\CardDTOAbstract;
+use App\DTOs\Sensors\AbstractCardSensorDTO;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-class StandardSensorCardDataDTO extends CardDTOAbstract
+class StandardSensorCardDataDTO extends AbstractCardSensorDTO
 {
     /**
      * @var string

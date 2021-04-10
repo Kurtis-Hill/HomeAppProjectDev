@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Controller\CardData;
+namespace App\Controller\UserInterface;
 
 use App\Form\CardViewForms\CardViewForm;
 use App\Services\CardUserDataService;

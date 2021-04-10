@@ -4,7 +4,7 @@
 namespace App\DTOs\Sensors;
 
 
-use App\DTOs\CardDTOAbstract;
+use App\DTOs\Sensors\AbstractCardSensorDTO;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 
@@ -13,7 +13,7 @@ use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
  * Class CardViewSensorFormDTO
  * @package App\DTOs\Sensors
  */
-class CardViewSensorFormDTO extends CardDTOAbstract
+class CardViewSensorFormDTO extends AbstractCardSensorDTO
 {
     /**
      * @var array

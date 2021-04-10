@@ -1,11 +1,10 @@
 <?php
 
 
-namespace App\Controller;
+namespace App\Controller\UserInterface;
 
 
 use App\Services\UserInterfaceService;
-use App\Services\ProfilebarServiceUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;

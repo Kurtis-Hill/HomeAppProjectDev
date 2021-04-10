@@ -17,6 +17,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
+    private const ADMIN_USER_TEST = 1;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
@@ -48,6 +50,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $stmt->fetchAll();
 
+    }
+
+    /**
+     * @return User
+     */
+    public function findAdminUserForTests(): User
+    {
+        return $this->findOneBy(['userID' => self::ADMIN_USER_TEST]);
     }
 
     // /**

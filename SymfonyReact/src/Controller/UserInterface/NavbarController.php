@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Controller;
+namespace App\Controller\UserInterface;
 
 use App\Services\UserInterfaceService;
 use App\Traits\API\HomeAppAPIResponseTrait;

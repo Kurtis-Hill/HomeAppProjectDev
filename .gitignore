@@ -32,3 +32,9 @@ SymfonyReact/package-lock.json
 
 /.php_cs.cache
 /.php-version
+
+###> symfony/phpunit-bridge ###
+.phpunit
+/SymfonyReact/phpunit.result.cache
+/SymfonyReact/phpunit.xml
+###< symfony/phpunit-bridge ###

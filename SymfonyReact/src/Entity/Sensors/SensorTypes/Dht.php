@@ -18,6 +18,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Dht implements StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
 {
+    public const SENSOR_TYPE_ID = 1;
+
     /**
      * @var int
      *
