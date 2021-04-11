@@ -2,6 +2,7 @@
 
 namespace App\Repository\Core;
 
+use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -41,6 +42,22 @@ class SensorsRepository extends EntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function findAllSensorsByAssociatedGroups(User $user)
+    {
+        $qb = $this->createQueryBuilder('sensor');
+        $expr = $qb->expr();
+
+        $qb->select('sensor')
+            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->where(
+                $expr->in('device.groupNameID', ':groupNameIds')
+            )
+            ->setParameters(['groupNameIds' => $user->getGroupNameIds()]);
+
+        dd($qb->getQuery()->getResult(), $user->getGroupNameIds());
+    }
+
 
 
 }

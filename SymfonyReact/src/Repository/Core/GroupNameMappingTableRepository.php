@@ -3,6 +3,7 @@
 
 namespace App\Repository\Core;
 
+use App\Entity\Core\GroupNames;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -16,8 +17,8 @@ class GroupNameMappingTableRepository extends EntityRepository
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gn.groupNameID, gn.groupName')
-            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
-            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userID')
+            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
+            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.userID = u.userID')
             ->where(
                 $qb->expr()->eq('gmt.userID', ':userID')
             )
@@ -31,14 +32,26 @@ class GroupNameMappingTableRepository extends EntityRepository
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gmt')
-            ->innerJoin('App\Entity\Core\GroupNames', 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
-            ->innerJoin('App\Entity\Core\User', 'u', Join::WITH, 'gmt.userID = u.userID')
+            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
+            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.userID = u.userID')
             ->where(
                 $qb->expr()->eq('gmt.userID', ':user')
             )
             ->setParameter('user', $user);
 
         return $qb->getQuery()->getResult();
+    }
 
+    public function findGroupsUserIsNotApartOf($groups)
+    {
+        $qb = $this->createQueryBuilder('gmt');
+
+        $qb->select('gmt')
+            ->where(
+                $qb->expr()->notIn('gmt.groupNameMappingID', ':groups')
+            )
+            ->setParameter('groups', $groups);
+
+        return $qb->getQuery()->getResult();
     }
 }

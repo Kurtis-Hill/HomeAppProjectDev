@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class GroupNames
 {
+    public const NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE = 'You are not part of this group';
     /**
      * @var int
      *

@@ -26,8 +26,8 @@ export default class AddNewDeviceContextProvider extends Component {
     }
 
     componentDidMount() {
-        const newDeviceGroup = document.getElementById("deviceGroup");
-        const newDeviceRoom = document.getElementById("deviceRoom");
+        const newDeviceGroup = document.getElementById("device-group");
+        const newDeviceRoom = document.getElementById("device-room");
 
         this.setState({
             emptyNewDeviceModalContent: {...this.state.emptyNewDeviceModalContent,
@@ -71,15 +71,15 @@ export default class AddNewDeviceContextProvider extends Component {
     updateNewDeviceModalForm = (event) => {
         const formInput = event.target.value;
         switch (event.target.name) {
-            case "deviceRoom":
+            case "device-room":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceRoom: formInput}});
                 break;
 
-            case "deviceGroup":
+            case "device-group":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceGroup: formInput}});
                 break;
 
-            case "deviceName":
+            case "device-name":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
                 break;
         }

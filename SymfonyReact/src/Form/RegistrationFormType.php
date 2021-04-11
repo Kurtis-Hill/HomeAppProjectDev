@@ -71,6 +71,7 @@ class RegistrationFormType extends AbstractType
                 ],
                 'error_bubbling' => true,
             ])
+            //@TODO chage this to groupName
             ->add('groupNameID', TextType::class, [
                 'required' => 'true',
                 'constraints' => [

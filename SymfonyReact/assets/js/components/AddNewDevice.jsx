@@ -42,10 +42,10 @@ const addNewDevice = () => {
                                 {newDeviceModalContent.formSubmit !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
                                 <label className="large font-weight-bold">Device Name</label>
-                                <input type="text" name="deviceName" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
+                                <input type="text" name="device-name" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
 
                                 <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>
-                                <select value={newDeviceModalContent.newDeviceGroup} name="deviceGroup" id="deviceGroup" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
+                                <select value={newDeviceModalContent.newDeviceGroup} name="device-group" id="deviceGroup" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {
                                         navBarContext.userGroupNames.length >= 1
                                         ? navBarContext.userGroupNames.map((groupNames) => (
@@ -57,7 +57,7 @@ const addNewDevice = () => {
                                 </select>
 
                                 <label className="modal-space large font-weight-bold">Which room you would like to add the sensor too</label>
-                                <select value={newDeviceModalContent.newDeviceRoom} name="deviceRoom" id="deviceRoom" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
+                                <select value={newDeviceModalContent.newDeviceRoom} name="device-room" id="deviceRoom" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {
                                     navBarContext.userRooms.length >= 0
                                     ? navBarContext.userRooms.map((room, index) => (

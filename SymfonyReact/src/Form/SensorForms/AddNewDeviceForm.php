@@ -27,9 +27,13 @@ class AddNewDeviceForm extends AbstractType
                 'constraints' => [
                     new NoSpecialCharactersConstraint(),
                     new NotBlank(),
-                    new Length(['min' => 1, 'max' => 20,
-                        'minMessage' => 'Device name too short',
-                        'maxMessage' => 'Device name too long'])
+                    new Length(
+                        [
+                            'min' => 1, 'max' => 20,
+                            'minMessage' => 'Device name too short',
+                            'maxMessage' => 'Device name too long'
+                        ]
+                    )
                 ]
             ])
 

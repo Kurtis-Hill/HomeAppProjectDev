@@ -4,6 +4,7 @@
 namespace App\Services\ESPDeviceSensor\Devices;
 
 
+use App\Entity\Core\GroupNames;
 use App\Entity\Devices\Devices;
 
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
@@ -65,12 +66,9 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
 
         if (is_callable($isCallableCheck)) {
             $groupIdCheck = $this->checkIfUserIsPartOfGroup($groupId);
-//            dd($groupIdCheck);
             if ($groupIdCheck !== true) {
-                throw new BadRequestException('You are not part of this group');
+                throw new BadRequestException(GroupNames::NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE);
             }
-//            dd('here', $deviceData['groupNameObject'], array_merge_recursive($this->getUser()->getGroupNameIds()));
-
         }
 
     }

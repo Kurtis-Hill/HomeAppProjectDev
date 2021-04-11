@@ -9,6 +9,7 @@ use App\Entity\Core\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,14 +31,22 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $groupName = new GroupNames();
-
-            $groupName->setGroupName($form->get('groupNameID')->getData());
-            $groupName->setTime(new \DateTime());
-
             try {
-                $entityManager->persist($groupName);
+                $entityManager = $this->getDoctrine()->getManager();
+                $groupNameObject = new GroupNames();
+
+                $groupName = $form->get('groupNameID')->getData();
+
+                $groupNameCheck = $entityManager->getRepository(GroupNames::class)->findOneBy(['groupName' => $groupName]);
+
+                if ($groupNameCheck instanceof GroupNames) {
+                    throw new BadRequestException($groupName.' has already been taken by another user');
+                }
+
+                $groupNameObject->setGroupName($groupName);
+                $groupNameObject->setTime(new \DateTime());
+
+                $entityManager->persist($groupNameObject);
                 $entityManager->flush();
 
                 $user->setPassword(
@@ -51,20 +60,20 @@ class RegistrationController extends AbstractController
                 $user->setFirstName($form->get('firstName')->getData());
                 $user->setLastName($form->get('lastName')->getData());
                 $user->setRoles(['ROLE_USER']);
-                $user->setGroupNameID($groupName);
+                $user->setGroupNameID($groupNameObject);
                 $user->setTime(new \DateTime());
 
                 $groupNameMapping = new GroupnNameMapping();
 
-                $groupNameMapping->setGroupnameid($groupName);
+                $groupNameMapping->setGroupnameid($groupNameObject);
                 $groupNameMapping->setUserID($user);
 
                 $entityManager->persist($user);
                 $entityManager->persist($groupNameMapping);
                 $entityManager->flush();
             } catch (ORMException | \Exception $e) {
-                if (isset($groupName)) {
-                    $entityManager->remove($groupName);
+                if (isset($groupNameObject)) {
+                    $entityManager->remove($groupNameObject);
                 }
                 if (isset($user)) {
                     $entityManager->remove($user);

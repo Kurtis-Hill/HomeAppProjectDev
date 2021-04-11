@@ -63,6 +63,10 @@ class DevicesRepository extends EntityRepository
         return $qb->getQuery()->getResult()[0] ?? null;
     }
 
+    /**
+     * @param $deviceDetails
+     * @return mixed|null
+     */
     public function findDeviceByIdAndGroupNameId($deviceDetails)
     {
         $qb = $this->createQueryBuilder('devices');
@@ -83,6 +87,7 @@ class DevicesRepository extends EntityRepository
 //dd($qb->getQuery()->getSingleResult());
         return $qb->getQuery()->getResult()[0] ?? null;
     }
+
 
 //    public function findUsersDeviceAPIRequest(string $deviceName, string $deviceSecret): ?Devices
 //    {

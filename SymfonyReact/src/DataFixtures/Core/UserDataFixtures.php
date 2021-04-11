@@ -16,7 +16,9 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 {
-    public const ADMIN_USER = 'admin-user';
+    public const ADMIN_USER = 'admin-user@gmail.com';
+
+    public const ADMIN_PASSWORD = 'admin1234';
 
     public const REGULAR_USER = 'regular-user';
 
@@ -42,15 +44,15 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         // Admin User
         $adminGroupName = new GroupNames();
 
-        $adminGroupName->setGroupName('admin-group');
+        $adminGroupName->setGroupName(self::ADMIN_GROUP);
         $adminGroupName->setTime();
 
         $adminUser = new User();
 
-        $adminUser->setEmail('admin-test-email@testing.com');
+        $adminUser->setEmail(self::ADMIN_USER);
         $adminUser->setFirstName('admin');
         $adminUser->setLastName('test');
-        $adminUser->setPassword($this->passwordEncoder->encodePassword($adminUser, 'admin1234'));
+        $adminUser->setPassword($this->passwordEncoder->encodePassword($adminUser, self::ADMIN_PASSWORD));
         $adminUser->setRoles(['ROLE_ADMIN']);
         $adminUser->setTime();
         $adminUser->setGroupNameID($adminGroupName);

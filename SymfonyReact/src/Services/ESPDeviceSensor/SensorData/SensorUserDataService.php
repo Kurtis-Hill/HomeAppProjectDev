@@ -213,13 +213,12 @@ class SensorUserDataService extends AbstractSensorService
                 $this->userInputErrors[] = $error->getMessage();
             }
         }
-//dd('failed');
+
         return $addNewSensorForm;
     }
 
 
     /**
-     * @param Security $security
      */
     protected function setServiceUserSession(): void
     {
@@ -228,8 +227,6 @@ class SensorUserDataService extends AbstractSensorService
             $this->sensorUser = $this->getUser();
             throw new \InvalidArgumentException('Wrong Entity Provided');
         }
-
-        $this->setServiceUserSession($this->getUser());
     }
 
 }

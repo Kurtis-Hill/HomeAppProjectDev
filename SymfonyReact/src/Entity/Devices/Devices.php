@@ -8,6 +8,8 @@ use App\Entity\Core\User;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 
 /**
@@ -273,6 +275,23 @@ class Devices implements UserInterface, APISensorUserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+//        $metadata->addPropertyConstraint('firstName', new Assert\Length([
+//            'min' => 2,
+//            'max' => 50,
+//            'minMessage' => 'Your first name must be at least {{ limit }} characters long',
+//            'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
+//        ]));
+
+        $metadata->addPropertyConstraint('deviceName', new Length([
+            'min' => 2,
+            'max' => 50,
+            'minMessage' => 'Your first name must be at least {{ limit }} characters long',
+            'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
+        ]));
     }
 
 }
