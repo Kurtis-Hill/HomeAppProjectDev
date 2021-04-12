@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Security;
 
 abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
 {
-    protected const SENSOR_TYPE_DATA = [
+    public const SENSOR_TYPE_DATA = [
         SensorType::DHT_SENSOR => [
             'alias' => 'dht',
             'object' => Dht::class,
@@ -171,7 +171,7 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     private function checkUserInstance(): void
     {
         if (!$this->user instanceof APISensorUserInterface) {
-            throw new BadRequestException('Wrong Entity Provided');
+            throw new BadRequestException('This entity cannot use this service');
         }
     }
 

@@ -4,7 +4,7 @@
 namespace App\Tests\ESPDeviceTests;
 
 
-use App\DataFixtures\DeviceFixtures;
+use App\DataFixtures\ESP8266DeviceFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 class DeviceServiceDeviceTest
@@ -26,7 +26,7 @@ class DeviceServiceDeviceTest
                 [],
                 [],
                 ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'].'","password":"'.DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'].'"}'
+                '{"username":"'.ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'].'","password":"'.ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'].'"}'
             );
 
             $requestResponse = $client->getResponse();

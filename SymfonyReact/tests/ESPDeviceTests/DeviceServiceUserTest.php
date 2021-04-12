@@ -6,7 +6,7 @@ namespace App\Tests\ESPDeviceTests;
 
 use App\API\HTTPStatusCodes;
 use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\DeviceFixtures;
+use App\DataFixtures\ESP8266DeviceFixtures;
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
@@ -67,7 +67,7 @@ class DeviceServiceUserTest extends WebTestCase
             ->getManager();
 
         $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findGroupByName(UserDataFixtures::ADMIN_GROUP);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, DeviceFixtures::ADMIN_ROOM_NAME);
+        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, ESP8266DeviceFixtures::ADMIN_ROOM_NAME);
         try {
             $this->setUserToken();
         } catch (\JsonException $e) {
@@ -109,7 +109,7 @@ class DeviceServiceUserTest extends WebTestCase
     public function test_add_duplicate_device_name_same_room()
     {
         $formData = [
-            'device-name' => DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'device-name' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
             'device-group' => $this->groupName->getGroupNameID(),
             'device-room' => $this->room->getRoomID(),
         ];
@@ -435,7 +435,7 @@ class DeviceServiceUserTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512)['responseData'];
 
         $deviceId = $responseData['deviceID'];
 
@@ -454,6 +454,19 @@ class DeviceServiceUserTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $requestCode);
     }
+
+
+    // @TODO add these when delete device functionality has been added
+    public function test_admin_can_delete_device_to_a_regular_owned_room_regular_owned_group()
+    {
+
+    }
+
+    public function test_regular_user_can_delete_device_to_admin_owned_room_admin_owned_group()
+    {
+
+    }
+
 
     /**
      * @return mixed|string|KernelBrowser|null

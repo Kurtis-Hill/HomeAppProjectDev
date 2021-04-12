@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\DataFixtures\ESP8266;
 
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Core\Room;
@@ -10,7 +10,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class DeviceFixtures extends Fixture implements OrderedFixtureInterface
+class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 {
     public const ADMIN_ROOM = 'admin-room';
 
@@ -23,6 +23,45 @@ class DeviceFixtures extends Fixture implements OrderedFixtureInterface
     public const LOGIN_TEST_ACCOUNT_NAME = [
         'name' => 'apiLoginTest',
         'password' => 'device1234'
+    ];
+
+    public const DEVICES = [
+        //admin owned devices
+      'AdminDeviceAdminRoomAdminGroup' => [
+          'referenceName' => 'aaa',
+          'password' => 'device1234'
+      ],
+        'AdminDeviceAdminRoomRegularGroup' => [
+            'referenceName' => 'aar',
+            'password' => 'device1234'
+        ],
+        'AdminDeviceRegularRoomRegularGroup' => [
+            'referenceName' => 'arr',
+            'password' => 'device1234'
+        ],
+        'AdminDeviceRegularRoomAdminGroup' => [
+            'referenceName' => 'ara',
+            'password' => 'device1234'
+        ],
+
+        //Regular user owned devices
+        'RegularDeviceRegularRoomRegularGroup' => [
+            'referenceName' => 'rrr',
+            'password' => 'device1234'
+        ],
+        'RegularDeviceRegularRoomAdminGroup' => [
+            'referenceName' => 'rra',
+            'password' => 'device1234'
+        ],
+        'RegularDeviceAdminRoomAdminGroup' => [
+            'referenceName' => 'raa',
+            'password' => 'device1234'
+        ],
+        'RegularDeviceAdminRoomRegularGroup' => [
+            'referenceName' => 'rar',
+            'password' => 'device1234'
+        ],
+
     ];
 
     private UserPasswordEncoderInterface $passwordEncoder;
@@ -53,207 +92,131 @@ class DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($regularAddedRoom);
         $this->addReference(self::REGULAR_ROOM, $regularAddedRoom);
-        //Create a Admin Owned Admin Group Admin Room Device
 
+        //these devices are for permission checks one device for each scenario
+        //Create a Admin Owned Device Admin Group Admin Room
         $adminAdminAdmin = new Devices();
 
-        $adminAdminAdmin->setDeviceName('adminAdminAdmin');
         $adminAdminAdmin->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $adminAdminAdmin->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $adminAdminAdmin->setRoomObject($adminAddedRoom);
-        $adminAdminAdmin->setPassword($this->passwordEncoder->encodePassword($adminAdminAdmin, 'device1234'));
+        $adminAdminAdmin->setDeviceName(self::DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']);
+        $adminAdminAdmin->setPassword($this->passwordEncoder->encodePassword($adminAdminAdmin, self::DEVICES['AdminDeviceAdminRoomAdminGroup']['password']));
         $adminAdminAdmin->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName'], $adminAdminAdmin);
         $manager->persist($adminAdminAdmin);
 
-//        Create Admin Owned Admin Group Regular Room Device
+//      Create Admin Owned Device Admin Group Regular Room
         $adminAdminRegular = new Devices();
 
-        $adminAdminRegular->setDeviceName('adminAdminRegular');
         $adminAdminRegular->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $adminAdminRegular->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $adminAdminRegular->setRoomObject($regularAddedRoom);
-        $adminAdminRegular->setPassword($this->passwordEncoder->encodePassword($adminAdminRegular, 'device1234'));
+        $adminAdminRegular->setDeviceName(self::DEVICES['AdminDeviceAdminRoomRegularGroup']['referenceName']);
+        $adminAdminRegular->setPassword($this->passwordEncoder->encodePassword($adminAdminRegular, self::DEVICES['AdminDeviceAdminRoomRegularGroup']['password']));
         $adminAdminRegular->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['AdminDeviceAdminRoomRegularGroup']['referenceName'], $adminAdminRegular);
         $manager->persist($adminAdminRegular);
 
 
-        //Create Admin Owned Regular Group Regular Room
+        //Create Admin Owned Device Regular Group Regular Room
         $adminRegularRegular = new Devices();
 
-        $adminRegularRegular->setDeviceName('adminRegularRegular');
         $adminRegularRegular->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $adminRegularRegular->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
         $adminRegularRegular->setRoomObject($regularAddedRoom);
-        $adminRegularRegular->setPassword($this->passwordEncoder->encodePassword($adminRegularRegular, 'device1234'));
+        $adminRegularRegular->setDeviceName(self::DEVICES['AdminDeviceRegularRoomRegularGroup']['referenceName']);
+        $adminRegularRegular->setPassword($this->passwordEncoder->encodePassword($adminRegularRegular, self::DEVICES['AdminDeviceRegularRoomRegularGroup']['password']));
         $adminRegularRegular->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['AdminDeviceRegularRoomRegularGroup']['referenceName'], $adminRegularRegular);
         $manager->persist($adminRegularRegular);
 
 
+        //Create Admin Owned Device Regular Group Admin Room
         $adminRegularAdmin = new Devices();
 
-        $adminRegularAdmin->setDeviceName('adminRegularAdmin');
         $adminRegularAdmin->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $adminRegularAdmin->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
         $adminRegularAdmin->setRoomObject($adminAddedRoom);
-        $adminRegularAdmin->setPassword($this->passwordEncoder->encodePassword($adminRegularAdmin, 'device1234'));
+        $adminRegularAdmin->setDeviceName(self::DEVICES['AdminDeviceRegularRoomAdminGroup']['referenceName']);
+        $adminRegularAdmin->setPassword($this->passwordEncoder->encodePassword($adminRegularAdmin, self::DEVICES['AdminDeviceRegularRoomAdminGroup']['password']));
         $adminRegularAdmin->setRoles([Devices::ROLE]);
 
-        $manager->persist($adminRegularAdmin);
-
-
+        $this->addReference(self::DEVICES['AdminDeviceRegularRoomAdminGroup']['referenceName'], $adminRegularRegular);
+        $manager->persist($adminRegularRegular);
 
 
 
         // Regular Device Regular Group Regular Room
         $regularRegularRegular = new Devices();
 
-        $regularRegularRegular->setDeviceName('regularRegularRegula');
         $regularRegularRegular->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
-        $regularRegularRegular->setPassword($this->passwordEncoder->encodePassword($regularRegularRegular, 'device1234'));
         $regularRegularRegular->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
-        $regularRegularRegular->setRoles([Devices::ROLE]);
         $regularRegularRegular->setRoomObject($regularAddedRoom);
+        $regularRegularRegular->setDeviceName(self::DEVICES['RegularDeviceRegularRoomRegularGroup']['referenceName']);
+        $regularRegularRegular->setPassword($this->passwordEncoder->encodePassword($regularRegularRegular, self::DEVICES['RegularDeviceRegularRoomRegularGroup']['password']));
+        $regularRegularRegular->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['RegularDeviceRegularRoomRegularGroup']['referenceName'], $regularRegularRegular);
         $manager->persist($regularRegularRegular);
 
 //        Create Regular Device Regular Group Admin Room
         $regularRegularAdmin = new Devices();
 
-        $regularRegularAdmin->setDeviceName('regularRegularAdmin');
         $regularRegularAdmin->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
         $regularRegularAdmin->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
         $regularRegularAdmin->setRoomObject($adminAddedRoom);
-        $regularRegularAdmin->setPassword($this->passwordEncoder->encodePassword($regularRegularAdmin, 'device1234'));
+        $regularRegularAdmin->setDeviceName(self::DEVICES['RegularDeviceRegularRoomAdminGroup']['referenceName']);
+        $regularRegularAdmin->setPassword($this->passwordEncoder->encodePassword($regularRegularAdmin, self::DEVICES['RegularDeviceRegularRoomAdminGroup']['password']));
         $regularRegularAdmin->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['RegularDeviceRegularRoomAdminGroup']['referenceName'], $regularRegularAdmin);
         $manager->persist($regularRegularAdmin);
 
 
         //Create Regular Device Admin Group Admin Room
         $regularAdminAdmin = new Devices();
 
-        $regularAdminAdmin->setDeviceName('regularAdminAdmin');
         $regularAdminAdmin->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
         $regularAdminAdmin->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $regularAdminAdmin->setRoomObject($adminAddedRoom);
-        $regularAdminAdmin->setPassword($this->passwordEncoder->encodePassword($regularAdminAdmin, 'device1234'));
+        $regularAdminAdmin->setDeviceName(self::DEVICES['RegularDeviceAdminRoomAdminGroup']['referenceName']);
+        $regularAdminAdmin->setPassword($this->passwordEncoder->encodePassword($regularAdminAdmin, self::DEVICES['RegularDeviceAdminRoomAdminGroup']['password']));
         $regularAdminAdmin->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['RegularDeviceAdminRoomAdminGroup']['referenceName'], $regularAdminAdmin);
         $manager->persist($regularAdminAdmin);
 
 
         //Create Regular Device Admin Group Regular Room
         $regularAdminRegular = new Devices();
 
-        $regularAdminRegular->setDeviceName('regularAdminRegular');
         $regularAdminRegular->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
         $regularAdminRegular->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $regularAdminRegular->setRoomObject($regularAddedRoom);
-        $regularAdminRegular->setPassword($this->passwordEncoder->encodePassword($regularAdminRegular, 'device1234'));
+        $regularAdminRegular->setDeviceName(self::DEVICES['RegularDeviceAdminRoomRegularGroup']['referenceName']);
+        $regularAdminRegular->setPassword($this->passwordEncoder->encodePassword($regularAdminRegular, self::DEVICES['RegularDeviceAdminRoomRegularGroup']['password']));
         $regularAdminRegular->setRoles([Devices::ROLE]);
 
+        $this->addReference(self::DEVICES['RegularDeviceAdminRoomRegularGroup']['referenceName'], $regularAdminRegular);
         $manager->persist($regularAdminRegular);
-
 
 
         //For Admin Duplicate Check
         $duplicateCheck = new Devices();
 
-        $duplicateCheck->setDeviceName(self::LOGIN_TEST_ACCOUNT_NAME['name']);
         $duplicateCheck->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $duplicateCheck->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $duplicateCheck->setRoomObject($adminAddedRoom);
+        $duplicateCheck->setDeviceName(self::LOGIN_TEST_ACCOUNT_NAME['name']);
         $duplicateCheck->setPassword($this->passwordEncoder->encodePassword($duplicateCheck, self::LOGIN_TEST_ACCOUNT_NAME['password']));
         $duplicateCheck->setRoles([Devices::ROLE]);
 
         $manager->persist($duplicateCheck);
 
-
-
-//
-//        $manager->persist($regularAddedRoom);
-//
-//        // Regular Group Devices
-//        for ($i = 0; $i <5; ++$i) {
-//            $device = new Devices();
-//
-//            $device->setDeviceName('device' .$i);
-//            $device->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
-//            $device->setPassword($this->passwordEncoder->encodePassword($device, 'device1234'.$i));
-//            $device->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
-//            $device->setRoles([Devices::ROLE]);
-//            $device->setRoomObject($regularAddedRoom);
-//
-//            $manager->persist($device);
-//        }
-//
-//        //Admin Room Regular user
-//        for ($i = 0; $i <2; ++$i) {
-//            $device = new Devices();
-//
-//            $device->setDeviceName('device' .$i);
-//            $device->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
-//            $device->setPassword($this->passwordEncoder->encodePassword($device, 'device1234'.$i));
-//            $device->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
-//            $device->setRoles([Devices::ROLE]);
-//            $device->setRoomObject($adminAddedRoom);
-//
-//            $manager->persist($device);
-//        }
-//
-//        //Regular Room Admin user
-//        for ($i = 0; $i <2; ++$i) {
-//            $device = new Devices();
-//
-//            $device->setDeviceName('device' .$i);
-//            $device->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
-//            $device->setPassword($this->passwordEncoder->encodePassword($device, 'device1234'.$i));
-//            $device->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
-//            $device->setRoles([Devices::ROLE]);
-//            $device->setRoomObject($regularAddedRoom);
-//
-//            $manager->persist($device);
-//        }
-//
-//
-//        //Regualr Room Admin Group
-//        //Admin Room Regular user
-//        for ($i = 0; $i <2; ++$i) {
-//            $device = new Devices();
-//
-//            $device->setDeviceName('device' .$i);
-//            $device->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
-//            $device->setPassword($this->passwordEncoder->encodePassword($device, 'device1234'.$i));
-//            $device->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
-//            $device->setRoles([Devices::ROLE]);
-//            $device->setRoomObject($regularAddedRoom);
-//
-//            $manager->persist($device);
-//        }
-//
-//        //Admin Room Regular Group Admin user
-//        for ($i = 0; $i <2; ++$i) {
-//            $device = new Devices();
-//
-//            $device->setDeviceName('device' .$i);
-//            $device->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
-//            $device->setPassword($this->passwordEncoder->encodePassword($device, 'device1234'.$i));
-//            $device->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
-//            $device->setRoles([Devices::ROLE]);
-//            $device->setRoomObject($adminAddedRoom);
-//
-//            $manager->persist($device);
-//        }
-
-
         $manager->flush();
-    }
-
-    public function foo()
-    {
-
     }
 }
