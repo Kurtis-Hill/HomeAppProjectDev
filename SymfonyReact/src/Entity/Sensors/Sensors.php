@@ -14,7 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Sensors
 {
-
     public const TEMPERATURE = 'Temperature';
 
     public const HUMIDITY = 'Humidity';

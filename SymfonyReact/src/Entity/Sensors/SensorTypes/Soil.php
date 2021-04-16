@@ -4,9 +4,11 @@ namespace App\Entity\Sensors\SensorTypes;
 
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Analog;
+use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Soil
@@ -36,14 +38,16 @@ class Soil implements StandardSensorTypeInterface, AnalogSensorTypeInterface
     private Analog $analogID;
 
     /**
-     * @var CardView
+     * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
+     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private CardView $cardViewID;
+    private Sensors $sensorNameID;
+
+    private CardView $cardView;
 
     /**
      * @return int
@@ -78,19 +82,40 @@ class Soil implements StandardSensorTypeInterface, AnalogSensorTypeInterface
     }
 
     /**
-     * @return Cardview
+     * @return Sensors
      */
-    public function getCardViewObject(): Cardview
+    public function getSensorObject(): Sensors
     {
-        return $this->cardViewID;
+        return $this->sensorNameID;
     }
 
     /**
-     * @param Cardview $cardViewID
+     * @param Sensors $sensor
      */
-    public function setCardViewObject(Cardview $cardViewID): void
+    public function setSensorObject(Sensors $sensor): void
     {
-        $this->cardViewID = $cardViewID;
+        $this->sensorNameID = $sensor;
+    }
+
+    /**
+     * @return CardView|null
+     */
+    public function getCardViewObject(): ?CardView
+    {
+        return $this->cardView;
+    }
+
+    /**
+     * @param CardView $cardView
+     */
+    public function setCardViewObject(CardView $cardView): void
+    {
+        $this->cardView = $cardView;
+    }
+
+    public function getSensorNameID(): Sensors
+    {
+        return $this->sensorNameID;
     }
 
 

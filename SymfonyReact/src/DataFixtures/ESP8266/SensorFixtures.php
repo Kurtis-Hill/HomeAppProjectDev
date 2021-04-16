@@ -5,6 +5,7 @@ namespace App\DataFixtures\ESP8266;
 
 
 
+use App\DataFixtures\Card\CardFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Analog;
@@ -12,11 +13,6 @@ use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorType;
-use App\Entity\Sensors\SensorTypes\Bmp;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\Entity\Sensors\SensorTypes\Dht;
-use App\Entity\Sensors\SensorTypes\Soil;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
@@ -32,7 +28,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
     public function getOrder()
     {
-        return 5;
+        return 6;
     }
 
     public function load(ObjectManager $manager): void
@@ -40,20 +36,36 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         // for permissions checks this wont cover every scenario down to a sensor by sensor but as there is currently no special permission
         // pending on the type of sensor a good selection of test data has been selected here
         $sensorCounter = 0;
+        $amountOfColours = count(CardFixtures::COLOURS) - 1;
+        $amountOfIcons = count(CardFixtures::ICONS) - 1;
+        $amountOfState = count(CardFixtures::CARD_STATES) - 1;
+
         foreach (ESP8266DeviceFixtures::DEVICES as $device) {
             $extraTestData = $sensorCounter % 2 === 0;
             foreach (AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
                 $newSensor = new Sensors();
                 $newCard = new CardView();
 
+//                dd(count(CardFixtures::CARD_STATES),
+//count(CardFixtures::COLOURS));
                 $newCard->setSensorNameID($newSensor);
                 $newCard->setUserID($this->getReference($extraTestData ? UserDataFixtures::ADMIN_USER : UserDataFixtures::REGULAR_USER));
-                $newCard->
+//                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[mt_rand(0, $amountOfState)]));
+                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[0]));
+                $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+                $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
+                $manager->persist($newCard);
                 if ($extraTestData) {
                     $otherUserCard = new CardView();
                     $otherUserCard->setSensorNameID($newSensor);
                     $otherUserCard->setUserID($this->getReference($extraTestData ? UserDataFixtures::REGULAR_USER : UserDataFixtures::ADMIN_USER));
+//                    $otherUserCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[mt_rand(0, $amountOfState)]));
+                    $otherUserCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[0]));
+                    $otherUserCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+                    $otherUserCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+
+                    $manager->persist($otherUserCard);
                 }
 
 
@@ -74,6 +86,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                         $newObject->setTime();
 
                         if ($newSensorType instanceof StandardSensorTypeInterface) {
+                            $newSensorType->setSensorObject($newSensor);
                             if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
                                 $newSensorType->setTempObject($newObject);
                             }

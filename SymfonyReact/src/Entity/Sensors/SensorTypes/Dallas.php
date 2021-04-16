@@ -8,6 +8,7 @@ use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Dallas
@@ -42,23 +43,15 @@ class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterf
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
+     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private Sensors $sensor;
-
+    private Sensors $sensorNameID;
 
     /**
      * @var CardView
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
-     * })
      */
-    private CardView $cardViewID;
-
-
+    private CardView $cardView;
 
     /**
      * @return int
@@ -77,19 +70,19 @@ class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterf
     }
 
     /**
-     * @return CardView
+     * @return Sensors
      */
-    public function getCardViewObject(): CardView
+    public function getSensorObject(): Sensors
     {
-        return $this->cardViewID;
+        return $this->sensorNameID;
     }
 
     /**
-     * @param CardView $cardViewID
+     * @param Sensors $sensor
      */
-    public function setCardViewObject(CardView $cardViewID): void
+    public function setSensorObject(Sensors $sensor): void
     {
-        $this->cardViewID = $cardViewID;
+        $this->sensorNameID = $sensor;
     }
 
     /**
@@ -111,20 +104,28 @@ class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterf
     /**
      * @return Sensors
      */
-    public function getSensor(): Sensors
+    public function getSensorNameID(): Sensors
     {
-        return $this->sensor;
+        return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Sensors $sensorNameID
      */
-    public function setSensor(Sensors $sensor): void
+    public function setSensorNameID(Sensors $sensorNameID): void
     {
-        $this->sensor = $sensor;
+        $this->sensorNameID = $sensorNameID;
     }
 
+    public function getCardViewObject(): ?CardView
+    {
+        return $this->cardView;
+    }
 
+    public function setCardViewObject(CardView $cardView): void
+    {
+        $this->cardView = $cardView;
+    }
 
 
 }

@@ -25,22 +25,26 @@ class CardViewRepository extends EntityRepository
 {
     private function prepareSensorDataForQuery(array $sensors, $qb, array $joinCondition): string
     {
+        $qb->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
+
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
 
         $sensorAlias = [];
         foreach ($sensors as $sensorNames => $sensorData) {
             $sensorAlias[] = $sensorData['alias'];
-            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH,$sensorData['alias'].$joinConditionString);
+//            dd( $sensorData['alias'].$joinConditionString, $sensors);
+//            dd($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
+            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
         }
-
+//dd(implode(', ', $sensorAlias));
         return implode(', ', $sensorAlias);
     }
 
 
-    public function getAllIndexCardObjectsForUser(?User $user, array $sensors)
+    public function getAllIndexSensorTypeObjectsForUser(?User $user, array $sensors): array
     {
         $userID = $user->getUserID();
-        $groupNameIDs = $user->getUserGroupMappingEntities();
+        $groupNameIDs = $user->getGroupNameIds();
 
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
@@ -48,16 +52,17 @@ class CardViewRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['cv', 'cardViewID']);
-
+        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
+//dd($sensorAlias);
         $qb->select($sensorAlias)
-            ->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID')
-            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID');
+            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
+            ->innerJoin(Cardstate::class, 'cardState', Join::WITH, 'cv.cardStateID = cardState.cardStateID');
 
+        //@TODO card state doesnt work needs relating properly
         $qb->where(
             $expr->orX(
-                $expr->eq('cv.cardState', ':cardviewOne'),
-                $expr->eq('cv.cardState', ':cardviewTwo')
+                $expr->eq('cardState.state', ':cardviewOne'),
+                $expr->eq('cardState.state', ':cardviewTwo')
             ),
             $expr->eq('cv.userID', ':userID'),
             $expr->in('devices.groupNameID', ':groupNameID')
@@ -71,7 +76,8 @@ class CardViewRepository extends EntityRepository
                 'cardviewTwo' => $cardViewTwo
             ]
         );
-
+//dd($qb->getQuery()->getSQL(), $userID, $groupNameIDs);
+//        dd($qb->getQuery()->getResult());
         return array_filter($qb->getQuery()->getResult());
     }
 

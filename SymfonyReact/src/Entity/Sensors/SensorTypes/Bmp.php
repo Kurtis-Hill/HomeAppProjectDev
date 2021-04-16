@@ -6,11 +6,13 @@ use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Bmp
@@ -30,14 +32,14 @@ class Bmp implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
     private int $bmpID;
 
     /**
-     * @var CardView
+     * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Card\CardView")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardViewID", referencedColumnName="cardViewID")
+     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private CardView $cardViewID;
+    private Sensors $sensorNameID;
 
     /**
      * @var Temperature
@@ -70,6 +72,11 @@ class Bmp implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
     private Latitude $latitudeID;
 
     /**
+     * @var CardView
+     */
+    private CardView $cardView;
+
+    /**
      * @return int
      */
     public function getSensorTypeID(): int
@@ -86,19 +93,27 @@ class Bmp implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
     }
 
     /**
-     * @return CardView
+     * @return Sensors
      */
-    public function getCardViewObject(): CardView
+    public function getSensorObject(): Sensors
     {
-        return $this->cardViewID;
+        return $this->sensorNameID;
     }
 
     /**
-     * @param CardView $cardViewID
+     * @param Sensors $sensor
      */
-    public function setCardViewObject(CardView $cardViewID): void
+    public function setSensorObject(Sensors $sensor): void
     {
-        $this->cardViewID = $cardViewID;
+        $this->sensorNameID = $sensor;
+    }
+
+    /**
+     * @return Sensors
+     */
+    public function getSensorNameID(): Sensors
+    {
+        return $this->sensorNameID;
     }
 
     /**
@@ -148,5 +163,16 @@ class Bmp implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
     {
         $this->latitudeID = $latitudeID;
     }
+
+    public function getCardViewObject(): ?CardView
+    {
+        return $this->cardView;
+    }
+
+    public function setCardViewObject(CardView $cardView): void
+    {
+        $this->cardView = $cardView;
+    }
+
 
 }

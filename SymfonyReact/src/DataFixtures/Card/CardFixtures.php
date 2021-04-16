@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Card;
 
+use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\Icons;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -120,16 +121,33 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
         [   'name' => 'smoking',
             'description' =>'smoking',
         ],
-];
+    ];
 
+    public const COLOURS = [
+       [
+          'colour' => 'danger',
+          'shade' => 'red',
+       ],
+       [
+          'colour' => 'success',
+          'shade' => 'green',
+       ],
+       [
+            'colour' => 'warning',
+            'shade' => 'Yellow',
+       ],
+       [
+            'colour' => 'primary',
+            'shade' => 'blue',
+       ]
+    ];
 
-
-
-
-
-
-
-
+    public const CARD_STATES = [
+        0 => Cardstate::ON,
+        1 => Cardstate::OFF,
+        2 => Cardstate::DEVICE_ONLY,
+        3 => Cardstate::ROOM_ONLY,
+    ];
 
 
     public function getOrder()
@@ -139,31 +157,13 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        $newCardStateOn = new Cardstate();
-        $newCardStateOn->setState('ON');
+        foreach (self::CARD_STATES as $state) {
+            $newCardState = new Cardstate();
+            $newCardState->setState($state);
 
-        $newCardStateOff = new Cardstate();
-        $newCardStateOff->setState('OFF');
-
-        $newCardStateIndexOnly = new Cardstate();
-        $newCardStateIndexOnly->setState('INDEX_ONLY');
-
-        $newCardStateDeviceOnly = new Cardstate();
-        $newCardStateDeviceOnly->setState('DEVICE_ONLY');
-
-        $newCardStateRoomOnly = new Cardstate();
-        $newCardStateRoomOnly->setState('ROOM_ONLY');
-
-        $this->setReference($iconDetails['name'], $newCardStateOn);
-        $this->setReference($iconDetails['name'], $newCardStateOff);
-        $this->setReference($iconDetails['name'], $newCardStateDeviceOnly);
-        $this->setReference($iconDetails['name'], $newCardStateRoomOnly);
-        $manager->persist($newCardStateOn);
-        $manager->persist($newCardStateOff);
-        $manager->persist($newCardStateDeviceOnly);
-        $manager->persist($newCardStateRoomOnly);
-
-
+            $this->setReference($state, $newCardState);
+            $manager->persist($newCardState);
+        }
 
         //Icons
         foreach (self::ICONS as $iconDetails) {
@@ -175,11 +175,14 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
             $manager->persist($newIcon);
         }
 
+        foreach (self::COLOURS as $iconDetails) {
+            $cardColour = new CardColour();
+            $cardColour->setColour($iconDetails['colour']);
+            $cardColour->setShade($iconDetails['shade']);
 
-
-
-
-
+            $this->setReference($iconDetails['colour'], $cardColour);
+            $manager->persist($cardColour);
+        }
 
 
         $manager->flush();

@@ -55,7 +55,7 @@ class SensorsRepository extends EntityRepository
             )
             ->setParameters(['groupNameIds' => $user->getGroupNameIds()]);
 
-        dd($qb->getQuery()->getResult(), $user->getGroupNameIds());
+//        dd($qb->getQuery()->getResult(), $user->getGroupNameIds());
     }
 
 
