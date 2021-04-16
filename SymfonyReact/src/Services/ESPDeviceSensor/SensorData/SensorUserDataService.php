@@ -27,25 +27,6 @@ use Symfony\Component\Security\Core\Security;
 
 class SensorUserDataService extends AbstractSensorService
 {
-    private User $sensorUser;
-
-    /**
-     * SensorUserDataService constructor.
-     * @param EntityManagerInterface $em
-     * @param Security $security
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(EntityManagerInterface $em, Security $security, FormFactoryInterface $formFactory)
-    {
-        parent::__construct($em, $security, $formFactory);
-
-//        try {
-//            $this->setServiceUserSession();
-//        } catch (\Exception $exception) {
-//            error_log($exception->getMessage());
-//        }
-    }
-
     /**
      * @param Sensors $sensor
      * @param CardView $cardView
@@ -206,6 +187,7 @@ class SensorUserDataService extends AbstractSensorService
 
         $this->userInputDataCheck($addNewSensorForm->getData());
         if ($addNewSensorForm->isSubmitted() && $addNewSensorForm->isValid()) {
+            $addNewSensorForm->getData()->setCreatedBy($this->getUser());
             $this->em->persist($addNewSensorForm->getData());
             $this->em->flush();
         } else {
@@ -215,18 +197,6 @@ class SensorUserDataService extends AbstractSensorService
         }
 
         return $addNewSensorForm;
-    }
-
-
-    /**
-     */
-    protected function setServiceUserSession(): void
-    {
-
-        if ($this->getUser() instanceof User) {
-            $this->sensorUser = $this->getUser();
-            throw new \InvalidArgumentException('Wrong Entity Provided');
-        }
     }
 
 }

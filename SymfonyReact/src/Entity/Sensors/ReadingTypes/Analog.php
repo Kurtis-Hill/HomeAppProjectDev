@@ -2,7 +2,6 @@
 
 namespace App\Entity\Sensors\ReadingTypes;
 
-use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -71,17 +70,6 @@ class Analog implements StandardReadingSensorInterface
      */
     private Sensors $sensorNameID;
 
-
-    /**
-     * @var Devices
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
-     * })
-     */
-    private Devices $deviceNameID;
-
     /**
      * @return int
      */
@@ -113,30 +101,12 @@ class Analog implements StandardReadingSensorInterface
     }
 
     /**
-     * @return Devices
-     */
-    public function getDeviceObject(): Devices
-    {
-        return $this->deviceNameID;
-    }
-
-
-    /**
      * @param Sensors $sensorNameID
      */
     public function setSensorNameID(Sensors $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
     }
-
-    /**
-     * @param Devices $deviceNameID
-     */
-    public function setDeviceNameID(Devices $deviceNameID): void
-    {
-        $this->deviceNameID = $deviceNameID;
-    }
-
 
     /**
      * Sensor Reading Methods
@@ -183,7 +153,7 @@ class Analog implements StandardReadingSensorInterface
     }
 
     /**
-     * @param int|float $reading
+     * @param int|float|string $reading
      */
     public function setHighReading(int|float|string $reading): void
     {
@@ -193,7 +163,7 @@ class Analog implements StandardReadingSensorInterface
     }
 
     /**
-     * @param int|float $reading
+     * @param int|float|string $reading
      */
     public function setLowReading(int|float|string $reading): void
     {
@@ -207,7 +177,7 @@ class Analog implements StandardReadingSensorInterface
      */
     public function setTime(?\DateTime $time = null): void
     {
-        $this->time = $time === null ?  new \DateTime('now') : $time;
+        $this->time = $time ?? new \DateTime('now');
     }
 
     /**
@@ -223,11 +193,11 @@ class Analog implements StandardReadingSensorInterface
     }
 
     /**
-     * @param bool $constrecord
+     * @param bool $constRecord
      */
-    public function setConstRecord(bool $constrecord): void
+    public function setConstRecord(bool $constRecord): void
     {
-        $this->constRecord = $constrecord;
+        $this->constRecord = $constRecord;
     }
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float

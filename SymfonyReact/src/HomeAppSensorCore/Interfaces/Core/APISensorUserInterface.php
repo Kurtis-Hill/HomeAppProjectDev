@@ -12,6 +12,7 @@ interface APISensorUserInterface
     public function setUserGroupMappingEntities(array $userGroupMappingEntities): void;
 
     /**
+     * @TODO remove this just use below
      * @return array
      */
     public function getUserGroupMappingEntities(): array;

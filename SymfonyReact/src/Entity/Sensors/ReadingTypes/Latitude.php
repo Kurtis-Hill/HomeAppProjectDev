@@ -2,9 +2,6 @@
 
 namespace App\Entity\Sensors\ReadingTypes;
 
-use App\Entity\Core\GroupNames;
-use App\Entity\Core\Room;
-use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -56,16 +53,6 @@ class Latitude implements StandardReadingSensorInterface
     private bool $constRecord = false;
 
     /**
-     * @var Devices
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
-     * })
-     */
-    private Devices $deviceNameID;
-
-    /**
      * @var Sensors
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
@@ -111,29 +98,12 @@ class Latitude implements StandardReadingSensorInterface
     }
 
     /**
-     * @return Devices
-     */
-    public function getDeviceObject(): Devices
-    {
-        return $this->deviceNameID;
-    }
-
-    /**
      * @param Sensors $id
      */
     public function setSensorNameID(Sensors $id): void
     {
         $this->sensorNameID = $id;
     }
-
-    /**
-     * @param Devices $deviceNameID
-     */
-    public function setDeviceNameID(Devices $deviceNameID): void
-    {
-        $this->deviceNameID = $deviceNameID;
-    }
-
 
     /**
      * Sensor Reading Methods
@@ -180,7 +150,7 @@ class Latitude implements StandardReadingSensorInterface
     }
 
     /**
-     * @param float|int $reading
+     * @param int|float|string $reading
      */
     public function setHighReading(int|float|string $reading): void
     {
@@ -190,7 +160,7 @@ class Latitude implements StandardReadingSensorInterface
     }
 
     /**
-     * @param float|int $reading
+     * @param int|float|string $reading
      */
     public function setLowReading(int|float|string $reading): void
     {
@@ -220,11 +190,11 @@ class Latitude implements StandardReadingSensorInterface
     }
 
     /**
-     * @param bool $constrecord
+     * @param bool $constRecord
      */
-    public function setConstRecord(bool $constrecord): void
+    public function setConstRecord(bool $constRecord): void
     {
-        $this->constRecord = $constrecord;
+        $this->constRecord = $constRecord;
     }
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float

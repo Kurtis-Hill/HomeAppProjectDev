@@ -2,9 +2,7 @@
 
 namespace App\Entity\Sensors\ReadingTypes;
 
-use App\Entity\Core\GroupNames;
-use App\Entity\Core\Room;
-use App\Entity\Devices\Devices;
+
 use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -73,16 +71,6 @@ class Humidity implements StandardReadingSensorInterface
     private Sensors $sensorNameID;
 
     /**
-     * @var Devices
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Devices\Devices")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
-     * })
-     */
-    private Devices $deviceNameID;
-
-    /**
      * @return int
      */
     public function getSensorID(): int
@@ -90,15 +78,10 @@ class Humidity implements StandardReadingSensorInterface
         return $this->humidID;
     }
 
-    public function setSensorID(int $id)
+    public function setSensorID(int $id): void
     {
         $this->humidID = $id;
     }
-
-
-    /**
-     * Sensor relational Objects
-     */
 
     /**
      * @return Sensors
@@ -106,14 +89,6 @@ class Humidity implements StandardReadingSensorInterface
     public function getSensorObject(): Sensors
     {
         return $this->sensorNameID;
-    }
-
-    /**
-     * @return Devices
-     */
-    public function getDeviceObject(): Devices
-    {
-        return $this->deviceNameID;
     }
 
     /**
@@ -125,15 +100,6 @@ class Humidity implements StandardReadingSensorInterface
     }
 
     /**
-     * @param Devices $deviceNameID
-     */
-    public function setDeviceNameID(Devices $deviceNameID): void
-    {
-        $this->deviceNameID = $deviceNameID;
-    }
-
-
-    /**
      * Sensor Reading Methods
      */
 
@@ -143,7 +109,7 @@ class Humidity implements StandardReadingSensorInterface
     }
 
     /**
-     * @return float|null
+     * @return int|float
      */
     public function getHighReading(): int|float
     {
@@ -185,7 +151,7 @@ class Humidity implements StandardReadingSensorInterface
     }
 
     /**
-     * @param int|float $reading
+     * @param int|float|string $reading
      */
     public function setLowReading(int|float|string $reading): void
     {
@@ -195,7 +161,7 @@ class Humidity implements StandardReadingSensorInterface
     }
 
     /**
-     * @param \DateTime $dateTime
+     * @param \DateTime|null $time
      */
     public function setTime(?\DateTime $time = null): void
     {
@@ -215,11 +181,11 @@ class Humidity implements StandardReadingSensorInterface
     }
 
     /**
-     * @param bool $constrecord
+     * @param bool $constRecord
      */
-    public function setConstRecord(bool $constrecord): void
+    public function setConstRecord(bool $constRecord): void
     {
-        $this->constRecord = $constrecord;
+        $this->constRecord = $constRecord;
     }
 
     #[Pure] public function getMeasurementDifferenceHighReading(): int|float

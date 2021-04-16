@@ -2,6 +2,7 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -59,6 +60,16 @@ class Sensors
     private Devices $deviceNameID;
 
     /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
+     * })
+     */
+    private User $createdBy;
+
+    /**
      * @return int
      */
     public function getSensorNameID(): int
@@ -109,4 +120,22 @@ class Sensors
     {
         $this->deviceNameID = $deviceNameID;
     }
+
+    /**
+     * @return User
+     */
+    public function getCreatedBy(): User
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param User $createdBy
+     */
+    public function setCreatedBy(User $createdBy): void
+    {
+        $this->createdBy = $createdBy;
+    }
+
+
 }

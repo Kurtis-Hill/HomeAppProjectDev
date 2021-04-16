@@ -12,13 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cardstate
 {
-    public const ON = 1;
+    public const ON = 'ON';
 
-    public const OFF = 2;
+    public const OFF = 'OFF';
 
-    public const INDEX_ONLY = 3;
+    public const INDEX_ONLY = 'INDEX_ONLY';
 
-    public const ROOM_ONLY = 4;
+    public const ROOM_ONLY = 'ROOM_ONLY';
+
+    public const DEVICE_ONLY = 'DEVICE_ONLY';
     /**
      * @var int
      *

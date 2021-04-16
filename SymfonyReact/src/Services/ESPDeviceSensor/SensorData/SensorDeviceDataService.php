@@ -28,11 +28,6 @@ use Symfony\Component\HttpFoundation\Request;
 class SensorDeviceDataService extends AbstractSensorService
 {
     /**
-     * @var Devices
-     */
-    private Devices $sensorUser;
-
-    /**
      * @param Request $request
      * @return array|null
      */

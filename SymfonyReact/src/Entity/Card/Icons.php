@@ -31,7 +31,7 @@ class Icons
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=20, nullable=false)
+     * @ORM\Column(name="description", type="string", length=20, nullable=true)
      */
     private string $description;
 

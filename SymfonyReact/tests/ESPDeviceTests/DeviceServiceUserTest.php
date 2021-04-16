@@ -6,7 +6,8 @@ namespace App\Tests\ESPDeviceTests;
 
 use App\API\HTTPStatusCodes;
 use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266DeviceFixtures;
+
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;

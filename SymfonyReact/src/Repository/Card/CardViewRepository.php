@@ -56,8 +56,8 @@ class CardViewRepository extends EntityRepository
 
         $qb->where(
             $expr->orX(
-                $expr->eq('cv.cardStateID', ':cardviewOne'),
-                $expr->eq('cv.cardStateID', ':cardviewTwo')
+                $expr->eq('cv.cardState', ':cardviewOne'),
+                $expr->eq('cv.cardState', ':cardviewTwo')
             ),
             $expr->eq('cv.userID', ':userID'),
             $expr->in('devices.groupNameID', ':groupNameID')
@@ -101,8 +101,8 @@ class CardViewRepository extends EntityRepository
 
         $qb->where(
             $expr->orX(
-                $expr->eq('cv.cardStateID', ':cardviewOne'),
-                $expr->eq('cv.cardStateID', ':cardviewTwo')
+                $expr->eq('cv.cardState', ':cardviewOne'),
+                $expr->eq('cv.cardState', ':cardviewTwo')
             ),
             $expr->eq('cv.userID', ':userID'),
             $expr->in('devices.groupNameID', ':groupNameID'),

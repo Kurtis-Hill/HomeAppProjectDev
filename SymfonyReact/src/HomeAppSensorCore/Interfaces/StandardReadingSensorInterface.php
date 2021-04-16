@@ -19,11 +19,11 @@ interface StandardReadingSensorInterface
      */
     public function getSensorObject(): Sensors;
 
-    public function getDeviceObject(): Devices;
+//    public function getDeviceObject(): Devices;
 
     public function setSensorNameID(Sensors $id);
 
-    public function setDeviceNameID(Devices $id);
+//    public function setDeviceNameID(Devices $id);
 
     /**
      * Sensor Reading Methods
@@ -49,7 +49,7 @@ interface StandardReadingSensorInterface
      */
     public function getConstRecord(): bool;
 
-    public function setConstRecord(bool $constrecord);
+    public function setConstRecord(bool $constRecord);
 
     public function getMeasurementDifferenceHighReading(): int|float;
 

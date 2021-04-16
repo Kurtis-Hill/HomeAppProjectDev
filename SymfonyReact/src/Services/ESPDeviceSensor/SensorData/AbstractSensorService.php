@@ -22,11 +22,6 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
     protected FormFactoryInterface $formFactory;
 
     /**
-     * @var User|Devices
-     */
-//    protected User|Devices $sensorUser;
-
-    /**
      * AbstractSensorService constructor.
      * @param EntityManagerInterface $em
      * @param Security $security
@@ -38,8 +33,6 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
 
         $this->formFactory = $formFactory;
     }
-
-    abstract protected function setServiceUserSession();
 
     /**
      * @param array $sensorFormData
