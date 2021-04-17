@@ -18,7 +18,7 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 3;
+        return 4;
     }
 
     public function load(ObjectManager $manager): void

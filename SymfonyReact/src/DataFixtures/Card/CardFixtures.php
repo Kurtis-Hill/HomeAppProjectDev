@@ -143,10 +143,10 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
     ];
 
     public const CARD_STATES = [
-        0 => Cardstate::ON,
-        1 => Cardstate::OFF,
-        2 => Cardstate::DEVICE_ONLY,
-        3 => Cardstate::ROOM_ONLY,
+        'on' => Cardstate::ON,
+        'off' => Cardstate::OFF,
+        'device' => Cardstate::DEVICE_ONLY,
+        'room' => Cardstate::ROOM_ONLY,
     ];
 
 

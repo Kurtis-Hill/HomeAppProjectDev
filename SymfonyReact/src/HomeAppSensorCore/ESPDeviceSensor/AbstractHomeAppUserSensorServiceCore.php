@@ -3,6 +3,7 @@
 
 namespace App\HomeAppSensorCore\ESPDeviceSensor;
 
+use App\Entity\Core\User;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -122,9 +123,9 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     ];
 
     /**
-     * @var ?APISensorUserInterface
+     * @var ?User
      */
-    private ?APISensorUserInterface $user;
+    private ?User $user;
 
     /**
      * @var EntityManagerInterface
@@ -156,7 +157,7 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
-        $this->user = $security->getUser() instanceof APISensorUserInterface ? $security->getUser() : null;
+        $this->user = $security->getUser() instanceof User ? $security->getUser() : null;
 
         try {
             $this->checkUserInstance();
@@ -199,11 +200,10 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     }
 
     /**
-     * @return APISensorUserInterface
+     * @return APISensorUserInterface|null
      */
-    protected function getUser(): APISensorUserInterface
+    protected function getUser(): ?User
     {
-
         return $this->user;
     }
 

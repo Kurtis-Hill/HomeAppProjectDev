@@ -19,7 +19,7 @@ class ReadingTypesFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        foreach (ESP8266DeviceFixtures::DEVICES as $device) {
+        foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
             foreach (AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
 
 

@@ -60,7 +60,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
      */
     public function prepareAllCardDTOs(?string $route, ?string $deviceId): array
     {
-      //  try {
+        try {
             if (isset($deviceId)) {
                 if (!is_numeric($deviceId)) {
                     throw new BadRequestException('none numeric device id passed');
@@ -72,23 +72,21 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
                 "device" => $this->getDevicePageCardDataObjects($deviceId),
                 default => $this->getIndexPageCardDataObjects()
             };
-//        } catch (BadRequestException $e) {
-//            $this->userInputErrors[] = $e->getMessage();
-//        } catch (\RuntimeException $e) {
-//            $this->serverErrors[] = $e->getMessage();
-//        } catch (ORMException $e) {
-//            error_log($e->getMessage());
-//            $this->serverErrors[] = 'Card Data Query Failure';
-//        } catch (Exception $e) {
-//            error_log($e->getMessage());
-//            $this->fatalErrors[] = 'Failed to prepare card data';
-//        }
-//        dd($sensorObjects);
+        } catch (BadRequestException $e) {
+            $this->userInputErrors[] = $e->getMessage();
+        } catch (\RuntimeException $e) {
+            $this->serverErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $this->fatalErrors[] = 'Failed to prepare card data';
+        }
 
         if (!empty($sensorObjects)) {
-//            dd($sensorObjects);
                 foreach ($sensorObjects as $cardDTO) {
-                 //   try {
+                    try {
                         if ($cardDTO instanceof StandardSensorTypeInterface) {
                             $cardViewObject = $this->em->getRepository(CardView::class)->findOneBy(
                                 [
@@ -96,14 +94,15 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
                                     'sensorNameID' => $cardDTO->getSensorNameID()
                                 ]
                             );
-//                            dd($sensorObjects);
-//                            dd($cardDTO);
+                            if (empty($cardViewObject) || !$cardViewObject instanceof CardView) {
+                                throw new BadRequestException('A Card Has Not Been Made For This Sensor');
+                            }
                             $cardDTO->setCardViewObject($cardViewObject);
                             $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
                         }
-//                    } catch (\RuntimeException $e) {
-//                        $this->cardErrors[] = $e->getMessage();
-//                    }
+                    } catch (\RuntimeException $e) {
+                        $this->cardErrors[] = $e->getMessage();
+                    }
                 }
         }
 
@@ -172,9 +171,9 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
      */
     #[ArrayShape(
         [
-            'icons' => Icons::class,
-            'colours' => CardColour::class,
-            'states' => Cardstate::class
+            'icons' => [Icons::class],
+            'colours' => [CardColour::class],
+            'states' => [Cardstate::class]
         ]
     )]
     private function getUserCardSelectionData(): array
@@ -207,6 +206,13 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
             }
 
             if ($cardData instanceof StandardSensorTypeInterface) {
+                $usersCardViewData = $this->em->getRepository(CardView::class)->findUsersCardFormDataByIdAndUser($cardViewID, $this->getUserID());
+
+                if (!$usersCardViewData instanceof CardView) {
+                    throw new BadRequestException('No card view data found for this sensor and user');
+                }
+
+                $cardData->setCardViewObject($usersCardViewData);
                 $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
             }
             else {
@@ -233,10 +239,6 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
     public function createNewSensorCard(Sensors $sensorObject): CardView
     {
         try {
-//            $maxIconNumber = $this->em->createQueryBuilder()
-//                ->select('count(icons.iconID)')
-//                ->from(Icons::class, 'icons')
-//                ->getQuery()->getSingleScalarResult();
             $iconRepository = $this->em->getRepository(Icons::class);
             $maxIconNumber = $iconRepository->countAllIcons();
 
@@ -250,7 +252,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
 
             $newCard = new CardView();
             $newCard->setSensorNameID($sensorObject);
-            $newCard->setUserID($this->getUser() instanceof User ?$this->getUser() : null);
+            $newCard->setUserID($this->getUser());
             $newCard->setCardIconID($randomIcon);
             $newCard->setCardColourID($randomColour);
             $newCard->setCardStateID($onCardState);

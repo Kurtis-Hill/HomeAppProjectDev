@@ -35,58 +35,83 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
     {
         // for permissions checks this wont cover every scenario down to a sensor by sensor but as there is currently no special permission
         // pending on the type of sensor a good selection of test data has been selected here
+
+        //In future to create a true test set the contents of this method will have to be duplicated
         $sensorCounter = 0;
         $amountOfColours = count(CardFixtures::COLOURS) - 1;
         $amountOfIcons = count(CardFixtures::ICONS) - 1;
-        $amountOfState = count(CardFixtures::CARD_STATES) - 1;
 
-        foreach (ESP8266DeviceFixtures::DEVICES as $device) {
-            $extraTestData = $sensorCounter % 2 === 0;
+        foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
             foreach (AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
-                $newSensor = new Sensors();
-                $newCard = new CardView();
+                $newAdminSensor = new Sensors();
+                $newAdminSensor->setDeviceNameID($this->getReference($device['referenceName']));
+                $newAdminSensor->setSensorName($sensorType.$sensorCounter);
+                $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
+                $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
-//                dd(count(CardFixtures::CARD_STATES),
-//count(CardFixtures::COLOURS));
-                $newCard->setSensorNameID($newSensor);
-                $newCard->setUserID($this->getReference($extraTestData ? UserDataFixtures::ADMIN_USER : UserDataFixtures::REGULAR_USER));
-//                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[mt_rand(0, $amountOfState)]));
-                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[0]));
+                $manager->persist($newAdminSensor);
+
+//                Card for the admin user
+                $newCard = new CardView();
+                $newCard->setSensorNameID($newAdminSensor);
+                $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
+                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['on']));
                 $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
                 $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
                 $manager->persist($newCard);
-                if ($extraTestData) {
-                    $otherUserCard = new CardView();
-                    $otherUserCard->setSensorNameID($newSensor);
-                    $otherUserCard->setUserID($this->getReference($extraTestData ? UserDataFixtures::REGULAR_USER : UserDataFixtures::ADMIN_USER));
-//                    $otherUserCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[mt_rand(0, $amountOfState)]));
-                    $otherUserCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[0]));
-                    $otherUserCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-                    $otherUserCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
-                    $manager->persist($otherUserCard);
-                }
+//                Card for the regular user
+                $otherUserCard = new CardView();
+                $otherUserCard->setSensorNameID($newAdminSensor);
+                $otherUserCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER));
+                $otherUserCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['on']));
+                $otherUserCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+                $otherUserCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+
+                $manager->persist($otherUserCard);
 
 
-                $newSensor->setDeviceNameID($this->getReference($device['referenceName']));
-                $newSensor->setSensorName($sensorType.$sensorCounter);
-                $newSensor->setSensorTypeID($this->getReference($sensorType));
-                $newSensor->setCreatedBy($this->getReference($extraTestData ? UserDataFixtures::ADMIN_USER : UserDataFixtures::REGULAR_USER));
 
-                $this->addReference($sensorType.$sensorCounter, $newSensor);
-                $manager->persist($newSensor);
+                // Regular created devices with card view set to off to reduce interface noise
+                $newRegularUserSensor = new Sensors();
+                $newRegularUserSensor->setDeviceNameID($this->getReference($device['referenceName']));
+                $newRegularUserSensor->setSensorName($sensorType.$sensorCounter);
+                $newRegularUserSensor->setSensorTypeID($this->getReference($sensorType));
+                $newRegularUserSensor->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
+
+                $manager->persist($newRegularUserSensor);
+
+//                Card for the admin user
+                $newCard = new CardView();
+                $newCard->setSensorNameID($newRegularUserSensor);
+                $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
+                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['off']));
+                $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+                $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+
+                $manager->persist($newCard);
+
+//                Card for the regular user
+                $otherUserCard = new CardView();
+                $otherUserCard->setSensorNameID($newRegularUserSensor);
+                $otherUserCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER));
+                $otherUserCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['off']));
+                $otherUserCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+                $otherUserCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+
+                $manager->persist($otherUserCard);
 
                 $newSensorType = new $sensorDetails['object'];
                 foreach ($sensorDetails['readingTypes'] as $object) {
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
-                        $newObject->setSensorNameID($newSensor);
+                        $newObject->setSensorNameID($newAdminSensor);
                         $newObject->setCurrentSensorReading(10);
                         $newObject->setTime();
 
                         if ($newSensorType instanceof StandardSensorTypeInterface) {
-                            $newSensorType->setSensorObject($newSensor);
+                            $newSensorType->setSensorObject($newAdminSensor);
                             if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
                                 $newSensorType->setTempObject($newObject);
                             }
@@ -106,8 +131,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     }
                 }
             }
-
-            ++$sensorCounter;
+            ++ $sensorCounter;
         }
 
         $manager->flush();

@@ -88,7 +88,7 @@ class SensorUserDataService extends AbstractSensorService
             if ($sensorNames === $sensor->getSensorTypeID()->getSensorType()) {
                 $newSensorTypeObject = new $sensorTypeData['object'];
                 if ($newSensorTypeObject instanceof StandardSensorTypeInterface) {
-                    $newSensorTypeObject->setSensorObject($cardView);
+                    $newSensorTypeObject->setSensorObject($sensor);
                     foreach ($sensorTypeData['readingTypes'] as $readingType => $readingTypeObject) {
                         $newObject = new $readingTypeObject;
 
@@ -107,7 +107,6 @@ class SensorUserDataService extends AbstractSensorService
 
                         if ($newObject instanceof StandardReadingSensorInterface) {
                             $newObject->setSensorNameID($sensor);
-                            $newObject->setDeviceNameID($deviceObject);
                             $newObject->setCurrentSensorReading(10);
                             $newObject->setTime(clone $dateTimeNow);
 

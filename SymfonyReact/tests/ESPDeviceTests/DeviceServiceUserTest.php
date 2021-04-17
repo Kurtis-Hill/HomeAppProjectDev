@@ -5,6 +5,7 @@ namespace App\Tests\ESPDeviceTests;
 
 
 use App\API\HTTPStatusCodes;
+use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -68,7 +69,7 @@ class DeviceServiceUserTest extends WebTestCase
             ->getManager();
 
         $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findGroupByName(UserDataFixtures::ADMIN_GROUP);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, ESP8266DeviceFixtures::ADMIN_ROOM_NAME);
+        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, RoomFixtures::ADMIN_ROOM_NAME);
         try {
             $this->setUserToken();
         } catch (\JsonException $e) {
@@ -246,8 +247,7 @@ class DeviceServiceUserTest extends WebTestCase
 
         $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
-
-        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($groupNameMappingEntities)[0];
+        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
 
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -458,15 +458,15 @@ class DeviceServiceUserTest extends WebTestCase
 
 
     // @TODO add these when delete device functionality has been added
-    public function test_admin_can_delete_device_to_a_regular_owned_room_regular_owned_group()
-    {
-
-    }
-
-    public function test_regular_user_can_delete_device_to_admin_owned_room_admin_owned_group()
-    {
-
-    }
+//    public function test_admin_can_delete_device_to_a_regular_owned_room_regular_owned_group()
+//    {
+//
+//    }
+//
+//    public function test_regular_user_can_delete_device_to_admin_owned_room_admin_owned_group()
+//    {
+//
+//    }
 
 
     /**

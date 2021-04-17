@@ -6,6 +6,7 @@ namespace App\Repository\Card;
 
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
+use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
 use App\Entity\Core\User;
 use App\Entity\Sensors\SensorType;
@@ -77,7 +78,7 @@ class CardViewRepository extends EntityRepository
             ]
         );
 //dd($qb->getQuery()->getSQL(), $userID, $groupNameIDs);
-//        dd($qb->getQuery()->getResult());
+//        dd(array_filter($qb->getQuery()->getResult()));
         return array_filter($qb->getQuery()->getResult());
     }
 
@@ -140,12 +141,12 @@ class CardViewRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('cv');
 
-        $sensorAlias = $this->prepareSensorDataForQuery($sensorData, $qb, ['cv', 'cardViewID']);
+        $sensorAlias = $this->prepareSensorDataForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
 
         $qb->select($sensorAlias)
             ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
             ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
-            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
+//            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
             ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
             ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
             ->where(
@@ -185,6 +186,34 @@ class CardViewRepository extends EntityRepository
 
         return $result;
     }
+
+    /**
+     * @param int $cardViewID
+     * @param int $userID
+     * @return CardView|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findUsersCardFormDataByIdAndUser(int $cardViewID, int $userID): ?CardView
+    {
+        $qb = $this->createQueryBuilder('cv');
+        $expr = $qb->expr();
+
+        $qb->select()
+            ->where(
+                $expr->eq(-'cv.cardViewID', ':cardViewID'),
+                $expr->eq('cv.userID', ':userID')
+            )
+            ->setParameters(
+                [
+                    'cardViewID' => $cardViewID,
+                    'userID' => $userID
+                ]
+            );
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+//    public function findSE
 
 //    public function getRandomCardViewDefaultData()
 //    {

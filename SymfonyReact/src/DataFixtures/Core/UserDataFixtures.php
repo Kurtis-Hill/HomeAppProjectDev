@@ -14,13 +14,19 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 {
     public const ADMIN_USER = 'admin-user@gmail.com';
 
+    public const SECOND_ADMIN_USER_ISOLATED = 'admin-regular-test-email@testing.com';
+
     public const ADMIN_PASSWORD = 'admin1234';
 
     public const REGULAR_USER = 'regular-user';
 
+    public const REGULAR_PASSWORD = 'user1234';
+
     public const ADMIN_GROUP = 'admin-group';
 
     public const REGULAR_GROUP = 'regular-group';
+
+    public const SECOND_REGULAR_USER_ISOLATED = 'regular-user-admin-group@gmail.com';
 
 
     private UserPasswordEncoderInterface $passwordEncoder;
@@ -53,12 +59,12 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUser->setTime();
         $adminUser->setGroupNameID($adminGroupName);
 
-        $groupMapping = new GroupnNameMapping();
+        $firstAminGroupName = new GroupnNameMapping();
 
-        $groupMapping->setGroupNameID($adminGroupName);
-        $groupMapping->setUserID($adminUser);
+        $firstAminGroupName->setGroupNameID($adminGroupName);
+        $firstAminGroupName->setUserID($adminUser);
 
-        $manager->persist($groupMapping);
+        $manager->persist($firstAminGroupName);
         $manager->persist($adminGroupName);
         $manager->persist($adminUser);
 
@@ -74,27 +80,108 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUser->setEmail('user-test-email@testing.com');
         $regularUser->setFirstName('user');
         $regularUser->setLastName('test');
-        $regularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, 'user1234'));
+        $regularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, self::REGULAR_PASSWORD));
         $regularUser->setRoles(['ROLE_USER']);
         $regularUser->setTime();
         $regularUser->setGroupNameID($userGroupName);
 
-        $groupMapping = new GroupnNameMapping();
+        $firstRegularGroupMapping = new GroupnNameMapping();
 
-        $groupMapping->setGroupNameID($userGroupName);
-        $groupMapping->setUserID($regularUser);
+        $firstRegularGroupMapping->setGroupNameID($userGroupName);
+        $firstRegularGroupMapping->setUserID($regularUser);
 
-        $manager->persist($groupMapping);
+        $manager->persist($firstRegularGroupMapping);
         $manager->persist($userGroupName);
         $manager->persist($regularUser);
+
+
+        // Joining the two users by group mapping
+        $adminUserInAdminGroup = new GroupnNameMapping();
+
+        $adminUserInAdminGroup->setGroupNameID($userGroupName);
+        $adminUserInAdminGroup->setUserID($adminUser);
+
+        $manager->persist($adminUserInAdminGroup);
+
+        $regularUserAdminGroup = new GroupnNameMapping();
+
+        $regularUserAdminGroup->setGroupNameID($adminGroupName);
+        $regularUserAdminGroup->setUserID($regularUser);
+
+
+
+
+        //Just Admin Groups
+        $adminUserGroupName = new GroupNames();
+
+        $adminUserGroupName->setGroupName('second-admin-user-group');
+        $adminUserGroupName->setTime();
+
+        $adminUserInAdminGroup = new User();
+
+        $adminUserInAdminGroup->setEmail(self::SECOND_ADMIN_USER_ISOLATED);
+        $adminUserInAdminGroup->setFirstName('second-admin-user');
+        $adminUserInAdminGroup->setLastName('test');
+        $adminUserInAdminGroup->setPassword($this->passwordEncoder->encodePassword($regularUser, self::ADMIN_PASSWORD));
+        $adminUserInAdminGroup->setRoles(['ROLE_ADMIN']);
+        $adminUserInAdminGroup->setTime();
+        $adminUserInAdminGroup->setGroupNameID($adminUserGroupName);
+
+        $secondAdminGroupMapping = new GroupnNameMapping();
+
+        $secondAdminGroupMapping->setGroupNameID($adminUserGroupName);
+        $secondAdminGroupMapping->setUserID($adminUserInAdminGroup);
+
+        $adminAdminGroupMapping = new GroupnNameMapping();
+
+        $adminAdminGroupMapping->setGroupNameID($adminGroupName);
+        $adminAdminGroupMapping->setUserID($adminUserInAdminGroup);
+
+        $manager->persist($adminAdminGroupMapping);
+        $manager->persist($secondAdminGroupMapping);
+        $manager->persist($adminUserGroupName);
+        $manager->persist($adminUserInAdminGroup);
+
+        //Just Regular Groups
+        $secondRegularUserGroupName = new GroupNames();
+
+        $secondRegularUserGroupName->setGroupName(self::SECOND_REGULAR_USER_ISOLATED);
+        $secondRegularUserGroupName->setTime();
+
+        $secondRegularUser = new User();
+
+        $secondRegularUser->setEmail(self::SECOND_REGULAR_USER_ISOLATED);
+        $secondRegularUser->setFirstName('second-regular-user');
+        $secondRegularUser->setLastName('test');
+        $secondRegularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, self::ADMIN_PASSWORD));
+        $secondRegularUser->setRoles(['ROLE_USER']);
+        $secondRegularUser->setTime();
+        $secondRegularUser->setGroupNameID($adminUserGroupName);
+
+        $secondRegularGroupMapping = new GroupnNameMapping();
+
+        $secondRegularGroupMapping->setGroupNameID($secondRegularUserGroupName);
+        $secondRegularGroupMapping->setUserID($secondRegularUser);
+
+        $regularRegularGroupMapping = new GroupnNameMapping();
+
+        $regularRegularGroupMapping->setGroupNameID($userGroupName);
+        $regularRegularGroupMapping->setUserID($secondRegularUser);
+
+        $manager->persist($regularRegularGroupMapping);
+        $manager->persist($secondRegularGroupMapping);
+        $manager->persist($secondRegularUser);
+        $manager->persist($secondRegularUserGroupName);
 
 
         $manager->flush();
 
         $this->addReference(self::ADMIN_USER, $adminUser);
         $this->addReference(self::REGULAR_USER, $regularUser);
+        $this->addReference(self::SECOND_ADMIN_USER_ISOLATED, $adminUserInAdminGroup);
 
         $this->addReference(self::ADMIN_GROUP, $adminGroupName);
         $this->addReference(self::REGULAR_GROUP, $userGroupName);
+        $this->addReference(self::SECOND_REGULAR_USER_ISOLATED, $secondRegularUserGroupName);
     }
 }

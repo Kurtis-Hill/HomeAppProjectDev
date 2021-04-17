@@ -79,14 +79,14 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void
     {
-        $this->cardIcon['iconID'] = $cardDTOData->getSensorObject()->getCardIconID()->getIconID();
-        $this->cardIcon['iconName'] = $cardDTOData->getSensorObject()->getCardIconID()->getIconName();
+        $this->cardIcon['iconID'] = $cardDTOData->getCardViewObject()->getCardIconID()->getIconID();
+        $this->cardIcon['iconName'] = $cardDTOData->getCardViewObject()->getCardIconID()->getIconName();
 
-        $this->cardColour['colourID'] = $cardDTOData->getSensorObject()->getCardColourID()->getColourID();
-        $this->cardColour['colour'] = $cardDTOData->getSensorObject()->getCardColourID()->getColour();
+        $this->cardColour['colourID'] = $cardDTOData->getCardViewObject()->getCardColourID()->getColourID();
+        $this->cardColour['colour'] = $cardDTOData->getCardViewObject()->getCardColourID()->getColour();
 
-        $this->currentViewState['stateID'] = $cardDTOData->getSensorObject()->getCardStateID()->getCardstateID();
-        $this->currentViewState['state'] = $cardDTOData->getSensorObject()->getCardStateID()->getState();
+        $this->currentViewState['stateID'] = $cardDTOData->getCardViewObject()->getCardStateID()->getCardstateID();
+        $this->currentViewState['state'] = $cardDTOData->getCardViewObject()->getCardStateID()->getState();
 
         $this->cardViewID = $cardDTOData->getSensorObject()->getCardViewID();
     }

@@ -8,7 +8,6 @@ use App\Entity\Core\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;
-use mysql_xdevapi\Exception;
 
 class GroupNameMappingTableRepository extends EntityRepository
 {
@@ -42,13 +41,13 @@ class GroupNameMappingTableRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findGroupsUserIsNotApartOf($groups)
+    public function findGroupsUserIsNotApartOf(array $groups)
     {
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gmt')
             ->where(
-                $qb->expr()->notIn('gmt.groupNameMappingID', ':groups')
+                $qb->expr()->notIn('gmt.groupNameID', ':groups'),
             )
             ->setParameter('groups', $groups);
 
