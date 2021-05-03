@@ -71,9 +71,11 @@ class SensorController extends AbstractController
         $newSensorForm = $sensorService->createNewSensor($sensorData);
 
         if (!empty($sensorService->getUserInputErrors())) {
+            $newSensorForm->getData() !== null ?:$this->getDoctrine()->getManager()->remove($newSensorForm->getData());
             return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
         }
         if (!empty($sensorService->getServerErrors())) {
+            $newSensorForm->getData() !== null ?:$this->getDoctrine()->getManager()->remove($newSensorForm->getData());
             return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
         }
 

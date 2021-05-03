@@ -24,6 +24,13 @@ class SensorType
 
     public const SOIL_SENSOR = 'Soil';
 
+    public const SENSOR_TYPES = [
+        self::DHT_SENSOR,
+        self::BMP_SENSOR,
+        self::DALLAS_TEMPERATURE,
+        self::SOIL_SENSOR
+    ];
+
     /**
      * @var int
      *

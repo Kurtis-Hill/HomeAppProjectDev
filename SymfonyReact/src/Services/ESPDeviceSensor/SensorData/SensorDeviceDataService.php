@@ -31,7 +31,7 @@ class SensorDeviceDataService extends AbstractSensorService
      * @param Request $request
      * @return array|null
      */
-    public function processSensorReadingUpdateRequest(Request $request): ?array
+    public function processSensorReadingUpdateRequest(Request $request): array
     {
         $sensorType = $request->request->get('sensor-type');
 
@@ -39,6 +39,7 @@ class SensorDeviceDataService extends AbstractSensorService
             $this->handleDhtUpdateRequest($request);
         }
         if ($sensorType === SensorType::DALLAS_TEMPERATURE) {
+//            dd('no');
             $this->handleDallasUpdateRequest($request);
         }
         if ($sensorType === SensorType::BMP_SENSOR) {
@@ -57,6 +58,8 @@ class SensorDeviceDataService extends AbstractSensorService
 //        } catch (\Exception $exception) {
 //            $this->serverErrors[] = $exception->getMessage();
 //        }
+
+        return [];
     }
 
     protected function setServiceUserSession()
@@ -79,7 +82,7 @@ class SensorDeviceDataService extends AbstractSensorService
         $sensorReadings = $this->multipleSensorsWithSingularReading($request, Dallas::MAX_POSSIBLE_SENSORS);
 
         foreach ($sensorReadings as $sensorReading) {
-             try {
+        //     try {
                 $sensor = $this->findSensorForAPIRequestByUserAndSensorName($this->getUser(), $sensorReading['sensorName']);
 
                 if ($sensor === null) {
@@ -116,15 +119,16 @@ class SensorDeviceDataService extends AbstractSensorService
                 $this->em->persist($temperatureObject);
                 // here intentionally so if any sensor fails to persist other sensor data can still be processed
                 $this->em->flush();
-            } catch (BadRequestException $exception) {
-                $this->userInputErrors[] = $exception->getMessage();
-            } catch (\RuntimeException $exception) {
-                $this->userInputErrors[] = 0;
-            } catch (ORMException $exception) {
-                $this->serverErrors[] = $exception->getMessage();
-            } catch (\Exception $exception) {
-                $this->serverErrors[] = $exception->getMessage();
-            }
+                dd('yeaaa');
+//            } catch (BadRequestException $exception) {
+//                $this->userInputErrors[] = $exception->getMessage();
+//            } catch (\RuntimeException $exception) {
+//                $this->userInputErrors[] = 0;
+//            } catch (ORMException $exception) {
+//                $this->serverErrors[] = $exception->getMessage();
+//            } catch (\Exception $exception) {
+//                $this->serverErrors[] = $exception->getMessage();
+//            }
         }
     }
 
@@ -214,13 +218,14 @@ class SensorDeviceDataService extends AbstractSensorService
      */
     private function findSensorForAPIRequestByUserAndSensorName(APISensorUserInterface $device, string $sensorName): ?Sensors
     {
+//        dd($device, $sensorName);
         $sensor = $this->em->getRepository(Sensors::class)->findOneBy(
             [
                 'sensorName' => $sensorName,
                 'deviceNameID' => $device
             ]
         );
-
+dd($sensor);
         if (!$sensor instanceof Sensors) {
             throw new BadRequestException('no sensor named ' .$sensorName. ' exists');
         }

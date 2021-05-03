@@ -13,9 +13,6 @@ use App\Entity\Core\Room;
 
 class DevicesRepository extends EntityRepository
 {
-
-    private const TEST_DEVICE = 1;
-
     /**
      * @param $groupNameID
      * @return array
@@ -60,14 +57,14 @@ class DevicesRepository extends EntityRepository
             );
         // use this after db clean
 //dd($qb->getQuery()->getOneOrNullResult());
-        return $qb->getQuery()->getResult()[0] ?? null;
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * @param $deviceDetails
      * @return mixed|null
      */
-    public function findDeviceByIdAndGroupNameId($deviceDetails)
+    public function findDeviceByIdAndGroupNameId($deviceDetails): ?Devices
     {
         $qb = $this->createQueryBuilder('devices');
         $expr = $qb->expr();
@@ -85,55 +82,6 @@ class DevicesRepository extends EntityRepository
                 ]
             );
 //dd($qb->getQuery()->getSingleResult());
-        return $qb->getQuery()->getResult()[0] ?? null;
-    }
-
-
-//    public function findUsersDeviceAPIRequest(string $deviceName, string $deviceSecret): ?Devices
-//    {
-//        //dd($deviceName, $deviceSecret);
-//        $qb = $this->createQueryBuilder('devices');
-//        $expr = $qb->expr();
-//
-//        $qb->select('devices')
-//            ->where(
-//                $expr->eq('devices.secret', ':deviceSecret'),
-//                $expr->eq('devices.deviceName', ':deviceName'),
-//            )
-//            ->setParameters([
-//                    'deviceSecret' => $deviceSecret,
-//                    'deviceName' => $deviceName
-//                ]
-//            );
-//
-//        return $qb->getQuery()->getOneOrNullResult();
-//    }
-//
-//    public function findDeviceByNameAndSecret(string $deviceName, string $deviceSecret): ?Devices
-//    {
-//        //dd($deviceName, $deviceSecret);
-//        $qb = $this->createQueryBuilder('devices');
-//        $expr = $qb->expr();
-//
-//        $qb->select('devices')
-//            ->where(
-//                $expr->eq('devices.secret', ':deviceSecret'),
-//                $expr->eq('devices.deviceName', ':deviceName'),
-//                $expr->in('devices.groupNameID', ':groupNameIds')
-//            )
-//            ->setParameters([
-//                    'deviceSecret' => $deviceSecret,
-//                    'deviceName' => $deviceName,
-//                ]
-//            );
-//
-//        //dd($groupNameIds, $qb->getQuery()->getResult());
-//
-//        return $qb->getQuery()->getOneOrNullResult();
-//    }
-
-    public function getTestDevice()
-    {
-        return $this->findOneBy(['deviceNameId' => self::TEST_DEVICE]);
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

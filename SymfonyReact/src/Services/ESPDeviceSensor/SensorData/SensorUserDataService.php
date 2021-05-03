@@ -74,7 +74,7 @@ class SensorUserDataService extends AbstractSensorService
      */
     private function createNewSensorReadingTypeData(Sensors $sensor, CardView $cardView, array $sensorData): void
     {
-        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getUserGroupMappingEntities()]);
+        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
         if (!$deviceObject instanceof Devices) {
             $this->em->remove($sensor);
             $this->em->flush();
@@ -157,10 +157,10 @@ class SensorUserDataService extends AbstractSensorService
 
             return $this->processNewSensorForm($addNewSensorForm, $sensorData);
         } catch (BadRequestException $exception) {
-            $this->em->remove($addNewSensorForm->getData());
+            $this->em->remove($newSensor);
             $this->userInputErrors[] = $exception->getMessage();
         } catch (\Exception | ORMException $e) {
-            $this->em->remove($addNewSensorForm->getData());
+            $this->em->remove($newSensor);
             error_log($e->getMessage());
             $this->serverErrors[] = $e->getMessage();
         }
@@ -194,6 +194,8 @@ class SensorUserDataService extends AbstractSensorService
                 $this->userInputErrors[] = $error->getMessage();
             }
         }
+
+//        dd($addNewSensorForm->getData());
 
         return $addNewSensorForm;
     }

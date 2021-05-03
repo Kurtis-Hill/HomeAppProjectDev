@@ -19,4 +19,20 @@ class CardstateRepository extends EntityRepository
 
         return $qb->getQuery()->getArrayResult();
     }
+
+    public function getFirstStateId()
+    {
+        return $this->createQueryBuilder('state')
+            ->select()
+            ->orderBy('state.cardStateID', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult();
+    }
+
+    public function countAllStates()
+    {
+        return $this->createQueryBuilder('state')
+            ->select('count(state.cardStateID)')
+            ->getQuery()->getSingleScalarResult();
+    }
 }

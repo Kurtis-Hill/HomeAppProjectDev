@@ -22,7 +22,7 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         //admin owned devices
       'AdminDeviceAdminRoomAdminGroup' => [
           'referenceName' => 'aaa',
-          'password' => 'device1234'
+          'password' => 'processSensorReadingUpdateRequest'
       ],
         'AdminDeviceAdminRoomRegularGroup' => [
             'referenceName' => 'aar',

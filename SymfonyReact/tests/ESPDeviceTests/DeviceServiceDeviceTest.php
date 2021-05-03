@@ -4,7 +4,8 @@
 namespace App\Tests\ESPDeviceTests;
 
 
-use App\DataFixtures\ESP8266DeviceFixtures;
+
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 class DeviceServiceDeviceTest

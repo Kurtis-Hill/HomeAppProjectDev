@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class CardcolourRepository extends EntityRepository
 {
-    public function getAllColours()
+    public function getAllColours(): array
     {
         $qb = $this->createQueryBuilder('c')
               ->orderBy('c.colour', 'ASC');
@@ -23,32 +23,19 @@ class CardcolourRepository extends EntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-    // /**
-    //  * @return Cardcolour[] Returns an array of Cardcolour objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getFirstColourId(): CardColour
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->createQueryBuilder('cardColour')
+            ->select()
+            ->orderBy('cardColour.colourID', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Cardcolour
+    public function countAllColours(): int
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->createQueryBuilder('cardColour')
+            ->select('count(cardColour.colourID)')
+            ->getQuery()->getSingleScalarResult();
     }
-    */
 }

@@ -14,6 +14,8 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    public const API_USER_LOGIN = '/HomeApp/api/login_check';
+
     /**
      * @Route("/HomeApp/api/csrfToken", name="csrf")
      * @param CsrfTokenManagerInterface $csrfTokenManager
