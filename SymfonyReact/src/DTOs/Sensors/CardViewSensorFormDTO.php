@@ -88,7 +88,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
         $this->currentViewState['stateID'] = $cardDTOData->getCardViewObject()->getCardStateID()->getCardstateID();
         $this->currentViewState['state'] = $cardDTOData->getCardViewObject()->getCardStateID()->getState();
 
-        $this->cardViewID = $cardDTOData->getSensorObject()->getCardViewID();
+        $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
     }
 
     /**

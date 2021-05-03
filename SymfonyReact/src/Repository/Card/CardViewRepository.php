@@ -146,7 +146,7 @@ class CardViewRepository extends EntityRepository
         $qb->select($sensorAlias)
             ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
             ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
-//            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
+            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
             ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
             ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
             ->where(
@@ -157,7 +157,7 @@ class CardViewRepository extends EntityRepository
         $result = array_filter($qb->getQuery()->getResult());
 
         $result = array_values($result);
-
+//dd($result);
         return $result[0];
     }
 
@@ -200,7 +200,7 @@ class CardViewRepository extends EntityRepository
 
         $qb->select()
             ->where(
-                $expr->eq(-'cv.cardViewID', ':cardViewID'),
+                $expr->eq('cv.cardViewID', ':cardViewID'),
                 $expr->eq('cv.userID', ':userID')
             )
             ->setParameters(

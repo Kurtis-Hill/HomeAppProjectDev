@@ -196,7 +196,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
      */
     public function getCardViewFormDTO(string $cardViewID): ?CardViewSensorFormDTO
     {
-        try {
+     //   try {
             $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], self::SENSOR_TYPE_DATA);
 
             $userSelectionData = $this->getUserCardSelectionData();
@@ -207,7 +207,6 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
 
             if ($cardData instanceof StandardSensorTypeInterface) {
                 $usersCardViewData = $this->em->getRepository(CardView::class)->findUsersCardFormDataByIdAndUser($cardViewID, $this->getUserID());
-
                 if (!$usersCardViewData instanceof CardView) {
                     throw new BadRequestException('No card view data found for this sensor and user');
                 }
@@ -218,15 +217,15 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
             else {
                 $this->serverErrors[] = 'Sensor Not Recognised, You May Need To Update Your App';
             }
-        } catch (\RuntimeException $e) {
-            $this->serverErrors[] = $e->getMessage();
-        } catch (ORMException $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = 'Card Data Query Failure';
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = 'Failed to prepare card data';
-        }
+//        } catch (\RuntimeException $e) {
+//            $this->serverErrors[] = $e->getMessage();
+//        } catch (ORMException $e) {
+//            error_log($e->getMessage());
+//            $this->serverErrors[] = 'Card Data Query Failure';
+//        } catch (Exception $e) {
+//            error_log($e->getMessage());
+//            $this->serverErrors[] = 'Failed to prepare card data';
+//        }
 
         return $cardViewFormDTO ?? null;
     }
