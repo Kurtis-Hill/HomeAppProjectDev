@@ -196,7 +196,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
      */
     public function getCardViewFormDTO(string $cardViewID): ?CardViewSensorFormDTO
     {
-     //   try {
+        try {
             $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], self::SENSOR_TYPE_DATA);
 
             $userSelectionData = $this->getUserCardSelectionData();
@@ -217,15 +217,15 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
             else {
                 $this->serverErrors[] = 'Sensor Not Recognised, You May Need To Update Your App';
             }
-//        } catch (\RuntimeException $e) {
-//            $this->serverErrors[] = $e->getMessage();
-//        } catch (ORMException $e) {
-//            error_log($e->getMessage());
-//            $this->serverErrors[] = 'Card Data Query Failure';
-//        } catch (Exception $e) {
-//            error_log($e->getMessage());
-//            $this->serverErrors[] = 'Failed to prepare card data';
-//        }
+        } catch (\RuntimeException $e) {
+            $this->serverErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Failed to prepare card data';
+        }
 
         return $cardViewFormDTO ?? null;
     }
@@ -242,8 +242,8 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
             $colourRepository = $this->em->getRepository(CardColour::class);
             $cardStateRepository = $this->em->getRepository(Cardstate::class);
 
-            $maxIconNumber = (int)$iconRepository->countAllIcons();
-            $maxColourNumber = (int)$colourRepository->countAllColours();
+            $maxIconNumber = $iconRepository->countAllIcons();
+            $maxColourNumber = $colourRepository->countAllColours();
 
 
             $firstIconId = $iconRepository->getFirstIconId()->getIconID();

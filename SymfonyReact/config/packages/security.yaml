@@ -23,7 +23,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        device:
+        device_api:
             pattern: ^/HomeApp/device
             stateless: true
             anonymous: true
@@ -36,7 +36,7 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
-        api:
+        user_api:
             pattern: ^/HomeApp/api
             stateless: true
             anonymous: true
@@ -57,6 +57,7 @@ security:
                     - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
+                target: app_login
 
 
     role_hierarchy:

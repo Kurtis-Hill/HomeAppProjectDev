@@ -28,6 +28,11 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public const SECOND_REGULAR_USER_ISOLATED = 'regular-user-admin-group@gmail.com';
 
+    public const USER_ACCOUNTS = [
+      self::ADMIN_GROUP,
+      self::REGULAR_GROUP
+    ];
+
 
     private UserPasswordEncoderInterface $passwordEncoder;
 

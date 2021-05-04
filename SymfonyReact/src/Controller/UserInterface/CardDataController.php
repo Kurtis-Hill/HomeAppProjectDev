@@ -104,7 +104,6 @@ class CardDataController extends AbstractController
     public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->get('card-view-id');
-
         $cardColourID = $request->get('card-colour');
         $cardIconID = $request->get('card-icon');
         $cardStateID = $request->get('card-view-state');

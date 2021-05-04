@@ -19,6 +19,11 @@ class RoomFixtures extends Fixture implements OrderedFixtureInterface
 
     public const REGULAR_ROOM_NAME = 'BedRoom';
 
+    public const ROOMS = [
+      self::ADMIN_ROOM,
+      self::REGULAR_ROOM
+    ];
+
     public function load(ObjectManager $manager)
     {
         //Create an admin room

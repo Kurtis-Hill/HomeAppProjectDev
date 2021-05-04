@@ -101,6 +101,13 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
+
+        self::assertNotNull($responseData['deviceID']);
+        self::assertArrayHasKey('secret', $responseData);
+        self::assertInstanceOf(Devices::class, $device);
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
@@ -121,6 +128,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['deviceName' => $formData['device-name']]);
+
+        self::assertCount(1, $device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -140,6 +150,7 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -158,6 +169,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+
+        self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -176,6 +190,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+
+        self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -195,6 +212,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+
+        self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -214,6 +234,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+
+        self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -233,6 +256,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+
+        self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -260,6 +286,9 @@ class DeviceController extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+
+        self::assertNull($device);
         self::assertStringContainsString(GroupNames::NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE, json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'][0]);
     }
 
@@ -281,28 +310,6 @@ class DeviceController extends WebTestCase
         );
 
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_device_password_is_sent_back_with_response()
-    {
-        $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_DEVICE_PATH,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
-
-        self::assertArrayHasKey('secret', $responseData);
     }
 
     public function test_device_password_is_sent_back_with_response_and_not_null()
@@ -347,76 +354,6 @@ class DeviceController extends WebTestCase
         self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $responseData['secret']);
     }
 
-    public function test_device_id_is_sent_back_with_response()
-    {
-        $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_DEVICE_PATH,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
-
-        self::assertArrayHasKey('deviceID', $responseData);
-    }
-
-    public function test_device_id_is_sent_back_with_response_and_not_null()
-    {
-        $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_DEVICE_PATH,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
-
-        self::assertNotNull($responseData['deviceID']);
-    }
-
-
-
-    public function test_device_is_created()
-    {
-        $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_DEVICE_PATH,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
-
-        $deviceId = $responseData['deviceID'];
-
-        $newDevice = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceNameID' => $deviceId]);
-
-        self::assertInstanceOf(Devices::class, $newDevice);
-    }
-
-
     public function test_new_device_can_login()
     {
         $formData = [
@@ -452,18 +389,6 @@ class DeviceController extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $requestCode);
     }
-
-
-    // @TODO add these when delete device functionality has been added
-//    public function test_admin_can_delete_device_to_a_regular_owned_room_regular_owned_group()
-//    {
-//
-//    }
-//
-//    public function test_regular_user_can_delete_device_to_admin_owned_room_admin_owned_group()
-//    {
-//
-//    }
 
 
     /**

@@ -40,7 +40,11 @@ class SensorsRepository extends EntityRepository
                 ]
             );
 
-        return $qb->getQuery()->getOneOrNullResult();
+        if (!empty($qb->getQuery()->getResult())) {
+//            dd($qb->getQuery()->getResult()[0]);
+        }
+        return $qb->getQuery()->getResult()[0] ?? null;
+//        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function findAllSensorsByAssociatedGroups(User $user)

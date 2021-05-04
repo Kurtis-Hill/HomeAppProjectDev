@@ -64,7 +64,7 @@ class DevicesRepository extends EntityRepository
      * @param $deviceDetails
      * @return mixed|null
      */
-    public function findDeviceByIdAndGroupNameId($deviceDetails): ?Devices
+    public function findDeviceByIdAndGroupNameIds($deviceDetails): ?Devices
     {
         $qb = $this->createQueryBuilder('devices');
         $expr = $qb->expr();

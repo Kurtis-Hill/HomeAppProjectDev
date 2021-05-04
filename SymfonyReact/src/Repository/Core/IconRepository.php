@@ -23,7 +23,7 @@ class IconRepository extends EntityRepository
 
    public function countAllIcons(): int
    {
-       return $this->createQueryBuilder('icons')
+       return (int)$this->createQueryBuilder('icons')
            ->select('count(icons.iconID)')
            ->getQuery()->getSingleScalarResult();
    }

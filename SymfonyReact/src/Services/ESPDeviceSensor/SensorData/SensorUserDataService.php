@@ -32,7 +32,7 @@ class SensorUserDataService extends AbstractSensorService
      * @param CardView $cardView
      * @param array $sensorData
      */
-    public function handleSensorCreation(Sensors $sensor, CardView $cardView, array $sensorData): void
+    public function handleSensorReadingTypeCreation(Sensors $sensor, CardView $cardView, array $sensorData): void
     {
         try {
             $this->createNewSensorReadingTypeData($sensor, $cardView, $sensorData);
@@ -74,7 +74,7 @@ class SensorUserDataService extends AbstractSensorService
      */
     private function createNewSensorReadingTypeData(Sensors $sensor, CardView $cardView, array $sensorData): void
     {
-        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
+        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
         if (!$deviceObject instanceof Devices) {
             $this->em->remove($sensor);
             $this->em->flush();
@@ -139,6 +139,7 @@ class SensorUserDataService extends AbstractSensorService
         $currentUserSensorNameCheck = $this->em->getRepository(Sensors::class)->checkForDuplicateSensor($sensorData, $this->getUser()->getUserGroupMappingEntities());
 
         if ($currentUserSensorNameCheck instanceof Sensors) {
+//            dd($currentUserSensorNameCheck, 'uo');
             throw new BadRequestException('You already have a sensor named '. $sensorData->getSensorName());
         }
     }
@@ -157,6 +158,7 @@ class SensorUserDataService extends AbstractSensorService
 
             return $this->processNewSensorForm($addNewSensorForm, $sensorData);
         } catch (BadRequestException $exception) {
+//            dd('he');
             $this->em->remove($newSensor);
             $this->userInputErrors[] = $exception->getMessage();
         } catch (\Exception | ORMException $e) {
@@ -177,11 +179,12 @@ class SensorUserDataService extends AbstractSensorService
     {
         $addNewSensorForm->submit($sensorData);
 
-        $device = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameId(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
+        $device = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
 
         if (!$device instanceof Devices) {
             throw new BadRequestException('Device not recognised');
         }
+//        dd($addNewSensorForm->getData());
         $addNewSensorForm->getData()->setDeviceNameID($device);
 
         $this->userInputDataCheck($addNewSensorForm->getData());

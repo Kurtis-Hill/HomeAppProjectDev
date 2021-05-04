@@ -21,7 +21,6 @@ class SecurityController extends AbstractController
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @return JsonResponse
      *
-     * Needs refactor, attach to axios headers
      * DEV USE ONLY
      */
     public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
@@ -51,7 +50,7 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        return $this->redirectToRoute('app_login');
+
     }
 
     /**

@@ -34,7 +34,7 @@ class CardcolourRepository extends EntityRepository
 
     public function countAllColours(): int
     {
-        return $this->createQueryBuilder('cardColour')
+        return (int)$this->createQueryBuilder('cardColour')
             ->select('count(cardColour.colourID)')
             ->getQuery()->getSingleScalarResult();
     }
