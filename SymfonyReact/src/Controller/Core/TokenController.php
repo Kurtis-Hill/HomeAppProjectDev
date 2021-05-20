@@ -5,7 +5,6 @@ namespace App\Controller\Core;
 
 
 use App\Entity\Core\User;
-use Couchbase\PasswordAuthenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
