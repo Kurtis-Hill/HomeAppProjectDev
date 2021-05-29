@@ -33,7 +33,7 @@ class CardViewRepository extends EntityRepository
         $sensorAlias = [];
         foreach ($sensors as $sensorNames => $sensorData) {
             $sensorAlias[] = $sensorData['alias'];
-//            dd( $sensorData['alias'].$joinConditionString, $sensors);
+//            dd($sensorData['alias'].$joinConditionString, $sensors);
 //            dd($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
             $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
         }
@@ -47,6 +47,7 @@ class CardViewRepository extends EntityRepository
         $userID = $user->getUserID();
         $groupNameIDs = $user->getGroupNameIds();
 
+//        dd('hey', $groupNameIDs);
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
 

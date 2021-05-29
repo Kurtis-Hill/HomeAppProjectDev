@@ -8,13 +8,11 @@ use App\Services\UserInterfaceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
  /**
   * @Route("/HomeApp/api/user", name="userDetails")
-
   */
 class UserDataController extends AbstractController
 {

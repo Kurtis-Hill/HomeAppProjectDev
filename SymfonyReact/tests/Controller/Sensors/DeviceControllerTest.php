@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class DeviceController extends WebTestCase
+class DeviceControllerTest extends WebTestCase
 {
     private const API_DEVICE_LOGIN = '/HomeApp/device/login_check';
 
@@ -65,12 +65,34 @@ class DeviceController extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findGroupByName(UserDataFixtures::ADMIN_GROUP);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, RoomFixtures::ADMIN_ROOM_NAME);
         try {
             $this->setUserToken();
         } catch (\JsonException $e) {
             error_log($e);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws \JsonException
+     */
+    private function setUserToken()
+    {
+        if ($this->userToken === null) {
+            $this->client->request(
+                'POST',
+                SecurityController::API_USER_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
+            );
+
+            $requestResponse = $this->client->getResponse();
+            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+            $this->userToken = $requestData['token'];
+            $this->userRefreshToken = $requestData['refreshToken'];
         }
     }
 
@@ -388,30 +410,5 @@ class DeviceController extends WebTestCase
         $requestCode = $this->client->getResponse()->getStatusCode();
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $requestCode);
-    }
-
-
-    /**
-     * @return mixed|string|KernelBrowser|null
-     * @throws \JsonException
-     */
-    private function setUserToken()
-    {
-        if ($this->userToken === null) {
-            $this->client->request(
-                'POST',
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            $this->userToken = $requestData['token'];
-            $this->userRefreshToken = $requestData['refreshToken'];
-        }
     }
 }

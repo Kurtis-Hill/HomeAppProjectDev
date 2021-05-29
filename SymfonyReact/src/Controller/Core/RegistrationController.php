@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Core;
 
 
 use App\Entity\Core\GroupNames;

@@ -61,10 +61,8 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
     public function prepareAllCardDTOs(?string $route, ?string $deviceId): array
     {
        // try {
-            if (isset($deviceId)) {
-                if (!is_numeric($deviceId)) {
-                    throw new BadRequestException('none numeric device id passed');
-                }
+            if (isset($deviceId) && !is_numeric($deviceId)) {
+                throw new BadRequestException('none numeric device id passed');
             }
 
             $sensorObjects = match ($route) {

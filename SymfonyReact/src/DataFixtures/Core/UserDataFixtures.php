@@ -33,7 +33,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
       self::REGULAR_GROUP
     ];
 
-
     private UserPasswordEncoderInterface $passwordEncoder;
 
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)

@@ -24,7 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SensorController extends WebTestCase
+class SensorControllerTest extends WebTestCase
 {
     private const GET_SENSOR_TYPES_URL = '/HomeApp/api/sensors/types';
 

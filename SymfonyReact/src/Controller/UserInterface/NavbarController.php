@@ -19,7 +19,9 @@ class NavbarController extends AbstractController
 
     /**
      * @Route("/navbar-data", name="navbar-data")
+     *
      * @param UserInterfaceService $userInterfaceService
+     *
      * @return JsonResponse
      */
     public function navBarData(UserInterfaceService $userInterfaceService)
@@ -32,5 +34,4 @@ class NavbarController extends AbstractController
 
         return $this->sendSuccessfulJsonResponse($navbarData);
     }
-
 }

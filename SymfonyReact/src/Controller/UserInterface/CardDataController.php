@@ -151,5 +151,4 @@ class CardDataController extends AbstractController
         return $this->sendSuccessfulUpdateJsonResponse();
     }
 
-
 }

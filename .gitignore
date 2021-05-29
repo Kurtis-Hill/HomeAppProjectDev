@@ -28,6 +28,7 @@ SymfonyReact/package-lock.json
 .idea
 .idea/workspace.xml
 .vscode
+SymfonyReact/.idea
 
 
 /.php_cs.cache
@@ -38,3 +39,4 @@ SymfonyReact/package-lock.json
 /SymfonyReact/phpunit.result.cache
 /SymfonyReact/phpunit.xml
 ###< symfony/phpunit-bridge ###
+SymfonyReact/.phpunit.result.cache

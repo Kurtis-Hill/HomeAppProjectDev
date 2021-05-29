@@ -4,7 +4,9 @@
 namespace App\Tests;
 
 
-class AuthenticationTests
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class AuthenticationTests extends WebTestCase
 {
 
 }

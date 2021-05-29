@@ -32,8 +32,8 @@ function Login(props) {
             });
         
         loginCheckResponse 
-        ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
-        : setError('Login check response error');
+            ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
+            : setError('Login check response error');
 
         const loginForm = document.getElementById('login-form');
 
@@ -46,13 +46,15 @@ function Login(props) {
                 setError('Login Failed Please Try Again');
                 setLoading(false); 
             });
-
-        
-        if (loginResponse.status === 200) {
-            window.location.replace(webappURL+'index');
-        } else {
-            alert('setting user data failed');
-        }
+                    
+        // if (loginResponse.status === 200) {
+        //     window.location.replace(webappURL+'index');
+        // } else {
+        //     alert('setting user data failed');
+        // }
+        loginResponse.status === 200 
+            ? window.location.replace(webappURL+'index')
+            : alert('setting user data failed');
 
         setLoading(false);
     }
