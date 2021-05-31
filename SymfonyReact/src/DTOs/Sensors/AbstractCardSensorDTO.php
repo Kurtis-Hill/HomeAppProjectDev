@@ -4,6 +4,8 @@
 namespace App\DTOs\Sensors;
 
 
+use App\Entity\Sensors\ReadingTypes\Humidity;
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
@@ -17,11 +19,11 @@ abstract class AbstractCardSensorDTO
     {
         $processed = false;
         if ($cardDTOData instanceof TemperatureSensorTypeInterface) {
-            $this->setSensorData($cardDTOData->getTempObject(), 'temperature', '°C');
+            $this->setSensorData($cardDTOData->getTempObject(), 'temperature', Temperature::READING_SYMBOL);
             $processed = true;
         }
         if ($cardDTOData instanceof HumiditySensorTypeInterface) {
-            $this->setSensorData($cardDTOData->getHumidObject(), 'humidity', '%');
+            $this->setSensorData($cardDTOData->getHumidObject(), 'humidity', Humidity::READING_SYMBOL);
             $processed = true;
         }
         if ($cardDTOData instanceof LatitudeSensorTypeInterface) {

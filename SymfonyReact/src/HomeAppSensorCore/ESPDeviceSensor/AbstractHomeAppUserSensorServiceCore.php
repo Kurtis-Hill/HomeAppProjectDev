@@ -108,6 +108,7 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
                     'readingTypes' => [
                         'temperature' =>  Temperature::class,
                         'humidity' =>  Humidity::class,
+                        'latitude' => Latitude::class,
                     ],
                 ],
                 'updateCurrentReading' => [

@@ -3,17 +3,17 @@
 
 namespace App\Form\CustomFormValidators\SensorDataValidators;
 
+
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class DallasTemperatureConstraintValidator extends ConstraintValidator
+class LatitudeConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof DallasTemperatureConstraint) {
-            throw new UnexpectedTypeException($constraint, DallasTemperatureConstraint::class);
-        }
+        if (!$constraint instanceof LatitudeConstraint) {
+            throw new UnexpectedTypeException($constraint, LatitudeConstraint::class);        }
 
         if ($value === null || $value === '') {
             return;
@@ -26,14 +26,14 @@ class DallasTemperatureConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 125) {
+        if ($value > 90) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < -55) {
+        if ($value < 0) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

@@ -44,7 +44,7 @@ trait HomeAppAPIResponseTrait
                 HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
         }
 
-        return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
+        return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
     }
 
     // 20x Successfull

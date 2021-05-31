@@ -3,6 +3,7 @@
 namespace App\Entity\Sensors\ReadingTypes;
 
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
@@ -13,7 +14,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_6", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
  */
-class Analog implements StandardReadingSensorInterface
+class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     /**
      * @var int
@@ -220,5 +221,10 @@ class Analog implements StandardReadingSensorInterface
         }
 
         return false;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return 'analog';
     }
 }

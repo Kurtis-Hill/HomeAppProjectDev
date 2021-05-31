@@ -4,9 +4,11 @@ namespace App\Entity\Sensors\ReadingTypes;
 
 
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 
 /**
@@ -15,8 +17,10 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="temp_ibfk_6", columns={"deviceNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\TempRepository")
  */
-class Temperature implements StandardReadingSensorInterface
+class Temperature implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_SYMBOL = '°C';
+
     /**
      * @var int
      *
@@ -216,4 +220,11 @@ class Temperature implements StandardReadingSensorInterface
 
         return false;
     }
+
+    public function getSensorTypeName(): string
+    {
+        return 'temperature';
+    }
+
+
 }

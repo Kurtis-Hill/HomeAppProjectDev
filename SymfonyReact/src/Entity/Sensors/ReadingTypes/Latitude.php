@@ -3,6 +3,7 @@
 namespace App\Entity\Sensors\ReadingTypes;
 
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
@@ -13,7 +14,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\LatitudeRepository")
  */
-class Latitude implements StandardReadingSensorInterface
+class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     /**
      * @var int
@@ -217,5 +218,10 @@ class Latitude implements StandardReadingSensorInterface
         }
 
         return false;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return 'latitude';
     }
 }

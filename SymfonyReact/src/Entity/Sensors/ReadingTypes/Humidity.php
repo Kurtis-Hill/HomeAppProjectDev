@@ -4,6 +4,7 @@ namespace App\Entity\Sensors\ReadingTypes;
 
 
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
@@ -14,8 +15,9 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="humid", uniqueConstraints={@ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"}), @ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_6", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Sensors\HumidRepository")
  */
-class Humidity implements StandardReadingSensorInterface
+class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_SYMBOL = '%';
     /**
      * @var int
      *
@@ -208,5 +210,10 @@ class Humidity implements StandardReadingSensorInterface
         }
 
         return false;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return 'humidity';
     }
 }
