@@ -120,8 +120,14 @@ class CardDataController extends AbstractController
             'cardIconID' => $cardIconID,
             'cardStateID' => $cardStateID,
         ];
-
+//dd($cardViewID);
         $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
+
+        if (!empty($cardDataService->getUserInputErrors() || empty($cardSensorReadingObject))) {
+//            dd('hi', $cardDataService->getUserInputErrors());
+            return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
+        }
+
         $cardViewObject = array_shift($cardSensorReadingObject);
 
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
@@ -135,6 +141,14 @@ class CardDataController extends AbstractController
             } catch (ORMException | \Exception $e) {
                 return $this->sendBadRequestJsonResponse();
             }
+        } else {
+            $errors = [];
+
+            foreach ($cardViewForm->getErrors(true, true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            return $this->sendBadRequestJsonResponse($errors);
         }
 
         $sensorTypeObject = $cardViewObject->getSensorNameID();

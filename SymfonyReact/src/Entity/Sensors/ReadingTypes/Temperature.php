@@ -4,6 +4,7 @@ namespace App\Entity\Sensors\ReadingTypes;
 
 
 use App\Entity\Sensors\Sensors;
+use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,6 +21,12 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Temperature implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_SYMBOL = '°C';
+
+    public const TEMPERATURE_SENSORS = [
+      SensorType::BMP_SENSOR,
+      SensorType::DALLAS_TEMPERATURE,
+      SensorType::DHT_SENSOR
+    ];
 
     /**
      * @var int

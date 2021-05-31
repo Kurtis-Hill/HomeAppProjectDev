@@ -56,7 +56,7 @@ class SensorController extends AbstractController
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
      */
-    public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
+    public function addNewSensolar(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         $sensorData = [
             'sensorName' => $request->request->get('sensor-name'),

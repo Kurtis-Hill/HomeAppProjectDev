@@ -121,7 +121,15 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
                     'userID' =>  $this->getUser()
                 ],
                 self::SENSOR_DATA);
-        } catch(ORMException | Exception $e){
+
+            if ($usersCurrentCardData === null) {
+                throw new BadRequestException('CardID not recognised');
+            }
+        } catch(BadRequestException $e){
+            $this->userInputErrors[] = $e->getMessage();
+            error_log($e->getMessage());
+        }
+        catch(ORMException $e){
             $this->serverErrors[] = 'Query error trying to find users card data';
             error_log($e->getMessage());
         }

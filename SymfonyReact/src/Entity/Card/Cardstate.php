@@ -21,6 +21,7 @@ class Cardstate
     public const ROOM_ONLY = 'ROOM_ONLY';
 
     public const DEVICE_ONLY = 'DEVICE_ONLY';
+
     /**
      * @var int
      *

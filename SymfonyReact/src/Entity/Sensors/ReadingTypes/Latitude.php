@@ -3,6 +3,7 @@
 namespace App\Entity\Sensors\ReadingTypes;
 
 use App\Entity\Sensors\Sensors;
+use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +17,10 @@ use JetBrains\PhpStorm\Pure;
  */
 class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const LATITUDE_SENSORS = [
+        SensorType::BMP_SENSOR
+    ];
+
     /**
      * @var int
      *
@@ -183,7 +188,7 @@ class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeIn
      */
 
     /**
-     * @return bool|null
+     * @return bool
      */
     public function getConstRecord(): bool
     {
