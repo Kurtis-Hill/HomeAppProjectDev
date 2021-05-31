@@ -42,7 +42,12 @@ class CardDataController extends AbstractController
         $cardData = $cardDataService->prepareAllCardDTOs($route, $deviceId);
 
         if (!empty($cardDataService->getServerErrors())) {
+            dd('1');
             return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong']);
+        }
+        if (!empty($cardDataService->getUserInputErrors())) {
+//            dd('2');
+            return $this->sendBadRequestJsonResponse();
         }
 
         if (empty($cardData)) {

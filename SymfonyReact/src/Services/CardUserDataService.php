@@ -10,6 +10,7 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
 use App\Entity\Core\User;
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -60,7 +61,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
      */
     public function prepareAllCardDTOs(?string $route, ?string $deviceId): array
     {
-       // try {
+        try {
             if (isset($deviceId) && !is_numeric($deviceId)) {
                 throw new BadRequestException('none numeric device id passed');
             }
@@ -70,17 +71,17 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
                 "device" => $this->getDevicePageCardDataObjects($deviceId),
                 default => $this->getIndexPageCardDataObjects()
             };
-//        } catch (BadRequestException $e) {
-//            $this->userInputErrors[] = $e->getMessage();
-//        } catch (\RuntimeException $e) {
-//            $this->serverErrors[] = $e->getMessage();
-//        } catch (ORMException $e) {
-//            error_log($e->getMessage());
-//            $this->serverErrors[] = 'Card Data Query Failure';
-//        } catch (Exception $e) {
-//            error_log($e->getMessage());
-//            $this->fatalErrors[] = 'Failed to prepare card data';
-//        }
+        } catch (BadRequestException $e) {
+            $this->userInputErrors[] = $e->getMessage();
+        } catch (\RuntimeException $e) {
+            $this->serverErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = 'Card Data Query Failure';
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $this->fatalErrors[] = 'Failed to prepare card data';
+        }
 
         if (!empty($sensorObjects)) {
                 foreach ($sensorObjects as $cardDTO) {
@@ -98,7 +99,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
                             $cardDTO->setCardViewObject($cardViewObject);
                             $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
                         }
-                    } catch (\RuntimeException $e) {
+                    } catch (BadRequestException $e) {
                         $this->cardErrors[] = $e->getMessage();
                     }
                 }
@@ -128,7 +129,16 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
         return $usersCurrentCardData ?? [];
     }
 
+    private function checkIfDeviceExists(int $deviceId)
+    {
+        $device = $this->em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $deviceId]);
 
+//        dd($device);
+        if ($device === null) {
+//            dd('hahxx');
+            throw new BadRequestException('Device given is not recognised');
+        }
+    }
     /**
      * @return array
      */
@@ -157,11 +167,14 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
             );
         }
 
+        $this->checkIfDeviceExists($deviceId);
+
         if ($this->getUser() instanceof User) {
             $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), self::SENSOR_TYPE_DATA, $deviceId);
         }
 
         return $cardData ?? [];
+
     }
 
     /**
