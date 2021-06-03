@@ -25,7 +25,6 @@ class SensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-
     /**
      * UPDATE SENSOR METHODS
      *
@@ -45,8 +44,6 @@ class SensorController extends AbstractController
         if (empty($sensorFormData)) {
             return $this->sendInternelServerErrorJsonResponse();
         }
-
-
     }
 
     /**
@@ -56,7 +53,7 @@ class SensorController extends AbstractController
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
      */
-    public function addNewSensolar(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
+    public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         $sensorData = [
             'sensorName' => $request->request->get('sensor-name'),

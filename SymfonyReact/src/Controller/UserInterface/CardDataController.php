@@ -3,6 +3,7 @@
 
 namespace App\Controller\UserInterface;
 
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Form\CardViewForms\CardViewForm;
 use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
@@ -124,18 +125,18 @@ class CardDataController extends AbstractController
         $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
 
         if (!empty($cardDataService->getUserInputErrors() || empty($cardSensorReadingObject))) {
-//            dd('hi', $cardDataService->getUserInputErrors());
             return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
         }
 
         $cardViewObject = array_shift($cardSensorReadingObject);
 
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
-
+//dd('hi');
         $cardViewForm->submit($cardViewData);
 
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
             $validFormData = $cardViewForm->getData();
+//            dd('hi');
             try {
                 $this->getDoctrine()->getManager()->persist($validFormData);
             } catch (ORMException | \Exception $e) {
@@ -151,19 +152,43 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestJsonResponse($errors);
         }
 
+//        dd('hi', $cardDataService->getUserInputErrors());
         $sensorTypeObject = $cardViewObject->getSensorNameID();
+//dd('je');
+                if ($sensorTypeObject->getSensorName() === 'Bmp0') {
 
+//            dd($sensorTypeObject);
+        }
         $sensorDataService->handleSensorReadingBoundary($request, $sensorTypeObject, $cardSensorReadingObject);
 
+//        if ($sensorTypeObject->getSensorName() === 'Bmp0') {
+//
+//            dd($sensorTypeObject);
+//        }
+//        $this->getDoctrine()->getManager()->flush();
         if (!empty($sensorDataService->getUserInputErrors())) {
+            if ($sensorTypeObject->getSensorName() === 'Bmp0') {
+
+//                dd('3', $sensorDataService->getUserInputErrors(), $sensorTypeObject);
+            }
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
         }
 
         if (!empty($sensorDataService->getServerErrors())) {
+            if ($sensorTypeObject->getSensorName() === 'Bmp0') {
+
+//                dd('1', $sensorTypeObject);
+            }
             return $this->sendInternelServerErrorJsonResponse();
         }
 
-        $this->getDoctrine()->getManager()->flush();
+        if ($sensorTypeObject->getSensorName() === 'Bmp0') {
+
+            $temp = $this->getDoctrine()->getManager()->getRepository(Temperature::class)->findOneBy(['sensorNameID' => $sensorTypeObject]);
+//            dd($sensorTypeObject, 'hi123', $temp);
+            $this->getDoctrine()->getManager()->flush();
+        }
+            $this->getDoctrine()->getManager()->flush();
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }

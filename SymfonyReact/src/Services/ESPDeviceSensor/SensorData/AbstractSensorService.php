@@ -6,6 +6,7 @@ namespace App\Services\ESPDeviceSensor\SensorData;
 use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\SensorType;
+use App\Entity\Sensors\SensorTypes\Bmp;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -75,7 +76,6 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
                                 $highReading = $readingNameOverRide[$readingType.'highReading'] ?? $request->get($readingType . '-high-reading');
                                 $lowReading =  $readingNameOverRide[$readingType.'lowReading'] ?? $request->get($readingType . '-low-reading');
                                 $constRecord = $readingNameOverRide[$readingType.'constRecord'] ?? $request->get($readingType . '-const-record');
-
                                 $errorMessage = "%s %s has no value";
                                 !empty($highReading) ?: $this->userInputErrors[] = sprintf($errorMessage, ucfirst($readingType), 'high reading');
                                 !empty($lowReading) ?: $this->userInputErrors[] = sprintf($errorMessage, ucfirst($readingType), 'low reading');
@@ -132,7 +132,6 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
 
         if ($form->isSubmitted() && $form->isValid()) {
             $validFormData = $form->getData();
-
             try {
                 $this->em->persist($validFormData);
             } catch (ORMException | \Exception $e) {

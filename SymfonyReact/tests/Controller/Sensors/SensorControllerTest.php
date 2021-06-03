@@ -60,6 +60,31 @@ class SensorControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * @return mixed|string|KernelBrowser|null
+     * @throws \JsonException
+     */
+    private function setUserToken()
+    {
+        if ($this->userToken === null) {
+            $this->client->request(
+                'POST',
+                SecurityController::API_USER_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
+            );
+
+            $requestResponse = $this->client->getResponse();
+            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+            $this->userToken = $requestData['token'];
+            $this->userRefreshToken = $requestData['refreshToken'];
+        }
+    }
+
+
     public function test_can_add_new_sensor_correct_details()
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
@@ -89,7 +114,7 @@ class SensorControllerTest extends WebTestCase
         self::assertInstanceOf(Sensors::class, $sensor);
     }
 
-    public function test_can_add_new_sensor_with_special_characters()
+    public function test_can_not_add_new_sensor_with_special_characters()
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
@@ -379,29 +404,5 @@ class SensorControllerTest extends WebTestCase
         $amountOfSensorTypesInResponse = count(json_decode($this->client->getResponse()->getContent(), true));
 
         self::assertEquals($totalSensorTypes, $amountOfSensorTypesInResponse);
-    }
-
-    /**
-     * @return mixed|string|KernelBrowser|null
-     * @throws \JsonException
-     */
-    private function setUserToken()
-    {
-        if ($this->userToken === null) {
-            $this->client->request(
-                'POST',
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            $this->userToken = $requestData['token'];
-            $this->userRefreshToken = $requestData['refreshToken'];
-        }
     }
 }

@@ -16,11 +16,11 @@ class SensorType
 
     public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
 
-    public const DHT_SENSOR = 'DHT';
+    public const DHT_SENSOR = 'Dht';
 
-    public const BMP_SENSOR = 'BMP';
+    public const BMP_SENSOR = 'Bmp';
 
-    public const DALLAS_TEMPERATURE = 'Dallas Temperature';
+    public const DALLAS_TEMPERATURE = 'Dallas';
 
     public const SOIL_SENSOR = 'Soil';
 

@@ -18,6 +18,10 @@ use JetBrains\PhpStorm\Pure;
  */
 class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
+    public const HIGH_TEMPERATURE_READING_BOUNDRY = 125;
+
+    public const LOW_TEMPERATURE_READING_BOUNDRY = -55;
+
     public const MAX_POSSIBLE_SENSORS = 8;
     /**
      * @var int

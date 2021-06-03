@@ -12,6 +12,7 @@ use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
+use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Form\SensorForms\AddNewSensorForm;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
@@ -53,16 +54,27 @@ class SensorUserDataService extends AbstractSensorService
      */
     public function handleSensorReadingBoundary(Request $request, Sensors $sensorType, array $cardSensorReadingObject): void
     {
+        if ($sensorType->getSensorTypeID()->getSensorType() === 'Bmp0') {
+//            dd('here t is');
+        }
+
         try {
             $sensorFormData = $this->prepareSensorFormData($request, $sensorType->getSensorTypeID(), SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
 
-            if (!empty($this->userInputErrors)) {
-                throw new BadRequestException();
+            if ($sensorType->getSensorTypeID()->getSensorType() === 'Bmp0') {
+//                dd($sensorFormData);
+            }
+            if (!empty($this->userInputErrors) || empty($sensorFormData)) {
+
+                throw new BadRequestException('something went wrong with processing the form');
             }
             if (!empty($sensorFormData)) {
+//                dd($sensorFormData);
                 $this->processSensorForm($sensorFormData, $cardSensorReadingObject);
+//                dd($hey);
             }
         } catch (\RuntimeException $exception) {
+//            dd('run');
             $this->serverErrors[] = 'Failed to process form data';
         }
     }
