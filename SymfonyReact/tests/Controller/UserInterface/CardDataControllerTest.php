@@ -2557,4 +2557,6 @@ class CardDataControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
+
+    // Route Authentication Tests
 }
