@@ -23,6 +23,10 @@ SymfonyReact/yarn.lock
 
 SymfonyReact/package-lock.json
 
+SymfonyReact/.env
+
+SymfonyReact/.env.test
+
 ###< symfony/webpack-encore-bundle ###
 
 .idea
