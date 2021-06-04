@@ -18,6 +18,7 @@ use App\Form\SensorForms\UpdateReadingForm;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Exception\UnexpectedValueException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
@@ -158,24 +159,8 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
     public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
-        $this->user = $security->getUser() instanceof User ? $security->getUser() : null;
-
-        try {
-            $this->checkUserInstance();
-        } catch (\Exception | \RuntimeException $e) {
-            $this->fatalErrors[] = $e->getMessage();
-        }
     }
 
-    /**
-     * @throws \Exception
-     */
-    private function checkUserInstance(): void
-    {
-        if (!$this->user instanceof APISensorUserInterface) {
-            throw new BadRequestException('This entity cannot use this service');
-        }
-    }
 
     /**
      * @param int|string $groupRequest

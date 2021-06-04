@@ -4,27 +4,69 @@
 namespace App\Services\ESPDeviceSensor\Devices;
 
 
-use App\Entity\Core\GroupNames;
 use App\Entity\Devices\Devices;
-
-use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
+use App\Form\SensorForms\AddNewDeviceForm;
+use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
+use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\Security\Core\Security;
 
 
-class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
+class DeviceServiceUser implements APIErrorInterface
 {
+    use FormProcessorTrait;
+
+    /**
+     * @var FormFactoryInterface
+     */
+    private FormFactoryInterface $formFactory;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $em;
+
+    private Security $security;
+
+    /**
+     * @var array
+     */
+    private array $userInputErrors = [];
+
+    /**
+     * @var array
+     */
+    private array $serverErrors = [];
+
+    /**
+     * DeviceServiceUser constructor.
+     * @param EntityManagerInterface $em
+     * @param FormFactoryInterface $formFactory
+     * @param Security $security
+     */
+    public function __construct(EntityManagerInterface $em, FormFactoryInterface $formFactory, Security $security)
+    {
+        $this->formFactory = $formFactory;
+        $this->em = $em;
+        $this->security = $security;
+    }
+
     /**
      * @param array $deviceData
-     * @param FormInterface $addNewDeviceForm
-     * @return FormInterface
+     * @return Devices|null
      */
-    public function handleNewDeviceSubmission(array $deviceData, FormInterface $addNewDeviceForm): FormInterface
+    public function handleNewDeviceSubmission(array $deviceData): ?Devices
     {
         try {
-            $this->userInputDataCheck($deviceData);
+            $newDevice = new Devices();
+            $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class, $newDevice);
+
+            $this->duplicateSensorCheck($deviceData);
 
             $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
         }
@@ -35,15 +77,11 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
             $this->serverErrors[] = 'Failed to process device query';
             error_log($e->getMessage());
         }
-        catch (\Exception $e) {
-            $this->serverErrors[] = 'Something went wrong';
-            error_log($e->getMessage());
-        }
 
-        return $addNewDeviceForm;
+        return $newDevice ?? null;
     }
 
-    private function userInputDataCheck(array $deviceData): void
+    private function duplicateSensorCheck(array $deviceData): void
     {
         $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDuplicateDeviceNewDeviceCheck($deviceData);
 
@@ -55,30 +93,14 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
                 )
             );
         }
-
-        $groupId = $deviceData['groupNameObject'];
-
-        if (!is_numeric($groupId)) {
-            throw new BadRequestException('Bad group name');
-        }
-
-        $isCallableCheck = [$this->getUser(), 'getGroupNameIds'];
-
-        if (is_callable($isCallableCheck)) {
-            $groupIdCheck = $this->checkIfUserIsPartOfGroup($groupId);
-            if ($groupIdCheck !== true) {
-                throw new BadRequestException(GroupNames::NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE);
-            }
-        }
-
     }
 
     /**
      * @param FormInterface $addNewDeviceForm
      * @param array $deviceData
-     * @return FormInterface
+     * @return void
      */
-    private function processNewDeviceForm(FormInterface $addNewDeviceForm, array $deviceData): FormInterface
+    private function processNewDeviceForm(FormInterface $addNewDeviceForm, array $deviceData): void
     {
         $addNewDeviceForm->submit($deviceData);
 
@@ -89,15 +111,27 @@ class DeviceServiceUser extends AbstractHomeAppUserSensorServiceCore
 
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setDeviceSecret($secret);
-            $validFormData->setCreatedBy($this->getUser());
+            $validFormData->setCreatedBy($this->security->getUser());
             $validFormData->setRoles([Devices::ROLE]);
         }
         else {
-            foreach ($addNewDeviceForm->getErrors(true, true) as $error) {
-                $this->userInputErrors[] = $error->getMessage();
-            }
+            $this->processSensorFormErrors($addNewDeviceForm);
         }
+    }
 
-        return $addNewDeviceForm;
+    /**
+     * @return array
+     */
+    #[Pure] public function getUserInputErrors(): array
+    {
+        return array_merge($this->returnAllFormInputErrors(), $this->userInputErrors);
+    }
+
+    /**
+     * @return array
+     */
+    public function getServerErrors(): array
+    {
+        return $this->serverErrors;
     }
 }

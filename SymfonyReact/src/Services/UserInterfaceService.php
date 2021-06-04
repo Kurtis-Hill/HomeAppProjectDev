@@ -37,10 +37,6 @@ class UserInterfaceService implements APIErrorInterface
      */
     private array $serverErrors = [];
 
-    /**
-     * @var array
-     */
-    private array $fatalErrors = [];
 
     /**
      * UserInterfaceService constructor.

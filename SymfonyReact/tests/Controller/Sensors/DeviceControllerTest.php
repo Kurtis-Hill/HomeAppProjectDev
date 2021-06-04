@@ -14,6 +14,7 @@ use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
+use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -65,6 +66,8 @@ class DeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
+        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findGroupByName(UserDataFixtures::ADMIN_GROUP);
+        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, RoomFixtures::ADMIN_ROOM_NAME);
         try {
             $this->setUserToken();
         } catch (\JsonException $e) {
@@ -76,7 +79,7 @@ class DeviceControllerTest extends WebTestCase
      * @return void
      * @throws \JsonException
      */
-    private function setUserToken()
+    private function setUserToken(): void
     {
         if ($this->userToken === null) {
             $this->client->request(
@@ -96,18 +99,18 @@ class DeviceControllerTest extends WebTestCase
         }
     }
 
-    public function test_login_token_not_null()
+    public function test_login_token_not_null(): void
     {
         self::assertNotNull($this->userToken);
     }
 
-    public function test_refresh_token_not_null()
+    public function test_refresh_token_not_null(): void
     {
         self::assertNotNull($this->userRefreshToken);
     }
 
 //  Add addNewDevice
-    public function test_add_new_device()
+    public function test_add_new_device(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -134,7 +137,7 @@ class DeviceControllerTest extends WebTestCase
     }
 
 
-    public function test_add_duplicate_device_name_same_room()
+    public function test_add_duplicate_device_name_same_room(): void
     {
         $formData = [
             'device-name' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
@@ -151,13 +154,20 @@ class DeviceControllerTest extends WebTestCase
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['deviceName' => $formData['device-name']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString(sprintf(
+            'Your group already has a device named %s that is in room %s',
+            ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            $this->room->getRoom(),
+        ), $responseData['responseData'][0]);
 
         self::assertCount(1, $device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
 
-    public function test_sending_malformed_request_missing_name()
+    public function test_sending_malformed_request_missing_name(): void
     {
         $formData = [
             'device-group' => $this->groupName->getGroupNameID(),
@@ -171,12 +181,13 @@ class DeviceControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
-
-
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//dd($responseData);
+        self::assertStringContainsString(sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device'), $responseData['responseData'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_sending_malformed_request_missing_group()
+    public function test_sending_malformed_request_missing_group(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -192,12 +203,14 @@ class DeviceControllerTest extends WebTestCase
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
+        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['responseData']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_sending_malformed_request_missing_room()
+    public function test_sending_malformed_request_missing_room(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -213,12 +226,14 @@ class DeviceControllerTest extends WebTestCase
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
+        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['responseData']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_sending_malfomed_group_id_string()
+    public function test_adding_device_sending_malfomed_group_id_string(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -233,14 +248,15 @@ class DeviceControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
-
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
 
+        self::assertStringContainsString(FormMessages::FORM_PROCESS_FAILURE_MESSAGE, $responseData['responseData']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_name_too_long()
+    public function test_adding_device_name_too_long(): void
     {
         $formData = [
             'device-name' => 'thisNameIsWaaaaaaaayTooooLoooong',
@@ -257,12 +273,14 @@ class DeviceControllerTest extends WebTestCase
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
+        self::assertStringContainsString('Device name too long', $responseData['responseData'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_name_special_characters()
+    public function test_adding_device_name_special_characters(): void
     {
         $formData = [
             'device-name' => 'device&&**name',
@@ -279,12 +297,14 @@ class DeviceControllerTest extends WebTestCase
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
+        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['responseData'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_to_group_not_apart_of()
+    public function test_adding_device_to_group_not_apart_of(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
 
@@ -309,13 +329,15 @@ class DeviceControllerTest extends WebTestCase
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString(GroupNames::NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE, json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'][0]);
+        self::assertStringContainsString(FormMessages::FORM_PROCESS_FAILURE_MESSAGE, $responseData['responseData']['errors']);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
 
-    public function test_cannot_add_device_with_no_token()
+    public function test_cannot_add_device_with_no_token(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -331,10 +353,13 @@ class DeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER']
         );
 
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertStringContainsString('JWT Token not found', $responseData['message']);
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_device_password_is_sent_back_with_response_and_not_null()
+    public function test_device_password_is_sent_back_with_response_and_not_null(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -355,7 +380,7 @@ class DeviceControllerTest extends WebTestCase
         self::assertNotNull($responseData['secret']);
     }
 
-    public function test_device_password_is_correct_format()
+    public function test_device_password_is_correct_format(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -376,7 +401,7 @@ class DeviceControllerTest extends WebTestCase
         self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $responseData['secret']);
     }
 
-    public function test_new_device_can_login()
+    public function test_new_device_can_login(): void
     {
         $formData = [
             'device-name' => self::UNIQUE_NEW_DEVICE_NAME,

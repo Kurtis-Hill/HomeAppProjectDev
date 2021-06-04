@@ -62,7 +62,7 @@ class UserDataControllerTest extends WebTestCase
 
             $requestResponse = $this->client->getResponse();
             $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-dd($requestData);
+//dd($requestData);
             $this->userToken = $requestData['token'];
             $this->userRefreshToken = $requestData['refreshToken'];
         }

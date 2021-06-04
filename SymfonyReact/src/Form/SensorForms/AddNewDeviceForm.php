@@ -9,6 +9,7 @@ use App\Entity\Core\Room;
 use App\Entity\Devices\Devices;
 
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Form\FormMessages;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,7 +27,7 @@ class AddNewDeviceForm extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersConstraint(),
-                    new NotBlank(),
+                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device')]),
                     new Length(
                         [
                             'min' => 1, 'max' => 20,

@@ -1,0 +1,54 @@
+<?php
+
+
+namespace App\Voters;
+
+
+use App\Entity\Core\GroupNames;
+use App\Entity\Core\User;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+class DeviceVoter extends Voter
+{
+    public const ADD_NEW_DEVICE = 'add-new-device';
+
+    protected function supports(string $attribute, $subject): bool
+    {
+        if (!in_array($attribute, [self::ADD_NEW_DEVICE])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
+    {
+        $user = $token->getUser();
+
+        return match ($attribute) {
+          self::ADD_NEW_DEVICE => $this->canAddNewDevice($user, $subject),
+          default => false
+        };
+    }
+
+    private function canAddNewDevice(UserInterface $user, ?GroupNames $groupNameObject): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        $isCallable = [$groupNameObject, 'getGroupNameID'];
+        if (!is_callable($isCallable)) {
+            return false;
+        }
+
+        if (!in_array($groupNameObject->getGroupNameID(), $user->getGroupNameIds(), true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+}
