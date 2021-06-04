@@ -33,7 +33,6 @@ use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use function PHPUnit\Framework\assertStringContainsString;
 
 
 class CardDataControllerTest extends WebTestCase
@@ -59,6 +58,11 @@ class CardDataControllerTest extends WebTestCase
      */
     private ?string $userToken = null;
 
+    /**
+     * @var User|null
+     */
+    private ?User $testUser;
+
 
     protected function setUp(): void
     {
@@ -67,6 +71,13 @@ class CardDataControllerTest extends WebTestCase
         $this->entityManager = static::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $this->testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+
+        $groupNameMappingEntities = $this->entityManager->getRepository(GroupnNameMapping::class)->getAllGroupMappingEntitiesForUser($this->testUser);
+
+        $this->testUser->setUserGroupMappingEntities($groupNameMappingEntities);
 
         try {
             $this->setUserToken();
@@ -102,14 +113,7 @@ class CardDataControllerTest extends WebTestCase
     //returnCardDataDTOs Tests
     public function test_returning_all_card_dto_index()
     {
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
-        $groupNameMappingEntities = $this->entityManager->getRepository(GroupnNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
-
-        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
-
-        $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllIndexSensorTypeObjectsForUser($testUser, AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA));
+        $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllIndexSensorTypeObjectsForUser($this->testUser, AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA));
 
         $this->client->request(
             'GET',
@@ -122,8 +126,8 @@ class CardDataControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         foreach ($responseData as $cardData) {
-            $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorName' => $cardData['sensorName']]);
-            $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+            $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
+            $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
             foreach ($cardData['sensorData'] as $sensorData) {
                 $readingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
@@ -164,16 +168,9 @@ class CardDataControllerTest extends WebTestCase
 
     public function test_returning_all_card_dto_by_device()
     {
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
-        $groupNameMappingEntities = $this->entityManager->getRepository(GroupnNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
-
-        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
-
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
 
-        $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($testUser, AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA, $device->getDeviceNameId()));
+        $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($this->testUser, AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA, $device->getDeviceNameId()));
 
         $this->client->request(
             'GET',
@@ -186,8 +183,8 @@ class CardDataControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         foreach ($responseData as $cardData) {
-            $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorName' => $cardData['sensorName']]);
-            $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+            $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
+            $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
             foreach ($cardData['sensorData'] as $sensorData) {
                 $readingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
@@ -228,13 +225,6 @@ class CardDataControllerTest extends WebTestCase
 
     public function test_returning_all_card_dto_by_device_with_bad_device_id()
     {
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
-        $groupNameMappingEntities = $this->entityManager->getRepository(GroupnNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
-
-        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
-
         while (true) {
             $invalidDeviceId = random_int(0, 10000);
             $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceNameID' => $invalidDeviceId]);
@@ -286,14 +276,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DALLAS_TEMPERATURE;
 
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $this->client->request(
             'GET',
@@ -341,14 +328,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $this->client->request(
             'GET',
@@ -395,14 +379,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DHT_SENSOR;
 
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $this->client->request(
             'GET',
@@ -449,14 +430,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::SOIL_SENSOR;
 
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $this->client->request(
             'GET',
@@ -508,13 +486,11 @@ class CardDataControllerTest extends WebTestCase
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         foreach ($cardColours as $colour) {
             $newColour = $colour->getColourID();
@@ -597,7 +573,7 @@ class CardDataControllerTest extends WebTestCase
 
         $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $readingFailureMessage = "%s %s reading failed for sensor: %s";
         $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
@@ -645,13 +621,11 @@ class CardDataControllerTest extends WebTestCase
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         foreach ($cardColours as $colour) {
             $newColour = $colour->getColourID();
@@ -734,7 +708,7 @@ class CardDataControllerTest extends WebTestCase
 
         $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $readingFailureMessage = "%s %s reading failed for sensor: %s";
         $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
@@ -783,13 +757,11 @@ class CardDataControllerTest extends WebTestCase
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         foreach ($cardColours as $colour) {
             $newColour = $colour->getColourID();
@@ -872,7 +844,7 @@ class CardDataControllerTest extends WebTestCase
 
         $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $readingFailureMessage = "%s %s reading failed for sensor: %s";
         $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
@@ -920,13 +892,11 @@ class CardDataControllerTest extends WebTestCase
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         foreach ($cardColours as $colour) {
             $newColour = $colour->getColourID();
@@ -1009,7 +979,7 @@ class CardDataControllerTest extends WebTestCase
 
         $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $readingFailureMessage = "%s %s reading failed for sensor: %s";
         $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
@@ -1059,13 +1029,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1130,7 +1098,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
@@ -1184,13 +1152,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DALLAS_TEMPERATURE;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1243,7 +1209,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
@@ -1287,13 +1253,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DHT_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1353,7 +1317,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -1403,13 +1367,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DHT_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1468,7 +1430,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -1498,13 +1460,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1569,7 +1529,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $highString = "Humidity for this sensor cannot be over 100 you entered %s%s";
@@ -1614,13 +1574,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DHT_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1680,7 +1638,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $highString = "Humidity for this sensor cannot be over 100 you entered %s%s";
@@ -1720,13 +1678,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::DHT_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1786,7 +1742,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString("High reading for humidity cannot be lower than low reading", $responseData['responseData'][0]);
@@ -1813,13 +1769,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1884,7 +1838,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $highString = "The highest possible latitude is 90 you entered \"%s\"";
@@ -1921,13 +1875,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::SOIL_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -1980,7 +1932,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $highString = "Reading for this sensor cannot be over 9999 you entered \"%s\"";
@@ -2007,13 +1959,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -2076,7 +2026,7 @@ class CardDataControllerTest extends WebTestCase
 
         $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertStringContainsString('The highest possible latitude is 90 you entered "100"', $responseData['responseData'][0]);
@@ -2108,13 +2058,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -2178,7 +2126,7 @@ class CardDataControllerTest extends WebTestCase
 
         $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
@@ -2210,13 +2158,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
@@ -2280,7 +2226,7 @@ class CardDataControllerTest extends WebTestCase
 
         $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
@@ -2312,13 +2258,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
@@ -2382,7 +2326,7 @@ class CardDataControllerTest extends WebTestCase
 
         $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
@@ -2414,13 +2358,11 @@ class CardDataControllerTest extends WebTestCase
     {
         $sensorType = SensorType::BMP_SENSOR;
 
-        $testUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
         $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $testUser, 'sensorTypeID' => $sensorTypeObject]);
+        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
@@ -2484,7 +2426,7 @@ class CardDataControllerTest extends WebTestCase
 
         $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
 
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $testUser, 'sensorNameID' => $sensorObject]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
@@ -2558,5 +2500,56 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    // Route Authentication Tests
+    // Route Authentication Test
+    public function test_getting_card_data_wrong_token()
+    {
+        $this->client->request(
+            'GET',
+            self::API_CARD_DATA_RETURN_CARD_DTO_ROUTE,
+            ['view' => 'index'],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken . 'wrong'],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+        self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
+//        dd($this->client->getResponse());
+    }
+
+    public function test_getting_card_state_view_form_wrong_token()
+    {
+        $cardView = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $this->testUser])[0];
+
+        $this->client->request(
+            'GET',
+            self::API_CARD_VIEW_FORM_DTO_URL,
+            ['cardViewID' => $cardView->getCardViewID()],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken. 'wrong'],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+//        dd($this->client->getResponse());
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+        self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_getting_update_card_view_wrong_token()
+    {
+        $this->client->request(
+            'POST',
+            self::API_UPDATE_CARD_VIEW_FORM,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken .'wrong'],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+        self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
+    }
 }

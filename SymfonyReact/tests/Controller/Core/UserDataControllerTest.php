@@ -68,7 +68,7 @@ class UserDataControllerTest extends WebTestCase
         }
     }
 
-    // user details test
+    // getUserDetails tests
     public function test_getting_user_details()
     {
         $this->client->request(

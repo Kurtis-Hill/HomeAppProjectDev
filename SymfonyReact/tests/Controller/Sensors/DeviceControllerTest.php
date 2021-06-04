@@ -106,7 +106,7 @@ class DeviceControllerTest extends WebTestCase
         self::assertNotNull($this->userRefreshToken);
     }
 
-//  Add New Device Tests
+//  Add addNewDevice
     public function test_add_new_device()
     {
         $formData = [
