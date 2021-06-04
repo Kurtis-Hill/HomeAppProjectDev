@@ -39,8 +39,10 @@ SymfonyReact/.idea
 /.php-version
 
 ###> symfony/phpunit-bridge ###
-.phpunit
+SymfonyReact/.phpunit
 /SymfonyReact/phpunit.result.cache
 /SymfonyReact/phpunit.xml
 ###< symfony/phpunit-bridge ###
 SymfonyReact/.phpunit.result.cache
+
+SymfonyReact/.php-version
