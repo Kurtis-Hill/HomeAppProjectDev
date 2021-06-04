@@ -30,16 +30,6 @@ class UserInterfaceService implements APIErrorInterface
     /**
      * @var array
      */
-    private array $userRooms;
-
-    /**
-     * @var array
-     */
-    private array $userDevices;
-
-    /**
-     * @var array
-     */
     private array $userInputErrors = [];
 
     /**
@@ -61,32 +51,22 @@ class UserInterfaceService implements APIErrorInterface
     {
         $this->em = $em;
         $this->user = $security->getUser();
-
-        try {
-            if ($this->user instanceof User) {
-                $this->userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->user->getGroupNameIDs());
-                $this->userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->user->getGroupNameAndIds());
-            }
-            else {
-                throw new BadRequestException('This type of user is not expected');
-            }
-        } catch (BadRequestException $exception) {
-            $this->userInputErrors[] = $exception->getMessage();
-        } catch (\RuntimeException $exception) {
-            $this->serverErrors[] = $exception->getMessage();
-        } catch (ORMException $exception) {
-            $this->serverErrors[] = 'Query Failed';
-        } catch (\Exception $exception) {
-            $this->fatalErrors[] = 'Something Happened Please log what you were doing and send a crash report';
-        }
     }
 
     #[ArrayShape(['rooms' => [], 'devices' => [], 'groupNames' => []])]
     public function getNavBarData(): array
     {
+        try {
+            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->user->getGroupNameIDs());
+            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->user->getGroupNameAndIds());
+        } catch (ORMException $exception) {
+            error_log($exception);
+            $this->serverErrors[] = 'NavBar Data Query Failed';
+        }
+
         return  [
-            'rooms' => $this->userRooms,
-            'devices' => $this->userDevices,
+            'rooms' => $userRooms ?? [],
+            'devices' => $userDevices ?? [],
             'groupNames' => $this->user->getGroupNameAndIds()
         ];
     }
@@ -99,14 +79,6 @@ class UserInterfaceService implements APIErrorInterface
             'userID' => $this->user->getUserID(),
             'roles' => $this->user->getRoles(),
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getFatalErrors(): array
-    {
-        return $this->fatalErrors;
     }
 
     /**
