@@ -31,8 +31,8 @@ class AddNewSensorForm extends AbstractType
                     new NoSpecialCharactersConstraint(),
                     new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Sensor name')]),
                     new Length(['min' => 1, 'max' => 20,
-                        'minMessage' => 'Device name too short',
-                        'maxMessage' => 'Device name too long'])
+                        'minMessage' => 'Sensor name too short',
+                        'maxMessage' => 'Sensor name too long'])
                 ]
             ])
             ->add('sensorTypeID', EntityType::class, [

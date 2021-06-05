@@ -118,8 +118,11 @@ class SensorControllerTest extends WebTestCase
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensors::class, $sensor);
+        self::assertStringContainsString('Request Accepted Successfully Updated', $responseData['title']);
+        self::assertArrayHasKey('sensorNameID', $responseData['responseData']);
+        self::assertIsInt($responseData['responseData']['sensorNameID']);
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
 
@@ -141,6 +144,9 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['responseData'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -162,6 +168,10 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        dd($this->client->getResponse(), $responseData);
+
+        self::assertStringContainsString('Device name too long', $responseData['responseData'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

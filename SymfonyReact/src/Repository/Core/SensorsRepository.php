@@ -19,6 +19,7 @@ class SensorsRepository extends EntityRepository
 {
     public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors
     {
+//        dd($sensorData);
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
 

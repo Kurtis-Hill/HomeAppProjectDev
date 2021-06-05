@@ -13,4 +13,5 @@ class FormMessages
     public const SHOULD_NOT_BE_BLANK = '%s name should not be blank';
 
     public const FORM_QUERY_ERROR = 'Query error please try again, if the issue continues log out and then back in again';
+
 }

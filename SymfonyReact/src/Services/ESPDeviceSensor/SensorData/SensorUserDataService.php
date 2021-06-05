@@ -127,7 +127,7 @@ class SensorUserDataService extends AbstractSensorService
                     }
                     $this->em->persist($newSensorTypeObject);
                 }
-
+//dd('d');
                 return $newSensorTypeObject;
             }
         }
@@ -163,9 +163,11 @@ class SensorUserDataService extends AbstractSensorService
      */
     private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): void
     {
+        $this->processForm($addNewSensorForm, $this->em, $sensorData);
+//        dd(';f');
+
         $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
 
-        $this->processForm($addNewSensorForm, $this->em, $sensorData);
     }
 
 }

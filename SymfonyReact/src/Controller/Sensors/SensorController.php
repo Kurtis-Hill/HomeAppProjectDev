@@ -72,6 +72,9 @@ class SensorController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $device = $em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
 
+        if ($device === null) {
+            return $this->sendBadRequestJsonResponse(['errors' => 'Cannot find device to add sensor too']);
+        }
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $device);
         } catch (\Exception) {
@@ -86,16 +89,14 @@ class SensorController extends AbstractController
         if ($sensor === null || !empty($sensorService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse(['errors' => $sensorService->getServerErrors()]);
         }
-
         if ($sensor instanceof Sensors) {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
-            $newSensorCard = $cardDataService->createNewSensorCard($sensor);
+            $newSensorCard = $cardDataService->createNewSensorCard($sensor, $this->getUser());
 
             if ($newSensorCard === null || !empty($sensorService->getServerErrors())) {
                 return $this->sendInternelServerErrorJsonResponse($sensorService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
             }
-
             $sensorReadingType = $sensorService->handleSensorReadingTypeCreation($sensor);
 
             if (!empty($sensorService->getUserInputErrors())) {

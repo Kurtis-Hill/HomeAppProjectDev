@@ -254,7 +254,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
      * @return CardView
      * @throws Exception
      */
-    public function createNewSensorCard(Sensors $sensorObject): ?CardView
+    public function createNewSensorCard(Sensors $sensorObject, User $user): ?CardView
     {
         try {
             $randomIcon = $this->returnRandomIcon();
@@ -271,7 +271,7 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
 
             $newCard = new CardView();
             $newCard->setSensorNameID($sensorObject);
-            $newCard->setUserID($this->getUser());
+            $newCard->setUserID($user);
             $newCard->setCardIconID($randomIcon);
             $newCard->setCardColourID($randomColour);
             $newCard->setCardStateID($onCardState);
@@ -320,6 +320,8 @@ class CardUserDataService extends AbstractHomeAppUserSensorServiceCore
         if (!$randomColour instanceof CardColour) {
             throw new \RuntimeException('Failed setting random colour');
         }
+
+        return $randomColour;
     }
 
     /**

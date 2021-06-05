@@ -129,7 +129,7 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
      */
     public function getUserInputErrors(): array
     {
-        return array_merge($this->getAllFormInputErrors(), $this->getUserInputErrors());
+        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
     }
 
 

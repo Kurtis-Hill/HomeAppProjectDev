@@ -27,6 +27,7 @@ trait FormProcessorTrait
 
             try {
                 $em->persist($validFormData);
+//                $em->flush();
             } catch (\Exception $e) {
                 error_log($e->getMessage());
                 $this->formInputErrors[] = 'Form persistence failed please try again';

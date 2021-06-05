@@ -61,7 +61,7 @@ class DeviceController extends AbstractController
         $device = $deviceService->handleNewDeviceSubmission($deviceData);
 
         if ($device === null || !empty($deviceService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($deviceService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
+            return $this->sendInternelServerErrorJsonResponse($deviceService->getServerErrors() ?? ['Something went wrong please try again']);
         }
         if (!empty($deviceService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($deviceService->getUserInputErrors() ?? ['the form you have submitted has failed']);

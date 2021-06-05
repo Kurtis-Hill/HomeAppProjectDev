@@ -127,10 +127,10 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
         ],
     ];
 
-    /**
-     * @var ?User
-     */
-    private ?User $user;
+//    /**
+//     * @var ?User
+//     */
+//    private ?User $user;
 
     /**
      * @var EntityManagerInterface
@@ -180,17 +180,17 @@ abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
         return in_array($groupRequest, $this->user->getGroupNameIds(), true);
     }
 
-    /**
-     * @return int|null
-     */
-    protected function getUserID()
-    {
-        return $this->user->getUserID();
-    }
+//    /**
+//     * @return int|null
+//     */
+//    protected function getUserID()
+//    {
+//        return $this->user->getUserID();
+//    }
 
-    /**
-     * @return APISensorUserInterface|null
-     */
+//    /**
+//     * @return APISensorUserInterface|null
+//     */
     protected function getUser(): ?User
     {
         return $this->user;
