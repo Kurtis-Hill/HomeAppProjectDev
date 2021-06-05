@@ -3,12 +3,15 @@
 
 namespace App\Controller\Sensors;
 
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
+use App\Form\FormMessages;
 use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use App\Voters\SensorVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +30,7 @@ class SensorController extends AbstractController
 
     /**
      * UPDATE SENSOR METHODS
+     * UNDER DEV
      *
      * @Route("/update/current-reading", name="update-current-reading")
      * @param Request $request
@@ -61,37 +65,60 @@ class SensorController extends AbstractController
             'deviceNameID' => $request->get('device-id')
         ];
 
-        if (empty($sensorData['sensorName'] || $sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
-            return $this->sendBadRequestJsonResponse(['errors' => '111Bad request somethings wrong with your form data, if the problem persists log out an back in again']);
+        if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
+            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::FORM_PRE_PROCESS_FAILURE]);
         }
 
-        $newSensorForm = $sensorService->createNewSensor($sensorData);
+        $em = $this->getDoctrine()->getManager();
+        $device = $em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
+
+        try {
+            $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $device);
+        } catch (\Exception) {
+            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::ACCES_DENIED]);
+        }
+
+        $sensor = $sensorService->createNewSensor($sensorData);
 
         if (!empty($sensorService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
+            return $this->sendBadRequestJsonResponse(['errors' => $sensorService->getUserInputErrors()]);
         }
-        if (!empty($sensorService->getServerErrors() || $newSensorForm->getData() === null)) {
-            return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
+        if ($sensor === null || !empty($sensorService->getServerErrors())) {
+            return $this->sendInternelServerErrorJsonResponse(['errors' => $sensorService->getServerErrors()]);
         }
 
-        $sensor = $newSensorForm->getData();
         if ($sensor instanceof Sensors) {
-            $newSensorCard = $cardDataService->createNewSensorCard($newSensorForm->getData());
-            $sensorID = $newSensorForm->getData()->getSensorNameID();
-            $sensorService->handleSensorReadingTypeCreation($newSensorForm->getData(), $newSensorCard, $sensorData);
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+            $newSensorCard = $cardDataService->createNewSensorCard($sensor);
+
+            if ($newSensorCard === null || !empty($sensorService->getServerErrors())) {
+                return $this->sendInternelServerErrorJsonResponse($sensorService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
+            }
+
+            $sensorReadingType = $sensorService->handleSensorReadingTypeCreation($sensor);
 
             if (!empty($sensorService->getUserInputErrors())) {
+                $em->remove($sensor);
+                $em->flush();
                 return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
             }
-
-            if (!empty($sensorService->getServerErrors())) {
-                return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong please try again']);
+            if (!empty($sensorService->getServerErrors() || $sensorReadingType === null)) {
+                $em->remove($sensor);
+                $em->flush();
+                return $this->sendInternelServerErrorJsonResponse($sensorService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
             }
+
+            $em->persist($sensorReadingType);
+
+            $em->flush();
+
+            $sensorID = $sensor->getSensorNameID();
 
             return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
         }
 
-        return $this->sendBadRequestJsonResponse();
+        return $this->sendBadRequestJsonResponse(['errors' => 'Something trying to add a sensor didnt return a sensor, make sure your app is up to date']);
     }
 
     /**

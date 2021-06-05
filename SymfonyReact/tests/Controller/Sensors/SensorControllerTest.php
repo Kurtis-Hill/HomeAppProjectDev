@@ -84,12 +84,12 @@ class SensorControllerTest extends WebTestCase
             );
 
             $requestResponse = $this->client->getResponse();
-            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-            $this->userToken = $requestData['token'];
-            $this->userRefreshToken = $requestData['refreshToken'];
+            $this->userToken = $responseData['token'];
+            $this->userRefreshToken = $responseData['refreshToken'];
 
-            $this->devices = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
+            $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
         }
     }
 
@@ -101,7 +101,7 @@ class SensorControllerTest extends WebTestCase
         $formData = [
             'sensor-name' => 'Testing',
             'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->devices->getDeviceNameID(),
+            'device-id' => $this->device->getDeviceNameID(),
         ];
 
         $this->client->request(
@@ -130,7 +130,7 @@ class SensorControllerTest extends WebTestCase
         $formData = [
             'sensor-name' => '&Testing',
             'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->devices->getDeviceNameID(),
+            'device-id' => $this->device->getDeviceNameID(),
         ];
 
         $this->client->request(

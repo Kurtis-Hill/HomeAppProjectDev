@@ -13,7 +13,7 @@ trait FormProcessorTrait
     private array $formInputErrors = [];
 
     /**
-     * @param Form|FormFactoryInterface $form
+     * @param FormInterface|FormFactoryInterface $form
      * @param EntityManagerInterface $em
      * @param array $formData
      */
@@ -29,11 +29,11 @@ trait FormProcessorTrait
                 $em->persist($validFormData);
             } catch (\Exception $e) {
                 error_log($e->getMessage());
-                $this->formInputErrors[] = 'Form persistence failed';
+                $this->formInputErrors[] = 'Form persistence failed please try again';
             }
         }
         else {
-            $this->processSensorFormErrors($form);
+            $this->processFormErrors($form);
         }
 
     }
@@ -41,7 +41,7 @@ trait FormProcessorTrait
     /**
      * @param FormInterface $form
      */
-    public function processSensorFormErrors(FormInterface $form): void
+    public function processFormErrors(FormInterface $form): void
     {
         foreach ($form->getErrors(true, true) as $error) {
 //            dd($error->getMessage());
@@ -52,7 +52,7 @@ trait FormProcessorTrait
     /**
      * @return array
      */
-    public function returnAllFormInputErrors(): array
+    public function getAllFormInputErrors(): array
     {
         return $this->formInputErrors;
     }

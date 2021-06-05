@@ -8,6 +8,7 @@ use App\Entity\Devices\Devices;
 use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Bmp;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
+use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\Security\Core\Security;
 
 abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
 {
+//    use FormProcessorTrait;
+
     /**
      * @var FormFactoryInterface
      */
@@ -45,7 +48,7 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
             foreach ($readingTypeObject as $sensorObject) {
                 if ($sensorType === $sensorObject::class) {
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
-                    $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
+                    $handledForm = $this->processForm($sensorForm, $this->em, $sensorData['formData']);
 
                     if ($handledForm instanceof FormInterface) {
                         $this->processFormErrors($handledForm);
@@ -122,36 +125,45 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
     }
 
     /**
-     * @param FormInterface|FormFactoryInterface $form
-     * @param array $formData
-     * @return bool|FormInterface
+     * @return array
      */
-    private function processForm(FormInterface|FormFactoryInterface $form, array $formData): ?FormInterface
+    public function getUserInputErrors(): array
     {
-        $form->submit($formData);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $validFormData = $form->getData();
-            try {
-                $this->em->persist($validFormData);
-            } catch (ORMException | \Exception $e) {
-                error_log($e->getMessage());
-                $this->serverErrors[] = 'Object persistence failed';
-            }
-
-            return null;
-        }
-
-        return $form;
+        return array_merge($this->getAllFormInputErrors(), $this->getUserInputErrors());
     }
 
-    /**
-     * @param FormInterface $form
-     */
-    private function processFormErrors(FormInterface $form): void
-    {
-        foreach ($form->getErrors(true, true) as $error) {
-            $this->userInputErrors[] = $error->getMessage();
-        }
-    }
+
+//    /**
+//     * @param FormInterface|FormFactoryInterface $form
+//     * @param array $formData
+//     * @return bool|FormInterface
+//     */
+//    private function processForm(FormInterface|FormFactoryInterface $form, array $formData): ?FormInterface
+//    {
+//        $form->submit($formData);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $validFormData = $form->getData();
+//            try {
+//                $this->em->persist($validFormData);
+//            } catch (ORMException | \Exception $e) {
+//                error_log($e->getMessage());
+//                $this->serverErrors[] = 'Object persistence failed';
+//            }
+//
+//            return null;
+//        }
+//
+//        return $form;
+//    }
+//
+//    /**
+//     * @param FormInterface $form
+//     */
+//    private function processFormErrors(FormInterface $form): void
+//    {
+//        foreach ($form->getErrors(true, true) as $error) {
+//            $this->userInputErrors[] = $error->getMessage();
+//        }
+//    }
 }

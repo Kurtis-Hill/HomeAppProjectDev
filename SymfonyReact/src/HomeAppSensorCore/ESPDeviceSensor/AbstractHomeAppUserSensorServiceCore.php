@@ -17,6 +17,7 @@ use App\Form\CardViewForms\StandardSensorOutOFBoundsForm;
 use App\Form\SensorForms\UpdateReadingForm;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
+use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use http\Exception\UnexpectedValueException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -25,6 +26,8 @@ use Symfony\Component\Security\Core\Security;
 
 abstract class AbstractHomeAppUserSensorServiceCore implements APIErrorInterface
 {
+    use FormProcessorTrait;
+
     public const SENSOR_TYPE_DATA = [
         SensorType::DHT_SENSOR => [
             'alias' => 'dht',

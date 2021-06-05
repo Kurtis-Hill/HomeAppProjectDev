@@ -11,6 +11,7 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 //use Doctrine\DBAL\Types\TextType;
+use App\Form\FormMessages;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -28,7 +29,7 @@ class AddNewSensorForm extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersConstraint(),
-                    new NotBlank(),
+                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Sensor name')]),
                     new Length(['min' => 1, 'max' => 20,
                         'minMessage' => 'Device name too short',
                         'maxMessage' => 'Device name too long'])

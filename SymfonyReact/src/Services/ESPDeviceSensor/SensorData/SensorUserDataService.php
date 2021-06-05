@@ -3,48 +3,67 @@
 
 namespace App\Services\ESPDeviceSensor\SensorData;
 
-use App\Entity\Card\CardView;
-use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
+
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
-use App\Entity\Sensors\SensorTypes\Bmp;
+use App\Form\FormMessages;
 use App\Form\SensorForms\AddNewSensorForm;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 
 class SensorUserDataService extends AbstractSensorService
 {
     /**
-     * @param Sensors $sensor
-     * @param CardView $cardView
      * @param array $sensorData
+     * @return Sensors|null
      */
-    public function handleSensorReadingTypeCreation(Sensors $sensor, CardView $cardView, array $sensorData): void
+    public function createNewSensor(array $sensorData): ?Sensors
     {
         try {
-            $this->createNewSensorReadingTypeData($sensor, $cardView, $sensorData);
+            $newSensor = new Sensors();
+
+            $addNewSensorForm = $this->formFactory->create(AddNewSensorForm::class, $newSensor);
+
+            $this->processNewSensorForm($addNewSensorForm, $sensorData);
+
+            return $newSensor;
         } catch (BadRequestException $exception) {
-            $this->em->remove($sensor);
-            $this->em->flush();
             $this->userInputErrors[] = $exception->getMessage();
-        } catch (\Exception | ORMException $e) {
+        } catch (ORMException $e) {
+            error_log($e->getMessage());
+            $this->serverErrors[] = FormMessages::FORM_QUERY_ERROR;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Sensors $sensor
+     * @return StandardSensorTypeInterface|null
+     */
+    public function handleSensorReadingTypeCreation(Sensors $sensor): ?StandardSensorTypeInterface
+    {
+        try {
+            return $this->createNewSensorReadingTypeData($sensor);
+        } catch (BadRequestException $exception) {
+            $this->userInputErrors[] = $exception->getMessage();
+        } catch (ORMException $e) {
             error_log($e->getMessage());
             $this->serverErrors[] = $e->getMessage();
         }
+
+        $this->em->remove($sensor);
+        $this->em->flush();
+
+        return null;
     }
 
     /**
@@ -54,46 +73,27 @@ class SensorUserDataService extends AbstractSensorService
      */
     public function handleSensorReadingBoundary(Request $request, Sensors $sensorType, array $cardSensorReadingObject): void
     {
-        if ($sensorType->getSensorTypeID()->getSensorType() === 'Bmp0') {
-//            dd('here t is');
-        }
-
         try {
             $sensorFormData = $this->prepareSensorFormData($request, $sensorType->getSensorTypeID(), SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
 
-            if ($sensorType->getSensorTypeID()->getSensorType() === 'Bmp0') {
-//                dd($sensorFormData);
-            }
             if (!empty($this->userInputErrors) || empty($sensorFormData)) {
 
                 throw new BadRequestException('something went wrong with processing the form');
             }
             if (!empty($sensorFormData)) {
-//                dd($sensorFormData);
                 $this->processSensorForm($sensorFormData, $cardSensorReadingObject);
-//                dd($hey);
             }
         } catch (\RuntimeException $exception) {
-//            dd('run');
             $this->serverErrors[] = 'Failed to process form data';
         }
     }
 
     /**
      * @param Sensors $sensor
-     * @param CardView $cardView
-     * @param array $sensorData
+     * @return StandardSensorTypeInterface|null
      */
-    private function createNewSensorReadingTypeData(Sensors $sensor, CardView $cardView, array $sensorData): void
+    private function createNewSensorReadingTypeData(Sensors $sensor): ?StandardSensorTypeInterface
     {
-        $deviceObject = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
-        if (!$deviceObject instanceof Devices) {
-            $this->em->remove($sensor);
-            $this->em->flush();
-
-            throw new BadRequestException('No Device Recognised');
-        }
-
         $dateTimeNow = new \DateTime();
 
         foreach (self::SENSOR_TYPE_DATA as $sensorNames => $sensorTypeData) {
@@ -124,10 +124,11 @@ class SensorUserDataService extends AbstractSensorService
 
                             $this->em->persist($newObject);
                         }
-
                     }
                     $this->em->persist($newSensorTypeObject);
                 }
+
+                return $newSensorTypeObject;
             }
         }
         if (empty($newSensorTypeObject) || !$this->em->contains($newSensorTypeObject)) {
@@ -140,79 +141,31 @@ class SensorUserDataService extends AbstractSensorService
             throw new BadRequestException('Sensor Type Not Recognised Your App May Need Updating');
         }
 
-        $this->em->flush();
+        return null;
     }
 
     /**
-     * @param Sensors $sensorData
+     * @param Sensors $sensor
      */
-    private function userInputDataCheck(Sensors $sensorData): void
+    private function duplicateSensorOnSameDeviceCheck(Sensors $sensor): void
     {
-        $currentUserSensorNameCheck = $this->em->getRepository(Sensors::class)->checkForDuplicateSensor($sensorData, $this->getUser()->getUserGroupMappingEntities());
+        $currentUserSensorNameCheck = $this->em->getRepository(Sensors::class)->checkForDuplicateSensorOnDevice($sensor);
 
         if ($currentUserSensorNameCheck instanceof Sensors) {
-//            dd($currentUserSensorNameCheck, 'uo');
-            throw new BadRequestException('You already have a sensor named '. $sensorData->getSensorName());
+            throw new BadRequestException('You already have a sensor named ' . $sensor->getSensorName());
         }
-    }
-
-
-    /**
-     * @param array $sensorData
-     * @return FormInterface|null
-     */
-    public function createNewSensor(array $sensorData): ?FormInterface
-    {
-        try {
-            $newSensor = new Sensors();
-
-            $addNewSensorForm = $this->formFactory->create(AddNewSensorForm::class, $newSensor);
-
-            return $this->processNewSensorForm($addNewSensorForm, $sensorData);
-        } catch (BadRequestException $exception) {
-//            dd('he');
-            $this->em->remove($newSensor);
-            $this->userInputErrors[] = $exception->getMessage();
-        } catch (\Exception | ORMException $e) {
-            $this->em->remove($newSensor);
-            error_log($e->getMessage());
-            $this->serverErrors[] = $e->getMessage();
-        }
-
-        return null;
     }
 
     /**
      * @param FormInterface $addNewSensorForm
      * @param array $sensorData
-     * @return FormInterface
+     * @return void
      */
-    private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): FormInterface
+    private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): void
     {
-        $addNewSensorForm->submit($sensorData);
+        $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
 
-        $device = $this->em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
-
-        if (!$device instanceof Devices) {
-            throw new BadRequestException('Device not recognised');
-        }
-//        dd($addNewSensorForm->getData());
-        $addNewSensorForm->getData()->setDeviceNameID($device);
-
-        $this->userInputDataCheck($addNewSensorForm->getData());
-        if ($addNewSensorForm->isSubmitted() && $addNewSensorForm->isValid()) {
-            $addNewSensorForm->getData()->setCreatedBy($this->getUser());
-            $this->em->persist($addNewSensorForm->getData());
-            $this->em->flush();
-        } else {
-            foreach ($addNewSensorForm->getErrors(true, true) as $error) {
-                $this->userInputErrors[] = $error->getMessage();
-            }
-        }
-
-//        dd($addNewSensorForm->getData());
-
-        return $addNewSensorForm;
+        $this->processForm($addNewSensorForm, $this->em, $sensorData);
     }
 
 }

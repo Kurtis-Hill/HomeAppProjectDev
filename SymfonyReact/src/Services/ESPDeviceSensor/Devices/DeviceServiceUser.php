@@ -115,7 +115,7 @@ class DeviceServiceUser implements APIErrorInterface
             $validFormData->setRoles([Devices::ROLE]);
         }
         else {
-            $this->processSensorFormErrors($addNewDeviceForm);
+            $this->processFormErrors($addNewDeviceForm);
         }
     }
 
@@ -124,7 +124,7 @@ class DeviceServiceUser implements APIErrorInterface
      */
     #[Pure] public function getUserInputErrors(): array
     {
-        return array_merge($this->returnAllFormInputErrors(), $this->userInputErrors);
+        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
     }
 
     /**

@@ -4,15 +4,15 @@
 namespace App\Voters;
 
 
-use App\Entity\Core\GroupNames;
 use App\Entity\Core\User;
+use App\Entity\Devices\Devices;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class DeviceVoter extends Voter
+class SensorVoter extends Voter
 {
-    public const ADD_NEW_DEVICE = 'add-new-device';
+    public const ADD_NEW_SENSOR = 'add-new-sensor';
 
     /**
      * @param string $attribute
@@ -21,7 +21,7 @@ class DeviceVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_DEVICE])) {
+        if (!in_array($attribute, [self::ADD_NEW_SENSOR])) {
             return false;
         }
 
@@ -39,32 +39,26 @@ class DeviceVoter extends Voter
         $user = $token->getUser();
 
         return match ($attribute) {
-          self::ADD_NEW_DEVICE => $this->canAddNewDevice($user, $subject),
-          default => false
+            self::ADD_NEW_SENSOR => $this->canAddNewDevice($user, $subject),
+            default => false
         };
     }
 
     /**
      * @param UserInterface $user
-     * @param GroupNames|null $groupNameObject
+     * @param Devices $devices
      * @return bool
      */
-    private function canAddNewDevice(UserInterface $user, ?GroupNames $groupNameObject): bool
+    private function canAddNewDevice(UserInterface $user, Devices $devices): bool
     {
         if (!$user instanceof User) {
             return false;
         }
 
-        $isCallable = [$groupNameObject, 'getGroupNameID'];
-        if (!is_callable($isCallable)) {
-            return false;
-        }
-
-        if (!in_array($groupNameObject->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
 
         return true;
     }
-
 }

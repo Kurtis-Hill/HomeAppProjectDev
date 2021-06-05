@@ -49,7 +49,7 @@ class DeviceController extends AbstractController
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $groupNameObject);
         } catch (\Exception) {
-            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::FORM_PROCESS_FAILURE_MESSAGE]);
+            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::ACCES_DENIED]);
         }
 
         $deviceData = [

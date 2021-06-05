@@ -17,12 +17,7 @@ use Doctrine\ORM\Query\Expr\Join;
  */
 class SensorsRepository extends EntityRepository
 {
-    public function findSensorFromAPIRequest(Devices $device, string $sensorName)
-    {
-
-    }
-
-    public function checkForDuplicateSensor(Sensors $sensorData, array $usersGroups)
+    public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -40,9 +35,6 @@ class SensorsRepository extends EntityRepository
                 ]
             );
 
-        if (!empty($qb->getQuery()->getResult())) {
-//            dd($qb->getQuery()->getResult()[0]);
-        }
         return $qb->getQuery()->getResult()[0] ?? null;
 //        return $qb->getQuery()->getOneOrNullResult();
     }

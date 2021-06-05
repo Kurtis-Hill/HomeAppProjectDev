@@ -251,7 +251,7 @@ class DeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
 
-        self::assertStringContainsString(FormMessages::FORM_PROCESS_FAILURE_MESSAGE, $responseData['responseData']['errors']);
+        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['responseData']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -332,7 +332,7 @@ class DeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString(FormMessages::FORM_PROCESS_FAILURE_MESSAGE, $responseData['responseData']['errors']);
+        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['responseData']['errors']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
