@@ -20,6 +20,7 @@ use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
+use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -114,14 +115,14 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensorID = $responseData['responseData']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
 
         self::assertInstanceOf(Sensors::class, $sensor);
         self::assertStringContainsString('Request Accepted Successfully Updated', $responseData['title']);
-        self::assertArrayHasKey('sensorNameID', $responseData['responseData']);
-        self::assertIsInt($responseData['responseData']['sensorNameID']);
+        self::assertArrayHasKey('sensorNameID', $responseData['payload']);
+        self::assertIsInt($responseData['payload']['sensorNameID']);
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
@@ -144,13 +145,16 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['responseData'][0]);
+        self::assertNull($sensor);
+        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_can_add_new_sensor_with_long_name()
+    public function test_can_not_add_new_sensor_with_long_name()
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
 
@@ -168,10 +172,11 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        dd($this->client->getResponse(), $responseData);
 
-        self::assertStringContainsString('Device name too long', $responseData['responseData'][0]);
+        self::assertNull($sensor);
+        self::assertStringContainsString('Sensor name too long', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -195,6 +200,9 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString('You already have a sensor named Dht0', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -224,6 +232,11 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+
+        self::assertNull($sensor);
+        self::assertStringContainsString('Cannot find device to add sensor too', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -252,6 +265,12 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+
+        self::assertNull($sensor);
+        self::assertStringContainsString('This value is not valid', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -275,7 +294,7 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensorID = $responseData['responseData']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
         $dhtSensor = $this->entityManager->getRepository(Dht::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -315,7 +334,7 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensorID = $responseData['responseData']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
         $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -356,7 +375,7 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensorID = $responseData['responseData']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
         $dallasSensor = $this->entityManager->getRepository(Dallas::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -392,7 +411,7 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensorID = $responseData['responseData']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
         $soilSensor = $this->entityManager->getRepository(Soil::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -408,6 +427,46 @@ class SensorControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
+
+    public function test_add_new_sensor_when_not_part_of_associate_group(): void
+    {
+        $this->client->request(
+            'POST',
+            SecurityController::API_USER_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"'.UserDataFixtures::SECOND_REGULAR_USER_ISOLATED.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        $token = $responseData['token'];
+
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::SOIL_SENSOR]);
+
+        $formData = [
+            'sensor-name' => 'Testing',
+            'sensor-type' => $sensorType->getSensorTypeID(),
+            'device-id' => $this->device->getDeviceNameID(),
+        ];
+
+        $this->client->request(
+            'POST',
+            self::ADD_NEW_SENSOR_URL,
+            $formData,
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $token],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
+        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
 
 
 
@@ -439,9 +498,8 @@ class SensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-
     // Access Tests
-    public function test_can_add_sensor_route_wrong_token()
+    public function test_can_add_sensor_route_wrong_token(): void
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::SOIL_SENSOR]);
 

@@ -46,6 +46,9 @@ class DeviceController extends AbstractController
 
         $groupNameObject = $em->getRepository(GroupNames::class)->findOneBy(['groupNameID' => $deviceGroup]);
 
+        if (!$groupNameObject instanceof GroupNames) {
+            return $this->sendBadRequestJsonResponse(['errors' => ['Cannot find group name to add device too']]);
+        }
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $groupNameObject);
         } catch (\Exception) {

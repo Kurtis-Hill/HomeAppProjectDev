@@ -2,6 +2,16 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Sensors\ReadingTypes\Analog;
+use App\Entity\Sensors\ReadingTypes\Humidity;
+use App\Entity\Sensors\ReadingTypes\Latitude;
+use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\Entity\Sensors\SensorTypes\Bmp;
+use App\Entity\Sensors\SensorTypes\Dallas;
+use App\Entity\Sensors\SensorTypes\Dht;
+use App\Entity\Sensors\SensorTypes\Soil;
+use App\Form\CardViewForms\StandardSensorOutOFBoundsForm;
+use App\Form\SensorForms\UpdateReadingForm;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,6 +39,105 @@ class SensorType
         self::BMP_SENSOR,
         self::DALLAS_TEMPERATURE,
         self::SOIL_SENSOR
+    ];
+
+    public const SENSOR_TYPE_DATA = [
+        SensorType::DHT_SENSOR => [
+            'alias' => 'dht',
+            'object' => Dht::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' => Humidity::class,
+            ],
+            'forms' => [
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' => Humidity::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => UpdateReadingForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' => Humidity::class,
+                    ],
+                ]
+            ]
+        ],
+
+        SensorType::DALLAS_TEMPERATURE => [
+            'alias' => 'dallas',
+            'object' => Dallas::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+            ],
+            'forms' => [
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => UpdateReadingForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                    ],
+                ]
+            ]
+        ],
+
+        SensorType::SOIL_SENSOR => [
+            'alias' => 'soil',
+            'object' => Soil::class,
+            'readingTypes' => [
+                'analog' =>  Analog::class,
+            ],
+            'forms' => [
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'analog' =>  Analog::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => UpdateReadingForm::class,
+                    'readingTypes' => [
+                        'analog' =>  Analog::class,
+                    ],
+                ]
+            ]
+        ],
+
+        SensorType::BMP_SENSOR => [
+            'alias' => 'bmp',
+            'object' => Bmp::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' => Humidity::class,
+                'latitude' => Latitude::class,
+            ],
+            'forms' => [
+                'outOfBounds' => [
+                    'form' => StandardSensorOutOFBoundsForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' =>  Humidity::class,
+                        'latitude' => Latitude::class,
+                    ],
+                ],
+                'updateCurrentReading' => [
+                    'form' => UpdateReadingForm::class,
+                    'readingTypes' => [
+                        'temperature' =>  Temperature::class,
+                        'humidity' =>  Humidity::class,
+                        'latitude' => Latitude::class,
+                    ],
+                ]
+            ]
+        ],
     ];
 
     /**

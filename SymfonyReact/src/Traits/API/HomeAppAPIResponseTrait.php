@@ -20,12 +20,12 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Request Successful',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_OK);
         }
         else {
-            return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
+            return new JsonResponse(['title' => 'Request Successful', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
         }
     }
 
@@ -39,12 +39,12 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Request Successful',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
         }
 
-        return new JsonResponse(['title' => 'Request Successful', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
+        return new JsonResponse(['title' => 'Request Successful', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY);
     }
 
     // 20x Successfull
@@ -90,12 +90,12 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Request Accepted Successfully Updated',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_CREATED);
         }
 
-        return new JsonResponse(['title' => 'Request Accepted Successfully Updated', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_CREATED);
+        return new JsonResponse(['title' => 'Request Accepted Successfully Updated', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_CREATED);
     }
 
     /**
@@ -108,12 +108,12 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Request Accepted Only Partial Response Sent',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
         }
 
-        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
     }
 
     /**
@@ -128,7 +128,7 @@ trait HomeAppAPIResponseTrait
                 HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
         }
 
-        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
     }
     // 40x Client Error Response
 
@@ -142,12 +142,12 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Bad Request No Data Returned',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse(['title' => 'Bad Request No Data Returned', 'responseData' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
+        return new JsonResponse(['title' => 'Bad Request No Data Returned', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -160,7 +160,7 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Nothing Found',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_NOT_FOUND);
         }
@@ -168,7 +168,7 @@ trait HomeAppAPIResponseTrait
         return new JsonResponse(
             [
                 'title' => 'Nothing Found',
-                'responseData' => 'No Response Message'
+                'payload' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_NOT_FOUND);
     }
@@ -185,7 +185,7 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'Server Error Please Try Again',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -193,7 +193,7 @@ trait HomeAppAPIResponseTrait
         return new JsonResponse(
             [
                 'title' => 'Server Error Please Try Again',
-                'responseData' => 'No Response Message'
+                'payload' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
     }
@@ -204,7 +204,7 @@ trait HomeAppAPIResponseTrait
             return new JsonResponse(
                 [
                     'title' => 'You Are Not Authorised To Be Here',
-                    'responseData' => $data
+                    'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_FORBIDDEN);
         }
@@ -212,7 +212,7 @@ trait HomeAppAPIResponseTrait
         return new JsonResponse(
             [
                 'title' => 'You Are Not Authorised To Be Here',
-                'responseData' => 'No Response Message'
+                'payload' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_FORBIDDEN);
     }

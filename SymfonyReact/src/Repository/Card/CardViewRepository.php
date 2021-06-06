@@ -33,21 +33,18 @@ class CardViewRepository extends EntityRepository
         $sensorAlias = [];
         foreach ($sensors as $sensorNames => $sensorData) {
             $sensorAlias[] = $sensorData['alias'];
-//            dd($sensorData['alias'].$joinConditionString, $sensors);
-//            dd($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
             $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
         }
-//dd(implode(', ', $sensorAlias));
+
         return implode(', ', $sensorAlias);
     }
 
 
     public function getAllIndexSensorTypeObjectsForUser(?User $user, array $sensors): array
     {
-        $userID = $user->getUserID();
+//        $userID = $user->getUserID();
         $groupNameIDs = $user->getGroupNameIds();
 
-//        dd('hey', $groupNameIDs);
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::INDEX_ONLY;
 
@@ -55,7 +52,7 @@ class CardViewRepository extends EntityRepository
         $expr = $qb->expr();
 
         $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
-//dd($sensorAlias);
+
         $qb->select($sensorAlias)
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
             ->innerJoin(Cardstate::class, 'cardState', Join::WITH, 'cv.cardStateID = cardState.cardStateID');
@@ -72,7 +69,7 @@ class CardViewRepository extends EntityRepository
 
         $qb->setParameters(
             [
-                'userID' => $userID,
+                'userID' => $user,
                 'groupNameID' => $groupNameIDs,
                 'cardviewOne' => $cardViewOne,
                 'cardviewTwo' => $cardViewTwo
@@ -92,7 +89,7 @@ class CardViewRepository extends EntityRepository
      */
     public function getAllCardReadingsForDevice(UserInterface $user, array $sensors, int $deviceDetails): array
     {
-        $userID = $user->getUserID();
+//        $userID = $user->getUserID();
         $groupNameIDs = $user->getGroupNameIds();
 //dd($groupNameIDs);
         $cardViewOne = Cardstate::ON;
@@ -119,7 +116,7 @@ class CardViewRepository extends EntityRepository
 
         $qb->setParameters(
             [
-                'userID' => $userID,
+                'userID' => $user,
                 'groupNameID' => $groupNameIDs,
                 'deviceNameID' => $deviceDetails,
                 'cardviewOne' => $cardViewOne,

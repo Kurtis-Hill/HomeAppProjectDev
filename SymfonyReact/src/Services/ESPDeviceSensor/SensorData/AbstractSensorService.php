@@ -8,6 +8,7 @@ use App\Entity\Devices\Devices;
 use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Bmp;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
+use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -16,14 +17,22 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
-abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCore
+abstract class AbstractSensorService implements APIErrorInterface
 {
-//    use FormProcessorTrait;
+    use FormProcessorTrait;
+
+    protected EntityManagerInterface $em;
+
+    protected Security $security;
 
     /**
      * @var FormFactoryInterface
      */
     protected FormFactoryInterface $formFactory;
+
+    protected array $userInputErrors = [];
+
+    protected array $serverErrors = [];
 
     /**
      * AbstractSensorService constructor.
@@ -33,8 +42,8 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
      */
     public function __construct(EntityManagerInterface $em, Security $security, FormFactoryInterface $formFactory)
     {
-        parent::__construct($em, $security);
-
+        $this->em = $em;
+        $this->security = $security;
         $this->formFactory = $formFactory;
     }
 
@@ -69,7 +78,7 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
     {
         $currentSensorType = $sensorType->getSensorType();
 
-        foreach (self::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
+        foreach (SensorType::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $currentSensorType) {
                 foreach ($sensorDataArrays['forms'] as $formType => $formData) {
                     if ($formType === $formToProcess) {
@@ -130,6 +139,11 @@ abstract class AbstractSensorService extends AbstractHomeAppUserSensorServiceCor
     public function getUserInputErrors(): array
     {
         return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
+    }
+
+    public function getServerErrors(): array
+    {
+        return $this->serverErrors;
     }
 
 

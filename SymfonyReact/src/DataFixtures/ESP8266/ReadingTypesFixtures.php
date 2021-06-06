@@ -5,6 +5,7 @@ namespace App\DataFixtures\ESP8266;
 
 
 use App\Entity\Sensors\Sensors;
+use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -20,7 +21,7 @@ class ReadingTypesFixtures extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
-            foreach (AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
+            foreach (SensorType::SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
 
 
                 //                $newSensor = new Sensors();

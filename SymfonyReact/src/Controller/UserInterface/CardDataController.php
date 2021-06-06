@@ -3,11 +3,15 @@
 
 namespace App\Controller\UserInterface;
 
-use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\Entity\Card\CardView;
+use App\Entity\Devices\Devices;
 use App\Form\CardViewForms\CardViewForm;
+use App\Form\FormMessages;
 use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use App\Voters\CardViewVoter;
+use App\Voters\SensorVoter;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,16 +44,28 @@ class CardDataController extends AbstractController
         $route = $request->get('view');
         $deviceId = $request->get('device-id');
 
-        $cardData = $cardDataService->prepareAllCardDTOs($route, $deviceId);
+        $em = $this->getDoctrine()->getManager();
+
+        if (isset($deviceId) && is_numeric($deviceId)) {
+            $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $deviceId]);
+
+            if ($device instanceof Devices) {
+                $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
+            } else {
+                return $this->sendBadRequestJsonResponse(['errors' => ['No device found']]);
+            }
+        }
+
+        $cardDataDTOs = $cardDataService->prepareAllCardDTOs($route, $deviceId);
 
         if (!empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse(['errors' => 'Something went wrong']);
+            return $this->sendInternelServerErrorJsonResponse(['errors' => $cardDataService->getServerErrors()]);
         }
         if (!empty($cardDataService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse();
         }
 
-        if (empty($cardData)) {
+        if (empty($cardDataDTOs)) {
             return $this->sendSuccessfulResponse();
         }
 
@@ -58,7 +74,7 @@ class CardDataController extends AbstractController
 
         $serializer = new Serializer($normaliser, $encoders);
 
-        $serializedCards = $serializer->serialize($cardData, 'json');
+        $serializedCards = $serializer->serialize($cardDataDTOs, 'json');
 
         if (!empty($cardDataService->getCardErrors())) {
             return $this->sendPartialContentResponse($serializedCards);
@@ -79,8 +95,20 @@ class CardDataController extends AbstractController
     {
         $cardViewID = $request->query->get('cardViewID');
 
-        if (empty($cardViewID)) {
-            return $this->sendBadRequestJsonResponse();
+        if (empty($cardViewID) || !is_numeric($cardViewID)) {
+            return $this->sendBadRequestJsonResponse(['errors' => ['malformed card view id request']]);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $cardViewObject = $em->getRepository(CardView::class)->findOneBy(['cardViewID' => $cardViewID]);
+
+        if ($cardViewObject instanceof CardView) {
+            try {
+                $this->denyAccessUnlessGranted(CardViewVoter::CAN_VIEW_CARD_VIEW_FORM, $cardViewObject);
+            } catch (\Exception) {
+                return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
+            }
         }
 
         $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewID);
@@ -121,7 +149,7 @@ class CardDataController extends AbstractController
             'cardIconID' => $cardIconID,
             'cardStateID' => $cardStateID,
         ];
-//dd($cardViewID);
+
         $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
 
         if (!empty($cardDataService->getUserInputErrors() || empty($cardSensorReadingObject))) {
@@ -131,7 +159,7 @@ class CardDataController extends AbstractController
         $cardViewObject = array_shift($cardSensorReadingObject);
 
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
-//dd('hi');
+
         $cardViewForm->submit($cardViewData);
 
         if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
@@ -152,43 +180,19 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestJsonResponse($errors);
         }
 
-//        dd('hi', $cardDataService->getUserInputErrors());
         $sensorTypeObject = $cardViewObject->getSensorNameID();
-//dd('je');
-                if ($sensorTypeObject->getSensorName() === 'Bmp0') {
 
-//            dd($sensorTypeObject);
-        }
         $sensorDataService->handleSensorReadingBoundary($request, $sensorTypeObject, $cardSensorReadingObject);
 
-//        if ($sensorTypeObject->getSensorName() === 'Bmp0') {
-//
-//            dd($sensorTypeObject);
-//        }
-//        $this->getDoctrine()->getManager()->flush();
         if (!empty($sensorDataService->getUserInputErrors())) {
-            if ($sensorTypeObject->getSensorName() === 'Bmp0') {
-
-//                dd('3', $sensorDataService->getUserInputErrors(), $sensorTypeObject);
-            }
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
         }
 
         if (!empty($sensorDataService->getServerErrors())) {
-            if ($sensorTypeObject->getSensorName() === 'Bmp0') {
-
-//                dd('1', $sensorTypeObject);
-            }
             return $this->sendInternelServerErrorJsonResponse();
         }
 
-        if ($sensorTypeObject->getSensorName() === 'Bmp0') {
-
-            $temp = $this->getDoctrine()->getManager()->getRepository(Temperature::class)->findOneBy(['sensorNameID' => $sensorTypeObject]);
-//            dd($sensorTypeObject, 'hi123', $temp);
-            $this->getDoctrine()->getManager()->flush();
-        }
-            $this->getDoctrine()->getManager()->flush();
+        $this->getDoctrine()->getManager()->flush();
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }

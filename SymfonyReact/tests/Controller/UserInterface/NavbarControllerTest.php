@@ -102,7 +102,7 @@ class NavbarControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
 
         $countMessage = 'user %s count wrong';
 

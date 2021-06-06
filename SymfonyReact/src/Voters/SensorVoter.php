@@ -14,6 +14,8 @@ class SensorVoter extends Voter
 {
     public const ADD_NEW_SENSOR = 'add-new-sensor';
 
+    public const VIEW_DEVICE_CARD_DATA = 'view-device-card-data';
+
     /**
      * @param string $attribute
      * @param mixed $subject
@@ -21,7 +23,7 @@ class SensorVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_SENSOR])) {
+        if (!in_array($attribute, [self::ADD_NEW_SENSOR, self::VIEW_DEVICE_CARD_DATA])) {
             return false;
         }
 
@@ -40,8 +42,22 @@ class SensorVoter extends Voter
 
         return match ($attribute) {
             self::ADD_NEW_SENSOR => $this->canAddNewDevice($user, $subject),
+            self::VIEW_DEVICE_CARD_DATA => $this->viewDeviceCardData($user, $subject),
             default => false
         };
+    }
+
+    private function viewDeviceCardData(UserInterface $user, Devices $devices): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

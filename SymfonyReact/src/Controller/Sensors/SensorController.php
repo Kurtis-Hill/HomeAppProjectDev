@@ -66,19 +66,19 @@ class SensorController extends AbstractController
         ];
 
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
-            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::FORM_PRE_PROCESS_FAILURE]);
+            return $this->sendBadRequestJsonResponse(['errors' => [FormMessages::FORM_PRE_PROCESS_FAILURE]]);
         }
 
         $em = $this->getDoctrine()->getManager();
-        $device = $em->getRepository(Devices::class)->findDeviceByIdAndGroupNameIds(['deviceNameID' => $sensorData['deviceNameID'], 'groupNameIDs' => $this->getUser()->getGroupNameIds()]);
+        $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $sensorData['deviceNameID']]);
 
-        if ($device === null) {
-            return $this->sendBadRequestJsonResponse(['errors' => 'Cannot find device to add sensor too']);
+        if (!$device instanceof Devices) {
+            return $this->sendBadRequestJsonResponse(['errors' => ['Cannot find device to add sensor too']]);
         }
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $device);
         } catch (\Exception) {
-            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::ACCES_DENIED]);
+            return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
         }
 
         $sensor = $sensorService->createNewSensor($sensorData);

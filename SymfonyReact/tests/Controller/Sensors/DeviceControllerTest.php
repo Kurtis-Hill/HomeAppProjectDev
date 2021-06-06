@@ -128,7 +128,7 @@ class DeviceControllerTest extends WebTestCase
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
         self::assertNotNull($responseData['deviceID']);
         self::assertArrayHasKey('secret', $responseData);
@@ -160,7 +160,7 @@ class DeviceControllerTest extends WebTestCase
             'Your group already has a device named %s that is in room %s',
             ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
             $this->room->getRoom(),
-        ), $responseData['responseData'][0]);
+        ), $responseData['payload'][0]);
 
         self::assertCount(1, $device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -183,7 +183,7 @@ class DeviceControllerTest extends WebTestCase
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 //dd($responseData);
-        self::assertStringContainsString(sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device'), $responseData['responseData'][0]);
+        self::assertStringContainsString(sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device'), $responseData['payload'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -205,7 +205,7 @@ class DeviceControllerTest extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['responseData']['errors']);
+        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['payload']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -228,7 +228,7 @@ class DeviceControllerTest extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['responseData']['errors']);
+        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['payload']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -251,7 +251,7 @@ class DeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
 
-        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['responseData']['errors']);
+        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors']);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -275,7 +275,7 @@ class DeviceControllerTest extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertStringContainsString('Device name too long', $responseData['responseData'][0]);
+        self::assertStringContainsString('Device name too long', $responseData['payload'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -299,7 +299,7 @@ class DeviceControllerTest extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['responseData'][0]);
+        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -332,7 +332,7 @@ class DeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['responseData']['errors']);
+        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -375,7 +375,7 @@ class DeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
         self::assertNotNull($responseData['secret']);
     }
@@ -396,7 +396,7 @@ class DeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
         self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $responseData['secret']);
     }
@@ -417,7 +417,7 @@ class DeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512)['payload'];
 
         $deviceId = $responseData['deviceID'];
 

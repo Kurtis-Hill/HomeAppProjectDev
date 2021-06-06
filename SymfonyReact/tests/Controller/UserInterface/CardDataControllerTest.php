@@ -113,7 +113,8 @@ class CardDataControllerTest extends WebTestCase
     //returnCardDataDTOs Tests
     public function test_returning_all_card_dto_index()
     {
-        $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllIndexSensorTypeObjectsForUser($this->testUser, AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA));
+        $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllIndexSensorTypeObjectsForUser($this->testUser, SensorType::SENSOR_TYPE_DATA));
+        $fixtureCardCount = count(ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES) * count(SensorType::SENSOR_TYPE_DATA);
 
         $this->client->request(
             'GET',
@@ -124,9 +125,11 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
+//dd($this->client->getResponse());
         foreach ($responseData as $cardData) {
             $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
+
+//            dd($sensorObject, $responseData, $cardData['sensorName'], $this->testUser->getUserID());
             $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
             foreach ($cardData['sensorData'] as $sensorData) {
@@ -162,6 +165,7 @@ class CardDataControllerTest extends WebTestCase
             self::assertEquals($cardViewObject->getCardViewID(), $cardData['cardViewID'], 'card view id\'s did not match from the object and the dto response data');
         }
 
+        self::assertCount($fixtureCardCount, $responseData);
         self::assertCount($countIndexCards, $responseData);
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -170,7 +174,8 @@ class CardDataControllerTest extends WebTestCase
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
 
-        $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($this->testUser, AbstractHomeAppUserSensorServiceCore::SENSOR_TYPE_DATA, $device->getDeviceNameId()));
+//        dd($device);
+        $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($this->testUser, SensorType::SENSOR_TYPE_DATA, $device->getDeviceNameId()));
 
         $this->client->request(
             'GET',
@@ -181,11 +186,11 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
+//dd($responseData, $this->client->getResponse());
         foreach ($responseData as $cardData) {
             $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
             $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
+//dd($responseData, $cardData);
             foreach ($cardData['sensorData'] as $sensorData) {
                 $readingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 
@@ -223,7 +228,7 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_returning_all_card_dto_by_device_with_bad_device_id()
+    public function test_returning_all_card_dto_by_device_with_none_existant_device_id()
     {
         while (true) {
             $invalidDeviceId = random_int(0, 10000);
@@ -242,14 +247,18 @@ class CardDataControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
+//        dd($this->client->getResponse(), 'gi');
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertNull($device);
+        self::assertStringContainsString('No device found', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     // showCardViewForm Controller Method
     public function test_card_form_user_options()
     {
-        $cardView = $this->entityManager->getRepository(CardView::class)->findAll()[0];
-
+        $cardView = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $this->testUser])[0];
         $numberOfIcons = $this->entityManager->getRepository(Icons::class)->countAllIcons();
         $numberOfColours = $this->entityManager->getRepository(CardColour::class)->countAllColours();
         $numberOfStates = $this->entityManager->getRepository(Cardstate::class)->countAllStates();
@@ -263,7 +272,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
+//dd($responseData);
         self::assertJson($this->client->getResponse()->getContent());
         self::assertCount($numberOfIcons, $responseData['userIconSelections']);
         self::assertCount($numberOfColours, $responseData['userColourSelections']);
@@ -1112,7 +1121,7 @@ class CardDataControllerTest extends WebTestCase
             Temperature::READING_SYMBOL,
             $highReading,
             Temperature::READING_SYMBOL
-        ), $responseData['responseData'][0]);
+        ), $responseData['payload'][0]);
 
 
         self::assertStringContainsString(sprintf(
@@ -1123,7 +1132,7 @@ class CardDataControllerTest extends WebTestCase
             Temperature::READING_SYMBOL,
             $lowReading,
             Temperature::READING_SYMBOL
-        ), $responseData['responseData'][1]);
+        ), $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1223,7 +1232,7 @@ class CardDataControllerTest extends WebTestCase
             Temperature::READING_SYMBOL,
             $highReading,
             Temperature::READING_SYMBOL
-        ), $responseData['responseData'][0]);
+        ), $responseData['payload'][0]);
 
 
         self::assertStringContainsString(sprintf(
@@ -1234,7 +1243,7 @@ class CardDataControllerTest extends WebTestCase
             Temperature::READING_SYMBOL,
             $lowReading,
             Temperature::READING_SYMBOL
-        ), $responseData['responseData'][1]);
+        ), $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1332,7 +1341,7 @@ class CardDataControllerTest extends WebTestCase
             Temperature::READING_SYMBOL,
             $highReading,
             Temperature::READING_SYMBOL
-        ), $responseData['responseData'][0]);
+        ), $responseData['payload'][0]);
 
 
         self::assertStringContainsString(sprintf(
@@ -1343,7 +1352,7 @@ class CardDataControllerTest extends WebTestCase
             Temperature::READING_SYMBOL,
             $lowReading,
             Temperature::READING_SYMBOL
-        ), $responseData['responseData'][1]);
+        ), $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1434,8 +1443,8 @@ class CardDataControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString('High reading for temperature cannot be lower than low reading', $responseData['responseData'][0]);
-        self::assertStringContainsString('High reading for humidity cannot be lower than low reading', $responseData['responseData'][1]);
+        self::assertStringContainsString('High reading for temperature cannot be lower than low reading', $responseData['payload'][0]);
+        self::assertStringContainsString('High reading for humidity cannot be lower than low reading', $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1539,14 +1548,14 @@ class CardDataControllerTest extends WebTestCase
             $highString,
             $highReading,
             Humidity::READING_SYMBOL
-        ), $responseData['responseData'][0]);
+        ), $responseData['payload'][0]);
 
 
         self::assertStringContainsString(sprintf(
             $lowString,
             $lowReading,
             Humidity::READING_SYMBOL
-        ), $responseData['responseData'][1]);
+        ), $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1648,14 +1657,14 @@ class CardDataControllerTest extends WebTestCase
             $highString,
             $highReading,
             Humidity::READING_SYMBOL
-        ), $responseData['responseData'][0]);
+        ), $responseData['payload'][0]);
 
 
         self::assertStringContainsString(sprintf(
             $lowString,
             $lowReading,
             Humidity::READING_SYMBOL
-        ), $responseData['responseData'][1]);
+        ), $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1745,7 +1754,7 @@ class CardDataControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString("High reading for humidity cannot be lower than low reading", $responseData['responseData'][0]);
+        self::assertStringContainsString("High reading for humidity cannot be lower than low reading", $responseData['payload'][0]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1844,8 +1853,8 @@ class CardDataControllerTest extends WebTestCase
         $highString = "The highest possible latitude is 90 you entered \"%s\"";
         $lowString = "The lowest possible latitude is 0 you entered \"%s\"";
 
-        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['responseData'][0]);
-        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['responseData'][1]);
+        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['payload'][0]);
+        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['payload'][1]);
 
         $temperatureObject = $sensorTypeObjectAfter->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -1938,8 +1947,8 @@ class CardDataControllerTest extends WebTestCase
         $highString = "Reading for this sensor cannot be over 9999 you entered \"%s\"";
         $lowString = "Reading for this sensor cannot be under 1000 you entered \"%s\"";
 
-        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['responseData'][0]);
-        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['responseData'][1]);
+        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['payload'][0]);
+        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['payload'][1]);
 
         $analogObject = $sensorTypeObjectAfter->getAnalogObject();
         self::assertNotEquals($formData['analog-high-reading'], $analogObject->getHighReading());
@@ -2029,8 +2038,8 @@ class CardDataControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('The highest possible latitude is 90 you entered "100"', $responseData['responseData'][0]);
-        self::assertStringContainsString('The lowest possible latitude is 0 you entered "-5"', $responseData['responseData'][1]);
+        self::assertStringContainsString('The highest possible latitude is 90 you entered "100"', $responseData['payload'][0]);
+        self::assertStringContainsString('The lowest possible latitude is 0 you entered "-5"', $responseData['payload'][1]);
 
         $temperatureObject = $bmpSensor->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -2129,7 +2138,7 @@ class CardDataControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
+        self::assertStringContainsString('This value is not valid.', $responseData['payload'][0]);
 
         $temperatureObject = $bmpSensor->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -2229,7 +2238,7 @@ class CardDataControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
+        self::assertStringContainsString('This value is not valid.', $responseData['payload'][0]);
 
         $temperatureObject = $bmpSensor->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -2329,7 +2338,7 @@ class CardDataControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
+        self::assertStringContainsString('This value is not valid.', $responseData['payload'][0]);
 
         $temperatureObject = $bmpSensor->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
@@ -2429,7 +2438,7 @@ class CardDataControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['responseData'][0]);
+        self::assertStringContainsString('This value is not valid.', $responseData['payload'][0]);
 
         $temperatureObject = $bmpSensor->getTempObject();
         self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
