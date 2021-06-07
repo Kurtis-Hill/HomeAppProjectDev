@@ -66,14 +66,14 @@ class SensorController extends AbstractController
         ];
 
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
-            return $this->sendBadRequestJsonResponse(['errors' => [FormMessages::FORM_PRE_PROCESS_FAILURE]]);
+            return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
         }
 
         $em = $this->getDoctrine()->getManager();
         $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $sensorData['deviceNameID']]);
 
         if (!$device instanceof Devices) {
-            return $this->sendBadRequestJsonResponse(['errors' => ['Cannot find device to add sensor too']]);
+            return $this->sendBadRequestJsonResponse(['Cannot find device to add sensor too']);
         }
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $device);
@@ -84,10 +84,10 @@ class SensorController extends AbstractController
         $sensor = $sensorService->createNewSensor($sensorData);
 
         if (!empty($sensorService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse(['errors' => $sensorService->getUserInputErrors()]);
+            return $this->sendBadRequestJsonResponse($sensorService->getUserInputErrors());
         }
         if ($sensor === null || !empty($sensorService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse(['errors' => $sensorService->getServerErrors()]);
+            return $this->sendInternelServerErrorJsonResponse($sensorService->getServerErrors());
         }
         if ($sensor instanceof Sensors) {
             $em = $this->getDoctrine()->getManager();
@@ -119,7 +119,7 @@ class SensorController extends AbstractController
             return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
         }
 
-        return $this->sendBadRequestJsonResponse(['errors' => 'Something trying to add a sensor didnt return a sensor, make sure your app is up to date']);
+        return $this->sendBadRequestJsonResponse(['Something trying to add a sensor didnt return a sensor, make sure your app is up to date']);
     }
 
     /**

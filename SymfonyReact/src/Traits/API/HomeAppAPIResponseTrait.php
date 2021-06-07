@@ -133,16 +133,21 @@ trait HomeAppAPIResponseTrait
     // 40x Client Error Response
 
     /**
-     * @param array $data
+     * @param array $errors
+     * @param array|null $data
      * @return JsonResponse
      */
-    public function sendBadRequestJsonResponse(array $data = []): JsonResponse
+    public function sendBadRequestJsonResponse(array $errors = [], array $data = null): JsonResponse
     {
-        if (!empty($data)) {
+        if (!empty($errors)) {
             return new JsonResponse(
                 [
                     'title' => 'Bad Request No Data Returned',
-                    'payload' => $data
+                    'payload' => [
+                        'errors' => $errors,
+                        $data,
+                    ]
+
                 ],
                 HTTPStatusCodes::HTTP_BAD_REQUEST);
         }
@@ -198,13 +203,17 @@ trait HomeAppAPIResponseTrait
             HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    public function sendForbiddenAccessJsonResponse(array $data = []): JsonResponse
+    public function sendForbiddenAccessJsonResponse(array $errors = [], array $data = null): JsonResponse
     {
-        if (!empty($data)) {
+        if (!empty($errors)) {
             return new JsonResponse(
                 [
                     'title' => 'You Are Not Authorised To Be Here',
-                    'payload' => $data
+                    'payload' => [
+                        'errors' => $errors,
+                        $data,
+                    ]
+
                 ],
                 HTTPStatusCodes::HTTP_FORBIDDEN);
         }

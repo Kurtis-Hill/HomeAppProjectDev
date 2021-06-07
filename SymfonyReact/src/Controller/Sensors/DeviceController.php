@@ -37,9 +37,7 @@ class DeviceController extends AbstractController
         $deviceRoom = $request->get('device-room');
 
         if (!isset($deviceGroup, $deviceRoom)) {
-            return $this->sendBadRequestJsonResponse([
-                'errors' => FormMessages::FORM_PRE_PROCESS_FAILURE
-            ]);
+            return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -47,12 +45,12 @@ class DeviceController extends AbstractController
         $groupNameObject = $em->getRepository(GroupNames::class)->findOneBy(['groupNameID' => $deviceGroup]);
 
         if (!$groupNameObject instanceof GroupNames) {
-            return $this->sendBadRequestJsonResponse(['errors' => ['Cannot find group name to add device too']]);
+            return $this->sendBadRequestJsonResponse(['Cannot find group name to add device too']);
         }
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $groupNameObject);
         } catch (\Exception) {
-            return $this->sendBadRequestJsonResponse(['errors' => FormMessages::ACCES_DENIED]);
+            return $this->sendBadRequestJsonResponse([FormMessages::ACCES_DENIED]);
         }
 
         $deviceData = [

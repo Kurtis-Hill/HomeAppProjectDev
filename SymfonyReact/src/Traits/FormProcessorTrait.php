@@ -15,7 +15,7 @@ trait FormProcessorTrait
 
     /**
      * @param FormInterface|FormFactoryInterface $form
-     * @param EntityManagerInterface $em
+     * @param EntityManagerInterface|ObjectManager $em
      * @param array $formData
      */
     public function processForm(FormInterface|FormFactoryInterface $form, EntityManagerInterface| ObjectManager $em, array $formData): void

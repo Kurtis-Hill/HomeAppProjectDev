@@ -123,17 +123,18 @@ class SensorUserDataService extends AbstractSensorService
 
     /**
      * @param Sensors $sensor
-     * @param array $formData
+     * @param array $updateData
      *
      */
-    public function handleSensorReadingBoundary(Sensors $sensor, array $formData): void
+    public function handleSensorReadingBoundary(Sensors $sensor, array $updateData): void
     {
+//        dd($updateData);
         try {
             $sensorTypeObject = $this->em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensor, SensorType::SENSOR_READING_TYPE_DATA);
             if (empty($sensorTypeObject)) {
                 throw new \UnexpectedValueException('No reading types were found for your request, please make sure your app is up to date');
             }
-            $sensorFormData = $this->prepareSensorFormData($sensor->getSensorTypeID(), $formData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
+            $sensorFormData = $this->prepareSensorFormData($sensor->getSensorTypeID(), $updateData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
 
             if (empty($sensorFormData)) {
                 throw new BadRequestException('something went wrong with processing the sensor reading update form');

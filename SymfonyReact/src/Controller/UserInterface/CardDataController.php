@@ -5,17 +5,13 @@ namespace App\Controller\UserInterface;
 
 use App\Entity\Card\CardView;
 use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorType;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\CardViewVoter;
 use App\Voters\SensorVoter;
-use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,19 +49,24 @@ class CardDataController extends AbstractController
             $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $deviceId]);
 
             if ($device instanceof Devices) {
-                $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
+                try {
+                    $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
+                } catch (\Exception $exception) {
+                    return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
+                }
             } else {
-                return $this->sendBadRequestJsonResponse(['errors' => ['No device found']]);
+//                dd('d');
+                return $this->sendBadRequestJsonResponse(['No device found']);
             }
         }
 
         $cardDataDTOs = $cardDataService->prepareAllCardDTOs($route, $deviceId);
 
         if (!empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse(['errors' => $cardDataService->getServerErrors()]);
+            return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());
         }
         if (!empty($cardDataService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse();
+            return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
         }
 
         if (empty($cardDataDTOs)) {
@@ -99,7 +100,7 @@ class CardDataController extends AbstractController
         $cardViewID = $request->query->get('cardViewID');
 
         if (empty($cardViewID) || !is_numeric($cardViewID)) {
-            return $this->sendBadRequestJsonResponse(['errors' => ['malformed card view id request']]);
+            return $this->sendBadRequestJsonResponse(['malformed card view id request']);
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -110,16 +111,16 @@ class CardDataController extends AbstractController
             try {
                 $this->denyAccessUnlessGranted(CardViewVoter::CAN_VIEW_CARD_VIEW_FORM, $cardViewObject);
             } catch (\Exception) {
-                return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
+                return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
             }
         } else {
-            return $this->sendBadRequestJsonResponse(['errors' => ['Card view id not recognised']]);
+            return $this->sendBadRequestJsonResponse(['Card view id not recognised']);
         }
 
         $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewID);
 
         if ($cardFormDTO === null || !empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse();
+            return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());
         }
 
         $encoders = [new JsonEncoder()];
@@ -143,7 +144,7 @@ class CardDataController extends AbstractController
         $cardViewID = $request->get('card-view-id');
 
         if (empty($cardViewID) || !is_numeric($cardViewID)) {
-            return $this->sendBadRequestJsonResponse(['errors' => 'malformed card view id not recognised']);
+            return $this->sendBadRequestJsonResponse(['malformed card view id not recognised']);
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -157,7 +158,7 @@ class CardDataController extends AbstractController
                 return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
             }
         } else {
-            return $this->sendBadRequestJsonResponse(['errors' => ['card not found by the id given']]);
+            return $this->sendBadRequestJsonResponse(['card not found by the id given']);
         }
 
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
@@ -183,12 +184,11 @@ class CardDataController extends AbstractController
         }
 
         if (!empty($sensorDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse();
+            return $this->sendInternelServerErrorJsonResponse($sensorDataService->getServerErrors());
         }
 
         $em->flush();
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }
-
 }

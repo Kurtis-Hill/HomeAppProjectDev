@@ -181,7 +181,7 @@ class CardContextProvider extends Component {
             case sensorType+"-high-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.HighReading = value;
+                        currentModalData.highReading = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -191,7 +191,7 @@ class CardContextProvider extends Component {
             case sensorType+"-low-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.LowReading = value;
+                        currentModalData.lowReading = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -201,7 +201,7 @@ class CardContextProvider extends Component {
             case sensorType+"-const-record":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.ConstRecord = value;
+                        currentModalData.constRecord = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -231,29 +231,32 @@ class CardContextProvider extends Component {
             );
         })
         .catch(error => {
+            // console.log('erro', error.response);
             const err = error.response;
-            const errors = err.data.responseData;
+            const errors = err.data.payload.errors;
 
-            if (err.status === 400) {
-                const badRequestErrors = (!errors.length > 1)
+            console.log('erro', errors);
+            
+            const badRequestErrors = (!errors.length > 1)
                 ? ['something went wrong']
                 : errors;
 
+            if (err.status === 400) {
                 this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: badRequestErrors}});
             }
 
             if (err.status === 404) {
-                this.setState({modalContent:{...this.state.modalContent,  modalSubmit: false, modalContent: emptyModalContent}});
+                this.setState({modalContent:{...this.state.modalContent,  modalSubmit: false, modalContent: emptyModalContent,  errors: badRequestErrors}});
                 this.toggleModal();
                 alert('Could not handle request please try again');
             }
 
             if (err.status === 500) {
-                const alertMessage = err.data.responseData !== undefined
-                    ? err.data.responseData
-                    : 'please try again or log out and try again';
-
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false}});
+                if (badRequestErrors === undefined) {
+                    alert('Please logout something went wrong');
+                } else {
+                    this.setState({modalContent:{...this.state.modalContent,  modalSubmit: false, modalContent: emptyModalContent}});
+                }
             }
         })
     }

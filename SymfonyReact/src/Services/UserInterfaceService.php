@@ -8,6 +8,7 @@ use App\Entity\Core\Room;
 use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
+use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
 
-class UserInterfaceService implements APIErrorInterface
+class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInterface
 {
     /**
      * @var EntityManagerInterface
@@ -53,8 +54,8 @@ class UserInterfaceService implements APIErrorInterface
     public function getNavBarData(): array
     {
         try {
-            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->user->getGroupNameIDs());
-            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->user->getGroupNameAndIds());
+            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->getUser()->getGroupNameIDs());
+            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->getUser()->getGroupNameAndIds());
         } catch (ORMException $exception) {
             error_log($exception);
             $this->serverErrors[] = 'NavBar Data Query Failed';
@@ -92,4 +93,11 @@ class UserInterfaceService implements APIErrorInterface
     {
         return $this->userInputErrors;
     }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+
 }

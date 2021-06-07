@@ -50,20 +50,20 @@ export default class AddNewDeviceContextProvider extends Component {
 
         axios.post(apiURL+'devices/add-new-device', formData, config)
             .then(response => {
-                const responseData = response.data.responseData;
+                const responseData = response.data.payload;
                 this.setState({addNewDeviceModalSubmit: false});
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responseData.secret, errors:[], newDeviceID: responseData.deviceID}});
             })
             .catch(error => {
-                const status = error.response.status;
-               // const responseData = error.data.responseData;
+               const status = error.response.status;
+               const responseData = error.data.payload;
 
-                console.log(error.response.data.responseData);
+                console.log(error.response.data.payload);
                 if (status === 400) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.responseData, formSubmit:false}});
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors, formSubmit:false}});
                 }
                 if (status === 500) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Server error'], formSubmit:false}});
+                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors, formSubmit:false}});
                 }
             })
     }

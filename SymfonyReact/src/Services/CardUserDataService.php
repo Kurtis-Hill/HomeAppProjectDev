@@ -72,7 +72,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      * @param int|null $deviceId
      * @return array
      */
-    public function prepareAllCardDTOs(?string $route, ?int $deviceId): array
+    public function prepareAllCardDTOs(?string $route = null, ?int $deviceId = null): array
     {
         try {
             if (isset($deviceId) && !is_numeric($deviceId)) {
@@ -95,7 +95,6 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                 foreach ($sensorObjects as $cardDTO) {
                     try {
                         if ($cardDTO instanceof StandardSensorTypeInterface) {
-//                            dd($cardDTO->getCardViewObject(), 'hi)';
                             $cardViewObject = $this->em->getRepository(CardView::class)->findOneBy(
                                 [
                                     'userID' => $this->getUser(),
@@ -155,9 +154,9 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      * @param int $deviceId
      * @return array
      */
-    private function getDevicePageCardDataObjects(int $deviceId): array
+    private function getDevicePageCardDataObjects(int $deviceId = null): array
     {
-        if (empty($deviceId)) {
+        if ($deviceId === null) {
             throw new BadRequestException(
                 'No card data found query if you have sensors on the device please logout and back in again please'
             );
