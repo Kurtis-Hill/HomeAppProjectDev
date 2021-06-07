@@ -4,8 +4,6 @@
 namespace App\Services\ESPDeviceSensor\SensorData;
 
 
-use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ConstantRecording\ConstAnalog;
 use App\Entity\Sensors\ConstantRecording\ConstHumid;
 use App\Entity\Sensors\ConstantRecording\ConstTemp;
@@ -39,7 +37,6 @@ class SensorDeviceDataService extends AbstractSensorService
             $this->handleDhtUpdateRequest($request);
         }
         if ($sensorType === SensorType::DALLAS_TEMPERATURE) {
-//            dd('no');
             $this->handleDallasUpdateRequest($request);
         }
         if ($sensorType === SensorType::BMP_SENSOR) {
@@ -60,18 +57,6 @@ class SensorDeviceDataService extends AbstractSensorService
 //        }
 
         return [];
-    }
-
-    protected function setServiceUserSession()
-    {
-        if ($this->getUser() instanceof Devices) {
-            $this->sensorUser = $this->getUser();
-        }
-        else {
-            throw new \InvalidArgumentException('Wrong Entity Provided');
-        }
-
-
     }
 
     /**
@@ -225,7 +210,6 @@ class SensorDeviceDataService extends AbstractSensorService
                 'deviceNameID' => $device
             ]
         );
-dd($sensor);
         if (!$sensor instanceof Sensors) {
             throw new BadRequestException('no sensor named ' .$sensorName. ' exists');
         }

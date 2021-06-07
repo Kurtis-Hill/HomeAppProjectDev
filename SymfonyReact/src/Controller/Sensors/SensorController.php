@@ -78,7 +78,7 @@ class SensorController extends AbstractController
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $device);
         } catch (\Exception) {
-            return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
+            return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
         }
 
         $sensor = $sensorService->createNewSensor($sensorData);
@@ -137,6 +137,4 @@ class SensorController extends AbstractController
 
         return $this->sendSuccessfulResponse($serializer->serialize($sensorTypes, 'json'));
     }
-
-
 }

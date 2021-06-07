@@ -56,7 +56,7 @@ export default class AddNewDeviceContextProvider extends Component {
             })
             .catch(error => {
                const status = error.response.status;
-               const responseData = error.data.payload;
+               const responseData = error.response.data.payload;
 
                 console.log(error.response.data.payload);
                 if (status === 400) {
@@ -65,7 +65,9 @@ export default class AddNewDeviceContextProvider extends Component {
                 if (status === 500) {
                     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors, formSubmit:false}});
                 }
-            })
+
+                setLoading(false);
+            });
     }
 
     updateNewDeviceModalForm = (event) => {

@@ -62,7 +62,6 @@ class StandardSensorCardDataDTO extends AbstractCardSensorDTO
 
     protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void
     {
-//        dd($cardDTOData);
         $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
 
         $this->sensorName =$cardDTOData->getSensorObject()->getSensorName();

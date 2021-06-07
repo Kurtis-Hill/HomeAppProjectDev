@@ -250,7 +250,6 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//        dd($this->client->getResponse(), $responseData, 'gi');
 
         self::assertNull($device);
         self::assertStringContainsString('No device found', $responseData['payload']['errors'][0]);
@@ -537,7 +536,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData, $this->client->getResponse());
+
         self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors'][0]);
         self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
 

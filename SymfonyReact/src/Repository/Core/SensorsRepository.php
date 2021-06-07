@@ -2,11 +2,9 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -20,8 +18,6 @@ class SensorsRepository extends EntityRepository
 {
     private function prepareSensorTypeDataObjectsForQuery(array $sensors, $qb, array $joinCondition): string
     {
-//        $qb->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
-
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
 
         $sensorAlias = [];
@@ -35,7 +31,6 @@ class SensorsRepository extends EntityRepository
 
     public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors
     {
-//        dd($sensorData);
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
 
@@ -56,54 +51,51 @@ class SensorsRepository extends EntityRepository
 //        return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findAllSensorsByAssociatedGroups(User $user)
-    {
-        $qb = $this->createQueryBuilder('sensor');
-        $expr = $qb->expr();
-
-        $qb->select('sensor')
-            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
-            ->where(
-                $expr->in('device.groupNameID', ':groupNameIds')
-            )
-            ->setParameters(['groupNameIds' => $user->getGroupNameIds()]);
-
-//        dd($qb->getQuery()->getResult(), $user->getGroupNameIds());
-    }
-
-
 
     /**
-     * Add left join for additional sensors
-     * needs refactor
      * @param Sensors $sensors
      * @param $sensorData
-     * @return StandardSensorTypeInterface|null
+     * @return array
      */
-    public function getSensorCardFormDataBySensor(Sensors $sensors, $sensorData)
+    public function getSensorCardFormDataBySensor(Sensors $sensors, $sensorData): array
     {
         $qb = $this->createQueryBuilder('sensors');
 
         $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
 
         $qb->select($sensorAlias)
-//            ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
-//            ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
-//            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
-//            ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
-//            ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
             ->where(
                 $qb->expr()->eq('sensors.sensorNameID', ':id')
             )
             ->setParameters(['id' => $sensors]);
+
         $result = array_filter($qb->getQuery()->getResult());
-//dd($result, 'result');
-//
         $result = array_values($result);
-//dd($result, 'result');
-//        dd($qb->getQuery()->getOneOrNullResult());
-//        return $qb->getQuery()->getOneOrNullResult();
+
         return $result;
+    }
+
+    /**
+     * @param Sensors $sensors
+     * @param $sensorData
+     * @return array
+     */
+    public function getSensorReadingTypeCardFormDataBySensor(Sensors $sensors, $sensorData): StandardSensorTypeInterface
+    {
+        $qb = $this->createQueryBuilder('sensors');
+
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
+
+        $qb->select($sensorAlias)
+            ->where(
+                $qb->expr()->eq('sensors.sensorNameID', ':id')
+            )
+            ->setParameters(['id' => $sensors]);
+
+        $result = array_filter($qb->getQuery()->getResult());
+        $result = array_values($result);
+
+        return $result[0];
     }
 
 }

@@ -130,7 +130,6 @@ class CardViewRepository extends EntityRepository
             ]
         );
 
-//        dd(array_filter($qb->getQuery()->getScalarResult()));
         return array_filter($qb->getQuery()->getScalarResult());
     }
 
@@ -144,9 +143,8 @@ class CardViewRepository extends EntityRepository
      */
     public function getAllCardReadingsForDevice(UserInterface $user, array $sensors, int $deviceDetails): array
     {
-//        $userID = $user->getUserID();
         $groupNameIDs = $user->getGroupNameIds();
-//dd($groupNameIDs);
+
         $cardViewOne = Cardstate::ON;
         $cardViewTwo = Cardstate::DEVICE_ONLY;
 
@@ -183,38 +181,28 @@ class CardViewRepository extends EntityRepository
     }
 
 
-    /**
-     * Add left join for additional sensors
-     * needs refactor
-     * @param array $criteria
-     * @param $sensorData
-     * @return mixed
-     */
-    public function getSensorCardFormData(array $criteria, $sensorData): ?StandardSensorTypeInterface
-    {
-        $qb = $this->createQueryBuilder('cv');
-
-        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
-
-        $qb->select($sensorAlias)
-//            ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
-//            ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
-//            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
-//            ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
-//            ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
-            ->where(
-                $qb->expr()->eq('cv.cardViewID', ':id')
-            )
-            ->setParameters(['id' => $criteria['id']]);
-        $result = array_filter($qb->getQuery()->getResult());
-//dd($result);
+//    /**
+//     * @param array $criteria
+//     * @param $sensorData
+//     * @return StandardSensorTypeInterface|null
+//     */
+//    public function getSensorTypeObject(array $criteria, $sensorData): ?StandardSensorTypeInterface
+//    {
+//        $qb = $this->createQueryBuilder('cv');
 //
-        $result = array_values($result);
-//dd($result, 'result');
-//        dd($qb->getQuery()->getOneOrNullResult());
-//        return $qb->getQuery()->getOneOrNullResult();
-        return $result[0];
-    }
+//        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
+//
+//        $qb->select($sensorAlias)
+//            ->where(
+//                $qb->expr()->eq('cv.cardViewID', ':id')
+//            )
+//            ->setParameters(['id' => $criteria['id']]);
+//        $result = array_filter($qb->getQuery()->getResult());
+//
+//        $result = array_values($result);
+////dd($result);
+//        return $result[0];
+//    }
 
 
     /**

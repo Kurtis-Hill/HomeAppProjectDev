@@ -104,7 +104,7 @@ class SensorUserDataService extends AbstractSensorService
                     }
                     $this->em->persist($newSensorTypeObject);
                 }
-//dd('d');
+
                 return $newSensorTypeObject;
             }
         }
@@ -128,7 +128,6 @@ class SensorUserDataService extends AbstractSensorService
      */
     public function handleSensorReadingBoundary(Sensors $sensor, array $updateData): void
     {
-//        dd($updateData);
         try {
             $sensorTypeObject = $this->em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensor, SensorType::SENSOR_READING_TYPE_DATA);
             if (empty($sensorTypeObject)) {

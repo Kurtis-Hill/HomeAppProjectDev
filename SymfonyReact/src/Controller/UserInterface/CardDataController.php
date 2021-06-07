@@ -55,7 +55,6 @@ class CardDataController extends AbstractController
                     return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
                 }
             } else {
-//                dd('d');
                 return $this->sendBadRequestJsonResponse(['No device found']);
             }
         }
@@ -117,7 +116,7 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestJsonResponse(['Card view id not recognised']);
         }
 
-        $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewID);
+        $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewObject);
 
         if ($cardFormDTO === null || !empty($cardDataService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());

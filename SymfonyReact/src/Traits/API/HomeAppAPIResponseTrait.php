@@ -24,9 +24,9 @@ trait HomeAppAPIResponseTrait
                 ],
                 HTTPStatusCodes::HTTP_OK);
         }
-        else {
-            return new JsonResponse(['title' => 'Request Successful', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
-        }
+
+        return new JsonResponse(['title' => 'Request Successful', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_OK);
+
     }
 
     /**

@@ -44,15 +44,13 @@ class CardViewVoter extends Voter
     private function canUserEditCardViewObject(UserInterface $user, CardView $cardView): bool
     {
         if (!$user instanceof User) {
-//            dd(1);
             return false;
         }
 
         if ($cardView->getUserID()->getUserID() !== $user->getUserID()) {
-//            dd($cardView->getUserID(), $user->getUserID());
             return false;
         }
-//dd('f');
+
         return true;
     }
 }

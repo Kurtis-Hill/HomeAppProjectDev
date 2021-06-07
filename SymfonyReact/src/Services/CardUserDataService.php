@@ -193,24 +193,16 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
 
     /**
-     * @param string $cardViewID
+     * @param CardView $cardViewObject
      * @return CardViewSensorFormDTO|null
      */
-    public function getCardViewFormDTO(string $cardViewID): ?CardViewSensorFormDTO
+    public function getCardViewFormDTO(CardView $cardViewObject): ?CardViewSensorFormDTO
     {
         try {
-            $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], SensorType::SENSOR_TYPE_DATA);
-//dd($cardData, 'line 228');
+            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::SENSOR_TYPE_DATA);
             $userSelectionData = $this->getUserCardSelectionData();
-//dd($cardData);
             if ($cardData instanceof StandardSensorTypeInterface) {
-                $usersCardViewData = $this->em->getRepository(CardView::class)->findUsersCardFormDataByIdAndUser($cardViewID, $this->getUser()->getUserID());
-//                dd($usersCardViewData, $cardData, $userSelectionData, 'line 233');
-                if (!$usersCardViewData instanceof CardView) {
-                    throw new BadRequestException('No card view data found for this sensor and user');
-                }
-
-                $cardData->setCardViewObject($usersCardViewData);
+                $cardData->setCardViewObject($cardViewObject);
                 $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
             }
             else {
