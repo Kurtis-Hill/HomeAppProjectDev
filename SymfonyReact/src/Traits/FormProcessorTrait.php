@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -17,7 +18,7 @@ trait FormProcessorTrait
      * @param EntityManagerInterface $em
      * @param array $formData
      */
-    public function processForm(FormInterface|FormFactoryInterface $form, EntityManagerInterface $em, array $formData): void
+    public function processForm(FormInterface|FormFactoryInterface $form, EntityManagerInterface| ObjectManager $em, array $formData): void
     {
         $form->submit($formData);
 

@@ -5,8 +5,11 @@ namespace App\Controller\UserInterface;
 
 use App\Entity\Card\CardView;
 use App\Entity\Devices\Devices;
+use App\Entity\Sensors\Sensors;
+use App\Entity\Sensors\SensorType;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\Services\CardUserDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -109,6 +112,8 @@ class CardDataController extends AbstractController
             } catch (\Exception) {
                 return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
             }
+        } else {
+            return $this->sendBadRequestJsonResponse(['errors' => ['Card view id not recognised']]);
         }
 
         $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewID);
@@ -136,53 +141,54 @@ class CardDataController extends AbstractController
     public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->get('card-view-id');
-        $cardColourID = $request->get('card-colour');
-        $cardIconID = $request->get('card-icon');
-        $cardStateID = $request->get('card-view-state');
 
-        if (empty($cardColourID) || empty($cardIconID) || empty($cardStateID) || empty($cardViewID)) {
-            return $this->sendBadRequestJsonResponse(['errors' => 'empty form data']);
+        if (empty($cardViewID) || !is_numeric($cardViewID)) {
+            return $this->sendBadRequestJsonResponse(['errors' => 'malformed card view id not recognised']);
         }
 
-        $cardViewData = [
-            'cardColourID' => $cardColourID,
-            'cardIconID' => $cardIconID,
-            'cardStateID' => $cardStateID,
-        ];
+        $em = $this->getDoctrine()->getManager();
 
-        $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
+        $cardViewObject = $em->getRepository(CardView::class)->findOneBy(['cardViewID' => $cardViewID]);
 
-        if (!empty($cardDataService->getUserInputErrors() || empty($cardSensorReadingObject))) {
-            return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
+        if ($cardViewObject instanceof CardView) {
+            try {
+                $this->denyAccessUnlessGranted(CardViewVoter::CAN_EDIT_CARD_VIEW_FORM, $cardViewObject);
+            } catch (\Exception) {
+                return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
+            }
+        } else {
+            return $this->sendBadRequestJsonResponse(['errors' => ['card not found by the id given']]);
         }
-
-        $cardViewObject = array_shift($cardSensorReadingObject);
 
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
 
-        $cardViewForm->submit($cardViewData);
+        $cardViewData = [
+            'cardColourID' => $request->get('card-colour'),
+            'cardIconID' => $request->get('card-icon'),
+            'cardStateID' => $request->get('card-view-state'),
+        ];
 
-        if ($cardViewForm->isSubmitted() && $cardViewForm->isValid()) {
-            $validFormData = $cardViewForm->getData();
-//            dd('hi');
-            try {
-                $this->getDoctrine()->getManager()->persist($validFormData);
-            } catch (ORMException | \Exception $e) {
-                return $this->sendBadRequestJsonResponse();
-            }
-        } else {
-            $errors = [];
+//        $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
+//        $cardViewObject = array_shift($cardSensorReadingObject);
 
-            foreach ($cardViewForm->getErrors(true, true) as $error) {
-                $errors[] = $error->getMessage();
-            }
+//        dd($cardSensorReadingObject, $cardViewObject);
+//        dd($request->request->all(), 'cont');
+        $cardDataService->processForm($cardViewForm, $em, $cardViewData);
 
-            return $this->sendBadRequestJsonResponse($errors);
+        if ($cardDataService->getUserInputErrors()) {
+            return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
         }
 
-        $sensorTypeObject = $cardViewObject->getSensorNameID();
+        $sensorObject = $cardViewObject->getSensorNameID();
+//dd($sensorTypeObject);
+        $sensorTypeObject = $em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensorObject, SensorType::SENSOR_TYPE_DATA);
 
-        $sensorDataService->handleSensorReadingBoundary($request, $sensorTypeObject, $cardSensorReadingObject);
+        if (!$sensorTypeObject instanceof StandardSensorTypeInterface) {
+            return $this->sendBadRequestJsonResponse(['errors' => ['Sensor type object not found your app may need updating']]);
+        }
+
+//        $processedSensorRequestData = $sensorDataService->processSensorUpdateRequestObject($request, $sensorTypeObject);
+        $sensorDataService->handleSensorReadingBoundary($sensorObject, $request->request->all());
 
         if (!empty($sensorDataService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
@@ -192,7 +198,7 @@ class CardDataController extends AbstractController
             return $this->sendInternelServerErrorJsonResponse();
         }
 
-        $this->getDoctrine()->getManager()->flush();
+        $em->flush();
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }

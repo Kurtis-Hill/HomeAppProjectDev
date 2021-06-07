@@ -24,6 +24,7 @@ use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
+use App\Form\FormMessages;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
@@ -113,6 +114,9 @@ class CardDataControllerTest extends WebTestCase
     //returnCardDataDTOs Tests
     public function test_returning_all_card_dto_index()
     {
+        $onCardState = $this->entityManager->getRepository(Cardstate::class)->findOneBy(['state' => Cardstate::ON]);
+
+        $countUsersCardsInOnState = count($this->entityManager->getRepository(CardView::class)->findBy(['cardStateID' => $onCardState, 'userID' => $this->testUser]));
         $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllIndexSensorTypeObjectsForUser($this->testUser, SensorType::SENSOR_TYPE_DATA));
         $fixtureCardCount = count(ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES) * count(SensorType::SENSOR_TYPE_DATA);
 
@@ -125,11 +129,9 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//dd($this->client->getResponse());
+
         foreach ($responseData as $cardData) {
             $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
-
-//            dd($sensorObject, $responseData, $cardData['sensorName'], $this->testUser->getUserID());
             $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 
             foreach ($cardData['sensorData'] as $sensorData) {
@@ -166,6 +168,7 @@ class CardDataControllerTest extends WebTestCase
         }
 
         self::assertCount($fixtureCardCount, $responseData);
+        self::assertCount($countUsersCardsInOnState, $responseData);
         self::assertCount($countIndexCards, $responseData);
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -174,7 +177,6 @@ class CardDataControllerTest extends WebTestCase
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
 
-//        dd($device);
         $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($this->testUser, SensorType::SENSOR_TYPE_DATA, $device->getDeviceNameId()));
 
         $this->client->request(
@@ -186,11 +188,11 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//dd($responseData, $this->client->getResponse());
+
         foreach ($responseData as $cardData) {
             $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
             $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-//dd($responseData, $cardData);
+
             foreach ($cardData['sensorData'] as $sensorData) {
                 $readingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 
@@ -272,7 +274,7 @@ class CardDataControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//dd($responseData);
+
         self::assertJson($this->client->getResponse()->getContent());
         self::assertCount($numberOfIcons, $responseData['userIconSelections']);
         self::assertCount($numberOfColours, $responseData['userColourSelections']);
@@ -484,6 +486,62 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['stateID']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
+
+
+    public function test_returning_all_card_dto_index_no_cards_in_off_state()
+    {
+        $offCardState = $this->entityManager->getRepository(Cardstate::class)->findOneBy(['state' => Cardstate::OFF]);
+        $cardsInOffState = $this->entityManager->getRepository(CardView::class)->findBy(['cardStateID' => $offCardState, 'userID' => $this->testUser]);
+
+
+        $this->client->request(
+            'GET',
+            self::API_CARD_DATA_RETURN_CARD_DTO_ROUTE,
+            ['view' => 'index'],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        foreach ($cardsInOffState as $indexCard) {
+            foreach ($responseData as $responseCardViewID) {
+                self::assertNotEquals($responseCardViewID['cardViewID'], $indexCard->getCardViewID(), 'A card with the state set to false has been found in the index dto sensor name: ' . $indexCard->getSensorNameID()->getSensorName());
+            }
+        }
+    }
+
+
+    public function test_cannot_view_not_owened_card_view()
+    {
+        $cards = $this->entityManager->getRepository(CardView::class)->findAll();
+
+        foreach ($cards as $card) {
+            if ($card->getUserID()->getUserID() !== $this->testUser->getUserID()) {
+                $cardNotOwnedByUser = $card;
+                break;
+            }
+        }
+
+        $formData = [
+            'cardViewID' => $cardNotOwnedByUser->getCardViewID(),
+        ];
+
+        $this->client->request(
+            'GET',
+            self::API_CARD_VIEW_FORM_DTO_URL,
+            $formData,
+            [],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors'][0]);
+        self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
+
+        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     //updateCardView Tests
@@ -1027,7 +1085,6 @@ class CardDataControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
     }
-
 
 
 
@@ -2508,6 +2565,73 @@ class CardDataControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
+
+    public function test_cannot_adjust_not_owened_card_view()
+    {
+        $cardColour = $this->entityManager->getRepository(CardColour::class)->findAll()[0]->getColourID();
+        $cardIcon = $this->entityManager->getRepository(Icons::class)->findAll()[0]->getIconID();
+        $cardState = $this->entityManager->getRepository(Cardstate::class)->findAll()[0]->getCardstateID();
+        $cards = $this->entityManager->getRepository(CardView::class)->findAll();
+
+        foreach ($cards as $card) {
+            /**
+             * @var CardView $card
+             */
+            if ($card->getSensorNameID()->getSensorName() === 'Bmp0' && $card->getUserID()->getUserID() !== $this->testUser->getUserID()) {
+                $cardNotOwnedByUser = $card;
+                break;
+            }
+        }
+
+        $formData = [
+            'card-view-id' => $cardNotOwnedByUser->getCardViewID(),
+            'card-colour' => $cardColour,
+            'card-icon' => $cardIcon,
+            'card-view-state' => $cardState,
+
+            'temperature-high-reading' => '40',
+            'temperature-low-reading' => '15',
+            'temperature-const-record' => true,
+
+            'humidity-high-reading' => '10',
+            'humidity-low-reading' => '60',
+            'humidity-const-record' => true,
+
+            'latitude-high-reading' => '15',
+            'latitude-low-reading' => '5',
+            'latitude-const-record' => true,
+        ];
+
+        $this->client->request(
+            'POST',
+            self::API_UPDATE_CARD_VIEW_FORM,
+            $formData,
+            [],
+            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+        );
+
+        $sensorTypeObjectAfter = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $card->getSensorNameID()->getSensorNameID()]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+
+        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+
+        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
+        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+
+        self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
+        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
 
     // Route Authentication Test
     public function test_getting_card_data_wrong_token()

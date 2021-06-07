@@ -12,7 +12,11 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\FormMessages;
 use App\Form\SensorForms\AddNewSensorForm;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
@@ -64,28 +68,6 @@ class SensorUserDataService extends AbstractSensorService
         $this->em->flush();
 
         return null;
-    }
-
-    /**
-     * @param Request $request
-     * @param Sensors $sensorType
-     * @param array $cardSensorReadingObject
-     */
-    public function handleSensorReadingBoundary(Request $request, Sensors $sensorType, array $cardSensorReadingObject): void
-    {
-        try {
-            $sensorFormData = $this->prepareSensorFormData($request, $sensorType->getSensorTypeID(), SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
-
-            if (!empty($this->userInputErrors) || empty($sensorFormData)) {
-
-                throw new BadRequestException('something went wrong with processing the form');
-            }
-            if (!empty($sensorFormData)) {
-                $this->processSensorForm($sensorFormData, $cardSensorReadingObject);
-            }
-        } catch (\RuntimeException $exception) {
-            $this->serverErrors[] = 'Failed to process form data';
-        }
     }
 
     /**
@@ -146,6 +128,32 @@ class SensorUserDataService extends AbstractSensorService
 
     /**
      * @param Sensors $sensor
+     * @param array $formData
+     */
+    public function handleSensorReadingBoundary(Sensors $sensor, array $formData): void
+    {
+        try {
+//            dd($sensor, $formData);
+            $sensorTypeObject = $this->em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensor, SensorType::SENSOR_TYPE_DATA);
+//            dd($sensorTypeObject);
+            $sensorFormData = $this->prepareSensorFormData($sensor->getSensorTypeID(), $formData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
+//dd($sensorTypeObject, $sensorFormData, 'ba');
+            if (!empty($this->userInputErrors) || empty($sensorFormData) || $sensorTypeObject === null) {
+
+                throw new BadRequestException('something went wrong with processing the form');
+            }
+            if (!empty($sensorFormData)) {
+                $this->processSensorForm($sensorFormData, $sensorTypeObject);
+            }
+        } catch (BadRequestException $exception) {
+            $this->userInputErrors[] = 'Failed to process form data';
+        }catch (\RuntimeException $exception) {
+            $this->serverErrors[] = 'Failed to process form data';
+        }
+    }
+
+    /**
+     * @param Sensors $sensor
      */
     private function duplicateSensorOnSameDeviceCheck(Sensors $sensor): void
     {
@@ -156,6 +164,44 @@ class SensorUserDataService extends AbstractSensorService
         }
     }
 
+    // update this method to include any other sensor types so that the requests can be prepared for processing
+    public function processSensorUpdateRequestObject(Request $request, StandardSensorTypeInterface $sensorType): array
+    {
+        $formDataToProcess = [];
+
+//        if ($sensorType instanceof TemperatureSensorTypeInterface) {
+            $formDataToProcess[] = [
+                'temperatureHighReading' => $request->get('temperature-high-reading'),
+                'temperatureLowReading' => $request->get('temperature-low-reading'),
+                'temperatureConstRecord' => $request->get('temperature-const-record'),
+
+//        }
+//        if ($sensorType instanceof  HumiditySensorTypeInterface) {
+//            $formDataToProcess[] = [
+                'humidityHighReading' => $request->get('humidity-high-reading'),
+                'humidityLowReading' => $request->get('humidity-low-reading'),
+                'humidityConstRecord' => $request->get('humidity-const-record'),
+//            ];
+//        }
+//        if ($sensorType instanceof LatitudeSensorTypeInterface) {
+//            $formDataToProcess[] = [
+                'latitudeHighReading' => $request->get('latitude-high-reading'),
+                'latitudeLowReading' => $request->get('latitude-low-reading'),
+                'latitudeConstRecord' => $request->get('latitude-const-record'),
+//            ];
+//        }
+//        if ($sensorType instanceof AnalogSensorTypeInterface) {
+//            $formDataToProcess[] =  [
+                'analogHighReading' => $request->get('analog-high-reading'),
+                'analogLowReading' => $request->get('analog-low-reading'),
+                'analogConstRecord' => $request->get('analog-const-record'),
+            ];
+//        }
+        dd($formDataToProcess, 'g', $sensorType, $request->request->all());
+        return $formDataToProcess;
+    }
+
+
     /**
      * @param FormInterface $addNewSensorForm
      * @param array $sensorData
@@ -164,9 +210,7 @@ class SensorUserDataService extends AbstractSensorService
     private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): void
     {
         $this->processForm($addNewSensorForm, $this->em, $sensorData);
-//        dd(';f');
 
         $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
-
     }
 }

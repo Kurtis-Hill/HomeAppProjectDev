@@ -26,6 +26,7 @@ class SensorType
 
     public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
 
+    // When creating a new sensor add a const here too and set it to the name of the entity
     public const DHT_SENSOR = 'Dht';
 
     public const BMP_SENSOR = 'Bmp';
@@ -34,6 +35,7 @@ class SensorType
 
     public const SOIL_SENSOR = 'Soil';
 
+    //When creating a new sensor add it to this list for testing
     public const SENSOR_TYPES = [
         self::DHT_SENSOR,
         self::BMP_SENSOR,
@@ -41,6 +43,9 @@ class SensorType
         self::SOIL_SENSOR
     ];
 
+    // Used by service classes to create forms for the sensors and for getting data from the database e.g getting unknown sensor type object (described as object below)
+    // to determine which sensor reading types are about to be updated
+    // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array
     public const SENSOR_TYPE_DATA = [
         SensorType::DHT_SENSOR => [
             'alias' => 'dht',

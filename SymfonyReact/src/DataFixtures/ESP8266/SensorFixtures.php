@@ -74,7 +74,6 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $manager->persist($otherUserCard);
 
 
-
 //                // Regular created devices with card view set to off to reduce interface noise
                 if ($addExtra) {
                     $sensorCounterExtra = $sensorCounter + 10;

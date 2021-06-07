@@ -5,10 +5,17 @@ namespace App\Services\ESPDeviceSensor\SensorData;
 
 use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
+use App\Entity\Sensors\ReadingTypes\Humidity;
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Bmp;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -49,45 +56,64 @@ abstract class AbstractSensorService implements APIErrorInterface
 
     /**
      * @param array $sensorFormData
-     * @param array $readingTypeObject
+     * @param array $sensorTypeObject
      */
-    protected function processSensorForm(array $sensorFormData, array $readingTypeObject): void
+    protected function processSensorForm(array $sensorFormData, StandardSensorTypeInterface $sensorTypeObject): void
     {
-        foreach ($sensorFormData as $sensorType => $sensorData) {
-            foreach ($readingTypeObject as $sensorObject) {
-                if ($sensorType === $sensorObject::class) {
-                    $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
-                    $handledForm = $this->processForm($sensorForm, $this->em, $sensorData['formData']);
+        $readingTypeObjects = [];
 
-                    if ($handledForm instanceof FormInterface) {
-                        $this->processFormErrors($handledForm);
-                    }
+        if ($sensorTypeObject instanceof TemperatureSensorTypeInterface) {
+            $readingTypeObjects[] = $sensorTypeObject->getTempObject();
+        }
+        if ($sensorTypeObject instanceof  HumiditySensorTypeInterface) {
+            $readingTypeObjects[] = $sensorTypeObject->getHumidObject();
+        }
+        if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
+            $readingTypeObjects[] = $sensorTypeObject->getLatitudeObject();
+        }
+        if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
+            $readingTypeObjects[] = $sensorTypeObject->getAnalogObject();
+        }
+
+//        if (empty($readingTypeObjects)) {
+//            throw new \RuntimeException('No reading type objects found to update, please ensure your app is up to date');
+//        }
+
+        dd($sensorFormData, $readingTypeObjects);
+        foreach ($sensorFormData as $sensorType => $sensorData) {
+            foreach ($readingTypeObjects as $sensorObject) {
+                if ($sensorType === $sensorObject::class) {
+                    dd($sensorType, $readingTypeObjects);
+                    $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
+                    $this->processForm($sensorForm, $this->em, $sensorData['formData']);
                 }
             }
         }
     }
 
     /**
-     * @param Request $request
      * @param SensorType $sensorType
+     * @param array $readingsToUpdate
      * @param string $formToProcess
-     * @param array $readingNameOverRide
      * @return array
      */
-    protected function prepareSensorFormData(Request $request, SensorType $sensorType, string $formToProcess, array $readingNameOverRide = []): array
+    protected function prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
     {
         $currentSensorType = $sensorType->getSensorType();
-
+//dd($sensorType, $readingsToUpdate, 'form');
         foreach (SensorType::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $currentSensorType) {
+//            dd($sensorName, $sensorDataArrays, $currentSensorType, 'haha');
                 foreach ($sensorDataArrays['forms'] as $formType => $formData) {
+//                    dd($formToProcess, $sensorDataArrays['forms']);
                     if ($formType === $formToProcess) {
 
                         if ($formToProcess === SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY) {
+//                            dd($formType, $sensorDataArrays);
                             foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
-                                $highReading = $readingNameOverRide[$readingType.'highReading'] ?? $request->get($readingType . '-high-reading');
-                                $lowReading =  $readingNameOverRide[$readingType.'lowReading'] ?? $request->get($readingType . '-low-reading');
-                                $constRecord = $readingNameOverRide[$readingType.'constRecord'] ?? $request->get($readingType . '-const-record');
+                                $highReading = $readingsToUpdate[$readingType.'-high-reading'];
+                                $lowReading =  $readingsToUpdate[$readingType.'-low-reading'];
+                                $constRecord = $readingsToUpdate[$readingType.'-const-record'];
                                 $errorMessage = "%s %s has no value";
                                 !empty($highReading) ?: $this->userInputErrors[] = sprintf($errorMessage, ucfirst($readingType), 'high reading');
                                 !empty($lowReading) ?: $this->userInputErrors[] = sprintf($errorMessage, ucfirst($readingType), 'low reading');
@@ -108,7 +134,7 @@ abstract class AbstractSensorService implements APIErrorInterface
 
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
                             foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
-                                $currentReading = $readingNameOverRide[$readingType.'currentReading'] ?? $request->get($readingType . '-high-reading');
+                                $currentReading = $readingsToUpdate[$readingType.'currentReading'] ?? $request->get($readingType . '-high-reading');
 
                                 $errorMessage = "%s %s has no value";
                                 !empty($currentReading) ?: $this->userInputErrors[] = sprintf($errorMessage, ucfirst($readingType), 'current reading');
@@ -129,7 +155,7 @@ abstract class AbstractSensorService implements APIErrorInterface
                 }
             }
         }
-
+//        dd($sensorFormsData, 'ses');
         return $sensorFormsData ?? [];
     }
 

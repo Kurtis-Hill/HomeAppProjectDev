@@ -52,7 +52,7 @@ class Temperature implements StandardReadingSensorInterface, AllSensorReadingTyp
     private float $highTemp = 50;
 
     /**
-     * @var float|null
+     * @var float
      *
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */

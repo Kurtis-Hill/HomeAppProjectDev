@@ -24,7 +24,23 @@ use App\Entity\Devices\Devices;
 
 class CardViewRepository extends EntityRepository
 {
-    private function prepareSensorDataForQuery(array $sensors, $qb, array $joinCondition): string
+    private function prepareSensorTypeDataObjectsForQuery(array $sensors, $qb, array $joinCondition): string
+    {
+        $qb->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
+
+        $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
+
+        $sensorAlias = [];
+        foreach ($sensors as $sensorNames => $sensorData) {
+            $sensorAlias[] = $sensorData['alias'];
+            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
+        }
+
+        return implode(', ', $sensorAlias);
+    }
+
+    //@TODO after DB refactor can use the sensor type array and build scalar results for the card view to reduce queries
+    private function prepareSensorTypeDataScalarForQuery(array $sensors, $qb, array $joinCondition): string
     {
         $qb->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
 
@@ -42,7 +58,6 @@ class CardViewRepository extends EntityRepository
 
     public function getAllIndexSensorTypeObjectsForUser(?User $user, array $sensors): array
     {
-//        $userID = $user->getUserID();
         $groupNameIDs = $user->getGroupNameIds();
 
         $cardViewOne = Cardstate::ON;
@@ -51,7 +66,7 @@ class CardViewRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
 
         $qb->select($sensorAlias)
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
@@ -75,10 +90,50 @@ class CardViewRepository extends EntityRepository
                 'cardviewTwo' => $cardViewTwo
             ]
         );
-//dd($qb->getQuery()->getSQL(), $userID, $groupNameIDs);
-//        dd(array_filter($qb->getQuery()->getResult()));
+
         return array_filter($qb->getQuery()->getResult());
     }
+
+    //@TODO ready to implement when DB changes have been made can reduce queries
+    public function getAllIndexSensorTypeScalarForUser(?User $user, array $sensors): array
+    {
+        $groupNameIDs = $user->getGroupNameIds();
+
+        $cardViewOne = Cardstate::ON;
+        $cardViewTwo = Cardstate::INDEX_ONLY;
+
+        $qb = $this->createQueryBuilder('cv');
+        $expr = $qb->expr();
+
+        $sensorAlias = $this->prepareSensorTypeDataScalarForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
+
+        $qb->select($sensorAlias)
+            ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
+            ->innerJoin(Cardstate::class, 'cardState', Join::WITH, 'cv.cardStateID = cardState.cardStateID');
+
+        //@TODO card state doesnt work needs relating properly
+        $qb->where(
+            $expr->orX(
+                $expr->eq('cardState.state', ':cardviewOne'),
+                $expr->eq('cardState.state', ':cardviewTwo')
+            ),
+            $expr->eq('cv.userID', ':userID'),
+            $expr->in('devices.groupNameID', ':groupNameID')
+        );
+
+        $qb->setParameters(
+            [
+                'userID' => $user,
+                'groupNameID' => $groupNameIDs,
+                'cardviewOne' => $cardViewOne,
+                'cardviewTwo' => $cardViewTwo
+            ]
+        );
+
+//        dd(array_filter($qb->getQuery()->getScalarResult()));
+        return array_filter($qb->getQuery()->getScalarResult());
+    }
+
 
 
     /**
@@ -98,7 +153,7 @@ class CardViewRepository extends EntityRepository
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
 
-        $sensorAlias = $this->prepareSensorDataForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensors, $qb, ['sensors', 'sensorNameID']);
 
         $qb->select($sensorAlias)
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
@@ -123,7 +178,7 @@ class CardViewRepository extends EntityRepository
                 'cardviewTwo' => $cardViewTwo
             ]
         );
-//dd($qb->getQuery()->getResult());
+
         return array_filter($qb->getQuery()->getResult());
     }
 
@@ -135,27 +190,29 @@ class CardViewRepository extends EntityRepository
      * @param $sensorData
      * @return mixed
      */
-    public function getSensorCardFormData(array $criteria, $sensorData): StandardSensorTypeInterface
+    public function getSensorCardFormData(array $criteria, $sensorData): ?StandardSensorTypeInterface
     {
         $qb = $this->createQueryBuilder('cv');
 
-        $sensorAlias = $this->prepareSensorDataForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
 
         $qb->select($sensorAlias)
-            ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
-            ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
-            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
-            ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
-            ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
+//            ->innerJoin(Icons::class, 'i', Join::WITH,'i.iconID = cv.cardIconID')
+//            ->innerJoin(CardColour::class, 'cc', Join::WITH,'cc.colourID = cv.cardColourID')
+//            ->innerJoin(Sensors::class, 's', Join::WITH,'s.sensorNameID = cv.sensorNameID')
+//            ->innerJoin(Cardstate::class, 'cs', Join::WITH,'cs.cardStateID = cv.cardStateID')
+//            ->innerJoin(SensorType::class, 'st', Join::WITH,'s.sensorTypeID = st.sensorTypeID')
             ->where(
                 $qb->expr()->eq('cv.cardViewID', ':id')
             )
             ->setParameters(['id' => $criteria['id']]);
-
         $result = array_filter($qb->getQuery()->getResult());
-
-        $result = array_values($result);
 //dd($result);
+//
+        $result = array_values($result);
+//dd($result, 'result');
+//        dd($qb->getQuery()->getOneOrNullResult());
+//        return $qb->getQuery()->getOneOrNullResult();
         return $result[0];
     }
 
@@ -169,7 +226,7 @@ class CardViewRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('cv');
 
-        $sensorAlias = $this->prepareSensorDataForQuery($sensorData, $qb, ['cv', 'sensorNameID']);
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['cv', 'sensorNameID']);
 
         $qb->select('cv, ' .$sensorAlias)
             ->where(
@@ -245,7 +302,7 @@ class CardViewRepository extends EntityRepository
 //     * @param null $type
 //     * @return array|mixed
 //     */
-//    public function getAllCardReadingsIndex($groupNameIDs, $userID, $type = null): array
+//    public function getAllCardReadingsIndexScalar($groupNameIDs, $userID, $type = null): array
 //    {
 //        $cardViewOne = Cardstate::ON;
 //        $cardViewTwo = Cardstate::INDEX_ONLY;
@@ -279,7 +336,7 @@ class CardViewRepository extends EntityRepository
 //            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
 //            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
-////            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
+//            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\Entity\Core\SensorType', 'st', Join::WITH,'st.sensortypeid = s.sensortypeid')
 //            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
 //            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')

@@ -14,6 +14,7 @@ use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
+use App\Form\FormMessages;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,19 +30,19 @@ class CardViewForm extends AbstractType
             ->add('cardColourID', EntityType::class, [
                 'class' => CardColour::class,
                 'constraints' => [
-                    new NotBlank(),
+                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'card colour')]),
                 ],
             ])
             ->add('cardIconID', EntityType::class, [
                 'class' => Icons::class,
                 'constraints' => [
-                    new NotBlank(),
+                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'card icon')]),
                 ],
             ])
             ->add('cardStateID', EntityType::class, [
                 'class' => Cardstate::class,
                 'constraints' => [
-                    new NotBlank(),
+                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'card state')]),
                 ],
             ])
         ;

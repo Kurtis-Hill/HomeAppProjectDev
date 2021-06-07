@@ -181,7 +181,7 @@ class CardContextProvider extends Component {
             case sensorType+"-high-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.highReading = value;
+                        currentModalData.HighReading = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -191,7 +191,7 @@ class CardContextProvider extends Component {
             case sensorType+"-low-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.lowReading = value;
+                        currentModalData.LowReading = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -201,7 +201,7 @@ class CardContextProvider extends Component {
             case sensorType+"-const-record":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.constRecord = value;
+                        currentModalData.ConstRecord = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }

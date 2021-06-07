@@ -22,6 +22,7 @@ use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
+use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Exception;
@@ -36,6 +37,8 @@ use Symfony\Component\Security\Core\Security;
  */
 class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInterface
 {
+    use FormProcessorTrait;
+
     private const SENSOR_READING_TYPE_DATA = [
         Sensors::TEMPERATURE => [
             'alias' => 'temp',
@@ -107,6 +110,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                 "device" => $this->getDevicePageCardDataObjects($deviceId),
                 default => $this->getIndexPageCardDataObjects()
             };
+//            dd($sensorObjects, 'hi');
         } catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
         } catch (ORMException $e) {
@@ -118,6 +122,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                 foreach ($sensorObjects as $cardDTO) {
                     try {
                         if ($cardDTO instanceof StandardSensorTypeInterface) {
+//                            dd($cardDTO->getCardViewObject(), 'hi)';
                             $cardViewObject = $this->em->getRepository(CardView::class)->findOneBy(
                                 [
                                     'userID' => $this->getUser(),
@@ -125,7 +130,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                                 ]
                             );
                             if (empty($cardViewObject) || !$cardViewObject instanceof CardView) {
-                                throw new BadRequestException('A Card Has Not Been Made For This Sensor');
+                                throw new BadRequestException('A Card Has Not Been Made For This Sensor ' . $cardDTO->getSensorObject()->getSensorName());
                             }
                             $cardDTO->setCardViewObject($cardViewObject);
                             $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
@@ -149,18 +154,10 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $usersCurrentCardData = $this->em->getRepository(CardView::class)->getUsersCurrentlySelectedSensorsCardData(
                 [
                     'id' => $cardViewData,
-                    'userID' =>  $this->getUser()
+                    'userID' => $this->getUser()
                 ],
                 self::SENSOR_READING_TYPE_DATA);
-
-            if ($usersCurrentCardData === null) {
-                throw new BadRequestException('CardID not recognised');
-            }
-        } catch(BadRequestException $e){
-            $this->userInputErrors[] = $e->getMessage();
-            error_log($e->getMessage());
-        }
-        catch(ORMException $e){
+        } catch(ORMException $e){
             $this->serverErrors[] = 'Query error trying to find users card data';
             error_log($e->getMessage());
         }
@@ -168,23 +165,13 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         return $usersCurrentCardData ?? [];
     }
 
-//    private function checkIfDeviceExists(int $deviceId)
-//    {
-//        $device = $this->em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $deviceId]);
-//
-////        dd($device);
-//        if ($device === null) {
-////            dd('hahxx');
-//            throw new BadRequestException('Device given is not recognised');
-//        }
-//    }
+
     /**
      * @return array
      */
     private function getIndexPageCardDataObjects(): array
     {
         $cardRepository = $this->em->getRepository(CardView::class);
-
         $cardData = $cardRepository->getAllIndexSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA);
 
         return $cardData ?? [];
@@ -241,11 +228,12 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     {
         try {
             $cardData = $this->em->getRepository(CardView::class)->getSensorCardFormData(['id' => $cardViewID], SensorType::SENSOR_TYPE_DATA);
-
+//dd($cardData, 'line 228');
             $userSelectionData = $this->getUserCardSelectionData();
-
+//dd($cardData);
             if ($cardData instanceof StandardSensorTypeInterface) {
                 $usersCardViewData = $this->em->getRepository(CardView::class)->findUsersCardFormDataByIdAndUser($cardViewID, $this->getUser()->getUserID());
+//                dd($usersCardViewData, $cardData, $userSelectionData, 'line 233');
                 if (!$usersCardViewData instanceof CardView) {
                     throw new BadRequestException('No card view data found for this sensor and user');
                 }
@@ -373,7 +361,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      */
     public function getUserInputErrors(): array
     {
-        return $this->userInputErrors;
+        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
     }
 
     /**
