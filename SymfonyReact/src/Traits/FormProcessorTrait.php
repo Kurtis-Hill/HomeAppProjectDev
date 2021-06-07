@@ -18,24 +18,17 @@ trait FormProcessorTrait
      * @param EntityManagerInterface|ObjectManager $em
      * @param array $formData
      */
-    public function processForm(FormInterface|FormFactoryInterface $form, EntityManagerInterface| ObjectManager $em, array $formData): void
+    public function processForm(FormInterface|FormFactoryInterface $form, array $formData): bool
     {
         $form->submit($formData);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $validFormData = $form->getData();
-
-            try {
-                $em->persist($validFormData);
-            } catch (\Exception $e) {
-                error_log($e->getMessage());
-                $this->formInputErrors[] = 'Form persistence failed please try again';
-            }
-        }
-        else {
+        if ($form->isSubmitted() && !$form->isValid()) {
             $this->processFormErrors($form);
+            
+            return false;
         }
-
+        
+        return true;
     }
 
     /**

@@ -31,7 +31,11 @@ class SensorUserDataService extends AbstractSensorService
 
             $addNewSensorForm = $this->formFactory->create(AddNewSensorForm::class, $newSensor);
 
-            $this->processNewSensorForm($addNewSensorForm, $sensorData);
+            $handledForm = $this->processNewSensorForm($addNewSensorForm, $sensorData);
+
+            if ($handledForm === true) {
+                $this->em->persist($addNewSensorForm->getData());
+            }
 
             return $newSensor;
         } catch (BadRequestException $exception) {
@@ -163,12 +167,14 @@ class SensorUserDataService extends AbstractSensorService
     /**
      * @param FormInterface $addNewSensorForm
      * @param array $sensorData
-     * @return void
+     * @return bool
      */
-    private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): void
+    private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): bool
     {
-        $this->processForm($addNewSensorForm, $this->em, $sensorData);
+        $processedFormResult = $this->processForm($addNewSensorForm, $sensorData);
 
         $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
+
+        return $processedFormResult;
     }
 }

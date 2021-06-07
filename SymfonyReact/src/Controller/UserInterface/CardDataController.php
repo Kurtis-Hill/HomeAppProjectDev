@@ -168,11 +168,13 @@ class CardDataController extends AbstractController
             'cardStateID' => $request->get('card-view-state'),
         ];
 
-        $cardDataService->processForm($cardViewForm, $em, $cardViewData);
+        $cardDataService->processForm($cardViewForm, $cardViewData);
 
         if ($cardDataService->getUserInputErrors()) {
             return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
         }
+
+        $em->persist($cardViewForm->getData());
 
         $sensorObject = $cardViewObject->getSensorNameID();
 

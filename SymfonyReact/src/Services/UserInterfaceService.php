@@ -12,7 +12,6 @@ use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
 
@@ -94,6 +93,9 @@ class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInt
         return $this->userInputErrors;
     }
 
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
         return $this->user;

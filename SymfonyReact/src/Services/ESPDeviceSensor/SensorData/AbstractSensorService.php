@@ -64,7 +64,11 @@ abstract class AbstractSensorService implements APIErrorInterface
             foreach ($readingTypeObjects as $sensorObject) {
                 if ($sensorType === $sensorObject::class) {
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
-                    $this->processForm($sensorForm, $this->em, $sensorData['formData']);
+                    $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
+
+                    if ($handledForm === true) {
+                        $this->em->persist($sensorForm->getData());
+                    }
                 }
             }
         }
