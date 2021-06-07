@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Controller\Sensors;
+namespace App\Controller\Device;
 
 
 class DeviceController

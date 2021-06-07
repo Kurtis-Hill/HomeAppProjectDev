@@ -2,7 +2,7 @@ api_login_check:
     path: /HomeApp/api/login_check
 
 sensor_api_login_check:
-  path: /HomeApp/device/login_check
+  path: /HomeApp/api/device/login_check
 
 gesdinet_jwt_refresh_token:
   path:       /HomeApp/api/token/refresh

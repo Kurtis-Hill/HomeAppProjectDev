@@ -24,7 +24,7 @@ abstract class AbstractSensorService implements APIErrorInterface
     /**
      * @var Security
      */
-    protected Security $security;
+//    protected Security $security;
 
     /**
      * @var FormFactoryInterface
@@ -50,7 +50,7 @@ abstract class AbstractSensorService implements APIErrorInterface
     public function __construct(EntityManagerInterface $em, Security $security, FormFactoryInterface $formFactory)
     {
         $this->em = $em;
-        $this->security = $security;
+//        $this->security = $security;
         $this->formFactory = $formFactory;
     }
 

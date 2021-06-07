@@ -27,7 +27,7 @@ class SensorDeviceDataService extends AbstractSensorService
 {
     /**
      * @param Request $request
-     * @return array|null
+     * @return array
      */
     public function processSensorReadingUpdateRequest(Request $request): array
     {

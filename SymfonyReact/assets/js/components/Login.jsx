@@ -11,12 +11,12 @@ function Login(props) {
 
     const loginPhoto = require('../../images/sitepictures/indexPhoto.jpg');
 
-    const createAccountLink = "/HomeApp/register";
+    const createAccountLink = "/HomeApp/WebApp/register";
 
     const handleLogin = async (event) => {
         setError(null);
         setLoading(true);
-        
+
         const csrfTokenResponse = await axios.get(apiURL+'csrfToken')
             .catch(error => {
                 setLoading(false);
@@ -25,13 +25,13 @@ function Login(props) {
 
         const formToken = csrfTokenResponse.data.token;
 
-        const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})        
+        const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})
             .catch(error => {
                 setError('Invalid Credentials');
-                setLoading(false); 
+                setLoading(false);
             });
-        
-        loginCheckResponse 
+
+        loginCheckResponse
             ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
             : setError('Login check response error');
 
@@ -41,24 +41,24 @@ function Login(props) {
 
         formData.append('_csrf_token', formToken);
 
-        const loginResponse = await axios.post('/HomeApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } })
+        const loginResponse = await axios.post('/HomeApp/WebApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } })
             .catch(error => {
                 setError('Login Failed Please Try Again');
-                setLoading(false); 
+                setLoading(false);
             });
-                    
+
         // if (loginResponse.status === 200) {
         //     window.location.replace(webappURL+'index');
         // } else {
         //     alert('setting user data failed');
         // }
-        loginResponse.status === 200 
+        loginResponse.status === 200
             ? window.location.replace(webappURL+'index')
             : alert('setting user data failed');
 
         setLoading(false);
     }
-    
+
     return (
         <React.Fragment>
             <div className="bg-gradient-primary">
@@ -72,10 +72,10 @@ function Login(props) {
                                         <div className="login-form">
                                             <div className="text-center">
                                                 <h1 className="login-formn-container h2 text-gray-700 mb-4 login-banner">Welcome Back To The Home-App!</h1>
-                                            </div>  
-                                            {error !== null ? <h2 className="text-center">{error}</h2> : null}                                          
+                                            </div>
+                                            {error !== null ? <h2 className="text-center">{error}</h2> : null}
                                             <form className="user" id="login-form">
-                                                <div className="form-group">                                    
+                                                <div className="form-group">
                                                     <input type="text" autoFocus name="email" {...username} placeholder="E-mail" autoComplete="username" className="form-control form-control-user login-form-field" aria-describedby="emailHelp" />
                                                 </div>
                                                 <div className="form-group">
@@ -87,11 +87,11 @@ function Login(props) {
                                                         <label className="custom-control-label" htmlFor="customCheck">Remember Me</label>
                                                     </div>
                                                 </div>
-                                                {loading 
-                                                    ? <div className="center-item login-spinner fa-2x fas fa-spinner fa-spin"></div> 
+                                                {loading
+                                                    ? <div className="center-item login-spinner fa-2x fas fa-spinner fa-spin"></div>
                                                     : <button name="submit" onClick={handleLogin} action="submit" className="btn btn-primary btn-user btn-block">Login</button>}
-                                                <hr />        
-                                            </form>                                               
+                                                <hr />
+                                            </form>
                                             <div className="text-center">
                                                 <a href={createAccountLink} className="small login-form-field" href="register.html">Create an Account!</a>
                                             </div>

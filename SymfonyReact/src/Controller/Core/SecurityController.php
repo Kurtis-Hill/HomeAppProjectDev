@@ -31,7 +31,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/HomeApp/login", name="app_login")
+     * @Route("/HomeApp/WebApp/login", name="app_login")
      * @param AuthenticationUtils $authenticationUtils
      * @param Request $request
      * @return RedirectResponse|Response
@@ -46,7 +46,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/HomeApp/logout", name="app_logout")
+     * @Route("/HomeApp/WebApp/logout", name="app_logout")
      */
     public function logout()
     {

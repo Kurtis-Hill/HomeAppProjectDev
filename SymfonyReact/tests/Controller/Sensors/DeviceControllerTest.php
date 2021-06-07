@@ -19,11 +19,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class DeviceControllerTest extends WebTestCase
+class UserDeviceControllerTest extends WebTestCase
 {
-    private const API_DEVICE_LOGIN = '/HomeApp/device/login_check';
+    private const API_DEVICE_LOGIN = '/HomeApp/api/device/login_check';
 
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/devices/add-new-device';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-device/add-new-device';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
