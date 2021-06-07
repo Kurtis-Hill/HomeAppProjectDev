@@ -59,7 +59,7 @@ function AddNewSensor(props) {
         })
         .catch(err => {
             const status = err.response.status
-            const data = err.response.data.responseData;
+            const data = err.response.data.payload.errors;
 
             if (status === 400) {
                 setErrors(data);
