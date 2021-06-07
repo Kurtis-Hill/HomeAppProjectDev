@@ -10,7 +10,7 @@ use App\Entity\Sensors\SensorTypes\Bmp;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
-use App\Form\CardViewForms\StandardSensorOutOFBoundsForm;
+use App\Form\SensorForms\StandardSensorOutOFBoundsForm;
 use App\Form\SensorForms\UpdateReadingForm;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -142,6 +142,25 @@ class SensorType
                     ],
                 ]
             ]
+        ],
+    ];
+
+    public const SENSOR_READING_TYPE_DATA = [
+        Sensors::TEMPERATURE => [
+            'alias' => 'temp',
+            'object' => Temperature::class
+        ],
+        Sensors::HUMIDITY => [
+            'alias' => 'humid',
+            'object' => Humidity::class
+        ],
+        Sensors::ANALOG => [
+            'alias' => 'analog',
+            'object' => Analog::class
+        ],
+        Sensors::LATITUDE => [
+            'alias' => 'lat',
+            'object' => Latitude::class
         ],
     ];
 

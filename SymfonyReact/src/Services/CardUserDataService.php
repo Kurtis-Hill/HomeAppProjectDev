@@ -10,22 +10,15 @@ use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
 use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Latitude;
-use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\ESPDeviceSensor\AbstractHomeAppUserSensorServiceCore;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -38,25 +31,6 @@ use Symfony\Component\Security\Core\Security;
 class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInterface
 {
     use FormProcessorTrait;
-
-    private const SENSOR_READING_TYPE_DATA = [
-        Sensors::TEMPERATURE => [
-            'alias' => 'temp',
-            'object' => Temperature::class
-        ],
-        Sensors::HUMIDITY => [
-            'alias' => 'humid',
-            'object' => Humidity::class
-        ],
-        Sensors::ANALOG => [
-            'alias' => 'analog',
-            'object' => Analog::class
-        ],
-        Sensors::LATITUDE => [
-            'alias' => 'lat',
-            'object' => Latitude::class
-        ],
-    ];
 
     /**
      * @var ?User
@@ -110,7 +84,6 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                 "device" => $this->getDevicePageCardDataObjects($deviceId),
                 default => $this->getIndexPageCardDataObjects()
             };
-//            dd($sensorObjects, 'hi');
         } catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
         } catch (ORMException $e) {
@@ -156,7 +129,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                     'id' => $cardViewData,
                     'userID' => $this->getUser()
                 ],
-                self::SENSOR_READING_TYPE_DATA);
+                SensorType::SENSOR_READING_TYPE_DATA);
         } catch(ORMException $e){
             $this->serverErrors[] = 'Query error trying to find users card data';
             error_log($e->getMessage());

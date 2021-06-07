@@ -168,11 +168,6 @@ class CardDataController extends AbstractController
             'cardStateID' => $request->get('card-view-state'),
         ];
 
-//        $cardSensorReadingObject = $cardDataService->editSelectedCardData($cardViewID);
-//        $cardViewObject = array_shift($cardSensorReadingObject);
-
-//        dd($cardSensorReadingObject, $cardViewObject);
-//        dd($request->request->all(), 'cont');
         $cardDataService->processForm($cardViewForm, $em, $cardViewData);
 
         if ($cardDataService->getUserInputErrors()) {
@@ -180,14 +175,7 @@ class CardDataController extends AbstractController
         }
 
         $sensorObject = $cardViewObject->getSensorNameID();
-//dd($sensorTypeObject);
-        $sensorTypeObject = $em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensorObject, SensorType::SENSOR_TYPE_DATA);
 
-        if (!$sensorTypeObject instanceof StandardSensorTypeInterface) {
-            return $this->sendBadRequestJsonResponse(['errors' => ['Sensor type object not found your app may need updating']]);
-        }
-
-//        $processedSensorRequestData = $sensorDataService->processSensorUpdateRequestObject($request, $sensorTypeObject);
         $sensorDataService->handleSensorReadingBoundary($sensorObject, $request->request->all());
 
         if (!empty($sensorDataService->getUserInputErrors())) {

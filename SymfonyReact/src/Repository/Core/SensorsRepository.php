@@ -80,7 +80,7 @@ class SensorsRepository extends EntityRepository
      * @param $sensorData
      * @return StandardSensorTypeInterface|null
      */
-    public function getSensorCardFormDataBySensor(Sensors $sensors, $sensorData): ?StandardSensorTypeInterface
+    public function getSensorCardFormDataBySensor(Sensors $sensors, $sensorData)
     {
         $qb = $this->createQueryBuilder('sensors');
 
@@ -103,7 +103,7 @@ class SensorsRepository extends EntityRepository
 //dd($result, 'result');
 //        dd($qb->getQuery()->getOneOrNullResult());
 //        return $qb->getQuery()->getOneOrNullResult();
-        return $result[0];
+        return $result;
     }
 
 }

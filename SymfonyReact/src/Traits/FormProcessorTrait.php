@@ -23,12 +23,10 @@ trait FormProcessorTrait
         $form->submit($formData);
 
         if ($form->isSubmitted() && $form->isValid()) {
-//            dd('valid!!');
             $validFormData = $form->getData();
 
             try {
                 $em->persist($validFormData);
-//                $em->flush();
             } catch (\Exception $e) {
                 error_log($e->getMessage());
                 $this->formInputErrors[] = 'Form persistence failed please try again';
@@ -46,7 +44,6 @@ trait FormProcessorTrait
     public function processFormErrors(FormInterface $form): void
     {
         foreach ($form->getErrors(true, true) as $error) {
-//            dd($error->getMessage());
             $this->formInputErrors[] = $error->getMessage();
         }
     }
