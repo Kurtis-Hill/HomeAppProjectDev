@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
  * @Route("/HomeApp/api/user-devices")
  */
-class DeviceController extends AbstractController
+class UserDeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
