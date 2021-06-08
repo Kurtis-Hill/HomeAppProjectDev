@@ -19,7 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class DeviceControllerTest extends WebTestCase
+class UserDeviceControllerTest extends WebTestCase
 {
     private const API_DEVICE_LOGIN = '/HomeApp/device/login_check';
 
