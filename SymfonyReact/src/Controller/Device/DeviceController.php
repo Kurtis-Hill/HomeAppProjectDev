@@ -38,7 +38,7 @@ class DeviceController extends AbstractController
     {
         dd($request->request->all());
         if (empty($request->request->get('sensor-type'))) {
-            return $this->sendBadRequestJsonResponse();
+            return $this->sendBadRequestJsonResponse(['no sensor type sent with request']);
         }
 
         $sensorFormData = $sensorDataService->processSensorReadingUpdateRequest($request);
