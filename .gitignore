@@ -46,3 +46,9 @@ SymfonyReact/.phpunit
 SymfonyReact/.phpunit.result.cache
 
 SymfonyReact/.php-version
+
+##< Docker ###
+HomeAppDocker/.env
+
+HomeAppDocker/db/data/*
+HomeAppDocker/logs/*
