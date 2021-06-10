@@ -11,6 +11,7 @@ use App\Services\ESPDeviceSensor\Devices\DeviceServiceUser;
 use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\DeviceVoter;
+use OldSound\RabbitMqBundle\OldSoundRabbitMqBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,21 +32,23 @@ class DeviceController extends AbstractController
      *
      * @Route("/update/current-reading", name="update-current-reading")
      * @param Request $request
-     * @param SensorDeviceDataService $sensorDataService
      * @return Response
      */
-    public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
+    public function queSensorReadingsForProcessing(Request $request, OldSoundRabbitMqBundle $bundle): Response
     {
-        dd($request->request->all());
-        if (empty($request->request->get('sensor-type'))) {
-            return $this->sendBadRequestJsonResponse();
+//        dd($request->request->all());
+        $postData = $request->request;
+        if (empty($postData->get('sensor-type') || $postData->get('device-name') || $postData->get('sensor-name1'))) {
+            return $this->sendBadRequestJsonResponse(['missing some required fields']);
         }
 
-        $sensorFormData = $sensorDataService->processSensorReadingUpdateRequest($request);
+        $rabbitMq = $this->get('old_sound_rabbit_mq.upload_current_reading_sensor_data')->publish(serialize($postData->all()));;
 
-        if (empty($sensorFormData)) {
-            return $this->sendInternelServerErrorJsonResponse();
-        }
+//        $sensorFormData = $sensorDataService->processSensorReadingUpdateRequest($request);
+
+//        if (empty($sensorFormData)) {
+//            return $this->sendInternelServerErrorJsonResponse();
+//        }
     }
 
 }
