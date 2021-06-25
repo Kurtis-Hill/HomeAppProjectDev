@@ -10,7 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
-class CardstateRepository extends EntityRepository
+class CardStateRepository extends EntityRepository
 {
     public function getAllStates()
     {

@@ -537,7 +537,7 @@ class CardDataControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors'][0]);
+        self::assertStringContainsString(FormMessages::ACCESS_DENIED, $responseData['payload']['errors'][0]);
         self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());

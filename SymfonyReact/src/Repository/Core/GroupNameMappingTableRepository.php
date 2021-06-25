@@ -11,21 +11,6 @@ use function Doctrine\ORM\QueryBuilder;
 
 class GroupNameMappingTableRepository extends EntityRepository
 {
-    public function getGroupsForUser($userID): array
-    {
-        $qb = $this->createQueryBuilder('gmt');
-
-        $qb->select('gn.groupNameID, gn.groupName')
-            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
-            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.userID = u.userID')
-            ->where(
-                $qb->expr()->eq('gmt.userID', ':userID')
-            )
-            ->setParameter('userID', $userID);
-
-        return $qb->getQuery()->getScalarResult();
-    }
-
     public function getAllGroupMappingEntitiesForUser(User $user)
     {
         $qb = $this->createQueryBuilder('gmt');

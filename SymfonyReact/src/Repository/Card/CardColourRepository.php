@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityRepository;
  * @method CardColour[]    findAll()
  * @method CardColour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CardcolourRepository extends EntityRepository
+class CardColourRepository extends EntityRepository
 {
     public function getAllColours(): array
     {

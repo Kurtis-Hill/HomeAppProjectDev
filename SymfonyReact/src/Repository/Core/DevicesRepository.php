@@ -81,7 +81,7 @@ class DevicesRepository extends EntityRepository
                     'groupNameID' => $deviceDetails['groupNameIDs'],
                 ]
             );
-//dd($qb->getQuery()->getSingleResult());
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 }

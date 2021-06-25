@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Cardcolour.
  *
  * @ORM\Table(name="cardcolour", uniqueConstraints={@ORM\UniqueConstraint(name="colour", columns={"colour"})})
- * @ORM\Entity(repositoryClass="App\Repository\Card\CardcolourRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Card\CardColourRepository")
  */
 class CardColour
 {

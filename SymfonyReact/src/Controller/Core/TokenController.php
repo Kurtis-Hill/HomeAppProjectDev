@@ -26,14 +26,12 @@ class TokenController extends AbstractController
 {
 
     /**
-     * For use in future if I create an app this would allow me to access a token
-     * @TODO take request and brake down content and insert credentials in the query
      * @Route("/", name="token")
      */
     public function newTokenAction(Request $request, EncoderFactoryInterface $encoderFactory, JWTEncoderInterface $JWTEncoder)
     {
         if (0 !== strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $data = json_decode($request->getContent(), true);
+            $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         }
 
         $user = $this->getDoctrine()

@@ -8,7 +8,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 
 class AuthenticationSuccessListener
 {
-    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $authenticationSuccessEvent)
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $authenticationSuccessEvent): void
     {
         $user = $authenticationSuccessEvent->getUser();
 

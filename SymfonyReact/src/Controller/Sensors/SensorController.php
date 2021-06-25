@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -55,8 +56,8 @@ class SensorController extends AbstractController
         }
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $device);
-        } catch (\Exception) {
-            return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
         }
 
         $sensor = $sensorService->createNewSensor($sensorData);

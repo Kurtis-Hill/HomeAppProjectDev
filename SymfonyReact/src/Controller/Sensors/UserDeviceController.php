@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/HomeApp/api/user-devices")
@@ -49,8 +50,8 @@ class UserDeviceController extends AbstractController
         }
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $groupNameObject);
-        } catch (\Exception) {
-            return $this->sendBadRequestJsonResponse([FormMessages::ACCES_DENIED]);
+        } catch (AccessDeniedException) {
+            return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
         }
 
         $deviceData = [

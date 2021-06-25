@@ -36,7 +36,7 @@ class CardShowTransformer implements DataTransformerInterface
 
         if ($carshow === null) {
             throw new TransformationFailedException(sprintf(
-                'An card show id with number "%s" does not exist!',
+                'An card show id with number "%s" does not exist',
                 $cardShowid
             ));
         }

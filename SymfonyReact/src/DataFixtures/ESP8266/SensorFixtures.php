@@ -29,7 +29,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
     public function getOrder()
     {
-        return 6;
+        return 5;
     }
 
     public function load(ObjectManager $manager): void
@@ -73,8 +73,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($otherUserCard);
 
-
-//                // Regular created devices with card view set to off to reduce interface noise
+                // Regular created devices with card view set to off to reduce interface noise
                 if ($addExtra) {
                     $sensorCounterExtra = $sensorCounter + 10;
                     $newRegularUserSensor = new Sensors();

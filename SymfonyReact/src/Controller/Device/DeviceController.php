@@ -36,7 +36,6 @@ class DeviceController extends AbstractController
      */
     public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
     {
-        dd($request->request->all());
         if (empty($request->request->get('sensor-type'))) {
             return $this->sendBadRequestJsonResponse();
         }

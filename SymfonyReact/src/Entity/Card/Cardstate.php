@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Cardstate
  *
  * @ORM\Table(name="cardstate")
- * @ORM\Entity(repositoryClass="App\Repository\Card\CardstateRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Card\CardStateRepository")
  */
 class Cardstate
 {
