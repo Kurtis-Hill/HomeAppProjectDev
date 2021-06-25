@@ -1,0 +1,164 @@
+version: '3.7'
+
+services:
+
+  php-fpm:
+    build:
+      context: ./php-fpm
+      # dockerfile: ./php-fpm/Dockerfile
+    container_name: '${APP_NAME}-php-fpm'
+    # build:
+    #   context: ./php-fpm
+    # working_dir: /var/www/html
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - APP_DEBUG=1
+      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db:3306/${MYSQL_DB}?serverVersion=10.5'
+    volumes:
+      - ../SymfonyReact:/var/www/html
+    depends_on:
+      - db
+      # db:
+      #   condition: service_healthy
+    # networks:
+    #   - HomeAppProjectNetwork
+
+  nginx:
+    build:
+      context: ./nginx  
+    container_name: '${APP_NAME}-nginx'  
+    volumes:
+      - ../src:/var/www:rw
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites/:/etc/nginx/sites-available
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+      - ./logs:/var/log:rw
+    depends_on:
+      - php-fpm
+      # php-fpm:
+      #   condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    # networks:
+    #   - HomeAppProjectNetwork
+
+  yarn:
+    build:
+      context: ./yarn
+    container_name: '${APP_NAME}-yarn'  
+    depends_on:
+      - php-fpm
+        # php-fpm:
+        #   condition: service_healthy
+    working_dir: /home/node/app/src
+    volumes:
+      - ../:/home/node/app
+    ports:
+      - 8080:8080  
+    # networks:
+    #   - HomeAppProjectNetwork
+
+
+  db:
+    image: mariadb:10.5.9
+    container_name: '${APP_NAME}-db'
+    # restart: always
+    ports:
+      - '${DB_PORT}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASS}'
+      MYSQL_DATABASE: '${MYSQL_DB}'
+    volumes:
+      - ./Docker/db/data:/var/lib/mysql
+      - ./Docker/db/mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      interval: 5s
+      retries: 5
+    # networks:
+    #   - HomeAppProjectNetwork
+
+  db_admin:
+    image: phpmyadmin/phpmyadmin:5
+    container_name: '${APP_NAME}-db-admin'
+    ports:
+      - '${APP_DB_PHP_MY_ADMIN_PORT}:80'
+    environment:
+      PMA_HOST: db_server
+    depends_on:
+      - php-fpm
+      # db_server:
+      #   condition: service_healthy
+    volumes:
+      - ./Docker/phpmyadmin:/var/www/html
+    # networks:
+    #   - HomeAppProjectNetwork
+
+
+
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
+  #   container_name: elasticsearch
+  #   environment:
+  #     - cluster.name=homeapp-cluster
+  #     - bootstrap.memory_lock=true
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - esdata1:/usr/share/elasticsearch/data
+  #   ports:
+  #     - 9200:9200
+  #   depends_on:
+  #       - php-fpm  
+  #   # networks:
+  #   #   - HomeAppProjectNetwork
+  # elasticsearch2:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:6.8.13
+  #   container_name: elasticsearch2
+  #   environment:
+  #     - cluster.name=docker-cluster
+  #     - bootstrap.memory_lock=true
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #     - "discovery.zen.ping.unicast.hosts=elasticsearch"
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - esdata2:/usr/share/elasticsearch/data
+  #   ports:
+  #     - 9300:9300      
+
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: '${APP_NAME}-rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    # networks:
+      # - HomeAppProjectNetwork      
+
+# networks:
+#   HomeAppProjectNetwork:
+#     driver: bridge
+
+
+volumes:
+  # db_data: ./Docker/db/data
+  # db_admin_data: ../DB/conf
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
