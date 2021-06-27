@@ -9,7 +9,6 @@ SymfonyReact/config/secrets/prod/prod.decrypt.private.php
 SymfonyReact/public/bundles/
 SymfonyReact/var/
 SymfonyReact/vendor/
-###< symfony/framework-bundle ###
 
 ###> symfony/webpack-encore-bundle ###
 SymfonyReact/node_modules/
@@ -22,20 +21,18 @@ SymfonyReact/symfony.lock
 SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
 
-
-
 ###< symfony/webpack-encore-bundle ###
 SymfonyReact/bin/console
 
-
+### IDE tools
 .idea
 .idea/workspace.xml
 .vscode
 SymfonyReact/.idea
 
-
-/.php_cs.cache
-/.php-version
+### CS tools
+.php_cs.cache
+.php-version
 
 ###> symfony/phpunit-bridge ###
 SymfonyReact/.phpunit
