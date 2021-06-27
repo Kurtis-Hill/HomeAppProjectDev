@@ -1,5 +1,6 @@
 
 ###> symfony/framework-bundle ###
+SymfonyReact/.env
 SymfonyReact/.env.local
 SymfonyReact/.env.local.php
 SymfonyReact/.env.*.local
@@ -40,15 +41,13 @@ SymfonyReact/.idea
 
 ###> symfony/phpunit-bridge ###
 SymfonyReact/.phpunit
-/SymfonyReact/phpunit.result.cache
-/SymfonyReact/phpunit.xml
-###< symfony/phpunit-bridge ###
-SymfonyReact/.phpunit.result.cache
-
+SymfonyReact/phpunit.result.cache
+SymfonyReact/phpunit.xml
 SymfonyReact/.php-version
 
 ##< Docker ###
 HomeAppDocker/.env
-
+HomeAppDocker/mariadb/db_data/*
+HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/db/data/*
 HomeAppDocker/logs/*
