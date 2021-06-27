@@ -77,6 +77,7 @@ class SecurityController extends AbstractController
         echo \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT;
         echo '<br>';
         echo "<br>";
+        die;
     }
 
     /**

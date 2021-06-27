@@ -1,6 +1,7 @@
 
 ###> symfony/framework-bundle ###
 SymfonyReact/.env
+SymfonyReact/.env.test
 SymfonyReact/.env.local
 SymfonyReact/.env.local.php
 SymfonyReact/.env.*.local
@@ -17,18 +18,15 @@ SymfonyReact/npm-debug.log
 SymfonyReact/yarn-error.log
 
 SymfonyReact/composer.lock
-
 SymfonyReact/symfony.lock
-
 SymfonyReact/yarn.lock
-
 SymfonyReact/package-lock.json
 
-SymfonyReact/.env
 
-SymfonyReact/.env.test
 
 ###< symfony/webpack-encore-bundle ###
+SymfonyReact/bin/console
+
 
 .idea
 .idea/workspace.xml
@@ -41,9 +39,11 @@ SymfonyReact/.idea
 
 ###> symfony/phpunit-bridge ###
 SymfonyReact/.phpunit
-SymfonyReact/phpunit.result.cache
 SymfonyReact/phpunit.xml
 SymfonyReact/.php-version
+SymfonyReact/bin/*
+SymfonyReact/.phpunit.result.cache
+SymfonyReact/bin/phpunit
 
 ##< Docker ###
 HomeAppDocker/.env
@@ -51,3 +51,4 @@ HomeAppDocker/mariadb/db_data/*
 HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/db/data/*
 HomeAppDocker/logs/*
+HomeAppDocker/test.sh
