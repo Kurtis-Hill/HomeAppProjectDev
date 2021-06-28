@@ -42,6 +42,12 @@ SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
 SymfonyReact/bin/phpunit
 
+
+SymfonyReact/bin/*
+
+
+SSL/*
+
 ##< Docker ###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*

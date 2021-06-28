@@ -25,7 +25,7 @@ class CardViewVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token)
     {
         $user = $token->getUser();
 

@@ -15,8 +15,8 @@ trait FormProcessorTrait
 
     /**
      * @param FormInterface|FormFactoryInterface $form
-     * @param EntityManagerInterface|ObjectManager $em
      * @param array $formData
+     * @return bool
      */
     public function processForm(FormInterface|FormFactoryInterface $form, array $formData): bool
     {

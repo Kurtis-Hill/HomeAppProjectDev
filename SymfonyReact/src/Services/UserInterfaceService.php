@@ -100,6 +100,4 @@ class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInt
     {
         return $this->user;
     }
-
-
 }

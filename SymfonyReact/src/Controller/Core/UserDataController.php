@@ -29,7 +29,7 @@ class UserDataController extends AbstractController
 
         if (!empty($userService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse($userService->getServerErrors());
-       }
+        }
 
         return $this->sendSuccessfulJsonResponse($userData);
     }

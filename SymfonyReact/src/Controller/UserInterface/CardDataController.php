@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -51,8 +52,8 @@ class CardDataController extends AbstractController
             if ($device instanceof Devices) {
                 try {
                     $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
-                } catch (\Exception $exception) {
-                    return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
+                } catch (AccessDeniedException $exception) {
+                    return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
                 }
             } else {
                 return $this->sendBadRequestJsonResponse(['No device found']);
@@ -109,8 +110,8 @@ class CardDataController extends AbstractController
         if ($cardViewObject instanceof CardView) {
             try {
                 $this->denyAccessUnlessGranted(CardViewVoter::CAN_VIEW_CARD_VIEW_FORM, $cardViewObject);
-            } catch (\Exception) {
-                return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCES_DENIED]);
+            } catch (AccessDeniedException) {
+                return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
             }
         } else {
             return $this->sendBadRequestJsonResponse(['Card view id not recognised']);
@@ -153,8 +154,8 @@ class CardDataController extends AbstractController
         if ($cardViewObject instanceof CardView) {
             try {
                 $this->denyAccessUnlessGranted(CardViewVoter::CAN_EDIT_CARD_VIEW_FORM, $cardViewObject);
-            } catch (\Exception) {
-                return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCES_DENIED]]);
+            } catch (AccessDeniedException) {
+                return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCESS_DENIED]]);
             }
         } else {
             return $this->sendBadRequestJsonResponse(['card not found by the id given']);

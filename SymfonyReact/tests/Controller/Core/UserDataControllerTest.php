@@ -79,7 +79,7 @@ class UserDataControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['responseData'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
         self::assertArrayHasKey('userID', $responseData);
         self::assertArrayHasKey('roles', $responseData);

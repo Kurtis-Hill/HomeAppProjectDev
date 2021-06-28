@@ -7,6 +7,7 @@ use App\Entity\Sensors\Sensors;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Sensors|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,7 +17,7 @@ use Doctrine\ORM\Query\Expr\Join;
  */
 class SensorsRepository extends EntityRepository
 {
-    private function prepareSensorTypeDataObjectsForQuery(array $sensors, $qb, array $joinCondition): string
+    private function prepareSensorTypeDataObjectsForQuery(array $sensors, QueryBuilder $qb, array $joinCondition): string
     {
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
 

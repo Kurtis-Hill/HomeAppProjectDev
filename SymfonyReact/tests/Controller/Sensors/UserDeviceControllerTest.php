@@ -333,7 +333,7 @@ class UserDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString(FormMessages::ACCES_DENIED, $responseData['payload']['errors'][0]);
+        self::assertStringContainsString(FormMessages::ACCESS_DENIED, $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
