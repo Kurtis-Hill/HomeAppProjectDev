@@ -10,7 +10,7 @@ services:
       - '${APP_PORT}:80'
     working_dir: /var/www/html
     environment:
-      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.5'
+      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6'
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
@@ -23,9 +23,10 @@ services:
       - HomeAppProjectNetwork
 
   maria-db:
-    image: mariadb:10.6.2
+#    image: mariadb:10.6.2
     build: 
       context: ./mariadb
+      dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
     restart: always
     ports:
@@ -64,4 +65,3 @@ services:
 
 networks:
   HomeAppProjectNetwork:
-
