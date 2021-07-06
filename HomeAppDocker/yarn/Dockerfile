@@ -1,11 +1,11 @@
 FROM node:10.21.0
 
-# COPY docker-entrypoint.sh /usr/bin/docker-entrypoint
-# RUN chmod +x /usr/bin/docker-entrypoint
+COPY docker-entrypoint.sh /usr/bin/docker-entrypoint
+RUN chmod +x /usr/bin/docker-entrypoint
 
-RUN npm install -g gulp-cli
+# RUN npm install yarn -g
 
-# ENTRYPOINT ["docker-entrypoint"]
+ENTRYPOINT ["docker-entrypoint"]
 CMD ["yarn"]
 
 EXPOSE 8080

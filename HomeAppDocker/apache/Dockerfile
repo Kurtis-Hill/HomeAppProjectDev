@@ -2,7 +2,7 @@ FROM php:8.0-apache
 
 RUN a2enmod rewrite
 
-RUN apt-get update && apt-get install -y git unzip zip
+RUN apt-get update && apt-get install -y git unzip zip nano
 
 RUN pecl install xdebug
 
@@ -15,9 +15,7 @@ COPY ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
-RUN apt-get update && apt-get upgrade -y && apt-get install nano
-
 COPY ./docker-entrypoint.sh /usr/bin/docker-entrypoint
+RUN chmod +x /usr/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]
-# CMD ["docker-php-entrypoint"]
