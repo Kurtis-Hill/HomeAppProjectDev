@@ -11,11 +11,11 @@ doctrine:
     dbname:   "%env(DB_NAME)%"
     user:     "%env(DB_USER)%"
     password: "%env(DB_PASSWORD)%"
-    options:
-      1007  : '%env(PRIVATE_KEY)%'
-      1008  : '%env(CLIENT_CERT)%'
-      1009  : '%env(CA_CERT)%'
-      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
+#    options:
+#      1007  : '%env(PRIVATE_KEY)%'
+#      1008  : '%env(CLIENT_CERT)%'
+#      1009  : '%env(CA_CERT)%'
+#      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
 
   orm:
     auto_generate_proxy_classes: '%kernel.debug%'

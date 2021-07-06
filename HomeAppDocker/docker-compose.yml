@@ -49,25 +49,29 @@ services:
     networks:
       - HomeAppProjectNetwork
 
-  # yarn:
-  #   build:
-  #     context: ./yarn
-  #   container_name: '${APP_NAME}-yarn'
-  #   working_dir: /home/node/app/src
-  #   volumes:
-  #     - ../SymfonyReact:/home/node/app    
+  yarn:
+    build:
+      context: ./yarn
+    container_name: '${APP_NAME}-yarn'
+    ports:
+      - 8080:8080
+    working_dir: /home/node/app/src
+    volumes:
+      - ../SymfonyReact:/home/node/app    
+    networks:
+      - HomeAppProjectNetwork  
 
-  # rabbitmq:
-  #   image: rabbitmq:3-management-alpine
-  #   container_name: '${APP_NAME}-rabbitmq'
-  #   ports:
-  #     - 5672:5672
-  #     - '${RABBIT_MQ_INTERFACE_PORT}:15672'
-  #   volumes:
-  #       - ./rabbitmq/data/:/var/lib/rabbitmq/
-  #       - ./rabbitmq/log/:/var/log/rabbitmq
-  #   networks:
-  #     - HomeAppProjectNetwork
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: '${APP_NAME}-rabbitmq'
+    ports:
+      - 5672:5672
+      - '${RABBIT_MQ_INTERFACE_PORT}:15672'
+    volumes:
+        - ./rabbitmq/data/:/var/lib/rabbitmq/
+        - ./rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - HomeAppProjectNetwork
  
 
 networks:

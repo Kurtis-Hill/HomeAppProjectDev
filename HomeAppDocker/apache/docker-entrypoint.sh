@@ -5,7 +5,8 @@ echo "Installing composer packages..."
 
 # TODO remember to un comment
 
-php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
+
+# php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 
 echo "...Composer packages installed"
 
