@@ -15,6 +15,8 @@ COPY ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
+RUN chmod 0444 -R /etc/ssl
+
 COPY ./docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 
