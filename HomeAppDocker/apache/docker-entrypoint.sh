@@ -9,7 +9,7 @@ echo "...Composer packages installed"
 
 echo "Querying test database"
 
-if ! php bin/console dbal:run-sql "select * from user limit 1"> /dev/null --env=test; then
+if [ ! php bin/console dbal:run-sql "select * from user limit 1"> /dev/null --env=test; ]  then
     echo "No test database found loading fixtures"
     php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"
