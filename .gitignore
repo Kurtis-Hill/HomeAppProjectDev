@@ -2,8 +2,9 @@
 ###> symfony/framework-bundle ###
 SymfonyReact/.env
 SymfonyReact/.env.test
+SymfonyReact/.env.test.nonelocal
 SymfonyReact/.env.local
-SymfonyReact/.env.local.php
+SymfonyReact/.env.nonelocal
 SymfonyReact/.env.*.local
 SymfonyReact/config/secrets/prod/prod.decrypt.private.php
 SymfonyReact/public/bundles/
@@ -41,9 +42,6 @@ SymfonyReact/.php-version
 SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
 SymfonyReact/bin/phpunit
-
-
-SymfonyReact/bin/*
 
 
 SSL/*
