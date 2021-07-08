@@ -21,6 +21,7 @@ use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Entity\Sensors\SensorTypes\Dht;
 use App\Entity\Sensors\SensorTypes\Soil;
 use App\Form\FormMessages;
+use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -51,6 +52,7 @@ class SensorControllerTest extends WebTestCase
      */
     private ?string $userToken = null;
 
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -58,7 +60,6 @@ class SensorControllerTest extends WebTestCase
         $this->entityManager = static::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
-
 
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
@@ -94,13 +95,84 @@ class SensorControllerTest extends WebTestCase
         }
     }
 
-    // addNewSensor
-    public function test_can_add_new_dht_sensor_correct_details()
+    /**
+     * @return \Generator
+     */
+    public function newSensorSimpleDataProvider(): \Generator
     {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
+        yield [
+            'sensor' => SensorType::DHT_SENSOR,
+            'sensorName' => 'dhtTest'
+        ];
+
+        yield [
+            'sensor' => SensorType::BMP_SENSOR,
+            'sensorName' => 'bmpTest'
+        ];
+
+        yield [
+            'sensor' => SensorType::SOIL_SENSOR,
+            'sensorName' => 'soilTest'
+        ];
+
+        yield [
+            'sensor' => SensorType::DALLAS_TEMPERATURE,
+            'sensorName' => 'dallasTest'
+        ];
+    }
+
+    public function newSensorExtendedDataProvider(): \Generator
+    {
+        yield [
+            'sensor' => SensorType::DHT_SENSOR,
+            'sensorName' => 'dhtTest',
+            'class' => Dht::class,
+            [
+                'temperature' => Temperature::class,
+                'humidity' => Humidity::class,
+            ]
+        ];
+
+        yield [
+            'sensor' => SensorType::BMP_SENSOR,
+            'sensorName' => 'bmpTest',
+            'class' => Bmp::class,
+            [
+                'temperature' => Temperature::class,
+                'humidity' => Humidity::class,
+                'latitude' => Latitude::class
+            ]
+        ];
+
+        yield [
+            'sensor' => SensorType::SOIL_SENSOR,
+            'sensorName' => 'soilTest',
+            'class' => Soil::class,
+            [
+                'analog' => Analog::class
+            ]
+        ];
+
+        yield [
+            'sensor' => SensorType::DALLAS_TEMPERATURE,
+            'sensorName' => 'dallasTest',
+            'class' => Dallas::class,
+            [
+                'temperature' => Temperature::class,
+            ]
+        ];
+    }
+
+
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     */
+    public function test_can_add_new_sensor_correct_details(string $sensorType, string $sensorName): void
+    {
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => 'Testing',
+            'sensor-name' => $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $this->device->getDeviceNameID(),
         ];
@@ -127,12 +199,17 @@ class SensorControllerTest extends WebTestCase
     }
 
 
-    public function test_can_not_add_new_sensor_with_special_characters()
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     */
+    public function test_can_not_add_new_sensor_with_special_characters(string $sensorType, string $sensorName)
     {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => '&Testing',
+            'sensor-name' => '&' . $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $this->device->getDeviceNameID(),
         ];
@@ -154,12 +231,17 @@ class SensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_can_not_add_new_sensor_with_long_name()
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     */
+    public function test_can_not_add_new_sensor_with_long_name(string $sensorType, string $sensorName)
     {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => 'TestingTestingTesting',
+            'sensor-name' => 'TestingTestingTesting' . $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $this->device->getDeviceNameID(),
         ];
@@ -180,10 +262,15 @@ class SensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_can_add_new_sensor_with_identicle_name()
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     */
+    public function test_can_add_new_sensor_with_identicle_name(string $sensorType, string $sensorName)
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
         $sensor = $this->entityManager->getRepository(Sensors::class)->findBy(['deviceNameID' => $device->getDeviceNameID()])[0];
 
         $formData = [
@@ -202,14 +289,19 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString('You already have a sensor named Dht0', $responseData['payload']['errors'][0]);
+        self::assertStringContainsString('You already have a sensor named '. $sensor->getSensorName(), $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_can_add_new_sensor_with_bad_device_id()
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     */
+    public function test_can_add_new_sensor_with_bad_device_id(string $sensorType, string $sensorName): void
     {
         $randomID = random_int(0, 1000000);
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         while (1) {
             $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $randomID]);
@@ -219,7 +311,7 @@ class SensorControllerTest extends WebTestCase
         }
 
         $formData = [
-            'sensor-name' => 'testing',
+            'sensor-name' => $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $randomID,
         ];
@@ -274,12 +366,18 @@ class SensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_can_add_dht_sensor_and_card_details()
+    /**
+     * @dataProvider newSensorExtendedDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     * @param StandardSensorTypeInterface $class
+     */
+    public function test_can_add_sensor_and_card_details(string $sensorType, string $sensorName, string $class, array $sensors)
     {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DHT_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => 'Testing',
+            'sensor-name' => $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $this->device->getDeviceNameID(),
         ];
@@ -297,138 +395,25 @@ class SensorControllerTest extends WebTestCase
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $dhtSensor = $this->entityManager->getRepository(Dht::class)->findOneBy(['sensorNameID' => $sensorID]);
+        $dhtSensor = $this->entityManager->getRepository($class)->findOneBy(['sensorNameID' => $sensorID]);
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensorNameID' => $sensorID]);
 
-        $temp = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $humid = $this->entityManager->getRepository(Humidity::class)->findOneBy(['sensorNameID' => $sensorID]);
-
+        foreach ($sensors as $sensorTypeClass) {
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensorNameID' => $sensorID]);
+            self::assertInstanceOf($sensorTypeClass, $sensorType);
+        }
         self::assertInstanceOf(Sensors::class, $sensor);
-        self::assertInstanceOf(Dht::class, $dhtSensor);
+        self::assertInstanceOf($class, $dhtSensor);
         self::assertInstanceOf(CardView::class, $cardView);
-
-        self::assertInstanceOf(Temperature::class, $temp);
-        self::assertInstanceOf(Humidity::class, $humid);
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
-
-    public function test_can_add_bmp_sensor_and_card_details()
-    {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::BMP_SENSOR]);
-
-        $formData = [
-            'sensor-name' => 'Testing',
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $sensorID = $responseData['payload']['sensorNameID'];
-
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensorNameID' => $sensorID]);
-
-        $temp = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $humid = $this->entityManager->getRepository(Humidity::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $latitude = $this->entityManager->getRepository(Latitude::class)->findOneBy(['sensorNameID' => $sensorID]);
-
-        self::assertInstanceOf(Sensors::class, $sensor);
-        self::assertInstanceOf(Bmp::class, $bmpSensor);
-        self::assertInstanceOf(CardView::class, $cardView);
-
-        self::assertInstanceOf(Temperature::class, $temp);
-        self::assertInstanceOf(Humidity::class, $humid);
-        self::assertInstanceOf(Latitude::class, $latitude);
-
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_can_add_dallas_sensor_and_card_details()
-    {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::DALLAS_TEMPERATURE]);
-
-        $formData = [
-            'sensor-name' => 'Testing',
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $sensorID = $responseData['payload']['sensorNameID'];
-
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $dallasSensor = $this->entityManager->getRepository(Dallas::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensorNameID' => $sensorID]);
-
-        $temp = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensorNameID' => $sensorID]);
-        self::assertInstanceOf(Sensors::class, $sensor);
-        self::assertInstanceOf(Dallas::class, $dallasSensor);
-        self::assertInstanceOf(CardView::class, $cardView);
-
-        self::assertInstanceOf(Temperature::class, $temp);
-
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_can_add_soil_sensor_and_card_details()
-    {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::SOIL_SENSOR]);
-
-        $formData = [
-            'sensor-name' => 'Testing',
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
-        ];
-
-        $this->client->request(
-            'POST',
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $sensorID = $responseData['payload']['sensorNameID'];
-
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $soilSensor = $this->entityManager->getRepository(Soil::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensorNameID' => $sensorID]);
-
-        $analog = $this->entityManager->getRepository(Analog::class)->findOneBy(['sensorNameID' => $sensorID]);
-
-        self::assertInstanceOf(Sensors::class, $sensor);
-        self::assertInstanceOf(Soil::class, $soilSensor);
-        self::assertInstanceOf(CardView::class, $cardView);
-
-        self::assertInstanceOf(Analog::class, $analog);
-
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_add_new_sensor_when_not_part_of_associate_group(): void
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @throws \JsonException
+     */
+    public function test_add_new_sensor_when_not_part_of_associate_group(string $sensorType, string $sensorName): void
     {
         $this->client->request(
             'POST',
@@ -444,10 +429,10 @@ class SensorControllerTest extends WebTestCase
 
         $token = $responseData['token'];
 
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::SOIL_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => 'Testing',
+            'sensor-name' => $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $this->device->getDeviceNameID(),
         ];
@@ -466,8 +451,6 @@ class SensorControllerTest extends WebTestCase
         self::assertStringContainsString(FormMessages::ACCESS_DENIED, $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
-
-
 
 
     // returnAllSensorTypes
@@ -499,12 +482,18 @@ class SensorControllerTest extends WebTestCase
     }
 
     // Access Tests
-    public function test_can_add_sensor_route_wrong_token(): void
+
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     */
+    public function test_can_add_sensor_route_wrong_token(string $sensorType, string $sensorName): void
     {
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => SensorType::SOIL_SENSOR]);
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => 'Testing',
+            'sensor-name' => $sensorName,
             'sensor-type' => $sensorType->getSensorTypeID(),
             'device-id' => $this->device->getDeviceNameID(),
         ];

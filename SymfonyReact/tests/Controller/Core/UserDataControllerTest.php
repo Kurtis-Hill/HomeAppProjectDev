@@ -68,39 +68,47 @@ class UserDataControllerTest extends WebTestCase
         }
     }
 
-    // getUserDetails tests
-    public function test_getting_user_details()
+    /**
+     * @param string|null $dataProvider
+     * @param int $status
+     * @param bool $success
+     * @throws \JsonException
+     * @dataProvider userDetailsDataProvider
+     */
+    public function test_getting_user_details(?string $dataProvider, int $status, bool $success): void
     {
         $this->client->request(
             'GET',
             self::USER_DETAILS_ROUTE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            ['HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken . $dataProvider],
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
+        if ($success !== false) {
+            $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
+            self::assertArrayHasKey('userID', $responseData);
+            self::assertArrayHasKey('roles', $responseData);
+        }
 
-        self::assertArrayHasKey('userID', $responseData);
-        self::assertArrayHasKey('roles', $responseData);
-
-        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertEquals($status, $this->client->getResponse()->getStatusCode());
     }
 
-
-    public function test_getting_user_details_wrong_token()
+    /**
+     * @return \Generator
+     */
+    public function userDetailsDataProvider(): \Generator
     {
-        $this->client->request(
-            'GET',
-            self::USER_DETAILS_ROUTE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken . '1'],
-        );
+        yield [
+            'token' => $this->userToken,
+            'status' => HTTPStatusCodes::HTTP_OK,
+            'succeed' => true
+        ];
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertEquals('Invalid JWT Token', $responseData['message']);
-        self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
+        yield [
+            'token' => $this->userToken . '1',
+            'status' => HTTPStatusCodes::HTTP_UNAUTHORISED,
+            'succeed' => false
+        ];
     }
 }
