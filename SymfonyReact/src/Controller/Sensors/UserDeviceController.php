@@ -3,8 +3,6 @@
 
 namespace App\Controller\Sensors;
 
-
-
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
 use App\Services\ESPDeviceSensor\Devices\DeviceServiceUser;
