@@ -16,7 +16,7 @@ SymfonyReact/public/build/
 SymfonyReact/npm-debug.log
 SymfonyReact/yarn-error.log
 
-SymfonyReact/composer.lock
+#SymfonyReact/composer.lock
 #SymfonyReact/symfony.lock
 SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
