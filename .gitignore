@@ -22,9 +22,6 @@ SymfonyReact/symfony.lock
 SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
 
-###< symfony/webpack-encore-bundle ###
-#SymfonyReact/bin/console
-
 ### IDE tools
 .idea
 .idea/workspace.xml
@@ -41,8 +38,6 @@ SymfonyReact/phpunit.xml
 SymfonyReact/.php-version
 SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
-SymfonyReact/bin/phpunit
-
 
 SSL/*
 
