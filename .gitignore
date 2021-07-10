@@ -23,7 +23,7 @@ SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
 
 ###< symfony/webpack-encore-bundle ###
-SymfonyReact/bin/console
+#SymfonyReact/bin/console
 
 ### IDE tools
 .idea
