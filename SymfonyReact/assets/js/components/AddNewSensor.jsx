@@ -66,7 +66,6 @@ function AddNewSensor(props) {
         if (addNewSensorRequest.status === 201) {
             setLoading(false);
             setSuccessMessage(true);
-            console.log('why', sensorTypes[0].sensorTypeID);
             setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
             setTimeout(() =>
                 toggleModal(), 1500
