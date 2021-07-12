@@ -23,7 +23,7 @@ services:
       - HomeAppProjectNetwork
 
   maria-db:
-    build: 
+    build:
       context: ./mariadb
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
@@ -57,9 +57,9 @@ services:
       - 8080:8080
     working_dir: /home/node/app/src
     volumes:
-      - ../SymfonyReact:/home/node/app    
+      - ../SymfonyReact:/home/node/app
     networks:
-      - HomeAppProjectNetwork  
+      - HomeAppProjectNetwork
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -72,6 +72,6 @@ services:
         - ./rabbitmq/log/:/var/log/rabbitmq
     networks:
       - HomeAppProjectNetwork
- 
+
 networks:
   HomeAppProjectNetwork:

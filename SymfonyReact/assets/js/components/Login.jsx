@@ -17,23 +17,19 @@ function Login(props) {
         setError(null);
         setLoading(true);
 
-        const csrfTokenResponse = await axios.get(apiURL+'csrfToken')
-            .catch(error => {
-                setLoading(false);
-                alert('Please Fresher The Browser');
-            });
+        const csrfTokenResponse = await axios.get(apiURL+'csrfToken');
+
+        csrfTokenResponse.status === 200
+            ? setLoading(false)
+            : setLoading(false) && alert('Please Fresher The Browser')
 
         const formToken = csrfTokenResponse.data.token;
 
         const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})
-            .catch(error => {
-                setError('Invalid Credentials');
-                setLoading(false);
-            });
 
         loginCheckResponse
             ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
-            : setError('Login check response error');
+            : setError('Login check response error') && setLoading(false);
 
         const loginForm = document.getElementById('login-form');
 
@@ -41,20 +37,11 @@ function Login(props) {
 
         formData.append('_csrf_token', formToken);
 
-        const loginResponse = await axios.post('/HomeApp/WebApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } })
-            .catch(error => {
-                setError('Login Failed Please Try Again');
-                setLoading(false);
-            });
+        const loginResponse = await axios.post('/HomeApp/WebApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } });
 
-        // if (loginResponse.status === 200) {
-        //     window.location.replace(webappURL+'index');
-        // } else {
-        //     alert('setting user data failed');
-        // }
         loginResponse.status === 200
             ? window.location.replace(webappURL+'index')
-            : alert('setting user data failed');
+            : alert('setting user data failed') && setLoading(false);
 
         setLoading(false);
     }

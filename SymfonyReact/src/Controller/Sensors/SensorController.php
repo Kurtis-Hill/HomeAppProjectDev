@@ -30,7 +30,7 @@ class SensorController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/add-new-sensor", name="add-new-sensor")
+     * @Route("/add-new-sensor", name="add-new-sensor", methods={"PUT"})
      * @param Request $request
      * @param SensorUserDataService $sensorService
      * @param CardUserDataService $cardDataService
@@ -38,18 +38,18 @@ class SensorController extends AbstractController
      */
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
-        $sensorData = [
-            'sensorName' => $request->request->get('sensor-name'),
-            'sensorTypeID' => $request->get('sensor-type'),
-            'deviceNameID' => $request->get('device-id')
-        ];
 
-        if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
+        try {
+            $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exception) {
+            return $this->sendBadRequestJsonResponse(['None valid format sent']);
+        }
+        if (empty($sensorData['sensor-type'] || $sensorData['device-id'])) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
         }
 
         $em = $this->getDoctrine()->getManager();
-        $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $sensorData['deviceNameID']]);
+        $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $sensorData['device-id']]);
 
         if (!$device instanceof Devices) {
             return $this->sendBadRequestJsonResponse(['Cannot find device to add sensor too']);
