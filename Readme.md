@@ -14,4 +14,4 @@ This should have; created all the necessary containers, loaded up the initial da
 
 <h2>Before we can do anything</h2>
 There is a compatibility issue in the JWT refresh token library we are using with Doctrine 3 since doctrine common 3.0, Doctrine\Common\Persistence\ObjectManager became Doctrine\Persistence\ObjectManager
-so to be able to get JWT tokens to authenticate you will need to adjust this manually in <code>SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Doctrine/RefreshTokenManager.php/code>
+so to be able to get JWT tokens to authenticate you will need to adjust this manually in <code>SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Doctrine/RefreshTokenManager.php</code>
