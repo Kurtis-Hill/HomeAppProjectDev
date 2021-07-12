@@ -65,7 +65,7 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: '${APP_NAME}-rabbitmq'
     ports:
-      - 5672:5672
+      - '${RABBIT_MQ_COMMS_PORT}:5672'
       - '${RABBIT_MQ_INTERFACE_PORT}:15672'
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq/
@@ -73,6 +73,5 @@ services:
     networks:
       - HomeAppProjectNetwork
  
-
 networks:
   HomeAppProjectNetwork:

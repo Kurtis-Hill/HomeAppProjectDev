@@ -6,8 +6,6 @@ RUN apt-get update && apt-get install -y git unzip zip nano
 
 RUN pecl install xdebug
 
-WORKDIR /var/www/html
-
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache openssl
 
@@ -19,5 +17,7 @@ RUN chmod 0444 -R /etc/ssl
 
 COPY ./docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
+
+WORKDIR /var/www/html
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]
