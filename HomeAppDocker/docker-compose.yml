@@ -72,7 +72,6 @@ services:
         - ./rabbitmq/log/:/var/log/rabbitmq
     networks:
       - HomeAppProjectNetwork
- 
 
 networks:
   HomeAppProjectNetwork:

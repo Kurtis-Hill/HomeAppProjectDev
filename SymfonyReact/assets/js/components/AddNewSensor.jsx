@@ -5,6 +5,11 @@ import { apiURL, getToken } from '../Utilities/Common';
 import { CardContext } from '../contexts/CardContexts';
 
 function AddNewSensor(props) {
+
+    useEffect(() => {
+        getSensorTypes();
+    }, [sensorTypes]);
+
     const cardContext = useContext(CardContext);
 
     const [successMessage, setSuccessMessage] = useState(false);
@@ -12,6 +17,7 @@ function AddNewSensor(props) {
     const [modalToggle, setModalToggle] = useState(false);
     const [errors, setErrors] = useState([]);
     const [sensorTypes, setSensorTypes] = useState([]);
+    const [selectedSensorTypes, setSelectedSensorTypes] = useState('');
 
     const sensorName = useFormInput('');
 
@@ -20,57 +26,63 @@ function AddNewSensor(props) {
         setSuccessMessage(false);
     }
 
-    const toggleModalOn = async () => {
-        setModalToggle(true);
+    const getSensorTypes = async () => {
+        const sensorTypeResponse = await axios.get(apiURL+"sensors/types", { headers: {"Authorization" : `BEARER ${getToken()}`} });
 
-        if (sensorTypes.length === 0) {
-            setLoading(true);
-            const sensorTypeResponse = await axios.get(apiURL+"sensors/types", { headers: {"Authorization" : `BEARER ${getToken()}`} })
-            .catch(error => {
-                alert('Something has gone wrong');
-            });
-
-            setSensorTypes(sensorTypeResponse.data);
-            setLoading(false);
+        if (sensorTypeResponse.status === 200) {
+            if (sensorTypeResponse.data) {
+                setSelectedSensorTypes(sensorTypeResponse.data[0].sensorTypeID);
+                setSensorTypes(sensorTypeResponse.data);
+            } else {
+                setErrors(['something has gone wrong getting form field data, unexpected response'])
+            }
         }
     }
 
+    const toggleModalOn = () => {
+        setModalToggle(true);
+    }
 
-    const handleFormSubmission = e => {
+    const updateSensorType = (selectedType) => {
+        setSelectedSensorTypes(selectedType.target.value)
+    }
+
+    const handleFormSubmission = async (e) => {
         e.preventDefault();
 
-        setErrors([])
+        setErrors([]);
         setLoading(true);
 
         const deviceName = new URLSearchParams(window.location.search).get('device-id');
 
-        const formData = new FormData(e.target);
+        const jsonRequestData = {
+            'device-id' : deviceName,
+            'sensor-type' : selectedSensorTypes,
+            'sensor-name' : sensorName.value,
+        }
 
-        formData.append('device-id', deviceName);
+        const addNewSensorRequest = await axios.put(apiURL+'sensors/add-new-sensor', JSON.stringify(jsonRequestData), { headers: {"Authorization" : `BEARER ${getToken()}`} });
 
-        axios.post(apiURL+'sensors/add-new-sensor', formData, { headers: {"Authorization" : `BEARER ${getToken()}`} })
-        .then(response => {
+        if (addNewSensorRequest.status === 201) {
             setLoading(false);
             setSuccessMessage(true);
-
+            console.log('why', sensorTypes[0].sensorTypeID);
+            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
             setTimeout(() =>
                 toggleModal(), 1500
             );
-        })
-        .catch(err => {
-            const status = err.response.status
-            const data = err.response.data.payload.errors;
+        } else {
+            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
 
             if (status === 400) {
-                setErrors(data);
+                setErrors(addNewSensorRequest.payload.errors);
             }
             if (status === 500) {
                 alert('Something went wrong try refreshing the browser '+data);
             }
-
             setSuccessMessage(false);
             setLoading(false);
-        });
+        }
     }
 
 
@@ -131,7 +143,7 @@ function AddNewSensor(props) {
                                                         <label className="large font-weight-bold">New Sensor Name</label>
                                                         <input type="text" className="form-space form-control" name="sensor-name" {...sensorName}></input>
                                                         <label className="modal-space large font-weight-bold">Sensor Type</label>
-                                                        <select name="sensor-type"  className="form-control">
+                                                        <select onChange={updateSensorType} name="sensor-type"  className="form-control">
                                                             {
                                                                 sensorTypes.map((sensorTypeData) =>(
                                                                     <option className="form-control" value={sensorTypeData.sensorTypeID} key={sensorTypeData.sensorTypeID}>{sensorTypeData.sensorType}</option>
@@ -165,6 +177,7 @@ const useFormInput = initialValue => {
     const handleChange = e => {
         setValue(e.target.value);
     }
+
     return {
         value,
         onChange: handleChange

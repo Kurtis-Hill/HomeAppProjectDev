@@ -16,11 +16,12 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class IndexController extends AbstractController
 {
     /**
-     * @Route("/{route}", name="spa-view")
      * @param Request $request
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @param $route
+     * @return Response
      */
+    #[Route('/{route}', name: 'spa-view')]
     public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route): Response
     {
         if (!$this->getUser()) {
