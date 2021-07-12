@@ -7,7 +7,11 @@ or
 <br>
 <code>https://github.com/Kurtis-Hill/HomeAppProjectDev.git</code>
 
-navigate to the root of the project directory and then change directory to HomeAppDocker.
+Navigate back to the root of the project directory and run this command<br>
+<code>cp .env.example .env && cp .env.test.example .env.test</code>
+
+Now change directory to HomeAppDocker.
+<code>cd HomeAppDocker</code>
 In this directory run <code>docker-compose up --build</code>
 
 This should have; created all the necessary containers, loaded up the initial database file with an admin user and also loaded the fixtures up for running tests.
