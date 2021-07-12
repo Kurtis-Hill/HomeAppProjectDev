@@ -3,7 +3,6 @@
 
 namespace App\Repository\Card;
 
-
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
@@ -19,7 +18,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Devices\Devices;
-
 
 
 class CardViewRepository extends EntityRepository

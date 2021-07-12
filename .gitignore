@@ -2,8 +2,9 @@
 ###> symfony/framework-bundle ###
 SymfonyReact/.env
 SymfonyReact/.env.test
+SymfonyReact/.env.test.nonelocal
 SymfonyReact/.env.local
-SymfonyReact/.env.local.php
+SymfonyReact/.env.nonelocal
 SymfonyReact/.env.*.local
 SymfonyReact/config/secrets/prod/prod.decrypt.private.php
 SymfonyReact/public/bundles/
@@ -21,9 +22,6 @@ SymfonyReact/yarn-error.log
 SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
 
-###< symfony/webpack-encore-bundle ###
-SymfonyReact/bin/console
-
 ### IDE tools
 .idea
 .idea/workspace.xml
@@ -40,13 +38,13 @@ SymfonyReact/phpunit.xml
 SymfonyReact/.php-version
 SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
-SymfonyReact/bin/phpunit
 
-
-SymfonyReact/bin/*
-
-
-SSL/*
+SSL/ca-cert.pem
+SSL/ca-key.pem
+SSL/client-cert.pem
+SSL/server-cert.pem
+SSL/server-key.pem
+SSL/server.pfx
 
 ##< Docker ###
 HomeAppDocker/.env
