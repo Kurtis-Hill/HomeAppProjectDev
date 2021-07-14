@@ -31,11 +31,7 @@ class SensorUserDataService extends AbstractSensorService
 
             $addNewSensorForm = $this->formFactory->create(AddNewSensorForm::class, $newSensor);
 
-            $handledForm = $this->processNewSensorForm($addNewSensorForm, [
-                'sensorName' => $sensorData['sensor-name'],
-                'sensorTypeID' => $sensorData['sensor-type'],
-                'deviceNameID' => $sensorData['device-id']
-            ]);
+            $handledForm = $this->processNewSensorForm($addNewSensorForm, $sensorData);
 
             if ($handledForm === true) {
                 $this->em->persist($addNewSensorForm->getData());

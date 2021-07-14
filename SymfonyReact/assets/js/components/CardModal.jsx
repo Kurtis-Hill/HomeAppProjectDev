@@ -9,13 +9,17 @@ const cardModal = () => {
 
   const modalSensorType = context.modalContent.sensorType;
 
-  const secondModalSensorType = context.modalContent.secondSensorType;
+  // const secondModalSensorType = context.modalContent.secondSensorType;
 
   const modalContent = context.modalContent;
 
+  const modalStatus = context.modalStatus;
+
+  const userSelectionData = context.userSelectionData;
+
   return (
   <React.Fragment>
-    {/* {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null} */}
+    {context.modalLoading !== false ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
 
     <div id="" style={context.modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}} className="modal-show modal fade show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div className="modal-dialog" role="document">
@@ -29,12 +33,12 @@ const cardModal = () => {
             </div>
 
             {
-              modalContent.errors.length > 0 ?
+              modalStatus.errors.length > 0 ?
                 <div className="error-container">
                   <div className="form-modal-error-box">
                     <ol>
                     {
-                      modalContent.errors.map((error, index) => (
+                      modalStatus.errors.map((error, index) => (
                         <li key={index} className="form-modal-error-text">{error}</li>
                       ))
                     }
@@ -44,46 +48,44 @@ const cardModal = () => {
             : null
           }
 
-            {modalContent.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
+            {modalStatus.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
               <React.Fragment>
                 <div className="modal-body">
                   <React.Fragment>
-                  {modalContent.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-
+                  {modalStatus.modalSubmit === true ? <div className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                   {
-
                     modalContent.sensorData.length >= 1
-                    ?
-                      modalContent.sensorData.map((sensorData, index) => (
-                        <div key={index} style={{paddingBottom: "10%"}}>
+                      ?
+                        modalContent.sensorData.map((sensorData, index) => (
+                          <div key={index} style={{paddingBottom: "10%"}}>
 
-                          <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
-                          <br />
-                          <input type="text" name={sensorData.sensorType+"-high-reading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
-                          <br />
-                          <label className="modal-space large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} Low Reading</label>
-                          <br />
-                          <input type="text" name={sensorData.sensorType+"-low-reading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
-                          <br />
-                          <label className="modal-space large font-weight-bold">{modalSensorType} Temperature Constantly Record Data</label>
-                          <select name={sensorData.sensorType+"-const-record"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control">
-                            <option value={false} key="no">No</option>
-                            <option value={true} key="yes">Yes</option>
-                          </select>
-                        </div>
-                      ))
-                    :
-                    null
+                            <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
+                            <br />
+                            <input type="text" name={sensorData.sensorType+"-high-reading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
+                            <br />
+                            <label className="modal-space large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} Low Reading</label>
+                            <br />
+                            <input type="text" name={sensorData.sensorType+"-low-reading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
+                            <br />
+                            <label className="modal-space large font-weight-bold">{modalSensorType} Temperature Constantly Record Data</label>
+                            <select name={sensorData.sensorType+"-const-record"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control">
+                              <option value={false} key="no">No</option>
+                              <option value={true} key="yes">Yes</option>
+                            </select>
+                          </div>
+                        ))
+                      :
+                      null
                   }
 
                   {
-                    modalContent.userColourSelections.length >= 1
+                    userSelectionData.userIconSelections.length >= 1
                     ?
                       <React.Fragment>
                         <label className="large font-weight-bold">Icon</label>
                         <br />
                         <select name="card-icon" id="icon-select" value={modalContent.cardIcon.iconID} onChange={(e) => {context.updateModalForm(e)}} className="form-space">
-                          {modalContent.userIconSelections.map((icons) => (
+                          {userSelectionData.userIconSelections.map((icons) => (
                             <option key={icons.iconID} value={icons.iconID}>{capitalizeFirstLetter(icons.iconName)}</option>
                           ))}
                         </select>
@@ -95,12 +97,12 @@ const cardModal = () => {
                   }
 
                   {
-                    modalContent.userColourSelections.length >= 1
+                    userSelectionData.userColourSelections.length >= 1
                     ?
                     <React.Fragment>
                       <label className="modal-space large font-weight-bold">Card Colour</label>
-                      <select name="card-colour" value={modalContent.currentColour} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
-                        {modalContent.userColourSelections.map((colours) => (
+                      <select name="card-colour" value={modalContent.cardColour} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
+                        {userSelectionData.userColourSelections.map((colours) => (
                           <option value={colours.colourID} key={colours.colourID}>{capitalizeFirstLetter(colours.colour)}</option>
                         ))}
                       </select>
@@ -110,12 +112,12 @@ const cardModal = () => {
                   }
 
                   {
-                    modalContent.userCardViewSelections.length >= 1
+                    userSelectionData.userCardViewSelections.length >= 1
                     ?
                     <React.Fragment>
                       <label className="modal-space large font-weight-bold">Card View</label>
                       <select name="card-view-state" value={modalContent.currentViewState.cardStateID} onChange={(e) => {context.updateModalForm(e)}} className="form-control">
-                        {modalContent.userCardViewSelections.map((states) => (
+                        {userSelectionData.userCardViewSelections.map((states) => (
                           <option value={states.cardStateID} key={states.cardStateID}>{capitalizeFirstLetter(states.state)}</option>
                         ))}
                       </select>

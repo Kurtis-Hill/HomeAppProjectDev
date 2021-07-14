@@ -583,10 +583,10 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
         ];
 
         $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
@@ -630,7 +630,7 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $this->client->request(
-            'POST',
+            'PUT',
             self::API_UPDATE_CARD_VIEW_FORM,
             $formData,
             [],
@@ -672,9 +672,9 @@ class CardDataControllerTest extends WebTestCase
 
         $cardErrorMessage = "%s id did not match for: %s";
 
-        self::assertEquals($formData['card-colour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['card-icon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['card-view-state'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
 
         self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
     }
@@ -718,10 +718,10 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
         ];
 
         $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
@@ -765,7 +765,7 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $this->client->request(
-            'POST',
+            'PUT',
             self::API_UPDATE_CARD_VIEW_FORM,
             $formData,
             [],
@@ -807,9 +807,9 @@ class CardDataControllerTest extends WebTestCase
 
         $cardErrorMessage = "%s id did not match for: %s";
 
-        self::assertEquals($formData['card-colour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['card-icon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['card-view-state'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
 
         self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
     }
@@ -854,10 +854,10 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
         ];
 
         $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
@@ -901,7 +901,7 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $this->client->request(
-            'POST',
+            'PUT',
             self::API_UPDATE_CARD_VIEW_FORM,
             $formData,
             [],
@@ -943,9 +943,9 @@ class CardDataControllerTest extends WebTestCase
 
         $cardErrorMessage = "%s id did not match for: %s";
 
-        self::assertEquals($formData['card-colour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['card-icon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['card-view-state'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
 
         self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
     }
@@ -989,10 +989,10 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
         ];
 
         $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
@@ -1078,9 +1078,9 @@ class CardDataControllerTest extends WebTestCase
 
         $cardErrorMessage = "%s id did not match for: %s";
 
-        self::assertEquals($formData['card-colour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['card-icon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['card-view-state'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
 
         self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
     }
@@ -1136,10 +1136,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = -50;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $highReading,
             'temperature-low-reading' => $lowReading,
@@ -1205,9 +1205,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1255,10 +1255,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = -60;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $highReading,
             'temperature-low-reading' => $lowReading,
@@ -1306,9 +1306,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
         self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1359,10 +1359,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = -45;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $highReading,
             'temperature-low-reading' => $lowReading,
@@ -1420,9 +1420,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
         self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1472,10 +1472,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = 30;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $highReading,
             'temperature-low-reading' => $lowReading,
@@ -1512,9 +1512,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
         self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1567,10 +1567,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = -5;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() +1,
@@ -1628,9 +1628,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1680,10 +1680,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = -5;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() +1,
@@ -1732,9 +1732,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
         self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1784,10 +1784,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = 40;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() +1,
@@ -1822,9 +1822,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
         self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1876,10 +1876,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = -5;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() +1,
@@ -1927,9 +1927,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -1978,10 +1978,10 @@ class CardDataControllerTest extends WebTestCase
         $lowReading = 999;
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'analog-high-reading' => $highReading,
             'analog-low-reading' => $lowReading,
@@ -2011,9 +2011,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['analog-low-reading'], $analogObject->getLowReading());
         self::assertNotEquals($formData['analog-const-record'], $analogObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -2063,10 +2063,10 @@ class CardDataControllerTest extends WebTestCase
         $humidityObject = $bmpSensor->getHumidObject();
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
@@ -2112,9 +2112,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -2163,10 +2163,10 @@ class CardDataControllerTest extends WebTestCase
         $latitudeObject = $bmpSensor->getLatitudeObject();
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => '$newColour',
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => '$newColour',
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
@@ -2211,9 +2211,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -2263,10 +2263,10 @@ class CardDataControllerTest extends WebTestCase
         $latitudeObject = $bmpSensor->getLatitudeObject();
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $randomInt,
-            'card-icon' => $newIcon,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $randomInt,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
@@ -2311,9 +2311,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -2363,10 +2363,10 @@ class CardDataControllerTest extends WebTestCase
         $latitudeObject = $bmpSensor->getLatitudeObject();
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $randomInt,
-            'card-view-state' => $newState,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $randomInt,
+            'cardViewState' => $newState,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
@@ -2411,9 +2411,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -2463,10 +2463,10 @@ class CardDataControllerTest extends WebTestCase
         $latitudeObject = $bmpSensor->getLatitudeObject();
 
         $formData = [
-            'card-view-id' => $cardViewObject->getCardViewID(),
-            'card-colour' => $newColour,
-            'card-icon' => $newIcon,
-            'card-view-state' => $randomInt,
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $newColour,
+            'cardIcon' => $newIcon,
+            'cardViewState' => $randomInt,
 
             'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
             'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
@@ -2511,9 +2511,9 @@ class CardDataControllerTest extends WebTestCase
         self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
         self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
 
-        self::assertNotEquals($formData['card-colour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['card-icon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['card-view-state'], $cardViewObject->getCardStateID()->getCardstateID());
+        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -2536,10 +2536,10 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $formData = [
-            'card-view-id' => $randomInt,
-            'card-colour' => $cardColour,
-            'card-icon' => $cardIcon,
-            'card-view-state' => $cardState,
+            'cardViewID' => $randomInt,
+            'cardColour' => $cardColour,
+            'cardIcon' => $cardIcon,
+            'cardViewState' => $cardState,
 
             'temperature-high-reading' => '40',
             'temperature-low-reading' => '10',
@@ -2583,10 +2583,10 @@ class CardDataControllerTest extends WebTestCase
         }
 
         $formData = [
-            'card-view-id' => $cardNotOwnedByUser->getCardViewID(),
-            'card-colour' => $cardColour,
-            'card-icon' => $cardIcon,
-            'card-view-state' => $cardState,
+            'cardViewID' => $cardNotOwnedByUser->getCardViewID(),
+            'cardColour' => $cardColour,
+            'cardIcon' => $cardIcon,
+            'cardViewState' => $cardState,
 
             'temperature-high-reading' => '40',
             'temperature-low-reading' => '15',

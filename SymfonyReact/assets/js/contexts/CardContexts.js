@@ -1,22 +1,29 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
-import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL, webappURL } from '../Utilities/Common';
+import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL, webappURL, getAPIHeader } from '../Utilities/Common';
+import { bool } from 'prop-types';
 
 export const CardContext = createContext();
 
 const emptyModalContent = {
-    submitSuccess: false,
-    errors: [],
-    modalSubmit: false,
     cardViewID: null,
     sensorData: [],
     cardIcon: [],
-    cardColour: [],
+    cardColour: '',
     currentViewState: [],
+};
+
+const emptyUserSelectionData = {
     userIconSelections: [],
     userColourSelections: [],
     userCardViewSelections: [],
-};
+}
+
+const emptyModalStatus = {
+    submitSuccess: false,
+    errors: [],
+    modalSubmit: false,
+}
 
 class CardContextProvider extends Component {
     constructor(props) {
@@ -27,9 +34,11 @@ class CardContextProvider extends Component {
             modalShow: false,
             modalLoading: false,
             modalContent: emptyModalContent,
+            userSelectionData: emptyUserSelectionData,
+            modalStatus: emptyModalStatus,
             url: '',
             errors: [],
-            alternativeDisplayMessage: 'Loading...'
+            alternativeDisplayMessage: 'Loading...',
         };
     }
 
@@ -108,23 +117,22 @@ class CardContextProvider extends Component {
 
 
     //gets the card form data so users can customize cards
-    getCardDataForm = (cardViewID) => {
-        this.setState({modalLoading: cardViewID})
-        axios.get(apiURL+'card-data/card-state-view-form?cardViewID='+cardViewID,
-            { headers: {"Authorization" : `Bearer ${getToken()}`} })
-        .then(response => {
+    getCardDataForm = async (cardViewID) => {
+        const cardDataFormResponse = await axios.get(`${apiURL}card-data/card-state-view-form?cardViewID=${cardViewID}`, getAPIHeader())
+
+        if (cardDataFormResponse.status === 200) {
             this.setState({modalLoading: false});
-            this.modalContent(response.data);
+            this.modalContent(cardDataFormResponse.data);
             this.setState({modalShow: true});
-        }).catch(error => {
+        } else {
             this.setState({modalLoading: false, alternativeDisplayMessage: 'Failed To Get Data'});
             alert("Failed Getting Form Please Try Again or Contact System Admin");
-        })
+        }
     }
 
 
     modalContent = (cardData) => {
-        const cardColour = cardData.cardColour;
+        const cardColour = cardData.cardColour.colourID;
         const cardIcon = cardData.cardIcon;
         const cardViewID = cardData.cardViewID;
         const currentViewState = cardData.currentViewState;
@@ -133,7 +141,14 @@ class CardContextProvider extends Component {
         const userCardViewSelections = cardData.userCardViewSelections;
         const userColourSelections = cardData.userColourSelections;
         const userIconSelections = cardData.userIconSelections;
-        const iconPreview = cardIcon;
+
+        this.setState({
+            userSelectionData: {
+                userCardViewSelections,
+                userColourSelections,
+                userIconSelections,
+            }
+        });
 
         this.setState({
             modalContent:{...this.state.modalContent,
@@ -142,17 +157,16 @@ class CardContextProvider extends Component {
                 cardViewID,
                 currentViewState,
                 sensorData,
-                userCardViewSelections,
-                userColourSelections,
-                userIconSelections,
-                iconPreview,
             }
         });
+
+        console.log(this.state.modalContent);
     }
 
 
     toggleModal = () => {
         this.setState({modalContent: emptyModalContent, modalShow: !this.state.modalShow});
+        this.setState({modalStatus: emptyModalStatus});
     }
 
 
@@ -166,12 +180,13 @@ class CardContextProvider extends Component {
                 const currentModalData = this.state.modalContent;
 
                 currentModalData.cardIcon.iconID = value;
+                //this is to change the font awesome logo
                 currentModalData.cardIcon.iconName = lowercaseFirstLetter(option.text);
                 this.setState({modalContent:{...this.state.modalContent}});
                 break;
 
             case "card-colour":
-                this.setState({modalContent:{...this.state.modalContent, currentColour: value}});
+                this.setState({modalContent:{...this.state.modalContent, cardColour: value}});
                 break;
 
             case "card-view-state":
@@ -201,7 +216,8 @@ class CardContextProvider extends Component {
             case sensorType+"-const-record":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        currentModalData.constRecord = value;
+                        const newRecord = value === 'true' ? true : false;
+                        currentModalData.constRecord = newRecord;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -210,55 +226,89 @@ class CardContextProvider extends Component {
         }
     }
 
-    handleSubmissionModalForm = (event) => {
+    handleSubmissionModalForm = async (event) => {
         event.preventDefault();
-        this.setState({modalContent:{...this.state.modalContent, modalSubmit: true, errors: []}});
+        this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: []}});
 
-        const formData = new FormData(event.target);
+        console.log(this.state.modalContent);
+        const jsonFormData = {
+            'cardViewID' : this.state.modalContent.cardViewID,
+            'cardColour' : this.state.modalContent.cardColour,
+            'cardViewState' : this.state.modalContent.currentViewState.stateID,
+            'cardIcon' : this.state.modalContent.cardIcon.iconID,
+            'sensorData' : this.state.modalContent.sensorData,
+            // 'constRecrod' : this.state.modalContent.constRecord,
+        };
 
-        formData.append('card-view-id', this.state.modalContent.cardViewID);
+        
+        try {
+            const formSubmissionResult = await axios.put(apiURL+'card-data/update-card-view', jsonFormData, getAPIHeader());
 
-        const config = {
-            headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
-        }
+            if (formSubmissionResult.status === 204) {
+                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
+                setTimeout(() =>
+                    this.toggleModal(), 1500
+                );
+            }   
 
-        axios.post(apiURL+'card-data/update-card-view', formData, config)
-        .then(response => {
-            this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, submitSuccess: true, errors:[]}});
+            const badRequestErrors = (!formSubmissionResult.data.payload.errors.length > 1)
+            ? ['something went wrong']
+            : error.data.payload.errors;
 
-            setTimeout(() =>
-                this.toggleModal(), 1500
-            );
-        })
-        .catch(error => {
-            // console.log('erro', error.response);
-            const err = error.response;
-            const errors = err.data.payload.errors;
+            console.log('form submit result', formSubmissionResult);
+            this.setState({modalStatus:{modalSubmit: false}});
 
-            console.log('erro', errors);
-            
-            const badRequestErrors = (!errors.length > 1)
-                ? ['something went wrong']
-                : errors;
-
-            if (err.status === 400) {
-                this.setState({modalContent:{...this.state.modalContent, modalSubmit: false, errors: badRequestErrors}});
+            if (formSubmissionResult.status === 400) {
+                console.log('worng1');
+                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
             }
 
-            if (err.status === 404) {
-                this.setState({modalContent:{...this.state.modalContent,  modalSubmit: false, modalContent: emptyModalContent,  errors: badRequestErrors}});
+            if (formSubmissionResult.status === 404) {
+                console.log('worng1');
+                this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
                 this.toggleModal();
                 alert('Could not handle request please try again');
             }
 
-            if (err.status === 500) {
-                if (badRequestErrors === undefined) {
+            if (formSubmissionResult.status === 500) {
+                console.log('worng1');
+                if (formSubmissionResult === undefined) {
                     alert('Please logout something went wrong');
                 } else {
-                    this.setState({modalContent:{...this.state.modalContent,  modalSubmit: false, modalContent: emptyModalContent}});
+                    this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false, errors: badRequestErrors}});
                 }
             }
-        })
+        } catch(error) {
+            console.log(error, 'error');
+            const badRequestErrors = (!error.data.payload.errors.length > 1)
+            ? ['something went wrong']
+            : error.data.payload.errors;
+
+            console.log('form submit result', error);
+            this.setState({modalStatus:{modalSubmit: false}});
+
+            if (error.status === 400) {
+                console.log('worng22');
+                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
+            }
+
+            if (error.status === 404) {
+
+                console.log('worng22');
+                this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
+                this.toggleModal();
+                alert('Could not handle request please try again');
+            }
+
+            if (error.status === 500) {
+                console.log('worng22');
+                if (error === undefined) {
+                    alert('Please logout something went wrong');
+                } else {
+                    this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false, errors: badRequestErrors}});
+                }
+            }
+        }
     }
 
     render() {
@@ -277,6 +327,8 @@ class CardContextProvider extends Component {
                         handleModalFormInput: this.handleModalFormInput,
                         errors: this.state.errors,
                         alternativeDisplayMessage: this.state.alternativeDisplayMessage,
+                        userSelectionData: this.state.userSelectionData,
+                        modalStatus: this.state.modalStatus,
                     }}>
                         {this.props.children}
                     </CardContext.Provider>

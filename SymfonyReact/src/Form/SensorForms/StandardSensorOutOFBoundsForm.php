@@ -187,11 +187,8 @@ class StandardSensorOutOFBoundsForm extends AbstractType
         $builder
             ->add('constRecord', TextType::class, [
                 'required' => false,
-                'constraints' => [
-                    new NotBlank(),
-                ],
-            ])
-        ;
+                'empty_data' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

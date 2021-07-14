@@ -22,11 +22,6 @@ abstract class AbstractSensorService implements APIErrorInterface
     protected EntityManagerInterface $em;
 
     /**
-     * @var Security
-     */
-//    protected Security $security;
-
-    /**
      * @var FormFactoryInterface
      */
     protected FormFactoryInterface $formFactory;
@@ -63,7 +58,6 @@ abstract class AbstractSensorService implements APIErrorInterface
                 if ($sensorType === $sensorObject::class) {
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
-
                     if ($handledForm === true) {
                         $this->em->persist($sensorForm->getData());
                     }
@@ -78,7 +72,7 @@ abstract class AbstractSensorService implements APIErrorInterface
      * @param string $formToProcess
      * @return array
      */
-    protected function prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
+    protected function  prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
     {
         $currentSensorType = $sensorType->getSensorType();
         foreach (SensorType::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
@@ -86,40 +80,49 @@ abstract class AbstractSensorService implements APIErrorInterface
                 foreach ($sensorDataArrays['forms'] as $formType => $formData) {
                     if ($formType === $formToProcess) {
                         if ($formToProcess === SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY) {
-                            foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
-                                $highReading = $readingsToUpdate[$readingType.'-high-reading'] ?: null;
-                                $lowReading =  $readingsToUpdate[$readingType.'-low-reading'] ?: null;
-                                $constRecord = $readingsToUpdate[$readingType.'-const-record'] ?: null;
+                            foreach ($readingsToUpdate['sensorData'] as $sensorData) {
+                                foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
+                                    if ($readingType === $sensorData['sensorType']) {
+                                        $highReading = $sensorData['highReading'] ?: null;
+                                        $lowReading = $sensorData['lowReading'] ?: null;
+                                        $constRecord = $sensorData['constRecord'] ?? null;
 
-                                $sensorFormsData[$readingTypeClass] = [
-                                    'formToProcess' => $formData['form'],
-                                    'object' => $sensorDataArrays['object'],
-                                    'formData' => [
-                                        'highReading' => $highReading,
-                                        'lowReading' => $lowReading,
-                                        'constRecord' => $constRecord
-                                    ]
-                                ];
+                                        $sensorFormsData[$readingTypeClass] = [
+                                            'formToProcess' => $formData['form'],
+                                            'object' => $sensorDataArrays['object'],
+                                            'formData' => [
+                                                'highReading' => $highReading,
+                                                'lowReading' => $lowReading,
+                                                'constRecord' => $constRecord
+                                            ]
+                                        ];
+                                        continue;
+                                    }
+                                }
                             }
                             continue;
                         }
 
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
-                            foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
-                                $currentReading = $readingsToUpdate[$readingType.'currentReading'];
+                            foreach ($readingsToUpdate['sensorData'] as $sensorData) {
+                                foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
+                                    if ($readingType === $sensorData['sensorType']) {
+                                        $currentReading = $readingsToUpdate[$readingType . 'currentReading'];
 
-                                $readingErrorMessage = "%s %s has no value";
-                                !empty($currentReading) ?: $this->userInputErrors[] = sprintf($readingErrorMessage, ucfirst($readingType), 'current reading');
+                                        $readingErrorMessage = "%s %s has no value";
+                                        !empty($currentReading) ?: $this->userInputErrors[] = sprintf($readingErrorMessage, ucfirst($readingType), 'current reading');
 
-                                $sensorFormsData[$readingTypeClass] = [
-                                    'formToProcess' => $formData['form'],
-                                    'object' => $sensorDataArrays['object'],
-                                    'formData' => [
-                                        'currentReading' => $currentReading,
-                                    ]
-                                ];
+                                        $sensorFormsData[$readingTypeClass] = [
+                                            'formToProcess' => $formData['form'],
+                                            'object' => $sensorDataArrays['object'],
+                                            'formData' => [
+                                                'currentReading' => $currentReading,
+                                            ]
+                                        ];
+                                        continue;
+                                    }
+                                }
                             }
-                            continue;
                         }
                         //Any other forms can be added here
 

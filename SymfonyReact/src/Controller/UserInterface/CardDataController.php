@@ -133,7 +133,7 @@ class CardDataController extends AbstractController
 
 
     /**
-     * @Route("/update-card-view", name="updateCardView", methods={"POST"})
+     * @Route("/update-card-view", name="updateCardView", methods={"PUT"})
      * @param Request $request
      * @param SensorUserDataService $sensorDataService
      * @param CardUserDataService $cardDataService
@@ -141,7 +141,13 @@ class CardDataController extends AbstractController
      */
     public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
-        $cardViewID = $request->get('card-view-id');
+        try {
+            $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return $this->sendBadRequestJsonResponse(['Format not expected']);
+        }
+//dd($cardData);
+        $cardViewID = $cardData['cardViewID'];
 
         if (empty($cardViewID) || !is_numeric($cardViewID)) {
             return $this->sendBadRequestJsonResponse(['malformed card view id not recognised']);
@@ -164,9 +170,9 @@ class CardDataController extends AbstractController
         $cardViewForm = $this->createForm(CardViewForm::class, $cardViewObject);
 
         $cardViewData = [
-            'cardColourID' => $request->get('card-colour'),
-            'cardIconID' => $request->get('card-icon'),
-            'cardStateID' => $request->get('card-view-state'),
+            'cardColourID' => $cardData['cardColour'],
+            'cardIconID' => $cardData['cardIcon'],
+            'cardStateID' => $cardData['cardViewState'],
         ];
 
         $cardDataService->processForm($cardViewForm, $cardViewData);
@@ -179,7 +185,7 @@ class CardDataController extends AbstractController
 
         $sensorObject = $cardViewObject->getSensorNameID();
 
-        $sensorDataService->handleSensorReadingBoundary($sensorObject, $request->request->all());
+        $sensorDataService->handleSensorReadingBoundary($sensorObject, $cardData);
 
         if (!empty($sensorDataService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
@@ -191,6 +197,7 @@ class CardDataController extends AbstractController
 
         $em->flush();
 
+        return $this->sendBadRequestJsonResponse(['error yall']);
         return $this->sendSuccessfulUpdateJsonResponse();
     }
 }
