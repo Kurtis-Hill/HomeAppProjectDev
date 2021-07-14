@@ -3,7 +3,6 @@
 
 namespace App\DTOs\Sensors;
 
-
 use App\DTOs\Sensors\AbstractCardSensorDTO;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
