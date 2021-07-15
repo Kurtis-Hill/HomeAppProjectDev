@@ -6,10 +6,8 @@ namespace App\EventListeners;
 
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\User;
-use App\Services\UserServiceUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
 
 class JWTAuthenticatedListener

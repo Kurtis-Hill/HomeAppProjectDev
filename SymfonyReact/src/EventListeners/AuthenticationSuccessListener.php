@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\EventListeners;
 
 use App\Entity\Core\User;

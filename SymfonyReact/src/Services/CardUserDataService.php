@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\DTOs\Factorys\CardDTOs\CardViewDTOFactory;
 use App\DTOs\Factorys\CardDTOs\CardViewFormDTOFactory;
-use App\DTOs\Sensors\CardViewSensorFormDTO;
+use App\DTOs\Sensors\CardDTOs\CardViewSensorFormDTO;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
@@ -208,7 +208,6 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
                 $cardFormDTOFactory = new CardViewFormDTOFactory();
                 $cardViewFormDTO = $cardFormDTOFactory->makeDTO($cardData, $userSelectionData);
-//                $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
             }
             else {
                 $this->serverErrors[] = 'Sensor Not Recognised, You May Need To Update Your App';
