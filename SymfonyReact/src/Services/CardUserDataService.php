@@ -3,9 +3,9 @@
 
 namespace App\Services;
 
+use App\DTOs\Factorys\CardDTOs\CardViewDTOFactory;
 use App\DTOs\Factorys\CardDTOs\CardViewFormDTOFactory;
 use App\DTOs\Sensors\CardViewSensorFormDTO;
-use App\DTOs\Sensors\CurrentReadingCardDataDTO;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
@@ -16,7 +16,6 @@ use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -94,22 +93,22 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $this->serverErrors[] = 'Card Data Query Failure';
         }
 
+        $cardViewDTOFactory = new CardViewDTOFactory();
         if (!empty($sensorObjects)) {
                 foreach ($sensorObjects as $cardDTO) {
                     try {
-                        if ($cardDTO instanceof StandardSensorTypeInterface) {
-                            $cardViewObject = $this->em->getRepository(CardView::class)->findOneBy(
-                                [
-                                    'userID' => $this->getUser(),
-                                    'sensorNameID' => $cardDTO->getSensorNameID()
-                                ]
-                            );
-                            if (empty($cardViewObject) || !$cardViewObject instanceof CardView) {
-                                throw new BadRequestException('A Card Has Not Been Made For This Sensor ' . $cardDTO->getSensorObject()->getSensorName());
-                            }
-                            $cardDTO->setCardViewObject($cardViewObject);
-                            $cardDTOs[] = new CurrentReadingCardDataDTO($cardDTO);
+                        $cardViewObject = $this->em->getRepository(CardView::class)->findOneBy(
+                            [
+                                'userID' => $this->getUser(),
+                                'sensorNameID' => $cardDTO->getSensorNameID()
+                            ]
+                        );
+                        if (!$cardViewObject instanceof CardView) {
+                            throw new BadRequestException('A Card Has Not Been Made For This Sensor ' . $cardDTO->getSensorObject()->getSensorName());
                         }
+                        $cardDTO->setCardViewObject($cardViewObject);
+
+                        $cardDTOs[] = $cardViewDTOFactory->makeDTO($cardDTO);
                     } catch (BadRequestException $e) {
                         $this->cardErrors[] = $e->getMessage();
                     }

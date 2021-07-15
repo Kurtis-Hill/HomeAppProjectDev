@@ -5,8 +5,9 @@ namespace App\HomeAppSensorCore\Interfaces\DTO;
 
 
 use App\DTOs\Sensors\CurrentReadingCardDataDTO;
+use App\HomeAppSensorCore\Interfaces\SensorInterface;
 
 interface CurrentSensorReadingCardInterface
 {
-    public function makeDTO(): CurrentReadingCardDataDTO;
+    public function makeDTO(SensorInterface $sensorData): CurrentReadingCardDataDTO;
 }

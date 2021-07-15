@@ -3,11 +3,13 @@
 
 namespace App\DTOs\Sensors;
 
+use App\HomeAppSensorCore\Interfaces\DTO\AllCardViewDTOInterface;
+
 /**
  * Class CardViewSensorFormDTO
  * @package App\DTOs\Sensors
  */
-class CardViewSensorFormDTO
+class CardViewSensorFormDTO implements AllCardViewDTOInterface
 {
     /**
      * @var array
@@ -23,7 +25,6 @@ class CardViewSensorFormDTO
      * @var array
      */
     private array $usersCardSelections;
-
 
     /**
      * CardDataDTO constructor.

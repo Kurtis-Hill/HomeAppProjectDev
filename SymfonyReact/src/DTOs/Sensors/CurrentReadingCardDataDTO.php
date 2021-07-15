@@ -4,11 +4,12 @@
 namespace App\DTOs\Sensors;
 
 use App\DTOs\Sensors\AbstractCardSensorDTO;
+use App\HomeAppSensorCore\Interfaces\DTO\AllCardViewDTOInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-class CurrentReadingCardDataDTO extends AbstractCardSensorDTO
+class CurrentReadingCardDataDTO implements AllCardViewDTOInterface
 {
     /**
      * @var string
@@ -50,53 +51,24 @@ class CurrentReadingCardDataDTO extends AbstractCardSensorDTO
      * CardDataDTO constructor
      * @param StandardSensorTypeInterface $cardDTOData
      */
-    public function __construct(StandardSensorTypeInterface $cardDTOData)
+    public function __construct(
+        string $sensorName,
+        string $sensorType,
+        string $sensorRoom,
+        string $cardIcon,
+        string $cardColour,
+        int $cardViewID,
+        array $sensorData,
+    )
     {
-        $this->filterSensorTypes($cardDTOData);
-        $this->setCardViewData($cardDTOData);
+        $this->sensorName = $sensorName;
+        $this->sensorType = $sensorType;
+        $this->sensorRoom = $sensorRoom;
+        $this->cardIcon = $cardIcon;
+        $this->cardColour = $cardColour;
+        $this->cardViewID = $cardViewID;
 
-        if (empty($this->cardViewID) || empty($this->sensorName) || empty($this->cardIcon) || empty($this->sensorType) || empty($this->sensorRoom) || empty($this->cardColour)) {
-            throw new \RuntimeException('Some card datsetSensorDataa is missing');
-        }
-    }
 
-    protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void
-    {
-        $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
-
-        $this->sensorName =$cardDTOData->getSensorObject()->getSensorName();
-
-        $this->cardIcon = $cardDTOData->getCardViewObject()->getCardIconID()->getIconName();
-
-        $this->sensorType = $cardDTOData->getSensorObject()->getSensorTypeID()->getSensorType();
-
-        $this->sensorRoom = $cardDTOData->getSensorObject()->getDeviceNameID()->getRoomObject()->getRoom();
-
-        $this->cardColour = $cardDTOData->getCardViewObject()->getCardColourID()->getColour();
-    }
-
-    /**
-     * @param StandardReadingSensorInterface $sensorTypeObject
-     * @param string $type
-     * @param string|null $symbol
-     */
-    protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
-    {
-        try {
-            $this->sensorData[] = [
-                'sensorType' => $type,
-                'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
-                'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
-                'currentReading' => is_float($sensorTypeObject->getCurrentReading()) ?  number_format($sensorTypeObject->getCurrentReading(), 2) : $sensorTypeObject->getCurrentReading(),
-                'getCurrentHighDifference' => is_float($sensorTypeObject->getMeasurementDifferenceHighReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceHighReading(), 2) : $sensorTypeObject->getMeasurementDifferenceHighReading(),
-                'getCurrentLowDifference' => is_float($sensorTypeObject->getMeasurementDifferenceLowReading()) ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2) : $sensorTypeObject->getMeasurementDifferenceLowReading(),
-                'readingSymbol' => $symbol,
-                'time' => $sensorTypeObject->getTime()->format('d-m H:i:s')
-            ];
-        } catch (\Exception $exception) {
-            error_log($exception);
-
-        }
     }
 
     /**

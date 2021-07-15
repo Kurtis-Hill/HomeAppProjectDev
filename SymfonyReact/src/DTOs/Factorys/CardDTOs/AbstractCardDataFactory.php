@@ -40,5 +40,11 @@ abstract class AbstractCardDataFactory
         return $sensorData;
     }
 
+    /**
+     * @param StandardReadingSensorInterface $sensorTypeObject
+     * @param string $type
+     * @param string|null $symbol
+     * @return array
+     */
     abstract protected function setStandardSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): array;
 }

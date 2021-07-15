@@ -34,6 +34,7 @@ use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class CardDataControllerTest extends WebTestCase
@@ -328,7 +329,7 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals($cardView->getCardViewID(), $responseData['cardViewID']);
         self::assertEquals($cardView->getCardIconID()->getIconID(), $responseData['cardIcon']['iconID']);
         self::assertEquals($cardView->getCardColourID()->getColourID(), $responseData['cardColour']['colourID']);
-        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['stateID']);
+        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['cardStateID']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -380,7 +381,7 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals($cardView->getCardViewID(), $responseData['cardViewID']);
         self::assertEquals($cardView->getCardIconID()->getIconID(), $responseData['cardIcon']['iconID']);
         self::assertEquals($cardView->getCardColourID()->getColourID(), $responseData['cardColour']['colourID']);
-        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['stateID']);
+        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['cardStateID']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -431,7 +432,7 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals($cardView->getCardViewID(), $responseData['cardViewID']);
         self::assertEquals($cardView->getCardIconID()->getIconID(), $responseData['cardIcon']['iconID']);
         self::assertEquals($cardView->getCardColourID()->getColourID(), $responseData['cardColour']['colourID']);
-        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['stateID']);
+        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['cardStateID']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -482,7 +483,7 @@ class CardDataControllerTest extends WebTestCase
         self::assertEquals($cardView->getCardViewID(), $responseData['cardViewID']);
         self::assertEquals($cardView->getCardIconID()->getIconID(), $responseData['cardIcon']['iconID']);
         self::assertEquals($cardView->getCardColourID()->getColourID(), $responseData['cardColour']['colourID']);
-        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['stateID']);
+        self::assertEquals($cardView->getCardStateID()->getCardstateID(), $responseData['currentViewState']['cardStateID']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -544,2092 +545,2092 @@ class CardDataControllerTest extends WebTestCase
     }
 
     //updateCardView Tests
-    public function test_can_update_card_view_form_all_selections_bmp()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-        ];
-
-        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObject = $sensorReadingTypeObject->getTempObject();
-
-            $formData = array_merge($formData, [
-                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-                'temperature-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObject = $sensorReadingTypeObject->getHumidObject();
-
-            $formData = array_merge($formData, [
-                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-                'humidity-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
-
-            $formData = array_merge($formData, [
-                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-                'latitude-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObject = $sensorReadingTypeObject->getAnalogObject();
-
-            $formData = array_merge($formData, [
-                'analog-high-reading' => $analogObject->getHighReading() - 1,
-                'analog-low-reading' => $analogObject->getLowReading() - 1,
-                'analog-const-record' => true,
-            ]);
-        }
-
-        $this->client->request(
-            'PUT',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $readingFailureMessage = "%s %s reading failed for sensor: %s";
-        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
-
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
-            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
-            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
-            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
-
-            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
-            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
-            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
-            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
-            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
-            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
-            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
-            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
-            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-
-        $cardErrorMessage = "%s id did not match for: %s";
-
-        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
-
-        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_can_update_card_view_form_all_selections_dallas()
-    {
-        $sensorType = SensorType::DALLAS_TEMPERATURE;
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-        ];
-
-        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObject = $sensorReadingTypeObject->getTempObject();
-
-            $formData = array_merge($formData, [
-                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-                'temperature-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObject = $sensorReadingTypeObject->getHumidObject();
-
-            $formData = array_merge($formData, [
-                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-                'humidity-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
-
-            $formData = array_merge($formData, [
-                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-                'latitude-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObject = $sensorReadingTypeObject->getAnalogObject();
-
-            $formData = array_merge($formData, [
-                'analog-high-reading' => $analogObject->getHighReading() - 1,
-                'analog-low-reading' => $analogObject->getLowReading() - 1,
-                'analog-const-record' => true,
-            ]);
-        }
-
-        $this->client->request(
-            'PUT',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $readingFailureMessage = "%s %s reading failed for sensor: %s";
-        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
-
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
-            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
-            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
-            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
-
-            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
-            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
-            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
-            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
-            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
-            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
-            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
-            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
-            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-
-        $cardErrorMessage = "%s id did not match for: %s";
-
-        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
-
-        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_can_update_card_view_form_all_selections_soil()
-    {
-        $sensorType = SensorType::SOIL_SENSOR;
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-        ];
-
-        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObject = $sensorReadingTypeObject->getTempObject();
-
-            $formData = array_merge($formData, [
-                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-                'temperature-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObject = $sensorReadingTypeObject->getHumidObject();
-
-            $formData = array_merge($formData, [
-                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-                'humidity-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
-
-            $formData = array_merge($formData, [
-                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-                'latitude-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObject = $sensorReadingTypeObject->getAnalogObject();
-
-            $formData = array_merge($formData, [
-                'analog-high-reading' => $analogObject->getHighReading() - 1,
-                'analog-low-reading' => $analogObject->getLowReading() - 1,
-                'analog-const-record' => true,
-            ]);
-        }
-
-        $this->client->request(
-            'PUT',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $readingFailureMessage = "%s %s reading failed for sensor: %s";
-        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
-
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
-            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
-            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
-            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
-
-            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
-            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
-            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
-            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
-            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
-            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
-            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
-            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
-            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-
-        $cardErrorMessage = "%s id did not match for: %s";
-
-        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
-
-        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_can_update_card_view_form_all_selections_dht()
-    {
-        $sensorType = SensorType::DHT_SENSOR;
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-        ];
-
-        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObject = $sensorReadingTypeObject->getTempObject();
-
-            $formData = array_merge($formData, [
-                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-                'temperature-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObject = $sensorReadingTypeObject->getHumidObject();
-
-            $formData = array_merge($formData, [
-                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-                'humidity-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
-
-            $formData = array_merge($formData, [
-                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-                'latitude-const-record' => true,
-            ]);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObject = $sensorReadingTypeObject->getAnalogObject();
-
-            $formData = array_merge($formData, [
-                'analog-high-reading' => $analogObject->getHighReading() - 1,
-                'analog-low-reading' => $analogObject->getLowReading() - 1,
-                'analog-const-record' => true,
-            ]);
-        }
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $readingFailureMessage = "%s %s reading failed for sensor: %s";
-        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
-
-        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
-            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
-            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
-            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
-            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
-            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
-
-            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
-            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
-            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
-            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
-            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
-            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
-            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
-            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
-            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
-            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
-            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
-        }
-
-        $cardErrorMessage = "%s id did not match for: %s";
-
-        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
-        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
-        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
-
-        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
-    }
-
-
-
-    //updateCardView Tests Wrong Data
-
-    // Temperature
-    public function test_can_not_update_card_view_form_temperature_selections_outofrange_data_bmp()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $humidityObject = $sensorTypeObject->getHumidObject();
-        $latitudeObject = $sensorTypeObject->getLatitudeObject();
-
-        $highReading = 90;
-        $lowReading = -50;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $highReading,
-            'temperature-low-reading' => $lowReading,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-low-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
-        $lowString = "%s settings for %s sensor cannot be below %s%s you entered %s%s";
-
-        self::assertStringContainsString(sprintf(
-            $highString,
-            'Temperature',
-            $sensorType,
-            Bmp::HIGH_TEMPERATURE_READING_BOUNDRY,
-            Temperature::READING_SYMBOL,
-            $highReading,
-            Temperature::READING_SYMBOL
-        ), $responseData['payload']['errors'][0]);
-
-
-        self::assertStringContainsString(sprintf(
-            $lowString,
-            'Temperature',
-            $sensorType,
-            Bmp::LOW_TEMPERATURE_READING_BOUNDRY,
-            Temperature::READING_SYMBOL,
-            $lowReading,
-            Temperature::READING_SYMBOL
-        ), $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_can_not_update_card_view_form_temperature_selections_outofrange_data_dallas()
-    {
-        $sensorType = SensorType::DALLAS_TEMPERATURE;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $highReading = 130;
-        $lowReading = -60;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $highReading,
-            'temperature-low-reading' => $lowReading,
-            'temperature-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
-        $lowString = "%s settings for %s sensor cannot be below %s%s you entered %s%s";
-
-        self::assertStringContainsString(sprintf(
-            $highString,
-            'Temperature',
-            $sensorType,
-            Dallas::HIGH_TEMPERATURE_READING_BOUNDRY,
-            Temperature::READING_SYMBOL,
-            $highReading,
-            Temperature::READING_SYMBOL
-        ), $responseData['payload']['errors'][0]);
-
-
-        self::assertStringContainsString(sprintf(
-            $lowString,
-            'Temperature',
-            $sensorType,
-            Dallas::LOW_TEMPERATURE_READING_BOUNDRY,
-            Temperature::READING_SYMBOL,
-            $lowReading,
-            Temperature::READING_SYMBOL
-        ), $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_can_not_update_card_view_form_temperature_selections_outofrange_data_dht()
-    {
-        $sensorType = SensorType::DHT_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $humidityObject = $sensorTypeObject->getHumidObject();
-
-        $highReading = 85;
-        $lowReading = -45;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $highReading,
-            'temperature-low-reading' => $lowReading,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-low-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
-        $lowString = "%s settings for %s sensor cannot be below %s%s you entered %s%s";
-
-        self::assertStringContainsString(sprintf(
-            $highString,
-            'Temperature',
-            $sensorType,
-            Dht::HIGH_TEMPERATURE_READING_BOUNDRY,
-            Temperature::READING_SYMBOL,
-            $highReading,
-            Temperature::READING_SYMBOL
-        ), $responseData['payload']['errors'][0]);
-
-
-        self::assertStringContainsString(sprintf(
-            $lowString,
-            'Temperature',
-            $sensorType,
-            Dht::LOW_TEMPERATURE_READING_BOUNDRY,
-            Temperature::READING_SYMBOL,
-            $lowReading,
-            Temperature::READING_SYMBOL
-        ), $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_can_not_update_card_view_form_temperature_selections_outofrange_high_low_dht()
-    {
-        $sensorType = SensorType::DHT_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
+//    public function test_can_update_card_view_form_all_selections_bmp()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//        ];
+//
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObject = $sensorReadingTypeObject->getTempObject();
+//
+//            $formData = array_merge($formData, [
+//                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//                'temperature-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObject = $sensorReadingTypeObject->getHumidObject();
+//
+//            $formData = array_merge($formData, [
+//                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//                'humidity-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
+//
+//            $formData = array_merge($formData, [
+//                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//                'latitude-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObject = $sensorReadingTypeObject->getAnalogObject();
+//
+//            $formData = array_merge($formData, [
+//                'analog-high-reading' => $analogObject->getHighReading() - 1,
+//                'analog-low-reading' => $analogObject->getLowReading() - 1,
+//                'analog-const-record' => true,
+//            ]);
+//        }
+//
+//        $this->client->request(
+//            'PUT',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $readingFailureMessage = "%s %s reading failed for sensor: %s";
+//        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
+//
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
+//            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
+//            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
+//            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
+//
+//            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
+//            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
+//            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
+//            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
+//            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
+//            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
+//            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
+//            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
+//            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//
+//        $cardErrorMessage = "%s id did not match for: %s";
+//
+//        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+//        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+//        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_can_update_card_view_form_all_selections_dallas()
+//    {
+//        $sensorType = SensorType::DALLAS_TEMPERATURE;
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//        ];
+//
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObject = $sensorReadingTypeObject->getTempObject();
+//
+//            $formData = array_merge($formData, [
+//                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//                'temperature-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObject = $sensorReadingTypeObject->getHumidObject();
+//
+//            $formData = array_merge($formData, [
+//                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//                'humidity-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
+//
+//            $formData = array_merge($formData, [
+//                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//                'latitude-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObject = $sensorReadingTypeObject->getAnalogObject();
+//
+//            $formData = array_merge($formData, [
+//                'analog-high-reading' => $analogObject->getHighReading() - 1,
+//                'analog-low-reading' => $analogObject->getLowReading() - 1,
+//                'analog-const-record' => true,
+//            ]);
+//        }
+//
+//        $this->client->request(
+//            'PUT',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $readingFailureMessage = "%s %s reading failed for sensor: %s";
+//        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
+//
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
+//            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
+//            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
+//            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
+//
+//            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
+//            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
+//            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
+//            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
+//            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
+//            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
+//            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
+//            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
+//            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//
+//        $cardErrorMessage = "%s id did not match for: %s";
+//
+//        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+//        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+//        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_can_update_card_view_form_all_selections_soil()
+//    {
+//        $sensorType = SensorType::SOIL_SENSOR;
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//        ];
+//
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObject = $sensorReadingTypeObject->getTempObject();
+//
+//            $formData = array_merge($formData, [
+//                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//                'temperature-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObject = $sensorReadingTypeObject->getHumidObject();
+//
+//            $formData = array_merge($formData, [
+//                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//                'humidity-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
+//
+//            $formData = array_merge($formData, [
+//                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//                'latitude-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObject = $sensorReadingTypeObject->getAnalogObject();
+//
+//            $formData = array_merge($formData, [
+//                'analog-high-reading' => $analogObject->getHighReading() - 1,
+//                'analog-low-reading' => $analogObject->getLowReading() - 1,
+//                'analog-const-record' => true,
+//            ]);
+//        }
+//
+//        $this->client->request(
+//            'PUT',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $readingFailureMessage = "%s %s reading failed for sensor: %s";
+//        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
+//
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
+//            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
+//            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
+//            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
+//
+//            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
+//            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
+//            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
+//            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
+//            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
+//            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
+//            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
+//            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
+//            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//
+//        $cardErrorMessage = "%s id did not match for: %s";
+//
+//        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+//        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+//        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_can_update_card_view_form_all_selections_dht()
+//    {
+//        $sensorType = SensorType::DHT_SENSOR;
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//        ];
+//
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObject = $sensorReadingTypeObject->getTempObject();
+//
+//            $formData = array_merge($formData, [
+//                'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//                'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//                'temperature-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObject = $sensorReadingTypeObject->getHumidObject();
+//
+//            $formData = array_merge($formData, [
+//                'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//                'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//                'humidity-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObject = $sensorReadingTypeObject->getLatitudeObject();
+//
+//            $formData = array_merge($formData, [
+//                'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//                'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//                'latitude-const-record' => true,
+//            ]);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObject = $sensorReadingTypeObject->getAnalogObject();
+//
+//            $formData = array_merge($formData, [
+//                'analog-high-reading' => $analogObject->getHighReading() - 1,
+//                'analog-low-reading' => $analogObject->getLowReading() - 1,
+//                'analog-const-record' => true,
+//            ]);
+//        }
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $readingFailureMessage = "%s %s reading failed for sensor: %s";
+//        $constFailureMessage = sprintf("const record failed for sensor: %s", '$sensorName');
+//
+//        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
+//            $temperatureObjectAfter = $sensorReadingTypeAfter->getTempObject();
+//            self::assertEquals($formData['temperature-high-reading'], $temperatureObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'temperature', 'high', $sensorName));
+//            self::assertEquals($formData['temperature-low-reading'], $temperatureObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'temperature', 'low', $sensorName));
+//            self::assertEquals($formData['temperature-const-record'], $temperatureObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof HumiditySensorTypeInterface) {
+//            $humidityObjectAfter = $sensorReadingTypeAfter->getHumidObject();
+//
+//            self::assertEquals($formData['humidity-high-reading'], $humidityObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'humidity', 'high', $sensorName));
+//            self::assertEquals($formData['humidity-low-reading'], $humidityObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'humidity', 'low', $sensorName));
+//            self::assertEquals($formData['humidity-const-record'], $humidityObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof LatitudeSensorTypeInterface) {
+//            $latitudeObjectAfter = $sensorReadingTypeAfter->getLatitudeObject();
+//            self::assertEquals($formData['latitude-high-reading'], $latitudeObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'latitude', 'high', $sensorName));
+//            self::assertEquals($formData['latitude-low-reading'], $latitudeObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'latitude', 'low', $sensorName));
+//            self::assertEquals($formData['latitude-const-record'], $latitudeObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//        if($sensorReadingTypeObject instanceof AnalogSensorTypeInterface) {
+//            $analogObjectAfter = $sensorReadingTypeAfter->getAnalogObject();
+//            self::assertEquals($formData['analog-high-reading'], $analogObjectAfter->getHighReading(), sprintf($readingFailureMessage, 'analog', 'high', $sensorName));
+//            self::assertEquals($formData['analog-low-reading'], $analogObjectAfter->getLowReading(), sprintf($readingFailureMessage, 'analog', 'low', $sensorName));
+//            self::assertEquals($formData['analog-const-record'], $analogObjectAfter->getConstRecord(), $constFailureMessage);
+//        }
+//
+//        $cardErrorMessage = "%s id did not match for: %s";
+//
+//        self::assertEquals($formData['cardColour'], $cardViewObjectAfter->getCardColourID()->getColourID(), sprintf($cardErrorMessage, 'colour', $sensorName));
+//        self::assertEquals($formData['cardIcon'], $cardViewObjectAfter->getCardIconID()->getIconID(), sprintf($cardErrorMessage, 'icon', $sensorName));
+//        self::assertEquals($formData['cardViewState'], $cardViewObjectAfter->getCardStateID()->getCardstateID(), sprintf($cardErrorMessage, 'card state', $sensorName));
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//
+//    //updateCardView Tests Wrong Data
+//
+//    // Temperature
+//    public function test_can_not_update_card_view_form_temperature_selections_outofrange_data_bmp()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
 //        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $highReading = 20;
-        $lowReading = 30;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $highReading,
-            'temperature-low-reading' => $lowReading,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $highReading,
-            'humidity-low-reading' => $lowReading,
-            'humidity-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertStringContainsString('High reading for temperature cannot be lower than low reading', $responseData['payload']['errors'][0]);
-        self::assertStringContainsString('High reading for humidity cannot be lower than low reading', $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    // Humidity
-    public function test_can_not_update_card_view_form_humidity_selections_outofrange_data_bmp()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $sensorTypeObject->getTempObject();
-        $latitudeObject = $sensorTypeObject->getLatitudeObject();
-
-        $highReading = 110;
-        $lowReading = -5;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $highReading,
-            'humidity-low-reading' => $lowReading,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $highString = "Humidity for this sensor cannot be over 100 you entered %s%s";
-        $lowString = "Humidity for this sensor cannot be under 0 you entered %s%s";
-
-        self::assertStringContainsString(sprintf(
-            $highString,
-            $highReading,
-            Humidity::READING_SYMBOL
-        ), $responseData['payload']['errors'][0]);
-
-
-        self::assertStringContainsString(sprintf(
-            $lowString,
-            $lowReading,
-            Humidity::READING_SYMBOL
-        ), $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_can_not_update_card_view_form_humidity_selections_outofrange_data_dht()
-    {
-        $sensorType = SensorType::DHT_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $sensorTypeObject->getTempObject();
-
-        $highReading = 110;
-        $lowReading = -5;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $highReading,
-            'humidity-low-reading' => $lowReading,
-            'humidity-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $highString = "Humidity for this sensor cannot be over 100 you entered %s%s";
-        $lowString = "Humidity for this sensor cannot be under 0 you entered %s%s";
-
-        self::assertStringContainsString(sprintf(
-            $highString,
-            $highReading,
-            Humidity::READING_SYMBOL
-        ), $responseData['payload']['errors'][0]);
-
-
-        self::assertStringContainsString(sprintf(
-            $lowString,
-            $lowReading,
-            Humidity::READING_SYMBOL
-        ), $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_can_not_update_card_view_form_humidity_selections_high_low_data_dht()
-    {
-        $sensorType = SensorType::DHT_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $sensorTypeObject->getTempObject();
-
-        $highReading = 30;
-        $lowReading = 40;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $highReading,
-            'humidity-low-reading' => $lowReading,
-            'humidity-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertStringContainsString("High reading for humidity cannot be lower than low reading", $responseData['payload']['errors'][0]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    // Latitude
-    public function test_can_not_update_card_view_form_latitude_selections_high_low_data_bmp()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $sensorTypeObject->getTempObject();
-        $humidObject = $sensorTypeObject->getHumidObject();
-
-        $highReading = 95;
-        $lowReading = -5;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidObject->getHighReading() + 1,
-            'humidity-low-reading' => $humidObject->getLowReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $highReading,
-            'latitude-low-reading' => $lowReading,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $highString = "The highest possible latitude is 90 you entered \"%s\"";
-        $lowString = "The lowest possible latitude is 0 you entered \"%s\"";
-
-        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['payload']['errors'][0]);
-        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    // Analog
-
-    public function test_can_not_update_card_view_form_analog_selections_high_low_data_soil()
-    {
-        $sensorType = SensorType::SOIL_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $highReading = 10000;
-        $lowReading = 999;
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'analog-high-reading' => $highReading,
-            'analog-low-reading' => $lowReading,
-            'analog-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $highString = "Reading for this sensor cannot be over 9999 you entered \"%s\"";
-        $lowString = "Reading for this sensor cannot be under 1000 you entered \"%s\"";
-
-        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['payload']['errors'][0]);
-        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['payload']['errors'][1]);
-
-        $analogObject = $sensorTypeObjectAfter->getAnalogObject();
-        self::assertNotEquals($formData['analog-high-reading'], $analogObject->getHighReading());
-        self::assertNotEquals($formData['analog-low-reading'], $analogObject->getLowReading());
-        self::assertNotEquals($formData['analog-const-record'], $analogObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-
-    public function test_can_update_card_view_form_latitude_selections_outofrange_data_bmp()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $bmpSensor->getTempObject();
-        $humidityObject = $bmpSensor->getHumidObject();
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => '100',
-            'latitude-low-reading' => '-5',
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('The highest possible latitude is 90 you entered "100"', $responseData['payload']['errors'][0]);
-        self::assertStringContainsString('The lowest possible latitude is 0 you entered "-5"', $responseData['payload']['errors'][1]);
-
-        $temperatureObject = $bmpSensor->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $bmpSensor->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_cannot_add_wrong_const_record_input()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $bmpSensor->getTempObject();
-        $humidityObject = $bmpSensor->getHumidObject();
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => '$newColour',
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
-
-        $temperatureObject = $bmpSensor->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $bmpSensor->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_cannot_add_wrong_card_colour_record_input()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        while (true) {
-            $randomInt = random_int(0, 10000);
-            $newCardColour = $this->entityManager->getRepository(CardColour::class)->findOneBy(['colourID' => $randomInt]);
-
-            if ($newCardColour === null) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $bmpSensor->getTempObject();
-        $humidityObject = $bmpSensor->getHumidObject();
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $randomInt,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
-
-        $temperatureObject = $bmpSensor->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $bmpSensor->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_cannot_add_wrong_icon_record_input()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
-
-        while (true) {
-            $randomInt = random_int(0, 10000);
-            $newCardIcon = $this->entityManager->getRepository(Icons::class)->findOneBy(['iconID' => $randomInt]);
-
-            if ($newCardIcon === null) {
-                break;
-            }
-        }
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardStates as $state) {
-            $newState = $state->getCardstateID();
-
-            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
-                break;
-            }
-        }
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $bmpSensor->getTempObject();
-        $humidityObject = $bmpSensor->getHumidObject();
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $randomInt,
-            'cardViewState' => $newState,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
-
-        $temperatureObject = $bmpSensor->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $bmpSensor->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_cannot_add_wrong_card_view_state()
-    {
-        $sensorType = SensorType::BMP_SENSOR;
-
-        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-
-        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-
-        while (true) {
-            $randomInt = random_int(0, 10000);
-            $newCardState = $this->entityManager->getRepository(Cardstate::class)->findOneBy(['cardStateID' => $randomInt]);
-
-            if ($newCardState === null) {
-                break;
-            }
-        }
-
-        foreach ($cardColours as $colour) {
-            $newColour = $colour->getColourID();
-
-            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
-                break;
-            }
-        }
-
-        foreach ($cardIcons as $icon) {
-            $newIcon = $icon->getIconID();
-
-            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
-                break;
-            }
-        }
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-        $temperatureObject = $bmpSensor->getTempObject();
-        $humidityObject = $bmpSensor->getHumidObject();
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-
-        $formData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $newColour,
-            'cardIcon' => $newIcon,
-            'cardViewState' => $randomInt,
-
-            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
-            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
-            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
-            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
-
-        $temperatureObject = $bmpSensor->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $bmpSensor->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $bmpSensor->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
-        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
-        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-
-    public function test_cannot_adjust_none_existant_card_view()
-    {
-        $cardColour = $this->entityManager->getRepository(CardColour::class)->findAll()[0]->getColourID();
-        $cardIcon = $this->entityManager->getRepository(Icons::class)->findAll()[0]->getIconID();
-        $cardState = $this->entityManager->getRepository(Cardstate::class)->findAll()[0]->getCardstateID();
-
-        while (true) {
-            $randomInt = random_int(1, 1000);
-
-            $card = $this->entityManager->getRepository(CardView::class)->findOneBy(['cardViewID' => $randomInt]);
-
-            if ($card === null) {
-                break;
-            }
-        }
-
-        $formData = [
-            'cardViewID' => $randomInt,
-            'cardColour' => $cardColour,
-            'cardIcon' => $cardIcon,
-            'cardViewState' => $cardState,
-
-            'temperature-high-reading' => '40',
-            'temperature-low-reading' => '10',
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => '10',
-            'humidity-low-reading' => '60',
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => '10',
-            'latitude-low-reading' => '30',
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_cannot_adjust_not_owened_card_view()
-    {
-        $cardColour = $this->entityManager->getRepository(CardColour::class)->findAll()[0]->getColourID();
-        $cardIcon = $this->entityManager->getRepository(Icons::class)->findAll()[0]->getIconID();
-        $cardState = $this->entityManager->getRepository(Cardstate::class)->findAll()[0]->getCardstateID();
-        $cards = $this->entityManager->getRepository(CardView::class)->findAll();
-
-        foreach ($cards as $card) {
-            /**
-             * @var CardView $card
-             */
-            if ($card->getSensorNameID()->getSensorName() === 'Bmp0' && $card->getUserID()->getUserID() !== $this->testUser->getUserID()) {
-                $cardNotOwnedByUser = $card;
-                break;
-            }
-        }
-
-        $formData = [
-            'cardViewID' => $cardNotOwnedByUser->getCardViewID(),
-            'cardColour' => $cardColour,
-            'cardIcon' => $cardIcon,
-            'cardViewState' => $cardState,
-
-            'temperature-high-reading' => '40',
-            'temperature-low-reading' => '15',
-            'temperature-const-record' => true,
-
-            'humidity-high-reading' => '10',
-            'humidity-low-reading' => '60',
-            'humidity-const-record' => true,
-
-            'latitude-high-reading' => '15',
-            'latitude-low-reading' => '5',
-            'latitude-const-record' => true,
-        ];
-
-        $this->client->request(
-            'POST',
-            self::API_UPDATE_CARD_VIEW_FORM,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-        );
-
-        $sensorTypeObjectAfter = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $card->getSensorNameID()->getSensorNameID()]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
-        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
-        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
-        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
-
-        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
-        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
-        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
-        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
-
-        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
-        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
-        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
-        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
-
-        self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
-        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
-    }
+//        $humidityObject = $sensorTypeObject->getHumidObject();
+//        $latitudeObject = $sensorTypeObject->getLatitudeObject();
+//
+//        $highReading = 90;
+//        $lowReading = -50;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $highReading,
+//            'temperature-low-reading' => $lowReading,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
+//        $lowString = "%s settings for %s sensor cannot be below %s%s you entered %s%s";
+//
+//        self::assertStringContainsString(sprintf(
+//            $highString,
+//            'Temperature',
+//            $sensorType,
+//            Bmp::HIGH_TEMPERATURE_READING_BOUNDRY,
+//            Temperature::READING_SYMBOL,
+//            $highReading,
+//            Temperature::READING_SYMBOL
+//        ), $responseData['payload']['errors'][0]);
+//
+//
+//        self::assertStringContainsString(sprintf(
+//            $lowString,
+//            'Temperature',
+//            $sensorType,
+//            Bmp::LOW_TEMPERATURE_READING_BOUNDRY,
+//            Temperature::READING_SYMBOL,
+//            $lowReading,
+//            Temperature::READING_SYMBOL
+//        ), $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_can_not_update_card_view_form_temperature_selections_outofrange_data_dallas()
+//    {
+//        $sensorType = SensorType::DALLAS_TEMPERATURE;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $highReading = 130;
+//        $lowReading = -60;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $highReading,
+//            'temperature-low-reading' => $lowReading,
+//            'temperature-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
+//        $lowString = "%s settings for %s sensor cannot be below %s%s you entered %s%s";
+//
+//        self::assertStringContainsString(sprintf(
+//            $highString,
+//            'Temperature',
+//            $sensorType,
+//            Dallas::HIGH_TEMPERATURE_READING_BOUNDRY,
+//            Temperature::READING_SYMBOL,
+//            $highReading,
+//            Temperature::READING_SYMBOL
+//        ), $responseData['payload']['errors'][0]);
+//
+//
+//        self::assertStringContainsString(sprintf(
+//            $lowString,
+//            'Temperature',
+//            $sensorType,
+//            Dallas::LOW_TEMPERATURE_READING_BOUNDRY,
+//            Temperature::READING_SYMBOL,
+//            $lowReading,
+//            Temperature::READING_SYMBOL
+//        ), $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_can_not_update_card_view_form_temperature_selections_outofrange_data_dht()
+//    {
+//        $sensorType = SensorType::DHT_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $humidityObject = $sensorTypeObject->getHumidObject();
+//
+//        $highReading = 85;
+//        $lowReading = -45;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $highReading,
+//            'temperature-low-reading' => $lowReading,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        $highString = "%s settings for %s sensor cannot exceed %u%s you entered %s%s";
+//        $lowString = "%s settings for %s sensor cannot be below %s%s you entered %s%s";
+//
+//        self::assertStringContainsString(sprintf(
+//            $highString,
+//            'Temperature',
+//            $sensorType,
+//            Dht::HIGH_TEMPERATURE_READING_BOUNDRY,
+//            Temperature::READING_SYMBOL,
+//            $highReading,
+//            Temperature::READING_SYMBOL
+//        ), $responseData['payload']['errors'][0]);
+//
+//
+//        self::assertStringContainsString(sprintf(
+//            $lowString,
+//            'Temperature',
+//            $sensorType,
+//            Dht::LOW_TEMPERATURE_READING_BOUNDRY,
+//            Temperature::READING_SYMBOL,
+//            $lowReading,
+//            Temperature::READING_SYMBOL
+//        ), $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_can_not_update_card_view_form_temperature_selections_outofrange_high_low_dht()
+//    {
+//        $sensorType = SensorType::DHT_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+////        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $highReading = 20;
+//        $lowReading = 30;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $highReading,
+//            'temperature-low-reading' => $lowReading,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $highReading,
+//            'humidity-low-reading' => $lowReading,
+//            'humidity-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertStringContainsString('High reading for temperature cannot be lower than low reading', $responseData['payload']['errors'][0]);
+//        self::assertStringContainsString('High reading for humidity cannot be lower than low reading', $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    // Humidity
+//    public function test_can_not_update_card_view_form_humidity_selections_outofrange_data_bmp()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $sensorTypeObject->getTempObject();
+//        $latitudeObject = $sensorTypeObject->getLatitudeObject();
+//
+//        $highReading = 110;
+//        $lowReading = -5;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $highReading,
+//            'humidity-low-reading' => $lowReading,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        $highString = "Humidity for this sensor cannot be over 100 you entered %s%s";
+//        $lowString = "Humidity for this sensor cannot be under 0 you entered %s%s";
+//
+//        self::assertStringContainsString(sprintf(
+//            $highString,
+//            $highReading,
+//            Humidity::READING_SYMBOL
+//        ), $responseData['payload']['errors'][0]);
+//
+//
+//        self::assertStringContainsString(sprintf(
+//            $lowString,
+//            $lowReading,
+//            Humidity::READING_SYMBOL
+//        ), $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_can_not_update_card_view_form_humidity_selections_outofrange_data_dht()
+//    {
+//        $sensorType = SensorType::DHT_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $sensorTypeObject->getTempObject();
+//
+//        $highReading = 110;
+//        $lowReading = -5;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $highReading,
+//            'humidity-low-reading' => $lowReading,
+//            'humidity-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        $highString = "Humidity for this sensor cannot be over 100 you entered %s%s";
+//        $lowString = "Humidity for this sensor cannot be under 0 you entered %s%s";
+//
+//        self::assertStringContainsString(sprintf(
+//            $highString,
+//            $highReading,
+//            Humidity::READING_SYMBOL
+//        ), $responseData['payload']['errors'][0]);
+//
+//
+//        self::assertStringContainsString(sprintf(
+//            $lowString,
+//            $lowReading,
+//            Humidity::READING_SYMBOL
+//        ), $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_can_not_update_card_view_form_humidity_selections_high_low_data_dht()
+//    {
+//        $sensorType = SensorType::DHT_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $sensorTypeObject->getTempObject();
+//
+//        $highReading = 30;
+//        $lowReading = 40;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $highReading,
+//            'humidity-low-reading' => $lowReading,
+//            'humidity-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertStringContainsString("High reading for humidity cannot be lower than low reading", $responseData['payload']['errors'][0]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    // Latitude
+//    public function test_can_not_update_card_view_form_latitude_selections_high_low_data_bmp()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $sensorTypeObject->getTempObject();
+//        $humidObject = $sensorTypeObject->getHumidObject();
+//
+//        $highReading = 95;
+//        $lowReading = -5;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() +1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidObject->getHighReading() + 1,
+//            'humidity-low-reading' => $humidObject->getLowReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $highReading,
+//            'latitude-low-reading' => $lowReading,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        $highString = "The highest possible latitude is 90 you entered \"%s\"";
+//        $lowString = "The lowest possible latitude is 0 you entered \"%s\"";
+//
+//        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['payload']['errors'][0]);
+//        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    // Analog
+//
+//    public function test_can_not_update_card_view_form_analog_selections_high_low_data_soil()
+//    {
+//        $sensorType = SensorType::SOIL_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $highReading = 10000;
+//        $lowReading = 999;
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'analog-high-reading' => $highReading,
+//            'analog-low-reading' => $lowReading,
+//            'analog-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Entity\Sensors\SensorTypes\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        $highString = "Reading for this sensor cannot be over 9999 you entered \"%s\"";
+//        $lowString = "Reading for this sensor cannot be under 1000 you entered \"%s\"";
+//
+//        self::assertStringContainsString(sprintf($highString, $highReading), $responseData['payload']['errors'][0]);
+//        self::assertStringContainsString(sprintf($lowString, $lowReading), $responseData['payload']['errors'][1]);
+//
+//        $analogObject = $sensorTypeObjectAfter->getAnalogObject();
+//        self::assertNotEquals($formData['analog-high-reading'], $analogObject->getHighReading());
+//        self::assertNotEquals($formData['analog-low-reading'], $analogObject->getLowReading());
+//        self::assertNotEquals($formData['analog-const-record'], $analogObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//
+//    public function test_can_update_card_view_form_latitude_selections_outofrange_data_bmp()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        $humidityObject = $bmpSensor->getHumidObject();
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => '100',
+//            'latitude-low-reading' => '-5',
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        self::assertStringContainsString('The highest possible latitude is 90 you entered "100"', $responseData['payload']['errors'][0]);
+//        self::assertStringContainsString('The lowest possible latitude is 0 you entered "-5"', $responseData['payload']['errors'][1]);
+//
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_cannot_add_wrong_const_record_input()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => '$newColour',
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
+//
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_cannot_add_wrong_card_colour_record_input()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        while (true) {
+//            $randomInt = random_int(0, 10000);
+//            $newCardColour = $this->entityManager->getRepository(CardColour::class)->findOneBy(['colourID' => $randomInt]);
+//
+//            if ($newCardColour === null) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $randomInt,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
+//
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_cannot_add_wrong_icon_record_input()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardStates = $this->entityManager->getRepository(Cardstate::class)->findAll();
+//
+//        while (true) {
+//            $randomInt = random_int(0, 10000);
+//            $newCardIcon = $this->entityManager->getRepository(Icons::class)->findOneBy(['iconID' => $randomInt]);
+//
+//            if ($newCardIcon === null) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardStates as $state) {
+//            $newState = $state->getCardstateID();
+//
+//            if ($newState !== $cardViewObject->getCardStateID()->getCardstateID()) {
+//                break;
+//            }
+//        }
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $randomInt,
+//            'cardViewState' => $newState,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
+//
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_cannot_add_wrong_card_view_state()
+//    {
+//        $sensorType = SensorType::BMP_SENSOR;
+//
+//        $sensorTypeObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+//
+//        $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorTypeID' => $sensorTypeObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $cardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+//        $cardIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+//
+//        while (true) {
+//            $randomInt = random_int(0, 10000);
+//            $newCardState = $this->entityManager->getRepository(Cardstate::class)->findOneBy(['cardStateID' => $randomInt]);
+//
+//            if ($newCardState === null) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardColours as $colour) {
+//            $newColour = $colour->getColourID();
+//
+//            if ($newColour !== $cardViewObject->getCardColourID()->getColourID()) {
+//                break;
+//            }
+//        }
+//
+//        foreach ($cardIcons as $icon) {
+//            $newIcon = $icon->getIconID();
+//
+//            if ($newIcon !== $cardViewObject->getCardIconID()->getIconID()) {
+//                break;
+//            }
+//        }
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//
+//        $formData = [
+//            'cardViewID' => $cardViewObject->getCardViewID(),
+//            'cardColour' => $newColour,
+//            'cardIcon' => $newIcon,
+//            'cardViewState' => $randomInt,
+//
+//            'temperature-high-reading' => $temperatureObject->getHighReading() + 1,
+//            'temperature-low-reading' => $temperatureObject->getLowReading() + 1,
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => $humidityObject->getHighReading() + 1,
+//            'humidity-low-reading' => $humidityObject->getLowReading() + 1,
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => $latitudeObject->getHighReading() + 1,
+//            'latitude-low-reading' => $latitudeObject->getLowReading() + 1,
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $bmpSensor = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensorObject]);
+//
+//        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        self::assertStringContainsString('This value is not valid.', $responseData['payload']['errors'][0]);
+//
+//        $temperatureObject = $bmpSensor->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $bmpSensor->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $bmpSensor->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertNotEquals($formData['cardColour'], $cardViewObject->getCardColourID()->getColourID());
+//        self::assertNotEquals($formData['cardIcon'], $cardViewObject->getCardIconID()->getIconID());
+//        self::assertNotEquals($formData['cardViewState'], $cardViewObject->getCardStateID()->getCardstateID());
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//
+//    public function test_cannot_adjust_none_existant_card_view()
+//    {
+//        $cardColour = $this->entityManager->getRepository(CardColour::class)->findAll()[0]->getColourID();
+//        $cardIcon = $this->entityManager->getRepository(Icons::class)->findAll()[0]->getIconID();
+//        $cardState = $this->entityManager->getRepository(Cardstate::class)->findAll()[0]->getCardstateID();
+//
+//        while (true) {
+//            $randomInt = random_int(1, 1000);
+//
+//            $card = $this->entityManager->getRepository(CardView::class)->findOneBy(['cardViewID' => $randomInt]);
+//
+//            if ($card === null) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'cardViewID' => $randomInt,
+//            'cardColour' => $cardColour,
+//            'cardIcon' => $cardIcon,
+//            'cardViewState' => $cardState,
+//
+//            'temperature-high-reading' => '40',
+//            'temperature-low-reading' => '10',
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => '10',
+//            'humidity-low-reading' => '60',
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => '10',
+//            'latitude-low-reading' => '30',
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_cannot_adjust_not_owened_card_view()
+//    {
+//        $cardColour = $this->entityManager->getRepository(CardColour::class)->findAll()[0]->getColourID();
+//        $cardIcon = $this->entityManager->getRepository(Icons::class)->findAll()[0]->getIconID();
+//        $cardState = $this->entityManager->getRepository(Cardstate::class)->findAll()[0]->getCardstateID();
+//        $cards = $this->entityManager->getRepository(CardView::class)->findAll();
+//
+//        foreach ($cards as $card) {
+//            /**
+//             * @var CardView $card
+//             */
+//            if ($card->getSensorNameID()->getSensorName() === 'Bmp0' && $card->getUserID()->getUserID() !== $this->testUser->getUserID()) {
+//                $cardNotOwnedByUser = $card;
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'cardViewID' => $cardNotOwnedByUser->getCardViewID(),
+//            'cardColour' => $cardColour,
+//            'cardIcon' => $cardIcon,
+//            'cardViewState' => $cardState,
+//
+//            'temperature-high-reading' => '40',
+//            'temperature-low-reading' => '15',
+//            'temperature-const-record' => true,
+//
+//            'humidity-high-reading' => '10',
+//            'humidity-low-reading' => '60',
+//            'humidity-const-record' => true,
+//
+//            'latitude-high-reading' => '15',
+//            'latitude-low-reading' => '5',
+//            'latitude-const-record' => true,
+//        ];
+//
+//        $this->client->request(
+//            'POST',
+//            self::API_UPDATE_CARD_VIEW_FORM,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//        );
+//
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $card->getSensorNameID()->getSensorNameID()]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        $temperatureObject = $sensorTypeObjectAfter->getTempObject();
+//        self::assertNotEquals($formData['temperature-high-reading'], $temperatureObject->getHighReading());
+//        self::assertNotEquals($formData['temperature-low-reading'], $temperatureObject->getLowReading());
+//        self::assertNotEquals($formData['temperature-const-record'], $temperatureObject->getConstRecord());
+//
+//        $humidityObject = $sensorTypeObjectAfter->getHumidObject();
+//        self::assertNotEquals($formData['humidity-high-reading'], $humidityObject->getHighReading());
+//        self::assertNotEquals($formData['humidity-low-reading'], $humidityObject->getLowReading());
+//        self::assertNotEquals($formData['humidity-const-record'], $humidityObject->getConstRecord());
+//
+//        $latitudeObject = $sensorTypeObjectAfter->getLatitudeObject();
+//        self::assertNotEquals($formData['latitude-high-reading'], $latitudeObject->getHighReading());
+//        self::assertNotEquals($formData['latitude-low-reading'], $latitudeObject->getLowReading());
+//        self::assertNotEquals($formData['latitude-const-record'], $latitudeObject->getConstRecord());
+//
+//        self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
+//        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+//    }
 
 
     // Route Authentication Test
@@ -2672,7 +2673,7 @@ class CardDataControllerTest extends WebTestCase
     public function test_getting_update_card_view_wrong_token()
     {
         $this->client->request(
-            'POST',
+            Request::METHOD_PUT,
             self::API_UPDATE_CARD_VIEW_FORM,
             [],
             [],
