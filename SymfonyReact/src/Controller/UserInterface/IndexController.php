@@ -8,11 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-/**
- * @Route("/HomeApp/WebApp")
- *
- * whole app needs to handle exceptions and all the status codes properly, just getting the app on its feat first
- */
+
+#[Route('/HomeApp/WebApp', name: 'home')]
 class IndexController extends AbstractController
 {
     /**
@@ -21,7 +18,7 @@ class IndexController extends AbstractController
      * @param $route
      * @return Response
      */
-    #[Route('/{route}', name: 'spa-view')]
+    #[Route('/{route}', name: 'spa-view', methods: [Request::METHOD_GET])]
     public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route): Response
     {
         if (!$this->getUser()) {

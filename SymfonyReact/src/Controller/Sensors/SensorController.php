@@ -30,12 +30,12 @@ class SensorController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/add-new-sensor", name="add-new-sensor", methods={"POST"})
      * @param Request $request
      * @param SensorUserDataService $sensorService
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
      */
+    #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         $sensorData = [

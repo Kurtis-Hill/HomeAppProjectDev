@@ -34,11 +34,11 @@ class CardDataController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/cards", name="card-data", methods={"GET"})
      * @param Request $request
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
+    #[Route('/cards', name: 'card-data', methods: [Request::METHOD_GET])]
     public function returnCardDataDTOs(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $route = $request->get('view');
@@ -89,12 +89,12 @@ class CardDataController extends AbstractController
 
 
     /**
-     * @Route("/card-state-view-form", name="cardViewForm", methods={"GET"})
      *
      * @param Request $request
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
+    #[Route('/card-state-view-form', name: 'card-view-form', methods: [Request::METHOD_GET])]
     public function showCardViewForm(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->query->get('cardViewID');
@@ -133,12 +133,12 @@ class CardDataController extends AbstractController
 
 
     /**
-     * @Route("/update-card-view", name="updateCardView", methods={"PUT"})
      * @param Request $request
      * @param SensorUserDataService $sensorDataService
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
+    #[Route('/update-card-view', name: 'update-card-view', methods: [Request::METHOD_PUT])]
     public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
         try {
@@ -146,7 +146,7 @@ class CardDataController extends AbstractController
         } catch (\JsonException $e) {
             return $this->sendBadRequestJsonResponse(['Format not expected']);
         }
-//dd($cardData);
+
         $cardViewID = $cardData['cardViewID'];
 
         if (empty($cardViewID) || !is_numeric($cardViewID)) {
@@ -197,7 +197,6 @@ class CardDataController extends AbstractController
 
         $em->flush();
 
-//        return $this->sendBadRequestJsonResponse(['error yall']);
         return $this->sendSuccessfulUpdateJsonResponse();
     }
 }

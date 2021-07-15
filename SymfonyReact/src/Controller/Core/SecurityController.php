@@ -17,12 +17,12 @@ class SecurityController extends AbstractController
     public const API_USER_LOGIN = '/HomeApp/api/login_check';
 
     /**
-     * @Route("/HomeApp/api/csrfToken", name="csrf")
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @return JsonResponse
      *
      * DEV USE ONLY
      */
+    #[Route('/HomeApp/api/csrfToken', name: 'csrf')]
     public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
@@ -31,11 +31,11 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/HomeApp/WebApp/login", name="app_login")
      * @param AuthenticationUtils $authenticationUtils
      * @param Request $request
      * @return RedirectResponse|Response
      */
+    #[Route('/HomeApp/WebApp/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
          if ($this->getUser()) {
@@ -55,8 +55,8 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/HomeApp/ssl", name="ssl")
      */
+    #[Route('/HomeApp/ssl', name: 'ssl')]
     public function showSSLConfig()
     {
         $ssl = $this->getDoctrine()->getRepository(User::class)->showSSL();
@@ -82,8 +82,8 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/HomeApp/xdebug", name="xdebug")
      */
+    #[Route('/HomeApp/xdebug', name: 'xdebug')]
     public function showxDebug()
     {
         return new Response(xdebug_info());
@@ -91,8 +91,8 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/HomeApp/driver", name="driver")
      */
+    #[Route('/HomeApp/driver', name: 'driver')]
     public function driverCheck()
     {
         $driver = \PDO::getAvailableDrivers();
@@ -102,8 +102,8 @@ class SecurityController extends AbstractController
 
     /**
      * FOR DEVELOPMENT ONLY
-     * @Route("/HomeApp/JIT", name="JIT")
      */
+    #[Route('/HomeApp/JIT', name: 'JIT')]
     public function checkJITDriver()
     {
         dd(\opcache_get_status()['jit']);

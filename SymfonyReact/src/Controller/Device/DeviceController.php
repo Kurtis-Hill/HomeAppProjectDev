@@ -21,11 +21,11 @@ class DeviceController extends AbstractController
      * UPDATE SENSOR METHODS
      * UNDER DEV
      *
-     * @Route("/update/current-reading", name="update-current-reading")
      * @param Request $request
      * @param SensorDeviceDataService $sensorDataService
      * @return Response
      */
+    #[Route('/update/current-reading', name: 'update-current-reading')]
     public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
     {
         dd($request->request->all());

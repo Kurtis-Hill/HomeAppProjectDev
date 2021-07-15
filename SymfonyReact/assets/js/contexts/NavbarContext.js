@@ -93,8 +93,10 @@ export default class NavbarContextProvider extends Component {
                 toggleNewDeviceModal: this.toggleNewDeviceModal,
                 addNewDeviceModalToggle: this.state.addNewDeviceModalToggle,
             }}>
+                
                 {this.props.children}
             </NavbarContext.Provider>
+            
         )
     }
 }
