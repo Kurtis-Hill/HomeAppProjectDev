@@ -3,7 +3,6 @@
 
 namespace App\DTOs\Factorys\CardDTOs;
 
-
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;

@@ -1,9 +1,7 @@
 <?php
 
 
-namespace App\DTOs\Sensors;
-
-use App\HomeAppSensorCore\Interfaces\DTO\AllCardViewDTOInterface;
+namespace App\DTOs\Sensors\CardDTOs;
 
 /**
  * Class CardViewSensorFormDTO

@@ -1,14 +1,11 @@
 <?php
 
+namespace App\DTOs\Sensors\CardDTOs;
 
-namespace App\DTOs\Sensors;
-
-use App\DTOs\Sensors\AbstractCardSensorDTO;
-use App\HomeAppSensorCore\Interfaces\DTO\AllCardViewDTOInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-
+/**
+ * Class CurrentReadingCardDataDTO
+ * @package App\DTOs\Sensors\CardDTOs
+ */
 class CurrentReadingCardDataDTO implements AllCardViewDTOInterface
 {
     /**
@@ -44,12 +41,18 @@ class CurrentReadingCardDataDTO implements AllCardViewDTOInterface
     /**
      * @var array
      */
-    private array $sensorData = [];
+    private array $sensorData;
 
 
     /**
      * CardDataDTO constructor
-     * @param StandardSensorTypeInterface $cardDTOData
+     * @param string $sensorName
+     * @param string $sensorType
+     * @param string $sensorRoom
+     * @param string $cardIcon
+     * @param string $cardColour
+     * @param int $cardViewID
+     * @param array $sensorData
      */
     public function __construct(
         string $sensorName,
@@ -67,7 +70,7 @@ class CurrentReadingCardDataDTO implements AllCardViewDTOInterface
         $this->cardIcon = $cardIcon;
         $this->cardColour = $cardColour;
         $this->cardViewID = $cardViewID;
-
+        $this->sensorData = $sensorData;
 
     }
 

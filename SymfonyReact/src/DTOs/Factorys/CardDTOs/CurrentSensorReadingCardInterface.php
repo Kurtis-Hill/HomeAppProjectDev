@@ -1,10 +1,9 @@
 <?php
 
 
-namespace App\HomeAppSensorCore\Interfaces\DTO;
+namespace App\DTOs\Factorys\CardDTOs;
 
-
-use App\DTOs\Sensors\CurrentReadingCardDataDTO;
+use App\DTOs\Sensors\CardDTOs\CurrentReadingCardDataDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 
 interface CurrentSensorReadingCardInterface

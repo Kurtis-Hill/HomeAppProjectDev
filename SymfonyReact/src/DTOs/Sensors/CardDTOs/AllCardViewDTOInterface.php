@@ -1,10 +1,10 @@
 <?php
 
-
-namespace App\HomeAppSensorCore\Interfaces\DTO;
-
+namespace App\DTOs\Sensors\CardDTOs;
 
 interface AllCardViewDTOInterface
 {
     public function getCardViewID(): int;
+
+    public function getSensorData(): array;
 }

@@ -2,8 +2,7 @@
 
 namespace App\DTOs\Factorys\CardDTOs;
 
-use App\DTOs\Sensors\CardViewSensorFormDTO;
-use App\HomeAppSensorCore\Interfaces\DTO\CardFormDTOInterface;
+use App\DTOs\Sensors\CardDTOs\CardViewSensorFormDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use JetBrains\PhpStorm\ArrayShape;

@@ -3,13 +3,17 @@
 
 namespace App\DTOs\Factorys\CardDTOs;
 
-use App\DTOs\Sensors\CurrentReadingCardDataDTO;
-use App\HomeAppSensorCore\Interfaces\DTO\CurrentSensorReadingCardInterface;
+use App\DTOs\Sensors\CardDTOs\CurrentReadingCardDataDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use JetBrains\PhpStorm\ArrayShape;
 
 class CardViewDTOFactory extends AbstractCardDataFactory implements CurrentSensorReadingCardInterface
 {
+    /**
+     * @param SensorInterface $sensorData
+     * @return CurrentReadingCardDataDTO
+     */
     public function makeDTO(SensorInterface $sensorData): CurrentReadingCardDataDTO
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
@@ -32,6 +36,24 @@ class CardViewDTOFactory extends AbstractCardDataFactory implements CurrentSenso
         );
     }
 
+    /**
+     * @param StandardReadingSensorInterface $sensorTypeObject
+     * @param string $type
+     * @param string|null $symbol
+     * @return array
+     */
+    #[ArrayShape(
+        [
+            'sensorType' => "string",
+            'highReading' => "float|int|string",
+            'lowReading' => "float|int|string",
+            'currentReading' => "float|int|string",
+            'getCurrentHighDifference' => "float|int|string",
+            'getCurrentLowDifference' => "float|int|string",
+            'readingSymbol' => "null|string", 'time' => "string"
+        ]
+    )
+    ]
     protected function setStandardSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): array
     {
         return [
