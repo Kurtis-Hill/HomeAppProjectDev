@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { apiURL, getToken } from '../Utilities/Common';
+import { getAPIHeader } from '../Utilities/APICommon';
+import { apiURL } from '../Utilities/URLSCommon';
 
 import { CardContext } from '../contexts/CardContexts';
 
@@ -27,7 +28,7 @@ function AddNewSensor(props) {
     }
 
     const getSensorTypes = async () => {
-        const sensorTypeResponse = await axios.get(apiURL+"sensors/types", { headers: {"Authorization" : `BEARER ${getToken()}`} });
+        const sensorTypeResponse = await axios.get(apiURL+"sensors/types", getAPIHeader());
 
         if (sensorTypeResponse.status === 200) {
             if (sensorTypeResponse.data) {
@@ -61,7 +62,7 @@ function AddNewSensor(props) {
             'sensor-name' : sensorName.value,
         }
 
-        const addNewSensorRequest = await axios.post(apiURL+'sensors/add-new-sensor', JSON.stringify(jsonRequestData), { headers: {"Authorization" : `BEARER ${getToken()}`} });
+        const addNewSensorRequest = await axios.post(apiURL+'sensors/add-new-sensor', JSON.stringify(jsonRequestData), getAPIHeader());
 
         if (addNewSensorRequest.status === 201) {
             setLoading(false);

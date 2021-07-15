@@ -1,15 +1,12 @@
 import React, { Component, useContext } from 'react';
 import { CardContext } from '../contexts/CardContexts';
 import { capitalizeFirstLetter } from '../Utilities/Common';
-import { DHT, DallasTemp, Soil } from '../Utilities/SensorsCommon';
 
 const cardModal = () => {
 
   const context = useContext(CardContext);
 
   const modalSensorType = context.modalContent.sensorType;
-
-  // const secondModalSensorType = context.modalContent.secondSensorType;
 
   const modalContent = context.modalContent;
 

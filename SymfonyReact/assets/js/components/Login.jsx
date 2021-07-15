@@ -1,7 +1,8 @@
 import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { setUserTokens, setUserSession, webappURL, apiURL, getToken } from '../Utilities/Common';
+import { setUserSession } from '../Utilities/Common';
+import { webappURL, apiURL, } from '../Utilities/URLSCommon'
 
 function Login(props) {
     const username = useFormInput('');

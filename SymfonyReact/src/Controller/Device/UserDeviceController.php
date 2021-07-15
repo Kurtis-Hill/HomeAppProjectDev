@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Controller\Sensors;
+namespace App\Controller\Device;
 
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
@@ -15,20 +15,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-/**
- * @Route("/HomeApp/api/user-devices")
- */
+#[Route('/HomeApp/api/user-devices', name: 'user-device')]
 class UserDeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
     /**
-     * @Route("/add-new-device", name="add-new-device")
      * @param Request $request
      * @param DeviceServiceUser $deviceService
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return JsonResponse
      */
+    #[Route('/add-new-device', name: 'add-new-device')]
     public function addNewDevice(Request $request, DeviceServiceUser $deviceService, UserPasswordEncoderInterface $passwordEncoder): JsonResponse
     {
         $deviceName = $request->get('device-name');

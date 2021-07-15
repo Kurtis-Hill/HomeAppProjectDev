@@ -1,7 +1,9 @@
 import React, { Component, createContext } from 'react'
 import axios from 'axios';
-import { getToken, getRefreshToken, setUserSession, lowercaseFirstLetter, apiURL, webappURL, getAPIHeader } from '../Utilities/Common';
-import { bool } from 'prop-types';
+
+import { setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
+import { apiURL, webappURL } from '../Utilities/URLSCommon';
+import { getToken, getRefreshToken, getAPIHeader } from '../Utilities/APICommon';
 
 export const CardContext = createContext();
 
@@ -253,26 +255,23 @@ class CardContextProvider extends Component {
         } catch(error) {
             console.log(error, 'error');
             const badRequestErrors = (!error.data.payload.errors.length > 1)
-            ? ['something went wrong']
-            : error.data.payload.errors;
+                ? ['something went wrong']
+                : error.data.payload.errors;
 
             console.log('form submit result', error);
             this.setState({modalStatus:{modalSubmit: false}});
 
             if (error.status === 400) {
-                console.log('worng22');
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
             }
 
             if (error.status === 404) {
-                console.log('worng22');
                 this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
                 this.toggleModal();
                 alert('Could not handle request please try again');
             }
 
             if (error.status === 500) {
-                console.log('worng22');
                 if (error === undefined) {
                     alert('Please logout something went wrong');
                 } else {

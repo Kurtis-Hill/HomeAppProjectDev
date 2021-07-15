@@ -2,7 +2,8 @@ import React, { Component, createContext } from 'react';
 import ReactDOM from "react-dom";
 import axios from 'axios';
 
-import { getToken, apiURL} from '../Utilities/Common';
+import { apiURL} from '../Utilities/URLSCommon';
+import { getAPIHeader} from '../Utilities/APICommon';
 
 export const NavbarContext = createContext();
 
@@ -57,8 +58,7 @@ export default class NavbarContextProvider extends Component {
     }
 
     navbarData = () => {
-        axios.get(apiURL+'navbar/navbar-data',
-        { headers: {"Authorization" : `Bearer ${getToken()}`} })
+        axios.get(apiURL+'navbar/navbar-data', getAPIHeader())
         .then(response => {
             console.log(response.data);
             const navBarResponse = response.data.payload;

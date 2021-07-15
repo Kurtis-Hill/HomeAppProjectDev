@@ -2,7 +2,7 @@ import React, { Component, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NavbarContext } from '../contexts/NavbarContext';
 
-import { webappURL } from '../Utilities/Common';
+import { webappURL } from '../Utilities/URLSCommon';
 
 
 const Navbar = () => {
@@ -10,7 +10,6 @@ const Navbar = () => {
 
     const navbarCollapse = context.navbarSize ? 'toggled' : '';
 
-    const deviceRoute = context.deviceNavURLS;
     const roomRoute = "rooms/";
     const homeRoute = webappURL+"index/";
 

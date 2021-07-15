@@ -4,14 +4,6 @@ export const getUser = () => {
     else return null;
 }
 
-export const getToken = () => {
-    return sessionStorage.getItem('token') || null;
-}
-
-export const getRefreshToken = () => {
-    return sessionStorage.getItem('refreshToken') || null;
-}
-
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');   
@@ -48,10 +40,10 @@ export const lowercaseFirstLetter = (string) => {
     return null;
 }
 
-export const getAPIHeader = (extraHeader = null) => {
-    return { headers: {"Authorization" : `Bearer ${getToken()}`} };
-}
+// export const getAPIHeader = (extraHeader = null) => {
+//     return { headers: {"Authorization" : `Bearer ${getToken()}`} };
+// }
 
-export const webappURL = '/HomeApp/WebApp/';
+// export const webappURL = '/HomeApp/WebApp/';
 
-export const apiURL = '/HomeApp/api/'
+// export const apiURL = '/HomeApp/api/'

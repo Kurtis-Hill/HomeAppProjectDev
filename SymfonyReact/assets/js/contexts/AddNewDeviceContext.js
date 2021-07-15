@@ -2,7 +2,8 @@ import React, { Component, createContext, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
-import { getToken, apiURL } from '../Utilities/Common';
+import { apiURL } from '../Utilities/URLSCommon';
+import { getAPIHeader, getToken } from '../Utilities/APICommon';
 
 export const AddNewDeviceContext = createContext();
 
@@ -37,37 +38,41 @@ export default class AddNewDeviceContextProvider extends Component {
         });
     }
 
-    handleNewDeviceFormSubmission = (event) => {
+    handleNewDeviceFormSubmission = async (event) => {
         event.preventDefault();
 
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
         const formData = new FormData(event.target);
 
-        const config = {
-            headers: { 'Content-Type': 'multipart/form-data' , "Authorization" : `BEARER ${getToken()}` }
-        }
+        const jsonFormData = {
+            'sensordata' : 'hey'
+        };
 
-        axios.post(apiURL+'devices/add-new-device', formData, config)
-            .then(response => {
+        try {
+            const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, formData, getAPIHeader());
+            
+            // if (newDeviceSubmissionResponse.response.status === 201) {
                 const responseData = response.data.payload;
                 this.setState({addNewDeviceModalSubmit: false});
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responseData.secret, errors:[], newDeviceID: responseData.deviceID}});
-            })
-            .catch(error => {
-               const status = error.response.status;
-               const responseData = error.response.data.payload;
+            // } else {
+            //     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['unexpected response'], formSubmit:false}});
+            // }
+        } catch(error) {
+            const status = error.response.status;
+            const responseData = error.response.data.payload;
 
-                console.log(error.response.data.payload);
-                if (status === 400) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors, formSubmit:false}});
-                }
-                if (status === 500) {
-                    this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors, formSubmit:false}});
-                }
+             console.log(error.response.data.payload);
+             if (status === 400) {
+                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors}});
+             }
+             if (status === 500) {
+                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: responseData.errors}});
+             }
 
-                setLoading(false);
-            });
+             this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false}});
+        }
     }
 
     updateNewDeviceModalForm = (event) => {

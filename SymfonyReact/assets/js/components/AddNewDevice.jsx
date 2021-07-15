@@ -1,7 +1,7 @@
 import React, { Component, useContext } from 'react';
 import { NavbarContext } from '../contexts/NavbarContext';
 import { AddNewDeviceContext } from '../contexts/AddNewDeviceContext';
-import { webappURL } from '../Utilities/Common';
+import { webappURL } from '../Utilities/URLSCommon';
 
 const addNewDevice = () => {
 
