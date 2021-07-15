@@ -8,7 +8,7 @@ use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-class StandardSensorCardDataDTO extends AbstractCardSensorDTO
+class CurrentReadingCardDataDTO extends AbstractCardSensorDTO
 {
     /**
      * @var string
@@ -56,7 +56,7 @@ class StandardSensorCardDataDTO extends AbstractCardSensorDTO
         $this->setCardViewData($cardDTOData);
 
         if (empty($this->cardViewID) || empty($this->sensorName) || empty($this->cardIcon) || empty($this->sensorType) || empty($this->sensorRoom) || empty($this->cardColour)) {
-            throw new \RuntimeException('Some card data is missing');
+            throw new \RuntimeException('Some card datsetSensorDataa is missing');
         }
     }
 

@@ -6,6 +6,7 @@ use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
@@ -18,7 +19,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="dhtsensor", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="cardviewID", columns={"cardviewID"})})
  * @ORM\Entity
  */
-class Dht implements StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
+class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
 {
     public const HIGH_TEMPERATURE_READING_BOUNDRY = 80;
 

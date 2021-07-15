@@ -41,6 +41,6 @@ abstract class AbstractCardSensorDTO
 
     abstract protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void;
 
-    abstract protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void;
+//    abstract protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void;
 
 }

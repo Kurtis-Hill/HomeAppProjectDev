@@ -197,7 +197,7 @@ class CardDataController extends AbstractController
 
         $em->flush();
 
-        return $this->sendBadRequestJsonResponse(['error yall']);
+//        return $this->sendBadRequestJsonResponse(['error yall']);
         return $this->sendSuccessfulUpdateJsonResponse();
     }
 }

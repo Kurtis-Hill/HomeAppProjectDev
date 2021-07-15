@@ -5,6 +5,7 @@ namespace App\Entity\Sensors\SensorTypes;
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +17,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\ReadingType\DallasRepository")
  */
-class Dallas implements StandardSensorTypeInterface, TemperatureSensorTypeInterface
+class Dallas implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
     public const HIGH_TEMPERATURE_READING_BOUNDRY = 125;
 

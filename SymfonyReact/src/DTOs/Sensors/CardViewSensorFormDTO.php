@@ -3,101 +3,43 @@
 
 namespace App\DTOs\Sensors;
 
-use App\DTOs\Sensors\AbstractCardSensorDTO;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
-
-
 /**
  * Class CardViewSensorFormDTO
  * @package App\DTOs\Sensors
  */
-class CardViewSensorFormDTO extends AbstractCardSensorDTO
+class CardViewSensorFormDTO
 {
     /**
      * @var array
      */
-    private array $sensorData = [];
+    private array $sensorData;
 
     /**
      * @var array
      */
-    private array $cardIcon;
+    private array $usersCurrentCardSelections;
 
     /**
      * @var array
      */
-    private array $cardColour;
-
-    /**
-     * @var array
-     */
-    private array $currentViewState;
-
-    /**
-     * @var int
-     */
-    private int $cardViewID;
-
-    /**
-     * @var array
-     */
-    private array $userSelections = [];
+    private array $usersCardSelections;
 
 
     /**
      * CardDataDTO constructor.
-     * @param StandardSensorTypeInterface $sensorData
-     * @param array $formOptions
+     * @param array $usersCurrentSelection
+     * @param array $usersCardSelections
+     * @param array $sensorData
      */
-    public function __construct(StandardSensorTypeInterface $sensorData, array $formOptions)
+    public function __construct(
+        array $usersCurrentSelection,
+        array $usersCardSelections,
+        array $sensorData,
+    )
     {
-        $this->filterSensorTypes($sensorData);
-        $this->setCardViewData($sensorData);
-        $this->setUserSelections($formOptions);
-    }
-
-    /**
-     * @param StandardReadingSensorInterface $sensorTypeObject
-     * @param string $type
-     * @param string|null $symbol
-     */
-    protected function setSensorData(StandardReadingSensorInterface $sensorTypeObject, string $type, string $symbol = null): void
-    {
-        $this->sensorData[] = [
-            'sensorType' => $type,
-            'highReading' => is_float($sensorTypeObject->getHighReading()) ? number_format($sensorTypeObject->getHighReading(), 2) : $sensorTypeObject->getHighReading(),
-            'lowReading' => is_float($sensorTypeObject->getLowReading()) ? number_format($sensorTypeObject->getLowReading(), 2): $sensorTypeObject->getLowReading(),
-            'readingSymbol' => $symbol,
-            'constRecord' => $sensorTypeObject->getConstRecord(),
-        ];
-    }
-
-    /**
-     * @param StandardSensorTypeInterface $cardDTOData
-     */
-    protected function setCardViewData(StandardSensorTypeInterface $cardDTOData): void
-    {
-        $this->cardIcon['iconID'] = $cardDTOData->getCardViewObject()->getCardIconID()->getIconID();
-        $this->cardIcon['iconName'] = $cardDTOData->getCardViewObject()->getCardIconID()->getIconName();
-
-        $this->cardColour['colourID'] = $cardDTOData->getCardViewObject()->getCardColourID()->getColourID();
-        $this->cardColour['colour'] = $cardDTOData->getCardViewObject()->getCardColourID()->getColour();
-
-        $this->currentViewState['stateID'] = $cardDTOData->getCardViewObject()->getCardStateID()->getCardstateID();
-        $this->currentViewState['state'] = $cardDTOData->getCardViewObject()->getCardStateID()->getState();
-
-        $this->cardViewID = $cardDTOData->getCardViewObject()->getCardViewID();
-    }
-
-    /**
-     * @param array $formOptions
-     */
-    private function setUserSelections(array $formOptions): void
-    {
-        $this->userSelections['icons'] = $formOptions['icons'];
-        $this->userSelections['colours'] = $formOptions['colours'];
-        $this->userSelections['states'] = $formOptions['states'];
+        $this->usersCurrentCardSelections = $usersCurrentSelection;
+        $this->usersCardSelections = $usersCardSelections;
+        $this->sensorData = $sensorData;
     }
 
     /**
@@ -113,7 +55,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getCardIcon(): array
     {
-        return $this->cardIcon;
+        return $this->usersCurrentCardSelections['cardIcon'];
     }
 
     /**
@@ -121,7 +63,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getCardColour(): array
     {
-        return $this->cardColour;
+        return $this->usersCurrentCardSelections['colours'];
     }
 
     /**
@@ -129,7 +71,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getCurrentViewState(): array
     {
-        return $this->currentViewState;
+        return $this->usersCurrentCardSelections['states'];
     }
 
     /**
@@ -137,7 +79,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getCardViewID(): int
     {
-        return $this->cardViewID;
+        return $this->usersCurrentCardSelections['cardViewID'];
     }
 
     /**
@@ -145,7 +87,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getUserIconSelections(): array
     {
-        return $this->userSelections['icons'];
+        return $this->usersCardSelections['icons'];
     }
 
     /**
@@ -153,7 +95,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getUserColourSelections(): array
     {
-        return $this->userSelections['colours'];
+        return $this->usersCardSelections['colours'];
     }
 
     /**
@@ -161,7 +103,7 @@ class CardViewSensorFormDTO extends AbstractCardSensorDTO
      */
     public function getUserCardViewSelections(): array
     {
-        return $this->userSelections['states'];
+        return $this->usersCardSelections['states'];
     }
 
 }

@@ -160,7 +160,7 @@ class CardContextProvider extends Component {
             }
         });
 
-        console.log(this.state.modalContent);
+        console.log('modal constent22', userIconSelections);
     }
 
 
@@ -230,14 +230,14 @@ class CardContextProvider extends Component {
         event.preventDefault();
         this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: []}});
 
-        console.log(this.state.modalContent);
+        // console.log(this.state.modalContent);
         const jsonFormData = {
             'cardViewID' : this.state.modalContent.cardViewID,
             'cardColour' : this.state.modalContent.cardColour,
-            'cardViewState' : this.state.modalContent.currentViewState.stateID,
+            'cardViewState' : this.state.modalContent.currentViewState.cardStateID,
             'cardIcon' : this.state.modalContent.cardIcon.iconID,
             'sensorData' : this.state.modalContent.sensorData,
-            // 'constRecrod' : this.state.modalContent.constRecord,
+            'constRecrod' : this.state.modalContent.constRecord,
         };
 
         
@@ -250,34 +250,6 @@ class CardContextProvider extends Component {
                     this.toggleModal(), 1500
                 );
             }   
-
-            const badRequestErrors = (!formSubmissionResult.data.payload.errors.length > 1)
-            ? ['something went wrong']
-            : error.data.payload.errors;
-
-            console.log('form submit result', formSubmissionResult);
-            this.setState({modalStatus:{modalSubmit: false}});
-
-            if (formSubmissionResult.status === 400) {
-                console.log('worng1');
-                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
-            }
-
-            if (formSubmissionResult.status === 404) {
-                console.log('worng1');
-                this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
-                this.toggleModal();
-                alert('Could not handle request please try again');
-            }
-
-            if (formSubmissionResult.status === 500) {
-                console.log('worng1');
-                if (formSubmissionResult === undefined) {
-                    alert('Please logout something went wrong');
-                } else {
-                    this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false, errors: badRequestErrors}});
-                }
-            }
         } catch(error) {
             console.log(error, 'error');
             const badRequestErrors = (!error.data.payload.errors.length > 1)
@@ -293,7 +265,6 @@ class CardContextProvider extends Component {
             }
 
             if (error.status === 404) {
-
                 console.log('worng22');
                 this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
                 this.toggleModal();

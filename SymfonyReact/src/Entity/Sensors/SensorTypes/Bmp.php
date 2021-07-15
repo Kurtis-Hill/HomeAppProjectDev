@@ -7,6 +7,7 @@ use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
@@ -20,7 +21,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="bmp", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="latitudeID", columns={"latitudeID"})})
  * @ORM\Entity
  */
-class Bmp implements StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
+class Bmp implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
 {
     public const HIGH_TEMPERATURE_READING_BOUNDRY = 85;
 

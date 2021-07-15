@@ -5,6 +5,7 @@ namespace App\Entity\Sensors\SensorTypes;
 use App\Entity\Card\CardView;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +17,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity
  */
-class Soil implements StandardSensorTypeInterface, AnalogSensorTypeInterface
+class Soil implements SensorInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
 {
     /**
      * @var int

@@ -3,8 +3,9 @@
 
 namespace App\Services;
 
+use App\DTOs\Factorys\CardDTOs\CardViewFormDTOFactory;
 use App\DTOs\Sensors\CardViewSensorFormDTO;
-use App\DTOs\Sensors\StandardSensorCardDataDTO;
+use App\DTOs\Sensors\CurrentReadingCardDataDTO;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
@@ -14,6 +15,7 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
+use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use App\Traits\FormProcessorTrait;
@@ -21,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
@@ -105,7 +108,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                                 throw new BadRequestException('A Card Has Not Been Made For This Sensor ' . $cardDTO->getSensorObject()->getSensorName());
                             }
                             $cardDTO->setCardViewObject($cardViewObject);
-                            $cardDTOs[] = new StandardSensorCardDataDTO($cardDTO);
+                            $cardDTOs[] = new CurrentReadingCardDataDTO($cardDTO);
                         }
                     } catch (BadRequestException $e) {
                         $this->cardErrors[] = $e->getMessage();
@@ -178,14 +181,14 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             'states' => [Cardstate::class]
         ]
     )]
-    private function getUserCardSelectionData(): array
+    private function getCardSelectionData(): array
     {
         $icons = $this->em->getRepository(Icons::class)->getAllIcons();
         $colours = $this->em->getRepository(CardColour::class)->getAllColours();
         $states = $this->em->getRepository(Cardstate::class)->getAllStates();
 
         if (empty($icons) || empty($colours) || empty($states)) {
-            throw new \RuntimeException('User selection data has failed to process');
+            throw new RuntimeException('User selection data has failed to process');
         }
 
         return ['icons' => $icons, 'colours' => $colours, 'states' => $states];
@@ -200,17 +203,20 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     {
         try {
             $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::SENSOR_TYPE_DATA);
-            $userSelectionData = $this->getUserCardSelectionData();
-            if ($cardData instanceof StandardSensorTypeInterface) {
+            if ($cardData instanceof SensorInterface) {
+                $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
-                $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
+
+                $cardFormDTOFactory = new CardViewFormDTOFactory();
+                $cardViewFormDTO = $cardFormDTOFactory->makeDTO($cardData, $userSelectionData);
+//                $cardViewFormDTO = new CardViewSensorFormDTO($cardData, $userSelectionData);
             }
             else {
                 $this->serverErrors[] = 'Sensor Not Recognised, You May Need To Update Your App';
             }
         } catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->serverErrors[] = $e->getMessage();
         } catch (ORMException $e) {
             error_log($e->getMessage());
@@ -237,7 +243,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $onCardState = $cardStateRepository->findOneBy(['state' => Cardstate::ON]);
 
             if (!$onCardState instanceof Cardstate) {
-                throw new \RuntimeException('Something went wrong setting a defualt card state');
+                throw new RuntimeException('Something went wrong setting a defualt card state');
             }
 
             $newCard = new CardView();
@@ -250,7 +256,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $this->em->persist($newCard);
 
             return $newCard;
-        } catch (\RuntimeException $exception) {
+        } catch (RuntimeException $exception) {
             error_log($exception->getMessage());
             $this->serverErrors[] = $exception->getMessage();
         }
@@ -275,7 +281,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         $randomIcon = $iconRepository->findOneBy(['iconID' => random_int($firstIconId, $firstIconId+$maxIconNumber-1)]);
 
         if (!$randomIcon instanceof Icons) {
-            throw new \RuntimeException('Failed setting random icon');
+            throw new RuntimeException('Failed setting random icon');
         }
 
         return $randomIcon;
@@ -289,7 +295,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         $randomColour = $colourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber+$firstColourId-1)]);
 
         if (!$randomColour instanceof CardColour) {
-            throw new \RuntimeException('Failed setting random colour');
+            throw new RuntimeException('Failed setting random colour');
         }
 
         return $randomColour;
