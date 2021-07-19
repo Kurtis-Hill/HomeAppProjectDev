@@ -77,24 +77,26 @@ class CardContextProvider extends Component {
             const deviceGroup = urlParam.get('device-group');
             const deviceRoom = urlParam.get('device-room');
 
-            this.setState({url: cardAPI+"?device-id="+deviceName+"&device-group="+deviceGroup+"&device-room="+deviceRoom+"&view=device"});
+            this.setState({url: `${cardAPI}"?device-id="${deviceName}"&device-group="${deviceGroup}+"&device-room="${deviceRoom}+"&view=device`});
         }
     }
 
 
     //Fetches all the card data to be displayed on the index page
-    fetchCardData = () => {
-        axios.get(this.state.url,
-            { headers: {"Authorization" : `BEARER ${getToken()}`} }
-        )
-        .then(response => {
-            if (response.data.length >= 1 && Array.isArray(response.data) ) {
+    fetchCardData = async () => {
+        try {
+            const response = await axios.get(this.state.url, getAPIHeader());
+
+            if (
+                response.data.length >= 1 &&
+                Array.isArray(response.data)
+                 ) {
                 this.setState({cardData: response.data});
             }
             else {
                 this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
             }
-        }).catch(error => {
+        } catch(error) {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
             }
@@ -113,8 +115,7 @@ class CardContextProvider extends Component {
                   //  window.location.replace('/HomeApp/logout');
                 }
             }
-        })
-
+        }           
     }
 
 
