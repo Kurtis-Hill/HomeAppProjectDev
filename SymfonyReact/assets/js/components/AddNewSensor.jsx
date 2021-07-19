@@ -56,10 +56,11 @@ function AddNewSensor(props) {
 
         const deviceName = new URLSearchParams(window.location.search).get('device-id');
 
+        console.log('hey', deviceName, selectedSensorTypes);
         const jsonRequestData = {
-            'device-id' : deviceName,
-            'sensor-type' : selectedSensorTypes,
-            'sensor-name' : sensorName.value,
+            'deviceNameID' : deviceName,
+            'sensorTypeID' : selectedSensorTypes,
+            'sensorName' : sensorName.value,
         }
 
         const addNewSensorRequest = await axios.post(apiURL+'sensors/add-new-sensor', JSON.stringify(jsonRequestData), getAPIHeader());

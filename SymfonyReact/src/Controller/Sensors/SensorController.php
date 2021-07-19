@@ -38,11 +38,7 @@ class SensorController extends AbstractController
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
-        $sensorData = [
-            'sensorName' => $request->request->get('sensor-name'),
-            'sensorTypeID' => $request->get('sensor-type'),
-            'deviceNameID' => $request->get('device-id')
-        ];
+        $sensorData = json_decode((string)$request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
