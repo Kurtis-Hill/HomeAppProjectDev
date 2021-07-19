@@ -10,27 +10,25 @@ const Navbar = () => {
 
     const navbarCollapse = context.navbarSize ? 'toggled' : '';
 
-    const roomRoute = "rooms/";
-    const homeRoute = webappURL+"index/";
-
     const deviceNavShowToggle = context.deviceSettingsNavToggle === true ? 'show' : null;
     const roomNavShowToggle = context.roomNavToggle === true ? 'show' : null;
 
     return (
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "+ navbarCollapse} id="accordionSidebar">
-                <a href={homeRoute} className="sidebar-brand d-flex align-items-center justify-content-center">
+                <Link to={`${webappURL}index`} className="sidebar-brand d-flex align-items-center justify-content-center">
                     <div className="sidebar-brand-icon rotate-n-15">
                         <i className="fas fa-home" />
                     </div>
                     <div className="sidebar-brand-text mx-3">Home App <sup>2</sup></div>
-                </a>
-
+                </Link>
                 <hr className="sidebar-divider my-0" />
 
                 <li className="nav-item">
-                    <a className="nav-link" href={webappURL+"index"}>
+                <Link to={`${webappURL}index`}> 
+                    <div className="nav-link" href={webappURL+"index"}>
                         <i className="fas fa-fw fa-tachometer-alt" />
-                        <span>Admin Dashboard</span></a>
+                    <span>Admin Dashboard</span></div>
+                </Link>
                 </li>
 
                 <hr className="sidebar-divider" />
@@ -48,7 +46,7 @@ const Navbar = () => {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">View Room:</h6>
                         {context.userRooms.map((navRoom) => (
-                            <a key={navRoom.roomID} className="collapse-item" href={roomRoute+navRoom.roomID}>{navRoom.room}</a>
+                            <Link to={`${webappURL}index`} key={navRoom.roomID} className="collapse-item">{navRoom.room}</Link>                            
                         ))}
                     </div>
                     </div>
@@ -63,7 +61,7 @@ const Navbar = () => {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">Devices:</h6>
                         {context.userDevices.map((device) => (
-                            <a key={device.deviceNameID} className="collapse-item" href={webappURL+"device?device-id="+device.deviceNameID+"&device-group="+device.groupNameID+"&device-room="+device.roomID+"&view=device"}>{device.deviceName}</a>
+                            <Link key={device.deviceNameID} className="collapse-item" to={`${webappURL}device?device-id=${device.deviceNameID}&device-group=${device.groupNameID}&device-room=${device.roomID}&view=device`}>{device.deviceName}</Link>
                         ))}
                          <div className="hover collapse-item" onClick={() => {context.toggleNewDeviceModal()}}>+Add New Device</div>
                     </div>

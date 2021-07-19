@@ -12,6 +12,7 @@ use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataService;
 use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\SensorVoter;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,8 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-/**
- * @Route("/HomeApp/api/sensors", name="devices")
- */
+
+#[Route('/HomeApp/api/sensors', name: 'devices')]
 class SensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -38,7 +38,12 @@ class SensorController extends AbstractController
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
-        $sensorData = json_decode((string)$request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        try {
+            $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            error_log($exception);
+            return $this->sendBadRequestJsonResponse(['Request Format not supported']);
+        }
 
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
@@ -98,9 +103,9 @@ class SensorController extends AbstractController
     }
 
     /**
-     * @Route("/types", name="get-sensor-types")
      * @return JsonResponse
      */
+    #[Route('/types', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function returnAllSensorTypes(): Response
     {
         $sensorTypes = $this->getDoctrine()->getManager()->getRepository(SensorType::class)->findAll();

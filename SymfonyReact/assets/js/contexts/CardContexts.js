@@ -77,7 +77,7 @@ class CardContextProvider extends Component {
             const deviceGroup = urlParam.get('device-group');
             const deviceRoom = urlParam.get('device-room');
 
-            this.setState({url: `${cardAPI}"?device-id="${deviceName}"&device-group="${deviceGroup}+"&device-room="${deviceRoom}+"&view=device`});
+            this.setState({url: `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`});
         }
     }
 

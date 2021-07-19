@@ -40,6 +40,7 @@ function Login(props) {
 
         const loginResponse = await axios.post('/HomeApp/WebApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } });
 
+        // window.history.replaceState(null, "HomeApp", `${webappURL}index`)
         loginResponse.status === 200
             ? window.location.replace(webappURL+'index')
             : alert('setting user data failed') && setLoading(false);
@@ -81,7 +82,7 @@ function Login(props) {
                                                 <hr />
                                             </form>
                                             <div className="text-center">
-                                                <a href={createAccountLink} className="small login-form-field" href="register.html">Create an Account!</a>
+                                                <a href={createAccountLink} className="small login-form-field">Create an Account!</a>
                                             </div>
                                         </div>
                                     </div>
