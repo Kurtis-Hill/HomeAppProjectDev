@@ -172,18 +172,22 @@ class SensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
-            $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
         );
+
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -209,20 +213,23 @@ class SensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => '&' . $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => '&' . $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
         );
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -241,20 +248,23 @@ class SensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => 'TestingTestingTesting' . $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => 'TestingTestingTesting' . $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
         );
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($sensor);
@@ -274,17 +284,20 @@ class SensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensors::class)->findBy(['deviceNameID' => $device->getDeviceNameID()])[0];
 
         $formData = [
-            'sensor-name' => $sensor->getSensorName(),
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => $sensor->getSensorName(),
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -311,21 +324,24 @@ class SensorControllerTest extends WebTestCase
         }
 
         $formData = [
-            'sensor-name' => $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $randomID,
+            'sensorName' => $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $randomID,
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         self::assertNull($sensor);
         self::assertStringContainsString('Cannot find device to add sensor too', $responseData['payload']['errors'][0]);
@@ -344,22 +360,25 @@ class SensorControllerTest extends WebTestCase
         }
 
         $formData = [
-            'sensor-name' => 'testing',
-            'sensor-type' => $randomID,
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => 'testing',
+            'sensorTypeID' => $randomID,
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensor-name']]);
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         self::assertNull($sensor);
         self::assertStringContainsString('This value is not valid', $responseData['payload']['errors'][0]);
@@ -377,17 +396,20 @@ class SensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
-            $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -432,17 +454,20 @@ class SensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
-            $formData,
+            [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $token],
+            $jsonData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -490,22 +515,26 @@ class SensorControllerTest extends WebTestCase
      */
     public function test_can_add_sensor_route_wrong_token(string $sensorType, string $sensorName): void
     {
+//        dd($this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]));
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensor-name' => $sensorName,
-            'sensor-type' => $sensorType->getSensorTypeID(),
-            'device-id' => $this->device->getDeviceNameID(),
+            'sensorName' => $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
-            $formData,
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken. '1'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken. '1', 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
         );
-
+//dd($this->client->getResponse()->getStatusCode());
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
     }
 
