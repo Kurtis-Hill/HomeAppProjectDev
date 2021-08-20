@@ -125,7 +125,6 @@ abstract class AbstractSensorService implements APIErrorInterface
                             }
                         }
                         //Any other forms can be added here
-
                     }
                 }
             }

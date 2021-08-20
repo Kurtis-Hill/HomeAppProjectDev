@@ -1,20 +1,24 @@
 <?php
 
 
-namespace App\DTOs\Factorys\CardDTOs;
+namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
-use App\DTOs\Sensors\CardDTOs\CurrentReadingCardDataDTO;
+use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
+use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
+use App\DTOs\CardDTOs\Sensors\DTOs\CurrentReadingCardDataDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use JetBrains\PhpStorm\ArrayShape;
+use RuntimeException;
 
-class CardViewDTOFactory extends AbstractCardDataFactory implements CurrentSensorReadingCardInterface
+class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeCardDataBuilder implements CardBuilderDTOInterface
 {
     /**
      * @param SensorInterface $sensorData
-     * @return CurrentReadingCardDataDTO
+     * @param array $extraSensorData
+     * @return AllCardViewDTOInterface
      */
-    public function makeDTO(SensorInterface $sensorData): CurrentReadingCardDataDTO
+    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): AllCardViewDTOInterface
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
 
@@ -22,7 +26,7 @@ class CardViewDTOFactory extends AbstractCardDataFactory implements CurrentSenso
         $cardViewData = $sensorData->getCardViewObject();
 
         if (!$cardViewData) {
-            throw new \RuntimeException('No Card Data Set, Card DTO Creation Failed');
+            throw new RuntimeException('No Card Data Set, Card DTO Creation Failed');
         }
 
         return new CurrentReadingCardDataDTO(
@@ -45,12 +49,13 @@ class CardViewDTOFactory extends AbstractCardDataFactory implements CurrentSenso
     #[ArrayShape(
         [
             'sensorType' => "string",
-            'highReading' => "float|int|string",
-            'lowReading' => "float|int|string",
-            'currentReading' => "float|int|string",
-            'getCurrentHighDifference' => "float|int|string",
-            'getCurrentLowDifference' => "float|int|string",
-            'readingSymbol' => "null|string", 'time' => "string"
+            'highReading' => "float|int",
+            'lowReading' => "float|int",
+            'currentReading' => "float|int",
+            'getCurrentHighDifference' => "float|int",
+            'getCurrentLowDifference' => "float|int",
+            'readingSymbol' => "null|string",
+            'time' => "string"
         ]
     )
     ]

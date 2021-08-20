@@ -1,27 +1,36 @@
 <?php
 
-namespace App\DTOs\Factorys\CardDTOs;
+namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
-use App\DTOs\Sensors\CardDTOs\CardViewSensorFormDTO;
+use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
+use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
+use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
-class CardViewFormDTOFactory extends AbstractCardDataFactory implements CardFormDTOInterface
+class SensorTypeCardViewFormDTOBuilder extends AbstractSensorTypeCardDataBuilder implements CardBuilderDTOInterface
 {
     /**
      * @param SensorInterface $sensorData
-     * @param array $usersCardSelections
+     * @param array $extraSensorData
      * @return CardViewSensorFormDTO
      */
-    public function makeDTO(SensorInterface $sensorData, array $usersCardSelections): CardViewSensorFormDTO
+    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): AllCardViewDTOInterface
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
         $usersCurrentCardDisplaySettings = $this->setUsersCurrentCardViewData($sensorData);
+        $usersCardSelections = $extraSensorData;
+
 
         return new CardViewSensorFormDTO(
-            $usersCurrentCardDisplaySettings,
-            $usersCardSelections,
+            $usersCurrentCardDisplaySettings['cardIcon'],
+            $usersCurrentCardDisplaySettings['colours'],
+            $usersCurrentCardDisplaySettings['states'],
+            $usersCurrentCardDisplaySettings['cardViewID'],
+            $usersCardSelections['icons'],
+            $usersCardSelections['colours'],
+            $usersCardSelections['states'],
             $formattedSensorData
         );
     }

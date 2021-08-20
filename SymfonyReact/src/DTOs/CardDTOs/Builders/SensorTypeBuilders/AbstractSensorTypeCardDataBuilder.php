@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\DTOs\Factorys\CardDTOs;
+namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Temperature;
@@ -12,7 +12,7 @@ use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 
-abstract class AbstractCardDataFactory
+abstract class AbstractSensorTypeCardDataBuilder
 {
     /**
      * @param SensorInterface $cardDTOData
@@ -32,6 +32,9 @@ abstract class AbstractCardDataFactory
         if ($cardDTOData instanceof AnalogSensorTypeInterface) {
             $sensorData[] = $this->setStandardSensorData($cardDTOData->getAnalogObject(), 'analog');
         }
+//        if ($cardDTOData instanceof OnOffSensorTypeInterface) {
+//            $sensorData[] = $this->setOnOffSensordata($cardDTOData->getPIRObject(), 'PIR');
+//        }
         if (empty($sensorData)) {
             throw new \RuntimeException('Sensor type not recognised, the app needs updating to support the new feature');
         }

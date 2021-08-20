@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Sensors\CardDTOs;
+namespace App\DTOs\CardDTOs\Sensors\DTOs;
 
 /**
  * Class CurrentReadingCardDataDTO

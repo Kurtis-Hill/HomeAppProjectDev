@@ -3,9 +3,8 @@
 
 namespace App\Services;
 
-use App\DTOs\Factorys\CardDTOs\CardViewDTOFactory;
-use App\DTOs\Factorys\CardDTOs\CardViewFormDTOFactory;
-use App\DTOs\Sensors\CardDTOs\CardViewSensorFormDTO;
+use App\DTOs\CardDTOs\Factories\CardFactories\CardViewDTOFactory;
+use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
@@ -40,6 +39,11 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     private ?User $user;
 
     /**
+     * @var CardViewDTOFactory
+     */
+    private CardViewDTOFactory $cardViewDTOFactory;
+
+    /**
      * @var EntityManagerInterface
      */
     protected EntityManagerInterface $em;
@@ -64,17 +68,18 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      * @param Security $security
      *
      */
-    public function __construct(EntityManagerInterface $em, Security $security)
+    public function __construct(EntityManagerInterface $em, Security $security, CardViewDTOFactory $cardViewDTOFactory)
     {
         $this->em = $em;
         $this->user = $security->getUser();
+        $this->cardViewDTOFactory = $cardViewDTOFactory;
     }
     /**
      * @param string|null $route
      * @param int|null $deviceId
      * @return array
      */
-    public function prepareAllCardDTOs(?string $route = null, ?int $deviceId = null): array
+    public function prepareCardDTOs(?string $route = null, ?int $deviceId = null, array $cardFilters = []): array
     {
         try {
             if (isset($deviceId) && !is_numeric($deviceId)) {
@@ -93,7 +98,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $this->serverErrors[] = 'Card Data Query Failure';
         }
 
-        $cardViewDTOFactory = new CardViewDTOFactory();
+        $cardViewDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
         if (!empty($sensorObjects)) {
                 foreach ($sensorObjects as $cardDTO) {
                     try {
@@ -153,10 +158,10 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
 
     /**
-     * @param int $deviceId
+     * @param int|null $deviceId
      * @return array
      */
-    private function getDevicePageCardDataObjects(int $deviceId = null): array
+    private function getDevicePageCardDataObjects(?int $deviceId = null): array
     {
         if ($deviceId === null) {
             throw new BadRequestException(
@@ -206,7 +211,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
                 $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
 
-                $cardFormDTOFactory = new CardViewFormDTOFactory();
+                $cardFormDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_READING_FORM_CARD);
                 $cardViewFormDTO = $cardFormDTOFactory->makeDTO($cardData, $userSelectionData);
             }
             else {
@@ -221,6 +226,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $this->serverErrors[] = 'Card Data Query Failure';
         }
 
+        dd($cardViewFormDTO);
         return $cardViewFormDTO ?? null;
     }
 
@@ -290,7 +296,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         $colourRepository = $this->em->getRepository(CardColour::class);
         $maxColourNumber = $colourRepository->countAllColours();
         $firstColourId = $colourRepository->getFirstColourId()->getColourID();
-        $randomColour = $colourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber+$firstColourId-1)]);
+        $randomColour = $colourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber + $firstColourId -1)]);
 
         if (!$randomColour instanceof CardColour) {
             throw new RuntimeException('Failed setting random colour');

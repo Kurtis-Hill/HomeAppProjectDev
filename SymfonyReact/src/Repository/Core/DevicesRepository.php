@@ -55,8 +55,7 @@ class DevicesRepository extends EntityRepository
                     'roomID' => $deviceDetails['roomObject']
                 ]
             );
-        // use this after db clean
-//dd($qb->getQuery()->getOneOrNullResult());
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 

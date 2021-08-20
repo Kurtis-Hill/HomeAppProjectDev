@@ -3,8 +3,6 @@
 
 namespace App\DataFixtures\ESP8266;
 
-
-
 use App\DataFixtures\Card\CardFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Card\CardView;
