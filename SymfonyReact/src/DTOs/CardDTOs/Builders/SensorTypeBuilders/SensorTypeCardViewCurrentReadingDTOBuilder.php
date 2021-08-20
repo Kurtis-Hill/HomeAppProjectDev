@@ -5,8 +5,8 @@ namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
-use App\DTOs\CardDTOs\Sensors\DTOs\CardDTOInterface;
-use App\DTOs\CardDTOs\Sensors\DTOs\CurrentReadingCardDataDTO;
+use App\DTOs\CardDTOs\Sensors\DTOs\SensorTypeCardDTOInterface;
+use App\DTOs\CardDTOs\Sensors\DTOs\CurrentReadingSensorTypeCardDataDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use JetBrains\PhpStorm\ArrayShape;
@@ -17,9 +17,9 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeCardD
     /**
      * @param SensorInterface $sensorData
      * @param array $extraSensorData
-     * @return CardDTOInterface
+     * @return SensorTypeCardDTOInterface
      */
-    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): CardDTOInterface
+    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): SensorTypeCardDTOInterface
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
 
@@ -30,7 +30,7 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeCardD
             throw new RuntimeException('No Card Data Set, Card DTO Creation Failed');
         }
 
-        return new CurrentReadingCardDataDTO(
+        return new CurrentReadingSensorTypeCardDataDTO(
             $sensor->getSensorName(),
             $sensor->getSensorTypeID()->getSensorType(),
             $sensor->getDeviceNameID()->getRoomObject()->getRoom(),

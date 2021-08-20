@@ -2,7 +2,7 @@
 
 namespace App\DTOs\CardDTOs\Sensors\DTOs;
 
-interface CardDTOInterface
+interface SensorTypeCardDTOInterface
 {
     public function getSensorData(): array;
 
