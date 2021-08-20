@@ -50,8 +50,8 @@ export default class AddNewDeviceContextProvider extends Component {
         //@TODO this sends empty data when selecting defaults need to change structure
         const jsonFormData = {
             'deviceName' : this.state.newDeviceModalContent.newDeviceName,
-            'deviceRoom' : !this.state.newDeviceModalContent.newDeviceRoom,
-            'deviceGroup' : !this.state.newDeviceModalContent.newDeviceGroup,
+            'deviceRoom' : this.state.newDeviceModalContent.newDeviceRoom,
+            'deviceGroup' : this.state.newDeviceModalContent.newDeviceGroup,
         };
 
         console.log('formdata', jsonFormData);

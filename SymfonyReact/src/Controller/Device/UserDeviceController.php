@@ -29,9 +29,12 @@ class UserDeviceController extends AbstractController
     #[Route('/add-new-device', name: 'add-new-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(Request $request, DeviceServiceUser $deviceService, UserPasswordEncoderInterface $passwordEncoder): JsonResponse
     {
-        $deviceName = $request->get('deviceName');
-        $deviceGroup = $request->get('deviceGroup');
-        $deviceRoom = $request->get('deviceRoom');
+        $newDeviceData = json_decode($request->getContent(), true);
+        $deviceName = $newDeviceData['deviceName'] ?? null;
+        $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
+        $deviceRoom = $newDeviceData['deviceRoom'] ?? null;
+
+//        dd($deviceName. $deviceGroup, $deviceRoom, $newDeviceData);
 
         if (!isset($deviceGroup, $deviceRoom)) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);

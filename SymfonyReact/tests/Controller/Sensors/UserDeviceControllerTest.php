@@ -16,13 +16,13 @@ use App\Entity\Core\User;
 use App\Entity\Devices\Devices;
 use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserDeviceControllerTest extends WebTestCase
 {
-    private const API_DEVICE_LOGIN = '/HomeApp/device/login_check';
-
     private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/add-new-device';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
@@ -70,14 +70,14 @@ class UserDeviceControllerTest extends WebTestCase
         $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, RoomFixtures::ADMIN_ROOM_NAME);
         try {
             $this->setUserToken();
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
             error_log($e);
         }
     }
 
     /**
      * @return void
-     * @throws \JsonException
+     * @throws JsonException
      */
     private function setUserToken(): void
     {
@@ -113,22 +113,24 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_add_new_device(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
 
-//        dd($this->client->getResponse());
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
         self::assertNotNull($responseData['deviceID']);
@@ -141,20 +143,23 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_add_duplicate_device_name_same_room(): void
     {
         $formData = [
-            'device-name' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData
         );
 
-        $device = $this->entityManager->getRepository(Devices::class)->findBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString(sprintf(
@@ -171,16 +176,19 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_sending_malformed_request_missing_name(): void
     {
         $formData = [
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            $jsonData
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -191,19 +199,22 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_sending_malformed_request_missing_group(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
 
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['payload']['errors'][0]);
@@ -214,19 +225,22 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_sending_malformed_request_missing_room(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            $jsonData,
         );
 
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['payload']['errors'][0]);
@@ -237,20 +251,23 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_adding_device_sending_malfomed_group_id_string(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => 'string',
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => 'string',
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
 
         self::assertStringContainsString('Cannot find group name to add device too', $responseData['payload']['errors'][0]);
         self::assertNull($device);
@@ -260,20 +277,23 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_adding_device_name_too_long(): void
     {
         $formData = [
-            'device-name' => 'thisNameIsWaaaaaaaayTooooLoooong',
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => 'thisNameIsWaaaaaaaayTooooLoooong',
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
 
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertStringContainsString('Device name too long', $responseData['payload']['errors'][0]);
@@ -284,20 +304,23 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_adding_device_name_special_characters(): void
     {
         $formData = [
-            'device-name' => 'device&&**name',
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => 'device&&**name',
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
             $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
 
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload']['errors'][0]);
@@ -316,20 +339,23 @@ class UserDeviceControllerTest extends WebTestCase
         $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
 
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
 
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['device-name']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
@@ -341,17 +367,20 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_cannot_add_device_with_no_token(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER']
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER'],
+            $jsonData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -363,17 +392,20 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_device_password_is_sent_back_with_response_and_not_null(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
@@ -384,17 +416,20 @@ class UserDeviceControllerTest extends WebTestCase
     public function test_device_password_is_correct_format(): void
     {
         $formData = [
-            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-            'device-group' => $this->groupName->getGroupNameID(),
-            'device-room' => $this->room->getRoomID(),
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
         ];
+
+        $jsonData = json_encode($formData);
 
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
-            $formData,
             [],
-            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
@@ -402,39 +437,30 @@ class UserDeviceControllerTest extends WebTestCase
         self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $responseData['secret']);
     }
 
-//    public function test_new_device_can_login(): void
-//    {
-//        $formData = [
-//            'device-name' => self::UNIQUE_NEW_DEVICE_NAME,
-//            'device-group' => $this->groupName->getGroupNameID(),
-//            'device-room' => $this->room->getRoomID(),
-//        ];
-//
-//        $this->client->request(
-//            'POST',
-//            self::ADD_NEW_DEVICE_PATH,
-//            $formData,
-//            [],
-//            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-//        );
-//
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512)['payload'];
-//
-//        $deviceId = $responseData['deviceID'];
-//
-//        $newDevice = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceNameID' => $deviceId]);
-//
-//        $this->client->request(
-//            'POST',
-//            self::API_DEVICE_LOGIN,
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json'],
-//            '{"username":"'.$newDevice->getDeviceName().'","password":"'.$responseData['secret'].'"}'
-//        );
-//
-//        $requestCode = $this->client->getResponse()->getStatusCode();
-//
-//        self::assertEquals(HTTPStatusCodes::HTTP_OK, $requestCode);
-//    }
+    public function test_new_device_can_login(): void
+    {
+        $formData = [
+            'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'password' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'],
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            'POST',
+            SecurityController::API_DEVICE_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512);
+
+        $requestCode = $this->client->getResponse()->getStatusCode();
+
+        self::assertArrayHasKey('token', $responseData);
+        self::assertArrayHasKey('refreshToken', $responseData);
+        self::assertEquals(HTTPStatusCodes::HTTP_OK, $requestCode);
+    }
 }

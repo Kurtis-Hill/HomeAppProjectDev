@@ -22,7 +22,7 @@ class RegistrationController extends AbstractController
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return Response
      */
-    #[Route('/HomeApp/WebApp/register', name: 'app_register', methods: [Request::METHOD_POST])]
+    #[Route('/HomeApp/register', name: 'app_register', methods: [Request::METHOD_POST, Request::METHOD_GET])]
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $user = new User();

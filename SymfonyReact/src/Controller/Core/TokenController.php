@@ -31,7 +31,7 @@ class TokenController extends AbstractController
      */
     public function newTokenAction(Request $request, EncoderFactoryInterface $encoderFactory, JWTEncoderInterface $JWTEncoder)
     {
-        if (0 !== strpos($request->headers->get('Content-Type'), 'application/json')) {
+        if (!str_starts_with($request->headers->get('Content-Type'), 'application/json')) {
             $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         }
 

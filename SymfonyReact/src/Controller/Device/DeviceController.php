@@ -23,10 +23,12 @@ class DeviceController extends AbstractController
      * @param SensorDeviceDataService $sensorDataService
      * @return Response
      */
-    #[Route('/update/current-reading', name: 'update-current-reading')]
+    #[Route('/update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT])]
     public function updateSensorsCurrentReading(Request $request, SensorDeviceDataService $sensorDataService): Response
     {
-        dd($request->request->all());
+        dd($request->getContent());
+
+
         if (empty($request->request->get('sensor-type'))) {
             return $this->sendBadRequestJsonResponse();
         }
