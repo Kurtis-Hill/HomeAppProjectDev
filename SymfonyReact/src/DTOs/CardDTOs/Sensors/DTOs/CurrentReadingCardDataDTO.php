@@ -6,7 +6,7 @@ namespace App\DTOs\CardDTOs\Sensors\DTOs;
  * Class CurrentReadingCardDataDTO
  * @package App\DTOs\Sensors\CardDTOs
  */
-class CurrentReadingCardDataDTO implements AllCardViewDTOInterface
+class CurrentReadingCardDataDTO implements AllCardViewDTOInterface, CardDTOInterface
 {
     /**
      * @var string

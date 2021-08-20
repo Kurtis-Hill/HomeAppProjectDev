@@ -4,6 +4,7 @@ namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
+use App\DTOs\CardDTOs\Sensors\DTOs\CardViewFormDTO;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
@@ -16,7 +17,7 @@ class SensorTypeCardViewFormDTOBuilder extends AbstractSensorTypeCardDataBuilder
      * @param array $extraSensorData
      * @return CardViewSensorFormDTO
      */
-    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): AllCardViewDTOInterface
+    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): CardViewFormDTO
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
         $usersCurrentCardDisplaySettings = $this->setUsersCurrentCardViewData($sensorData);

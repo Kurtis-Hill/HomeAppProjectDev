@@ -13,5 +13,5 @@ interface CardBuilderDTOInterface
      * @param array $extraSensorData
      * @return AllCardViewDTOInterface
      */
-    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): AllCardViewDTOInterface;
+    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []);
 }

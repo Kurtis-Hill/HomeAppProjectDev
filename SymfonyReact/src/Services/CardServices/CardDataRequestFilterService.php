@@ -5,7 +5,11 @@ namespace App\Services\CardServices;
 
 
 use App\DTOs\CardDTOs\Factories\CardFactories\CardViewDTOFactory;
+use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
+use App\Entity\Sensors\SensorType;
+use App\Repository\Card\CardViewRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
@@ -16,8 +20,14 @@ class CardDataRequestFilterService
      */
     private CardViewDTOFactory $cardViewDTOFactory;
 
-    public function __construct(CardViewDTOFactory $cardViewDTOFactory)
+    private EntityManagerInterface $em;
+
+    /**
+     * @param CardViewDTOFactory $cardViewDTOFactory
+     */
+    public function __construct(EntityManagerInterface $em, CardViewDTOFactory $cardViewDTOFactory)
     {
+        $this->em = $em;
         $this->cardViewDTOFactory = $cardViewDTOFactory;
     }
 
@@ -69,4 +79,42 @@ class CardDataRequestFilterService
 
         return $cardDTOs ?? [];
     }
+
+    private function getRoomCardDataObjects(?int $deviceId, array $filters = [])
+    {
+
+    }
+
+    private function getDevicePageCardDataObjects(?int $deviceId, array $filters = [])
+    {
+
+    }
+
+    private function getIndexPageCardDataObjects(?int $deviceId, array $filters = [])
+    {
+        $sensors = SensorType::SENSOR_TYPE_DATA;
+
+        if (!empty($filters)) {
+            if (!empty($filters['sensorType'])) {
+
+            }
+        }
+
+        $cardRepository = $this->em->getRepository(CardView::class);
+        $standardSensorTypeCards = $this->getStandardSensorTypeData($cardRepository);
+
+        return $standardSensorTypeCards;
+    }
+
+    /**
+     * @param CardViewRepository $cardViewRepository
+     * @return array
+     */
+    private function getStandardSensorTypeData(CardViewRepository $cardViewRepository): array
+    {
+        $cardData = $cardViewRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
+
+        return $cardData ?? [];
+    }
+
 }

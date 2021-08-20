@@ -16,6 +16,7 @@ use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
+use App\Repository\Card\CardViewRepository;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -89,7 +90,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $sensorObjects = match ($route) {
                 "room" => $this->getRoomCardDataObjects($deviceId),
                 "device" => $this->getDevicePageCardDataObjects($deviceId),
-                default => $this->getIndexPageCardDataObjects()
+                default => $this->getIndexUserDefaultView()
             };
         } catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
@@ -123,6 +124,14 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         return $cardDTOs ?? [];
     }
 
+    private function getIndexUserDefaultView(): array
+    {
+        $cardRepository = $this->em->getRepository(CardView::class);
+        $standardSensorTypeCards = $this->getStandardSensorTypeData($cardRepository);
+
+        return $standardSensorTypeCards;
+    }
+
     /**
      * @param string $cardViewData
      * @return array
@@ -146,12 +155,12 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
 
     /**
+     * @param CardViewRepository $cardViewRepository
      * @return array
      */
-    private function getIndexPageCardDataObjects(): array
+    private function getStandardSensorTypeData(CardViewRepository $cardViewRepository): array
     {
-        $cardRepository = $this->em->getRepository(CardView::class);
-        $cardData = $cardRepository->getAllIndexSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA);
+        $cardData = $cardViewRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
 
         return $cardData ?? [];
     }

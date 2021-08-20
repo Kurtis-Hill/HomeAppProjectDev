@@ -7,7 +7,7 @@ namespace App\DTOs\CardDTOs\Sensors\DTOs;
  * Class CardViewSensorFormDTO
  * @package App\DTOs\Sensors
  */
-class CardViewSensorFormDTO implements AllCardViewDTOInterface
+class CardViewSensorFormDTO implements AllCardViewDTOInterface, CardViewFormDTO
 {
     /**
      * @var array
