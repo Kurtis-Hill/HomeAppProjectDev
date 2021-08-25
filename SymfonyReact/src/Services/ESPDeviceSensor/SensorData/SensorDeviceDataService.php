@@ -26,24 +26,23 @@ use Symfony\Component\HttpFoundation\Request;
 class SensorDeviceDataService extends AbstractSensorService
 {
     /**
-     * @param Request $request
+     * @param array $sensorData
      * @return array
      */
-    public function processSensorReadingUpdateRequest(Request $request): array
+    public function processSensorReadingUpdateRequest(array $sensorData): array
     {
-        $sensorType = $request->request->get('sensor-type');
 
-        if ($sensorType === SensorType::DHT_SENSOR) {
-            $this->handleDhtUpdateRequest($request);
+        if ($sensorData['sensorType'] === SensorType::DHT_SENSOR) {
+            $this->handleDhtUpdateRequest($sensorData);
         }
-        if ($sensorType === SensorType::DALLAS_TEMPERATURE) {
-            $this->handleDallasUpdateRequest($request);
+        if ($sensorData['sensorType'] === SensorType::DALLAS_TEMPERATURE) {
+            $this->handleDallasUpdateRequest($sensorData);
         }
-        if ($sensorType === SensorType::BMP_SENSOR) {
-            $this->handleBmpUpdateRequest($request);
+        if ($sensorData['sensorType'] === SensorType::BMP_SENSOR) {
+            $this->handleBmpUpdateRequest($sensorData);
         }
-        if ($sensorType === SensorType::SOIL_SENSOR) {
-            $this->handleSoilUpdateRequest($request);
+        if ($sensorData['sensorType'] === SensorType::SOIL_SENSOR) {
+            $this->handleSoilUpdateRequest($sensorData);
         }
 
 //        } catch (BadRequestException $exception) {

@@ -9214,7 +9214,8 @@
     "platform": {
         "php": "^8.0",
         "ext-ctype": "*",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "ext-pcntl": "7.4"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
