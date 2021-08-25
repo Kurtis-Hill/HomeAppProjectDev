@@ -10,10 +10,6 @@ use App\Entity\Sensors\Sensors;
 
 interface StandardReadingSensorInterface
 {
-    public function getSensorID(): int;
-
-    public function setSensorID(int $id);
-
     /**
      * Sensor relational Objects
      */
@@ -47,15 +43,7 @@ interface StandardReadingSensorInterface
     /**
      * Sensor Functional Methods
      */
-    public function getConstRecord(): bool;
-
-    public function setConstRecord(bool $constRecord);
-
     public function getMeasurementDifferenceHighReading(): int|float;
 
     public function getMeasurementDifferenceLowReading(): int|float;
-
-    public function isReadingOutOfBounds(): bool;
-
-
 }
