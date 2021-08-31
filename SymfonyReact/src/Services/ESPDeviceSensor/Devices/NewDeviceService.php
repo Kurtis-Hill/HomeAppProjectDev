@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
 
-class DeviceServiceUser implements APIErrorInterface
+class NewDeviceService implements APIErrorInterface
 {
     use FormProcessorTrait;
 
@@ -31,6 +31,9 @@ class DeviceServiceUser implements APIErrorInterface
      */
     private EntityManagerInterface $em;
 
+    /**
+     * @var Security
+     */
     private Security $security;
 
     /**
@@ -81,6 +84,9 @@ class DeviceServiceUser implements APIErrorInterface
         return $newDevice ?? null;
     }
 
+    /**
+     * @param array $deviceData
+     */
     private function duplicateSensorCheck(array $deviceData): void
     {
         $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDuplicateDeviceNewDeviceCheck($deviceData);

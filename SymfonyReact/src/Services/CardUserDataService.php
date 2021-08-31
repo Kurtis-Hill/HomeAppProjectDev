@@ -16,7 +16,6 @@ use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
-use App\Repository\Card\CardViewRepository;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -67,7 +66,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     /**
      * @param EntityManagerInterface $em
      * @param Security $security
-     *
+     * @param CardViewDTOFactory $cardViewDTOFactory
      */
     public function __construct(EntityManagerInterface $em, Security $security, CardViewDTOFactory $cardViewDTOFactory)
     {
@@ -126,8 +125,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
     private function getIndexUserDefaultView(): array
     {
-        $cardRepository = $this->em->getRepository(CardView::class);
-        $standardSensorTypeCards = $this->getStandardSensorTypeData($cardRepository);
+        $standardSensorTypeCards = $this->getStandardSensorTypeData();
 
         return $standardSensorTypeCards;
     }
@@ -155,12 +153,12 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
 
     /**
-     * @param CardViewRepository $cardViewRepository
      * @return array
      */
-    private function getStandardSensorTypeData(CardViewRepository $cardViewRepository): array
+    private function getStandardSensorTypeData(): array
     {
-        $cardData = $cardViewRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
+        $cardRepository = $this->em->getRepository(CardView::class);
+        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
 
         return $cardData ?? [];
     }

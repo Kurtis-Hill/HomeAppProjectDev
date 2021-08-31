@@ -128,7 +128,6 @@ class SensorUserDataService extends AbstractSensorService
     /**
      * @param Sensors $sensor
      * @param array $updateData
-     *
      */
     public function handleSensorReadingBoundary(Sensors $sensor, array $updateData): void
     {

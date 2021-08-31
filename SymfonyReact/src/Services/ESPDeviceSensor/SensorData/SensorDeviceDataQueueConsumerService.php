@@ -42,7 +42,6 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
                 };
 
                 return true;
-
             } catch (
                 BadRequestException
                 | SensorNotFoundException
@@ -63,24 +62,28 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
      * @throws DeviceNotFoundException
      * @throws SensorNotFoundException
      */
-    private function handleDallasUpdateRequest(array $sensorData, Devices $device): bool
+    private function handleDallasUpdateRequest(array $sensorData, Devices $device): void
     {
         $dallasSensor = $this->em->getRepository(Dallas::class)->findSensorBySensorName($sensorData['sensorName'], $device);
 
-        if ($dallasSensor === null) throw new SensorNotFoundException(
-            sprintf(
-                SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME,
-                $sensorData['sensorName']
-            )
-        );
+        if ($dallasSensor === null) {
+            throw new SensorNotFoundException(
+                sprintf(
+                    SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME,
+                    $sensorData['sensorName']
+                )
+            );
+        }
 
-        if (!$dallasSensor instanceof Dallas && $dallasSensor instanceof SensorInterface) throw new DeviceNotFoundException(
-            sprintf(
-                DeviceNotFoundException::DEVICE_NOT_FOUND_MESSAGE_WITH_SENSOR_NAME_AND_DEVICE_ID,
-                $dallasSensor->getSensorObject()->getSensorName(),
-                $device->getDeviceNameID()
-            )
-        );
+        if (!$dallasSensor instanceof Dallas && $dallasSensor instanceof SensorInterface) {
+            throw new DeviceNotFoundException(
+                sprintf(
+                    DeviceNotFoundException::DEVICE_NOT_FOUND_MESSAGE_WITH_SENSOR_NAME_AND_DEVICE_ID,
+                    $dallasSensor->getSensorObject()->getSensorName(),
+                    $device->getDeviceNameID()
+                )
+            );
+        }
 
         $sensorFormData = $this->prepareSensorFormData(
             $dallasSensor->getSensorObject()->getSensorTypeID(),
@@ -88,9 +91,11 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
             SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY
         );
 
-        if (empty($sensorFormData)) throw new RuntimeException(
-            'Sensor form has failed to process correctly for sensor ' .$sensorData['sensorName']
-        );
+        if (empty($sensorFormData)) {
+            throw new RuntimeException(
+                'Sensor form has failed to process correctly for sensor ' . $sensorData['sensorName']
+            );
+        }
 
         $this->processSensorForm(
             $sensorFormData,
@@ -103,7 +108,6 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
 
         $this->em->persist($dallasSensor);
         $this->em->flush();
-
     }
 
     /**
@@ -141,39 +145,38 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
 
     /**
      * @param AllSensorReadingTypeInterface $readingType
+     * @return void
      */
-    private function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): bool
+    private function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): void
     {
-        if ($readingType->getConstRecord() !== true) {
-            return false;
+        if ($readingType->getConstRecord() !== false) {
+            if ($readingType instanceof Temperature) {
+                $constObject = new ConstTemp();
+                $constObject->setSensorID($readingType);
+            }
+            if ($readingType instanceof Humidity) {
+                $constObject = new ConstHumid();
+                $constObject->setSensorID($readingType);
+            }
+            if ($readingType instanceof Latitude) {
+                //to do make table
+            }
+            if ($readingType instanceof Analog) {
+                $constObject = new ConstAnalog();
+                $constObject->setSensorID($readingType);
+            }
+
+            $isCallable = [$readingType, 'setSensorID'];
+
+            if (!isset($constObject) || !is_callable($isCallable)) throw new RuntimeException(
+                'Sensor type: ' . $readingType->getSensorTypeName() . 'not currently suppoerted for constant recoding values'
+            );
+
+            $constObject->setSensorReading($readingType->getCurrentReading());
+            $constObject->setTime();
+
+            $this->em->persist($constObject);
         }
-
-        if ($readingType instanceof Temperature) {
-            $constObject = new ConstTemp();
-        }
-        if ($readingType instanceof Humidity) {
-            $constObject = new ConstHumid();
-        }
-        if ($readingType instanceof Latitude) {
-            //to do make table
-        }
-        if ($readingType instanceof Analog) {
-            $constObject = new ConstAnalog();
-//            $constObject->setSensorID($readingType->get);
-        }
-
-
-        $isCallable = [$readingType, 'setSensorID'];
-
-        if (!isset($constObject) || !is_callable($isCallable)) throw new RuntimeException(
-            'Sensor type: ' . $readingType->getSensorTypeName() . 'not currently suppoerted for constant recoding values'
-        );
-
-        $constObject->setSensorReading($readingType->getCurrentReading());
-        $constObject->setSensorID($readingType);
-        $constObject->setTime();
-
-        $this->em->persist($constObject);
     }
 
     private function handleBmpUpdateRequest(Request $request)

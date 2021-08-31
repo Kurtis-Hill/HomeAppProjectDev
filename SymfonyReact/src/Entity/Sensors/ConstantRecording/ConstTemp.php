@@ -2,6 +2,7 @@
 
 namespace App\Entity\Sensors\ConstantRecording;
 
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -103,9 +104,9 @@ class ConstTemp
     }
 
     /**
-     * @param Sensors $sensorID
+     * @param Temperature $sensorID
      */
-    public function setSensorID(Sensors $sensorID): void
+    public function setSensorID(Temperature $sensorID): void
     {
         $this->sensorID = $sensorID;
     }
