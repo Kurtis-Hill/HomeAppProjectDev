@@ -46,7 +46,7 @@ class SensorType
     // Used by service classes to create forms for the sensors and for getting data from the database e.g getting unknown sensor type object (described as object below)
     // to determine which sensor reading types are about to be updated
     // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array
-    public const SENSOR_TYPE_DATA = [
+    public const ALL_SENSOR_TYPE_DATA = [
         SensorType::DHT_SENSOR => [
             'alias' => 'dht',
             'object' => Dht::class,

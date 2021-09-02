@@ -111,6 +111,7 @@ class NewDeviceService implements APIErrorInterface
         $addNewDeviceForm->submit($deviceData);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
+//            dd('hey', $addNewDeviceForm->getData());
             $secret = $deviceData['deviceName'];
             $secret .= time();
             $secret = hash("md5", $secret);

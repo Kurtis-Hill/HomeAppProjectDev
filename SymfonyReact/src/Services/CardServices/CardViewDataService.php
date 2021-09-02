@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-class CardDataRequestFilterService
+class CardViewDataService
 {
     /**
      * @var CardViewDTOFactory
@@ -92,7 +92,7 @@ class CardDataRequestFilterService
 
     private function getIndexPageCardDataObjects(?int $deviceId, array $filters = [])
     {
-        $sensors = SensorType::SENSOR_TYPE_DATA;
+        $sensors = SensorType::ALL_SENSOR_TYPE_DATA;
 
         if (!empty($filters)) {
             if (!empty($filters['sensorType'])) {
@@ -112,7 +112,7 @@ class CardDataRequestFilterService
      */
     private function getStandardSensorTypeData(CardViewRepository $cardViewRepository): array
     {
-        $cardData = $cardViewRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
+        $cardData = $cardViewRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
 
         return $cardData ?? [];
     }

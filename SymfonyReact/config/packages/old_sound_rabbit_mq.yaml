@@ -17,6 +17,8 @@ old_sound_rabbit_mq:
 
     producers:
         upload_current_reading_sensor_data:
+#            class: App\Producers\SensorProducers\SensorUpdateCurrentReadingProducer
+#            service_alias: 'app.update.sensor.producer'
             connection: default
             exchange_options: { name: 'current-reading-upload-sensor-data', type: direct }
 #                service_alias: home_app_service # no alias by default

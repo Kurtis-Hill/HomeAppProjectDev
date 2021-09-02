@@ -158,7 +158,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     private function getStandardSensorTypeData(): array
     {
         $cardRepository = $this->em->getRepository(CardView::class);
-        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
+        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
 
         return $cardData ?? [];
     }
@@ -176,7 +176,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             );
         }
 
-        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::SENSOR_TYPE_DATA, $deviceId);
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, $deviceId);
 
         return $cardData ?? [];
 
@@ -213,7 +213,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     public function getCardViewFormDTO(CardView $cardViewObject): ?CardViewSensorFormDTO
     {
         try {
-            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::SENSOR_TYPE_DATA);
+            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::ALL_SENSOR_TYPE_DATA);
             if ($cardData instanceof SensorInterface) {
                 $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
@@ -233,7 +233,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $this->serverErrors[] = 'Card Data Query Failure';
         }
 
-        dd($cardViewFormDTO);
+//        dd($cardViewFormDTO);
         return $cardViewFormDTO ?? null;
     }
 

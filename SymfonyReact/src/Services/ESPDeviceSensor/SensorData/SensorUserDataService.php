@@ -77,7 +77,7 @@ class SensorUserDataService extends AbstractSensorService
     {
         $dateTimeNow = new \DateTime();
 
-        foreach (SensorType::SENSOR_TYPE_DATA as $sensorNames => $sensorTypeData) {
+        foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorNames => $sensorTypeData) {
             if ($sensorNames === $sensor->getSensorTypeID()->getSensorType()) {
                 $newSensorTypeObject = new $sensorTypeData['object'];
                 if ($newSensorTypeObject instanceof StandardSensorTypeInterface) {

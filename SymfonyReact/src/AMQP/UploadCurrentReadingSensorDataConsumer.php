@@ -20,11 +20,6 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     private SensorDeviceDataQueueConsumerService $sensorDeviceDataQueueConsumerService;
 
     /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
-
-    /**
      * @var SensorsRepository
      */
     private SensorsRepository $sensorRepository;
@@ -42,7 +37,6 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         EntityManagerInterface $entityManager
     ) {
         $this->sensorDeviceDataQueueConsumerService = $sensorDeviceDataQueueConsumerService;
-        $this->em = $entityManager;
 
         $this->sensorRepository = $entityManager->getRepository(SensorsRepository::class);
         $this->deviceRepository = $entityManager->getRepository(DevicesRepository::class);

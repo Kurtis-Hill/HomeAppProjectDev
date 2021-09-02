@@ -75,7 +75,7 @@ abstract class AbstractSensorService implements APIErrorInterface
     protected function  prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
     {
         $currentSensorType = $sensorType->getSensorType();
-        foreach (SensorType::SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
+        foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $currentSensorType) {
                 foreach ($sensorDataArrays['forms'] as $formType => $formData) {
                     if ($formType === $formToProcess) {
