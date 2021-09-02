@@ -33,3 +33,9 @@ services:
     App\EventListeners\JWTAuthenticatedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
+
+    App\Controller\Device\DeviceController:
+        calls:
+            - setCurrentReadingProducer: ['@current_sensor_reading_producer']
+        arguments:
+            $uploadService: '@current_sensor_reading_producer'

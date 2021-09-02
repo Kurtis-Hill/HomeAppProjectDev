@@ -5,6 +5,7 @@ namespace App\AMQP;
 
 
 use App\Entity\Devices\Devices;
+use App\Entity\Sensors\Sensors;
 use App\Repository\Core\DevicesRepository;
 use App\Repository\Core\SensorsRepository;
 use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataQueueConsumerService;
@@ -44,14 +45,15 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         $this->sensorDeviceDataQueueConsumerService = $sensorDeviceDataQueueConsumerService;
         $this->em = $entityManager;
 
-        $this->sensorRepository = $entityManager->getRepository(SensorsRepository::class);
-        $this->deviceRepository = $entityManager->getRepository(DevicesRepository::class);
+        $this->sensorRepository = $entityManager->getRepository(Sensors::class);
+        $this->deviceRepository = $entityManager->getRepository(Devices::class);
     }
 
     public function execute(AMQPMessage $msg): bool
     {
         $sensorData = unserialize($msg->getBody(), ['allowed_classes' => false]);
 
+        dd($sensorData);
         $device = $this->findSensorBelongsToDevice((int)$sensorData['deviceId']);
 
         if ($device instanceof Devices) {

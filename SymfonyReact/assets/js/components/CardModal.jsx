@@ -30,19 +30,20 @@ const cardModal = () => {
             </div>
 
             {
-              modalStatus.errors.length > 0 ?
-                <div className="error-container">
-                  <div className="form-modal-error-box">
-                    <ol>
-                    {
-                      modalStatus.errors.map((error, index) => (
-                        <li key={index} className="form-modal-error-text">{error}</li>
-                      ))
-                    }
-                    </ol>
+              modalStatus.errors.length > 0 
+                ?
+                  <div className="error-container">
+                    <div className="form-modal-error-box">
+                      <ol>
+                      {
+                        modalStatus.errors.map((error, index) => (
+                          <li key={index} className="form-modal-error-text">{error}</li>
+                        ))
+                      }
+                      </ol>
+                    </div>
                   </div>
-                </div>
-            : null
+                : null
           }
 
             {modalStatus.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
