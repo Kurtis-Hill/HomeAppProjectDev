@@ -3,10 +3,11 @@
 
 namespace App\Controller\Device;
 
-use App\Producers\SensorProducers\SensorUpdateCurrentReadingProducer;
+use App\AMQP\Producers\UpdateCurrentDataProducer;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
+use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,25 +22,29 @@ class DeviceController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     /**
+     * @var ProducerInterface
+     */
+    private ProducerInterface $currentReadingAMQPProducer;
+
+
+    /**
      * UPDATE SENSOR METHODS
      * UNDER DEV
      *
      * @param Request $request
-     * @param TokenInterface $security
+     * @param Security $security
      * @return JsonResponse|Response
      */
     #[Route('/update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT])]
     public function updateSensorsCurrentReading(
         Request $request,
         Security $security,
-        $updateReadingProducer
-//        SensorUpdateCurrentReadingProducer $currentReadingProducer
     ): JsonResponse|Response {
-//        try {
-//            $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//        } catch (JsonException) {
-//            return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
-//        }
+        try {
+            $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
+        }
 
         $isCallable = [$security->getUser(), 'getDeviceNameID'];
 
@@ -49,28 +54,28 @@ class DeviceController extends AbstractController
 
         $deviceId = $security->getUser()->getDeviceNameID();
 
-
-//        $rabbitMQ = $this->get('old_sound_rabbit_mq.current-reading-upload-sensor-data');
-//        dd($updateReadingProducer);
-//        $rabbitMQ = $this->get($updateReadingProducer);
-
         $sensorData = [
+            'sensorType' => 'dallas',
             'sensorData' => [
-                'deviceId' => '1176',
-                'sensorType' => 'Dht',
-                'sensorName' => 'Bmp11',
-                'currentReading' => '12'
-            ]
+                0 => [
+                    'sensorName' => 'Bmp1',
+                    'currentReading' => '12'
+                ],
+                1 => [
+                    'sensorName' => 'Bmp11',
+                    'currentReading' => '24'
+                ]
+            ],
         ];
 
-        $hey = json_encode($sensorData);
-//        dd($hey);
+        $json = json_encode($sensorData);
+        dd($json);
 
         try {
             foreach ($sensorData['sensorData'] as $sensorUpdateData) {
                 $sensorUpdateData['deviceId'] = $deviceId;
 
-//                $currentReadingProducer->publish(serialize($sensorUpdateData));
+                $this->currentReadingAMQPProducer->publish(serialize($sensorUpdateData));
             }
         } catch (Exception $exception) {
             return $this->sendBadRequestJsonResponse(['Failed to produce messages ' . $exception->getMessage()]);
@@ -79,4 +84,11 @@ class DeviceController extends AbstractController
         return $this->sendSuccessfulJsonResponse(['Sensor data accepted']);
     }
 
+    /**
+     * @param ProducerInterface $producer
+     */
+    public function setCurrentReadingProducer(ProducerInterface $producer)
+    {
+        $this->currentReadingAMQPProducer = $producer;
+    }
 }

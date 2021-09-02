@@ -10,9 +10,6 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        bind:
-            $updateReadingProducer: '@app.update.sensor.producer'
-
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -37,5 +34,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
-    App\Producers\SensorProducers\SensorUpdateCurrentReadingProducer: '@app.update.sensor.producer'
-    app.update.sensor.producer.two: '@App\Producers\SensorProducers\SensorUpdateCurrentReadingProducer'
+    App\Controller\Device\DeviceController:
+        calls:
+            - setCurrentReadingProducer: ['@current_sensor_reading_producer']
