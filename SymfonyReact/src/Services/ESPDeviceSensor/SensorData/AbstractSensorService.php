@@ -55,12 +55,16 @@ abstract class AbstractSensorService implements APIErrorInterface
     {
         foreach ($sensorFormData as $sensorType => $sensorData) {
             foreach ($readingTypeObjects as $sensorObject) {
+//                dd($sensorType, $sensorObject);
                 if ($sensorType === $sensorObject::class) {
+//                    dd('hi');
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
                     if ($handledForm === true) {
+//                        dd('it did');
                         $this->em->persist($sensorForm->getData());
                     }
+//                    dd('did not');
                 }
             }
         }
@@ -74,6 +78,7 @@ abstract class AbstractSensorService implements APIErrorInterface
      */
     protected function  prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
     {
+//        dd($readingsToUpdate);
         $currentSensorType = $sensorType->getSensorType();
         foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $currentSensorType) {
@@ -96,22 +101,26 @@ abstract class AbstractSensorService implements APIErrorInterface
                                                 'constRecord' => $constRecord
                                             ]
                                         ];
-                                        continue;
+//                                        dd($sensorFormsData);
                                     }
                                 }
                             }
                             continue;
                         }
-
+//dd($sensorType);
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
+//                                dd($readingsToUpdate);
                             foreach ($readingsToUpdate['sensorData'] as $sensorData) {
                                 foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
+//                                    dd($readingType, $sensorData);
                                     if ($readingType === $sensorData['sensorType']) {
-                                        $currentReading = $readingsToUpdate[$readingType . 'currentReading'];
-
+//                                        dd($sensorData);
+                                        $currentReading = $sensorData['currentReading'];
+//dd($currentReading);
                                         $readingErrorMessage = "%s %s has no value";
                                         !empty($currentReading) ?: $this->userInputErrors[] = sprintf($readingErrorMessage, ucfirst($readingType), 'current reading');
 
+//                                        dd($re)
                                         $sensorFormsData[$readingTypeClass] = [
                                             'formToProcess' => $formData['form'],
                                             'object' => $sensorDataArrays['object'],
@@ -119,6 +128,7 @@ abstract class AbstractSensorService implements APIErrorInterface
                                                 'currentReading' => $currentReading,
                                             ]
                                         ];
+//                                        dd($sensorFormsData);
                                         continue;
                                     }
                                 }

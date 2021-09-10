@@ -54,27 +54,29 @@ class DeviceController extends AbstractController
 
         $deviceId = $security->getUser()->getDeviceNameID();
 
-        $sensorData = [
-            'sensorType' => 'dallas',
-            'sensorData' => [
-                0 => [
-                    'sensorName' => 'Bmp1',
-                    'currentReading' => '12'
-                ],
-                1 => [
-                    'sensorName' => 'Bmp11',
-                    'currentReading' => '24'
-                ]
-            ],
-        ];
-
-        $json = json_encode($sensorData);
-        dd($json);
+//        $sensorData = [
+//            'sensorType' => 'dallas',
+//            'sensorData' => [
+//                0 => [
+//                    'sensorName' => 'Bmp1',
+//                    'currentReading' => '12'
+//                ],
+//                1 => [
+//                    'sensorName' => 'Bmp11',
+//                    'currentReading' => '24'
+//                ]
+//            ],
+//        ];
+//
+//        $json = json_encode($sensorData);
+//        dd($json);
 
         try {
             foreach ($sensorData['sensorData'] as $sensorUpdateData) {
                 $sensorUpdateData['deviceId'] = $deviceId;
+                $sensorUpdateData['sensorType'] = $sensorData['sensorType'];
 
+//                dd($sensorUpdateData);
                 $this->currentReadingAMQPProducer->publish(serialize($sensorUpdateData));
             }
         } catch (Exception $exception) {

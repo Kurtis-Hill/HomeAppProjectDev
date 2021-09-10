@@ -489,7 +489,7 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $totalSensorTypes = count(SensorType::SENSOR_TYPES);
+        $totalSensorTypes = count(SensorType::ALL_SENSOR_TYPE_DATA);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -497,7 +497,7 @@ class SensorControllerTest extends WebTestCase
 
         foreach ($responseData as $sensorType) {
             self::assertIsInt($sensorType['sensorTypeID']);
-            self::assertContains($sensorType['sensorType'], SensorType::SENSOR_TYPES);
+            self::assertContains($sensorType['sensorType'], SensorType::ALL_SENSOR_TYPE_DATA);
             self::assertArrayHasKey('description', $sensorType);
         }
 

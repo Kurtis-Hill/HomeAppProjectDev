@@ -44,7 +44,7 @@ const cardModal = () => {
                     </div>
                   </div>
                 : null
-          }
+            }
 
             {modalStatus.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
               <React.Fragment>

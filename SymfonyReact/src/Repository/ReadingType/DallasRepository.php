@@ -26,30 +26,37 @@ class DallasRepository extends EntityRepository
         $qb = $this->createQueryBuilder('dallas');
         $expr = $qb->expr();
 
-        $qb->select()
+        $qb->select('dallas')
             ->innerJoin(
                 Sensors::class,
                 'sensor',
                 Join::WITH,
-                'sensor.sensorNameID = dallas.sensorNameID'#
-        )
+                'dallas.sensorNameID = sensor.sensorNameID'
+            )
             ->innerJoin(
                 Devices::class,
                 'device',
                 Join::WITH,
                 'sensor.deviceNameID = device.deviceNameID'
             )
+            ->innerJoin(
+                Temperature::class,
+                'temp',
+                Join::WITH,
+                'dallas.tempID = temp.tempID'
+            )
             ->where(
-                $expr->eq('sensorName', ':sensorName'),
-                $expr->eq('sensors.deviceNameID', ':deviceID')
+                $expr->eq('sensor.sensorName', ':sensorName'),
+                $expr->eq('sensor.deviceNameID', ':deviceID')
             )
             ->setParameters(
                 [
                     'sensorName' => $sensorName,
-                    'deviceID' => $devices
+                    'deviceID' => $devices->getUserID()
                 ]
             );
 
+//        dd($qb->getQuery()->getResult());
         return $qb->getQuery()->getOneOrNullResult();
     }
     /**
