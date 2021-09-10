@@ -9,6 +9,7 @@ use Exception;
 use JsonException;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,6 +47,10 @@ class DeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
         }
 
+        if (empty($sensorData['sensorData'])) {
+            throw new BadRequestException('you have not provided the correct information to update the sensor');
+        }
+
         $isCallable = [$security->getUser(), 'getDeviceNameID'];
 
         if (!is_callable($isCallable) || !$security->getUser()->getDeviceNameID()) {
@@ -58,11 +63,11 @@ class DeviceController extends AbstractController
 //            'sensorType' => 'dallas',
 //            'sensorData' => [
 //                0 => [
-//                    'sensorName' => 'Bmp1',
+//                    'sensorName' => 'Dallas1',
 //                    'currentReading' => '12'
 //                ],
 //                1 => [
-//                    'sensorName' => 'Bmp11',
+//                    'sensorName' => 'Dallas11',
 //                    'currentReading' => '24'
 //                ]
 //            ],

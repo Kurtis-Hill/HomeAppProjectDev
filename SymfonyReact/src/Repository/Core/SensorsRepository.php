@@ -59,7 +59,7 @@ class SensorsRepository extends EntityRepository
      * @param array $sensorData
      * @return array
      */
-    public function getSensorTypeObejctsBySensor(Devices $device, string $sensors, array $sensorData): array
+    public function getSensorTypeObjectsBySensor(Devices $device, string $sensors, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('sensors');
         $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);

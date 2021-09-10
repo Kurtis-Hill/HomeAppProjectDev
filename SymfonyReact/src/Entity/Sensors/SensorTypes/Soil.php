@@ -19,6 +19,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class Soil implements SensorInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
 {
+    public const NAME = 'Soil';
+
     /**
      * @var int
      *

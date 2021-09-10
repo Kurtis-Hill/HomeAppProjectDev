@@ -58,15 +58,15 @@ class SensorType
                 self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
-                        'humidity' => Humidity::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
+                        Humidity::READING_TYPE => Humidity::class,
                     ],
                 ],
                 self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
-                        'humidity' => Humidity::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
+                        Humidity::READING_TYPE => Humidity::class,
                     ],
                 ]
             ]
@@ -76,41 +76,41 @@ class SensorType
             'alias' => 'dallas',
             'object' => Dallas::class,
             'readingTypes' => [
-                'temperature' =>  Temperature::class,
+                Temperature::READING_TYPE =>  Temperature::class,
             ],
             'forms' => [
                 self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
+                       Temperature::READING_TYPE =>  Temperature::class,
                     ],
                 ],
                 self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
                     ],
                 ]
             ]
         ],
 
-        SensorType::SOIL_SENSOR => [
+        Soil::NAME => [
             'alias' => 'soil',
             'object' => Soil::class,
             'readingTypes' => [
-                'analog' =>  Analog::class,
+                Analog::READING_TYPE =>  Analog::class,
             ],
             'forms' => [
                 self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
-                        'analog' =>  Analog::class,
+                        Analog::READING_TYPE =>  Analog::class,
                     ],
                 ],
                 self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'analog' =>  Analog::class,
+                        Analog::READING_TYPE =>  Analog::class,
                     ],
                 ]
             ]

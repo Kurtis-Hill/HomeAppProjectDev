@@ -17,6 +17,7 @@ use JetBrains\PhpStorm\Pure;
  */
 class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_TYPE = 'analog';
     public const ANALOG_SENSORS = [
         SensorType::SOIL_SENSOR
     ];

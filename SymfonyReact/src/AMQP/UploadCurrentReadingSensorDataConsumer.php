@@ -46,38 +46,14 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         $sensorData = unserialize($msg->getBody(), ['allowed_classes' => false]);
-
-//        dd($sensorData);
-        $device = $this->findSensorBelongsToDevice((int)$sensorData['deviceId']);
+//dd($sensorData);
+        $device = $this->deviceRepository->findOneBy(['deviceNameID' => (int)$sensorData['deviceId']]);
 //dd($device);
         if ($device instanceof Devices) {
-            $sensorDataHandled = $this->sensorDeviceDataQueueConsumerService->handleUpdateCurrentReadingSensorData($sensorData, $device);
-
-            return $sensorDataHandled;
+            return $this->sensorDeviceDataQueueConsumerService->handleUpdateCurrentReadingSensorData($sensorData, $device);
         }
-
 
         return false;
-    }
-
-    /**
-     * @param int $deviceID
-     * @return bool
-     */
-    private function findSensorBelongsToDevice(int $deviceID): ?Devices
-    {
-        $device = $this->deviceRepository->findOneBy(['deviceNameID' => $deviceID]);
-
-        if ($device instanceof Devices) {
-            return $device;
-        }
-
-        return null;
-    }
-
-    private function handleSensorDataRequest(array $sensorData): bool
-    {
-
     }
 
 }

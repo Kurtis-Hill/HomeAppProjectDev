@@ -95,7 +95,7 @@ class CardDataController extends AbstractController
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
-    #[Route('/card-state-view-form', name: 'card-view-form', methods: [Request::METHOD_GET])]
+    #[Route('/card-sensor-form', name: 'card-view-form', methods: [Request::METHOD_GET])]
     public function showCardViewForm(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->query->get('cardViewID');

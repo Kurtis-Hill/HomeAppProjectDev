@@ -40,7 +40,7 @@ class CardDTOCreatorService implements APIErrorInterface, LoggedInUserRequiredIn
     /**
      * @var CardDataFilterService
      */
-    private $cardDataFilterService;
+    private CardDataFilterService $cardDataFilterService;
 
     /**
      * @var EntityManagerInterface
@@ -134,9 +134,9 @@ class CardDTOCreatorService implements APIErrorInterface, LoggedInUserRequiredIn
     private function getIndexPageCardDataObjects($filteredSensorTypes)
     {
         $cardRepository = $this->em->getRepository(CardView::class);
-        $standardSensorTypeCards = $this->getStandardSensorTypeData($cardRepository);
+        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), $filteredSensorTypes, Cardstate::INDEX_ONLY);
 
-        return $standardSensorTypeCards;
+        return $cardData;
     }
 
     private function getIndexUserDefaultView(): array

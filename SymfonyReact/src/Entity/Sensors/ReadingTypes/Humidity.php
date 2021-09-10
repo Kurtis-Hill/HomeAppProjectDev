@@ -18,6 +18,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_TYPE = 'humidity';
+
     public const READING_SYMBOL = '%';
 
     public const HUMIDITY_SENSORS = [
