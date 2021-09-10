@@ -61,7 +61,7 @@ class CardDataController extends AbstractController
         }
 
         $cardFilters = $request->get('filters') ?? [];
-        $cardDataDTOs = $cardDataService->prepareCardDTOs($route, $deviceId, $cardFilters);
+        $cardDataDTOs = $cardDataService->prepareCardDTOs($route, $device ?? null, $cardFilters);
 
         if (!empty($cardDataService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());
