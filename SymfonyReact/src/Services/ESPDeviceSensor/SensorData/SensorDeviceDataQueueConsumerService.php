@@ -13,6 +13,7 @@ use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Entity\Sensors\SensorTypes\Dallas;
 use App\Exceptions\DeviceNotFoundException;
@@ -20,6 +21,7 @@ use App\Exceptions\SensorNotFoundException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +39,7 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
         {
             try {
                 match ($sensorData['sensorType']) {
-                    SensorType::DHT_SENSOR => $this->handleDallasUpdateRequest($sensorData, $device),
+                    SensorType::DALLAS_TEMPERATURE => $this->handleDallasUpdateRequest($sensorData, $device),
                     default => throw new UnexpectedValueException('No type has been added to handle this request')
                 };
 
@@ -59,35 +61,44 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
     /**
      * @param array $sensorData
      * @param Devices $device
-     * @throws DeviceNotFoundException
-     * @throws SensorNotFoundException
      */
-    private function handleDallasUpdateRequest(array $sensorData, Devices $device): void
+    #[NoReturn] private function handleDallasUpdateRequest(array $sensorData, Devices $device): void
     {
-        $dallasSensor = $this->em->getRepository(Dallas::class)->findSensorBySensorName($sensorData['sensorName'], $device);
+//        $sensor = $this->em->getRepository(Sensors::class)->findOneBy(['sensorName' => $sensorData['sensorName'], 'deviceNameID' => $device]);
+        $sensorTypeObjects = $this->em->getRepository(Sensors::class)->getSensorTypeObejctsBySensor($device,$sensorData['sensorName'], SensorType::SENSOR_READING_TYPE_DATA);
+//        $dallasSensor = $this->em->getRepository(Dallas::class)->findSensorBySensorName($sensorData['sensorName'], $device);
 
-        if ($dallasSensor === null) {
-            throw new SensorNotFoundException(
-                sprintf(
-                    SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME,
-                    $sensorData['sensorName']
-                )
-            );
-        }
+//        $tempObject = $dallasSensor->getTempObject();
+        dd( $sensorTypeObjects);
+//        $dallasSensor = $this->em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensorData['sensorName'], $device);
 
-        if (!$dallasSensor instanceof Dallas && $dallasSensor instanceof SensorInterface) {
-            throw new DeviceNotFoundException(
-                sprintf(
-                    DeviceNotFoundException::DEVICE_NOT_FOUND_MESSAGE_WITH_SENSOR_NAME_AND_DEVICE_ID,
-                    $dallasSensor->getSensorObject()->getSensorName(),
-                    $device->getDeviceNameID()
-                )
-            );
-        }
+//        if ($dallasSensor === null) {
+//            throw new SensorNotFoundException(
+//                sprintf(
+//                    SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME,
+//                    $sensorData['sensorName']
+//                )
+//            );
+//        }
+
+//        if (!$dallasSensor instanceof Dallas && $dallasSensor instanceof SensorInterface) {
+//            throw new DeviceNotFoundException(
+//                sprintf(
+//                    DeviceNotFoundException::DEVICE_SENSOR_AND_TYPE_NOT_MATCHED,
+//                    $dallasSensor->getSensorObject()->getSensorTypeID()->getSensorType(),
+//                    $sensorData['sensorType']
+//                )
+//            );
+//        }
+
+        $updateData = [
+                'currentReading' => $sensorData['currentReading'],
+                'sensorType' => 'temperature'
+        ];
 
         $sensorFormData = $this->prepareSensorFormData(
             $dallasSensor->getSensorObject()->getSensorTypeID(),
-            $sensorData['currentReading'],
+            ['sensorData' => [$updateData]],
             SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY
         );
 
@@ -99,14 +110,14 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
 
         $this->processSensorForm(
             $sensorFormData,
-            [$dallasSensor->getSensorObject()->getSensorTypeID()]
+            [$dallasSensor->getTempObject()]
         );
 
         $this->checkAndProcessConstRecord($dallasSensor->getTempObject());
 
-        $this->checkTemperatureOutOfBounds($dallasSensor);
-
+        $this->checkTemperatureOutOfBounds($dallasSensor->getTempObject());
         $this->em->persist($dallasSensor);
+dd($dallasSensor);
         $this->em->flush();
     }
 
@@ -115,6 +126,7 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
      */
     private function checkTemperatureOutOfBounds(AllSensorReadingTypeInterface $readingType): void
     {
+//        dd($readingType);
         if ($readingType->isReadingOutOfBounds() === true) {
             if ($readingType instanceof Temperature) {
                 $outOfBounds = new OutOfRangeTemp();
@@ -138,6 +150,7 @@ class SensorDeviceDataQueueConsumerService extends AbstractSensorService
             $outOfBounds->setSensorID($readingType);
             $outOfBounds->setSensorReading($readingType->getCurrentReading());
             $outOfBounds->setTime();
+//            dd('here');
 
             $this->em->persist($outOfBounds);
         }

@@ -143,7 +143,7 @@ class CardContextProvider extends Component {
 
         const userCardViewSelections = cardData.userCardViewSelections;
         const userColourSelections = cardData.userColourSelections;
-        const userIconSelections = cardData.userIconSelections;
+        const userIconSelections = cardData.iconSelection;
 
         this.setState({
             userSelectionData: {

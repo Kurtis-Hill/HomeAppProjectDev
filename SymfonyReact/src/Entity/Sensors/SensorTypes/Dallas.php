@@ -19,11 +19,12 @@ use JetBrains\PhpStorm\Pure;
  */
 class Dallas implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
-    public const HIGH_TEMPERATURE_READING_BOUNDRY = 125;
+    public const HIGH_TEMPERATURE_READING_BOUNDARY = 125;
 
-    public const LOW_TEMPERATURE_READING_BOUNDRY = -55;
+    public const LOW_TEMPERATURE_READING_BOUNDARY = -55;
 
     public const MAX_POSSIBLE_SENSORS = 8;
+
     /**
      * @var int
      *
@@ -36,7 +37,7 @@ class Dallas implements SensorInterface, StandardSensorTypeInterface, Temperatur
     /**
      * @var Temperature
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })

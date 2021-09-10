@@ -23,6 +23,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class Bmp implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
 {
+    public const NAME = 'Bmp';
+
     public const HIGH_TEMPERATURE_READING_BOUNDRY = 85;
 
     public const LOW_TEMPERATURE_READING_BOUNDRY = -45;

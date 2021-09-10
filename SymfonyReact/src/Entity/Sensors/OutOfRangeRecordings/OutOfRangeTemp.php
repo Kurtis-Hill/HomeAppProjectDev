@@ -3,6 +3,7 @@
 namespace App\Entity\Sensors\OutOfRangeRecordings;
 
 
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -38,14 +39,14 @@ class OutOfRangeTemp
     private $time;
 
     /**
-     * @var Sensors
+     * @var Temperature
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="sensorNameID")
+     *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
      */
-    private Sensors $sensorID;
+    private Temperature $sensorID;
 
     /**
      * @return int
@@ -104,9 +105,9 @@ class OutOfRangeTemp
     }
 
     /**
-     * @param Sensors $sensorID
+     * @param Temperature $sensorID
      */
-    public function setSensorID(Sensors $sensorID): void
+    public function setSensorID(Temperature $sensorID): void
     {
         $this->sensorID = $sensorID;
     }

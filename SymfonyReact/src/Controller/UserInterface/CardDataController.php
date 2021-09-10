@@ -186,7 +186,7 @@ class CardDataController extends AbstractController
 
         $sensorObject = $cardViewObject->getSensorNameID();
 
-        $sensorDataService->handleSensorReadingBoundary($sensorObject, $cardData);
+        $sensorDataService->handleSensorReadingBoundaryUpdate($cardViewObject->getSensorNameID()->getDeviceNameID(), $sensorObject->getSensorName(),$cardData);
 
         if (!empty($sensorDataService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());

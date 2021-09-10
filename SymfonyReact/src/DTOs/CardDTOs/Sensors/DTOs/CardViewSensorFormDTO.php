@@ -171,7 +171,7 @@ class CardViewSensorFormDTO implements AllCardViewDTOInterface, CardViewFormDTO
     /**
      * @return array
      */
-    public function getColourSelection(): array
+    public function getUserColourSelections(): array
     {
         return $this->colourSelection;
     }
@@ -179,34 +179,8 @@ class CardViewSensorFormDTO implements AllCardViewDTOInterface, CardViewFormDTO
     /**
      * @return array
      */
-    public function getCardStates(): array
+    public function getUserCardViewSelections(): array
     {
         return $this->cardStates;
     }
-
-
-
-//    /**
-//     * @return array
-//     */
-//    public function getUserIconSelections(): array
-//    {
-//        return $this->iconSelection;
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function getUserColourSelections(): array
-//    {
-//        return $this->colourSelection;
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function getUserCardViewSelections(): array
-//    {
-//        return $this->cardStates;
-//    }
 }

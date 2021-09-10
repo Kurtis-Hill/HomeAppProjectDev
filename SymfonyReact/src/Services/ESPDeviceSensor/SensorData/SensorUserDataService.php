@@ -4,6 +4,7 @@
 namespace App\Services\ESPDeviceSensor\SensorData;
 
 
+use App\Entity\Devices\Devices;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -17,6 +18,7 @@ use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use UnexpectedValueException;
 
 class SensorUserDataService extends AbstractSensorService
 {
@@ -126,15 +128,16 @@ class SensorUserDataService extends AbstractSensorService
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Devices $device
+     * @param string $sensor
      * @param array $updateData
      */
-    public function handleSensorReadingBoundary(Sensors $sensor, array $updateData): void
+    public function handleSensorReadingBoundaryUpdate(Devices $device, string $sensor, array $updateData): void
     {
         try {
-            $sensorTypeObject = $this->em->getRepository(Sensors::class)->getSensorCardFormDataBySensor($sensor, SensorType::SENSOR_READING_TYPE_DATA);
-            if (empty($sensorTypeObject)) {
-                throw new \UnexpectedValueException('No reading types were found for your request, please make sure your app is up to date');
+            $sensorTypeObjects = $this->em->getRepository(Sensors::class)->getSensorTypeObejctsBySensor($device, $sensor, SensorType::SENSOR_READING_TYPE_DATA);
+            if (empty($sensorTypeObjects)) {
+                throw new UnexpectedValueException('No reading types were found for your request, please make sure your app is up to date');
             }
             $sensorFormData = $this->prepareSensorFormData($sensor->getSensorTypeID(), $updateData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
 
@@ -142,10 +145,10 @@ class SensorUserDataService extends AbstractSensorService
                 throw new BadRequestException('something went wrong with processing the sensor reading update form');
             }
 
-             $this->processSensorForm($sensorFormData, $sensorTypeObject);
+             $this->processSensorForm($sensorFormData, $sensorTypeObjects);
         } catch (BadRequestException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
-        }catch (\UnexpectedValueException $exception) {
+        }catch (UnexpectedValueException $exception) {
             $this->serverErrors[] = $exception->getMessage();
         }
     }

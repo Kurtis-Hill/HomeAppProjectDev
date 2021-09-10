@@ -47,9 +47,9 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     {
         $sensorData = unserialize($msg->getBody(), ['allowed_classes' => false]);
 
-        dd($sensorData);
+//        dd($sensorData);
         $device = $this->findSensorBelongsToDevice((int)$sensorData['deviceId']);
-
+//dd($device);
         if ($device instanceof Devices) {
             $sensorDataHandled = $this->sensorDeviceDataQueueConsumerService->handleUpdateCurrentReadingSensorData($sensorData, $device);
 

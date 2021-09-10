@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Temperature implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_TYPE = 'temperature';
+
     public const READING_SYMBOL = '°C';
 
     public const TEMPERATURE_SENSORS = [
