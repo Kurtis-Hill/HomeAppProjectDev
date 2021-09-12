@@ -2,6 +2,12 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Sensors\ConstantRecording\ConstAnalog;
+use App\Entity\Sensors\ConstantRecording\ConstHumid;
+use App\Entity\Sensors\ConstantRecording\ConstTemp;
+use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeAnalog;
+use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeHumid;
+use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeTemp;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -148,19 +154,27 @@ class SensorType
     public const SENSOR_READING_TYPE_DATA = [
         Sensors::TEMPERATURE => [
             'alias' => 'temp',
-            'object' => Temperature::class
+            'object' => Temperature::class,
+            'outOfBounds' => OutOfRangeTemp::class,
+            'constRecord' => ConstTemp::class
         ],
         Sensors::HUMIDITY => [
             'alias' => 'humid',
-            'object' => Humidity::class
+            'object' => Humidity::class,
+            'outOfBounds' => OutOfRangeHumid::class,
+            'constRecord' => ConstHumid::class
         ],
         Sensors::ANALOG => [
             'alias' => 'analog',
-            'object' => Analog::class
+            'object' => Analog::class,
+            'outOfBounds' => OutOfRangeAnalog::class,
+            'constRecord' => ConstAnalog::class
         ],
         Sensors::LATITUDE => [
             'alias' => 'lat',
-            'object' => Latitude::class
+            'object' => Latitude::class,
+            'outOfBounds' => '@OTODO implement',
+            'constRecord' => 'TOOD implement'
         ],
     ];
 

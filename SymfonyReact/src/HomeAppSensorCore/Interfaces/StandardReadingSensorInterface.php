@@ -24,8 +24,6 @@ interface StandardReadingSensorInterface
     /**
      * Sensor Reading Methods
      */
-    public function getCurrentReading(): int|float;
-
     public function getHighReading(): int|float;
 
     public function getLowReading(): int|float;

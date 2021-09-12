@@ -5,25 +5,17 @@ namespace App\AMQP;
 
 
 use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
 use App\Repository\Core\DevicesRepository;
-use App\Repository\Core\SensorsRepository;
-use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataQueueConsumerService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataQueueConsumerUpdateService;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
     /**
-     * @var SensorDeviceDataQueueConsumerService
+     * @var SensorDeviceDataQueueConsumerUpdateService
      */
-    private SensorDeviceDataQueueConsumerService $sensorDeviceDataQueueConsumerService;
-
-    /**
-     * @var SensorsRepository
-     */
-    private SensorsRepository $sensorRepository;
+    private SensorDeviceDataQueueConsumerUpdateService $sensorDeviceDataQueueConsumerService;
 
     /**
      * @var DevicesRepository
@@ -31,24 +23,22 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     private DevicesRepository $deviceRepository;
 
     /**
-     * @param SensorDeviceDataQueueConsumerService $sensorDeviceDataQueueConsumerService
+     * @param SensorDeviceDataQueueConsumerUpdateService $sensorDeviceDataQueueConsumerService
+     * @param DevicesRepository $deviceRepository
      */
     public function __construct(
-        SensorDeviceDataQueueConsumerService $sensorDeviceDataQueueConsumerService,
-        EntityManagerInterface $entityManager
+        SensorDeviceDataQueueConsumerUpdateService $sensorDeviceDataQueueConsumerService,
+        DevicesRepository $deviceRepository
     ) {
         $this->sensorDeviceDataQueueConsumerService = $sensorDeviceDataQueueConsumerService;
-
-        $this->sensorRepository = $entityManager->getRepository(Sensors::class);
-        $this->deviceRepository = $entityManager->getRepository(Devices::class);
+        $this->deviceRepository = $deviceRepository;
     }
 
     public function execute(AMQPMessage $msg): bool
     {
         $sensorData = unserialize($msg->getBody(), ['allowed_classes' => false]);
-//dd($sensorData);
         $device = $this->deviceRepository->findOneBy(['deviceNameID' => (int)$sensorData['deviceId']]);
-//dd($device);
+
         if ($device instanceof Devices) {
             return $this->sensorDeviceDataQueueConsumerService->handleUpdateCurrentReadingSensorData($sensorData, $device);
         }

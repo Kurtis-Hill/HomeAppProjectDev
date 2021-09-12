@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
-class SensorUserDataService extends AbstractSensorService
+class SensorUserDataUpdateService extends AbstractSensorUpdateService
 {
     /**
      * @param array $sensorData

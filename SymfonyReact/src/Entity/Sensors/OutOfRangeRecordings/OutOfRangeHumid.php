@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Entity\Sensors\ConstantRecording;
+namespace App\Entity\Sensors\OutOfRangeRecordings;
 
-
-use App\Entity\Sensors\ReadingTypes\Analog;
+use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ConstAnalog
+ * OutofRangeHumid
  *
- * @ORM\Table(name="constanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
+ * @ORM\Table(name="outofrangehumid", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class ConstAnalog implements ConstantlyRecordInterface
+class OutOfRangeHumid implements OutOfBoundsEntityInterface
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
+     * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $constRecordID;
+    private int $outOfRangeID;
 
     /**
      * @var float
@@ -35,34 +34,34 @@ class ConstAnalog implements ConstantlyRecordInterface
     /**
      * @var DateTime
      *
-     * @ORM\Column(name="timez", type="date", nullable=false)
+     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
     private DateTime $time;
 
     /**
-     * @var Analog
+     * @var Humidity
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Analog")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="analogID")
+     *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
      * })
      */
-    private Analog $sensorReadingTypeID;
+    private Humidity $sensorReadingTypeID;
 
     /**
      * @return int
      */
-    public function getConstRecordID(): int
+    public function getOutOfRangeID(): int
     {
-        return $this->constRecordID;
+        return $this->outOfRangeID;
     }
 
     /**
-     * @param int $constRecordID
+     * @param int $outOfRangeID
      */
-    public function setConstRecordID(int $constRecordID): void
+    public function setOutOfRangeID(int $outOfRangeID): void
     {
-        $this->constRecordID = $constRecordID;
+        $this->outOfRangeID = $outOfRangeID;
     }
 
     /**
@@ -98,15 +97,15 @@ class ConstAnalog implements ConstantlyRecordInterface
     }
 
     /**
-     * @return Analog
+     * @return AllSensorReadingTypeInterface
      */
-    public function getSensorReadingTypeID(): Analog
+    public function getSensorReadingTypeID(): AllSensorReadingTypeInterface
     {
         return $this->sensorReadingTypeID;
     }
 
     /**
-     * @param Analog $sensorReadingTypeID
+     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
      */
     public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {

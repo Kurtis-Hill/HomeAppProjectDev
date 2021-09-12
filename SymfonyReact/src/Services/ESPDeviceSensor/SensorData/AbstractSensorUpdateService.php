@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Security;
 
-abstract class AbstractSensorService implements APIErrorInterface
+abstract class AbstractSensorUpdateService implements APIErrorInterface
 {
     use FormProcessorTrait;
 

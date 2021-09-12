@@ -4,110 +4,111 @@ namespace App\Entity\Sensors\OutOfRangeRecordings;
 
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-//@todo needs sensor FK adding
 /**
  * OutOfRangeAnalog.
  *
  * @ORM\Table(name="outofrangeanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class OutOfRangeAnalog
+class OutOfRangeAnalog implements OutOfBoundsEntityInterface
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="analogID", type="integer", nullable=false)
+     * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $analogID;
+    private int $outOfRangeID;
 
     /**
-     * @var null|float
+     * @var float
      *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
-    private $sensorReading = 'NULL';
+    private float $sensorReading;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time;
+    private DateTime $time;
 
     /**
-     * @var Sensors
+     * @var Analog
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Analog")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorID", referencedColumnName="sensorNameID")
      * })
      */
-    private Sensors $sensorID;
+    private Analog $sensorReadingTypeID;
 
     /**
      * @return int
      */
-    public function getAnalogID(): int
+    public function getOutOfRangeID(): int
     {
-        return $this->analogID;
+        return $this->outOfRangeID;
     }
 
     /**
-     * @param int $analogID
+     * @param int $outOfRangeID
      */
-    public function setAnalogID(int $analogID): void
+    public function setOutOfRangeID(int $outOfRangeID): void
     {
-        $this->analogID = $analogID;
+        $this->outOfRangeID = $outOfRangeID;
     }
 
     /**
-     * @return null|float
+     * @return float
      */
-    public function getSensorReading()
+    public function getSensorReading(): float
     {
         return $this->sensorReading;
     }
 
     /**
-     * @param null|float $sensorReading
+     * @param float $sensorReading
      */
-    public function setSensorReading($sensorReading): void
+    public function setSensorReading(float $sensorReading): void
     {
         $this->sensorReading = $sensorReading;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getTime()
+    public function getTime(): DateTime
     {
         return $this->time;
     }
 
     /**
-     * @param \DateTime $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
-     * @return Analog
+     * @return AllSensorReadingTypeInterface
      */
-    public function getSensorID(): Analog
+    public function getSensorReadingTypeID(): AllSensorReadingTypeInterface
     {
-        return $this->sensorID;
+        return $this->sensorReadingTypeID;
     }
 
     /**
-     * @param Analog $sensorID
+     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
      */
-    public function setSensorID(Analog $sensorID): void
+    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
-        $this->sensorID = $sensorID;
+        $this->sensorReadingTypeID = $sensorReadingTypeID;
     }
 }

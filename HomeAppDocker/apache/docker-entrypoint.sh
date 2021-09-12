@@ -26,4 +26,20 @@ else
     echo "Test database found"
 fi    
 
+if [ ! -f /etc/logs/server-errors.log ]; then
+    touch /etc/logs/server-errors.log
+fi    
+
+if [ ! -f /etc/logs/user-input-error.log ]; then
+    touch /etc/logs/server-errors.log
+fi
+
 exec /usr/local/bin/docker-php-entrypoint "$@"
+
+## not working as intended needs fixing ##
+if [ ! php bin/console dbal:run-sql "select * from user limit 1" --env=test ]; then
+    $1;
+else 
+    echo "Test database found"
+fi  
+

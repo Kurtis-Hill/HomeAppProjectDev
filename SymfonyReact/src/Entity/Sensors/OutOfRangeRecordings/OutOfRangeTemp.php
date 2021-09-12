@@ -4,7 +4,8 @@ namespace App\Entity\Sensors\OutOfRangeRecordings;
 
 
 use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,16 +14,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="outofrangetemp", indexes={@ORM\Index(name="outofrangetemp_ibfk_1", columns={"sensorID"})})
  * @ORM\Entity
  */
-class OutOfRangeTemp
+class OutOfRangeTemp implements OutOfBoundsEntityInterface
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="tempID", type="integer", nullable=false)
+     * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $tempID;
+    private int $outOfRangeID;
 
     /**
      * @var float
@@ -32,11 +33,11 @@ class OutOfRangeTemp
     private float $sensorReading;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time;
+    private DateTime $time;
 
     /**
      * @var Temperature
@@ -46,28 +47,28 @@ class OutOfRangeTemp
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
      */
-    private Temperature $sensorID;
+    private Temperature $sensorReadingTypeID;
 
     /**
      * @return int
      */
-    public function getTempID(): int
+    public function getOutOfRangeID(): int
     {
-        return $this->tempID;
+        return $this->outOfRangeID;
     }
 
     /**
-     * @param int $tempID
+     * @param int $outOfRangeID
      */
-    public function setTempID(int $tempID): void
+    public function setOutOfRangeID(int $outOfRangeID): void
     {
-        $this->tempID = $tempID;
+        $this->outOfRangeID = $outOfRangeID;
     }
 
     /**
-     * @return float
+     * @return int
      */
-    public function getSensorReading(): float
+    public function getSensorReading(): int
     {
         return $this->sensorReading;
     }
@@ -81,34 +82,34 @@ class OutOfRangeTemp
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getTime()
+    public function getTime(): DateTime
     {
         return $this->time;
     }
 
     /**
-     * @param \DateTime $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
-     * @return Sensors
+     * @return AllSensorReadingTypeInterface
      */
-    public function getSensorID(): Sensors
+    public function getSensorReadingTypeID(): AllSensorReadingTypeInterface
     {
-        return $this->sensorID;
+        return $this->sensorReadingTypeID;
     }
 
     /**
-     * @param Temperature $sensorID
+     * @param Temperature $sensorReadingTypeID
      */
-    public function setSensorID(Temperature $sensorID): void
+    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
-        $this->sensorID = $sensorID;
+        $this->sensorReadingTypeID = $sensorReadingTypeID;
     }
 }

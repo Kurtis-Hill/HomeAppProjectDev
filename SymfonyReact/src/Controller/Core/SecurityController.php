@@ -110,4 +110,13 @@ class SecurityController extends AbstractController
         dd(\opcache_get_status()['jit']);
     }
 
+    /**
+     * @return Response
+     */
+    #[Route('/HomeApp/ini', name: 'ini')]
+    public function phpIni()
+    {
+        return new Response(phpinfo());
+    }
+
 }

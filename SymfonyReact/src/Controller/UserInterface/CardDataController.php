@@ -8,7 +8,7 @@ use App\Entity\Devices\Devices;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
-use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorUserDataUpdateService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\CardViewVoter;
 use App\Voters\SensorVoter;
@@ -135,12 +135,12 @@ class CardDataController extends AbstractController
 
     /**
      * @param Request $request
-     * @param SensorUserDataService $sensorDataService
+     * @param SensorUserDataUpdateService $sensorDataService
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
     #[Route('/update-card-view', name: 'update-card-view', methods: [Request::METHOD_PUT])]
-    public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
+    public function updateCardView(Request $request, SensorUserDataUpdateService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
         try {
             $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);

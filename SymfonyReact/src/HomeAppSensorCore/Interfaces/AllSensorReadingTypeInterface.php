@@ -16,5 +16,7 @@ interface AllSensorReadingTypeInterface
 
     public function setConstRecord(bool $constRecord);
 
+    public function getCurrentReading(): int|float;
+
     public function isReadingOutOfBounds(): bool;
 }

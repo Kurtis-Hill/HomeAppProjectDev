@@ -8,8 +8,8 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
-use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataQueueConsumerService;
-use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataQueueConsumerUpdateService;
+use App\Services\ESPDeviceSensor\SensorData\SensorUserDataUpdateService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\SensorVoter;
 use JsonException;
@@ -31,12 +31,12 @@ class SensorController extends AbstractController
 
     /**
      * @param Request $request
-     * @param SensorUserDataService $sensorService
+     * @param SensorUserDataUpdateService $sensorService
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
      */
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
-    public function addNewSensor(Request $request, SensorUserDataService $sensorService, CardUserDataService $cardDataService): JsonResponse
+    public function addNewSensor(Request $request, SensorUserDataUpdateService $sensorService, CardUserDataService $cardDataService): JsonResponse
     {
         try {
             $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);

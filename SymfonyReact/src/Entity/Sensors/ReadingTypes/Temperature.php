@@ -232,8 +232,6 @@ class Temperature implements StandardReadingSensorInterface, AllSensorReadingTyp
 
     public function getSensorTypeName(): string
     {
-        return 'temperature';
+        return self::READING_TYPE;
     }
-
-
 }
