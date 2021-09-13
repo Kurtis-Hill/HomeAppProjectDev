@@ -3,6 +3,8 @@
 namespace App\Entity\Sensors\ConstantRecording;
 
 use App\Entity\Sensors\ReadingTypes\Humidity;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,16 +13,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="consthumid", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class ConstHumid
+class ConstHumid implements ConstantlyRecordInterface
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="humidID", type="integer", nullable=false)
+     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $humidID;
+    private int $constRecordID;
 
     /**
      * @var float
@@ -41,25 +43,25 @@ class ConstHumid
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="humidID")
+     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="humidID")
      * })
      */
-    private Humidity $sensorID;
+    private Humidity $sensorReadingTypeID;
 
     /**
      * @return int
      */
-    public function getHumidID(): int
+    public function getConstRecordID(): int
     {
-        return $this->humidID;
+        return $this->constRecordID;
     }
 
     /**
-     * @param int $humidID
+     * @param int $constRecordID
      */
-    public function setHumidID(int $humidID): void
+    public function setConstRecordID(int $constRecordID): void
     {
-        $this->humidID = $humidID;
+        $this->constRecordID = $constRecordID;
     }
 
     /**
@@ -81,33 +83,33 @@ class ConstHumid
     /**
      * @return \DateTime
      */
-    public function getTime()
+    public function getTime(): DateTime
     {
         return $this->time;
     }
 
     /**
-     * @param \DateTime $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time === null ?  new \DateTime('now') : $time;
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
      * @return Humidity
      */
-    public function getSensorID(): Humidity
+    public function getSensorReadingTypeID(): Humidity
     {
-        return $this->sensorID;
+        return $this->sensorReadingTypeID;
     }
 
     /**
-     * @param Humidity $sensorID
+     * @param Humidity $sensorReadingTypeID
      */
-    public function setSensorID(Humidity $sensorID): void
+    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
-        $this->sensorID = $sensorID;
+        $this->sensorReadingTypeID = $sensorReadingTypeID;
     }
 
 

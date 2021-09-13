@@ -4,6 +4,7 @@
     "require": {
         "php": "^8.0",
         "ext-ctype": "*",
+        "ext-http": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.10",
         "doctrine/doctrine-bundle": "*",
@@ -12,6 +13,7 @@
         "doctrine/persistence": "^2.1",
         "gesdinet/jwt-refresh-token-bundle": "^0.9.1",
         "lexik/jwt-authentication-bundle": "^2.6",
+        "php-amqplib/rabbitmq-bundle": "^2.8",
         "phpdocumentor/reflection-docblock": "^5.2",
         "phpunit/phpunit": "^9.5",
         "sensio/framework-extra-bundle": "^5.5",
@@ -22,15 +24,18 @@
         "symfony/form": "5.2.*",
         "symfony/framework-bundle": "5.2.*",
         "symfony/http-foundation": "5.2.*",
-        "symfony/profiler-pack": "^1.0",
         "symfony/property-access": "5.2.*",
         "symfony/property-info": "5.2.*",
         "symfony/security-bundle": "5.2.*",
         "symfony/serializer": "5.2.*",
-        "symfony/twig-pack": "^1.0",
+        "symfony/stopwatch": "5.2.*",
+        "symfony/twig-bundle": "5.2.*",
         "symfony/validator": "5.2.*",
+        "symfony/web-profiler-bundle": "5.2.*",
         "symfony/webpack-encore-bundle": "^1.7",
-        "symfony/yaml": "5.2.*"
+        "symfony/yaml": "5.2.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^6.5",

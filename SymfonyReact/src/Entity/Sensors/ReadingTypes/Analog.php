@@ -6,6 +6,7 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -17,6 +18,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_TYPE = 'analog';
+
     public const ANALOG_SENSORS = [
         SensorType::SOIL_SENSOR
     ];
@@ -35,7 +38,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
      *
      * @ORM\Column(name="analogReading", type="smallint", precision=10, scale=0, nullable=false)
      */
-    private int $analogReading;
+    private float $analogReading;
 
     /**
      * @var float
@@ -59,11 +62,11 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     private bool $constRecord = false;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?\DateTime $time;
+    private DateTime $time;
 
 
     /**
@@ -135,7 +138,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     }
 
     /**
-     * @return float
+     * @return int|float
      */
     public function getLowReading(): int|float
     {
@@ -143,7 +146,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getTime(): \DateTimeInterface
     {
@@ -179,11 +182,11 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     }
 
     /**
-     * @param \DateTime|null $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
@@ -230,6 +233,6 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
 
     public function getSensorTypeName(): string
     {
-        return 'analog';
+        return self::READING_TYPE;
     }
 }

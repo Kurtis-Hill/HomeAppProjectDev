@@ -5,7 +5,7 @@ namespace App\Controller\Device;
 
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
-use App\Services\ESPDeviceSensor\Devices\DeviceServiceUser;
+use App\Services\ESPDeviceSensor\Devices\NewDeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\DeviceVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,19 +22,17 @@ class UserDeviceController extends AbstractController
 
     /**
      * @param Request $request
-     * @param DeviceServiceUser $deviceService
+     * @param NewDeviceService $deviceService
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return JsonResponse
      */
     #[Route('/add-new-device', name: 'add-new-device', methods: [Request::METHOD_POST])]
-    public function addNewDevice(Request $request, DeviceServiceUser $deviceService, UserPasswordEncoderInterface $passwordEncoder): JsonResponse
+    public function addNewDevice(Request $request, NewDeviceService $deviceService, UserPasswordEncoderInterface $passwordEncoder): JsonResponse
     {
         $newDeviceData = json_decode($request->getContent(), true);
         $deviceName = $newDeviceData['deviceName'] ?? null;
         $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
         $deviceRoom = $newDeviceData['deviceRoom'] ?? null;
-
-//        dd($deviceName. $deviceGroup, $deviceRoom, $newDeviceData);
 
         if (!isset($deviceGroup, $deviceRoom)) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);

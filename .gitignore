@@ -53,3 +53,4 @@ HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/db/data/*
 HomeAppDocker/logs/*
 HomeAppDocker/test.sh
+HomeAppDocker/apache/auth.json

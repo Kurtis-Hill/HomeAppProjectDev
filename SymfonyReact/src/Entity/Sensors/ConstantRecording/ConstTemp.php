@@ -2,7 +2,10 @@
 
 namespace App\Entity\Sensors\ConstantRecording;
 
+use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,16 +14,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="consttemp", indexes={@ORM\Index(name="consttemp_ibfk_1", columns={"sensorID"})})
  * @ORM\Entity
  */
-class ConstTemp
+class ConstTemp implements ConstantlyRecordInterface
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="tempID", type="integer", nullable=false)
+     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $tempID;
+    private int $constRecordID;
 
     /**
      * @var float
@@ -30,36 +33,36 @@ class ConstTemp
     private float $sensorReading;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time;
+    private DateTime $time;
 
     /**
-     * @var Sensors
+     * @var Temperature
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="tempID")
+     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="tempID")
      * })
      */
-    private Sensors $sensorID;
+    private Temperature $sensorReadingTypeID;
 
     /**
      * @return int
      */
-    public function getTempID(): int
+    public function getConstRecordID(): int
     {
-        return $this->tempID;
+        return $this->constRecordID;
     }
 
     /**
-     * @param int $tempID
+     * @param int $constRecordID
      */
-    public function setTempID(int $tempID): void
+    public function setConstRecordID(int $constRecordID): void
     {
-        $this->tempID = $tempID;
+        $this->constRecordID = $constRecordID;
     }
 
     /**
@@ -79,36 +82,34 @@ class ConstTemp
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getTime()
+    public function getTime(): DateTime
     {
         return $this->time;
     }
 
     /**
-     * @param \DateTime $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
      * @return Sensors
      */
-    public function getSensorID(): Sensors
+    public function getSensorReadingTypeID(): Temperature
     {
-        return $this->sensorID;
+        return $this->sensorReadingTypeID;
     }
 
     /**
-     * @param Sensors $sensorID
+     * @param Temperature $sensorReadingTypeID
      */
-    public function setSensorID(Sensors $sensorID): void
+    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
-        $this->sensorID = $sensorID;
+        $this->sensorReadingTypeID = $sensorReadingTypeID;
     }
-
-
 }

@@ -8,7 +8,7 @@ use App\Entity\Devices\Devices;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
-use App\Services\ESPDeviceSensor\SensorData\SensorUserDataService;
+use App\Services\ESPDeviceSensor\SensorData\SensorUserDataUpdateService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\CardViewVoter;
 use App\Voters\SensorVoter;
@@ -60,7 +60,8 @@ class CardDataController extends AbstractController
             }
         }
 
-        $cardDataDTOs = $cardDataService->prepareAllCardDTOs($route, $deviceId);
+        $cardFilters = $request->get('filters') ?? [];
+        $cardDataDTOs = $cardDataService->prepareCardDTOs($route, $device ?? null, $cardFilters);
 
         if (!empty($cardDataService->getServerErrors())) {
             return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());
@@ -94,7 +95,7 @@ class CardDataController extends AbstractController
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
-    #[Route('/card-state-view-form', name: 'card-view-form', methods: [Request::METHOD_GET])]
+    #[Route('/card-sensor-form', name: 'card-view-form', methods: [Request::METHOD_GET])]
     public function showCardViewForm(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
         $cardViewID = $request->query->get('cardViewID');
@@ -134,12 +135,12 @@ class CardDataController extends AbstractController
 
     /**
      * @param Request $request
-     * @param SensorUserDataService $sensorDataService
+     * @param SensorUserDataUpdateService $sensorDataService
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */
     #[Route('/update-card-view', name: 'update-card-view', methods: [Request::METHOD_PUT])]
-    public function updateCardView(Request $request, SensorUserDataService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
+    public function updateCardView(Request $request, SensorUserDataUpdateService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
     {
         try {
             $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -185,7 +186,7 @@ class CardDataController extends AbstractController
 
         $sensorObject = $cardViewObject->getSensorNameID();
 
-        $sensorDataService->handleSensorReadingBoundary($sensorObject, $cardData);
+        $sensorDataService->handleSensorReadingBoundaryUpdate($cardViewObject->getSensorNameID()->getDeviceNameID(), $sensorObject->getSensorName(),$cardData);
 
         if (!empty($sensorDataService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());

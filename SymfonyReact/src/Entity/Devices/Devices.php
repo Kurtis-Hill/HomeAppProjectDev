@@ -279,13 +279,6 @@ class Devices implements UserInterface, APISensorUserInterface
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-//        $metadata->addPropertyConstraint('firstName', new Assert\Length([
-//            'min' => 2,
-//            'max' => 50,
-//            'minMessage' => 'Your first name must be at least {{ limit }} characters long',
-//            'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
-//        ]));
-
         $metadata->addPropertyConstraint('deviceName', new Length([
             'min' => 2,
             'max' => 50,

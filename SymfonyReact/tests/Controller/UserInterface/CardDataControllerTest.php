@@ -118,8 +118,8 @@ class CardDataControllerTest extends WebTestCase
         $onCardState = $this->entityManager->getRepository(Cardstate::class)->findOneBy(['state' => Cardstate::ON]);
 
         $countUsersCardsInOnState = count($this->entityManager->getRepository(CardView::class)->findBy(['cardStateID' => $onCardState, 'userID' => $this->testUser]));
-        $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllIndexSensorTypeObjectsForUser($this->testUser, SensorType::SENSOR_TYPE_DATA));
-        $fixtureCardCount = count(ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES) * count(SensorType::SENSOR_TYPE_DATA);
+        $countIndexCards = count($this->entityManager->getRepository(CardView::class)->getAllSensorTypeObjectsForUser($this->testUser, SensorType::ALL_SENSOR_TYPE_DATA));
+        $fixtureCardCount = count(ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES) * count(SensorType::ALL_SENSOR_TYPE_DATA);
 
         $this->client->request(
             'GET',
@@ -178,7 +178,7 @@ class CardDataControllerTest extends WebTestCase
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
 
-        $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($this->testUser, SensorType::SENSOR_TYPE_DATA, $device->getDeviceNameId()));
+        $countDeviceCards = count($this->entityManager->getRepository(CardView::class)->getAllCardReadingsForDevice($this->testUser, SensorType::ALL_SENSOR_TYPE_DATA, $device->getDeviceNameId()));
 
         $this->client->request(
             'GET',

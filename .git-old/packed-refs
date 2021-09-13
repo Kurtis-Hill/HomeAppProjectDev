@@ -1,0 +1,16 @@
+# pack-refs with: peeled fully-peeled sorted 
+4d416dfa5ffb6bfab8a5fb7ac2f8afcdf5890dd5 refs/remotes/origin/Add-New-Device
+99d9d07fdf552cf66fbcaccefc49269b893ea9ed refs/remotes/origin/Card-DTO
+836fd8da959fe4ffcc87497e9d4bee5fa153b827 refs/remotes/origin/Creating-API-Sensor
+083018484d013f96c86bb55c392c4dde591b1ed9 refs/remotes/origin/Creating-API-Trait
+b5bb6f84f742d57488f7475b89ddfa094ec47973 refs/remotes/origin/Docker
+6acce4559da164db6f6bbcfff06d38fc9e2bf193 refs/remotes/origin/Fixtures
+e46505a1671beb25bff493ac56b2116a6aaa8faf refs/remotes/origin/General-Refactor
+2ed5a3f4df4e5e28dd658ee52df9763be73a9af0 refs/remotes/origin/LoginRefactor
+1f0dc86dff922b110423679d89efa0ece6d6adb4 refs/remotes/origin/Modal
+9e40983ea205ac3cd399606a37fe2c1caf5abc53 refs/remotes/origin/RabbitMQ
+ff7d3775db4591e4b7f631d09717acefd8893bc6 refs/remotes/origin/Refactor-Services
+87c7b215db2f6001fcde71d5bffe19ab02a0a9bd refs/remotes/origin/Tests
+3500d02b8a9869c7fb144bcc697ff9690d831311 refs/remotes/origin/Update
+eac113cf39e8b9771efe00fcb61f4fb4e3ab9a27 refs/remotes/origin/Update-Sensors
+ebc8a23b7e83d9e0519513adeb96a6df63412a07 refs/remotes/origin/master

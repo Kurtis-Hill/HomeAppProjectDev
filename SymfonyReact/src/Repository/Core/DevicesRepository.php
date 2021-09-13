@@ -6,13 +6,19 @@ namespace App\Repository\Core;
 
 use App\Entity\Core\GroupNames;
 use App\Entity\Devices\Devices;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Persistence\ManagerRegistry;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Core\Room;
 
-class DevicesRepository extends EntityRepository
+class DevicesRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Devices::class);
+    }
+
     /**
      * @param $groupNameID
      * @return array
@@ -55,8 +61,7 @@ class DevicesRepository extends EntityRepository
                     'roomID' => $deviceDetails['roomObject']
                 ]
             );
-        // use this after db clean
-//dd($qb->getQuery()->getOneOrNullResult());
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 

@@ -2,6 +2,12 @@
 
 namespace App\Entity\Sensors;
 
+use App\Entity\Sensors\ConstantRecording\ConstAnalog;
+use App\Entity\Sensors\ConstantRecording\ConstHumid;
+use App\Entity\Sensors\ConstantRecording\ConstTemp;
+use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeAnalog;
+use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeHumid;
+use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeTemp;
 use App\Entity\Sensors\ReadingTypes\Analog;
 use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\ReadingTypes\Latitude;
@@ -36,17 +42,17 @@ class SensorType
     public const SOIL_SENSOR = 'Soil';
 
     //When creating a new sensor add it to this list for testing
-    public const SENSOR_TYPES = [
-        self::DHT_SENSOR,
-        self::BMP_SENSOR,
-        self::DALLAS_TEMPERATURE,
-        self::SOIL_SENSOR
-    ];
+//    public const ALL_SENSOR_TYPES = [
+//        self::DHT_SENSOR,
+//        self::BMP_SENSOR,
+//        self::DALLAS_TEMPERATURE,
+//        self::SOIL_SENSOR
+//    ];
 
     // Used by service classes to create forms for the sensors and for getting data from the database e.g getting unknown sensor type object (described as object below)
     // to determine which sensor reading types are about to be updated
     // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array
-    public const SENSOR_TYPE_DATA = [
+    public const ALL_SENSOR_TYPE_DATA = [
         SensorType::DHT_SENSOR => [
             'alias' => 'dht',
             'object' => Dht::class,
@@ -55,18 +61,18 @@ class SensorType
                 'humidity' => Humidity::class,
             ],
             'forms' => [
-                'outOfBounds' => [
+                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
-                        'humidity' => Humidity::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
+                        Humidity::READING_TYPE => Humidity::class,
                     ],
                 ],
-                'updateCurrentReading' => [
+                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
-                        'humidity' => Humidity::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
+                        Humidity::READING_TYPE => Humidity::class,
                     ],
                 ]
             ]
@@ -76,48 +82,48 @@ class SensorType
             'alias' => 'dallas',
             'object' => Dallas::class,
             'readingTypes' => [
-                'temperature' =>  Temperature::class,
+                Temperature::READING_TYPE =>  Temperature::class,
             ],
             'forms' => [
-                'outOfBounds' => [
+                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
+                       Temperature::READING_TYPE =>  Temperature::class,
                     ],
                 ],
-                'updateCurrentReading' => [
+                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
                     ],
                 ]
             ]
         ],
 
-        SensorType::SOIL_SENSOR => [
+        Soil::NAME => [
             'alias' => 'soil',
             'object' => Soil::class,
             'readingTypes' => [
-                'analog' =>  Analog::class,
+                Analog::READING_TYPE =>  Analog::class,
             ],
             'forms' => [
-                'outOfBounds' => [
+                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
-                        'analog' =>  Analog::class,
+                        Analog::READING_TYPE =>  Analog::class,
                     ],
                 ],
-                'updateCurrentReading' => [
+                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'analog' =>  Analog::class,
+                        Analog::READING_TYPE =>  Analog::class,
                     ],
                 ]
             ]
         ],
 
-        SensorType::BMP_SENSOR => [
-            'alias' => 'bmp',
+        Bmp::NAME => [
+            'alias' => Bmp::NAME,
             'object' => Bmp::class,
             'readingTypes' => [
                 'temperature' =>  Temperature::class,
@@ -125,7 +131,7 @@ class SensorType
                 'latitude' => Latitude::class,
             ],
             'forms' => [
-                'outOfBounds' => [
+                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
                     'form' => StandardSensorOutOFBoundsForm::class,
                     'readingTypes' => [
                         'temperature' =>  Temperature::class,
@@ -133,10 +139,10 @@ class SensorType
                         'latitude' => Latitude::class,
                     ],
                 ],
-                'updateCurrentReading' => [
+                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
                     'form' => UpdateReadingForm::class,
                     'readingTypes' => [
-                        'temperature' =>  Temperature::class,
+                        Temperature::READING_TYPE =>  Temperature::class,
                         'humidity' =>  Humidity::class,
                         'latitude' => Latitude::class,
                     ],
@@ -148,19 +154,27 @@ class SensorType
     public const SENSOR_READING_TYPE_DATA = [
         Sensors::TEMPERATURE => [
             'alias' => 'temp',
-            'object' => Temperature::class
+            'object' => Temperature::class,
+            'outOfBounds' => OutOfRangeTemp::class,
+            'constRecord' => ConstTemp::class
         ],
         Sensors::HUMIDITY => [
             'alias' => 'humid',
-            'object' => Humidity::class
+            'object' => Humidity::class,
+            'outOfBounds' => OutOfRangeHumid::class,
+            'constRecord' => ConstHumid::class
         ],
         Sensors::ANALOG => [
             'alias' => 'analog',
-            'object' => Analog::class
+            'object' => Analog::class,
+            'outOfBounds' => OutOfRangeAnalog::class,
+            'constRecord' => ConstAnalog::class
         ],
         Sensors::LATITUDE => [
             'alias' => 'lat',
-            'object' => Latitude::class
+            'object' => Latitude::class,
+            'outOfBounds' => '@OTODO implement',
+            'constRecord' => 'TOOD implement'
         ],
     ];
 

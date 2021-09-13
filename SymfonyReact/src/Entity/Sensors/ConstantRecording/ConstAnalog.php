@@ -4,6 +4,8 @@ namespace App\Entity\Sensors\ConstantRecording;
 
 
 use App\Entity\Sensors\ReadingTypes\Analog;
+use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,16 +14,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="constanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
  * @ORM\Entity
  */
-class ConstAnalog
+class ConstAnalog implements ConstantlyRecordInterface
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="analogID", type="integer", nullable=false)
+     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $analogID;
+    private int $constRecordID;
 
     /**
      * @var float
@@ -31,36 +33,36 @@ class ConstAnalog
     private float $sensorReading;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="timez", type="date", nullable=false)
      */
-    private \DateTime $time;
+    private DateTime $time;
 
     /**
      * @var Analog
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Analog")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="analogID")
+     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="analogID")
      * })
      */
-    private Analog $sensorID;
+    private Analog $sensorReadingTypeID;
 
     /**
      * @return int
      */
-    public function getAnalogID(): int
+    public function getConstRecordID(): int
     {
-        return $this->analogID;
+        return $this->constRecordID;
     }
 
     /**
-     * @param int $analogID
+     * @param int $constRecordID
      */
-    public function setAnalogID(int $analogID): void
+    public function setConstRecordID(int $constRecordID): void
     {
-        $this->analogID = $analogID;
+        $this->constRecordID = $constRecordID;
     }
 
     /**
@@ -80,33 +82,34 @@ class ConstAnalog
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getTime(): \DateTime
+    public function getTime(): DateTime
     {
         return $this->time;
     }
 
-
-    public function setTime(): void
+    /**
+     * @param DateTime|null $time
+     */
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = new \DateTime();
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
      * @return Analog
      */
-    public function getSensorID(): Analog
+    public function getSensorReadingTypeID(): Analog
     {
-        return $this->sensorID;
+        return $this->sensorReadingTypeID;
     }
 
     /**
-     * @param Analog $sensorID
+     * @param Analog $sensorReadingTypeID
      */
-    public function setSensorID(Analog $sensorID): void
+    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
-        $this->sensorID = $sensorID;
+        $this->sensorReadingTypeID = $sensorReadingTypeID;
     }
-
 }

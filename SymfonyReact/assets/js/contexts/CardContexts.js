@@ -1,9 +1,9 @@
-import React, { Component, createContext } from 'react'
+import React, {Component, createContext} from 'react'
 import axios from 'axios';
 
-import { setUserSession, lowercaseFirstLetter } from '../Utilities/Common';
-import { apiURL, webappURL } from '../Utilities/URLSCommon';
-import { getToken, getRefreshToken, getAPIHeader } from '../Utilities/APICommon';
+import {lowercaseFirstLetter, setUserSession} from '../Utilities/Common';
+import {apiURL, webappURL} from '../Utilities/URLSCommon';
+import {getAPIHeader, getRefreshToken} from '../Utilities/APICommon';
 
 export const CardContext = createContext();
 
@@ -115,13 +115,13 @@ class CardContextProvider extends Component {
                   //  window.location.replace('/HomeApp/logout');
                 }
             }
-        }           
+        }
     }
 
 
     //gets the card form data so users can customize cards
     getCardDataForm = async (cardViewID) => {
-        const cardDataFormResponse = await axios.get(`${apiURL}card-data/card-state-view-form?cardViewID=${cardViewID}`, getAPIHeader())
+        const cardDataFormResponse = await axios.get(`${apiURL}card-data/card-sensor-form?cardViewID=${cardViewID}`, getAPIHeader())
 
         if (cardDataFormResponse.status === 200) {
             this.setState({modalLoading: false});
@@ -143,7 +143,7 @@ class CardContextProvider extends Component {
 
         const userCardViewSelections = cardData.userCardViewSelections;
         const userColourSelections = cardData.userColourSelections;
-        const userIconSelections = cardData.userIconSelections;
+        const userIconSelections = cardData.iconSelection;
 
         this.setState({
             userSelectionData: {
@@ -219,8 +219,7 @@ class CardContextProvider extends Component {
             case sensorType+"-const-record":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.sensorType === sensorType) {
-                        const newRecord = value === 'true' ? true : false;
-                        currentModalData.constRecord = newRecord;
+                        currentModalData.constRecord = value === 'true';
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -243,7 +242,7 @@ class CardContextProvider extends Component {
             'constRecrod' : this.state.modalContent.constRecord,
         };
 
-        
+
         try {
             const formSubmissionResult = await axios.put(apiURL+'card-data/update-card-view', jsonFormData, getAPIHeader());
 
@@ -252,28 +251,25 @@ class CardContextProvider extends Component {
                 setTimeout(() =>
                     this.toggleModal(), 1500
                 );
-            }   
+            }
         } catch(error) {
-            console.log(error, 'error');
-            const badRequestErrors = (!error.data.payload.errors.length > 1)
+            const badRequestErrors = (!error.response.data.payload.errors.length > 1)
                 ? ['something went wrong']
-                : error.data.payload.errors;
+                : error.response.data.payload.errors;
 
-            console.log('form submit result', error);
-            this.setState({modalStatus:{modalSubmit: false}});
-
-            if (error.status === 400) {
+            if (error.response.status === 400) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
+                console.log(this.state.modalStatus.errors, 'we go');
             }
 
-            if (error.status === 404) {
+            if (error.response.status === 404) {
                 this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
                 this.toggleModal();
                 alert('Could not handle request please try again');
             }
 
-            if (error.status === 500) {
-                if (error === undefined) {
+            if (error.response.status === 500) {
+                if (error.response.data === undefined) {
                     alert('Please logout something went wrong');
                 } else {
                     this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false, errors: badRequestErrors}});

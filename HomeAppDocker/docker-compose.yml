@@ -8,14 +8,17 @@ services:
     container_name: '${APP_NAME}-php-apache-server'
     ports:
       - '${APP_PORT}:80'
+      - 9000
     working_dir: /var/www/html
     environment:
       - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6'
+      # - WSLIP=${WSLIP}
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
       - ./apache/sites-enabled:/etc/apache2/sites-enabled
       - ./apache/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - ./apache/logs:/etc/logs
     depends_on:
       maria-db:
         condition: service_healthy
@@ -27,7 +30,7 @@ services:
       context: ./mariadb
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
-    restart: always
+    restart: always 
     ports:
       - '${DB_PORT}:3306'
     environment:
@@ -40,14 +43,23 @@ services:
       - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./mariadb/setup.sql:/docker-entrypoint-initdb.d/init.sql:rw,delegated
       - ./mariadb/50config/50-client.cnf:/etc/mysql/mariadb.conf.d/50-client.cnf
-      - ./mariadb/50config/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
       - ../SSL:/etc/mysql/ssl
+      - ./mariadb/dev:/etc/dev
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
       interval: 5s
       retries: 5
     networks:
       - HomeAppProjectNetwork
+
+  phpmyadmin:
+    container_name: '${APP_NAME}-phpmyadmin'
+    image: phpmyadmin:5-fpm-alpine
+    restart: always
+    ports:
+      - '8103:80'
+    environment:
+      - PMA_ARBITRARY=1
 
   yarn:
     build:
@@ -65,7 +77,6 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: '${APP_NAME}-rabbitmq'
     ports:
-      - '${RABBIT_MQ_COMMS_PORT}:5672'
       - '${RABBIT_MQ_INTERFACE_PORT}:15672'
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq/

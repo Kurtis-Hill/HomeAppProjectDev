@@ -293,6 +293,7 @@ class UserDeviceControllerTest extends WebTestCase
             $jsonData,
         );
 
+//        dd($this->client->getResponse()->getContent());
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 

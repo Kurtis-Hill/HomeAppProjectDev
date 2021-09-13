@@ -54,12 +54,12 @@ class CardViewRepository extends EntityRepository
     }
 
 
-    public function getAllIndexSensorTypeObjectsForUser(?User $user, array $sensors): array
+    public function getAllSensorTypeObjectsForUser(?User $user, array $sensors, string $view): array
     {
         $groupNameIDs = $user->getGroupNameIds();
 
         $cardViewOne = Cardstate::ON;
-        $cardViewTwo = Cardstate::INDEX_ONLY;
+        $cardViewTwo = $view;
 
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();

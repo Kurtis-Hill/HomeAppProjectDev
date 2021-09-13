@@ -18,6 +18,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_TYPE = 'humidity';
+
     public const READING_SYMBOL = '%';
 
     public const HUMIDITY_SENSORS = [
@@ -197,12 +199,18 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
         $this->constRecord = $constRecord;
     }
 
-    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
+    /**
+     * @return int|float
+     */
+    public function getMeasurementDifferenceHighReading(): int|float
     {
         return $this->getHighReading() - $this->getCurrentReading();
     }
 
-    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
+    /**
+     * @return int|float
+     */
+    public function getMeasurementDifferenceLowReading(): int|float
     {
         return $this->getLowReading() - $this->getCurrentReading();
     }
@@ -221,6 +229,6 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
 
     public function getSensorTypeName(): string
     {
-        return 'humidity';
+        return self::READING_TYPE;
     }
 }

@@ -3,8 +3,6 @@
 
 namespace App\DataFixtures\ESP8266;
 
-
-
 use App\DataFixtures\Card\CardFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Card\CardView;
@@ -44,7 +42,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
             $addExtra = $sensorCounter & 1 ;
-            foreach (SensorType::SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
+            foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
                 $newAdminSensor = new Sensors();
                 $newAdminSensor->setDeviceNameID($this->getReference($device['referenceName']));
                 $newAdminSensor->setSensorName($sensorType.$sensorCounter);
