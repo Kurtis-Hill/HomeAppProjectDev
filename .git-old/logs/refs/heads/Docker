@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 914e1fc9c07562f6a21a47a3c66f0c2a4e82ed4f Kurtis <kurtis@soapmedia.co.uk> 1625928538 +0100	branch: Created from refs/remotes/origin/Docker
+914e1fc9c07562f6a21a47a3c66f0c2a4e82ed4f 87480623bd09da6046a61c9ae3820b7dea96f336 Kurtis <kurtis@soapmedia.co.uk> 1625936111 +0100	commit: restored bin console
+87480623bd09da6046a61c9ae3820b7dea96f336 2d932ea1ec5368f18fd7ad83c19fedda2c3a1342 Kurtis <kurtis@soapmedia.co.uk> 1625936150 +0100	commit: restored bin console
+2d932ea1ec5368f18fd7ad83c19fedda2c3a1342 666f744d1768cdaa179ef99af17378d151d7255a Kurtis <kurtis@soapmedia.co.uk> 1625936525 +0100	commit: git ignore updates

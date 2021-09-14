@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 ce44f412029b70c2dad653e5982e8a51cbdfeca1 kurtis-hill <kurtis.hill1990@gmail.com> 1626281170 +0100	branch: Created from HEAD
+ce44f412029b70c2dad653e5982e8a51cbdfeca1 1cd2692d416f3c8c5442275328a9b8f0cd6b4855 kurtis-hill <kurtis.hill1990@gmail.com> 1626290251 +0100	commit: begun refactor
+1cd2692d416f3c8c5442275328a9b8f0cd6b4855 ad6ebc5c3f6ee136b9c667adb05235904812e623 kurtis-hill <kurtis.hill1990@gmail.com> 1626344706 +0100	pull: Fast-forward
+ad6ebc5c3f6ee136b9c667adb05235904812e623 488a36228a62650282524e67ea6075657fadb600 kurtis-hill <kurtis.hill1990@gmail.com> 1626370889 +0100	commit: finished adding DTO factories

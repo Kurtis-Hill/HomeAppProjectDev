@@ -4,18 +4,21 @@
 namespace App\AMQP;
 
 
+use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Entity\Devices\Devices;
+use App\ErrorLogs;
 use App\Repository\Core\DevicesRepository;
-use App\Services\ESPDeviceSensor\SensorData\SensorDeviceDataQueueConsumerUpdateService;
+use App\Services\ESPDeviceSensor\SensorData\UpdateCurrentSensorReadingsService;
+use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
     /**
-     * @var SensorDeviceDataQueueConsumerUpdateService
+     * @var UpdateCurrentSensorReadingsService
      */
-    private SensorDeviceDataQueueConsumerUpdateService $sensorDeviceDataQueueConsumerService;
+    private UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService;
 
     /**
      * @var DevicesRepository
@@ -23,21 +26,34 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     private DevicesRepository $deviceRepository;
 
     /**
-     * @param SensorDeviceDataQueueConsumerUpdateService $sensorDeviceDataQueueConsumerService
+     * @param UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService
      * @param DevicesRepository $deviceRepository
      */
     public function __construct(
-        SensorDeviceDataQueueConsumerUpdateService $sensorDeviceDataQueueConsumerService,
+        UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService,
         DevicesRepository $deviceRepository
     ) {
         $this->sensorDeviceDataQueueConsumerService = $sensorDeviceDataQueueConsumerService;
         $this->deviceRepository = $deviceRepository;
     }
 
+    /**
+     * @param AMQPMessage $msg
+     * @return bool
+     */
     public function execute(AMQPMessage $msg): bool
     {
-        $sensorData = unserialize($msg->getBody(), ['allowed_classes' => false]);
-        $device = $this->deviceRepository->findOneBy(['deviceNameID' => (int)$sensorData['deviceId']]);
+        try {
+            $sensorData = unserialize($msg->getBody(), ['allowed_classes' => UpdateSensorReadingDTO::class]);
+        } catch (Exception $exception) {
+            error_log(
+                'Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage(),
+                ErrorLogs::SERVER_ERROR_LOG_LOCATION
+            );
+            return true;
+        }
+
+        $device = $this->deviceRepository->findOneBy(['deviceNameID' => $sensorData->getDeviceId()]);
 
         if ($device instanceof Devices) {
             return $this->sensorDeviceDataQueueConsumerService->handleUpdateCurrentReadingSensorData($sensorData, $device);

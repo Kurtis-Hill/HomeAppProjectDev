@@ -16,6 +16,8 @@ class HTTPStatusCodes
 
     public const HTTP_PARTIAL_CONTENT = 206;
 
+    public const HTTP_MULTI_STATUS_CONTENT = 207;
+
     public const HTTP_BAD_REQUEST = 400;
 
 

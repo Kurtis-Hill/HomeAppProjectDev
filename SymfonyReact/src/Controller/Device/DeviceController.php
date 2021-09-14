@@ -4,6 +4,7 @@
 namespace App\Controller\Device;
 
 use App\AMQP\Producers\UpdateCurrentDataProducer;
+use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
@@ -59,33 +60,24 @@ class DeviceController extends AbstractController
 
         $deviceId = $security->getUser()->getDeviceNameID();
 
-//        $sensorData = [
-//            'sensorType' => 'dallas',
-//            'sensorData' => [
-//                0 => [
-//                    'sensorName' => 'Dallas1',
-//                    'currentReading' => '12'
-//                ],
-//                1 => [
-//                    'sensorName' => 'Dallas11',
-//                    'currentReading' => '24'
-//                ]
-//            ],
-//        ];
-//
-//        $json = json_encode($sensorData);
-//        dd($json);
+        $errors = [];
 
-        try {
-            foreach ($sensorData['sensorData'] as $sensorUpdateData) {
-                $sensorUpdateData['deviceId'] = $deviceId;
-                $sensorUpdateData['sensorType'] = $sensorData['sensorType'];
+        foreach ($sensorData['sensorData'] as $sensorUpdateData) {
+            try {
+                $updateReadingDTO = new UpdateSensorReadingDTO(
+                    $sensorData['sensorType'],
+                    $sensorUpdateData['sensorName'],
+                    $sensorUpdateData['currentReadings'],
+                    $deviceId
+                );
 
-//                dd($sensorUpdateData);
-                $this->currentReadingAMQPProducer->publish(serialize($sensorUpdateData));
+                $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
+            } catch (Exception $exception) {
+                $errors[] = $exception->getMessage();
             }
-        } catch (Exception $exception) {
-            return $this->sendBadRequestJsonResponse(['Failed to produce messages ' . $exception->getMessage()]);
+        }
+        if (!empty($errors)) {
+            return $this->sendMultiStatusJsonResponse();
         }
 
         return $this->sendSuccessfulJsonResponse(['Sensor data accepted']);

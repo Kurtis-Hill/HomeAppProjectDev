@@ -1,0 +1,20 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = git@github.com:Kurtis-Hill/HomeAppProjectDev.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[branch "Docker"]
+	remote = origin
+	merge = refs/heads/Docker
+[branch "Request-Refactor"]
+	remote = origin
+	merge = refs/heads/Request-Refactor
+[branch "DTO-Refactor"]
+	remote = origin
+	merge = refs/heads/DTO-Refactor
