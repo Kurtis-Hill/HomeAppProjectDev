@@ -115,7 +115,7 @@ CREATE TABLE `cardview` (
 --
 
 CREATE TABLE `constanalog` (
-  `constanalogID` int(11) NOT NULL,
+  `constRecordID` int(11) NOT NULL,
   `analogID` int(11) NOT NULL,
   `sensorReading` float NOT NULL,
   `timez` date NOT NULL
@@ -128,7 +128,7 @@ CREATE TABLE `constanalog` (
 --
 
 CREATE TABLE `consthumid` (
-`consthumidID` int(11) NOT NULL,
+`constRecordID` int(11) NOT NULL,
 `humidID` int(11) NOT NULL,
 `sensorReading` float NOT NULL,
 `timez` datetime NOT NULL DEFAULT current_timestamp()
@@ -141,7 +141,7 @@ CREATE TABLE `consthumid` (
 --
 
 CREATE TABLE `consttemp` (
-`consttempID` int(11) NOT NULL,
+`constRecordID` int(11) NOT NULL,
 `tempID` int(11) NOT NULL,
 `sensorReading` float NOT NULL,
 `timez` datetime NOT NULL DEFAULT current_timestamp()
@@ -508,21 +508,21 @@ ALTER TABLE `cardview`
 -- Indexes for table `constanalog`
 --
 ALTER TABLE `constanalog`
-  ADD PRIMARY KEY (constanalogID),
+  ADD PRIMARY KEY (constRecordID),
   ADD KEY `sensorID` (analogID);
 
 --
 -- Indexes for table `consthumid`
 --
 ALTER TABLE `consthumid`
-  ADD PRIMARY KEY (consthumidID),
+  ADD PRIMARY KEY (constRecordID),
   ADD KEY `sensorID` (`humidID`);
 
 --
 -- Indexes for table `consttemp`
 --
 ALTER TABLE `consttemp`
-  ADD PRIMARY KEY (consttempID),
+  ADD PRIMARY KEY (constRecordID),
   ADD KEY `consttemp_ibfk_1` (tempID);
 
 --
@@ -706,19 +706,19 @@ ALTER TABLE `cardview`
 -- AUTO_INCREMENT for table `constanalog`
 --
 ALTER TABLE `constanalog`
-  MODIFY constanalogID int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `consthumid`
 --
 ALTER TABLE `consthumid`
-  MODIFY consthumidID int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `consttemp`
 --
 ALTER TABLE `consttemp`
-  MODIFY consttempID int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `dallas`
@@ -1077,7 +1077,7 @@ CREATE TABLE `cardview` (
 --
 
 CREATE TABLE `constanalog` (
-`constanalogID` int(11) NOT NULL,
+`constRecordID` int(11) NOT NULL,
 `analogID` int(11) NOT NULL,
 `sensorReading` float NOT NULL,
 `timez` date NOT NULL
@@ -1090,7 +1090,7 @@ CREATE TABLE `constanalog` (
 --
 
 CREATE TABLE `consthumid` (
-`consthumidID` int(11) NOT NULL,
+`constRecordID` int(11) NOT NULL,
 `humidID` int(11) NOT NULL,
 `sensorReading` float NOT NULL,
 `timez` datetime NOT NULL DEFAULT current_timestamp()
@@ -1103,7 +1103,7 @@ CREATE TABLE `consthumid` (
 --
 
 CREATE TABLE `consttemp` (
-`consttempID` int(11) NOT NULL,
+`constRecordID` int(11) NOT NULL,
 `tempID` int(11) NOT NULL,
 `sensorReading` float NOT NULL,
 `timez` datetime NOT NULL DEFAULT current_timestamp()
@@ -1462,21 +1462,21 @@ ALTER TABLE `cardview`
 -- Indexes for table `constanalog`
 --
 ALTER TABLE `constanalog`
-    ADD PRIMARY KEY (constanalogID),
+    ADD PRIMARY KEY (constRecordID),
     ADD KEY `sensorID` (analogID);
 
 --
 -- Indexes for table `consthumid`
 --
 ALTER TABLE `consthumid`
-    ADD PRIMARY KEY (consthumidID),
+    ADD PRIMARY KEY (constRecordID),
     ADD KEY `sensorID` (`humidID`);
 
 --
 -- Indexes for table `consttemp`
 --
 ALTER TABLE `consttemp`
-    ADD PRIMARY KEY (consttempID),
+    ADD PRIMARY KEY (constRecordID),
     ADD KEY `consttemp_ibfk_1` (tempID);
 
 --
@@ -1660,19 +1660,19 @@ ALTER TABLE `cardview`
 -- AUTO_INCREMENT for table `constanalog`
 --
 ALTER TABLE `constanalog`
-    MODIFY constanalogID int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `consthumid`
 --
 ALTER TABLE `consthumid`
-    MODIFY consthumidID int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `consttemp`
 --
 ALTER TABLE `consttemp`
-    MODIFY consttempID int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `dallas`

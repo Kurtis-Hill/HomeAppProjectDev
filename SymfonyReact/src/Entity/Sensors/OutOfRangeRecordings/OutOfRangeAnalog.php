@@ -43,7 +43,7 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Analog")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorID", referencedColumnName="sensorNameID")
+     *   @ORM\JoinColumn(name="analogID", referencedColumnName="sensorNameID")
      * })
      */
     private Analog $sensorReadingTypeID;

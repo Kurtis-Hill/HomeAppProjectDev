@@ -44,7 +44,7 @@ class ConstAnalog implements ConstantlyRecordInterface
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Analog")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="analogID")
+     *   @ORM\JoinColumn(name="analogID", referencedColumnName="analogID")
      * })
      */
     private Analog $sensorReadingTypeID;

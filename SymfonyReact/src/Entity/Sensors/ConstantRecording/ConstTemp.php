@@ -44,7 +44,7 @@ class ConstTemp implements ConstantlyRecordInterface
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="tempID")
+     *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
      */
     private Temperature $sensorReadingTypeID;

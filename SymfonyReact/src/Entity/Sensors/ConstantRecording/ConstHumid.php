@@ -43,7 +43,7 @@ class ConstHumid implements ConstantlyRecordInterface
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorReadingTypeID", referencedColumnName="humidID")
+     *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
      * })
      */
     private Humidity $sensorReadingTypeID;
