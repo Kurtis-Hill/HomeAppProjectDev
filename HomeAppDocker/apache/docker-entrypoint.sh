@@ -16,7 +16,7 @@ php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 echo "...Composer packages installed"
 
 echo "Querying test database"
-sdf
+
 ## not working as intended needs fixing ##
 # if ! php bin/console dbal:run-sql "select * from user limit 1" --env=test > /dev/null -gt 1; then
 #     echo "No test database found loading fixtures"

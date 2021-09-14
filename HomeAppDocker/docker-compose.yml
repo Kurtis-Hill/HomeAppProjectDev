@@ -44,7 +44,6 @@ services:
       - ./mariadb/setup.sql:/docker-entrypoint-initdb.d/init.sql:rw,delegated
       - ./mariadb/50config/50-client.cnf:/etc/mysql/mariadb.conf.d/50-client.cnf
       - ../SSL:/etc/mysql/ssl
-      - ./mariadb/dev:/etc/dev
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
       interval: 5s
