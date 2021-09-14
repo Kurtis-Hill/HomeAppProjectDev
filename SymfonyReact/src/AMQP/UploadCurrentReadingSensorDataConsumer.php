@@ -44,12 +44,14 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            $sensorData = unserialize($msg->getBody(), ['allowed_classes' => UpdateSensorReadingDTO::class]);
+            $sensorData = unserialize($msg->getBody(), ['allowed_classes' => [UpdateSensorReadingDTO::class]]);
         } catch (Exception $exception) {
             error_log(
                 'Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage(),
+                0,
                 ErrorLogs::SERVER_ERROR_LOG_LOCATION
             );
+
             return true;
         }
 

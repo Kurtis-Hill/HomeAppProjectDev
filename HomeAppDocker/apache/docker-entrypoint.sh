@@ -11,11 +11,13 @@ fi
 
 echo "Installing composer packages..."
 
-php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
+#php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 
 echo "...Composer packages installed"
 
 echo "Querying test database"
+
+
 
 ## not working as intended needs fixing ##
 # if ! php bin/console dbal:run-sql "select * from user limit 1" --env=test > /dev/null -gt 1; then

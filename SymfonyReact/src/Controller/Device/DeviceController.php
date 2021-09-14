@@ -43,12 +43,12 @@ class DeviceController extends AbstractController
         Security $security,
     ): JsonResponse|Response {
         try {
-            $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
         }
 
-        if (empty($sensorData['sensorData'])) {
+        if (empty($requestData['sensorData'])) {
             throw new BadRequestException('you have not provided the correct information to update the sensor');
         }
 
@@ -62,10 +62,10 @@ class DeviceController extends AbstractController
 
         $errors = [];
 
-        foreach ($sensorData['sensorData'] as $sensorUpdateData) {
+        foreach ($requestData['sensorData'] as $sensorUpdateData) {
             try {
                 $updateReadingDTO = new UpdateSensorReadingDTO(
-                    $sensorData['sensorType'],
+                    $requestData['sensorType'],
                     $sensorUpdateData['sensorName'],
                     $sensorUpdateData['currentReadings'],
                     $deviceId

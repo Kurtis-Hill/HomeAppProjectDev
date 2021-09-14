@@ -112,8 +112,8 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
         $sensorType = $sensorTypeObjects->get(0)->getSensorObject()->getSensorTypeID();
 
         $updateData = [
-                'currentReading' => $sensorData->getCurrentReadings()['currentReading'],
-                'sensorType' => Temperature::READING_TYPE
+                'currentReading' => $sensorData->getCurrentReadings(),
+                'sensorType' => $sensorTypeObjects->get(0)->getSensorTypeName()
         ];
 
         $sensorFormData = $this->prepareSensorFormData(
@@ -135,7 +135,12 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
 
         $this->handleExtraSensorDataChecks($sensorTypeObjects);
 
-        $this->em->flush();
+        try {
+            $this->em->flush();
+        } catch (\Exception $exception) {
+            error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            return false;
+        }
 
         return true;
     }

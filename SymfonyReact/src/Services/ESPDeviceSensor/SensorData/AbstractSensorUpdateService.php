@@ -79,9 +79,9 @@ abstract class AbstractSensorUpdateService implements APIErrorInterface
     protected function  prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
     {
 //        dd($readingsToUpdate);
-        $currentSensorType = $sensorType->getSensorType();
+        $sensorType = $sensorType->getSensorType();
         foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
-            if ($sensorName === $currentSensorType) {
+            if ($sensorName === $sensorType) {
                 foreach ($sensorDataArrays['forms'] as $formType => $formData) {
                     if ($formType === $formToProcess) {
                         if ($formToProcess === SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY) {
@@ -109,14 +109,11 @@ abstract class AbstractSensorUpdateService implements APIErrorInterface
                         }
 //dd($sensorType);
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
-//                                dd($readingsToUpdate);
                             foreach ($readingsToUpdate['sensorData'] as $sensorData) {
                                 foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
-//                                    dd($readingType, $sensorData);
                                     if ($readingType === $sensorData['sensorType']) {
-//                                        dd($sensorData);
                                         $currentReading = $sensorData['currentReading'];
-//dd($currentReading);
+
                                         $readingErrorMessage = "%s %s has no value";
                                         !empty($currentReading) ?: $this->userInputErrors[] = sprintf($readingErrorMessage, ucfirst($readingType), 'current reading');
 

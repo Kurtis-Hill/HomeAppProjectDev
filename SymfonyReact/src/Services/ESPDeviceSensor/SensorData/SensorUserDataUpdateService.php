@@ -139,8 +139,8 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService
             if (empty($sensorTypeObjects)) {
                 throw new UnexpectedValueException('No reading types were found for your request, please make sure your app is up to date');
             }
-            $firstSensor = $sensorTypeObjects[0];
-            $sensorType = $firstSensor->getSensorObject()->getSensorTypeID();
+            $firstSensorTypeObject = $sensorTypeObjects[0];
+            $sensorType = $firstSensorTypeObject->getSensorObject()->getSensorTypeID();
             $sensorFormData = $this->prepareSensorFormData($sensorType, $updateData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
 
             if (empty($sensorFormData)) {

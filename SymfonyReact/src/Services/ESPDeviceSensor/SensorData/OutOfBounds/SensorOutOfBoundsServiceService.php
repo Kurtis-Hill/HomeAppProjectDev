@@ -20,7 +20,6 @@ class SensorOutOfBoundsServiceService implements OutOfBoundsSensorServiceInterfa
     {
         if ($readingType->isReadingOutOfBounds()) {
             foreach (SensorType::SENSOR_READING_TYPE_DATA as $sensorReadingTypeData) {
-//                dd($sensorReadingTypeData);
                 if ($sensorReadingTypeData['object'] === $readingType::class) {
                     $sensorOutOfBoundsObject = new $sensorReadingTypeData['outOfBounds'];
 
