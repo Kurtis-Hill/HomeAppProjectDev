@@ -53,6 +53,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType
 
         if ($builder->getData() instanceof Temperature) {
             if ($options['formSensorType'] instanceof Dht) {
+//                dd('boom');
                 $builder
                     ->add('highReading', TextType::class, [
                         'required' => true,

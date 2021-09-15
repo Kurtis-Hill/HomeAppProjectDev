@@ -41,7 +41,6 @@ class UpdateReadingForm extends AbstractType
             if ($options['formSensorType'] instanceof Dallas) {
                 $builder
                     ->add('currentReading', TextType::class, [
-                        'mapped' => false,
                         'required' => true,
                         'constraints' => [
                             new DallasTemperatureConstraint(),
@@ -53,6 +52,7 @@ class UpdateReadingForm extends AbstractType
             if ($options['formSensorType'] instanceof Bmp) {
                 $builder
                     ->add('currentReading', TextType::class, [
+                        'mapped' => false,
                         'required' => true,
                         'constraints' => [
                             new NoSpecialCharactersConstraint(),
@@ -61,7 +61,6 @@ class UpdateReadingForm extends AbstractType
                     ]);
             }
         }
-
         if ($builder->getData() instanceof Humidity) {
             $builder
                 ->add('currentReading', TextType::class, [
@@ -78,6 +77,7 @@ class UpdateReadingForm extends AbstractType
             if ($options['formSensorType'] instanceof Soil) {
                 $builder
                     ->add('currentReading', TextType::class, [
+                        'mapped' => false,
                         'required' => true,
                         'constraints' => [
                             new SoilContraint(),

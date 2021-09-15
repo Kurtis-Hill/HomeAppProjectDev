@@ -155,7 +155,7 @@ class Temperature implements StandardReadingSensorInterface, AllSensorReadingTyp
     /**
      * @param int|float $reading
      */
-    public function setCurrentSensorReading(int|float $reading): void
+    public function setCurrentReading(int|float $reading): void
     {
         $this->currentReading = $reading;
     }

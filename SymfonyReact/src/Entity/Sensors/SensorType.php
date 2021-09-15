@@ -41,14 +41,6 @@ class SensorType
 
     public const SOIL_SENSOR = 'Soil';
 
-    //When creating a new sensor add it to this list for testing
-//    public const ALL_SENSOR_TYPES = [
-//        self::DHT_SENSOR,
-//        self::BMP_SENSOR,
-//        self::DALLAS_TEMPERATURE,
-//        self::SOIL_SENSOR
-//    ];
-
     // Used by service classes to create forms for the sensors and for getting data from the database e.g getting unknown sensor type object (described as object below)
     // to determine which sensor reading types are about to be updated
     // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array

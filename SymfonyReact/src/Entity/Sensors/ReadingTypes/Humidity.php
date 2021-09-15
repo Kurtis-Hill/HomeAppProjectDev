@@ -41,7 +41,7 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
      *
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
-    private int $humidReading;
+    private int $currentReading;
 
     /**
      * @var int
@@ -116,7 +116,7 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
 
     public function getCurrentReading(): int|float
     {
-        return $this->humidReading;
+        return $this->currentReading;
     }
 
     /**
@@ -146,9 +146,9 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
     /**
      * @param int|float $reading
      */
-    public function setCurrentSensorReading(int|float $reading): void
+    public function setCurrentReading(int|float $reading): void
     {
-        $this->humidReading = $reading;
+        $this->currentReading = $reading;
     }
 
     /**

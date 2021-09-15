@@ -63,6 +63,7 @@ class DeviceController extends AbstractController
         $errors = [];
 
         foreach ($requestData['sensorData'] as $sensorUpdateData) {
+//            dd($sensorUpdateData, $requestData['sensorData']);
             try {
                 $updateReadingDTO = new UpdateSensorReadingDTO(
                     $requestData['sensorType'],
@@ -76,6 +77,7 @@ class DeviceController extends AbstractController
                 $errors[] = $exception->getMessage();
             }
         }
+//        dd($errors);
         if (!empty($errors)) {
             return $this->sendMultiStatusJsonResponse();
         }

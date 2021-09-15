@@ -14,10 +14,12 @@ use App\Exceptions\ReadingTypeNotSupportedException;
 use App\Exceptions\SensorNotFoundException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\Services\ESPDeviceSensor\SensorData\ConstantlyRecord\SensorConstantlyRecordService;
+use App\Services\ESPDeviceSensor\SensorData\Interfaces\UpdateCurrentSensorReadingInterface;
 use App\Services\ESPDeviceSensor\SensorData\OutOfBounds\SensorOutOfBoundsServiceService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -26,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use UnexpectedValueException;
 
 
-class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
+class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService implements UpdateCurrentSensorReadingInterface
 {
     /**
      * @var SensorOutOfBoundsServiceService
@@ -66,6 +68,7 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
             try {
                 return match ($sensorData->getSensorType()) {
                     SensorType::DALLAS_TEMPERATURE => $this->handleDallasUpdateRequest($sensorData, $device),
+                    SensorType::DHT_SENSOR => $this->handleDhtUpdateRequest($sensorData, $device),
                     default => throw new UnexpectedValueException('No type has been added to handle this request')
                 };
 
@@ -75,10 +78,12 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
                 | UnexpectedValueException $exception
             ) {
                 $this->userInputErrors[] = $exception->getMessage();
+                dd($exception->getMessage());
                 error_log($exception->getMessage(), 0, ErrorLogs::USER_INPUT_ERROR_LOG_LOCATION);
 
             } catch (ORMException | RuntimeException $exception) {
                 $this->serverErrors[] = $exception->getMessage();
+                dd($exception->getMessage());
                 error_log($exception->getMessage(), 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
             }
 
@@ -86,45 +91,110 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
         }
 
     /**
-     * @param UpdateSensorReadingDTO $sensorData
+     * @param UpdateSensorReadingDTO $updateSensorReadingDTO
      * @param Devices $device
      * @return bool
      * @throws SensorNotFoundException
      */
-    private function handleDallasUpdateRequest(UpdateSensorReadingDTO $sensorData, Devices $device): bool
+    private function handleDallasUpdateRequest(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool
     {
-        $sensorTypeObjects = new ArrayCollection(
-            $this->em->getRepository(Sensors::class)->getSensorTypeObjectsBySensor(
-            $device,
-            $sensorData->getSensorName(),
-            SensorType::SENSOR_READING_TYPE_DATA
-            )
-        );
-
-        if ($sensorTypeObjects->isEmpty()) {
-            throw new SensorNotFoundException(
-                sprintf(
-                    SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME,
-                    $sensorData->getSensorName()
-                )
-            );
-        }
-        $sensorType = $sensorTypeObjects->get(0)->getSensorObject()->getSensorTypeID();
+        $sensorTypeObjects = $this->getSensorReadingTypeObjects($updateSensorReadingDTO, $device);
 
         $updateData = [
-                'currentReading' => $sensorData->getCurrentReadings(),
+                'currentReading' => $updateSensorReadingDTO->getCurrentReadings(),
                 'sensorType' => $sensorTypeObjects->get(0)->getSensorTypeName()
         ];
 
+        $this->prepareAndProcessSensorForms(
+            $sensorTypeObjects,
+            $updateSensorReadingDTO,
+            [$updateData]
+        );
+
+        $this->handleExtraSensorDataChecks($sensorTypeObjects);
+
+        try {
+            $this->em->flush();
+        } catch (Exception $exception) {
+            error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param UpdateSensorReadingDTO $updateSensorReadingDTO
+     * @param $device
+     * @return bool
+     */
+    private function handleDhtUpdateRequest(UpdateSensorReadingDTO $updateSensorReadingDTO, $device): bool
+    {
+        $sensorTypeObjects = $this->getSensorReadingTypeObjects(
+            $updateSensorReadingDTO,
+            $device
+        );
+//        dd($sensorTypeObjects->get(0)->getSensorTypeName());
+
+        $updateData = [
+            [
+                'currentReading' => $updateSensorReadingDTO->getCurrentReadings()['tempReading'],
+                'sensorType' => $sensorTypeObjects->get(0)->getSensorTypeName()
+            ],
+            [
+                'currentReading' => $updateSensorReadingDTO->getCurrentReadings()['humidReading'],
+                'sensorType' => $sensorTypeObjects->get(1)->getSensorTypeName()
+            ]
+        ];
+
+        $this->prepareAndProcessSensorForms(
+            $sensorTypeObjects,
+            $updateSensorReadingDTO,
+            $updateData
+        );
+
+        $this->handleExtraSensorDataChecks($sensorTypeObjects);
+
+        try {
+            $this->em->flush();
+//            dd('flushh');
+        } catch (Exception $exception) {
+//        dd('heere');
+            error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private function handleBmpUpdateRequest(UpdateSensorReadingDTO $updateSensorReadingDTO, $device): bool
+    {
+
+    }
+
+    private function handleSoilUpdateRequest(UpdateSensorReadingDTO $updateSensorReadingDTO, $device): bool
+    {
+
+    }
+
+    private function prepareAndProcessSensorForms(
+        ArrayCollection $sensorTypeObjects,
+        UpdateSensorReadingDTO $updateSensorReadingDTO,
+        array $updateData
+    ): void
+    {
+        $sensorType = $sensorTypeObjects->get(0)->getSensorObject()->getSensorTypeID();
+
         $sensorFormData = $this->prepareSensorFormData(
             $sensorType,
-            ['sensorData' => [$updateData]],
+            ['sensorData' => $updateData],
             SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY
         );
 
         if (empty($sensorFormData)) {
             throw new RuntimeException(
-                'Sensor form has failed to process correctly for sensor ' . $sensorData->getSensorName()
+                'Sensor form has failed to process correctly for sensor ' . $updateSensorReadingDTO->getSensorName()
             );
         }
 
@@ -132,17 +202,22 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
             $sensorFormData,
             $sensorTypeObjects->toArray()
         );
+    }
 
-        $this->handleExtraSensorDataChecks($sensorTypeObjects);
+    private function getSensorReadingTypeObjects(UpdateSensorReadingDTO $updateSensorReadingDTO, $device): ArrayCollection
+    {
+        $sensorTypeObjects = $this->getSensorReadingTypeObjectsToUpdate($device, $updateSensorReadingDTO->getSensorName());
 
-        try {
-            $this->em->flush();
-        } catch (\Exception $exception) {
-            error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
-            return false;
+        if ($sensorTypeObjects->isEmpty()) {
+            throw new SensorNotFoundException(
+                sprintf(
+                    SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME,
+                    $updateSensorReadingDTO->getSensorName()
+                )
+            );
         }
 
-        return true;
+        return $sensorTypeObjects;
     }
 
     /**
@@ -173,20 +248,4 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
         });
     }
 
-
-
-    private function handleBmpUpdateRequest(Request $request)
-    {
-
-    }
-
-    private function handleSoilUpdateRequest(Request $request)
-    {
-
-    }
-
-    private function handleDhtUpdateRequest(Request $request)
-    {
-
-    }
 }
