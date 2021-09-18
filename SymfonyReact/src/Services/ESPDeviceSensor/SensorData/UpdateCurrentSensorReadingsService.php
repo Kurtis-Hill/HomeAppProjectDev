@@ -45,10 +45,10 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService
      * @param SensorConstantlyRecordService $sensorConstantlyRecordService
      */
     #[Pure] public function __construct(
-        EntityManagerInterface          $em,
-        FormFactoryInterface            $formFactory,
+        EntityManagerInterface $em,
+        FormFactoryInterface $formFactory,
         SensorOutOfBoundsServiceService $sensorOutOfBoundsService,
-        SensorConstantlyRecordService   $sensorConstantlyRecordService
+        SensorConstantlyRecordService $sensorConstantlyRecordService
     )
     {
         $this->sensorConstantlyRecordService = $sensorConstantlyRecordService;
