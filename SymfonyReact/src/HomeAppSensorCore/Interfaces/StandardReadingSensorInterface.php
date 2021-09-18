@@ -30,7 +30,7 @@ interface StandardReadingSensorInterface
 
     public function getTime(): \DateTimeInterface;
 
-    public function setCurrentSensorReading(int|float $reading): void;
+    public function setCurrentReading(int|float $reading): void;
 
     public function setHighReading(int|float|string $reading): void;
 

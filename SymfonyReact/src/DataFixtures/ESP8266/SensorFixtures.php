@@ -108,7 +108,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
                         $newObject->setSensorNameID($newAdminSensor);
-                        $newObject->setCurrentSensorReading(10);
+                        $newObject->setCurrentReading(10);
                         $newObject->setTime();
 
                         if ($newSensorType instanceof StandardSensorTypeInterface) {

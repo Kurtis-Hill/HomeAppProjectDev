@@ -156,7 +156,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @param int|float $reading
      */
-    public function setCurrentSensorReading(int|float $reading): void
+    public function setCurrentReading(int|float $reading): void
     {
         $this->analogReading = $reading;
     }
