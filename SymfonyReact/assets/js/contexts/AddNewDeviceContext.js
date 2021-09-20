@@ -20,29 +20,25 @@ const emptyNewDeviceModalContent = {
 export default class AddNewDeviceContextProvider extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             addNewDeviceModalToggle: false,
             newDeviceModalContent: emptyNewDeviceModalContent,
         }
     }
 
-    componentDidMount() {
-        const newDeviceGroup = document.getElementById("device-group");
-        const newDeviceRoom = document.getElementById("device-room");
-
-        this.setState({
-            emptyNewDeviceModalContent: {
-                ...this.state.emptyNewDeviceModalContent,
-                newDeviceGroup: newDeviceGroup,
-                newDeviceRoom: newDeviceRoom,
-            }
-        });
-    }
-
     handleNewDeviceFormSubmission = async (event) => {
         event.preventDefault();
 
+        if (this.state.newDeviceModalContent.newDeviceGroup === '') {
+            console.log('its true', this.state.newDeviceModalContent.newDeviceGroup);
+            var newDeviceGroup = document.getElementById("deviceGroup").value;
+        }
+        
+        if (this.state.newDeviceModalContent.newDeviceRoom === '') {
+            console.log('its true 2', this.state.newDeviceModalContent.newDeviceRoom);
+            var newDeviceRoom = document.getElementById("deviceRoom").value;
+        }
+        
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
         const formData = new FormData(event.target);
@@ -50,23 +46,27 @@ export default class AddNewDeviceContextProvider extends Component {
         //@TODO this sends empty data when selecting defaults need to change structure
         const jsonFormData = {
             'deviceName' : this.state.newDeviceModalContent.newDeviceName,
-            'deviceRoom' : this.state.newDeviceModalContent.newDeviceRoom,
-            'deviceGroup' : this.state.newDeviceModalContent.newDeviceGroup,
+            'deviceRoom' :  this.state.newDeviceModalContent.newDeviceRoom !== '' ? this.state.newDeviceModalContent.newDeviceRoom : document.getElementById("deviceRoom").value ,
+            'deviceGroup' :  this.state.newDeviceModalContent.newDeviceGroup !== '' ? this.state.newDeviceModalContent.newDeviceGroup : document.getElementById("deviceGroup").value,
         };
 
         console.log('formdata', jsonFormData);
-        try {
+      //  try {
             const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, jsonFormData, getAPIHeader());
-            if (newDeviceSubmissionResponse.response.status === 201) {
+
+            // console.log('ge', newDeviceSubmissionResponse.response);
+            if (newDeviceSubmissionResponse.status === 201) {
                 const responseData = newDeviceSubmissionResponse.data.payload;
+                console.log('hey response', responseData);
                 this.setState({addNewDeviceModalSubmit: false});
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responseData.secret, errors:[], newDeviceID: responseData.deviceID}});
             } else {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['unexpected response'], formSubmit:false}});
             }
-        } catch(error) {
-             this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'] ,formSubmit:false}});
-        }
+
+        // } catch(error) {
+        //     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
+        // }        
     }
 
     updateNewDeviceModalForm = (event) => {

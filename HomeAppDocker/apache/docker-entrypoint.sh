@@ -4,19 +4,17 @@ set -e
 sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
 # echo "xdebug.remote_host=$WSLIP" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-# first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
 echo "Installing composer packages..."
 
-#php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
+php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 
 echo "...Composer packages installed"
 
 echo "Querying test database"
-
 
 
 ## not working as intended needs fixing ##

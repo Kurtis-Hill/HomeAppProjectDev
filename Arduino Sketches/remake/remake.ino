@@ -47,19 +47,43 @@ OneWire testWire(0);
 DallasTemperature sensors(0);
 
 //Web bits
-const char *host = "klh19901017.asuscomm.com";
-const int httpsPort = 443; 
-const char fingerprint[] PROGMEM = "3704ac7ac54ee4adc8c983d119951491359f494e";
+ESP8266WiFiMulti WiFiMulti;
+// Test
+#define HOMEAPP_HOST "https://192.168.1.172"
+// Prod
+//#define HOMEAPP_HOST "https://klh17101990.asuscomm.com"
+#define HOMEAPP_URL "HomeApp"
+#define HOMEAPP_PORT "8101"
+
+#define HOMEAPP_LOGIN "api/device/login_check"
+
+const char fingerprint[] PROGMEM = "60ee151bee994d6ca826a69abce1e724173721ca";
+
+String token;
+String refreshToken;
 
 
-char* accessPointSsid = "ESP8266-HomeAppDeviceAccessPoint";
-char* accessPointPassword = "HomeApp1234";
+// Access ponint network bits
+#define ACCESSPOINT_SSID "ESP8266-HomeApp-D-AP"
+#define ACCESSPOINT_PASSWORD "HomeApp1234"
 
 ESP8266WebServer server;
 IPAddress local_ip(192,168,1,254);
 IPAddress gateway(192,168,1,1);
 IPAddress netmask(255,255,255,0);
 
+//Dallas Bus Temperature
+struct DallasTempData {
+  char sensorName[8][25];
+  float tempReading[8];
+  int sensorCount;
+};
+DallasTempData dallasTempData;
+
+
+
+
+// Webpages
 char webpage[] PROGMEM = R"=====(
 <html>
   <body>
@@ -193,8 +217,8 @@ char webpage[] PROGMEM = R"=====(
       };
 
       var deviceCredentials = {
-        'username':deviceSecret, 
-        'password':deviceName
+        'username':deviceName, 
+        'password':deviceSecret
       };
 
       //Dallas Bus Sensor Names
@@ -638,41 +662,6 @@ char webpage[] PROGMEM = R"=====(
 
 )=====";
 
-//Dallas Bus Temperature
-struct DallasBusTempData {
-  char sensorName[8][25];
-  int sensorCount;
-};
-DallasBusTempData dallasBusTempData;
-
-//DHT Sensor
-struct DHTTempHumid {
-  char DHTTempHumidSensorName[1][25];
-  String tempPostData;
-  String humidPostData;
-//  String sensorPostData;
-};
-DHTTempHumid dhtTempHumid;
-
-//ADC Sensor
-struct AnalogSensors {
-  char sensorNames[4][25];
-  String analogPostData;
-  String sensorPostData;
-  int sensorCount;
-};
-AnalogSensors analogSensors;
-//Adafruit_ADS1115 ads;
-
-//char deviceName[20];
-//char deviceSecret[32];
-
-//need to double check this will hold refresh token
-String token;
-String refreshToken;
-
-String homeAppLogin = "login";
-const char *login = "/login";
 
 
 
@@ -683,16 +672,20 @@ void handleSettingsUpdate(){
 
   strcpy(jsonData, data.c_str());
   
-  Serial.println("full payload");
+  Serial.println("full payload"); // @DEV
   Serial.println(data);
-  Serial.println("json char");
+  Serial.println("json char array");
   Serial.println(jsonData);
 
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, jsonData);
 
-  
-  if (!saveWifiCredentals(doc["wifi"]) || !saveSensorDataToSpiff(doc["sensorData"]) || saveDeviceUserSettings(doc["deviceCredentials"])) {   
+  //throwing exception when not setting any device data
+  if (
+    !saveWifiCredentals(doc["wifi"]) 
+    || !saveSensorDataToSpiff(doc["sensorData"]) 
+    || !saveDeviceUserSettings(doc["deviceCredentials"])) 
+  {   
     Serial.println("failed to save spiffs");
     server.send(500, "application/json", "{\"status\":\"Spiff error\"}"); 
   } else {
@@ -741,11 +734,11 @@ bool saveWifiCredentals(DynamicJsonDocument doc) {
 
 // Start of device user settings
 bool saveDeviceUserSettings(DynamicJsonDocument doc) {
-  Serial.println("setting device user setting now");
+  Serial.println("Setting device user setting now");
   String deviceName = doc["username"].as<String>();
   String secret = doc["password"].as<String>();
 
-  Serial.println("deviceName");
+  Serial.println("deviceName"); // @DEV
   Serial.println(deviceName);
   Serial.println("secret");
   Serial.println(secret);
@@ -755,8 +748,12 @@ bool saveDeviceUserSettings(DynamicJsonDocument doc) {
     || deviceName == "" 
     || deviceName == "\0" 
     || deviceName == "null"
+    || secret == NULL
+    || secret == "" 
+    || secret == "\0" 
+    || secret == "null"
     ) {
-    Serial.println("No device user name set, not setting any values");
+    Serial.println("No device user name sent in payload, not setting any values and using defaults");
     return true;
   }
   
@@ -789,6 +786,8 @@ bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
 // Dallas functions
 bool saveDallasSensorData(DynamicJsonDocument dallasData) {
   int dallasCount = dallasData["busTempCount"].as<int>();
+  Serial.println("dallas count2!!");
+  Serial.println(dallasCount);
   Serial.println("dallas count");
   Serial.println(dallasCount);
   if (dallasCount >= 1) {
@@ -806,7 +805,7 @@ bool saveDallasSensorData(DynamicJsonDocument dallasData) {
 
     Serial.println("Dallas SPIFF close, sucess");
 
-    Serial.println(dallasBusTempData.sensorCount);
+    Serial.println(dallasTempData.sensorCount);// @DEV
     return true;  
   }
   Serial.println("No dallas sensor data sent");
@@ -823,22 +822,22 @@ bool setDallasValues() {
     DeserializationError error = deserializeJson(dallasDoc, dallasSensor);
 
     if (error) {
-      Serial.println("serialization error");
+      Serial.println("deserialization error");
       return false;
     }
     
-    dallasBusTempData.sensorCount = dallasDoc["busTempCount"].as<int>();
+    dallasTempData.sensorCount = dallasDoc["busTempCount"].as<int>();
 
-    if (dallasBusTempData.sensorCount == 0) {
+    if (dallasTempData.sensorCount == 0) {
       Serial.println("No Sensor count not setting any values");
       return true;
     }
    
     Serial.print("dallas sensor count ");
-    Serial.println(dallasBusTempData.sensorCount);
+    Serial.println(dallasTempData.sensorCount);
 
     int x = 1;
-    for (int i=0; i < dallasBusTempData.sensorCount; ++i) {
+    for (int i=0; i < dallasTempData.sensorCount; ++i) {
       String nameCheck = dallasDoc["busTempNameArray"][i].as<String>();
 
       if(nameCheck == NULL || nameCheck == "" || nameCheck == "\0" || nameCheck == "null") {
@@ -846,9 +845,9 @@ bool setDallasValues() {
         continue;
       }
       
-      strncpy(dallasBusTempData.sensorName[i], dallasDoc["busTempNameArray"][i], sizeof(dallasBusTempData.sensorName[i]));
+      strncpy(dallasTempData.sensorName[i], dallasDoc["busTempNameArray"][i], sizeof(dallasTempData.sensorName[i]));
       Serial.print("dallas sensor name ");
-      Serial.println(dallasBusTempData.sensorName[i]);
+      Serial.println(dallasTempData.sensorName[i]);
     }
   }
   dallasSensor.close();
@@ -884,7 +883,7 @@ void createAccessPoint() {
   Serial.println("Setting up wireless access point");
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(local_ip, gateway, netmask);
-  WiFi.softAP(accessPointSsid, accessPointPassword);
+  WiFi.softAP(ACCESSPOINT_SSID, ACCESSPOINT_PASSWORD);
   Serial.println("AP MODE Activated");
   delay(2000);
   WiFi.printDiag(Serial); 
@@ -926,9 +925,12 @@ bool connectToNetwork() {
       if (WiFi.status() == WL_CONNECTED){
         Serial.println("Wifi connection made");
         WiFi.printDiag(Serial); 
+        Serial.println("");
+        Serial.print("Network IP Address ");
+        Serial.println(WiFi.localIP());
         return true;
       }
-      if (retryCounter == 5) {
+      if (retryCounter == 25) {
         Serial.println("Wifi timed out connection was not made");
         return false;
       }      
@@ -942,98 +944,151 @@ bool connectToNetwork() {
 
 
 
-//Production version
 bool deviceLogin() {
-  WiFiClientSecure httpsClient;
-
-  Serial.printf("Using fingerprint '%s'\n", fingerprint);
-  httpsClient.setFingerprint(fingerprint);
-  httpsClient.setTimeout(15000); // 15 Seconds
-  delay(1000);
+  Serial.println("Logging device in");
+  String endpoint = HOMEAPP_LOGIN;
   
-  Serial.print("Connecting via HTTPS to :");
-  Serial.print(host);
-  int r=0;
-  while((!httpsClient.connect(host, httpsPort))){
-      delay(100);
-      Serial.print(".");
-      r++;
+  String url = buildHomeAppUrl(endpoint);
+  
+  String jsonData = getSerializedSpiff("/device.json");
+
+  String payload = sendHomeAppHttpsRequest(url, jsonData);
+
+  return saveTokensFromLogin(payload);
+}
+
+
+String buildHomeAppUrl(String endpoint) {
+  Serial.println("building url");
+  String url = HOMEAPP_HOST;
+  url += ":";
+  url += HOMEAPP_PORT;
+  url += "/";
+  url += HOMEAPP_URL;
+  url += "/";
+  url += endpoint;
+
+  Serial.print("url built: ");
+  Serial.println(url);
+  return url;
+}
+
+
+String sendHomeAppHttpsRequest(
+  String url,
+  String jsonData
+  ) {
+  Serial.println("Building Https connection");
+  std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
+  client->setFingerprint(fingerprint);
+  HTTPClient https;
+
+  Serial.print("[HTTPS] begin connecting to... ");
+  Serial.println(url);
+  
+  https.begin(*client, url);
+  https.addHeader("Content-Type", "application/json");
+
+  Serial.println("[HTTP] POST...");
+  int httpCode = https.POST(jsonData);
+
+  // httpCode will be negative on error
+  if (httpCode > 0) {
+    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+    if (httpCode == HTTP_CODE_OK) {
+      const String& payload = https.getString();
+      Serial.print("received payload: ");
+      Serial.println(payload);
+      return payload;
+    }
+  } else {
+      Serial.printf("[HTTP] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
+ 
   }
-  if(r==30) {
-    Serial.println("Connection failed");
+
+  https.end();
+  return "";
+}
+
+
+
+bool saveTokensFromLogin(String payload) {  
+  char jsonData[1000];
+  strcpy(jsonData, payload.c_str());
+
+  DynamicJsonDocument responseTokens(1024);
+  DeserializationError error = deserializeJson(responseTokens, jsonData);
+
+  if (error) {
+    Serial.println("deserialization error");
     return false;
   }
+  
+  Serial.println("token json"); // @DEV
+  Serial.println(responseTokens["token"].as<String>());
+  
+  token = responseTokens["token"].as<String>();
+  refreshToken = responseTokens["refreshToken"].as<String>();
+  
+  Serial.println("Token: "); //@DEBUG
+  Serial.println(token);
+  Serial.println("refreshToken");
+  Serial.println(refreshToken);
 
-  httpsClient.print(String("POST ") + homeAppLogin + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
-               "Content-Type: application/json"+ "\r\n" +
-               "Content-Length: 250" + "\r\n\r\n" +
-               ""+
-               "Connection: close\r\n\r\n"
-  );
-
-  Serial.println("Request sent to");
-  Serial.println(host + homeAppLogin);
+  return true;
 }
 
-void resetDevice() {
-  ESP.restart();
+
+DynamicJsonDocument getDerserializedJson(String serializedJson, int buffSize) {
+  Serial.println("Deseriazing Json");
+
+  char jsonData[buffSize];
+
+  strcpy(jsonData, serializedJson.c_str());
+
+  DynamicJsonDocument deserializedJson(1024);
+  DeserializationError error = deserializeJson(deserializedJson, jsonData);
+
+  if (error) {
+    Serial.println("deserialization error");
+  }
+
+  return deserializedJson;
 }
 
 
-bool deviceLoginDev() {
-    Serial.print("Begining to log in");
-    WiFiClient client;
-    HTTPClient http;
 
-    Serial.print("[HTTP] begin connecting to... ");
-    Serial.println((String)host+"/login/");
-    
-    http.begin(client, "http://"+(String)host+"/"+(String)login+"/"); //HTTP
-    http.addHeader("Content-Type", "application/json");
 
-    Serial.print("Getting json device data from spiff");
-
-    String jsonData = getSerializedDeviceNameSecret();
-    
-    Serial.print("[HTTP] POST...\n");
-    // start connection and send HTTP header and body
-    int httpCode = http.POST(jsonData);
-
-    // httpCode will be negative on error
-    if (httpCode > 0) {
-      // HTTP header has been send and Server response header has been handled
-      Serial.printf("[HTTP] POST... code: %d\n", httpCode);
-
-      // file found at server
-      if (httpCode == HTTP_CODE_OK) {
-        const String& payload = http.getString();
-        Serial.println("received payload:\n<<");
-        Serial.println(payload);
-        Serial.println(">>");        
-      }
-    } else {
-      Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
-      return false;
-    }
-    http.end();
-    return true;
+bool sendUpdateSensorData() {
+  
 }
 /////<!---END OF NETWORK METHODS---!>//////
-
-String getSerializedDeviceNameSecret() {
-  File deviceFile = SPIFFS.open("/device.json", "r");
+void resetDevice() {
+  createAccessPoint();
+//  SPIFFS.remove("/device.json");
+//  SPIFFS.remove("/wifi.json");
+//  SPIFFS.remove("/dallas.json");
   
+}
+
+void restartDevice() {
+  ESP.restart;
+}
+
+
+String getSerializedSpiff(String spiff) {
+  Serial.print("accessing spiff: ");
+  Serial.println(spiff);
+  File deviceFile = SPIFFS.open(spiff, "r");
   String deviceJson;
-  uint16_t i = 0;
+  
   while(deviceFile.available()){
     deviceJson += char(deviceFile.read());
-    i++;
   }
   Serial.println("whole json string from spiff:");
-  Serial.println(deviceJson); //use for debug
+  Serial.println(deviceJson); //@DEBUG
   deviceFile.close();
-
+  Serial.println("Spiff closed successfully");
   return deviceJson;
 }
 
@@ -1044,30 +1099,34 @@ void setup() {
 //  Serial.begin(9600);
   Serial.begin(115200);
   Serial.println("Searial started");
-  
-  //WebBits
-  //Serve setup page
+
+  Serial.print("Starting web servers...");
+  //Web
   server.on("/",[](){server.send_P(200,"text/html",webpage);});
-  // handle json sent from page
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
   
   server.on("/reset-device", HTTP_GET, resetDevice);
+  server.on("/restart-device", HTTP_GET, restartDevice);
   Serial.println("Servers Begun");
   server.begin();
 
-  delay(8000);
+  Serial.println("...Webservers started");
+  delay(5000);
   SPIFFS.begin();
-  
+
+  Serial.println("Begining setup");
   if (setupNetworkConnection()) {
     // change device login for production
-    if (deviceLoginDev()) {
+    if (deviceLogin()) {
       if (!setDallasValues()) {
         Serial.println("Failed to set dallas values");
       }        
     } else {
-      Serial.println("Device has failed to login cannot sent any data"); 
+      Serial.println("Device has failed to login, cannot send any data"); 
     }
   }
+
+  Serial.println("End of Setup");
 }
 
 void loop() {
@@ -1080,8 +1139,18 @@ void loop() {
   if(WiFi.status()== WL_CONNECTED){
     Serial.println("Connected to wifi");
   }
+  Serial.println("Loop finished");
   delay(1000);
 }
+
+
+
+
+
+
+
+
+
 
 void readWifiJson() {
   File wifiCredentials = SPIFFS.open("/device.json", "r");

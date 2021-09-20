@@ -31,7 +31,7 @@ SymfonyReact/.idea
 ### CS tools
 .php_cs.cache
 .php-version
-
+.php-cs-fixer.cache
 ###> symfony/phpunit-bridge ###
 SymfonyReact/.phpunit
 SymfonyReact/phpunit.xml

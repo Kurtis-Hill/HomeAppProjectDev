@@ -11,6 +11,6 @@ yarn install
 
 yarn encore dev --watch
 
-# yarn encore dev-server --hot --host=0.0.0.0 --port 8080
+yarn encore dev-server --hot --host=apache --port 8080
 
 exec "$@"
