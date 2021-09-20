@@ -178,6 +178,11 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
 
     }
 
+    /**
+     * @param ArrayCollection $sensorTypeObjects
+     * @param UpdateSensorReadingDTO $updateSensorReadingDTO
+     * @param array $updateData
+     */
     private function prepareAndProcessSensorForms(
         ArrayCollection $sensorTypeObjects,
         UpdateSensorReadingDTO $updateSensorReadingDTO,
@@ -204,6 +209,12 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
         );
     }
 
+    /**
+     * @param UpdateSensorReadingDTO $updateSensorReadingDTO
+     * @param $device
+     * @return ArrayCollection
+     * @throws SensorNotFoundException
+     */
     private function getSensorReadingTypeObjects(UpdateSensorReadingDTO $updateSensorReadingDTO, $device): ArrayCollection
     {
         $sensorTypeObjects = $this->getSensorReadingTypeObjectsToUpdate($device, $updateSensorReadingDTO->getSensorName());
