@@ -13,6 +13,7 @@ use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\Form\FormMessages;
 use App\Form\SensorForms\AddNewSensorForm;
+use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\ORMException;
@@ -20,7 +21,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
-class SensorUserDataUpdateService extends AbstractSensorUpdateService
+class SensorUserDataUpdateService extends AbstractSensorUpdateService implements APIErrorInterface
 {
     /**
      * @param array $sensorData
@@ -85,27 +86,27 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService
                 if ($newSensorTypeObject instanceof StandardSensorTypeInterface) {
                     $newSensorTypeObject->setSensorObject($sensor);
                     foreach ($sensorTypeData['readingTypes'] as $readingType => $readingTypeObject) {
-                        $newObject = new $readingTypeObject;
+                        $newReadingTypeObject = new $readingTypeObject;
 
-                        if ($newObject instanceof Temperature) {
-                            $newSensorTypeObject->setTempObject($newObject);
+                        if ($newReadingTypeObject instanceof Temperature) {
+                            $newSensorTypeObject->setTempObject($newReadingTypeObject);
                         }
-                        if ($newObject instanceof Humidity) {
-                            $newSensorTypeObject->setHumidObject($newObject);
+                        if ($newReadingTypeObject instanceof Humidity) {
+                            $newSensorTypeObject->setHumidObject($newReadingTypeObject);
                         }
-                        if ($newObject instanceof Analog) {
-                            $newSensorTypeObject->setAnalogObject($newObject);
+                        if ($newReadingTypeObject instanceof Analog) {
+                            $newSensorTypeObject->setAnalogObject($newReadingTypeObject);
                         }
-                        if ($newObject instanceof Latitude) {
-                            $newSensorTypeObject->setLatitudeObject($newObject);
+                        if ($newReadingTypeObject instanceof Latitude) {
+                            $newSensorTypeObject->setLatitudeObject($newReadingTypeObject);
                         }
 
-                        if ($newObject instanceof StandardReadingSensorInterface) {
-                            $newObject->setSensorNameID($sensor);
-                            $newObject->setCurrentReading(10);
-                            $newObject->setTime(clone $dateTimeNow);
+                        if ($newReadingTypeObject instanceof StandardReadingSensorInterface) {
+                            $newReadingTypeObject->setSensorNameID($sensor);
+                            $newReadingTypeObject->setCurrentReading(10);
+                            $newReadingTypeObject->setTime(clone $dateTimeNow);
 
-                            $this->em->persist($newObject);
+                            $this->em->persist($newReadingTypeObject);
                         }
                     }
                     $this->em->persist($newSensorTypeObject);
@@ -115,8 +116,8 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService
             }
         }
         if (empty($newSensorTypeObject) || !$this->em->contains($newSensorTypeObject)) {
-            if (!empty($newObject)) {
-                $this->em->remove($newObject);
+            if (!empty($newReadingTypeObject)) {
+                $this->em->remove($newReadingTypeObject);
             }
             $this->em->remove($sensor);
             $this->em->flush();

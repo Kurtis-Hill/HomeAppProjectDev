@@ -8,7 +8,7 @@ use App\Exceptions\OutOfBoundsEntityException;
 use App\Exceptions\ReadingTypeNotSupportedException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 
-class SensorOutOfBoundsServiceService implements OutOfBoundsSensorServiceInterface
+class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterface
 {
     /**
      * @param AllSensorReadingTypeInterface $readingType

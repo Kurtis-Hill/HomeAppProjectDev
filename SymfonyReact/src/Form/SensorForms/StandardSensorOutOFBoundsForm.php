@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class StandardSensorOutOFBoundsForm extends AbstractType
+class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadingUpdateInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

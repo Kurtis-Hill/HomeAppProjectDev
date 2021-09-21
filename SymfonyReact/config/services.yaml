@@ -37,3 +37,12 @@ services:
     App\Controller\Device\DeviceController:
         calls:
             - setCurrentReadingProducer: ['@current_sensor_reading_producer']
+
+    App\Services\ESPDeviceSensor\SensorData\CurrentReading\CurrentReadingUpdateSensorFactory:
+        calls:
+            - setDallasReadingUpdateService: ['@App\Services\ESPDeviceSensor\SensorData\CurrentReading\Sensors\DallasCurrentReadingUpdate']
+            - setDhtReadingUpdateService: ['@App\Services\ESPDeviceSensor\SensorData\CurrentReading\Sensors\DhtCurrentReadingUpdate']
+            - setBmpReadingUpdateService: ['@App\Services\ESPDeviceSensor\SensorData\CurrentReading\Sensors\BmpCurrentReadingUpdate']
+
+    App\Services\ESPDeviceSensor\SensorData\CurrentReading\UpdateCurrentSensorReadingInterface:
+        alias: 'App\Services\ESPDeviceSensor\SensorData\UpdateCurrentSensorReadingsService'

@@ -207,9 +207,6 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
 
     }
 
-    /**
-     * @return array
-     */
     #[ArrayShape(
         [
             'icons' => [Icons::class],

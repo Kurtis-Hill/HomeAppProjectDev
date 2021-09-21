@@ -65,15 +65,17 @@ class DeviceController extends AbstractController
         foreach ($requestData['sensorData'] as $sensorUpdateData) {
 //            dd($sensorUpdateData, $requestData['sensorData']);
             try {
+//                dd($sensorUpdateData['currentReadings']);
                 $updateReadingDTO = new UpdateSensorReadingDTO(
                     $requestData['sensorType'],
                     $sensorUpdateData['sensorName'],
                     $sensorUpdateData['currentReadings'],
                     $deviceId
                 );
-
+//dd($this->currentReadingAMQPProducer)
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception $exception) {
+//                dd($exception->getMessage());
                 $errors[] = $exception->getMessage();
             }
         }

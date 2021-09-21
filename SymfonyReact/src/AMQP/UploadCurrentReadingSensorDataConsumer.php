@@ -8,6 +8,7 @@ use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Entity\Devices\Devices;
 use App\ErrorLogs;
 use App\Repository\Core\DevicesRepository;
+use App\Services\ESPDeviceSensor\SensorData\CurrentReading\UpdateCurrentSensorReadingInterface;
 use App\Services\ESPDeviceSensor\SensorData\UpdateCurrentSensorReadingsService;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -18,7 +19,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     /**
      * @var UpdateCurrentSensorReadingsService
      */
-    private UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService;
+    private UpdateCurrentSensorReadingsService $sensorCurrentReadingUpdateService;
 
     /**
      * @var DevicesRepository
@@ -26,14 +27,14 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     private DevicesRepository $deviceRepository;
 
     /**
-     * @param UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService
+     * @param UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService
      * @param DevicesRepository $deviceRepository
      */
     public function __construct(
-        UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService,
+        UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
         DevicesRepository $deviceRepository
     ) {
-        $this->sensorDeviceDataQueueConsumerService = $sensorDeviceDataQueueConsumerService;
+        $this->sensorCurrentReadingUpdateService = $sensorDeviceDataQueueConsumerService;
         $this->deviceRepository = $deviceRepository;
     }
 
@@ -58,7 +59,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         $device = $this->deviceRepository->findOneBy(['deviceNameID' => $sensorData->getDeviceId()]);
 
         if ($device instanceof Devices) {
-            return $this->sensorDeviceDataQueueConsumerService->handleUpdateCurrentReadingSensorData($sensorData, $device);
+            return $this->sensorCurrentReadingUpdateService->handleUpdateCurrentReadingSensorData($sensorData, $device);
         }
 
         return false;
