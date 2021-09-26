@@ -8,7 +8,7 @@ use App\Entity\Devices\Devices;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
-use App\Services\ESPDeviceSensor\SensorData\SensorUserDataUpdateService;
+use App\Services\ESPDeviceSensor\SensorDataServices\SensorUserDataUpdateService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\CardViewVoter;
 use App\Voters\SensorVoter;

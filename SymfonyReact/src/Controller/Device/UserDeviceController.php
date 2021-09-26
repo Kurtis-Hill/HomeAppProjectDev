@@ -5,7 +5,7 @@ namespace App\Controller\Device;
 
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
-use App\Services\ESPDeviceSensor\Devices\NewDeviceService;
+use App\ESPDeviceSensor\Devices\NewDeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\DeviceVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

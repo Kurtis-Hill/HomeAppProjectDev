@@ -8,6 +8,8 @@ use App\Entity\Sensors\Sensors;
 
 interface SensorInterface
 {
+    public function setSensorObject(Sensors $sensor);
+
     public function getSensorTypeID(): int;
 
     public function getSensorObject(): Sensors;
