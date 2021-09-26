@@ -49,7 +49,7 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService implements
             $handledForm = $this->processNewSensorForm($addNewSensorForm, $sensorData);
 
             if ($handledForm === true) {
-                $this->em->persist($addNewSensorForm->getData());
+                $this->sensorRepository->persist($addNewSensorForm->getData());
             }
 
             return $newSensor;
@@ -78,8 +78,8 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService implements
             $this->serverErrors[] = $e->getMessage();
         }
 
-        $this->em->remove($sensor);
-        $this->em->flush();
+        $this->sensorRepository->remove($sensor);
+        $this->sensorRepository->flush();
 
         return null;
     }
@@ -118,21 +118,21 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService implements
                             $newReadingTypeObject->setCurrentReading(10);
                             $newReadingTypeObject->setTime(clone $dateTimeNow);
 
-                            $this->em->persist($newReadingTypeObject);
+                            $this->sensorRepository->persist($newReadingTypeObject);
                         }
                     }
-                    $this->em->persist($newSensorTypeObject);
+                    $this->sensorRepository->persist($newSensorTypeObject);
                 }
 
                 return $newSensorTypeObject;
             }
         }
-        if (empty($newSensorTypeObject) || !$this->em->contains($newSensorTypeObject)) {
+        if (empty($newSensorTypeObject) || !$this->sensorRepository->contains($newSensorTypeObject)) {
             if (!empty($newReadingTypeObject)) {
-                $this->em->remove($newReadingTypeObject);
+                $this->sensorRepository->remove($newReadingTypeObject);
             }
-            $this->em->remove($sensor);
-            $this->em->flush();
+            $this->sensorRepository->remove($sensor);
+            $this->sensorRepository->flush();
 
             throw new BadRequestException('Sensor Type Not Recognised Your App May Need Updating');
         }
@@ -173,7 +173,7 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService implements
      */
     private function duplicateSensorOnSameDeviceCheck(Sensors $sensor): void
     {
-        $currentUserSensorNameCheck = $this->em->getRepository(Sensors::class)->checkForDuplicateSensorOnDevice($sensor);
+        $currentUserSensorNameCheck = $this->sensorRepository->getRepository(Sensors::class)->checkForDuplicateSensorOnDevice($sensor);
 
         if ($currentUserSensorNameCheck instanceof Sensors) {
             throw new BadRequestException('You already have a sensor named ' . $sensor->getSensorName());

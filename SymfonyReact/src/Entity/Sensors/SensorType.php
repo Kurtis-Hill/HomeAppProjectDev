@@ -240,6 +240,4 @@ class SensorType
     {
         $this->description = $description;
     }
-
-
 }

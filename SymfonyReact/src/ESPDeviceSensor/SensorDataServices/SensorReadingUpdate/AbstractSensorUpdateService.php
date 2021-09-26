@@ -6,15 +6,16 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate;
 
 use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\Form\SensorForms\SensorReadingUpdateInterface;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -25,7 +26,7 @@ abstract class AbstractSensorUpdateService
     /**
      * @var EntityManagerInterface
      */
-    protected EntityManagerInterface $em;
+    protected SensorRepository $sensorRepository;
 
     /**
      * @var FormFactoryInterface
@@ -35,12 +36,12 @@ abstract class AbstractSensorUpdateService
 
     /**
      * AbstractSensorService constructor.
-     * @param EntityManagerInterface $em
+     * @param SensorRepository $sensorRepository
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(EntityManagerInterface $em, FormFactoryInterface $formFactory)
+    public function __construct(SensorRepository $sensorRepository, FormFactoryInterface $formFactory)
     {
-        $this->em = $em;
+        $this->sensorRepository = $sensorRepository;
         $this->formFactory = $formFactory;
     }
 
@@ -58,13 +59,13 @@ abstract class AbstractSensorUpdateService
 //                    dd($this->formInputErrors);
                     if ($handledForm === true) {
 //                        dd('it did');
-                        $this->em->persist($sensorForm->getData());
+                        $this->sensorRepository->persist($sensorForm->getData());
                     }
 //                    dd('did not');
                 }
             }
         }
-        $this->em->flush();
+        $this->sensorRepository->flush();
     }
 
 
@@ -205,7 +206,7 @@ abstract class AbstractSensorUpdateService
     protected function getSensorReadingTypeObjectsToUpdate(Devices $device, string $sensorName): ArrayCollection
     {
         return new ArrayCollection(
-            $this->em->getRepository(Sensors::class)->getSensorReadingTypeObjectsBySensorNameAndDevice(
+            $this->sensorRepository->getSensorReadingTypeObjectsBySensorNameAndDevice(
                 $device,
                 $sensorName,
                 SensorType::SENSOR_READING_TYPE_DATA

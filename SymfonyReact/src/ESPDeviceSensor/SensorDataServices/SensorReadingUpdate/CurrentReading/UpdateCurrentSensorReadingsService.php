@@ -50,7 +50,7 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
             $this->handleOutOfBoundsReadingsCheck($sensorReadingTypeObjects);
             $this->handleConstRecordReadingsCheck($sensorReadingTypeObjects);
 
-            $this->em->flush();
+            $this->sensorRepository->flush();
 
             return true;
 //        } catch (
