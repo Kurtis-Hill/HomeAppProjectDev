@@ -17,12 +17,23 @@ use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
 class SensorUserDataUpdateService extends AbstractSensorUpdateService implements APIErrorInterface
 {
+    /**
+     * @var array
+     */
+    private array $userInputErrors = [];
+
+    /**
+     * @var array
+     */
+    private array $serverErrors = [];
+
     /**
      * @param array $sensorData
      * @return Sensors|null
@@ -181,5 +192,19 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService implements
         $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
 
         return $processedFormResult;
+    }
+
+
+    #[Pure] public function getUserInputErrors(): array
+    {
+        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
+    }
+
+    /**
+     * @return array
+     */
+    public function getServerErrors(): array
+    {
+        return $this->serverErrors;
     }
 }

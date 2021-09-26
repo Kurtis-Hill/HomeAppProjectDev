@@ -201,7 +201,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             );
         }
 
-        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, $deviceId);
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, $deviceId->getDeviceNameID());
 
         return $cardData ?? [];
 

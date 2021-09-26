@@ -86,6 +86,7 @@ class SensorControllerTest extends WebTestCase
             );
 
             $requestResponse = $this->client->getResponse();
+//            dd($requestResponse);
             $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
             $this->userToken = $responseData['token'];

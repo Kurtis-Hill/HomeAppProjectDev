@@ -8,18 +8,26 @@ use App\Exceptions\ConstRecordEntityException;
 use App\Exceptions\OutOfBoundsEntityException;
 use App\Exceptions\ReadingTypeNotSupportedException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use App\Services\ESPDeviceSensor\SensorData\Repository\ORM\ConstTempORMRepository;
 
-class SensorConstantlyRecordService
+class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServiceInterface
 {
+    private ConstTempORMRepository $constTempORMRepository;
+
+    public function __construct(ConstTempORMRepository $constTempORMRepository)
+    {
+        $this->constTempORMRepository = $constTempORMRepository;
+    }
+
     /**
      * @param AllSensorReadingTypeInterface $readingType
-     * @return ConstantlyRecordInterface|null
+     * @return void
      * @throws ConstRecordEntityException
      * @throws ReadingTypeNotSupportedException
      */
-    public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): ?ConstantlyRecordInterface
+    public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): void
     {
-        if ($readingType->getConstRecord()) {
+        if (!$readingType->getConstRecord()) {
             foreach (SensorType::SENSOR_READING_TYPE_DATA as $sensorReadingTypeData) {
                 if ($sensorReadingTypeData['object'] === $readingType::class) {
                     $sensorConstRecordObject = new $sensorReadingTypeData['constRecord'];
@@ -36,7 +44,7 @@ class SensorConstantlyRecordService
                     $sensorConstRecordObject->setSensorReading($readingType->getCurrentReading());
                     $sensorConstRecordObject->setTime();
 
-                    return $sensorConstRecordObject;
+                    $this->constTempORMRepository->persistUpdateReadingData($sensorConstRecordObject);
                 }
             }
 
@@ -47,8 +55,5 @@ class SensorConstantlyRecordService
                 )
             );
         }
-
-
-        return null;
     }
 }

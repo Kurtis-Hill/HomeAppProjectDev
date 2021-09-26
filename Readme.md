@@ -25,4 +25,24 @@ and the password is : admin1234
 when adding a new sensor to the system and updating the current readings use the following format to adjust the reading:
 'readingType'Reading
 e.g a temperature reading would be temperatureReading
-if the sensor only has one reading type you can simply use currentReading
+
+a typical request may look something like this:
+<code>
+{
+    "sensorType": "Dallas",
+    "sensorData": [ 
+        {
+            "sensorName": "Dallas1",
+            "currentReadings": {
+                "temperatureReading": "12"
+        }
+        },
+        {
+            "sensorName": "Dallas1",
+            "currentReadings": {
+                "temperatureReading": "19"
+            }
+        }
+    ]
+}
+</code>

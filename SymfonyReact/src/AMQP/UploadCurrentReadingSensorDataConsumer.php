@@ -9,7 +9,7 @@ use App\Entity\Devices\Devices;
 use App\ErrorLogs;
 use App\Repository\Core\DevicesRepository;
 use App\Services\ESPDeviceSensor\SensorData\CurrentReading\UpdateCurrentSensorReadingInterface;
-use App\Services\ESPDeviceSensor\SensorData\UpdateCurrentSensorReadingsService;
+use App\Services\ESPDeviceSensor\SensorData\CurrentReading\UpdateCurrentSensorReadingsService;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;

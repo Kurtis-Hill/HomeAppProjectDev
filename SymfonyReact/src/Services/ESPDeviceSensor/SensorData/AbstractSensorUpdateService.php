@@ -34,15 +34,7 @@ abstract class AbstractSensorUpdateService
      */
     protected FormFactoryInterface $formFactory;
 
-    /**
-     * @var array
-     */
-    protected array $userInputErrors = [];
 
-    /**
-     * @var array
-     */
-    protected array $serverErrors = [];
 
     /**
      * AbstractSensorService constructor.
@@ -189,13 +181,12 @@ abstract class AbstractSensorUpdateService
     {
         $sensorType = $sensorTypeObjects->get(0)->getSensorObject()->getSensorTypeID();
 
-//        dd($updateData, 'hi2');
         $sensorFormData = $this->prepareSensorFormData(
             $sensorType,
             ['sensorData' => $updateData],
             SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY
         );
-//dd($sensorFormData);
+
         if (empty($sensorFormData)) {
             throw new RuntimeException(
                 'Sensor form has failed to process correctly for sensor ' . $updateSensorReadingDTO->getSensorName()
@@ -222,21 +213,5 @@ abstract class AbstractSensorUpdateService
                 SensorType::SENSOR_READING_TYPE_DATA
             )
         );
-    }
-
-    /**
-     * @return array
-     */
-    #[Pure] public function getUserInputErrors(): array
-    {
-        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
-    }
-
-    /**
-     * @return array
-     */
-    public function getServerErrors(): array
-    {
-        return $this->serverErrors;
     }
 }

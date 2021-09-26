@@ -124,7 +124,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @return int|float
      */
-    public function getCurrentReading(): int|float
+    public function getCurrentReading(): int
     {
         return $this->analogReading;
     }
@@ -132,7 +132,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @return int|float
      */
-    public function getHighReading(): int|float
+    public function getHighReading(): int
     {
         return $this->highAnalog;
     }
@@ -140,7 +140,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @return int|float
      */
-    public function getLowReading(): int|float
+    public function getLowReading(): int
     {
         return $this->lowAnalog;
     }

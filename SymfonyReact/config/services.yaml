@@ -38,11 +38,17 @@ services:
         calls:
             - setCurrentReadingProducer: ['@current_sensor_reading_producer']
 
-    App\Services\ESPDeviceSensor\SensorData\CurrentReading\CurrentReadingUpdateSensorFactory:
-        calls:
-            - setDallasReadingUpdateService: ['@App\Services\ESPDeviceSensor\SensorData\CurrentReading\Sensors\DallasCurrentReadingUpdate']
-            - setDhtReadingUpdateService: ['@App\Services\ESPDeviceSensor\SensorData\CurrentReading\Sensors\DhtCurrentReadingUpdate']
-            - setBmpReadingUpdateService: ['@App\Services\ESPDeviceSensor\SensorData\CurrentReading\Sensors\BmpCurrentReadingUpdate']
-
+######################## Update Sensor Reading Services ######################################################
     App\Services\ESPDeviceSensor\SensorData\CurrentReading\UpdateCurrentSensorReadingInterface:
-        alias: 'App\Services\ESPDeviceSensor\SensorData\UpdateCurrentSensorReadingsService'
+        alias: 'App\Services\ESPDeviceSensor\SensorData\CurrentReading\UpdateCurrentSensorReadingsService'
+
+    App\Services\ESPDeviceSensor\SensorData\OutOfBounds\OutOfBoundsSensorServiceInterface:
+        alias: 'App\Services\ESPDeviceSensor\SensorData\OutOfBounds\SensorOutOfBoundsSensorService'
+
+    App\Services\ESPDeviceSensor\SensorData\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
+        alias: 'App\Services\ESPDeviceSensor\SensorData\ConstantlyRecord\SensorConstantlyRecordServiceService'
+
+
+######################## New Sensor Creation Services ########################################################
+    App\Services\ESPDeviceSensor\SensorData\NewSensor\NewSensorCreationServiceInterface:
+        alias: 'App\Services\ESPDeviceSensor\SensorData\NewSensor\NewSensorCreationService'
