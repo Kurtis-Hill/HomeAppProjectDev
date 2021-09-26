@@ -681,16 +681,25 @@ void handleSettingsUpdate(){
   deserializeJson(doc, jsonData);
 
   
-  if (!saveWifiCredentals(doc["wifi"]) || !saveSensorDataToSpiff(doc["sensorData"]) || !saveDeviceUserSettings(doc["deviceCredentials"])) {   
+  if (!saveWifiCredentals(doc["wifi"])) {   
     Serial.println("failed to save spiffs");
-    server.send(500, "application/json", "{\"status\":\"Spiff error\"}"); 
-  } else {
-    server.send(200, "application/json", "{\"status\":\"ok\"}");
+    server.send(500, "application/json", "{\"status\":\"Wifi Spiff error\"}"); 
   }
+  if (!saveSensorDataToSpiff(doc["sensorData"])) {
+    Serial.println("failed to save sensor data spiffs");
+    server.send(500, "application/json", "{\"status\":\"sensor data spiff error\"}"); 
+  }
+  if (!saveDeviceUserSettings(doc["deviceCredentials"])) {
+    Serial.println("failed to save device data spiffs");
+    server.send(500, "application/json", "{\"status\":\"device data spiff error\"}"); 
+  }
+  
+  server.send(200, "application/json", "{\"status\":\"ok\"}");
   
   delay(500);
   ESP.restart();
 }
+
 
 bool saveWifiCredentals(DynamicJsonDocument doc) {
   const char* ssid = doc["ssid"];
@@ -832,7 +841,6 @@ bool setDallasValues() {
     Serial.print("dallas sensor count ");
     Serial.println(dallasTempData.sensorCount);
 
-    int x = 1;
     for (int i=0; i < dallasTempData.sensorCount; ++i) {
       String nameCheck = dallasDoc["busTempNameArray"][i].as<String>();
 
@@ -916,7 +924,7 @@ bool connectToNetwork() {
       delay(500);
       Serial.print(retryCounter);
       Serial.println("..");
-      Serial.println(ssid);
+      Serial.println(ssid); //@DEV
       Serial.println(pass);
       if (WiFi.status() == WL_CONNECTED){
         Serial.println("Wifi connection made");
@@ -994,7 +1002,7 @@ String sendHomeAppHttpsRequest(
     if (httpCode == HTTP_CODE_OK) {
       const String& payload = https.getString();
       Serial.print("received payload: ");
-      Serial.println(payload);
+      Serial.println(payload);      
       return payload;
     }
   } else {
@@ -1037,7 +1045,6 @@ bool saveTokensFromLogin(String payload) {
 
 DynamicJsonDocument getDerserializedJson(String serializedJson, int buffSize) {
   Serial.println("Deseriazing Json");
-
   char jsonData[buffSize];
 
   strcpy(jsonData, serializedJson.c_str());
@@ -1058,9 +1065,9 @@ DynamicJsonDocument getDerserializedJson(String serializedJson, int buffSize) {
 bool sendUpdateSensorData() {
   
 }
-/////<!---END OF NETWORK METHODS---!>//////
+
 void resetDevice() {
-  createAccessPoint();
+  createAccessPoint(); //@DEV
 //  SPIFFS.remove("/device.json");
 //  SPIFFS.remove("/wifi.json");
 //  SPIFFS.remove("/dallas.json");
@@ -1070,7 +1077,15 @@ void resetDevice() {
 void restartDevice() {
   ESP.restart;
 }
+/////<!---END OF NETWORK METHODS---!>//////
 
+void readAndSaveDallasTempReadings() {
+  
+  for (i = 0; i < dallasTempData.sensorCount; ++i) {
+    rando = random(5, 45);
+    dallasTempData.tempReading[i] = rando;
+  }
+}
 
 String getSerializedSpiff(String spiff) {
   Serial.print("accessing spiff: ");
@@ -1095,24 +1110,22 @@ void setup() {
 //  Serial.begin(9600);
   Serial.begin(115200);
   Serial.println("Searial started");
-
   Serial.print("Starting web servers...");
-  //Web
+  //Net
   server.on("/",[](){server.send_P(200,"text/html",webpage);});
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
   
   server.on("/reset-device", HTTP_GET, resetDevice);
   server.on("/restart-device", HTTP_GET, restartDevice);
-  Serial.println("Servers Begun");
   server.begin();
+  Serial.println("Servers Begun");
 
-  Serial.println("...Webservers started");
   delay(5000);
   SPIFFS.begin();
-
-  Serial.println("Begining setup");
+  Serial.println("...SPIFFS started");
+  
+  Serial.println("Begining device setup");
   if (setupNetworkConnection()) {
-    // change device login for production
     if (deviceLogin()) {
       if (!setDallasValues()) {
         Serial.println("Failed to set dallas values");
@@ -1121,7 +1134,6 @@ void setup() {
       Serial.println("Device has failed to login, cannot send any data"); 
     }
   }
-
   Serial.println("End of Setup");
 }
 
