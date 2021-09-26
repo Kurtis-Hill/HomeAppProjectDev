@@ -4,8 +4,6 @@
 #include <SPIFFSReadServer.h>
 #include <SPIFFSIniFile.h>
 
-#include <BearSSLHelpers.h>
-#include <CertStoreBearSSL.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiAP.h>
 #include <ESP8266WiFiGeneric.h>
@@ -14,17 +12,11 @@
 #include <ESP8266WiFiSTA.h>F
 #include <ESP8266WiFiType.h>
 #include <WiFiClient.h>
-#include <WiFiClientSecure.h>
-//#include <WiFiClientSecureAxTLS.h>
-#include <WiFiClientSecureBearSSL.h>
 #include <WiFiServer.h>
 #include <WiFiServerSecure.h>
-#include <WiFiUdp.h>
 #include <ESP8266HTTPClient.h>
 
-#include <DNSServer.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
 #include <EEPROM.h>
 #include <FS.h>
 
@@ -37,17 +29,19 @@
 
 #include <DHT.h>;
 
-
-#define DHTPIN 13  // what pin we're connected to
-#define DHTTYPE DHT22   // DHT 22  (AM2302)
+// DHT
+#define DHTPIN 13 
+#define DHTTYPE DHT22 
 DHT dht(DHTPIN, DHTTYPE);
 
+// Dallas
 OneWire oneWire(0);
 OneWire testWire(0);
 DallasTemperature sensors(0);
 
 //Web bits
 ESP8266WiFiMulti WiFiMulti;
+
 // Test
 #define HOMEAPP_HOST "https://192.168.1.172"
 // Prod
@@ -1005,18 +999,56 @@ String sendHomeAppHttpsRequest(
       Serial.println(payload);      
       return payload;
     }
+    if (httpCode == 401) {
+      String urlCheck = buildHomeAppUrl("api/token/refresh");
+      Serial.println("url check");
+      Serial.println(urlCheck);
+      if (url == urlCheck) {
+        deviceLogin();
+      }
+      handleRefreshTokens();
+    }
   } else {
       Serial.printf("[HTTP] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
  
   }
-
   https.end();
   return "";
+}
+
+ void handleRefreshTokens() {
+  Serial.println("server sent back a 401 attempting to refresh token");
+  String url = buildHomeAppUrl("api/token/refresh");
+  Serial.print("refresh token url: "); //@DEV
+  Serial.println(url);
+
+  DynamicJsonDocument refreshToken(1024);
+
+  refreshToken["refreshToken"] = refreshToken;
+
+  String jsonData;
+
+  serializeJson(refreshToken, jsonData);
+
+  Serial.print("serialized json data to send");//@dev
+  Serial.print(jsonData);
+
+  String tokens = sendHomeAppHttpsRequest(url, jsonData);
+
+  bool saveSuccess = saveTokensFromLogin(tokens);
+
+  if(!saveSuccess) {
+    Serial.println("tokens failed to save");
+    delay(2000);
+    deviceLogin();
+  }
 }
 
 
 
 bool saveTokensFromLogin(String payload) {  
+  Serial.println("saving payload into tokens: ");
+  Serial.println(payload);
   char jsonData[1000];
   strcpy(jsonData, payload.c_str());
 
@@ -1061,11 +1093,6 @@ DynamicJsonDocument getDerserializedJson(String serializedJson, int buffSize) {
 
 
 
-
-bool sendUpdateSensorData() {
-  
-}
-
 void resetDevice() {
   createAccessPoint(); //@DEV
 //  SPIFFS.remove("/device.json");
@@ -1080,11 +1107,30 @@ void restartDevice() {
 /////<!---END OF NETWORK METHODS---!>//////
 
 void readAndSaveDallasTempReadings() {
-  
-  for (i = 0; i < dallasTempData.sensorCount; ++i) {
-    rando = random(5, 45);
+  for (int i = 0; i < dallasTempData.sensorCount; ++i) {
+    Serial.print("Getting Temp Reading...");
+    int rando = random(5, 45);
+    Serial.println("Temp Reading:");
+    Serial.println(rando);
     dallasTempData.tempReading[i] = rando;
+    Serial.print("dallas sensor temp reading");
+    Serial.println(dallasTempData.tempReading[i]);
   }
+}
+
+String buildDallasReadingSensorUpdateRequest() {
+  DynamicJsonDocument sensorUpdateRequest(1024);
+
+  sensorUpdateRequest["sensorType"] = "Dallas";
+
+  for (int i = 0; i < dallasTempData.sensorCount; ++i) {
+    sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
+    sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperatureReading"] = String(dallasTempData.tempReading[i]);
+  }
+  String jsonData;
+  serializeJson(sensorUpdateRequest, jsonData);
+
+  return jsonData;
 }
 
 String getSerializedSpiff(String spiff) {
@@ -1105,10 +1151,9 @@ String getSerializedSpiff(String spiff) {
 
 
 
-
 void setup() {
 //  Serial.begin(9600);
-  Serial.begin(115200);
+  Serial.begin(115200); 
   Serial.println("Searial started");
   Serial.print("Starting web servers...");
   //Net
@@ -1136,6 +1181,7 @@ void setup() {
   }
   Serial.println("End of Setup");
 }
+
 
 void loop() {
 //  readWifiJson();
