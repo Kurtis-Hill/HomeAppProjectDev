@@ -3,11 +3,10 @@
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
 use App\Entity\Sensors\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface;
-use App\Exceptions\OutOfBoundsEntityException;
-use App\Exceptions\ReadingTypeNotSupportedException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 
 class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterface
@@ -21,7 +20,7 @@ class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterfac
 
     /**
      * @param AllSensorReadingTypeInterface $readingType
-     * @return OutOfBoundsEntityInterface|null
+     * @return void
      * @throws OutOfBoundsEntityException
      * @throws ReadingTypeNotSupportedException
      */

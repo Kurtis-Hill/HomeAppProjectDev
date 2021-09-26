@@ -494,11 +494,12 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
+//        dd($responseData);
         $sensorTypeCount = count($responseData);
 
         foreach ($responseData as $sensorType) {
             self::assertIsInt($sensorType['sensorTypeID']);
-            self::assertContains($sensorType['sensorType'], SensorType::ALL_SENSOR_TYPE_DATA);
+            self::assertArrayHasKey($sensorType['sensorType'], SensorType::ALL_SENSOR_TYPE_DATA);
             self::assertArrayHasKey('description', $sensorType);
         }
 

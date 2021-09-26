@@ -50,4 +50,27 @@ class SensorRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult()[0] ?? null;
     }
+
+    public function getSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
+    {
+        $qb = $this->createQueryBuilder('sensors');
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
+
+        $qb->select($sensorAlias)
+            ->innerJoin(
+                Devices::class,
+                'device',
+                Join::WITH,
+                'sensors.deviceNameID = device.deviceNameID'
+            )
+            ->where(
+                $qb->expr()->eq('sensors.sensorName', ':sensorName'),
+                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+            )
+            ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
+        $result = array_filter($qb->getQuery()->getResult());
+        $result = array_values($result);
+
+        return $result;
+    }
 }

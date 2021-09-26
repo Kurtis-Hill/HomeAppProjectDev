@@ -4,10 +4,9 @@ namespace App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord;
 
 use App\Entity\Sensors\ConstantRecording\ConstantlyRecordInterface;
 use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface;
-use App\Exceptions\ConstRecordEntityException;
-use App\Exceptions\OutOfBoundsEntityException;
-use App\Exceptions\ReadingTypeNotSupportedException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 
 class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServiceInterface
@@ -36,7 +35,7 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
                     if (!$sensorConstRecordObject instanceof ConstantlyRecordInterface) {
                         throw new ConstRecordEntityException(
                             sprintf(
-                                OutOfBoundsEntityException::OUT_OF_BOUNDS_ENTITY_NOT_FOUND_MESSAGE,
+                                ConstRecordEntityException::CONST_RECORD_ENTITY_NOT_FOUND_MESSAGE,
                                 $readingType->getSensorID()
                             )
                         );

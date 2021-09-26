@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\AMQP;
+namespace App\ESPDeviceSensor\AMQP;
 
 
 use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
@@ -64,5 +64,4 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 
         return false;
     }
-
 }

@@ -65,7 +65,6 @@ class SensorController extends AbstractController
         }
 
         $sensor = $newSensorCreationService->createNewSensor($sensorData);
-
         if (!empty($newSensorCreationService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
         }
@@ -81,6 +80,7 @@ class SensorController extends AbstractController
             $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
 
             if (!empty($newSensorCreationService->getUserInputErrors())) {
+                dd('user error', $sensor);
                 $em->remove($sensor);
                 $em->flush();
 

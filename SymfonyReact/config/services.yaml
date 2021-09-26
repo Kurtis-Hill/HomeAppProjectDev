@@ -48,6 +48,9 @@ services:
     App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
         alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
 
+    App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary'
+
 
 ######################## New Sensor Creation Services ########################################################
     App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:

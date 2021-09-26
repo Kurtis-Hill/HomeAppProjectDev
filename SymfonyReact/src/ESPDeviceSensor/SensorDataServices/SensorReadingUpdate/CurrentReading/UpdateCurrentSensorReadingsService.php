@@ -3,22 +3,20 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentRead
 
 use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Entity\Devices\Devices;
-use App\Entity\Sensors\ReadingTypes\Humidity;
 use App\ErrorLogs;
+use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
+use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService;
-use App\Exceptions\ConstRecordEntityException;
-use App\Exceptions\OutOfBoundsEntityException;
-use App\Exceptions\ReadingTypeNotSupportedException;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorUpdateService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
-
 
 class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService implements UpdateCurrentSensorReadingInterface
 {

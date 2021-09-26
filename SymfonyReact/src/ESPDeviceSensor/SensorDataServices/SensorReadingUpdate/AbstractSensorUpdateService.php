@@ -8,15 +8,13 @@ use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
-use App\Exceptions\SensorNotFoundException;
+use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
 use App\Form\SensorForms\SensorReadingUpdateInterface;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
 

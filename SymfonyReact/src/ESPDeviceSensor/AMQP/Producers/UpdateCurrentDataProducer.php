@@ -1,6 +1,6 @@
 <?php
 
-namespace App\AMQP\Producers;
+namespace App\ESPDeviceSensor\AMQP\Producers;
 
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 

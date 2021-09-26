@@ -9,6 +9,7 @@ use App\Form\SensorForms\AddNewSensorForm;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\Traits\FormProcessorTrait;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -42,10 +43,10 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface, API
 
             if ($handledForm === true) {
                 $this->sensorRepository->persist($addNewSensorForm->getData());
+                $this->sensorRepository->flush();
             }
 
-            $this->sensorRepository->flush();
-
+//dD($this->userInputErrors, $this->serverErrors);
             return $newSensor;
         } catch (BadRequestException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
@@ -65,8 +66,9 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface, API
     private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): bool
     {
         $processedFormResult = $this->processForm($addNewSensorForm, $sensorData);
-
-        $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
+        if ($processedFormResult === true) {
+            $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
+        }
 
         return $processedFormResult;
     }
@@ -88,8 +90,8 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface, API
         return $this->serverErrors;
     }
 
-    public function getUserInputErrors(): array
+    #[Pure] public function getUserInputErrors(): array
     {
-        return $this->userInputErrors;
+        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
     }
 }

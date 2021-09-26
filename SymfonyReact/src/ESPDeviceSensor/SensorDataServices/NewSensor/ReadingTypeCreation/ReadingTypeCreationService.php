@@ -8,12 +8,13 @@ use App\Entity\Sensors\ReadingTypes\Latitude;
 use App\Entity\Sensors\ReadingTypes\Temperature;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface;
-use App\Exceptions\SensorTypeException;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use DateTime;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
@@ -49,7 +50,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface, 
 
     private function createNewSensorReadingTypeData(Sensors $sensor)
     {
-        $dateTimeNow = new \DateTime();
+        $dateTimeNow = new DateTime();
 
         foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorNames => $sensorTypeData) {
             if ($sensorNames === $sensor->getSensorTypeID()->getSensorType()) {

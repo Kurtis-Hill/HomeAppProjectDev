@@ -140,33 +140,33 @@ class SensorUserDataUpdateService extends AbstractSensorUpdateService implements
         return null;
     }
 
-    /**
-     * @param Devices $device
-     * @param string $sensorName
-     * @param array $updateData
-     */
-    public function handleSensorReadingBoundaryUpdate(Devices $device, string $sensorName, array $updateData): void
-    {
-        try {
-            $sensorTypeObjects = $this->em->getRepository(Sensors::class)->getSensorReadingTypeObjectsBySensorNameAndDevice($device, $sensorName, SensorType::SENSOR_READING_TYPE_DATA);
-            if (empty($sensorTypeObjects)) {
-                throw new UnexpectedValueException('No reading types were found for your request, please make sure your app is up to date');
-            }
-            $firstSensorTypeObject = $sensorTypeObjects[0];
-            $sensorType = $firstSensorTypeObject->getSensorObject()->getSensorTypeID();
-            $sensorFormData = $this->prepareSensorFormData($sensorType, $updateData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
-//dd($updateData, 'ho');
-            if (empty($sensorFormData)) {
-                throw new BadRequestException('something went wrong with processing the sensor reading update form');
-            }
-
-             $this->processSensorForm($sensorFormData, $sensorTypeObjects);
-        } catch (BadRequestException $exception) {
-            $this->userInputErrors[] = $exception->getMessage();
-        }catch (UnexpectedValueException $exception) {
-            $this->serverErrors[] = $exception->getMessage();
-        }
-    }
+//    /**
+//     * @param Devices $device
+//     * @param string $sensorName
+//     * @param array $updateData
+//     */
+//    public function handleSensorReadingBoundaryUpdate(Devices $device, string $sensorName, array $updateData): void
+//    {
+//        try {
+//            $sensorTypeObjects = $this->em->getRepository(Sensors::class)->getSensorReadingTypeObjectsBySensorNameAndDevice($device, $sensorName, SensorType::SENSOR_READING_TYPE_DATA);
+//            if (empty($sensorTypeObjects)) {
+//                throw new UnexpectedValueException('No reading types were found for your request, please make sure your app is up to date');
+//            }
+//            $firstSensorTypeObject = $sensorTypeObjects[0];
+//            $sensorType = $firstSensorTypeObject->getSensorObject()->getSensorTypeID();
+//            $sensorFormData = $this->prepareSensorFormData($sensorType, $updateData, SensorType::OUT_OF_BOUND_FORM_ARRAY_KEY);
+////dd($updateData, 'ho');
+//            if (empty($sensorFormData)) {
+//                throw new BadRequestException('something went wrong with processing the sensor reading update form');
+//            }
+//
+//             $this->processSensorForm($sensorFormData, $sensorTypeObjects);
+//        } catch (BadRequestException $exception) {
+//            $this->userInputErrors[] = $exception->getMessage();
+//        }catch (UnexpectedValueException $exception) {
+//            $this->serverErrors[] = $exception->getMessage();
+//        }
+//    }
 
     /**
      * @param Sensors $sensor
