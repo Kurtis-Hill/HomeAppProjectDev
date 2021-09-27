@@ -5,10 +5,12 @@ namespace App\Controller\UserInterface;
 
 use App\Entity\Card\CardView;
 use App\Entity\Devices\Devices;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary;
+use App\ESPDeviceSensor\SensorDataServices\SensorUserDataUpdateService;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
-use App\Services\ESPDeviceSensor\SensorData\SensorUserDataUpdateService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\CardViewVoter;
 use App\Voters\SensorVoter;
@@ -135,8 +137,12 @@ class CardDataController extends AbstractController
      * @return Response|JsonResponse
      */
     #[Route('/update-card-view', name: 'update-card-view', methods: [Request::METHOD_PUT])]
-    public function updateCardView(Request $request, SensorUserDataUpdateService $sensorDataService, CardUserDataService $cardDataService): Response|JsonResponse
-    {
+    public function updateCardView(
+        Request $request,
+        UpdateBoundaryReadingsInterface $updateBoundaryReadings,
+//        SensorUserDataUpdateService $sensorDataService,
+        CardUserDataService $cardDataService
+    ): Response|JsonResponse {
         try {
             $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
@@ -181,14 +187,18 @@ class CardDataController extends AbstractController
 
         $sensorObject = $cardViewObject->getSensorNameID();
 //dd($cardData);
-        $sensorDataService->handleSensorReadingBoundaryUpdate($cardViewObject->getSensorNameID()->getDeviceNameID(), $sensorObject->getSensorName(),$cardData);
+        $updateBoundaryReadings->handleSensorReadingBoundaryUpdate(
+            $cardViewObject->getSensorNameID()->getDeviceNameID(),
+            $sensorObject->getSensorName(),
+            $cardData
+        );
 
-        if (!empty($sensorDataService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse($sensorDataService->getUserInputErrors());
+        if (!empty($updateBoundaryReadings->getUserInputErrors())) {
+            return $this->sendBadRequestJsonResponse($updateBoundaryReadings->getUserInputErrors());
         }
 
-        if (!empty($sensorDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($sensorDataService->getServerErrors());
+        if (!empty($updateBoundaryReadings->getServerErrors())) {
+            return $this->sendInternelServerErrorJsonResponse($updateBoundaryReadings->getServerErrors());
         }
 
         $em->flush();

@@ -10,7 +10,7 @@ fi
 
 echo "Installing composer packages..."
 
-php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
+#php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 
 echo "...Composer packages installed"
 

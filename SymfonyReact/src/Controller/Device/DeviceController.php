@@ -3,7 +3,6 @@
 
 namespace App\Controller\Device;
 
-use App\AMQP\Producers\UpdateCurrentDataProducer;
 use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 
 #[Route('/HomeApp/api/device', name: 'device')]
@@ -65,15 +63,17 @@ class DeviceController extends AbstractController
         foreach ($requestData['sensorData'] as $sensorUpdateData) {
 //            dd($sensorUpdateData, $requestData['sensorData']);
             try {
+//                dd($sensorUpdateData['currentReadings']);
                 $updateReadingDTO = new UpdateSensorReadingDTO(
                     $requestData['sensorType'],
                     $sensorUpdateData['sensorName'],
                     $sensorUpdateData['currentReadings'],
                     $deviceId
                 );
-
+//dd($this->currentReadingAMQPProducer)
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception $exception) {
+//                dd($exception->getMessage());
                 $errors[] = $exception->getMessage();
             }
         }

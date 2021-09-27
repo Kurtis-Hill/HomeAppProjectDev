@@ -38,4 +38,39 @@ services:
         calls:
             - setCurrentReadingProducer: ['@current_sensor_reading_producer']
 
+######################## Consumers ######################################################
     App\AMQP\UploadCurrentReadingSensorDataConsumer:
+######################## Update Sensor Reading Services ######################################################
+    App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
+
+    namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
+        alias: 'namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'
+
+    App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
+
+    App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary'
+
+
+######################## New Sensor Creation Services ########################################################
+    App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationService'
+
+    App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
+
+######################## Factories ###########################################################################
+
+    App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\ORMConstRecordFactory'
+
+    App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\ORMOutOfBoundsFactory'
+
+    App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorReadingTypeFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorReadingTypeFactoryInterface\SensorReadingTypeFactory'
+
+    App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactory'

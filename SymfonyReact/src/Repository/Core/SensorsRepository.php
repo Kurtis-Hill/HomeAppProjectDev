@@ -77,10 +77,11 @@ class SensorsRepository extends EntityRepository
                 $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
             )
             ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
-
+//        dd($qb->getQuery()->getSQL());
         $result = array_filter($qb->getQuery()->getResult());
+//dd($result);
         $result = array_values($result);
-
+//dd($sensors, $sensorData, $device->getDeviceNameID(), $sensorAlias);
         return $result;
     }
 

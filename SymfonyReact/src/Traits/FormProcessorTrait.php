@@ -21,13 +21,15 @@ trait FormProcessorTrait
     public function processForm(FormInterface|FormFactoryInterface $form, array $formData): bool
     {
         $form->submit($formData);
-//dd($formData);
+//dd($form->getData());
         if ($form->isSubmitted() && !$form->isValid()) {
+//            dd('balie');
             $this->processFormErrors($form);
 //dd('false');
             return false;
         }
 
+//        dd('is ok');
 //        dd($form->getData());
         return true;
     }

@@ -86,6 +86,7 @@ class SensorControllerTest extends WebTestCase
             );
 
             $requestResponse = $this->client->getResponse();
+//            dd($requestResponse);
             $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
             $this->userToken = $responseData['token'];
@@ -232,7 +233,7 @@ class SensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
+//dd($responseData, $this->client->getResponse()->getContent());
         self::assertNull($sensor);
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -493,11 +494,12 @@ class SensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
+//        dd($responseData);
         $sensorTypeCount = count($responseData);
 
         foreach ($responseData as $sensorType) {
             self::assertIsInt($sensorType['sensorTypeID']);
-            self::assertContains($sensorType['sensorType'], SensorType::ALL_SENSOR_TYPE_DATA);
+            self::assertArrayHasKey($sensorType['sensorType'], SensorType::ALL_SENSOR_TYPE_DATA);
             self::assertArrayHasKey('description', $sensorType);
         }
 

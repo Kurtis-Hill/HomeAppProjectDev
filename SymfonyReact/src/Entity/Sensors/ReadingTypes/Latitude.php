@@ -118,7 +118,7 @@ class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeIn
     /**
      * @return float|int
      */
-    public function getCurrentReading(): int|float
+    public function getCurrentReading(): int
     {
         return $this->latitude;
     }
@@ -126,15 +126,15 @@ class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeIn
     /**
      * @return float|int
      */
-    public function getHighReading(): int|float
+    public function getHighReading(): int
     {
         return $this->highLatitude;
     }
 
     /**
-     * @return float|int
+     * @return int
      */
-    public function getLowReading(): int|float
+    public function getLowReading(): int
     {
         return $this->lowLatitude;
     }
