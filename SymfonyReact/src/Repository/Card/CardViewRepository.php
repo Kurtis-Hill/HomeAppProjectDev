@@ -19,7 +19,6 @@ use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Sensors\Sensors;
 use App\Entity\Devices\Devices;
 
-
 class CardViewRepository extends EntityRepository
 {
     private function prepareSensorTypeDataObjectsForQuery(array $sensors, $qb, array $joinCondition): string
@@ -198,7 +197,7 @@ class CardViewRepository extends EntityRepository
 //        $result = array_filter($qb->getQuery()->getResult());
 //
 //        $result = array_values($result);
-////dd($result);
+    ////dd($result);
 //        return $result[0];
 //    }
 

@@ -103,7 +103,7 @@ class CardContextProvider extends Component {
             else {
                 if (error.data.status === 401) {
                     axios.post(apiURL+'token/refresh',
-                        { refreshToken : getRefreshToken() }
+                            { refreshToken : getRefreshToken() }
                     )
                     .then(response => {
                         setUserSession(response.data.token, response.data.refreshToken);

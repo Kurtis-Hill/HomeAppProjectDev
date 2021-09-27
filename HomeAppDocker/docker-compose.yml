@@ -7,7 +7,6 @@ services:
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-php-apache-server'
     ports:
-      - '${HTTP_APP_PORT}:80'
       - '${HTTPS_APP_PORT}:443'
       - 9000
     working_dir: /var/www/html

@@ -15,14 +15,8 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
-    /**
-     * @var UpdateCurrentSensorReadingsService
-     */
     private UpdateCurrentSensorReadingsService $sensorDeviceDataQueueConsumerService;
 
-    /**
-     * @var DevicesRepository
-     */
     private DevicesRepository $deviceRepository;
 
     /**
