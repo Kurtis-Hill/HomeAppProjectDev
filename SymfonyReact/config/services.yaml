@@ -51,9 +51,10 @@ services:
             - setESPCurrentReadingProducer: ['@current_sensor_reading_producer']
 
 
-
-
 ######################## Sensors ######################################################################################
+######################## Consumers ######################################################
+    App\AMQP\UploadCurrentReadingSensorDataConsumer:
+
 ######################## Update Sensor Reading Services ######################################################
     App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
         alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'

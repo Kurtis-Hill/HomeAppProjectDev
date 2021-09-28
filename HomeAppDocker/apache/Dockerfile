@@ -6,8 +6,6 @@ RUN mkdir /etc/logs
 
 # RUN touch /etc/logs/server-errors.log && touch /etc/logs/user-input-error.log
 
-# RUN touch /etc/logs/user-input-error.log
-
 RUN apt-get update && apt-get install -y git unzip zip nano iputils-ping
 
 RUN pecl install xdebug
