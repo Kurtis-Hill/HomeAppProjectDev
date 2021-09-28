@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
 use App\Entity\Sensors\Sensors;
+use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\Form\FormMessages;
 use App\Form\SensorForms\AddNewSensorForm;
@@ -32,21 +33,20 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface, API
         $this->formFactory = $formFactory;
     }
 
-    public function createNewSensor(array $sensorData): ?Sensors
+    public function createNewSensor(NewSensorDTO $newSensorDTO): ?Sensors
     {
         try {
             $newSensor = new Sensors();
 
             $addNewSensorForm = $this->formFactory->create(AddNewSensorForm::class, $newSensor);
 
-            $handledForm = $this->processNewSensorForm($addNewSensorForm, $sensorData);
+            $handledForm = $this->processNewSensorForm($addNewSensorForm, $newSensorDTO);
 
             if ($handledForm === true) {
                 $this->sensorRepository->persist($addNewSensorForm->getData());
                 $this->sensorRepository->flush();
             }
 
-//dD($this->userInputErrors, $this->serverErrors);
             return $newSensor;
         } catch (BadRequestException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
@@ -60,12 +60,19 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface, API
 
     /**
      * @param FormInterface $addNewSensorForm
-     * @param array $sensorData
+     * @param NewSensorDTO $newSensorDTO
      * @return bool
      */
-    private function processNewSensorForm(FormInterface $addNewSensorForm, array $sensorData): bool
+    private function processNewSensorForm(FormInterface $addNewSensorForm, NewSensorDTO $newSensorDTO): bool
     {
-        $processedFormResult = $this->processForm($addNewSensorForm, $sensorData);
+        $processedFormResult = $this->processForm(
+            $addNewSensorForm,
+            [
+                'sensorName' => $newSensorDTO->getSensorName(),
+                'sensorTypeID' => $newSensorDTO->getSensorTypeID(),
+                'deviceNameID' => $newSensorDTO->getDeviceNameID(),
+            ]
+        );
         if ($processedFormResult === true) {
             $this->duplicateSensorOnSameDeviceCheck($addNewSensorForm->getData());
         }

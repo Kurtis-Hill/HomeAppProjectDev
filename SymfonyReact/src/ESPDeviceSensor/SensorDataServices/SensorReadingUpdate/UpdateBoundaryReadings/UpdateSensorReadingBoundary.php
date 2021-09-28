@@ -4,6 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBound
 
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorUpdateService;
 use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,11 +18,6 @@ class UpdateSensorReadingBoundary extends AbstractSensorUpdateService implements
     private array $userInputErrors = [];
 
     private array $serverErrors = [];
-
-    #[Pure] public function __construct(EntityManagerInterface $em, FormFactoryInterface $formFactory)
-    {
-        parent::__construct($em, $formFactory);
-    }
 
     public function handleSensorReadingBoundaryUpdate(Devices $device, string $sensorName, array $updateData): void
     {
@@ -43,7 +39,7 @@ class UpdateSensorReadingBoundary extends AbstractSensorUpdateService implements
                 throw new BadRequestException('something went wrong with processing the sensor reading update form');
             }
 
-            $this->processSensorForm($sensorFormData, $sensorTypeObjects);
+            $this->processSensorForm($sensorFormData, $sensorTypeObjects->toArray());
         } catch (BadRequestException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
         }catch (UnexpectedValueException $exception) {

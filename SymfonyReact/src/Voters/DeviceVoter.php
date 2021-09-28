@@ -60,7 +60,7 @@ class DeviceVoter extends Voter
             return false;
         }
 
-        if (!in_array($groupNameObject->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($groupNameObject?->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
 

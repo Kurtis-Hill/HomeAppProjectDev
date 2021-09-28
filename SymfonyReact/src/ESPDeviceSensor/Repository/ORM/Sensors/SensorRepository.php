@@ -3,15 +3,15 @@
 namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 use App\Entity\Devices\Devices;
-use App\Entity\Sensors\ConstantRecording\ConstTemp;
 use App\Entity\Sensors\Sensors;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
-class SensorRepository extends ServiceEntityRepository
+class SensorRepository extends ServiceEntityRepository implements SensorRepositoryInterface
 {
-    private $registry;
+    private ManagerRegistry $registry;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -28,6 +28,11 @@ class SensorRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->registry->getManager()->flush();
+    }
+
+    public function remove(Sensors $sensors): void
+    {
+        $this->registry->getManager()->remove($sensors);
     }
 
     public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors
@@ -72,5 +77,18 @@ class SensorRepository extends ServiceEntityRepository
         $result = array_values($result);
 
         return $result;
+    }
+
+    private function prepareSensorTypeDataObjectsForQuery(array $sensors, QueryBuilder $qb, array $joinCondition): string
+    {
+        $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
+
+        $sensorAlias = [];
+        foreach ($sensors as $sensorNames => $sensorData) {
+            $sensorAlias[] = $sensorData['alias'];
+            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
+        }
+
+        return implode(', ', $sensorAlias);
     }
 }

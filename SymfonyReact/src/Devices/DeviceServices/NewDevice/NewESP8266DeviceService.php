@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\ESPDeviceSensor\Devices;
+namespace App\Devices\DeviceServices\NewDevice;
 
 
 use App\Entity\Devices\Devices;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
 
-class NewDeviceService implements APIErrorInterface
+class NewESP8266DeviceService implements NewDeviceServiceInterface, APIErrorInterface
 {
     use FormProcessorTrait;
 
@@ -111,7 +111,6 @@ class NewDeviceService implements APIErrorInterface
         $addNewDeviceForm->submit($deviceData);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
-//            dd('hey', $addNewDeviceForm->getData());
             $secret = $deviceData['deviceName'];
             $secret .= time();
             $secret = hash("md5", $secret);

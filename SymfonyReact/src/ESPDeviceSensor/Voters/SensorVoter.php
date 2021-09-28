@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Voters;
+namespace App\ESPDeviceSensor\Voters;
 
 
 use App\Entity\Core\User;

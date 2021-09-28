@@ -8,6 +8,11 @@ gesdinet_jwt_refresh_token:
   path:       /HomeApp/api/token/refresh
   controller: gesdinet.jwtrefreshtoken::refresh
 
+##@Dev work on removing
+#add_new_device_controller:
+#  path: /HomeApp/api/user-devices/add-new-device
+#  controller: App\Devices\Controller\AddNewDeviceController
+
 #device_gesdinet_jwt_refresh_token:
 #  path:       /HomeApp/api/sensor/token/refresh
 #  controller: gesdinet.jwtrefreshtoken::refresh

@@ -11,11 +11,11 @@ use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 
 class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServiceInterface
 {
-    private ORMConstRecordFactoryInterface $constTempORMRepository;
+    private ORMConstRecordFactoryInterface $constORMRepositoryFactory;
 
-    public function __construct(ORMConstRecordFactoryInterface $constORMRepository)
+    public function __construct(ORMConstRecordFactoryInterface $constORMRepositoryFactory)
     {
-        $this->constTempORMRepository = $constORMRepository;
+        $this->constORMRepositoryFactory = $constORMRepositoryFactory;
     }
 
     /**
@@ -44,7 +44,7 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
                     $sensorConstRecordObject->setSensorReading($readingType->getCurrentReading());
                     $sensorConstRecordObject->setTime();
 
-                    $constORMRepository = $this->constTempORMRepository->getConstRecordServiceRepository($sensorReadingTypeData['object']);
+                    $constORMRepository = $this->constORMRepositoryFactory->getConstRecordServiceRepository($sensorReadingTypeData['object']);
 
                     $constORMRepository->persist($sensorConstRecordObject);
                     $constORMRepository->flush();

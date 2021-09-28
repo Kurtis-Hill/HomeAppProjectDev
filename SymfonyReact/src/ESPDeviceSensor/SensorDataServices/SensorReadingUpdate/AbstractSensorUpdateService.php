@@ -8,6 +8,7 @@ use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
 use App\Entity\Devices\Devices;
 use App\Entity\Sensors\SensorType;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\Form\SensorForms\SensorReadingUpdateInterface;
 use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
@@ -28,6 +29,8 @@ abstract class AbstractSensorUpdateService
      */
     protected SensorRepository $sensorRepository;
 
+    private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
+
     /**
      * @var FormFactoryInterface
      */
@@ -39,9 +42,13 @@ abstract class AbstractSensorUpdateService
      * @param SensorRepository $sensorRepository
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(SensorRepository $sensorRepository, FormFactoryInterface $formFactory)
-    {
+    public function __construct(
+        SensorRepository $sensorRepository,
+        SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
+        FormFactoryInterface $formFactory
+    ) {
         $this->sensorRepository = $sensorRepository;
+        $this->sensorReadingTypeFactory = $sensorReadingTypeFactory;
         $this->formFactory = $formFactory;
     }
 
@@ -56,10 +63,9 @@ abstract class AbstractSensorUpdateService
                 if ($sensorType === $sensorObject::class) {
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
-//                    dd($this->formInputErrors);
                     if ($handledForm === true) {
-//                        dd('it did');
-                        $this->sensorRepository->persist($sensorForm->getData());
+                        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($sensorForm->getData()::class);
+                        $readingTypeRepository->persist($sensorForm->getData());
                     }
 //                    dd('did not');
                 }

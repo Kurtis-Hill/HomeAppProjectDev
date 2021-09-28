@@ -6,14 +6,12 @@ namespace App\Controller\UserInterface;
 use App\Entity\Card\CardView;
 use App\Entity\Devices\Devices;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary;
-use App\ESPDeviceSensor\SensorDataServices\SensorUserDataUpdateService;
+use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\CardViewVoter;
-use App\Voters\SensorVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -132,7 +130,7 @@ class CardDataController extends AbstractController
 
     /**
      * @param Request $request
-     * @param SensorUserDataUpdateService $sensorDataService
+     * @param UpdateBoundaryReadingsInterface $updateBoundaryReadings
      * @param CardUserDataService $cardDataService
      * @return Response|JsonResponse
      */

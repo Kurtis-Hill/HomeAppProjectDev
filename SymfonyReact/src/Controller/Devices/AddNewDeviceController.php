@@ -1,11 +1,10 @@
 <?php
 
+namespace App\Controller\Devices;
 
-namespace App\Controller\Device;
-
+use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService;
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
-use App\ESPDeviceSensor\Devices\NewDeviceService;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\Voters\DeviceVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,20 +14,23 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route('/HomeApp/api/user-devices', name: 'user-device')]
-class UserDeviceController extends AbstractController
+#[Route('/HomeApp/api/user-devices', name: 'user-devices')]
+class AddNewDeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
-
+///HomeApp/api/user-devices/esp/add-new-device
     /**
      * @param Request $request
-     * @param NewDeviceService $deviceService
+     * @param NewESP8266DeviceService $deviceService
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return JsonResponse
      */
-    #[Route('/add-new-device', name: 'add-new-device', methods: [Request::METHOD_POST])]
-    public function addNewDevice(Request $request, NewDeviceService $deviceService, UserPasswordEncoderInterface $passwordEncoder): JsonResponse
-    {
+    #[Route('/esp/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
+    public function addNewDevice(
+        Request $request,
+        NewESP8266DeviceService $deviceService,
+        UserPasswordEncoderInterface $passwordEncoder
+    ): JsonResponse {
         $newDeviceData = json_decode($request->getContent(), true);
         $deviceName = $newDeviceData['deviceName'] ?? null;
         $deviceGroup = $newDeviceData['deviceGroup'] ?? null;

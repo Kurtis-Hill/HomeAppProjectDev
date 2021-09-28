@@ -14,16 +14,6 @@ class CardViewSensorFormDTO implements AllCardViewDTOInterface, CardViewFormDTO
      */
     private array $sensorData;
 
-//    /**
-//     * @var array
-//     */
-//    private array $usersCurrentCardSelections;
-//
-//    /**
-//     * @var array
-//     */
-//    private array $usersCardSelections;
-
     /**
      * @var array
      */
@@ -59,22 +49,6 @@ class CardViewSensorFormDTO implements AllCardViewDTOInterface, CardViewFormDTO
      */
     private array $cardStates;
 
-//    /**
-//     * CardDataDTO constructor.
-//     * @param array $usersCurrentSelection
-//     * @param array $usersCardSelections
-//     * @param array $sensorData
-//     */
-//    public function __construct(
-//        array $usersCurrentSelection,
-//        array $usersCardSelections,
-//        array $sensorData,
-//    )
-//    {
-//        $this->usersCurrentCardSelections = $usersCurrentSelection;
-//        $this->usersCardSelections = $usersCardSelections;
-//        $this->sensorData = $sensorData;
-//    }
 
     public function __construct(
         array $currentCardIcon,
