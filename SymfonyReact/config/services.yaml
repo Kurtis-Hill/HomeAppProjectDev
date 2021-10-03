@@ -19,7 +19,7 @@ services:
     ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{Traits,DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{Traits,DependencyInjection,Entity, Devices/Entity, ESPDeviceSensor/Entity, Migrations,Tests,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -46,12 +46,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
-    App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
+    App\Controller\Sensors\ESPSensorUpdateController:
         calls:
             - setESPCurrentReadingProducer: ['@current_sensor_reading_producer']
 
 
 ######################## Sensors ######################################################################################
+######################## Producers ######################################################
+
 ######################## Consumers ######################################################
     App\AMQP\UploadCurrentReadingSensorDataConsumer:
 

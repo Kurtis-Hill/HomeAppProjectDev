@@ -2,7 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\OutOfBounds;
 
-use App\Entity\Sensors\OutOfRangeRecordings\OutOfBoundsEntityInterface;
+
+use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 
 interface OutOfBoundsRepositoryInterface
 {

@@ -2,9 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\ReadingType;
 
-use App\Entity\Sensors\ReadingTypes\Latitude;
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,12 +18,12 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
         parent::__construct($registry, Latitude::class);
     }
 
-    public function persist(AllSensorReadingTypeInterface $sensorReadingType)
+    public function persist(AllSensorReadingTypeInterface $sensorReadingType): void
     {
         $this->registry->getManager()->persist($sensorReadingType);
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->registry->getManager()->flush();
     }

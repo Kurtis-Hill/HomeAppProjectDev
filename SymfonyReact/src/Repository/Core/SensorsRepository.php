@@ -2,9 +2,9 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -77,11 +77,9 @@ class SensorsRepository extends EntityRepository
                 $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
             )
             ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
-//        dd($qb->getQuery()->getSQL());
         $result = array_filter($qb->getQuery()->getResult());
-//dd($result);
         $result = array_values($result);
-//dd($sensors, $sensorData, $device->getDeviceNameID(), $sensorAlias);
+
         return $result;
     }
 

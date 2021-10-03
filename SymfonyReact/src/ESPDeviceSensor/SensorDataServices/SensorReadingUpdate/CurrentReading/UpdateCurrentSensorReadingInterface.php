@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 
 interface UpdateCurrentSensorReadingInterface
 {

@@ -3,7 +3,7 @@
 
 namespace App\Controller\Sensors;
 
-use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Entity\SensorType;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

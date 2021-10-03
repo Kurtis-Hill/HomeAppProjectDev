@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
-use App\Entity\Sensors\Sensors;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
+use App\ESPDeviceSensor\Entity\Sensors;
 
 interface NewSensorCreationServiceInterface
 {

@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\ReadingType;
 
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,12 +18,12 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         parent::__construct($registry, Temperature::class);
     }
 
-    public function persist(AllSensorReadingTypeInterface $sensorReadingType)
+    public function persist(AllSensorReadingTypeInterface $sensorReadingType): void
     {
         $this->registry->getManager()->persist($sensorReadingType);
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->registry->getManager()->flush();
     }

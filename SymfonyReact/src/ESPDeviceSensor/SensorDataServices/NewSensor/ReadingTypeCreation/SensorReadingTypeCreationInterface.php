@@ -2,8 +2,7 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation;
 
-use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\Sensors;
 
 interface SensorReadingTypeCreationInterface
 {

@@ -2,7 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\Device;
 
-use App\Entity\Devices\Devices;
+
+use App\Devices\Entity\Devices;
 
 interface DeviceRepositoryInterface
 {

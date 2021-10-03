@@ -2,7 +2,7 @@
 
 namespace App\Controller\Sensors;
 
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
@@ -22,21 +22,22 @@ class ESPSensorUpdateController extends AbstractController
 
     private ProducerInterface $currentReadingAMQPProducer;
 
+
     /**
      * @param Request $request
      * @param Security $security
      * @return JsonResponse|Response
      */
-    #[Route('update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT])]
+    #[Route('update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT, Request::METHOD_POST])]
     public function updateSensorsCurrentReading(
         Request $request,
         Security $security,
     ): JsonResponse|Response {
-        try {
+//        try {
             $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
-        }
+//        } catch (JsonException) {
+//            return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
+//        }
 
         if (empty($requestData['sensorData'])) {
             throw new BadRequestException('you have not provided the correct information to update the sensor');
@@ -76,7 +77,7 @@ class ESPSensorUpdateController extends AbstractController
     /**
      * @param ProducerInterface $producer
      */
-    public function setESPCurrentReadingProducer(ProducerInterface $producer)
+    public function setESPCurrentReadingProducer(ProducerInterface $producer): void
     {
         $this->currentReadingAMQPProducer = $producer;
     }

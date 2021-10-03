@@ -2,9 +2,9 @@
 
 namespace App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds;
 
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsHumidityRepository;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfRangeAnalogORMRepository;

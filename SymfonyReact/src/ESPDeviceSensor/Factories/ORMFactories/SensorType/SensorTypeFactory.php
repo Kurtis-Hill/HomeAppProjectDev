@@ -2,10 +2,10 @@
 
 namespace App\ESPDeviceSensor\Factories\ORMFactories\SensorType;
 
-use App\Entity\Sensors\SensorTypes\Bmp;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\Entity\Sensors\SensorTypes\Dht;
-use App\Entity\Sensors\SensorTypes\Soil;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\BmpRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\DallasRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\DhtRepository;

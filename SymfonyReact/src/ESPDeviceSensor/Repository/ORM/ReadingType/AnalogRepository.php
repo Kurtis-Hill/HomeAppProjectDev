@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\ReadingType;
 
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,12 +18,12 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         parent::__construct($registry, Analog::class);
     }
 
-    public function persist(AllSensorReadingTypeInterface $sensorReadingType)
+    public function persist(AllSensorReadingTypeInterface $sensorReadingType): void
     {
         $this->registry->getManager()->persist($sensorReadingType);
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->registry->getManager()->flush();
     }

@@ -3,10 +3,10 @@
 namespace App\Controller\Devices;
 
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService;
+use App\Devices\Voters\DeviceVoter;
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use App\Voters\DeviceVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

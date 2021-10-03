@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\Sensors;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;

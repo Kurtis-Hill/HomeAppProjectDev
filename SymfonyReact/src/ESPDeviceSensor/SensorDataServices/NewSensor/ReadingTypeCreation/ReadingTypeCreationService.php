@@ -2,18 +2,17 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation;
 
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Latitude;
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorType;
+use App\Core\APIInterface\APIErrorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
+use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
 use DateTime;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -63,6 +62,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface, 
 
                         $sensorReadingRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($readingTypeObject);
 
+                        //Adding New Sensor Type
                         if ($newReadingTypeObject instanceof Temperature) {
                             $newSensorTypeObject->setTempObject($newReadingTypeObject);
                         }

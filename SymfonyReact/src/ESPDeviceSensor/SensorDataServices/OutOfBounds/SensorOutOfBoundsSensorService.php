@@ -2,12 +2,12 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
-use App\Entity\Sensors\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 
 class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterface
 {

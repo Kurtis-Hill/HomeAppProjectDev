@@ -4,10 +4,10 @@
 namespace App\Services;
 
 
+use App\Core\APIInterface\APIErrorInterface;
+use App\Devices\Entity\Devices;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;

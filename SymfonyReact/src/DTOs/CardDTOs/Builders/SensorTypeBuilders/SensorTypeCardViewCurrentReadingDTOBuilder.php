@@ -4,11 +4,10 @@
 namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
-use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\SensorTypeCardDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\CurrentReadingSensorTypeCardDataDTO;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 

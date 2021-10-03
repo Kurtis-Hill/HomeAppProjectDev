@@ -2,24 +2,24 @@
 
 namespace App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord;
 
-use App\Entity\Sensors\ConstantRecording\ConstAnalog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryAnalogRepositroy;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryAnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository;
 
 class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
 {
-    private ConstantlyRecordRepositoryAnalogRepositroy $constAnalog;
+    private ConstantlyRecordRepositoryAnalogRepository $constAnalog;
 
     private ConstantlyRecordRepositoryTempRepository $constTemp;
 
     private ConstantlyRecordRepositoryHumidRepository $constHumid;
 
     public function __construct(
-        ConstantlyRecordRepositoryAnalogRepositroy $constAnalog,
+        ConstantlyRecordRepositoryAnalogRepository $constAnalog,
         ConstantlyRecordRepositoryTempRepository   $constTemp,
         ConstantlyRecordRepositoryHumidRepository  $constHumid,
     )
@@ -32,7 +32,7 @@ class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
     public function getConstRecordServiceRepository(string $sensorReadingTypeObject): ConstantlyRecordRepositoryInterface
     {
         return match ($sensorReadingTypeObject) {
-            ConstAnalog::class => $this->constAnalog,
+            Analog::class => $this->constAnalog,
             Temperature::class => $this->constTemp,
             Humidity::class => $this->constHumid,
         };

@@ -3,7 +3,7 @@
 namespace App\Entity\Card;
 
 use App\Entity\Core\User;
-use App\Entity\Sensors\Sensors;
+use App\ESPDeviceSensor\Entity\Sensors;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -27,7 +27,7 @@ class CardView
     /**
      * @var Sensors
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Sensors\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })

@@ -2,12 +2,12 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord;
 
-use App\Entity\Sensors\ConstantRecording\ConstantlyRecordInterface;
-use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 
 class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServiceInterface
 {

@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
 
 interface UpdateBoundaryReadingsInterface
 {
