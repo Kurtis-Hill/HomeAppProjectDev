@@ -46,14 +46,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
-    App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
+    App\Controller\Sensors\ESPSensorUpdateController:
         calls:
             - setESPCurrentReadingProducer: ['@current_sensor_reading_producer']
 
 
 ######################## Sensors ######################################################################################
 ######################## Consumers ######################################################
-    App\AMQP\UploadCurrentReadingSensorDataConsumer:
+    App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
 
 ######################## Update Sensor Reading Services ######################################################
     App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:

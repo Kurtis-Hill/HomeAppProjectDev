@@ -27,11 +27,12 @@ class ESPSensorUpdateController extends AbstractController
      * @param Security $security
      * @return JsonResponse|Response
      */
-    #[Route('update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT])]
+    #[Route('update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT, Request::METHOD_POST])]
     public function updateSensorsCurrentReading(
         Request $request,
         Security $security,
     ): JsonResponse|Response {
+
         try {
             $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
@@ -39,7 +40,7 @@ class ESPSensorUpdateController extends AbstractController
         }
 
         if (empty($requestData['sensorData'])) {
-            throw new BadRequestException('you have not provided the correct information to update the sensor');
+            return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor']);;
         }
 
         $isCallable = [$security->getUser(), 'getDeviceNameID'];

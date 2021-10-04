@@ -66,11 +66,11 @@ security:
 
 
     access_control:
+        - { path: ^/HomeApp/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/device/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/WebApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        DEV
         - { path: ^/HomeApp/ssl, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/csrfToken, roles: IS_AUTHENTICATED_ANONYMOUSLY }

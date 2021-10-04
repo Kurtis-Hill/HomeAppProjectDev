@@ -30,7 +30,7 @@ services:
       context: ./mariadb
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
-    restart: always 
+    restart: always
     ports:
       - '${DB_PORT}:3306'
     environment:
@@ -69,7 +69,7 @@ services:
     ports:
       - '${RABBIT_MQ_INTERFACE_PORT}:15672'
     volumes:
-        - ./rabbitmq/data/:/var/lib/rabbitmq/
+        - ./rabbitmq/data/:/var/lib/rabbitmq
         - ./rabbitmq/log/:/var/log/rabbitmq
     networks:
       - HomeAppProjectNetwork
