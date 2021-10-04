@@ -854,6 +854,7 @@ bool setDhtValues() {
 
     if (error) {
       Serial.println("deserialization error");
+      dhtSensorSpiff.close();
       return false;
     }
 
@@ -861,6 +862,7 @@ bool setDhtValues() {
 
     if(dhtSensorName == NULL || dhtSensorName == "" || dhtSensorName == "\0" || dhtSensorName == "null") {
       Serial.println("Name check failed skipping dht this sensor");
+      dhtSensorSpiff.close();
       return true;
     }
 
@@ -888,6 +890,7 @@ bool saveDallasSensorData(DynamicJsonDocument dallasData) {
     if(serializeJson(dallasData, dallasSPIFF)) {
       Serial.println("Dallas serialization save success");
     } else {
+      dallasSPIFF.close();
       Serial.println("Dallas Serialization failure");
       return false;
     }
@@ -914,6 +917,7 @@ bool setDallasValues() {
 
     if (error) {
       Serial.println("deserialization error");
+      dallasSensor.close();
       return false;
     }
     
@@ -921,6 +925,7 @@ bool setDallasValues() {
 
     if (dallasTempData.sensorCount == 0) {
       Serial.println("No Sensor count not setting any values");
+      dallasSensor.close();
       return true;
     }
    
@@ -1259,10 +1264,11 @@ String getSerializedSpiff(String spiff) {
   while(deviceFile.available()){
     deviceJson += char(deviceFile.read());
   }
-  Serial.println("whole json string from spiff:");
-  Serial.println(deviceJson); //@DEBUG
   deviceFile.close();
   Serial.println("Spiff closed successfully");
+  Serial.println("whole json string from spiff:");
+  Serial.println(deviceJson); //@DEBUG
+
   return deviceJson;
 }
 //<---------- END OF SPIFF MEthods ------------------>
