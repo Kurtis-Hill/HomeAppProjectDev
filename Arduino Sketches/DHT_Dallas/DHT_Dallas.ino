@@ -45,6 +45,7 @@
 
 #define HOMEAPP_LOGIN "api/device/login_check"
 #define HOMEAPP_REFRESH_TOKEN "api/token/refresh"
+#define HOMEAPP_IP_UPDATE "api/device/ipupdate"
 
 const char fingerprint[] PROGMEM = "60ee151bee994d6ca826a69abce1e724173721ca";
 
@@ -712,9 +713,9 @@ void handleSettingsUpdate(){
 
   
   Serial.println("Finished saving credentials");
-  success == true ? server.send(200, "application/json", "{\"status\":\"ok\"}") : server.send(500, "application/json", "{\"status\":\"device data spiff error\"}");
-//  server.send(500, "application/json", "{\"status\":\"device data spiff error\"}"); 
-//  server.send(200, "application/json", "{\"status\":\"ok\"}");
+  success == true 
+    ? server.send(200, "application/json", "{\"status\":\"ok\"}") 
+    : server.send(500, "application/json", "{\"status\":\"device data spiff error\"}");   
   
   delay(500);
   Serial.println("Restarting device");
@@ -814,7 +815,6 @@ bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
 
 // Dht functions
 bool saveDhtSensorData(DynamicJsonDocument dhtData) {
-//  String nameCheck = dhtData["sensorName"].as<String>();
     if (
     dhtData["sensorName"] == NULL 
     || dhtData["sensorName"] == "" 
@@ -824,9 +824,8 @@ bool saveDhtSensorData(DynamicJsonDocument dhtData) {
       Serial.println("dht sensor not sent, wont save any data");
       return true;
     }
-      
+         
     String nameCheck = dhtData["sensorName"].as<String>();
-//    dhtData.sensorName = sensorName;
     Serial.println("Dht sensor name");
     Serial.println(nameCheck);
     
@@ -1221,6 +1220,35 @@ String buildDallasReadingSensorUpdateRequest() {
   return jsonData;
 }
 
+String buildIpAddressUpdateRequest() {
+  Serial.println("Building IP update request");
+  DynamicJsonDocument ipUpdateRequest(64);
+
+  ipUpdateRequest["IPAddress"] = ipAddress;
+
+  String jsonData;
+  serializeJson(ipUpdateRequest, jsonData);
+
+  Serial.println("serialized json data");
+  Serial.println(jsonData);
+
+  return jsonData;
+}
+
+bool updateDeviceIPAddress() {
+  Serial.println("device ip address updating");
+  String url = buildHomeAppUrl(HOMEAPP_IP_UPDATE);
+  String payload = buildIpAddressUpdateRequest();
+  String response = sendHomeAppHttpsRequest(url, payload, true);
+
+  if (response == "") {
+    Serial.println("response empty, failed to update IP Address");
+    return false;
+  }
+
+  Serial.println("device update success");
+  return true;
+}
 
 bool sendDallasUpdateRequest() {
   Serial.println("Begining to send Dallas request");
@@ -1482,41 +1510,4 @@ void loop() {
   }
   Serial.println("Loop finished");
   delay(1000);
-}
-
-
-
-
-
-
-
-void readWifiJson() {
-  File wifiCredentials = SPIFFS.open("/device.json", "r");
-  if (wifiCredentials) {
-    StaticJsonDocument<200> wifiDoc;
-    DeserializationError error = deserializeJson(wifiDoc, wifiCredentials);
-    String deviceNameCheck = wifiDoc["deviceName"].as<String>();
-    String secretOne = wifiDoc["deviceSecret"].as<String>();
-  
-    const char* deviceName = wifiDoc["deviceName"];
-    const char* deviceSecret = wifiDoc["deviceSecret"];
-
-    Serial.println("deviceNameCheck");
-    Serial.println(deviceNameCheck);
-    Serial.println("secret");
-    Serial.println(secretOne);
-  
-  
-    Serial.println("deviceNameCheck22");
-    Serial.println(deviceName);
-    Serial.println("secret22");
-    Serial.println(deviceSecret);
-
-//    String passOne = wifiDoc["busTempNameArray"][0].as<String>();
-//    Serial.println("bus temp count read wifi");
-//    Serial.println(ssidOne);
-//    Serial.println("sensorname one");
-//    Serial.println(passOne);
-  }
-  wifiCredentials.close();
 }
