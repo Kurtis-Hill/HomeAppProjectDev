@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord;
 
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
 
 interface SensorConstantlyRecordServiceInterface
 {

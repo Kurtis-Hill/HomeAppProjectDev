@@ -2,7 +2,7 @@
 
 namespace App\Controller\Sensors;
 
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
@@ -32,7 +32,6 @@ class ESPSensorUpdateController extends AbstractController
         Request $request,
         Security $security,
     ): JsonResponse|Response {
-
         try {
             $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
@@ -77,7 +76,7 @@ class ESPSensorUpdateController extends AbstractController
     /**
      * @param ProducerInterface $producer
      */
-    public function setESPCurrentReadingProducer(ProducerInterface $producer)
+    public function setESPCurrentReadingProducer(ProducerInterface $producer): void
     {
         $this->currentReadingAMQPProducer = $producer;
     }

@@ -2,14 +2,14 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\OutOfBounds;
 
-use App\Entity\Sensors\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\Entity\Sensors\OutOfRangeRecordings\OutOfRangeHumid;
+use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
+use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfRangeHumid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 class OutOfBoundsHumidityRepository extends ServiceEntityRepository implements OutOfBoundsRepositoryInterface
 {
-    private $registry;
+    private ManagerRegistry $registry;
 
     public function __construct(ManagerRegistry $registry)
     {

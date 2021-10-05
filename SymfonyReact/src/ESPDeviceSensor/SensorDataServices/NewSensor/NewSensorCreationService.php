@@ -2,12 +2,12 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
-use App\Entity\Sensors\Sensors;
+use App\Core\APIInterface\APIErrorInterface;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Forms\AddNewSensorForm;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\Form\FormMessages;
-use App\Form\SensorForms\AddNewSensorForm;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\Traits\FormProcessorTrait;
 use Exception;
 use JetBrains\PhpStorm\Pure;

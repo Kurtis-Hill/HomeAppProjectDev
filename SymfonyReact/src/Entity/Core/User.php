@@ -2,7 +2,7 @@
 
 namespace App\Entity\Core;
 
-use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
+use App\Core\UserInterface\APISensorUserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\Json;

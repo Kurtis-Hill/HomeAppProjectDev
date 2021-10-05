@@ -1,21 +1,18 @@
 <?php
 
-
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate;
 
-
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\SensorType;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Forms\SensorReadingUpdateInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
-use App\Form\SensorForms\SensorReadingUpdateInterface;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -24,9 +21,6 @@ abstract class AbstractSensorUpdateService
 {
     use FormProcessorTrait;
 
-    /**
-     * @var EntityManagerInterface
-     */
     protected SensorRepository $sensorRepository;
 
     private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
@@ -40,6 +34,7 @@ abstract class AbstractSensorUpdateService
     /**
      * AbstractSensorService constructor.
      * @param SensorRepository $sensorRepository
+     * @param SensorReadingTypeFactoryInterface $sensorReadingTypeFactory
      * @param FormFactoryInterface $formFactory
      */
     public function __construct(

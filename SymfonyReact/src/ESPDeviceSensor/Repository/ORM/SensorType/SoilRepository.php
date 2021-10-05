@@ -2,9 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\SensorType;
 
-use App\Entity\Sensors\SensorTypes\Soil;
-use App\ESPDeviceSensor\Repository\ORM\ReadingType\ReadingTypeRepositoryInterface;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

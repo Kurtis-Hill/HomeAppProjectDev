@@ -4,21 +4,17 @@
 namespace App\Repository\Core;
 
 
+use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupNames;
-use App\Entity\Devices\Devices;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Core\Room;
 
-class DevicesRepository extends ServiceEntityRepository
+class DevicesRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Devices::class);
-    }
-
     /**
      * @param $groupNameID
      * @return array

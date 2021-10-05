@@ -1,16 +1,15 @@
 <?php
 
-
 namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\AnalogSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\HumiditySensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\LatitudeSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\TemperatureSensorTypeInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 
 abstract class AbstractSensorTypeCardDataBuilder
 {

@@ -2,14 +2,11 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\SensorType;
-use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
+use App\Core\APIInterface\APIErrorInterface;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorUpdateService;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 

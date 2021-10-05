@@ -3,10 +3,10 @@
 
 namespace App\ESPDeviceSensor\AMQP;
 
-
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
 use App\ErrorLogs;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService;
 use App\Repository\Core\DevicesRepository;
@@ -28,11 +28,11 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 
     /**
      * @param UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService
-     * @param DevicesRepository $deviceRepository
+     * @param DeviceRepositoryInterface $deviceRepository
      */
     public function __construct(
         UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
-        DevicesRepository $deviceRepository
+        DeviceRepositoryInterface $deviceRepository
     ) {
         $this->sensorCurrentReadingUpdateService = $sensorDeviceDataQueueConsumerService;
         $this->deviceRepository = $deviceRepository;
@@ -56,7 +56,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
             return true;
         }
 
-        $device = $this->deviceRepository->findOneBy(['deviceNameID' => $sensorData->getDeviceId()]);
+        $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
 
         if ($device instanceof Devices) {
             return $this->sensorCurrentReadingUpdateService->handleUpdateCurrentReadingSensorData($sensorData, $device);

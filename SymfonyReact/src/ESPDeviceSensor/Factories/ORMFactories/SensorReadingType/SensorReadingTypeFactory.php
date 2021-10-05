@@ -2,10 +2,10 @@
 
 namespace App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType;
 
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Latitude;
-use App\Entity\Sensors\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\AnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\HumidityRepository;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\LatitudeRepository;
@@ -36,7 +36,6 @@ class SensorReadingTypeFactory implements SensorReadingTypeFactoryInterface
 
     public function getSensorReadingTypeRepository(string $sensorType): ReadingTypeRepositoryInterface
     {
-//        dd('fg');
         return match ($sensorType) {
             Temperature::class => $this->temperatureRepository,
             Humidity::class => $this->humidityRepository,

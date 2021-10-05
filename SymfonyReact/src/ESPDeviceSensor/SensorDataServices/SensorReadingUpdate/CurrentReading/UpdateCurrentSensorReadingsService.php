@@ -1,9 +1,10 @@
 <?php
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
 use App\ErrorLogs;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
@@ -11,7 +12,6 @@ use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyReco
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorUpdateService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;

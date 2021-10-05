@@ -13,7 +13,7 @@ use App\Entity\Core\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
 use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;

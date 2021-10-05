@@ -3,10 +3,9 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-
-use App\Entity\Devices\Devices;
-use App\Form\SensorForms\AddNewDeviceForm;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
+use App\Core\APIInterface\APIErrorInterface;
+use App\Devices\Entity\Devices;
+use App\Devices\Forms\AddNewDeviceForm;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;

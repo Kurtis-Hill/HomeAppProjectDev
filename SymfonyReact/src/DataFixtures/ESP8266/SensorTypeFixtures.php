@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures\ESP8266;
 
-use App\Entity\Sensors\SensorType;
+use App\ESPDeviceSensor\Entity\SensorType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

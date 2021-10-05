@@ -2,9 +2,9 @@
 
 namespace App\Controller\Sensors;
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
+use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
+use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;

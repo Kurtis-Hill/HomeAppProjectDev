@@ -2,8 +2,7 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
-use App\Entity\Sensors\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\HomeAppSensorCore\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
 
 interface OutOfBoundsSensorServiceInterface
 {

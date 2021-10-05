@@ -3,8 +3,6 @@
 namespace App\Repository\Card;
 
 use App\Entity\Card\CardColour;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 /**

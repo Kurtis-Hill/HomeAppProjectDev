@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\ConstRecord;
 
-use App\Entity\Sensors\ConstantRecording\ConstantlyRecordInterface;
-use App\Entity\Sensors\ConstantRecording\ConstHumid;
+use App\ESPDeviceSensor\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\ESPDeviceSensor\Entity\ConstantRecording\ConstHumid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

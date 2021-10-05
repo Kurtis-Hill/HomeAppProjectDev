@@ -19,7 +19,7 @@ services:
     ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{Traits,DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{Traits,DependencyInjection,Entity, Devices/Entity, ESPDeviceSensor/Entity, Migrations,Tests,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -39,6 +39,7 @@ services:
 #        tags: [ 'controller.service_arguments' ]
 
     App\EventListeners\AuthenticationSuccessListener:
+        arguments: [ '@request_stack' ]
         tags:
              - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
 
@@ -46,12 +47,19 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
+    App\EventListeners\JWTDecode:
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded   }
+
     App\Controller\Sensors\ESPSensorUpdateController:
         calls:
             - setESPCurrentReadingProducer: ['@current_sensor_reading_producer']
 
 
 ######################## Sensors ######################################################################################
+######################## Producers ######################################################
+
 ######################## Consumers ######################################################
     App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
 
@@ -74,6 +82,10 @@ services:
 
     App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
         alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
+
+    ######################## Device IPAddress Services ########################################################
+    App\Devices\DeviceServices\IPAddress\Update\UpdateIPAddressServiceInterface:
+        alias: 'App\Devices\DeviceServices\IPAddress\Update\UpdateIPAddressService'
 
 ######################## Factories ###########################################################################
     App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:

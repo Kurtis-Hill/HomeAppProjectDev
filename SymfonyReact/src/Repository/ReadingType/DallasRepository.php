@@ -4,11 +4,11 @@
 namespace App\Repository\ReadingType;
 
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;

@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\ConstRecord;
 
-use App\Entity\Sensors\ConstantRecording\ConstantlyRecordInterface;
+use App\ESPDeviceSensor\Entity\ConstantRecording\ConstantlyRecordInterface;
 
 interface ConstantlyRecordRepositoryInterface
 {

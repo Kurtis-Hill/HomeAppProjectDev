@@ -3,11 +3,10 @@
 namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
-use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewFormDTO;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
-use App\HomeAppSensorCore\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
 class SensorTypeCardViewFormDTOBuilder extends AbstractSensorTypeCardDataBuilder implements CardBuilderDTOInterface

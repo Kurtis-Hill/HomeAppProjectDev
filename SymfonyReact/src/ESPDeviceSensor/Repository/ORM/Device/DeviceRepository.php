@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\Device;
 
+use App\Devices\Entity\Devices;
 use App\Entity\Core\Room;
-use App\Entity\Devices\Devices;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

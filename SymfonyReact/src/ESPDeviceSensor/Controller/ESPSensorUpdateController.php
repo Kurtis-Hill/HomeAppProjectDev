@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Controller;
 
-use App\DTOs\SensorDTOs\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
@@ -76,7 +76,7 @@ class ESPSensorUpdateController extends AbstractController
     /**
      * @param ProducerInterface $producer
      */
-    public function setESPCurrentReadingProducer(ProducerInterface $producer)
+    public function setESPCurrentReadingProducer(ProducerInterface $producer): void
     {
         $this->currentReadingAMQPProducer = $producer;
     }

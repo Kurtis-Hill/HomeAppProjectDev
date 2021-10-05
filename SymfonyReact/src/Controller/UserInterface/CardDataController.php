@@ -4,7 +4,7 @@
 namespace App\Controller\UserInterface;
 
 use App\Entity\Card\CardView;
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\CardViewForms\CardViewForm;

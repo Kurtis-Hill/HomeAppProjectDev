@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Controller;
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
