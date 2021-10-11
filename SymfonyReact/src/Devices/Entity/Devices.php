@@ -83,6 +83,13 @@ class Devices implements UserInterface, APISensorUserInterface
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="ipAddress", type="string", nullable=true)
+     */
+    private ?string $ipAddress = null;
+
+    /**
+     * @var string
      */
     private string $secret;
 
@@ -266,7 +273,7 @@ class Devices implements UserInterface, APISensorUserInterface
         // TODO: Implement getSalt() method.
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->deviceName;
     }
@@ -277,7 +284,24 @@ class Devices implements UserInterface, APISensorUserInterface
         // TODO: Implement eraseCredentials() method.
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    /**
+     * @return string|null
+     */
+    public function getIpAddress(): ?string
+    {
+        return $this->ipAddress;
+    }
+
+    /**
+     * @param ?string $ipAddress
+     */
+    public function setIpAddress(?string $ipAddress): void
+    {
+        $this->ipAddress = $ipAddress;
+    }
+
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
     {
         $metadata->addPropertyConstraint('deviceName', new Length([
             'min' => 2,

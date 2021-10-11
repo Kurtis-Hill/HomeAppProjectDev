@@ -53,8 +53,8 @@ class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInt
     public function getNavBarData(): array
     {
         try {
-            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->getUser()->getGroupNameIDs());
-            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->getUser()->getGroupNameAndIds());
+            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->getUser()?->getGroupNameIDs());
+            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->getUser()?->getGroupNameAndIds());
         } catch (ORMException $exception) {
             error_log($exception);
             $this->serverErrors[] = 'NavBar Data Query Failed';

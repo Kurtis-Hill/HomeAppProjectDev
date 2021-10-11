@@ -47,10 +47,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
-    App\EventListeners\JWTDecode:
-        arguments: [ '@request_stack' ]
-        tags:
-            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded   }
 
     App\Controller\Sensors\ESPSensorUpdateController:
         calls:
@@ -67,8 +63,8 @@ services:
     App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
         alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
 
-    namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
-        alias: 'namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'
+    App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'
 
     App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
         alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
@@ -82,10 +78,6 @@ services:
 
     App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
         alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
-
-    ######################## Device IPAddress Services ########################################################
-    App\Devices\DeviceServices\IPAddress\Update\UpdateIPAddressServiceInterface:
-        alias: 'App\Devices\DeviceServices\IPAddress\Update\UpdateIPAddressService'
 
 ######################## Factories ###########################################################################
     App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:
