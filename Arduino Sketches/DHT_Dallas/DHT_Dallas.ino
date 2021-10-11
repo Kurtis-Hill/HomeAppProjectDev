@@ -36,7 +36,7 @@
 
 //Web bits
 // Test
-#define HOMEAPP_HOST "https://192.168.1.172"
+#define HOMEAPP_HOST "https://192.168.1.224"
 // Prod
 //#define HOMEAPP_HOST "https://klh17101990.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
@@ -50,6 +50,7 @@
 const char fingerprint[] PROGMEM = "60ee151bee994d6ca826a69abce1e724173721ca";
 
 String ipAddress;
+String publicIpAddress;
 String token;
 String refreshToken;
 
@@ -253,9 +254,6 @@ char webpage[] PROGMEM = R"=====(
       var busTempCount = busTempNameArray.length;
 
       var data = {'dallas': {busTempCount: busTempCount, busTempNameArray: busTempNameArray}};
-
-      // data.busTempNames = busTempNameArray;
-      // data.busTemp = busTempCount;
 
       // ADC Sensor Names
       var analogName1 =  document.getElementById("AnalogName1").value;
@@ -1050,7 +1048,16 @@ bool deviceLogin() {
   Serial.println("Logging device in");
   String endpoint = HOMEAPP_LOGIN;
   String url = buildHomeAppUrl(endpoint);
-  String jsonData = getSerializedSpiff("/device.json");
+  String deviceData = getSerializedSpiff("/device.json");
+
+  StaticJsonDocument<128> loginDoc;
+  DeserializationError error = deserializeJson(loginDoc, deviceData);
+
+  loginDoc["ipAddress"] = ipAddress;
+
+  String jsonData;
+  serializeJson(loginDoc, jsonData);
+  
   String payload = sendHomeAppHttpsRequest(url, jsonData, false);
 
   if (
@@ -1261,12 +1268,13 @@ bool sendDallasUpdateRequest() {
 }
 
 bool sendDhtUpdateRequest() {
-  Serial.println("Begining to send Dht request");
-  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
   String payload = buildDhtReadingSensorUpdateRequest();
   if (payload == "") {
+    Serial.println("Aborting request");
     return false;
   }
+  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
+
   String response = sendHomeAppHttpsRequest(url, payload, true);
   Serial.println("response");
   Serial.println(response);
@@ -1279,7 +1287,7 @@ String buildDhtReadingSensorUpdateRequest() {
 
   sensorUpdateRequest["sensorType"] = "Dht";
 
-  if (!isnan(dhtSensor.tempReading) || !isnan(dhtSensor.humidReading)) {
+  if (!isnan(dhtSensor.tempReading) && !isnan(dhtSensor.humidReading)) {
     Serial.print("sensor name:");
     Serial.println(dhtSensor.sensorName);
     sensorUpdateRequest["sensorData"][0]["sensorName"] = dhtSensor.sensorName;
@@ -1293,7 +1301,7 @@ String buildDhtReadingSensorUpdateRequest() {
   
     return jsonData;
   }
-
+  Serial.println("dht readings are empty");
   return "";
 }
 
@@ -1449,6 +1457,49 @@ String ipToString(IPAddress ip){
 }
 
 
+bool getExternalIP() {
+  WiFiClient client;
+  if (!client.connect("api.ipify.org", 80)) {
+    Serial.println("Failed to connect with 'api.ipify.org' !");
+    return false;
+  }
+  else {
+    int timeout = millis() + 5000;
+    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
+    while (client.available() == 0) {
+      if (timeout - millis() < 0) {
+        Serial.println(">>> Client Timeout !");
+        client.stop();
+        return false;
+      }
+    }
+    uint8_t* msg;
+    int size;
+    while ((size = client.available()) > 0) {
+      msg = (uint8_t*)malloc(size);
+      size = client.read(msg, size);
+      Serial.write(msg, size);
+    }
+
+    DynamicJsonDocument deserializedJson(32);
+    DeserializationError error = deserializeJson(deserializedJson, msg);
+    
+    if (error) {
+      Serial.println("deserialization error");
+      return false;
+    }
+
+    publicIpAddress = deserializedJson["ip"].as<String>();
+    Serial.println("publicIp is");
+    Serial.println(publicIpAddress);
+    free(msg);
+    
+    return true;
+  }
+}
+
+
+
 
 void setup() {
 //  Serial.begin(9600);
@@ -1486,6 +1537,7 @@ void setup() {
       }
     }
   }
+  getExternalIP();
   delay(3000);
   Serial.println("End of Setup");
 }
