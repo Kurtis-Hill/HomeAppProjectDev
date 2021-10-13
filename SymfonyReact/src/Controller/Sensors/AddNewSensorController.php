@@ -96,7 +96,7 @@ class AddNewSensorController extends AbstractController
             }
 
             $sensorID = $sensor->getSensorNameID();
-
+//            dd($sensor);
             return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
         }
 

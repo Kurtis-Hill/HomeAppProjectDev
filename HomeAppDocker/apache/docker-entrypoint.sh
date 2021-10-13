@@ -8,12 +8,6 @@ if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
-echo "App env is"
-echo ${APP_ENV}
-
-echo "App env 2 is"
-echo $APP_ENV
-
 if [ ${APP_ENV} == 'prod' ]; then
 	echo "Installing composer packages..."
 	php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction

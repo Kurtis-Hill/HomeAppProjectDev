@@ -82,11 +82,18 @@ class Devices implements UserInterface, APISensorUserInterface
     private array $roles;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="ipAddress", type="string", nullable=true)
      */
     private ?string $ipAddress = null;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="externalIpAddress", type="string", nullable=true)
+     */
+    private ?string $externalIpAddress = null;
 
     /**
      * @var string
@@ -300,6 +307,21 @@ class Devices implements UserInterface, APISensorUserInterface
         $this->ipAddress = $ipAddress;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getExternalIpAddress(): ?string
+    {
+        return $this->externalIpAddress;
+    }
+
+    /**
+     * @param string|null $externalIpAddress
+     */
+    public function setExternalIpAddress(?string $externalIpAddress): void
+    {
+        $this->externalIpAddress = $externalIpAddress;
+    }
 
     public static function loadValidatorMetadata(ClassMetadata $metadata): void
     {

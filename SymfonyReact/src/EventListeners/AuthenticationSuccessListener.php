@@ -41,8 +41,10 @@ class AuthenticationSuccessListener
         if ($user instanceof Devices) {
             $deviceLoginRequest = json_decode($this->requestStack->getCurrentRequest()->getContent(), true);
             $ipAddress = $deviceLoginRequest['ipAddress'] ?? null;
+            $externalIpAddress = $deviceLoginRequest["externalIpAddress"] ?? null;
 
             $user->setIpAddress($ipAddress);
+            $user->setExternalIpAddress($externalIpAddress);
             $this->deviceRepository->persist($user);
             $this->deviceRepository->flush();
         }

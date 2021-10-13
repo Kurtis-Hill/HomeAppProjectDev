@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserDeviceControllerTest extends WebTestCase
 {
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/add-new-device';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/esp/add-new-device';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
@@ -149,7 +149,6 @@ class UserDeviceControllerTest extends WebTestCase
         ];
 
         $jsonData = json_encode($formData);
-
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,

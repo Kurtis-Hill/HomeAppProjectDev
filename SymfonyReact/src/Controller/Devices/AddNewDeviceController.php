@@ -31,6 +31,7 @@ class AddNewDeviceController extends AbstractController
         NewESP8266DeviceService $deviceService,
         UserPasswordEncoderInterface $passwordEncoder
     ): JsonResponse {
+//        dd($request->getContent());
         $newDeviceData = json_decode($request->getContent(), true);
         $deviceName = $newDeviceData['deviceName'] ?? null;
         $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
