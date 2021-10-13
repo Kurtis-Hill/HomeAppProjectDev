@@ -1044,7 +1044,7 @@ bool connectToNetwork() {
 
 
 
-bool deviceLogin() {
+bool deviceLogin(bool externalIpFound) {
   Serial.println("Logging device in");
   String endpoint = HOMEAPP_LOGIN;
   String url = buildHomeAppUrl(endpoint);
@@ -1054,6 +1054,10 @@ bool deviceLogin() {
   DeserializationError error = deserializeJson(loginDoc, deviceData);
 
   loginDoc["ipAddress"] = ipAddress;
+
+  if(externalIpFound) {
+    loginDoc["externalIpAddress"] = publicIpAddress;
+  }
 
   String jsonData;
   serializeJson(loginDoc, jsonData);
@@ -1133,7 +1137,7 @@ String sendHomeAppHttpsRequest(
       Serial.println("url check");
       Serial.println(urlLoopCheck);
       if (url == urlLoopCheck) {
-        deviceLogin();
+        deviceLogin(false);
       }
       handleRefreshTokens();
     }
@@ -1168,7 +1172,7 @@ String sendHomeAppHttpsRequest(
   if(!saveSuccess) {
     Serial.println("tokens failed to save");
     delay(2000);
-    deviceLogin();
+    deviceLogin(false);
   }
 }
 
@@ -1458,44 +1462,43 @@ String ipToString(IPAddress ip){
 
 
 bool getExternalIP() {
+  Serial.print("Begining to get external ip in");
   WiFiClient client;
-  if (!client.connect("api.ipify.org", 80)) {
-    Serial.println("Failed to connect with 'api.ipify.org' !");
-    return false;
-  }
-  else {
-    int timeout = millis() + 5000;
-    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
-    while (client.available() == 0) {
-      if (timeout - millis() < 0) {
-        Serial.println(">>> Client Timeout !");
-        client.stop();
+  HTTPClient http;
+
+  Serial.print("[HTTPS] begin connecting to... ");
+  Serial.println("https://api.ipify.org/?format=json");
+  
+  http.begin(client, "http://api.ipify.org/?format=json");
+  
+  Serial.println("[HTTPS] GET...");
+  int httpCode = http.GET();
+
+  // httpCode will be negative on error
+  if (httpCode > 0) {
+    Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+    if (httpCode == HTTP_CODE_OK) {
+      const String& payload = http.getString();
+      Serial.print("received payload: ");
+      Serial.println(payload);
+
+      DynamicJsonDocument responsePayload(32);
+      DeserializationError error = deserializeJson(responsePayload, payload);
+
+      if (error) {
+        Serial.println("external ip address deserialization error");
         return false;
       }
+      
+      publicIpAddress = responsePayload["ip"].as<String>();     
     }
-    uint8_t* msg;
-    int size;
-    while ((size = client.available()) > 0) {
-      msg = (uint8_t*)malloc(size);
-      size = client.read(msg, size);
-      Serial.write(msg, size);
-    }
-
-    DynamicJsonDocument deserializedJson(32);
-    DeserializationError error = deserializeJson(deserializedJson, msg);
-    
-    if (error) {
-      Serial.println("deserialization error");
+  } else {
+      Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
       return false;
-    }
-
-    publicIpAddress = deserializedJson["ip"].as<String>();
-    Serial.println("publicIp is");
-    Serial.println(publicIpAddress);
-    free(msg);
-    
-    return true;
   }
+  http.end();
+  
+  return true;
 }
 
 
@@ -1522,7 +1525,8 @@ void setup() {
   Serial.println("Begining device setup");
 
   if (setupNetworkConnection()) {
-    bool loggedIn = deviceLogin();
+    bool externalIpSuccess = getExternalIP();
+    bool loggedIn = deviceLogin(externalIpSuccess);
 
     if (loggedIn == true) {
       if (setDallasValues()) {
@@ -1537,7 +1541,6 @@ void setup() {
       }
     }
   }
-  getExternalIP();
   delay(3000);
   Serial.println("End of Setup");
 }
