@@ -9,8 +9,17 @@ git config --global url."https://".insteadOf git://
 
 yarn install
 
-yarn encore dev --watch
+if [ ${APP_ENV} != 'prod' ]; then
+   yarn encore dev --watch
+   yarn encore dev-server --hot --host=apache --port 8080
+fi
 
-yarn encore dev-server --hot --host=apache --port 8080
+if [ ${APP_ENV} != 'dev' ]; then
+   yarn install --check-files      
+   yarn encore dev --watch
+   yarn encore dev-server --hot --host=apache --port 8080
+fi
+        
+
 
 exec "$@"
