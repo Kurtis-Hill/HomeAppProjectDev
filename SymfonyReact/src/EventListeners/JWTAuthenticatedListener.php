@@ -4,6 +4,7 @@
 namespace App\EventListeners;
 
 
+use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,6 +44,9 @@ class JWTAuthenticatedListener
                 $authenticatedEvent->setPayload(['group name exception occurred']);
                 error_log($exception->getMessage());
             }
+        }
+        if ($user instanceof Devices) {
+            dd($authenticatedEvent->getPayload());
         }
     }
 }

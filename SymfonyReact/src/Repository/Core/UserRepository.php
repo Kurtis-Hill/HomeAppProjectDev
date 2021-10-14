@@ -45,7 +45,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $raw = "SHOW STATUS LIKE 'Ssl_cipher'";
 
         $stmt = $conn->prepare($raw);
-        $result =$stmt->execute();
+        $result = $stmt->execute();
 
         return $stmt->fetchAll();
 

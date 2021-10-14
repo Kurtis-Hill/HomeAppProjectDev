@@ -11,7 +11,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class CardShowTransformer implements DataTransformerInterface
 {
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {

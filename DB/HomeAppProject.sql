@@ -507,22 +507,22 @@ ALTER TABLE `cardview`
 -- Indexes for table `constanalog`
 --
 ALTER TABLE `constanalog`
-  ADD PRIMARY KEY (`analogID`),
-  ADD KEY `sensorID` (`sensorID`);
+  ADD PRIMARY KEY (constRecordID),
+  ADD KEY `sensorID` (sensorReadingTypeID);
 
 --
 -- Indexes for table `consthumid`
 --
 ALTER TABLE `consthumid`
-  ADD PRIMARY KEY (`humidID`),
+  ADD PRIMARY KEY (constRecordID),
   ADD KEY `sensorID` (`sensorID`);
 
 --
 -- Indexes for table `consttemp`
 --
 ALTER TABLE `consttemp`
-  ADD PRIMARY KEY (`tempID`),
-  ADD KEY `consttemp_ibfk_1` (`sensorID`);
+  ADD PRIMARY KEY (constRecordID),
+  ADD KEY `consttemp_ibfk_1` (sensorReadingTypeID);
 
 --
 -- Indexes for table `dallas`
@@ -598,15 +598,15 @@ ALTER TABLE `migration_versions`
 -- Indexes for table `outofrangeanalog`
 --
 ALTER TABLE `outofrangeanalog`
-  ADD PRIMARY KEY (`analogID`),
-  ADD KEY `sensorID` (`sensorID`);
+  ADD PRIMARY KEY (outofrangeID),
+  ADD KEY `sensorID` (analogID);
 
 --
 -- Indexes for table `outofrangehumid`
 --
 ALTER TABLE `outofrangehumid`
-  ADD PRIMARY KEY (`humidID`),
-  ADD KEY `sensorID` (`sensorID`);
+  ADD PRIMARY KEY (outofrangeID),
+  ADD KEY `sensorID` (humidID);
 
 --
 -- Indexes for table `outofrangetemp`
@@ -705,19 +705,19 @@ ALTER TABLE `cardview`
 -- AUTO_INCREMENT for table `constanalog`
 --
 ALTER TABLE `constanalog`
-  MODIFY `analogID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `consthumid`
 --
 ALTER TABLE `consthumid`
-  MODIFY `humidID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `consttemp`
 --
 ALTER TABLE `consttemp`
-  MODIFY `tempID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY constRecordID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `dallas`
@@ -771,13 +771,13 @@ ALTER TABLE `latitude`
 -- AUTO_INCREMENT for table `outofrangeanalog`
 --
 ALTER TABLE `outofrangeanalog`
-  MODIFY `analogID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY outofrangeID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `outofrangehumid`
 --
 ALTER TABLE `outofrangehumid`
-  MODIFY `humidID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY outofrangeID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `outofrangetemp`
@@ -860,7 +860,7 @@ ALTER TABLE `cardview`
 -- Constraints for table `constanalog`
 --
 ALTER TABLE `constanalog`
-  ADD CONSTRAINT `constanalog_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `constanalog_ibfk_1` FOREIGN KEY (sensorReadingTypeID) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `consthumid`
@@ -872,7 +872,7 @@ ALTER TABLE `consthumid`
 -- Constraints for table `consttemp`
 --
 ALTER TABLE `consttemp`
-  ADD CONSTRAINT `consttemp_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `temp` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `consttemp_ibfk_1` FOREIGN KEY (sensorReadingTypeID) REFERENCES `temp` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `dallas`
@@ -921,13 +921,13 @@ ALTER TABLE `latitude`
 -- Constraints for table `outofrangeanalog`
 --
 ALTER TABLE `outofrangeanalog`
-  ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `sensornames` (`sensorNameID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `sensornames` (`sensorNameID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `outofrangehumid`
 --
 ALTER TABLE `outofrangehumid`
-  ADD CONSTRAINT `outofrangehumid_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `sensornames` (`sensorNameID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `outofrangehumid_ibfk_1` FOREIGN KEY (humidID) REFERENCES `sensornames` (`sensorNameID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `outofrangetemp`

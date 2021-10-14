@@ -13,7 +13,7 @@ use App\Entity\Core\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
+use App\Devices\Entity\Devices;
 use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserDeviceControllerTest extends WebTestCase
 {
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/add-new-device';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/esp/add-new-device';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
@@ -149,7 +149,6 @@ class UserDeviceControllerTest extends WebTestCase
         ];
 
         $jsonData = json_encode($formData);
-
         $this->client->request(
             'POST',
             self::ADD_NEW_DEVICE_PATH,
@@ -293,6 +292,7 @@ class UserDeviceControllerTest extends WebTestCase
             $jsonData,
         );
 
+//        dd($this->client->getResponse()->getContent());
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 

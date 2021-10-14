@@ -3,25 +3,26 @@
 
 namespace App\Services;
 
-use App\DTOs\Factorys\CardDTOs\CardViewDTOFactory;
-use App\DTOs\Factorys\CardDTOs\CardViewFormDTOFactory;
-use App\DTOs\Sensors\CardDTOs\CardViewSensorFormDTO;
+use App\Core\APIInterface\APIErrorInterface;
+use App\Core\UserInterface\APISensorUserInterface;
+use App\Devices\Entity\Devices;
+use App\DTOs\CardDTOs\Factories\CardFactories\CardViewDTOFactory;
+use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
 use App\Entity\Card\CardColour;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
 use App\Entity\Card\Icons;
 use App\Entity\Core\User;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorType;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
-use App\HomeAppSensorCore\Interfaces\Core\APISensorUserInterface;
-use App\HomeAppSensorCore\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
+use App\Services\CardServices\CardDataFilterService;
+use App\Services\CardServices\CardDataProviderInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
@@ -30,7 +31,7 @@ use Symfony\Component\Security\Core\Security;
 /**
  * Class CardDataService.
  */
-class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInterface
+class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInterface, CardDataProviderInterface
 {
     use FormProcessorTrait;
 
@@ -38,6 +39,16 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      * @var ?User
      */
     private ?User $user;
+
+    /**
+     * @var CardViewDTOFactory
+     */
+    private CardViewDTOFactory $cardViewDTOFactory;
+
+    /**
+     * @var CardDataFilterService
+     */
+    private $cardDataFilterService;
 
     /**
      * @var EntityManagerInterface
@@ -62,38 +73,48 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     /**
      * @param EntityManagerInterface $em
      * @param Security $security
-     *
+     * @param CardViewDTOFactory $cardViewDTOFactory
      */
-    public function __construct(EntityManagerInterface $em, Security $security)
+    public function __construct(
+        EntityManagerInterface $em,
+        Security $security,
+        CardViewDTOFactory $cardViewDTOFactory,
+        CardDataFilterService $cardDataFilterService,
+    )
     {
         $this->em = $em;
         $this->user = $security->getUser();
+        $this->cardViewDTOFactory = $cardViewDTOFactory;
+        $this->cardDataFilterService = $cardDataFilterService;
     }
+
     /**
      * @param string|null $route
-     * @param int|null $deviceId
+     * @param Devices|null $deviceId
+     * @param array $cardFilters
      * @return array
      */
-    public function prepareAllCardDTOs(?string $route = null, ?int $deviceId = null): array
+    public function prepareCardDTOs(?string $route = null, ?Devices $deviceId = null, array $cardFilters = []): array
     {
-        try {
-            if (isset($deviceId) && !is_numeric($deviceId)) {
-                throw new BadRequestException('device id is not one that can be processed');
-            }
-
-            $sensorObjects = match ($route) {
-                "room" => $this->getRoomCardDataObjects($deviceId),
-                "device" => $this->getDevicePageCardDataObjects($deviceId),
-                default => $this->getIndexPageCardDataObjects()
-            };
-        } catch (BadRequestException $e) {
-            $this->userInputErrors[] = $e->getMessage();
-        } catch (ORMException $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = 'Card Data Query Failure';
+        $sensorTypes = SensorType::ALL_SENSOR_TYPE_DATA;
+        if (!empty($cardFilters)) {
+            $sensorTypes = $this->cardDataFilterService->filterSensorTypes($sensorTypes, $cardFilters);
         }
 
-        $cardViewDTOFactory = new CardViewDTOFactory();
+//        try {
+            $sensorObjects = match ($route) {
+                "room" => $this->getRoomCardDataObjects($sensorTypes),
+                "device" => $this->getDevicePageCardDataObjects($deviceId),
+                default => $this->getIndexPageCardDataObjects($sensorTypes)
+            };
+//        } catch (BadRequestException $e) {
+//            $this->userInputErrors[] = $e->getMessage();
+//        } catch (ORMException $e) {
+//            error_log($e->getMessage());
+//            $this->serverErrors[] = 'Card Data Query Failure';
+//        }
+
+        $cardViewDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
         if (!empty($sensorObjects)) {
                 foreach ($sensorObjects as $cardDTO) {
                     try {
@@ -118,11 +139,26 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         return $cardDTOs ?? [];
     }
 
+    private function getIndexPageCardDataObjects($filteredSensorTypes)
+    {
+        $cardRepository = $this->em->getRepository(CardView::class);
+        $standardSensorTypeCards = $this->getStandardSensorTypeData($cardRepository);
+
+        return $standardSensorTypeCards;
+    }
+
+    private function getIndexUserDefaultView(): array
+    {
+        $standardSensorTypeCards = $this->getStandardSensorTypeData();
+
+        return $standardSensorTypeCards;
+    }
+
     /**
      * @param string $cardViewData
      * @return array
      */
-    public function editSelectedCardData(string $cardViewData): array
+    public function getSelectedCardDataById(string $cardViewData): array
     {
         try {
             $usersCurrentCardData = $this->em->getRepository(CardView::class)->getUsersCurrentlySelectedSensorsCardData(
@@ -143,36 +179,33 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     /**
      * @return array
      */
-    private function getIndexPageCardDataObjects(): array
+    private function getStandardSensorTypeData(): array
     {
         $cardRepository = $this->em->getRepository(CardView::class);
-        $cardData = $cardRepository->getAllIndexSensorTypeObjectsForUser($this->getUser(), SensorType::SENSOR_TYPE_DATA);
+        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
 
         return $cardData ?? [];
     }
 
 
     /**
-     * @param int $deviceId
+     * @param int|null $deviceId
      * @return array
      */
-    private function getDevicePageCardDataObjects(int $deviceId = null): array
+    private function getDevicePageCardDataObjects(?Devices $deviceId = null): array
     {
-        if ($deviceId === null) {
+        if (!$deviceId instanceof Devices) {
             throw new BadRequestException(
                 'No card data found query if you have sensors on the device please logout and back in again please'
             );
         }
 
-        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::SENSOR_TYPE_DATA, $deviceId);
+        $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, $deviceId->getDeviceNameID());
 
         return $cardData ?? [];
 
     }
 
-    /**
-     * @return array
-     */
     #[ArrayShape(
         [
             'icons' => [Icons::class],
@@ -200,27 +233,28 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      */
     public function getCardViewFormDTO(CardView $cardViewObject): ?CardViewSensorFormDTO
     {
-        try {
-            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::SENSOR_TYPE_DATA);
+//        try {
+            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::ALL_SENSOR_TYPE_DATA);
             if ($cardData instanceof SensorInterface) {
                 $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
 
-                $cardFormDTOFactory = new CardViewFormDTOFactory();
+                $cardFormDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_READING_FORM_CARD);
                 $cardViewFormDTO = $cardFormDTOFactory->makeDTO($cardData, $userSelectionData);
             }
             else {
                 $this->serverErrors[] = 'Sensor Not Recognised, You May Need To Update Your App';
             }
-        } catch (BadRequestException $e) {
-            $this->userInputErrors[] = $e->getMessage();
-        } catch (RuntimeException $e) {
-            $this->serverErrors[] = $e->getMessage();
-        } catch (ORMException $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = 'Card Data Query Failure';
-        }
+//        } catch (BadRequestException $e) {
+//            $this->userInputErrors[] = $e->getMessage();
+//        } catch (RuntimeException $e) {
+//            $this->serverErrors[] = $e->getMessage();
+//        } catch (ORMException $e) {
+//            error_log($e->getMessage());
+//            $this->serverErrors[] = 'Card Data Query Failure';
+//        }
 
+//        dd($cardViewFormDTO);
         return $cardViewFormDTO ?? null;
     }
 
@@ -231,7 +265,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      */
     public function createNewSensorCard(Sensors $sensorObject, User $user): ?CardView
     {
-        try {
+//        try {
             $randomIcon = $this->returnRandomIcon();
 
             $randomColour = $this->returnRandomColour();
@@ -254,14 +288,14 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
             $this->em->persist($newCard);
 
             return $newCard;
-        } catch (RuntimeException $exception) {
-            error_log($exception->getMessage());
-            $this->serverErrors[] = $exception->getMessage();
-        }
-        catch (ORMException $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = 'Card Data Query Failure';
-        }
+//        } catch (RuntimeException $exception) {
+//            error_log($exception->getMessage());
+//            $this->serverErrors[] = $exception->getMessage();
+//        }
+//        catch (ORMException $e) {
+//            error_log($e->getMessage());
+//            $this->serverErrors[] = 'Card Data Query Failure';
+//        }
 
         if (isset($newCard)) {
             $this->em->remove($newCard);
@@ -290,7 +324,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         $colourRepository = $this->em->getRepository(CardColour::class);
         $maxColourNumber = $colourRepository->countAllColours();
         $firstColourId = $colourRepository->getFirstColourId()->getColourID();
-        $randomColour = $colourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber+$firstColourId-1)]);
+        $randomColour = $colourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber + $firstColourId -1)]);
 
         if (!$randomColour instanceof CardColour) {
             throw new RuntimeException('Failed setting random colour');

@@ -2,10 +2,6 @@
 
 namespace App\Traits;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
-use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -21,13 +17,11 @@ trait FormProcessorTrait
     public function processForm(FormInterface|FormFactoryInterface $form, array $formData): bool
     {
         $form->submit($formData);
-
         if ($form->isSubmitted() && !$form->isValid()) {
             $this->processFormErrors($form);
-            
             return false;
         }
-        
+
         return true;
     }
 

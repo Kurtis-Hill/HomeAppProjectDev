@@ -15,3 +15,34 @@ This should have; created all the necessary containers, loaded up the initial da
 <h2>Before we can do anything</h2>
 There is a compatibility issue in the JWT refresh token library we are using with Doctrine 3 since doctrine common 3.0, Doctrine\Common\Persistence\ObjectManager became Doctrine\Persistence\ObjectManager
 so to be able to get JWT tokens to authenticate you will need to adjust this manually in <code>SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Doctrine/RefreshTokenManager.php</code>
+
+
+<h2>Running the front end</h2>
+to sign into the front end the admin username is : admin
+and the password is : admin1234
+
+
+when adding a new sensor to the system and updating the current readings use the following format to adjust the reading:
+'readingType'Reading
+e.g a temperature reading would be temperatureReading
+
+a typical request may look something like this:
+<code>
+{
+    "sensorType": "Dallas",
+    "sensorData": [ 
+        {
+            "sensorName": "Dallas1",
+            "currentReadings": {
+                "temperatureReading": "12"
+        }
+        },
+        {
+            "sensorName": "Dallas1",
+            "currentReadings": {
+                "temperatureReading": "19"
+            }
+        }
+    ]
+}
+</code>

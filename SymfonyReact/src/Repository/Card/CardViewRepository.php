@@ -3,22 +3,17 @@
 
 namespace App\Repository\Card;
 
-use App\Entity\Card\CardColour;
+use App\Devices\Entity\Devices;
 use App\Entity\Card\Cardstate;
 use App\Entity\Card\CardView;
-use App\Entity\Card\Icons;
 use App\Entity\Core\User;
-use App\Entity\Sensors\SensorType;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\Sensors;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\Security\Core\User\UserInterface;
 use function Doctrine\ORM\QueryBuilder;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Devices\Devices;
-
 
 class CardViewRepository extends EntityRepository
 {
@@ -54,12 +49,12 @@ class CardViewRepository extends EntityRepository
     }
 
 
-    public function getAllIndexSensorTypeObjectsForUser(?User $user, array $sensors): array
+    public function getAllSensorTypeObjectsForUser(?User $user, array $sensors, string $view): array
     {
         $groupNameIDs = $user->getGroupNameIds();
 
         $cardViewOne = Cardstate::ON;
-        $cardViewTwo = Cardstate::INDEX_ONLY;
+        $cardViewTwo = $view;
 
         $qb = $this->createQueryBuilder('cv');
         $expr = $qb->expr();
@@ -198,7 +193,7 @@ class CardViewRepository extends EntityRepository
 //        $result = array_filter($qb->getQuery()->getResult());
 //
 //        $result = array_values($result);
-////dd($result);
+    ////dd($result);
 //        return $result[0];
 //    }
 

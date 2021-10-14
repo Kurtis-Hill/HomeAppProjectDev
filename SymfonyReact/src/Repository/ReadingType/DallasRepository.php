@@ -4,18 +4,65 @@
 namespace App\Repository\ReadingType;
 
 
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorTypes\Dallas;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 
 class DallasRepository extends EntityRepository
 {
     /**
+     * @param string $sensorName
+     * @param Devices $devices
+     * @return SensorInterface|null
+     * @throws NonUniqueResultException
+     */
+    public function findSensorBySensorName(string $sensorName, Devices $devices): ?SensorInterface
+    {
+        $qb = $this->createQueryBuilder('dallas');
+        $expr = $qb->expr();
+
+        $qb->select('dallas')
+            ->innerJoin(
+                Sensors::class,
+                'sensor',
+                Join::WITH,
+                'dallas.sensorNameID = sensor.sensorNameID'
+            )
+            ->innerJoin(
+                Devices::class,
+                'device',
+                Join::WITH,
+                'sensor.deviceNameID = device.deviceNameID'
+            )
+            ->innerJoin(
+                Temperature::class,
+                'temp',
+                Join::WITH,
+                'dallas.tempID = temp.tempID'
+            )
+            ->where(
+                $expr->eq('sensor.sensorName', ':sensorName'),
+                $expr->eq('sensor.deviceNameID', ':deviceID')
+            )
+            ->setParameters(
+                [
+                    'sensorName' => $sensorName,
+                    'deviceID' => $devices->getUserID()
+                ]
+            );
+
+//        dd($qb->getQuery()->getResult());
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+    /**
      * @param Sensors $sensor
      * @return Dallas|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function findDallasSensorBySensor(Sensors $sensor): ?Temperature
     {

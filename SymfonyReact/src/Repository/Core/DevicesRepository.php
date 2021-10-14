@@ -4,10 +4,12 @@
 namespace App\Repository\Core;
 
 
+use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupNames;
-use App\Entity\Devices\Devices;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Persistence\ManagerRegistry;
 use function Doctrine\ORM\QueryBuilder;
 use App\Entity\Core\Room;
 
@@ -55,8 +57,7 @@ class DevicesRepository extends EntityRepository
                     'roomID' => $deviceDetails['roomObject']
                 ]
             );
-        // use this after db clean
-//dd($qb->getQuery()->getOneOrNullResult());
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 

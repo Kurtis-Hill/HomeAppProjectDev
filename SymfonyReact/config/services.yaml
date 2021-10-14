@@ -3,6 +3,8 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+imports:
+#    - { resource: services-device.yaml }
 parameters:
 
 services:
@@ -13,9 +15,11 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
+
+    ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{Traits,DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{Traits,DependencyInjection,Entity, Devices/Entity, ESPDeviceSensor/Entity, Migrations,Tests,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -23,13 +27,78 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+
+################### ESP Sensors ############################
+#    App\ESPDeviceSensor\Controller\:
+#        resource: '../src/ESPDeviceSensor/Controller/'
+#        tags: [ 'controller.service_arguments' ]
+#
+################### User Interface ############################
+#    App\UserInterface\Controller\:
+#        resource: '../src/UserInterface/Controller'
+#        tags: [ 'controller.service_arguments' ]
 
     App\EventListeners\AuthenticationSuccessListener:
+        arguments: [ '@request_stack' ]
         tags:
              - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
 
     App\EventListeners\JWTAuthenticatedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
+
+
+    App\Controller\Sensors\ESPSensorUpdateController:
+        calls:
+            - setESPCurrentReadingProducer: ['@current_sensor_reading_producer']
+
+
+######################## Sensors ######################################################################################
+######################## Producers ######################################################
+
+######################## Consumers ######################################################
+    App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
+
+######################## Update Sensor Reading Services ######################################################
+    App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
+
+    App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'
+
+    App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
+
+    App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary'
+
+######################## New Sensor Creation Services ########################################################
+    App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationService'
+
+    App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
+        alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
+
+######################## Factories ###########################################################################
+    App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactory'
+
+    App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\ORMOutOfBoundsFactory'
+
+    App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactory'
+
+    App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface:
+        alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactory'
+
+
+######################## Repositories ########################################################################
+    App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface:
+        alias: 'App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepository'
+######################## End Of Sensors ######################################################################################
+
+######################## Devices ######################################################################################
+    App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
+        alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
+######################## EndOfDevices ######################################################################################

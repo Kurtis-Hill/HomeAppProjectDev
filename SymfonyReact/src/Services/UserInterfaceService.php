@@ -4,10 +4,10 @@
 namespace App\Services;
 
 
+use App\Core\APIInterface\APIErrorInterface;
+use App\Devices\Entity\Devices;
 use App\Entity\Core\Room;
 use App\Entity\Core\User;
-use App\Entity\Devices\Devices;
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -53,8 +53,8 @@ class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInt
     public function getNavBarData(): array
     {
         try {
-            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->getUser()->getGroupNameIDs());
-            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->getUser()->getGroupNameAndIds());
+            $userRooms = $this->em->getRepository(Room::class)->getAllUserRoomsByGroupId($this->getUser()?->getGroupNameIDs());
+            $userDevices = $this->em->getRepository(Devices::class)->getAllUsersDevicesByGroupId($this->getUser()?->getGroupNameAndIds());
         } catch (ORMException $exception) {
             error_log($exception);
             $this->serverErrors[] = 'NavBar Data Query Failed';

@@ -117,6 +117,24 @@ trait HomeAppAPIResponseTrait
     }
 
     /**
+     * @param array $data
+     * @return JsonResponse
+     */
+    public function sendMultiStatusJsonResponse(array $data = []): JsonResponse
+    {
+        if (!empty($data)) {
+            return new JsonResponse(
+                [
+                    'title' => 'Part of the request was accepted',
+                    'payload' => $data
+                ],
+                HTTPStatusCodes::HTTP_MULTI_STATUS_CONTENT);
+        }
+
+        return new JsonResponse(['title' => 'Request Accepted Only Partial Response Sent', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+    }
+
+    /**
      * @param string|null $data
      * @return Response
      */

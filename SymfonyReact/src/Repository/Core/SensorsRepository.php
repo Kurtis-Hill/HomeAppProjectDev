@@ -2,9 +2,9 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\Sensors;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
+use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -54,22 +54,29 @@ class SensorsRepository extends EntityRepository
 
 
     /**
-     * @param Sensors $sensors
-     * @param $sensorData
+     * @param Devices $device
+     * @param string $sensors
+     * @param array $sensorData
      * @return array
      */
-    public function getSensorCardFormDataBySensor(Sensors $sensors, $sensorData): array
+    public function getSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
     {
-        $qb = $this->createQueryBuilder('sensors');
 
+        $qb = $this->createQueryBuilder('sensors');
         $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
 
         $qb->select($sensorAlias)
-            ->where(
-                $qb->expr()->eq('sensors.sensorNameID', ':id')
+            ->innerJoin(
+                Devices::class,
+                'device',
+                Join::WITH,
+                'sensors.deviceNameID = device.deviceNameID'
             )
-            ->setParameters(['id' => $sensors]);
-
+            ->where(
+                $qb->expr()->eq('sensors.sensorName', ':sensorName'),
+                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+            )
+            ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
         $result = array_filter($qb->getQuery()->getResult());
         $result = array_values($result);
 

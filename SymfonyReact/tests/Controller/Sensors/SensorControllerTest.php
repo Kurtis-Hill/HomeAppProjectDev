@@ -8,20 +8,20 @@ use App\API\HTTPStatusCodes;
 use App\Controller\Core\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Devices\Entity\Devices;
 use App\Entity\Card\CardView;
-use App\Entity\Devices\Devices;
-use App\Entity\Sensors\ReadingTypes\Analog;
-use App\Entity\Sensors\ReadingTypes\Humidity;
-use App\Entity\Sensors\ReadingTypes\Latitude;
-use App\Entity\Sensors\ReadingTypes\Temperature;
-use App\Entity\Sensors\Sensors;
-use App\Entity\Sensors\SensorType;
-use App\Entity\Sensors\SensorTypes\Bmp;
-use App\Entity\Sensors\SensorTypes\Dallas;
-use App\Entity\Sensors\SensorTypes\Dht;
-use App\Entity\Sensors\SensorTypes\Soil;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\Form\FormMessages;
-use App\HomeAppSensorCore\Interfaces\SensorTypes\StandardSensorTypeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -86,6 +86,7 @@ class SensorControllerTest extends WebTestCase
             );
 
             $requestResponse = $this->client->getResponse();
+//            dd($requestResponse);
             $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
             $this->userToken = $responseData['token'];
@@ -232,7 +233,7 @@ class SensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
+//dd($responseData, $this->client->getResponse()->getContent());
         self::assertNull($sensor);
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -389,9 +390,10 @@ class SensorControllerTest extends WebTestCase
      * @dataProvider newSensorExtendedDataProvider
      * @param string $sensorType
      * @param string $sensorName
-     * @param StandardSensorTypeInterface $class
+     * @param string $class
+     * @param array $sensors
      */
-    public function test_can_add_sensor_and_card_details(string $sensorType, string $sensorName, string $class, array $sensors)
+    public function test_can_add_sensor_and_card_details(string $sensorType, string $sensorName, string $class, array $sensors): void
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
@@ -424,6 +426,7 @@ class SensorControllerTest extends WebTestCase
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensorNameID' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
+
         self::assertInstanceOf(Sensors::class, $sensor);
         self::assertInstanceOf($class, $dhtSensor);
         self::assertInstanceOf(CardView::class, $cardView);
@@ -489,15 +492,16 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
         );
 
-        $totalSensorTypes = count(SensorType::SENSOR_TYPES);
+        $totalSensorTypes = count(SensorType::ALL_SENSOR_TYPE_DATA);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
+//        dd($responseData);
         $sensorTypeCount = count($responseData);
 
         foreach ($responseData as $sensorType) {
             self::assertIsInt($sensorType['sensorTypeID']);
-            self::assertContains($sensorType['sensorType'], SensorType::SENSOR_TYPES);
+            self::assertArrayHasKey($sensorType['sensorType'], SensorType::ALL_SENSOR_TYPE_DATA);
             self::assertArrayHasKey('description', $sensorType);
         }
 
