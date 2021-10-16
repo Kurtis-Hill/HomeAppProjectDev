@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+#[Route('/HomeApp/api/sensors', name: 'devices')]
 class AddNewSensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;

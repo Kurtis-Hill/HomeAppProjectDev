@@ -4,12 +4,12 @@ controllers:
 
 esp-device-sensors:
     resource: ../../src/ESPDeviceSensor/Controller
-    prefix: /api/sensors
+#    prefix: /HomeApp/api/sensors
     type: annotation
 
 devices:
     resource: ../../src/Devices/Controller
-    prefix: /api/devices
+#    prefix: /api/devices
     type: annotation
 
 kernel:

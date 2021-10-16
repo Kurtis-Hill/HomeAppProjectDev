@@ -8,11 +8,11 @@ if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
-echo "Installing composer packages..."
-
-#php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
-
-echo "...Composer packages installed"
+if [ ${APP_ENV} == 'prod' ]; then
+	echo "Installing composer packages..."
+	php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
+	echo "...Composer packages installed"
+fi
 
 echo "Querying test database"
 

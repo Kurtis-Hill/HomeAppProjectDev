@@ -6,7 +6,11 @@ namespace App\DataFixtures\ESP8266;
 use App\DataFixtures\Card\CardFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Card\CardView;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
@@ -99,6 +103,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $manager->persist($otherUserCard);
 
                 $newSensorType = new $sensorDetails['object'];
+
                 foreach ($sensorDetails['readingTypes'] as $object) {
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
@@ -131,6 +136,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->flush();
+//        dd('g');
     }
 
 }

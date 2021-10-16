@@ -7,13 +7,15 @@ use App\Devices\Voters\DeviceVoter;
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class AddNewDeviceController
+#[Route('/HomeApp/api/user-devices', name: 'user-devices')]
+class AddNewDeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
     /**
@@ -22,7 +24,7 @@ class AddNewDeviceController
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @return JsonResponse
      */
-    #[Route('/esp/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
+    #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
         NewESP8266DeviceService $deviceService,
