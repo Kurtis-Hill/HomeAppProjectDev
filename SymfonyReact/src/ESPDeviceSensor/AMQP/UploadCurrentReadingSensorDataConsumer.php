@@ -7,9 +7,9 @@ use App\Devices\Entity\Devices;
 use App\ErrorLogs;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService;
-use App\Repository\Core\DevicesRepository;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -22,9 +22,9 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     private UpdateCurrentSensorReadingsService $sensorCurrentReadingUpdateService;
 
     /**
-     * @var DevicesRepository
+     * @var DeviceRepositoryInterface
      */
-    private DevicesRepository $deviceRepository;
+    private DeviceRepositoryInterface $deviceRepository;
 
     /**
      * @param UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService

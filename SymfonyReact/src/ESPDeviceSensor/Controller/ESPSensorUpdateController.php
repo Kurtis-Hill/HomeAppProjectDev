@@ -2,6 +2,7 @@
 
 namespace App\ESPDeviceSensor\Controller;
 
+use App\ESPDeviceSensor\AMQP\Producers\UpdateCurrentDataProducer;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
@@ -20,6 +21,11 @@ class ESPSensorUpdateController extends AbstractController
     use HomeAppAPIResponseTrait;
 
     private ProducerInterface $currentReadingAMQPProducer;
+
+//    public function __construct(UpdateCurrentDataProducer $currentDataProducer)
+//    {
+//        $this->currentReadingAMQPProducer = $currentDataProducer;
+//    }
 
     /**
      * @param Request $request
@@ -47,7 +53,7 @@ class ESPSensorUpdateController extends AbstractController
             return $this->sendBadRequestJsonResponse(['No device id found for device']);
         }
 
-        $deviceId = $security->getUser()->getDeviceNameID();
+        $deviceId = $security->getUser()?->getDeviceNameID();
 
         $errors = [];
 

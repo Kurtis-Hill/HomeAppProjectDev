@@ -14,9 +14,13 @@ services:
     resource: './*'
     exclude: './{Traits,DependencyInjection,Entity,Tests}'
 
+####### not working had to put in main services for now ####### DEV
   App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
     calls:
       - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
+
+  ######################## Producers ######################################################
+  App\ESPDeviceSensor\AMQP\Producers\UpdateCurrentDataProducer:
 
   ######################## Consumers ######################################################
   App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
