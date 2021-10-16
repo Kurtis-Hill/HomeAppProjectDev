@@ -12,10 +12,15 @@ services:
   ################### Core ############################
   App\Devices\:
     resource: '../src/Devices/*'
-    exclude: '../src/Devices/{Traits,DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+    exclude: '../src/Devices/{Traits,DependencyInjection,Entity,Tests}'
 
 
   ################### Devices ############################
   App\Devices\Controller\:
     resource: '../src/Devices/Controller'
     tags: [ 'controller.service_arguments' ]
+
+  ######################## Devices ######################################################################################
+  App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
+######################## EndOfDevices ######################################################################################
