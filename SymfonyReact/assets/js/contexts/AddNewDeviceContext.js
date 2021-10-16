@@ -52,7 +52,7 @@ export default class AddNewDeviceContextProvider extends Component {
 
         console.log('formdata', jsonFormData);
       //  try {
-            const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, jsonFormData, getAPIHeader());
+            const newDeviceSubmissionResponse = await axios.post(`${apiURL}devices/add-new-device`, jsonFormData, getAPIHeader());
 
             // console.log('ge', newDeviceSubmissionResponse.response);
             if (newDeviceSubmissionResponse.status === 201) {

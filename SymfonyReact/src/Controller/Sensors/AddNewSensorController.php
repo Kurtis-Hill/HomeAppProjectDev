@@ -27,6 +27,10 @@ class AddNewSensorController extends AbstractController
 
     /**
      * @param Request $request
+     * @param NewSensorCreationServiceInterface $newSensorCreationService
+     * @param SensorReadingTypeCreationInterface $readingTypeCreation
+     * @param DeviceRepositoryInterface $deviceRepository
+     * @param SensorRepositoryInterface $sensorRepository
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
      */

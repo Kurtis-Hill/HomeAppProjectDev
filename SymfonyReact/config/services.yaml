@@ -52,6 +52,10 @@ services:
         calls:
             - setESPCurrentReadingProducer: ['@current_sensor_reading_producer']
 
+    App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
+        calls:
+            - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
+
 
 ######################## Sensors ######################################################################################
 ######################## Producers ######################################################
