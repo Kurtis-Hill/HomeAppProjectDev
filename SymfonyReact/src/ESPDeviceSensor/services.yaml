@@ -55,7 +55,7 @@ services:
     alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactory'
 
 
-  ######################## Repositories ########################################################################
+######################## Repositories ########################################################################
   App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface:
     alias: 'App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepository'
 ######################## End Of Sensors ######################################################################################

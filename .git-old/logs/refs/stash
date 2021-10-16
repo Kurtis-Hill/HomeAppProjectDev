@@ -1,6 +1,0 @@
-0000000000000000000000000000000000000000 45f4156e2d01bc3a0d34002b3a4730484df50c98 Kurtis <kurtis@soapmedia.co.uk> 1625928536 +0100	WIP on master: ebc8a23 added composer.lock file
-45f4156e2d01bc3a0d34002b3a4730484df50c98 e2ad70a4a263e85d2178fc5c6d6d6c75dd88f67e Kurtis <kurtis@soapmedia.co.uk> 1626163917 +0100	WIP on Docker: 666f744 git ignore updates
-e2ad70a4a263e85d2178fc5c6d6d6c75dd88f67e 48c0d1a9480a6210a06554cb71569570028a801b Kurtis <kurtis@soapmedia.co.uk> 1626163989 +0100	WIP on master: ebc8a23 added composer.lock file
-48c0d1a9480a6210a06554cb71569570028a801b 0ff6e82b445985e6faf026efb362b99280762d78 Kurtis <kurtis@soapmedia.co.uk> 1626262821 +0100	WIP on master: 2c25b8a removed debug
-0ff6e82b445985e6faf026efb362b99280762d78 93ba1238db752cb5ef223c4f22aa8a21fd5d6fd5 kurtis-hill <kurtis.hill1990@gmail.com> 1626426663 +0100	WIP on master: 15669c9 sorted namespacing issue
-93ba1238db752cb5ef223c4f22aa8a21fd5d6fd5 f889444420fdbacf80f5eeec68c0ec52b8d22c5d kurtis-hill <kurtis.hill1990@gmail.com> 1629966773 +0100	WIP on Request-Refactor: 93abc1f interface better naming

@@ -20,7 +20,7 @@ services:
     resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
-######################## Devices ######################################################################################
+
+  ######################## Services ########################################################################
   App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
     alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
-######################## EndOfDevices ######################################################################################
