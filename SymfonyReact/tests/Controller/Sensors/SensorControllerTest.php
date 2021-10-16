@@ -3,7 +3,6 @@
 
 namespace App\Tests\Controller\Sensors;
 
-
 use App\API\HTTPStatusCodes;
 use App\Controller\Core\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
@@ -19,7 +18,6 @@ use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
@@ -233,7 +231,7 @@ class SensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData, $this->client->getResponse()->getContent());
+        //dd($responseData, $this->client->getResponse()->getContent());
         self::assertNull($sensor);
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -538,7 +536,7 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken. '1', 'CONTENT_TYPE' => 'application/json'],
             $jsonData,
         );
-//dd($this->client->getResponse()->getStatusCode());
+        //dd($this->client->getResponse()->getStatusCode());
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
     }
 

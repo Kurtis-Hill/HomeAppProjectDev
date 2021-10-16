@@ -10,17 +10,17 @@ services:
   # this creates a service per class whose id is the fully-qualified class name
 
 ################### Core ############################
-  App\:
-    resource: '../*'
-    exclude: '../{Traits,DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+  App\Devices\:
+    resource: './*'
+    exclude: './{Traits,DependencyInjection,Entity,Tests}'
 
 
 ################### Devices ############################
   App\Devices\Controller\:
-    resource: '../Controller'
+    resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
-######################## Devices ######################################################################################
+
+  ######################## Services ########################################################################
   App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
     alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
-######################## EndOfDevices ######################################################################################

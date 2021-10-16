@@ -3,7 +3,10 @@
 namespace App\ESPDeviceSensor\Controller;
 
 use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
@@ -22,8 +25,13 @@ class AddNewSensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
+
     /**
      * @param Request $request
+     * @param NewSensorCreationServiceInterface $newSensorCreationService
+     * @param SensorReadingTypeCreationInterface $readingTypeCreation
+     * @param DeviceRepositoryInterface $deviceRepository
+     * @param SensorRepositoryInterface $sensorRepository
      * @param CardUserDataService $cardDataService
      * @return JsonResponse
      */
@@ -32,6 +40,8 @@ class AddNewSensorController extends AbstractController
         Request $request,
         NewSensorCreationServiceInterface $newSensorCreationService,
         SensorReadingTypeCreationInterface $readingTypeCreation,
+        DeviceRepositoryInterface $deviceRepository,
+        SensorRepositoryInterface $sensorRepository,
         CardUserDataService $cardDataService
     ): JsonResponse {
         try {
@@ -40,15 +50,17 @@ class AddNewSensorController extends AbstractController
             error_log($exception);
             return $this->sendBadRequestJsonResponse(['Request Format not supported']);
         }
-        dd($sensorData);
-//        $newSensorDTO;
 
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
         }
+        $newSensorDTO = new NewSensorDTO(
+            $sensorData['sensorName'],
+            $sensorData['sensorTypeID'],
+            $sensorData['deviceNameID']
+        );
 
-        $em = $this->getDoctrine()->getManager();
-        $device = $em->getRepository(Devices::class)->findOneBy(['deviceNameID' => $sensorData['deviceNameID']]);
+        $device = $deviceRepository->findOneById($newSensorDTO->getDeviceNameID());
 
         if (!$device instanceof Devices) {
             return $this->sendBadRequestJsonResponse(['Cannot find device to add sensor too']);
@@ -59,7 +71,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
         }
 
-        $sensor = $newSensorCreationService->createNewSensor($sensorData);
+        $sensor = $newSensorCreationService->createNewSensor($newSensorDTO);
         if (!empty($newSensorCreationService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
         }
@@ -75,15 +87,15 @@ class AddNewSensorController extends AbstractController
             $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
 
             if (!empty($newSensorCreationService->getUserInputErrors())) {
-                dd('user error', $sensor);
-                $em->remove($sensor);
-                $em->flush();
+                $sensorRepository->remove($sensor);
+                $sensorRepository->remove($sensor);
+                $sensorRepository->flush();
 
                 return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
             }
             if (!empty($newSensorCreationService->getServerErrors())) {
-                $em->remove($sensor);
-                $em->flush();
+                $sensorRepository->remove($sensor);
+                $sensorRepository->flush();
 
                 return $this->sendInternelServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
             }

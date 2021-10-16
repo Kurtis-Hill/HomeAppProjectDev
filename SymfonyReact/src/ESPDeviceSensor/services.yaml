@@ -1,0 +1,61 @@
+parameters:
+
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+
+  ################### Core ############################
+  App\ESPDeviceSensor\:
+    resource: './*'
+    exclude: './{Traits,DependencyInjection,Entity,Tests}'
+
+  App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
+    calls:
+      - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
+
+  ######################## Consumers ######################################################
+  App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
+
+  ######################## Update Sensor Reading Services ######################################################
+  App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
+
+  App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'
+
+  App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
+
+  App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary'
+
+  ######################## New Sensor Creation Services ########################################################
+  App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationService'
+
+  App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
+
+  ######################## Factories ###########################################################################
+  App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:
+    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactory'
+
+  App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface:
+    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\ORMOutOfBoundsFactory'
+
+  App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface:
+    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactory'
+
+  App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface:
+    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactory'
+
+
+######################## Repositories ########################################################################
+  App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface:
+    alias: 'App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepository'
+######################## End Of Sensors ######################################################################################
