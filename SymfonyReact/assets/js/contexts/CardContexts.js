@@ -54,7 +54,7 @@ class CardContextProvider extends Component {
 
 
     componentDidUpdate(prevProps, preState) {
-        this.setURL();
+        // this.setURL();
         //TODO compare states display up/down arrow for reading level
         // console.log('prev state', preState);
         // console.log('prev props', prevProps);
@@ -66,7 +66,6 @@ class CardContextProvider extends Component {
 
 
     setURL = () => {
-        console.log("setting url");
         const cardAPI = apiURL+'card-data/cards';
         if (window.location.pathname === webappURL+'index') {
             this.setState({url: cardAPI});
@@ -82,9 +81,6 @@ class CardContextProvider extends Component {
 
         const currentGetParameters = `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`;
 
-        console.log(`${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`);
-        console.log(this.state.url);
-
 // DEV needs sorting not proper
         if (currentGetParameters === `${this.state.url}`) {
             return;
@@ -98,6 +94,7 @@ class CardContextProvider extends Component {
 
     //Fetches all the card data to be displayed on the index page
     fetchCardData = async () => {
+        this.setURL();
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 
