@@ -65,12 +65,12 @@ IPAddress netmask(255,255,255,0);
 
 
 //Sensor sepcific settings
-#define AMOUNT_OF_USABLE_PINS 15
-#define ACTIVE_START_PIN 2
-#define LAST_ACTIVE_PIN 4
+#define AMOUNT_OF_USABLE_PINS 0
+#define ACTIVE_START_PIN 0
+#define LAST_ACTIVE_PIN 0
 
 // DHT
-#define DHTPIN 4
+#define DHTPIN 2
 #define DHTTYPE DHT22 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -1007,7 +1007,8 @@ bool connectToNetwork() {
     WiFi.begin(ssid, pass);
 
     int retryCounter = 0;
-    
+
+    Serial.println("Begining to conenct to wifi");
     while(WiFi.status() != WL_CONNECTED){
       ++retryCounter;
       delay(500);
@@ -1314,11 +1315,12 @@ String buildDhtReadingSensorUpdateRequest() {
 
 
 void resetDevice() {
-  createAccessPoint(); //@DEV
   SPIFFS.remove("/device.json");
   SPIFFS.remove("/wifi.json");
   SPIFFS.remove("/dallas.json");
+  SPIFFS.remove("/dht.json");
   server.send(200, "application/json", "{\"status\":\"device reset\"}"); 
+  ESP.restart;
 }
 
 void restartDevice() {
@@ -1360,12 +1362,12 @@ String getSerializedSpiff(String spiff) {
 
   return deviceJson;
 }
-//<---------- END OF SPIFF MEthods ------------------>
+//<---------- END OF SPIFF Methods ------------------>
 
 //<------- Dallas Sensor Functions -------------->
 bool findDallasSensor() {
   bool sensorSuccess = false;
-  for (uint8_t pin = ACTIVE_START_PIN; pin < AMOUNT_OF_USABLE_PINS && pin < LAST_ACTIVE_PIN ; pin++) {
+  for (uint8_t pin = ACTIVE_START_PIN; pin <= AMOUNT_OF_USABLE_PINS || pin <= LAST_ACTIVE_PIN ; pin++) {
     Serial.println("pin");
     Serial.println(pin);
     sensorSuccess = searchPinForOneWire(pin);
@@ -1446,7 +1448,7 @@ void takeDallasTempReadings() {
 
 //<!------------- DHT Functions --------------!>
 void takeDhtReadings() {
-  Serial.print("Taking DHT Readigns:");
+  Serial.println("Taking DHT Readigns:");
   dhtSensor.tempReading = dht.readTemperature();
   dhtSensor.humidReading = dht.readHumidity();
   Serial.print("Temp is:");
@@ -1533,15 +1535,16 @@ void setup() {
     bool loggedIn = deviceLogin(externalIpSuccess);
 
     if (loggedIn == true) {
+      if (setDhtValues()) {
+        dht.begin();
+      }
+      delay(1000);
       if (setDallasValues()) {
         if (findDallasSensor()) {
           delay(500);
           Serial.println("Begining Dallas sensor");
           sensors.begin();
         }
-      }
-      if (setDhtValues()) {
-        dht.begin();
       }
     }
   }
