@@ -39,7 +39,73 @@ class AuthenticationSuccessListener
             $authenticationSuccessEvent->setData($data);
         }
         if ($user instanceof Devices) {
-            $deviceLoginRequest = json_decode($this->requestStack->getCurrentRequest()->getContent(), true);
+            $deviceLoginRequest = json_decode($this->requestStack->getCurrentRequest()?3333333333333333333333333333333
+
+
+
+
+
+
+                3
+
+            -oi78rfs[[-=pack(
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 bmg hbhjnyuccbgytv3ju4
+
+                )]3;486o;979
+            9;=][8=->getContent(), true);
             $ipAddress = $deviceLoginRequest['ipAddress'] ?? null;
             $externalIpAddress = $deviceLoginRequest["externalIpAddress"] ?? null;
 

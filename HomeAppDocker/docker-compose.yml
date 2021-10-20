@@ -13,7 +13,7 @@ services:
       - 9000
     working_dir: /var/www/html
     environment:
-      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6'
+      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6' #@DEV look into
       - 'APP_ENV=${APP_ENV}'
       # - WSLIP=${WSLIP}
     volumes:
