@@ -18,6 +18,16 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         'password' => 'device1234'
     ];
 
+    public const ADMIN_TEST_DEVICE = [
+        'referenceName' => 'admin-device',
+        'password' => 'admin-device'
+    ];
+
+    public const USER_TEST_DEVICE = [
+        'referenceName' => 'user-device',
+        'password' => 'user-device'
+    ];
+
     public const PERMISSION_CHECK_DEVICES = [
         //admin owned devices
       'AdminDeviceAdminRoomAdminGroup' => [
@@ -197,7 +207,27 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($duplicateCheck);
 
-        //@TODO created some admin and regular user isolated (group name mapping) devices
+        $adminDevice = new Devices();
+        $adminDevice->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
+        $adminDevice->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
+        $adminDevice->setRoomObject($this->getReference(RoomFixtures::ADMIN_ROOM));
+        $adminDevice->setDeviceName(self::ADMIN_TEST_DEVICE['referenceName']);
+        $adminDevice->setPassword($this->passwordEncoder->encodePassword($duplicateCheck, self::ADMIN_TEST_DEVICE['password']));
+        $adminDevice->setRoles([Devices::ROLE]);
+        $this->setReference(self::ADMIN_TEST_DEVICE['referenceName'], $adminDevice);
+
+        $manager->persist($adminDevice);
+
+        $userDevice = new Devices();
+        $userDevice->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
+        $userDevice->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
+        $userDevice->setRoomObject($this->getReference(RoomFixtures::ADMIN_ROOM));
+        $userDevice->setDeviceName(self::USER_TEST_DEVICE['referenceName']);
+        $userDevice->setPassword($this->passwordEncoder->encodePassword($duplicateCheck, self::USER_TEST_DEVICE['password']));
+        $userDevice->setRoles([Devices::ROLE]);
+        $this->setReference(self::ADMIN_TEST_DEVICE['referenceName'], $userDevice);
+
+        $manager->persist($adminDevice);
 
         $manager->flush();
 
