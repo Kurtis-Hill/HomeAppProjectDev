@@ -3,7 +3,6 @@
 
 namespace App\Tests\Controller\Sensors;
 
-
 use App\API\HTTPStatusCodes;
 use App\Controller\Core\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
@@ -22,6 +21,8 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -63,16 +64,16 @@ class SensorControllerTest extends WebTestCase
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
             $this->setUserToken();
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
             error_log($e);
         }
     }
 
     /**
-     * @return mixed|string|KernelBrowser|null
-     * @throws \JsonException
+     * @return void
+     * @throws JsonException
      */
-    private function setUserToken()
+    private function setUserToken(): void
     {
         if ($this->userToken === null) {
             $this->client->request(
@@ -85,7 +86,6 @@ class SensorControllerTest extends WebTestCase
             );
 
             $requestResponse = $this->client->getResponse();
-//            dd($requestResponse);
             $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
             $this->userToken = $responseData['token'];
@@ -96,9 +96,9 @@ class SensorControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    public function newSensorSimpleDataProvider(): \Generator
+    public function newSensorSimpleDataProvider(): Generator
     {
         yield [
             'sensor' => SensorType::DHT_SENSOR,
@@ -121,7 +121,7 @@ class SensorControllerTest extends WebTestCase
         ];
     }
 
-    public function newSensorExtendedDataProvider(): \Generator
+    public function newSensorExtendedDataProvider(): Generator
     {
         yield [
             'sensor' => SensorType::DHT_SENSOR,
@@ -232,7 +232,6 @@ class SensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData, $this->client->getResponse()->getContent());
         self::assertNull($sensor);
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['payload']['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -435,7 +434,7 @@ class SensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function test_add_new_sensor_when_not_part_of_associate_group(string $sensorType, string $sensorName): void
     {
@@ -537,7 +536,6 @@ class SensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken. '1', 'CONTENT_TYPE' => 'application/json'],
             $jsonData,
         );
-//dd($this->client->getResponse()->getStatusCode());
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
     }
 

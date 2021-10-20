@@ -63,7 +63,7 @@ function AddNewSensor(props) {
             'sensorName' : sensorName.value,
         }
 
-        const addNewSensorRequest = await axios.post(apiURL+'sensors/add-new-sensor', JSON.stringify(jsonRequestData), getAPIHeader());
+        const addNewSensorRequest = await axios.post(`${apiURL}sensors/add-new-sensor`, JSON.stringify(jsonRequestData), getAPIHeader());
 
         if (addNewSensorRequest.status === 201) {
             setLoading(false);

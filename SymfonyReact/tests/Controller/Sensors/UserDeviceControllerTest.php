@@ -3,7 +3,6 @@
 
 namespace App\Tests\Controller\Sensors;
 
-
 use App\API\HTTPStatusCodes;
 use App\Controller\Core\SecurityController;
 use App\DataFixtures\Core\RoomFixtures;
@@ -19,11 +18,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 
 class UserDeviceControllerTest extends WebTestCase
 {
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/esp/add-new-device';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/add-new-device';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
@@ -109,7 +107,7 @@ class UserDeviceControllerTest extends WebTestCase
         self::assertNotNull($this->userRefreshToken);
     }
 
-//  Add addNewDevice
+    //  Add addNewDevice
     public function test_add_new_device(): void
     {
         $formData = [

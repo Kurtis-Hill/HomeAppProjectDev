@@ -8,14 +8,13 @@ use Exception;
 use JsonException;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-#[Route('/HomeApp/api/device/esp/', name: 'device')]
+#[Route('/HomeApp/api/device/', name: 'device')]
 class ESPSensorUpdateController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -27,7 +26,7 @@ class ESPSensorUpdateController extends AbstractController
      * @param Security $security
      * @return JsonResponse|Response
      */
-    #[Route('update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT])]
+    #[Route('esp/update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT, Request::METHOD_POST])]
     public function updateSensorsCurrentReading(
         Request $request,
         Security $security,
@@ -39,12 +38,12 @@ class ESPSensorUpdateController extends AbstractController
         }
 
         if (empty($requestData['sensorData'])) {
-            throw new BadRequestException('you have not provided the correct information to update the sensor');
+            return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor']);;
         }
 
         $isCallable = [$security->getUser(), 'getDeviceNameID'];
 
-        if (!is_callable($isCallable) || !$security->getUser()->getDeviceNameID()) {
+        if (!is_callable($isCallable) || !$security->getUser()?->getDeviceNameID()) {
             return $this->sendBadRequestJsonResponse(['No device id found for device']);
         }
 
@@ -62,7 +61,6 @@ class ESPSensorUpdateController extends AbstractController
                 );
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception $exception) {
-//                dd($exception->getMessage());
                 $errors[] = $exception->getMessage();
             }
         }
