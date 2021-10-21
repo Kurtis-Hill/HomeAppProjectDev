@@ -30,10 +30,10 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
     public const PERMISSION_CHECK_DEVICES = [
         //admin owned devices
-      'AdminDeviceAdminRoomAdminGroup' => [
+        'AdminDeviceAdminRoomAdminGroup' => [
           'referenceName' => 'aaa',
           'password' => 'processSensorReadingUpdateRequest'
-      ],
+        ],
         'AdminDeviceAdminRoomRegularGroup' => [
             'referenceName' => 'aar',
             'password' => 'device1234'
@@ -64,10 +64,6 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
             'referenceName' => 'rar',
             'password' => 'device1234'
         ],
-    ];
-
-    public const INTERFACE_TEST_DATA = [
-
     ];
 
     private UserPasswordEncoderInterface $passwordEncoder;
@@ -212,7 +208,7 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $adminDevice->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $adminDevice->setRoomObject($this->getReference(RoomFixtures::ADMIN_ROOM));
         $adminDevice->setDeviceName(self::ADMIN_TEST_DEVICE['referenceName']);
-        $adminDevice->setPassword($this->passwordEncoder->encodePassword($duplicateCheck, self::ADMIN_TEST_DEVICE['password']));
+        $adminDevice->setPassword($this->passwordEncoder->encodePassword($adminDevice, self::ADMIN_TEST_DEVICE['password']));
         $adminDevice->setRoles([Devices::ROLE]);
         $this->setReference(self::ADMIN_TEST_DEVICE['referenceName'], $adminDevice);
 
@@ -223,11 +219,11 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $userDevice->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $userDevice->setRoomObject($this->getReference(RoomFixtures::ADMIN_ROOM));
         $userDevice->setDeviceName(self::USER_TEST_DEVICE['referenceName']);
-        $userDevice->setPassword($this->passwordEncoder->encodePassword($duplicateCheck, self::USER_TEST_DEVICE['password']));
+        $userDevice->setPassword($this->passwordEncoder->encodePassword($userDevice, self::USER_TEST_DEVICE['password']));
         $userDevice->setRoles([Devices::ROLE]);
-        $this->setReference(self::ADMIN_TEST_DEVICE['referenceName'], $userDevice);
+        $this->setReference(self::USER_TEST_DEVICE['referenceName'], $userDevice);
 
-        $manager->persist($adminDevice);
+        $manager->persist($userDevice);
 
         $manager->flush();
 

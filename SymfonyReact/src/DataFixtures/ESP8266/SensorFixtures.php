@@ -24,7 +24,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
-    private const SENSORS = [
+    public const SENSORS = [
         'Dht' => 'AdminDHTSensor',
         'Dallas' => 'AdminDallasSensor',
         'Soil' => 'AdminSoilSensor',
@@ -32,13 +32,13 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
     ];
 
     private const CARD_VIEW_CHECK = [
-        'SensorOneON',
-        'SensorTwoOFF',
-        'SensorThreeINDEXONLY',
-        'SensorFourROOMONLY,'
+        'on' => 'S1ON',
+        'off' => 'S2OFF',
+        'device' => 'S3DeviceONLY',
+        'room' => 'S4ROOMONLY,'
     ];
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 5;
     }
@@ -49,44 +49,61 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         $amountOfColours = count(CardFixtures::COLOURS) - 1;
         $amountOfIcons = count(CardFixtures::ICONS) - 1;
 
-        $sensorCount = 0;
-        foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorData) {
-            $sensor = new Sensors();
-            $sensor->setDeviceNameID($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE));
-            $sensor->setSensorName(self::CARD_VIEW_CHECK['SensorOneON']."0".$sensorCount);
-            $sensor->setSensorTypeID($this->getReference($sensorType));
-            $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
+        // to check each sensor type with card states can be returned as to be displayed on the frontend
+        $sensorCountCardView = 0;
+        foreach (self::CARD_VIEW_CHECK as $state => $sensorData) {
+            foreach (SensorType::ALL_SENSOR_TYPE_DATA as $name => $sensorDetails) {
+                $sensor = new Sensors();
+//dd('gi ');
+                $sensor->setDeviceNameID($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
+                $sensor->setSensorName($sensorData.$name.$sensorCountCardView);
+                $sensor->setSensorTypeID($this->getReference($name));
+                $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
-            $sensorUser = new Sensors();
-            $sensor->setDeviceNameID($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE));
-            $sensor->setSensorName(self::CARD_VIEW_CHECK['SensorOneON']."1".$sensorCount);
-            $sensor->setSensorTypeID($this->getReference($sensorType));
-            $sensor->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
+                $manager->persist($sensor);
 
-            $manager->persist($sensor);
+                $newCard = new CardView();
+                $newCard->setSensorNameID($sensor);
+                $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
+                $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES[$state]));
+                $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+                $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
-//                Card for the admin user
-            $newCard = new CardView();
-            $newCard->setSensorNameID($sensor);
-            $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['on']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+                $manager->persist($newCard);
+                $newSensorType = new $sensorDetails['object'];
 
-            $manager->persist($newCard);
 
-            $newCard = new CardView();
-            $newCard->setSensorNameID($sensor);
-            $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['on']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+                foreach ($sensorDetails['readingTypes'] as $object) {
+                    $newObject = new $object;
+                    if ($newObject instanceof StandardReadingSensorInterface) {
+                        $newObject->setSensorNameID($sensor);
+                        $newObject->setCurrentReading(10);
+                        $newObject->setTime();
 
-            $manager->persist($newCard);
+                        if ($newSensorType instanceof StandardSensorTypeInterface) {
+                            $newSensorType->setSensorObject($sensor);
+                            if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
+                                $newSensorType->setTempObject($newObject);
+                            }
+                            if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
+                                $newSensorType->setHumidObject($newObject);
+                            }
+                            if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
+                                $newSensorType->setLatitudeObject($newObject);
+                            }
+                            if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
+                                $newSensorType->setAnalogObject($newObject);
+                            }
+                        }
+
+                        $manager->persist($newSensorType);
+                        $manager->persist($newObject);
+                    }
+                }
+            }
+//            dd('hi');
+            ++$sensorCountCardView;
         }
-
-
-
 
 
         // sensor reading update sensor
@@ -100,7 +117,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $this->addReference($name, $newAdminSensor);
             $manager->persist($newAdminSensor);
         }
-        // for permissions checks this wont cover every scenario down to a sensor by sensor but as there is currently no special permission
+        // for permissions checks one sensor of each type for each variation of device creation
         $sensorCounter = 0;
 
         foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
@@ -195,12 +212,12 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     }
                     $newObjectTwo = new $object;
                     if ($newObjectTwo instanceof StandardReadingSensorInterface) {
-                        $newObjectTwo->setSensorNameID($newAdminSensor);
+                        $newObjectTwo->setSensorNameID($newRegularUserSensor);
                         $newObjectTwo->setCurrentReading(10);
                         $newObjectTwo->setTime();
 
                         if ($newSensorTypeTwo instanceof StandardSensorTypeInterface) {
-                            $newSensorTypeTwo->setSensorObject($newAdminSensor);
+                            $newSensorTypeTwo->setSensorObject($newRegularUserSensor);
                             if ($newSensorTypeTwo instanceof TemperatureSensorTypeInterface && $newObjectTwo instanceof Temperature) {
                                 $newSensorTypeTwo->setTempObject($newObjectTwo);
                             }

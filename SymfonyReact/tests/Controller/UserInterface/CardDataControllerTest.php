@@ -126,9 +126,9 @@ class CardDataControllerTest extends WebTestCase
         foreach ($responseData as $cardData) {
             $sensorObject = $this->entityManager->getRepository(Sensors::class)->findOneBy(['createdBy' => $this->testUser, 'sensorName' => $cardData['sensorName']]);
             $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
-if ($sensorObject === null) {
-    dd($cardData['sensorName']);
-}
+//if ($sensorObject === null) {
+//    dd($cardData['sensorName']);
+//}
             foreach ($cardData['sensorData'] as $sensorData) {
                 $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 

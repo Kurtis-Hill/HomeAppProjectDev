@@ -21,6 +21,7 @@ class ESPSensorUpdateController extends AbstractController
 
     private ProducerInterface $currentReadingAMQPProducer;
 
+    public const SENSOR_UPDATE_SUCCESS_MESSAGE = 'Sensor data accepted';
     /**
      * @param Request $request
      * @param Security $security
@@ -36,7 +37,6 @@ class ESPSensorUpdateController extends AbstractController
         } catch (JsonException) {
             return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
         }
-
         if (empty($requestData['sensorData'])) {
             return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor']);;
         }
@@ -61,6 +61,7 @@ class ESPSensorUpdateController extends AbstractController
                 );
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception $exception) {
+                dd('asd');
                 $errors[] = $exception->getMessage();
             }
         }
@@ -68,7 +69,7 @@ class ESPSensorUpdateController extends AbstractController
             return $this->sendMultiStatusJsonResponse();
         }
 
-        return $this->sendSuccessfulJsonResponse(['Sensor data accepted']);
+        return $this->sendSuccessfulJsonResponse([self::SENSOR_UPDATE_SUCCESS_MESSAGE]);
     }
 
     /**
