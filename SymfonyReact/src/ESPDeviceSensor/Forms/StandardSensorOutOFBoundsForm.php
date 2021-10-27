@@ -3,7 +3,7 @@
 
 namespace App\ESPDeviceSensor\Forms;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;

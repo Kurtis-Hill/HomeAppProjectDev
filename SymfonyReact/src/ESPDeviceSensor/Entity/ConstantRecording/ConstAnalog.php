@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -104,9 +104,6 @@ class ConstAnalog implements ConstantlyRecordInterface
         return $this->sensorReadingTypeID;
     }
 
-    /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
-     */
     public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Analog) {

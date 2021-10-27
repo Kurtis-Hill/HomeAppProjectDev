@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate;
 
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;

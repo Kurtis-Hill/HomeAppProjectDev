@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
 use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;

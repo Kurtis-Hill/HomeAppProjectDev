@@ -51,8 +51,11 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface, APIErrorInte
      * @param FormFactoryInterface $formFactory
      * @param Security $security
      */
-    public function __construct(EntityManagerInterface $em, FormFactoryInterface $formFactory, Security $security)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        FormFactoryInterface $formFactory,
+        Security $security
+    ) {
         $this->formFactory = $formFactory;
         $this->em = $em;
         $this->security = $security;

@@ -34,8 +34,8 @@ class UpdateSensorReadingDTO
     public function __construct(
         string $sensorType,
         string $sensorName,
-        array  $currentReadings,
-        int    $deviceId,
+        array $currentReadings,
+        int $deviceId,
     )
     {
         $this->sensorType = $sensorType;

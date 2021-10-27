@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord;
 
 use App\ESPDeviceSensor\Entity\ConstantRecording\ConstantlyRecordInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
@@ -27,7 +27,6 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
     public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): void
     {
         if (!$readingType->getConstRecord()) {
-//            dd('con');
             foreach (SensorType::SENSOR_READING_TYPE_DATA as $sensorReadingTypeData) {
                 if ($sensorReadingTypeData['object'] === $readingType::class) {
                     $sensorConstRecordObject = new $sensorReadingTypeData['constRecord'];

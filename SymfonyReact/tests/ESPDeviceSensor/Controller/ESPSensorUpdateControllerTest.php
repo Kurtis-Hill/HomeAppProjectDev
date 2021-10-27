@@ -2,13 +2,12 @@
 
 namespace App\Tests\ESPDeviceSensor\Controller;
 
+use App\API\HTTPStatusCodes;
 use App\Controller\Core\SecurityController;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\DataFixtures\ESP8266\SensorFixtures;
 use App\ESPDeviceSensor\Controller\ESPSensorUpdateController;
-use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use Generator;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -142,16 +141,27 @@ class ESPSensorUpdateControllerTest extends WebTestCase
 
     /**
      * @dataProvider malformedSensorUpdateDataProvider
-     * @throws JsonException
      */
     public function test_sending_malformed_sensor_update_request(
         string $sensorType,
-        array $sensorData
-    ): void
-    {
-        $sendData['sensorType'] = $sensorType;
-        $sendData['sensorData'] = [$sensorData];
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
+        array $sensorData,
+        string $title,
+        string $message,
+        int $responseCode,
+    ): void {
+        if (!empty($sensorData)) {
+            $dataToSend = [
+                'sensorType' => $sensorType,
+                'sensorData' => [$sensorData]
+            ];
+        } else {
+            $dataToSend = [
+                'sensorType' => $sensorType,
+            ];
+        }
+
+        $jsonData = json_encode($dataToSend, JSON_THROW_ON_ERROR);
+
         $this->client->request(
             'POST',
             self::ESP_SENSOR_UPDATE,
@@ -162,39 +172,46 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
+        self::assertEquals($responseCode, $requestResponse->getStatusCode());
+        self::assertEquals($title, $responseData['title']);
+        self::assertEquals($message, $responseData['errors'][0]);
     }
 
     public function malformedSensorUpdateDataProvider(): Generator
     {
         yield [
-            'sensorType' => SensorType::DHT_SENSOR,
+            'sensorType' => SensorType::DHT_SENSOR . '1',
             'sensorData' => [
                 'sensorName' => SensorFixtures::SENSORS['Dht'],
                 'currentReadings' => [
                     'temperatureReading' => 15.5,
                     'humidityReading' => 50
                 ]
-            ]
+            ],
+            'title' => 'Bad Request No Data Returned',
+            'message' => 'Sensor type not recognised',
+            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
+
         yield [
             'sensorType' => SensorType::DALLAS_TEMPERATURE,
-            'sensorData' => [
-                'sensorNameWrong' => SensorFixtures::SENSORS['Dallas'],
-                'currentReadings' => [
-                    'temperatureReading' => 15.5,
-                ]
-            ]
+            'sensorData' => [],
+            'title' => 'Bad Request No Data Returned',
+            'message' => 'you have not provided the correct information to update the sensor',
+            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
+
         yield [
             'sensorType' => SensorType::BMP_SENSOR,
             'sensorData' => [
                 'sensorName' => SensorFixtures::SENSORS['Bmp'],
-                'currentReadingsWrong' => [
-                    'temperatureReading' => 15.5,
-                ]
-            ]
+            ],
+            'title' => 'Part of the request was accepted',
+            'message' => 'Only partial content processed',
+            'responseCode' => HTTPStatusCodes::HTTP_MULTI_STATUS_CONTENT
         ];
     }
 }

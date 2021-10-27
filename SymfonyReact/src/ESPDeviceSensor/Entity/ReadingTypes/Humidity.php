@@ -2,18 +2,20 @@
 
 namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Humidity
  *
  * @ORM\Table(name="humid", uniqueConstraints={@ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"}), @ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_6", columns={"deviceNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Sensors\HumidRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\HumidityRepository")
  */
-class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'humidity';
 
@@ -62,11 +64,11 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
     private bool $constRecord = false;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTime|null
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?\DateTime $time;
+    private ?DateTime $time;
 
     /**
      * @var Sensors
@@ -133,7 +135,7 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getTime(): \DateTimeInterface
     {
@@ -169,11 +171,11 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
     }
 
     /**
-     * @param \DateTime|null $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
@@ -188,41 +190,12 @@ class Humidity implements StandardReadingSensorInterface, AllSensorReadingTypeIn
         return $this->constRecord;
     }
 
-    /**
-     * @param bool $constRecord
-     */
+
     public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
     }
 
-    /**
-     * @return int|float
-     */
-    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
-    {
-        return $this->getHighReading() - $this->getCurrentReading();
-    }
-
-    /**
-     * @return int|float
-     */
-    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
-    {
-        return $this->getLowReading() - $this->getCurrentReading();
-    }
-
-    public function isReadingOutOfBounds(): bool
-    {
-        if ($this->getCurrentReading() <= $this->getHighReading()) {
-            return true;
-        }
-        if ($this->getCurrentReading() <= $this->getLowReading()) {
-            return true;
-        }
-
-        return false;
-    }
 
     public function getSensorTypeName(): string
     {

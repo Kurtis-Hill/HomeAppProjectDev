@@ -80,8 +80,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         Security $security,
         CardViewDTOFactory $cardViewDTOFactory,
         CardDataFilterService $cardDataFilterService,
-    )
-    {
+    ) {
         $this->em = $em;
         $this->user = $security->getUser();
         $this->cardViewDTOFactory = $cardViewDTOFactory;

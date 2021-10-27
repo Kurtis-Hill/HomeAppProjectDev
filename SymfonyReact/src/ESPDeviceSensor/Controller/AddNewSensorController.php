@@ -50,7 +50,6 @@ class AddNewSensorController extends AbstractController
             error_log($exception);
             return $this->sendBadRequestJsonResponse(['Request Format not supported']);
         }
-
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
             return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
         }
@@ -76,18 +75,18 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
         }
         if ($sensor === null || !empty($newSensorCreationService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($newSensorCreationService->getServerErrors());
+            return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors());
         }
         if ($sensor instanceof Sensors) {
             $newSensorCard = $cardDataService->createNewSensorCard($sensor, $this->getUser());
 
             if ($newSensorCard === null || !empty($newSensorCreationService->getServerErrors())) {
-                return $this->sendInternelServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
+                return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
             }
+
             $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
 
             if (!empty($newSensorCreationService->getUserInputErrors())) {
-                $sensorRepository->remove($sensor);
                 $sensorRepository->remove($sensor);
                 $sensorRepository->flush();
 
@@ -97,7 +96,7 @@ class AddNewSensorController extends AbstractController
                 $sensorRepository->remove($sensor);
                 $sensorRepository->flush();
 
-                return $this->sendInternelServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
+                return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
             }
 
             $sensorID = $sensor->getSensorNameID();

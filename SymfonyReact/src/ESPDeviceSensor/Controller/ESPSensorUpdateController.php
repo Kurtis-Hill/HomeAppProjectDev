@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\Controller;
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\Entity\SensorType;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
@@ -22,35 +23,37 @@ class ESPSensorUpdateController extends AbstractController
     private ProducerInterface $currentReadingAMQPProducer;
 
     public const SENSOR_UPDATE_SUCCESS_MESSAGE = 'Sensor data accepted';
+
     /**
      * @param Request $request
-     * @param Security $security
      * @return JsonResponse|Response
      */
     #[Route('esp/update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT, Request::METHOD_POST])]
     public function updateSensorsCurrentReading(
         Request $request,
-        Security $security,
     ): JsonResponse|Response {
         try {
             $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
         }
+
         if (empty($requestData['sensorData'])) {
             return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor']);;
         }
 
-        $isCallable = [$security->getUser(), 'getDeviceNameID'];
-
-        if (!is_callable($isCallable) || !$security->getUser()?->getDeviceNameID()) {
-            return $this->sendBadRequestJsonResponse(['No device id found for device']);
+        if (!in_array($requestData['sensorType'], SensorType::ALL_SENSORS, true)) {
+            return $this->sendBadRequestJsonResponse(['Sensor type not recognised']);
         }
 
-        $deviceId = $security->getUser()->getDeviceNameID();
+        $isCallable = [$this->getUser(), 'getDeviceNameID'];
+
+        if (!is_callable($isCallable) || !$this->getUser()?->getDeviceNameID()) {
+            return $this->sendBadRequestJsonResponse(['No device id found for device']);
+        }
+        $deviceId = $this->getUser()?->getDeviceNameID();
 
         $errors = [];
-
         foreach ($requestData['sensorData'] as $sensorUpdateData) {
             try {
                 $updateReadingDTO = new UpdateSensorReadingDTO(
@@ -61,12 +64,11 @@ class ESPSensorUpdateController extends AbstractController
                 );
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception $exception) {
-                dd('asd');
                 $errors[] = $exception->getMessage();
             }
         }
         if (!empty($errors)) {
-            return $this->sendMultiStatusJsonResponse();
+            return $this->sendMultiStatusJsonResponse(['Only partial content processed']);
         }
 
         return $this->sendSuccessfulJsonResponse([self::SENSOR_UPDATE_SUCCESS_MESSAGE]);

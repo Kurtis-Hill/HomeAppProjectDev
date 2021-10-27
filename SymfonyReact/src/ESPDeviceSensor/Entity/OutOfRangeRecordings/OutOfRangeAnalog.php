@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
