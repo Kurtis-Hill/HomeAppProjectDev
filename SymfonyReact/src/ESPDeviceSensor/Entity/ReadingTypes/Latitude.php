@@ -2,6 +2,8 @@
 
 namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,10 +13,12 @@ use JetBrains\PhpStorm\Pure;
  * Latitude
  *
  * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Sensors\LatitudeRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\LatitudeRepository")
  */
-class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Latitude extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
+    public const READING_TYPE = 'latitude';
+
     public const LATITUDE_SENSORS = [
         SensorType::BMP_SENSOR
     ];
@@ -201,30 +205,8 @@ class Latitude implements StandardReadingSensorInterface, AllSensorReadingTypeIn
         $this->constRecord = $constRecord;
     }
 
-    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
-    {
-        return $this->getCurrentReading() - $this->getHighReading();
-    }
-
-    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
-    {
-        return $this->getCurrentReading() - $this->getLowReading();
-    }
-
-    public function isReadingOutOfBounds(): bool
-    {
-        if ($this->getCurrentReading() <= $this->getHighReading()) {
-            return true;
-        }
-        if ($this->getCurrentReading() <= $this->getLowReading()) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function getSensorTypeName(): string
     {
-        return 'latitude';
+        return self::READING_TYPE;
     }
 }

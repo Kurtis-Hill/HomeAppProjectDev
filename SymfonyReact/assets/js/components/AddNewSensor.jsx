@@ -63,29 +63,37 @@ function AddNewSensor(props) {
             'sensorName' : sensorName.value,
         }
 
-        const addNewSensorRequest = await axios.post(`${apiURL}sensors/add-new-sensor`, JSON.stringify(jsonRequestData), getAPIHeader());
-
-        if (addNewSensorRequest.status === 201) {
-            setLoading(false);
-            setSuccessMessage(true);
-            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
-            setTimeout(() =>
-                toggleModal(), 1500
+        try {
+            const addNewSensorRequest = await axios.post(
+                `${apiURL}sensors/add-new-sensor`,
+                JSON.stringify(jsonRequestData),
+                getAPIHeader()
             );
-        } else {
-            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
+            if (addNewSensorRequest.status === 201) {
+                setLoading(false);
+                setSuccessMessage(true);
+                setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
+                setTimeout(() =>
+                    toggleModal(), 1500
+                );
+            } else {
+                setLoading(false);
+                setErrors(`unexpected response`);
+            }
+        } catch (error) {
+            const errors = error.response.data.errors;
 
-            if (status === 400) {
-                setErrors(addNewSensorRequest.payload.errors);
-            }
-            if (status === 500) {
-                alert('Something went wrong try refreshing the browser '+data);
-            }
             setSuccessMessage(false);
             setLoading(false);
+            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
+            if (error.response.status === 400) {
+                setErrors(errors);
+            }
+            if (error.response.status === 500) {
+                alert(`Something went wrong try refreshing the browser ${data}`);
+            }
         }
     }
-
 
     return (
         <React.Fragment>

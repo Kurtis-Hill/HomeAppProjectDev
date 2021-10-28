@@ -1,16 +1,15 @@
 <?php
+
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
-use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
@@ -32,23 +31,20 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
     private SensorOutOfBoundsSensorService $outOfBoundsServiceService;
 
     #[Pure] public function __construct(
-        SensorRepositoryInterface $sensorRepository,
-        SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
-        FormFactoryInterface  $formFactory,
+        EntityManagerInterface $em,
+        FormFactoryInterface $formFactory,
         SensorConstantlyRecordServiceInterface $constantlyRecordService,
         OutOfBoundsSensorServiceInterface $outOfBoundsServiceService,
-    )
-    {
+    ) {
         $this->outOfBoundsServiceService = $outOfBoundsServiceService;
         $this->constantlyRecordService = $constantlyRecordService;
-        parent::__construct($sensorRepository, $sensorReadingTypeFactory,$formFactory);
+        parent::__construct($em, $formFactory);
     }
 
     /**
      * @param UpdateSensorReadingDTO $updateSensorReadingDTO
      * @param Devices $device
      * @return bool
-     * @throws ReadingTypeNotSupportedException
      */
     public function handleUpdateCurrentReadingSensorData(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool
     {

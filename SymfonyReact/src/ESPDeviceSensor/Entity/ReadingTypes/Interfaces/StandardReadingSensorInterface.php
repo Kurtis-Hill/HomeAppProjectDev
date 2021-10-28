@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ESPDeviceSensor\Entity\ReadingTypes;
+namespace App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces;
 
 
 use App\ESPDeviceSensor\Entity\Sensors;

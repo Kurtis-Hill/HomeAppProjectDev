@@ -41,7 +41,7 @@ export default class AddNewDeviceContextProvider extends Component {
         };
 
         console.log('formdata', jsonFormData);
-      //  try {
+       try {
             const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, jsonFormData, getAPIHeader());
 
             // console.log('ge', newDeviceSubmissionResponse.response);
@@ -54,9 +54,9 @@ export default class AddNewDeviceContextProvider extends Component {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['unexpected response'], formSubmit:false}});
             }
 
-        // } catch(error) {
-        //     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
-        // }        
+        } catch(error) {
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
+        }        
     }
 
     updateNewDeviceModalForm = (event) => {

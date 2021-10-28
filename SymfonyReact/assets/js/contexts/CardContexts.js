@@ -267,13 +267,12 @@ class CardContextProvider extends Component {
                 );
             }
         } catch(error) {
-            const badRequestErrors = (!error.response.data.payload.errors.length > 1)
+            const badRequestErrors = (!error.data.errors.length > 1)
                 ? ['something went wrong']
-                : error.response.data.payload.errors;
+                : error.response.data.errors;
 
             if (error.response.status === 400) {
-                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
-                console.log(this.state.modalStatus.errors, 'we go');
+                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});            
             }
 
             if (error.response.status === 404) {

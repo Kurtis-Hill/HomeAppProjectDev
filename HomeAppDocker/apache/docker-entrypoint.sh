@@ -2,43 +2,58 @@
 set -e
 
 sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
-# echo "xdebug.remote_host=$WSLIP" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
+
 if [ ${APP_ENV} == 'prod' ]; then
-	echo "Installing composer packages..."
-	php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
-	echo "...Composer packages installed"
+	echo "production container build"
+	echo "checking internet connection"
+	if ping -c 1 api.github.com &> /dev/null
+	then
+		echo "internet connection found"
+		echo "Installing composer packages..."
+		php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction --no-dev
+		echo "...Composer packages installed"
+	else
+		echo "No internet connection"
+	fi
+	
+	if [ -f /usr/local/etc/php/conf.d/xdebug.ini ]; then
+		echo "Removing xdebug config"
+    	rm -r /usr/local/etc/php/conf.d/xdebug.ini
+	fi
 fi
 
-echo "Querying test database"
+if [ ${APP_ENV} == 'dev' ]; then
+	echo "dev container build"
+	echo "checking internet connection"
+	if ping -c 1 api.github.com &> /dev/null
+	then
+		echo "internet connection found"
+		echo "Installing packages..."
+		php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
+		echo "...Packages installed"
+	else
+		echo "No internet connection"
+	fi
 
+	echo "Querying test database"
+	 if ! php bin/console dbal:run-sql "select firstName from user where firstName = 'admin' limit 1" --env=test | grep -q 'array(1)'; then
+		echo "No test database found loading fixtures..."
+    	php bin/console doctrine:fixtures:load --no-interaction --env=test
+    	echo "...Fixtures loaded"
+	fi
+fi
 
-## not working as intended needs fixing ##
-# if ! php bin/console dbal:run-sql "select * from user limit 1" --env=test > /dev/null -gt 1; then
-#     echo "No test database found loading fixtures"
-#     php bin/console doctrine:fixtures:load --no-interaction --env=test
-#     echo "...Fixtures loaded"
-# else
-#     echo "Test database found"
-# fi
+if [ ! -f /etc/logs/server-errors.log ]; then
+    touch /etc/logs/server-errors.log
+fi
 
-# if [ ! -f /etc/logs/server-errors.log ]; then
-#     touch /etc/logs/server-errors.log
-# fi
-
-# if [ ! -f /etc/logs/user-input-error.log ]; then
-#     touch /etc/logs/server-errors.log
-# fi
+if [ ! -f /etc/logs/user-input-errors.log ]; then
+    touch /etc/logs/user-input-errors.log
+fi
 
 exec /usr/local/bin/docker-php-entrypoint "$@"
-
-## not working as intended needs fixing ##
-# if [ ! php bin/console dbal:run-sql "select * from user limit 1" --env=test ]; then
-#     $1;
-# else
-#     echo "Test database found"
-# fi

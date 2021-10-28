@@ -37,6 +37,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
+## needs removing moved to sensor services doesnt work
     App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
         calls:
             - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]

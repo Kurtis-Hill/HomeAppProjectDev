@@ -21,6 +21,8 @@ use JetBrains\PhpStorm\Pure;
  */
 class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
 {
+    public const NAME = 'Dht';
+
     public const HIGH_TEMPERATURE_READING_BOUNDRY = 80;
 
     public const LOW_TEMPERATURE_READING_BOUNDRY = -40;

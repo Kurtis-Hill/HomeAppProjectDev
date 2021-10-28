@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\ESPDeviceSensor\Entity\ReadingTypes;
+namespace App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces;
 
 interface AllSensorReadingTypeInterface
 {

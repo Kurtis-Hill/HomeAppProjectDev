@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Controller;
 
-use App\HomeAppSensorCore\Interfaces\APIErrorInterface;
+use App\Core\APIInterface\APIErrorInterface;
 use Symfony\Component\Security\Core\Security;
 
 class UserDataService implements APIErrorInterface

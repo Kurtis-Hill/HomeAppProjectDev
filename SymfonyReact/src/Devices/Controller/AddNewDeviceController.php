@@ -7,6 +7,7 @@ use App\Devices\Voters\DeviceVoter;
 use App\Entity\Core\GroupNames;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,9 +30,13 @@ class AddNewDeviceController extends AbstractController
         Request $request,
         NewESP8266DeviceService $deviceService,
         UserPasswordEncoderInterface $passwordEncoder
-    ): JsonResponse
-    {
-        $newDeviceData = json_decode($request->getContent(), true);
+    ): JsonResponse {
+        try {
+            $newDeviceData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
+        }
+
         $deviceName = $newDeviceData['deviceName'] ?? null;
         $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
         $deviceRoom = $newDeviceData['deviceRoom'] ?? null;
@@ -62,7 +67,7 @@ class AddNewDeviceController extends AbstractController
         $device = $deviceService->handleNewDeviceSubmission($deviceData);
 
         if ($device === null || !empty($deviceService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($deviceService->getServerErrors() ?? ['Something went wrong please try again']);
+            return $this->sendInternalServerErrorJsonResponse($deviceService->getServerErrors() ?? ['Something went wrong please try again']);
         }
         if (!empty($deviceService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($deviceService->getUserInputErrors() ?? ['the form you have submitted has failed']);

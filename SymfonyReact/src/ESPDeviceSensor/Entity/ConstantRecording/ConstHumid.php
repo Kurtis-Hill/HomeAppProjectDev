@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
