@@ -173,8 +173,8 @@ CREATE TABLE `devicenames` (
   `groupNameID` int(11) NOT NULL,
   `roomID` int(11) NOT NULL,
   `createdBy` int(11) NOT NULL,
-  'ipAddress' varchar(13) DEFAULT NULL,
-  'externalIpAddress' varchar(13) DEFAULT NULL,
+  `ipAddress` varchar(13) DEFAULT NULL,
+  `externalIpAddress` varchar(13) DEFAULT NULL,
   `roles` longtext NOT NULL COMMENT '(DC2Type:json)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -1137,8 +1137,8 @@ CREATE TABLE `devicenames` (
 `groupNameID` int(11) NOT NULL,
 `roomID` int(11) NOT NULL,
 `createdBy` int(11) NOT NULL,
-'ipAddress' varchar(13) DEFAULT NULL,
-'externalIpAddress' varchar(13) DEFAULT NULL,
+`ipAddress` varchar(13) DEFAULT NULL,
+`externalIpAddress` varchar(13) DEFAULT NULL,
 `roles` longtext NOT NULL COMMENT '(DC2Type:json)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
