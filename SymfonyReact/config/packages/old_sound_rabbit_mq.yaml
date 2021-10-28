@@ -12,25 +12,15 @@ old_sound_rabbit_mq:
 ##### Update Sensor Reading Request ##########
     producers:
         upload_current_reading_sensor_data:
+            class: App\ESPDeviceSensor\AMQP\Producers\UpdateCurrentDataProducer
             service_alias: current_sensor_reading_producer
             connection: default
-            exchange_options: { name: 'current-reading-upload-sensor-data', type: direct }
-        upload_device_ip:
-            service_alias: update_device_ip_producer
-            connection: default
-            exchange_options: { name: 'update-ip-address', type: direct }
+            exchange_options: { name: '%env(UPDATE_SENSOR_EXCHANGE_NAME)%', type: direct }
 
 ##### Update Sensor Reading Request ##########
     consumers:
         upload_current_reading_sensor_data:
             connection: default
-            exchange_options: { name: 'current-reading-upload-sensor-data', type: direct }
-            queue_options: { name: 'upload-current-reading-sensor-data' }
+            exchange_options: { name: '%env(UPDATE_SENSOR_EXCHANGE_NAME)%', type: direct }
+            queue_options: { name: '%env(UPDATE_SENSOR_QUEUE_NAME)%' }
             callback: App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer
-#        update_device_ip_address:
-#            connection: default
-#            exchange_options: { name: 'update-ip-address', type: direct }
-#            queue_options: { name: 'update-ip-address' }
-#            callback: App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer
-
-##### Update Device IP Request ##########

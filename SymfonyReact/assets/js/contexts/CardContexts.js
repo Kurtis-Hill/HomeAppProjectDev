@@ -54,6 +54,7 @@ class CardContextProvider extends Component {
 
 
     componentDidUpdate(prevProps, preState) {
+        // this.setURL();
         //TODO compare states display up/down arrow for reading level
         // console.log('prev state', preState);
         // console.log('prev props', prevProps);
@@ -61,29 +62,39 @@ class CardContextProvider extends Component {
 
     componentWillUnmount() {
         clearInterval(this.cardRefreshTimerID);
-      }
+    }
 
 
     setURL = () => {
         const cardAPI = apiURL+'card-data/cards';
         if (window.location.pathname === webappURL+'index') {
             this.setState({url: cardAPI});
+            return;
         }
-        if (window.location.pathname === webappURL+'device') {
-            const windowLocation = window.location.search;
-            const urlParam = new URLSearchParams(windowLocation);
 
-            const deviceName = urlParam.get('device-id');
-            const deviceGroup = urlParam.get('device-group');
-            const deviceRoom = urlParam.get('device-room');
+        const windowLocation = window.location.search;
+        const urlParam = new URLSearchParams(windowLocation);
 
-            this.setState({url: `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`});
+        const deviceName = urlParam.get('device-id');
+        const deviceGroup = urlParam.get('device-group');
+        const deviceRoom = urlParam.get('device-room');
+
+        const currentGetParameters = `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`;
+
+// DEV needs sorting not proper
+        if (currentGetParameters === `${this.state.url}`) {
+            return;
+        } else {
+            this.setState({url: currentGetParameters});
         }
     }
 
 
+
+
     //Fetches all the card data to be displayed on the index page
     fetchCardData = async () => {
+        this.setURL();
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 

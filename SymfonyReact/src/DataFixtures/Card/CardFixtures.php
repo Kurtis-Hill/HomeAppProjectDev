@@ -40,8 +40,6 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
             'name' => 'cannabis',
             'description' =>'cannabis leaf'
         ],
-
-
         [
             'name' => 'camera',
             'description' =>'camera'
