@@ -9,7 +9,7 @@ services:
         APP_ENV: prod
     container_name: '${APP_NAME}-php-apache-server'
     ports:
-      - '${HTTPS_APP_PORT}:443'
+      - '127.0.0.1:${HTTPS_APP_PORT}:443'
       - 9000
     working_dir: /var/www/html
     environment:
@@ -34,8 +34,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
     restart: always
-    ports:
-      - '${DB_PORT}:3306'
+#    ports:
+#      - '127.0.0.1:${DB_PORT}:3306'
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
       MYSQL_USER: '${MYSQL_USER}'
@@ -62,7 +62,7 @@ services:
       - 8080:8080
     working_dir: /home/node/app/src
     environment:
-      - 'APP_ENV=${APP_ENV}'
+      - '127.0.0.1:APP_ENV=${APP_ENV}'
     volumes:
       - ../SymfonyReact:/home/node/app
     networks:
@@ -72,7 +72,7 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: '${APP_NAME}-rabbitmq'
     ports:
-      - '${RABBIT_MQ_INTERFACE_PORT}:15672'
+      - '127.0.0.1:${RABBIT_MQ_INTERFACE_PORT}:15672'
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq
         - ./rabbitmq/log/:/var/log/rabbitmq

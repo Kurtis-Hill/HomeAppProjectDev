@@ -50,7 +50,6 @@ SSL/server.pfx
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
 HomeAppDocker/rabbitmq/data/*
-HomeAppDocker/db/data/*
-HomeAppDocker/logs/*
 HomeAppDocker/test.sh
 HomeAppDocker/apache/auth.json
+HomeAppDocker/apache/logs/*
