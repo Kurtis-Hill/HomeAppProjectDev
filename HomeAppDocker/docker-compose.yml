@@ -62,7 +62,7 @@ services:
       - 8080:8080
     working_dir: /home/node/app/src
     environment:
-      - '127.0.0.1:APP_ENV=${APP_ENV}'
+      - 'APP_ENV=${APP_ENV}'
     volumes:
       - ../SymfonyReact:/home/node/app
     networks:

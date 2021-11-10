@@ -32,7 +32,7 @@ if [ ${APP_ENV} == 'dev' ]; then
 	echo "checking internet connection"
 	if ping -c 1 api.github.com &> /dev/null
 	then
-		echo "internet connection found"
+		echo "git hub connection found"
 		echo "Installing packages..."
 		php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 		echo "...Packages installed"

@@ -7,6 +7,15 @@ or
 <br>
 <code>https://github.com/Kurtis-Hill/HomeAppProjectDev.git</code>
 
+<h2>SSL Setup</h2>
+first we need to create; client server and ca-certificates these can be signed or self signed. There are multiple guides online for generating these certs but the naming convention should follow:
+<ul>
+    <li>ca-cert.pem</li>
+    <li>client-cert.pem</li>
+    <li>server-cert.pem</li>    
+</ul>
+you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github  
+
 navigate to the root of the project directory and then change directory to HomeAppDocker.
 In this directory run <code>docker-compose up --build</code>
 

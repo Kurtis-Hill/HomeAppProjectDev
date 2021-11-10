@@ -24,9 +24,6 @@
                 "composer-plugin-api": "^1.1.0 || ^2.0",
                 "php": "^7 || ^8"
             },
-            "replace": {
-                "ocramius/package-versions": "1.11.99"
-            },
             "require-dev": {
                 "composer/composer": "^1.9.3 || ^2.0@dev",
                 "ext-zip": "^1.13",

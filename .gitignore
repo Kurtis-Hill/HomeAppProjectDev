@@ -39,12 +39,12 @@ SymfonyReact/.php-version
 SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
 
-SSL/ca-cert.pem
-SSL/ca-key.pem
-SSL/client-cert.pem
-SSL/server-cert.pem
-SSL/server-key.pem
-SSL/server.pfx
+SSL/*
+# SSL/ca-key.pem
+# SSL/client-cert.pem
+# SSL/server-cert.pem
+# SSL/server-key.pem
+# SSL/server.pfx
 
 ##< Docker ###
 HomeAppDocker/.env
