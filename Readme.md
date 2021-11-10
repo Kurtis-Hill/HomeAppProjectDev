@@ -7,6 +7,10 @@ or
 <br>
 <code>https://github.com/Kurtis-Hill/HomeAppProjectDev.git</code>
 
+<h2>Docker env</h2>
+Run this command from the project root
+<code>cp HomeAppDocker/.env.example HomeAppDocker/.env</code>
+and then add your own variables to suit your machines configuration
 <h2>SSL Setup</h2>
 first we need to create; client server and ca-certificates these can be signed or self signed. There are multiple guides online for generating these certs but the naming convention should follow:
 <ul>
