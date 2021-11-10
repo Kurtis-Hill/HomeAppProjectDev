@@ -28,15 +28,15 @@ function AddNewSensor(props) {
     }
 
     const getSensorTypes = async () => {
-        const sensorTypeResponse = await axios.get(apiURL+"sensors/types", getAPIHeader());
+        try {
+            const sensorTypeResponse = await axios.get(`${apiURLsensors}/types`, getAPIHeader());
 
-        if (sensorTypeResponse.status === 200) {
             if (sensorTypeResponse.data) {
                 setSelectedSensorTypes(sensorTypeResponse.data[0].sensorTypeID);
                 setSensorTypes(sensorTypeResponse.data);
-            } else {
-                setErrors(['something has gone wrong getting form field data, unexpected response'])
             }
+        } catch (error) {
+            setErrors(['something has gone wrong getting form field data, unexpected response'])
         }
     }
 

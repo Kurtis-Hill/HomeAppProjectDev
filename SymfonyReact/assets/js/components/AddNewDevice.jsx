@@ -4,7 +4,6 @@ import { AddNewDeviceContext } from '../contexts/AddNewDeviceContext';
 import { webappURL } from '../Utilities/URLSCommon';
 
 const addNewDevice = () => {
-    console.log('he')
     const navBarContext = useContext(NavbarContext);
 
     const addNewDeviceContext = useContext(AddNewDeviceContext);

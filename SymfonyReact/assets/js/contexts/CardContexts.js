@@ -98,16 +98,17 @@ class CardContextProvider extends Component {
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 
-            if (
-                response.data.length >= 1 &&
-                Array.isArray(response.data)
-                 ) {
-                this.setState({cardData: response.data});
+            response.data.length >= 1 
+            && Array.isArray(response.data)
+                ?
+                    this.setState({cardData: response.data})
+                    :
+                    this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
             }
             else {
-                this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
+                
             }
-        } catch(error) {
+        } catch (error) {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
             }

@@ -58,7 +58,7 @@ export default class NavbarContextProvider extends Component {
     }
 
     navbarData = () => {
-        axios.get(apiURL+'navbar/navbar-data', getAPIHeader())
+        axios.get(`${apiURL}navbar/navbar-data`, getAPIHeader())
         .then(response => {
             console.log(response.data);
             const navBarResponse = response.data.payload;

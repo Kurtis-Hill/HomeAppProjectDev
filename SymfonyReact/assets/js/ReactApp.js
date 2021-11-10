@@ -16,6 +16,7 @@ import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
 import AddNewSensor from './components/AddNewSensor';
+import AddNewRoom from './components/UserRooms/AddNewRoom';
 import AddNewDevice from './components/AddNewDevice';
 
 export default class App extends Component {
@@ -53,6 +54,9 @@ export default class App extends Component {
                                                 <AddNewSensor/>
                                             </CardContextProvider>
                                         </Route>
+                                        <Route path="/HomeApp/WebApp/index">   
+                                            <AddNewRoom />
+                                       </Route> 
                                     </div>
                                 </div>         
                             </div>
