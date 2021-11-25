@@ -25,9 +25,12 @@ function AddNewRoom(props) {
 
             if (statusCode === 500) {
                 setErrors(["Server error, try again if the problem persists log out and back in again"]);
-            } else {
+            }
+            if (statusCode === 400) {
                 setErrors(error.response.data.errors);
-                console.log(error);
+            }
+            else {
+                setErrors(["unexpected response while getting user groups, log back out and in again"]);
             }
         }
     }

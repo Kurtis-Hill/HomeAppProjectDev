@@ -7,13 +7,12 @@ if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
-
 if [ ${APP_ENV} == 'prod' ]; then
 	echo "production container build"
-	echo "checking internet connection"
+	echo "checking connection to github"
 	if ping -c 1 api.github.com &> /dev/null
 	then
-		echo "internet connection found"
+		echo "git hub connection made"
 		echo "Installing composer packages..."
 		php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction --no-dev
 		echo "...Composer packages installed"
@@ -27,12 +26,13 @@ if [ ${APP_ENV} == 'prod' ]; then
 	fi
 fi
 
+
 if [ ${APP_ENV} == 'dev' ]; then
 	echo "dev container build"
-	echo "checking internet connection"
+	echo "checking connection to github"
 	if ping -c 1 api.github.com &> /dev/null
 	then
-		echo "git hub connection found"
+		echo "git hub connection made"
 		echo "Installing packages..."
 		php -d memory_limit=-1 `which composer` install --prefer-dist --no-interaction
 		echo "...Packages installed"
