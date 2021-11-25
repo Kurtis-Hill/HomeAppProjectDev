@@ -10,6 +10,8 @@ use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
@@ -31,14 +33,19 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
     private SensorOutOfBoundsSensorService $outOfBoundsServiceService;
 
     #[Pure] public function __construct(
-        EntityManagerInterface $em,
+        SensorRepository $sensorRepository,
+        SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
         FormFactoryInterface $formFactory,
         SensorConstantlyRecordServiceInterface $constantlyRecordService,
         OutOfBoundsSensorServiceInterface $outOfBoundsServiceService,
     ) {
         $this->outOfBoundsServiceService = $outOfBoundsServiceService;
         $this->constantlyRecordService = $constantlyRecordService;
-        parent::__construct($em, $formFactory);
+
+        parent::__construct($sensorRepository,
+            $sensorReadingTypeFactory,
+            $formFactory
+        );
     }
 
     /**
@@ -46,7 +53,7 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
      * @param Devices $device
      * @return bool
      */
-    public function handleUpdateCurrentReadingSensorData(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool
+    public function handleUpdateSensorCurrentReading(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool
     {
         try {
             $sensorReadingTypeObjects = $this->getSensorReadingTypeObjects($updateSensorReadingDTO, $device);
@@ -62,14 +69,12 @@ class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService imp
             | SensorNotFoundException
             | UnexpectedValueException $exception
         ) {
-            dd($exception->getMessage());
             error_log($exception->getMessage(), 0, ErrorLogs::USER_INPUT_ERROR_LOG_LOCATION);
 
         } catch (
             ORMException
             | RuntimeException
             | ReadingTypeNotSupportedException $exception) {
-            dd($exception->getMessage());
             error_log($exception->getMessage(), 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
         }
 

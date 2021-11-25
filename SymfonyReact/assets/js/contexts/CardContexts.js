@@ -103,11 +103,7 @@ class CardContextProvider extends Component {
                 ?
                     this.setState({cardData: response.data})
                     :
-                    this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
-            }
-            else {
-                
-            }
+                    this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});           
         } catch (error) {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});

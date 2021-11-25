@@ -156,7 +156,7 @@ abstract class AbstractSensorUpdateService
         array $updateData
     ): void
     {
-        $sensorType = $sensorTypeObjects->get(0)->getSensorObject()->getSensorTypeID();
+        $sensorType = $sensorTypeObjects->get(0)?->getSensorObject()->getSensorTypeID();
 
         $sensorFormData = $this->prepareSensorFormData(
             $sensorType,

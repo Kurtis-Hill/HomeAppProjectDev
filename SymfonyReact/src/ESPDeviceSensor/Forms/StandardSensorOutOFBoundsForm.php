@@ -9,6 +9,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
@@ -27,7 +28,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadingUpdateInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $highLowCheck = new Callback(function(int|float $highReading, ExecutionContextInterface $context) {
             $lowReading = $context->getRoot()->getData()->getLowReading();
@@ -48,7 +49,6 @@ class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadin
 
         if ($builder->getData() instanceof Temperature) {
             if ($options['formSensorType'] instanceof Dht) {
-//                dd('boom');
                 $builder
                     ->add('highReading', TextType::class, [
                         'required' => true,
@@ -179,7 +179,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadin
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'csrf_protection' => false,

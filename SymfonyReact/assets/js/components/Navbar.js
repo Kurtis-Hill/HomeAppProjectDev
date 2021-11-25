@@ -48,6 +48,7 @@ const Navbar = () => {
                         {context.userRooms.map((navRoom) => (
                             <Link to={`${webappURL}index`} key={navRoom.roomID} className="collapse-item">{navRoom.room}</Link>                            
                         ))}
+                        <Link to={`${webappURL}add-room`} className="collapse-item">+Add New Room</Link>
                     </div>
                     </div>
                 </li>

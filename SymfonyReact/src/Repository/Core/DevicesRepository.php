@@ -48,7 +48,7 @@ class DevicesRepository extends EntityRepository
             ->where(
                   $expr->eq('devices.deviceName', ':deviceName'),
                   $expr->eq('devices.groupNameID', ':groupNameID'),
-                $expr->eq('room.roomID', ':roomID')
+                  $expr->eq('room.roomID', ':roomID')
             )
             ->setParameters(
                 [

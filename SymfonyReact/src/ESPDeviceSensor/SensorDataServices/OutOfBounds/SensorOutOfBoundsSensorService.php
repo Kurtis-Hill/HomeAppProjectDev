@@ -9,7 +9,7 @@ use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface;
 
-class   SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterface
+class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterface
 {
     private OutOfBoundsFactoryInterface $outOfBoundsFactory;
 

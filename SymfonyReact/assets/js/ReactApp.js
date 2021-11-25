@@ -54,7 +54,7 @@ export default class App extends Component {
                                                 <AddNewSensor/>
                                             </CardContextProvider>
                                         </Route>
-                                        <Route path="/HomeApp/WebApp/index">   
+                                        <Route path="/HomeApp/WebApp/add-room">
                                             <AddNewRoom />
                                        </Route> 
                                     </div>

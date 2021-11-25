@@ -60,6 +60,6 @@ services:
 
 
 ######################## Repositories ########################################################################
-  App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface:
-    alias: 'App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepository'
+  App\Devices\Repository\ORM\DeviceRepositoryInterface:
+    alias: 'App\Devices\Repository\ORM\DeviceRepository'
 ######################## End Of Sensors ######################################################################################

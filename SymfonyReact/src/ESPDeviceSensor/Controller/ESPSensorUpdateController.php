@@ -20,18 +20,17 @@ class ESPSensorUpdateController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-    private ProducerInterface $currentReadingAMQPProducer;
-
     public const SENSOR_UPDATE_SUCCESS_MESSAGE = 'Sensor data accepted';
+
+    private ProducerInterface $currentReadingAMQPProducer;
 
     /**
      * @param Request $request
-     * @return JsonResponse|Response
+     * @return Response
      */
     #[Route('esp/update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT, Request::METHOD_POST])]
-    public function updateSensorsCurrentReading(
-        Request $request,
-    ): JsonResponse|Response {
+    public function updateSensorsCurrentReading(Request $request): Response
+    {
         try {
             $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
@@ -46,9 +45,7 @@ class ESPSensorUpdateController extends AbstractController
             return $this->sendBadRequestJsonResponse(['Sensor type not recognised']);
         }
 
-        $isCallable = [$this->getUser(), 'getDeviceNameID'];
-
-        if (!is_callable($isCallable) || !$this->getUser()?->getDeviceNameID()) {
+        if (!is_callable([$this->getUser(), 'getDeviceNameID']) || !$this->getUser()?->getDeviceNameID()) {
             return $this->sendBadRequestJsonResponse(['No device id found for device']);
         }
         $deviceId = $this->getUser()?->getDeviceNameID();

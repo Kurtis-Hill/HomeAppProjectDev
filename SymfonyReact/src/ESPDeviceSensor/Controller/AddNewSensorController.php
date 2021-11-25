@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\Controller;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensors;
-use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
@@ -25,16 +25,6 @@ class AddNewSensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-
-    /**
-     * @param Request $request
-     * @param NewSensorCreationServiceInterface $newSensorCreationService
-     * @param SensorReadingTypeCreationInterface $readingTypeCreation
-     * @param DeviceRepositoryInterface $deviceRepository
-     * @param SensorRepositoryInterface $sensorRepository
-     * @param CardUserDataService $cardDataService
-     * @return JsonResponse
-     */
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
@@ -74,36 +64,33 @@ class AddNewSensorController extends AbstractController
         if (!empty($newSensorCreationService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
         }
-        if ($sensor === null || !empty($newSensorCreationService->getServerErrors())) {
+        if (!$sensor instanceof Sensors || !empty($newSensorCreationService->getServerErrors())) {
             return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors());
         }
-        if ($sensor instanceof Sensors) {
-            $newSensorCard = $cardDataService->createNewSensorCard($sensor, $this->getUser());
 
-            if ($newSensorCard === null || !empty($newSensorCreationService->getServerErrors())) {
-                return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
-            }
+        $newSensorCard = $cardDataService->createNewSensorCard($sensor, $this->getUser());
 
-            $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
-
-            if (!empty($newSensorCreationService->getUserInputErrors())) {
-                $sensorRepository->remove($sensor);
-                $sensorRepository->flush();
-
-                return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
-            }
-            if (!empty($newSensorCreationService->getServerErrors())) {
-                $sensorRepository->remove($sensor);
-                $sensorRepository->flush();
-
-                return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
-            }
-
-            $sensorID = $sensor->getSensorNameID();
-
-            return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
+        if ($newSensorCard === null || !empty($newSensorCreationService->getServerErrors())) {
+            return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
         }
 
-        return $this->sendBadRequestJsonResponse(['Something trying to add a sensor didnt return a sensor, make sure your app is up to date']);
+        $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
+
+        if (!empty($newSensorCreationService->getUserInputErrors())) {
+            $sensorRepository->remove($sensor);
+            $sensorRepository->flush();
+
+            return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
+        }
+        if (!empty($newSensorCreationService->getServerErrors())) {
+            $sensorRepository->remove($sensor);
+            $sensorRepository->flush();
+
+            return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
+        }
+
+        $sensorID = $sensor->getSensorNameID();
+
+        return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
     }
 }

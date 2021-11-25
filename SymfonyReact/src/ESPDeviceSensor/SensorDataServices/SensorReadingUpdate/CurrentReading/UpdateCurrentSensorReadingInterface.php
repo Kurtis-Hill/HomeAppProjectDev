@@ -7,5 +7,5 @@ use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 
 interface UpdateCurrentSensorReadingInterface
 {
-    public function handleUpdateCurrentReadingSensorData(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool;
+    public function handleUpdateSensorCurrentReading(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool;
 }

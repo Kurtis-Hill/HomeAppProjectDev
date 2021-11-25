@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
@@ -13,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\Security;
-
 
 class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInterface
 {

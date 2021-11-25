@@ -6,6 +6,7 @@ namespace App\Devices\DeviceServices\NewDevice;
 use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Forms\AddNewDeviceForm;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -16,62 +17,37 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
 
-class NewESP8266DeviceService implements NewDeviceServiceInterface, APIErrorInterface
+class NewESP8266DeviceService implements NewDeviceServiceInterface
 {
     use FormProcessorTrait;
 
-    /**
-     * @var FormFactoryInterface
-     */
     private FormFactoryInterface $formFactory;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
+    private DeviceRepositoryInterface $deviceRepository;
 
-    /**
-     * @var Security
-     */
     private Security $security;
 
-    /**
-     * @var array
-     */
     private array $userInputErrors = [];
 
-    /**
-     * @var array
-     */
     private array $serverErrors = [];
 
-    /**
-     * DeviceServiceUser constructor.
-     * @param EntityManagerInterface $em
-     * @param FormFactoryInterface $formFactory
-     * @param Security $security
-     */
     public function __construct(
-        EntityManagerInterface $em,
+        DeviceRepositoryInterface $deviceRepository,
         FormFactoryInterface $formFactory,
         Security $security
     ) {
         $this->formFactory = $formFactory;
-        $this->em = $em;
+        $this->deviceRepository = $deviceRepository;
         $this->security = $security;
     }
 
-    /**
-     * @param array $deviceData
-     * @return Devices|null
-     */
     public function handleNewDeviceSubmission(array $deviceData): ?Devices
     {
         try {
             $newDevice = new Devices();
             $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class, $newDevice);
 
-            $this->duplicateSensorCheck($deviceData);
+            $this->duplicateDeviceCheck($deviceData);
 
             $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
         }
@@ -86,12 +62,9 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface, APIErrorInte
         return $newDevice ?? null;
     }
 
-    /**
-     * @param array $deviceData
-     */
-    private function duplicateSensorCheck(array $deviceData): void
+    private function duplicateDeviceCheck(array $deviceData): void
     {
-        $currentUserDeviceCheck = $this->em->getRepository(Devices::class)->findDuplicateDeviceNewDeviceCheck($deviceData);
+        $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck($deviceData);
 
         if ($currentUserDeviceCheck instanceof Devices) {
             throw new BadRequestException(
@@ -127,17 +100,11 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface, APIErrorInte
         }
     }
 
-    /**
-     * @return array
-     */
     #[Pure] public function getUserInputErrors(): array
     {
         return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
     }
 
-    /**
-     * @return array
-     */
     public function getServerErrors(): array
     {
         return $this->serverErrors;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ESPDeviceSensor\Repository\ORM\Device;
+namespace App\Devices\Repository\ORM;
 
 use App\Devices\Entity\Devices;
 use App\Entity\Core\Room;
@@ -45,13 +45,13 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->innerJoin(Room::class, 'room')
             ->where(
                 $expr->eq('devices.deviceName', ':deviceName'),
-                $expr->eq('devices.groupNameID', ':groupNameID'),
+//                $expr->eq('devices.groupNameID', ':groupNameID'),
                 $expr->eq('room.roomID', ':roomID')
             )
             ->setParameters(
                 [
                     'deviceName' => $deviceDetails['deviceName'],
-                    'groupNameID' => $deviceDetails['groupNameObject'],
+//                    'groupNameID' => $deviceDetails['groupNameObject'],
                     'roomID' => $deviceDetails['roomObject']
                 ]
             );

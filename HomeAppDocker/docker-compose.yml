@@ -13,14 +13,13 @@ services:
       - 9000
     working_dir: /var/www/html
     environment:
-      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6' #@DEV look into
+      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6' #@TODO dont need i think
       - 'APP_ENV=${APP_ENV}'
-      # - WSLIP=${WSLIP}
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
       - ./apache/sites-enabled:/etc/apache2/sites-enabled
-      - ./apache/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
     depends_on:
       maria-db:
