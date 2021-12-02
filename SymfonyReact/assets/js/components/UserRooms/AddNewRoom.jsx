@@ -40,7 +40,7 @@ function AddNewRoom(props) {
         try {
             const newRoomResponse = await axios.post(`${apiURL}add-user-room`, {
                 'roomName': userRoom,
-                'groupID': selectedGroup
+                'groupId': selectedGroup
             }, getAPIHeader());
         } catch (error) {
             const statusCode = error.status;

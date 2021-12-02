@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
-use App\Entity\Core\Room;
+use App\User\Entity;
 use App\Entity\Core\User;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use Doctrine\ORM\EntityManagerInterface;

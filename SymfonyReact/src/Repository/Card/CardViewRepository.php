@@ -314,7 +314,7 @@ class CardViewRepository extends EntityRepository
 //                'cc.colour',
 //                'cv.cardviewid'
 //            )
-//            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+//            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
 //            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
@@ -361,7 +361,7 @@ class CardViewRepository extends EntityRepository
 //            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
 //            ->leftJoin('App\Entity\Sensors\Humid', 'h', Join::WITH,'h.sensornameid = cv.sensornameid')
 //            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
-//            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+//            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
 //            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
@@ -412,7 +412,7 @@ class CardViewRepository extends EntityRepository
 //        $qb = $this->createQueryBuilder('cv');
 //        $qb->select('a', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
 //            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
-//            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+//            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
 //            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
@@ -446,7 +446,7 @@ class CardViewRepository extends EntityRepository
 //        $qb = $this->createQueryBuilder('cv');
 //        $qb->select('t', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
 //            ->innerJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
-//            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+//            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
 //            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
@@ -480,7 +480,7 @@ class CardViewRepository extends EntityRepository
 //        $qb = $this->createQueryBuilder('cv');
 //        $qb->select( 'h', 'r.room', 'i.iconname', 's.sensorname', 'cc.colour', 'cv.cardviewid')
 //            ->innerJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
-//            ->innerJoin('App\Entity\Core\Room', 'r', Join::WITH,'r.roomid = cv.roomid')
+//            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
 //            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')

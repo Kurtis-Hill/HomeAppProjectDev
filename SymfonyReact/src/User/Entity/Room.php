@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity\Core;
+namespace App\User\Entity;
 
+use App\Entity\Core\GroupNames;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

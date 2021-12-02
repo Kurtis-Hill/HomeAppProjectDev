@@ -3,7 +3,7 @@
 namespace App\Devices\Repository\ORM;
 
 use App\Devices\Entity\Devices;
-use App\Entity\Core\Room;
+use App\User\Entity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

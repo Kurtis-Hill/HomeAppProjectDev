@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use function Doctrine\ORM\QueryBuilder;
-use App\Entity\Core\Room;
+use App\User\Entity;
 
 class DevicesRepository extends EntityRepository
 {

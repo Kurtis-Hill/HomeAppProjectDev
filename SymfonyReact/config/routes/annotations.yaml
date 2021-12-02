@@ -12,6 +12,11 @@ devices:
 #    prefix: /api/devices
     type: annotation
 
+user:
+    resource: ../../src/User/Controller
+    #    prefix: /api/devices
+    type: annotation
+
 kernel:
     resource: ../../src/Kernel.php
     type: annotation
