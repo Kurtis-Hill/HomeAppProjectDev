@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { getAPIHeader } from '../../Utilities/APICommon';
-import { apiURL } from '../../Utilities/URLSCommon';
+import { getAPIHeader } from '../../../Utilities/APICommon';
+import { apiURL } from '../../../Utilities/URLSCommon';
 
 function AddNewRoom(props) {
     useEffect(() => {
