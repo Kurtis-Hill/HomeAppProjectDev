@@ -10,7 +10,7 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, 'GroupName');
+        parent::__construct($registry, GroupNames::class);
     }
 
     public function findOneById(int $id): ?GroupNames

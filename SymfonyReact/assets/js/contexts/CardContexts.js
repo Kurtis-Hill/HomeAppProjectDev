@@ -1,9 +1,9 @@
 import React, {Component, createContext} from 'react'
 import axios from 'axios';
 
-import {lowercaseFirstLetter, setUserSession} from '../Utilities/Common';
-import {apiURL, webappURL} from '../Utilities/URLSCommon';
-import {getAPIHeader, getRefreshToken} from '../Utilities/APICommon';
+import { lowercaseFirstLetter, setUserSession } from '../Utilities/Common';
+import { apiURL, webappURL } from '../Utilities/URLSCommon';
+import { getAPIHeader, getRefreshToken } from '../Utilities/APICommon';
 
 export const CardContext = createContext();
 
@@ -98,8 +98,8 @@ class CardContextProvider extends Component {
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 
-            response.data.length >= 1 
-            && Array.isArray(response.data)
+            Array.isArray(response.data) 
+            && response.data.length >= 1
                 ?
                     this.setState({cardData: response.data})
                     :

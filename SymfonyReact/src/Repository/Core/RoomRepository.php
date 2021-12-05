@@ -31,11 +31,14 @@ class RoomRepository extends EntityRepository
         $expr = $qb->expr();
 
         $qb->select('r')
+            ->innerJoin('r.groupName', 'gn')
             ->where(
-                $expr->eq('r.room' ,':room')
+                $expr->eq('r.room' ,':room'),
+                $expr->eq('gn.groupNameID' ,':groupName')
             )
             ->setParameters([
-                'room' => $roomName
+                'room' => $roomName,
+                'groupName' => $groupName->getGroupNameID()
             ]);
 
         return $qb->getQuery()->getOneOrNullResult();

@@ -2,12 +2,11 @@
 
 namespace App\User\Repository\ORM;
 
-use App\User\Entity;
-use App\User\DTO\RoomDTOs\AddNewRoomDTO;
+use App\User\Entity\Room;
 
 interface RoomRepositoryInterface
 {
-    public function findDuplicateRoom(AddNewRoomDTO $addNewRoomDTO): ?Room;
+    public function findDuplicateRoom(string $roomName, int $groupNameId): ?Room;
 
     public function persist(Room $room): void;
 

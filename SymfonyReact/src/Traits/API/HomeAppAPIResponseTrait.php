@@ -104,7 +104,7 @@ trait HomeAppAPIResponseTrait
         if (!empty($data)) {
             return new JsonResponse(
                 [
-                    'title' => 'Request Accepted Successfully Updated',
+                    'title' => 'Request Accepted Successfully Created',
                     'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_CREATED
@@ -113,7 +113,7 @@ trait HomeAppAPIResponseTrait
 
         return new JsonResponse(
             [
-                'title' => 'Request Accepted Successfully Updated',
+                'title' => 'Request Accepted Successfully Created',
                 'payload' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_CREATED
@@ -183,12 +183,8 @@ trait HomeAppAPIResponseTrait
             HTTPStatusCodes::HTTP_PARTIAL_CONTENT
         );
     }
-    // 40x Client Error Response
 
-    /**
-     * @param array $errors
-     * @return JsonResponse
-     */
+    // 40x Client Error Response
     public function sendBadRequestJsonResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
@@ -231,10 +227,6 @@ trait HomeAppAPIResponseTrait
 
     // 50x Server Error Response
 
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
     public function sendInternalServerErrorJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {

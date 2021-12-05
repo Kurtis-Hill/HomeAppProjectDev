@@ -10,10 +10,11 @@ use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
-use App\User\Entity;
 use App\Entity\Core\User;
 use App\Form\FormMessages;
+use App\User\Entity\Room;
 use Doctrine\ORM\EntityManagerInterface;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

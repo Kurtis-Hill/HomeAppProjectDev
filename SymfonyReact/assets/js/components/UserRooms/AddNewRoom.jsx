@@ -6,22 +6,25 @@ import { apiURL } from '../../Utilities/URLSCommon';
 function AddNewRoom(props) {
     useEffect(() => {
         getUserGroups();
-    }, [groups]);
+    }, [groups, errors, success]);
 
     const userRoom = useFormInput('');
 
     const [selectedGroup, setSelectedGroup] = useState('');
-    const [groups, setGroups] = useState([{'groupID': 1, 'groupName': 'name'}, {'groupID': 2, 'groupName': 'second name'}]);
+    const [groups, setGroups] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [success, setSuccess] = useState(false);
 
     const getUserGroups = async () => {
         try {
-            const userGroupsResponse = await axios.get(`${apiURL}user-groups`, getAPIHeader());
-
-            setGroups(userGroupsResponse.data);
-            setSelectedGroup(userGroupsResponse.data[0].groupID);
+            const userGroupsResponse = await axios.get(`${apiURL}user-groups/groups`, getAPIHeader());
+            if (userGroupsResponse.data && Array.isArray(userGroupsResponse.data)) {
+                const payload = userGroupsResponse.data; 
+                setGroups(payload);
+                setSelectedGroup(payload[0].groupNameId);
+            }
         } catch (error) {
-            const statusCode = error.response.status;
+            const statusCode = error.status;
 
             if (statusCode === 500) {
                 setErrors(["Server error, try again if the problem persists log out and back in again"]);
@@ -38,16 +41,26 @@ function AddNewRoom(props) {
     const handleNewRoomFormSubmission = async (event) => {
         event.preventDefault();
         try {
-            const newRoomResponse = await axios.post(`${apiURL}add-user-room`, {
-                'roomName': userRoom,
+            const newRoomResponse = await axios.post(`${apiURL}user-rooms/add-user-room`, {
+                'roomName': userRoom.value,
                 'groupId': selectedGroup
             }, getAPIHeader());
+            
+            setErrors([]);        
+            if (newRoomResponse.status === 201) {
+                setSuccess(true);
+            }
         } catch (error) {
+            setSuccess(false);
             const statusCode = error.status;
             if (statusCode === 500) {
                 setErrors(["Server error, try again if the problem persists log out and back in again"]);
-            } else {
-                setErrors(error.data);
+            } else {              
+                if (Array.isArray((error.response.data.errors))) {
+                    setErrors(error.response.data.errors);
+                } else {
+                    setErrors(['Something went wrong']);
+                }
             }
         }
     }
@@ -75,8 +88,20 @@ function AddNewRoom(props) {
                         </div>
                     :
                         null
-            }
-            
+            }            
+            { 
+                success === true 
+                    ? 
+                        <div className='success-container'>
+                            <div className='form-modal-success-box'>
+                                <ol>
+                                    <li style={{"listStyle":"none"}}><h5>New room has been added</h5></li>
+                                </ol>
+                            </div>
+                        </div>  
+                    : 
+                        null
+            }                    
             <form onSubmit={handleNewRoomFormSubmission}>
                 <div className="form-group">
                     <input type="room" className="form-control" aria-describedby="emailHelp" placeholder="Enter room name" {...userRoom}/>
@@ -85,7 +110,7 @@ function AddNewRoom(props) {
                     {
                         groups.length >= 1
                             ? groups.map((group) => (
-                                <option className="form-control" value={group.groupID} key={group.groupID}>{group.groupName}</option>
+                                <option className="form-control" value={group.groupNameId} key={group.groupNameId}>{group.groupName}</option>
                             ))
                             :
                             <option>No group names available try to Log Out then back in again</option>
@@ -96,6 +121,7 @@ function AddNewRoom(props) {
         </React.Fragment>
     );
 }
+
 const useFormInput = initialValue => {
     const [value, setValue] = useState(initialValue);
 

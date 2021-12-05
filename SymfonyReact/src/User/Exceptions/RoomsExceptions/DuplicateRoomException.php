@@ -6,5 +6,5 @@ use Exception;
 
 class DuplicateRoomException extends Exception
 {
-    public const MESSAGE = 'A sensor with the name: %s already exists';
+    public const MESSAGE = 'A room with the name: %s already exists in this group';
 }

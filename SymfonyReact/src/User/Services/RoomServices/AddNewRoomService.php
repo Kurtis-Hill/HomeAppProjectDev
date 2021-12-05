@@ -5,67 +5,58 @@ namespace App\User\Services\RoomServices;
 use App\Entity\Core\GroupNames;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
-use App\User\Repository\ORM\RoomRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use Doctrine\ORM\ORMException;
-use Exception;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AddNewRoomService implements AddNewRoomServiceInterface
 {
-    private RoomRepository $roomRepository;
-
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private RoomRepositoryInterface $roomRepository;
 
     private ValidatorInterface $validator;
 
+    private array $userInputErrors = [];
 
-    private array $userInputErrors;
+    private array $serverErrors = [];
 
-    private array $serverErrors;
-
-    public function __construct(RoomRepositoryInterface $roomRepository, GroupNameRepositoryInterface $groupNameRepository, ValidatorInterface $validator)
+    public function __construct(RoomRepositoryInterface $roomRepository, ValidatorInterface $validator)
     {
         $this->roomRepository = $roomRepository;
-        $this->groupNameRepository = $groupNameRepository;
         $this->validator = $validator;
     }
 
     public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): ?Room
     {
         try {
-            $this->checkForDuplicates($addNewRoomDTO);
-            $groupName = $this->checkForGroupName($addNewRoomDTO);
-
-            $newRoom = $this->createNewRoom($addNewRoomDTO, $groupName);
-            $this->validateNewRoom($newRoom);
-        } catch (ORMException $e) {
-            $this->serverErrors[] = 'Failed to execute queries against the room';
-            error_log($e->getMessage());
-        } catch (DuplicateRoomException | GroupNameNotFoundException $exception) {
+            $this->checkForRoomDuplicates($addNewRoomDTO);
+        } catch (DuplicateRoomException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
-        } catch (Exception) {
-            $this->serverErrors[] = 'Failed to create new room';
         }
 
         return null;
     }
 
-    private function checkForGroupName(AddNewRoomDTO $addNewRoomDTO): ?string
+    public function validateAndCreateRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): ?Room
     {
-        $groupName = $this->groupNameRepository->findOneBy(['name' => $addNewRoomDTO->getGroupName()]);
-        if (!$groupName instanceof GroupNames) {
-            throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $addNewRoomDTO->getGroupNameId()));
+        $newRoom = $this->createNewRoom($addNewRoomDTO, $groupName);
+
+        $validated = $this->validateNewRoom($newRoom);
+
+        if ($validated) {
+            $this->roomRepository->persist($newRoom);
+            $this->roomRepository->flush($newRoom);
         }
-        return $groupName->getName();
+
+
+        return $newRoom;
     }
 
-    private function checkForDuplicates(AddNewRoomDTO $addNewRoomDTO): void
+    private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
     {
-        $duplicateCheck = $this->roomRepository->findDuplicateRoom($addNewRoomDTO);
+        $duplicateCheck = $this->roomRepository->findDuplicateRoom(
+            $addNewRoomDTO->getRoomName(),
+            $addNewRoomDTO->getGroupNameId()
+        );
 
         if ($duplicateCheck instanceof Room) {
             throw new DuplicateRoomException(sprintf(DuplicateRoomException::MESSAGE, $addNewRoomDTO->getRoomName()));
@@ -78,17 +69,32 @@ class AddNewRoomService implements AddNewRoomServiceInterface
 
         $newRoom->setGroupNameID($groupName);
         $newRoom->setRoom($addNewRoomDTO->getRoomName());
+
+        return $newRoom;
     }
 
-    /**
-     * @throws Exception
-     */
-    private function validateNewRoom(Room $room): void
+    private function validateNewRoom(Room $room): bool
     {
-        $validation = $this->validator->validate($room);
+        $errors = $this->validator->validate($room);
 
-        foreach ($validation->getIterator() as $violation) {
-            $this->userInputErrors[] = $violation->getMessage();
+        if (count($errors) > 0) {
+            foreach ($errors as $error) {
+                $this->userInputErrors[] = $error->getMessage();
+            }
+
+            return false;
         }
+
+        return true;
+    }
+
+    public function getUserInputErrors(): array
+    {
+        return $this->userInputErrors;
+    }
+
+    public function getServerErrors(): array
+    {
+        return $this->serverErrors;
     }
 }

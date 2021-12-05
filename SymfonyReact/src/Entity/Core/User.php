@@ -4,6 +4,7 @@ namespace App\Entity\Core;
 
 use App\Core\UserInterface\APISensorUserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\Json;
 
@@ -88,9 +89,8 @@ class User implements UserInterface, APISensorUserInterface
      */
     private array $userGroupMappingEntities = [];
 
-    /**
-     * @return array
-     */
+
+    #[ArrayShape([GroupnNameMapping::class])]
     public function getUserGroupMappingEntities(): array
     {
         return $this->userGroupMappingEntities;
