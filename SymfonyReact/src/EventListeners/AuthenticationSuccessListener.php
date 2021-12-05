@@ -4,7 +4,7 @@ namespace App\EventListeners;
 
 use App\Devices\Entity\Devices;
 use App\Entity\Core\User;
-use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -22,9 +22,8 @@ class AuthenticationSuccessListener
         $this->requestStack = $requestStack;
         $this->deviceRepository = $deviceRepository;
     }
-    /**
-     * @param AuthenticationSuccessEvent $authenticationSuccessEvent
-     */
+
+    
     public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $authenticationSuccessEvent): void
     {
         $user = $authenticationSuccessEvent->getUser();

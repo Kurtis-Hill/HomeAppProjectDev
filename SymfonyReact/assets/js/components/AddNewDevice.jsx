@@ -4,7 +4,6 @@ import { AddNewDeviceContext } from '../contexts/AddNewDeviceContext';
 import { webappURL } from '../Utilities/URLSCommon';
 
 const addNewDevice = () => {
-    console.log('he')
     const navBarContext = useContext(NavbarContext);
 
     const addNewDeviceContext = useContext(AddNewDeviceContext);
@@ -48,10 +47,10 @@ const addNewDevice = () => {
                                 <select value={newDeviceModalContent.newDeviceGroup} name="device-group" id="deviceGroup" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {
                                         navBarContext.userGroupNames.length >= 1
-                                        ? navBarContext.userGroupNames.map((groupNames) => (
-                                            <option className="form-control" value={groupNames.groupNameID} key={groupNames.groupNameID}>{groupNames.groupName}</option>
-                                            ))
-                                        :
+                                            ? navBarContext.userGroupNames.map((groupNames) => (
+                                                <option className="form-control" value={groupNames.groupNameID} key={groupNames.groupNameID}>{groupNames.groupName}</option>
+                                                ))
+                                            :
                                         <option>No group names available try to Log Out then back in again</option>
                                     }
                                 </select>

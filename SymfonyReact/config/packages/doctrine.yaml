@@ -47,3 +47,8 @@ doctrine:
         dir: '%kernel.project_dir%/src/Devices/Entity'
         alias: Devices
         prefix: App\Devices\Entity
+      User:
+        type: annotation
+        dir: '%kernel.project_dir%/src/Devices/Entity'
+        alias: User
+        prefix: App\User\Entity

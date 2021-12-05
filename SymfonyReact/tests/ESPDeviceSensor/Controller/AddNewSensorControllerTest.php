@@ -66,30 +66,24 @@ class AddNewSensorControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @return void
-     * @throws JsonException
-     */
     private function setUserToken(): void
     {
-        if ($this->userToken === null) {
-            $this->client->request(
-                'POST',
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-            );
+        $this->client->request(
+            'POST',
+            SecurityController::API_USER_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
+        );
 
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-            $this->userToken = $responseData['token'];
-            $this->userRefreshToken = $responseData['refreshToken'];
+        $this->userToken = $responseData['token'];
 
-            $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
-        }
+        $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
+
     }
 
     /**
@@ -191,7 +185,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
 
         self::assertInstanceOf(Sensors::class, $sensor);
-        self::assertStringContainsString('Request Accepted Successfully Updated', $responseData['title']);
+        self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
         self::assertArrayHasKey('sensorNameID', $responseData['payload']);
         self::assertIsInt($responseData['payload']['sensorNameID']);
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());

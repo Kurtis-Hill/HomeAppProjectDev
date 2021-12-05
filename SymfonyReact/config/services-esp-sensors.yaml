@@ -11,8 +11,12 @@ services:
 
   ################### Core ############################
   App\ESPDeviceSensor\:
-    resource: './*'
-    exclude: './{Traits,DependencyInjection,Entity,Tests}'
+    resource: '../src/ESPDeviceSensor/*'
+    exclude: '../src/ESPDeviceSensor/{Traits,DependencyInjection,Entity,Tests}'
+
+  App\ESPDeviceSensor\Controller\:
+    resource: '../src/ESPDeviceSensor/Controller'
+    tags: [ 'controller.service_arguments' ]
 
 ####### not working had to put in main services for now ####### DEV
   App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
@@ -60,6 +64,6 @@ services:
 
 
 ######################## Repositories ########################################################################
-  App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface:
-    alias: 'App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepository'
+  App\Devices\Repository\ORM\DeviceRepositoryInterface:
+    alias: 'App\Devices\Repository\ORM\DeviceRepository'
 ######################## End Of Sensors ######################################################################################

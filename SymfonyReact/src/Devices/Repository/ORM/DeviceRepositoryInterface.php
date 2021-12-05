@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ESPDeviceSensor\Repository\ORM\Device;
+namespace App\Devices\Repository\ORM;
 
 
 use App\Devices\Entity\Devices;

@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Entity\Core;
+namespace App\User\Entity;
 
+use App\Entity\Core\GroupNames;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping\Column;
 
 /**
  * Room
@@ -21,11 +24,17 @@ class Room
      */
     private int $roomID;
 
+
     /**
-     * @var string
-     *
-     * @ORM\Column(name="room", type="string", length=20, nullable=false)
+     * @Column(type="string")
      */
+    #[Assert\Length(
+        min: 2,
+        max: 20,
+        minMessage: 'Room name must be at least {{ limit }} characters long',
+        maxMessage: 'Room name cannot be longer than {{ limit }} characters',
+    )]
+    #[Column(type: "string", length: 20, nullable: false)]
     private string $room;
 
     /**

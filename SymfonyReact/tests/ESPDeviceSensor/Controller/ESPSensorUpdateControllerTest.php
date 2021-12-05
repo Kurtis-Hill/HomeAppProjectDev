@@ -9,7 +9,6 @@ use App\DataFixtures\ESP8266\SensorFixtures;
 use App\ESPDeviceSensor\Controller\ESPSensorUpdateController;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Generator;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,50 +35,34 @@ class ESPSensorUpdateControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        try {
-            $this->setUserToken();
-        } catch (JsonException $e) {
-            error_log($e);
-        }
+        $this->setUserToken();
     }
 
-    /**
-     * @return void
-     * @throws JsonException
-     */
     private function setUserToken(): void
     {
-        if ($this->userToken === null) {
-            $this->client->request(
-                'POST',
-                SecurityController::API_DEVICE_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'].'","password":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'].'"}'
-            );
+        $this->client->request(
+            'POST',
+            SecurityController::API_DEVICE_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'].'","password":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'].'"}'
+        );
 
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-            $this->userToken = $responseData['token'];
-        }
+        $this->userToken = $responseData['token'];
     }
 
-    /**
-     * @dataProvider successfulUpdateRequestDataProvider
-     * @param string $sensorType
-     * @param array $sensorData
-     * @throws JsonException
-     */
     public function test_sending_sensor_update_requests(
         string $sensorType,
-        array  $sensorData,
+        array $sensorData,
     ): void
     {
         $sendData['sensorType'] = $sensorType;
         $sendData['sensorData'] = [$sensorData];
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
+        $jsonData = json_encode($sendData);
 
         $this->client->request(
             'POST',

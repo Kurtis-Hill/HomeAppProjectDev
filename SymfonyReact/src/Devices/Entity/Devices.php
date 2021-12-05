@@ -4,8 +4,8 @@ namespace App\Devices\Entity;
 
 use App\Core\UserInterface\APISensorUserInterface;
 use App\Entity\Core\GroupNames;
-use App\Entity\Core\Room;
 use App\Entity\Core\User;
+use App\User\Entity\Room;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\Length;
@@ -67,7 +67,7 @@ class Devices implements UserInterface, APISensorUserInterface
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\Room")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })

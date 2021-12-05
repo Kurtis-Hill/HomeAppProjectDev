@@ -1,9 +1,8 @@
 import React, { Component, createContext, useContext } from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
 
 import { apiURL } from '../Utilities/URLSCommon';
-import { getAPIHeader, getToken } from '../Utilities/APICommon';
+import { getAPIHeader } from '../Utilities/APICommon';
 
 export const AddNewDeviceContext = createContext();
 
@@ -54,7 +53,7 @@ export default class AddNewDeviceContextProvider extends Component {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['unexpected response'], formSubmit:false}});
             }
 
-        } catch(error) {
+        } catch (error) {
             this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
         }        
     }

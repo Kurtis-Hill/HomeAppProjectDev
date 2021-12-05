@@ -6,7 +6,7 @@ namespace App\ESPDeviceSensor\AMQP;
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
-use App\ESPDeviceSensor\Repository\ORM\Device\DeviceRepositoryInterface;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService;
@@ -59,7 +59,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
 
         if ($device instanceof Devices) {
-            return $this->sensorCurrentReadingUpdateService->handleUpdateCurrentReadingSensorData($sensorData, $device);
+            return $this->sensorCurrentReadingUpdateService->handleUpdateSensorCurrentReading($sensorData, $device);
         }
 
         return false;

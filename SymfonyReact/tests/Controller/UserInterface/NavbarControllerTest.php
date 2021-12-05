@@ -11,7 +11,7 @@ use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\Room;
+use App\User\Entity;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

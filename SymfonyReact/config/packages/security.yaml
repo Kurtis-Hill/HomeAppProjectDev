@@ -1,4 +1,3 @@
-
 security:
     encoders:
         App\Entity\Core\User:

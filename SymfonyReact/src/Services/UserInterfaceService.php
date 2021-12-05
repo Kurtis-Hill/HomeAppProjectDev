@@ -1,19 +1,16 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
-use App\Entity\Core\Room;
 use App\Entity\Core\User;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
+use App\User\Entity\Room;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\Security;
-
 
 class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInterface
 {
@@ -69,7 +66,7 @@ class UserInterfaceService implements APIErrorInterface, LoggedInUserRequiredInt
 
 
     #[ArrayShape(['userID' => "int", 'roles' => "array|string[]"])]
-    public function getAppUserDataForLocalStorage()
+    public function getAppUserDataForLocalStorage(): array
     {
         return [
             'userID' => $this->user->getUserID(),

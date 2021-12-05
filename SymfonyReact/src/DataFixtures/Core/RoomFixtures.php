@@ -4,7 +4,7 @@
 namespace App\DataFixtures\Core;
 
 
-use App\Entity\Core\Room;
+use App\User\Entity;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
