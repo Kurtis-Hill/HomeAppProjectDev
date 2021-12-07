@@ -6,7 +6,7 @@ namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 

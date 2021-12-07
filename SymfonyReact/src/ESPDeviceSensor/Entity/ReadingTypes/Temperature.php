@@ -2,6 +2,8 @@
 
 namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,9 +13,9 @@ use JetBrains\PhpStorm\Pure;
  * Temp
  *
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="temp_ibfk_6", columns={"deviceNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Sensors\TempRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\TemperatureRepository")
  */
-class Temperature implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'temperature';
 
@@ -203,27 +205,6 @@ class Temperature implements StandardReadingSensorInterface, AllSensorReadingTyp
         $this->constRecord = $constRecord;
     }
 
-    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
-    {
-        return $this->getHighReading() - $this->getCurrentReading();
-    }
-
-    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
-    {
-        return $this->getLowReading() - $this->getCurrentReading();
-    }
-
-    public function isReadingOutOfBounds(): bool
-    {
-        if ($this->getCurrentReading() <= $this->getHighReading()) {
-            return true;
-        }
-        if ($this->getCurrentReading() <= $this->getLowReading()) {
-            return true;
-        }
-
-        return false;
-    }
 
     public function getSensorTypeName(): string
     {

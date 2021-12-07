@@ -6,12 +6,13 @@ namespace App\Repository\Core;
 
 use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupNames;
+use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use function Doctrine\ORM\QueryBuilder;
-use App\Entity\Core\Room;
+use App\User\Entity;
 
 class DevicesRepository extends EntityRepository
 {
@@ -48,7 +49,7 @@ class DevicesRepository extends EntityRepository
             ->where(
                   $expr->eq('devices.deviceName', ':deviceName'),
                   $expr->eq('devices.groupNameID', ':groupNameID'),
-                $expr->eq('room.roomID', ':roomID')
+                  $expr->eq('room.roomID', ':roomID')
             )
             ->setParameters(
                 [

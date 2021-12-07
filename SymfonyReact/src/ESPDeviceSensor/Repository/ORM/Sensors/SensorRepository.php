@@ -73,6 +73,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
             )
             ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
+
         $result = array_filter($qb->getQuery()->getResult());
         $result = array_values($result);
 

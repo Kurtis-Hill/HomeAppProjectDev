@@ -28,15 +28,15 @@ function AddNewSensor(props) {
     }
 
     const getSensorTypes = async () => {
-        const sensorTypeResponse = await axios.get(apiURL+"sensors/types", getAPIHeader());
+        try {
+            const sensorTypeResponse = await axios.get(`${apiURLsensors}/types`, getAPIHeader());
 
-        if (sensorTypeResponse.status === 200) {
             if (sensorTypeResponse.data) {
                 setSelectedSensorTypes(sensorTypeResponse.data[0].sensorTypeID);
                 setSensorTypes(sensorTypeResponse.data);
-            } else {
-                setErrors(['something has gone wrong getting form field data, unexpected response'])
             }
+        } catch (error) {
+            setErrors(['something has gone wrong getting form field data, unexpected response'])
         }
     }
 
@@ -56,36 +56,43 @@ function AddNewSensor(props) {
 
         const deviceName = new URLSearchParams(window.location.search).get('device-id');
 
-        console.log('hey', deviceName, selectedSensorTypes);
         const jsonRequestData = {
             'deviceNameID' : deviceName,
             'sensorTypeID' : selectedSensorTypes,
             'sensorName' : sensorName.value,
         }
 
-        const addNewSensorRequest = await axios.post(apiURL+'sensors/add-new-sensor', JSON.stringify(jsonRequestData), getAPIHeader());
-
-        if (addNewSensorRequest.status === 201) {
-            setLoading(false);
-            setSuccessMessage(true);
-            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
-            setTimeout(() =>
-                toggleModal(), 1500
+        try {
+            const addNewSensorRequest = await axios.post(
+                `${apiURL}sensors/add-new-sensor`,
+                JSON.stringify(jsonRequestData),
+                getAPIHeader()
             );
-        } else {
-            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
+            if (addNewSensorRequest.status === 201) {
+                setLoading(false);
+                setSuccessMessage(true);
+                setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
+                setTimeout(() =>
+                    toggleModal(), 1500
+                );
+            } else {
+                setLoading(false);
+                setErrors(`unexpected response`);
+            }
+        } catch (error) {
+            const errors = error.response.data.errors;
 
-            if (status === 400) {
-                setErrors(addNewSensorRequest.payload.errors);
-            }
-            if (status === 500) {
-                alert('Something went wrong try refreshing the browser '+data);
-            }
             setSuccessMessage(false);
             setLoading(false);
+            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
+            if (error.response.status === 400) {
+                setErrors(errors);
+            }
+            if (error.response.status === 500) {
+                alert(`Something went wrong try refreshing the browser ${data}`);
+            }
         }
     }
-
 
     return (
         <React.Fragment>

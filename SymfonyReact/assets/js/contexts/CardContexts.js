@@ -1,9 +1,9 @@
 import React, {Component, createContext} from 'react'
 import axios from 'axios';
 
-import {lowercaseFirstLetter, setUserSession} from '../Utilities/Common';
-import {apiURL, webappURL} from '../Utilities/URLSCommon';
-import {getAPIHeader, getRefreshToken} from '../Utilities/APICommon';
+import { lowercaseFirstLetter, setUserSession } from '../Utilities/Common';
+import { apiURL, webappURL } from '../Utilities/URLSCommon';
+import { getAPIHeader, getRefreshToken } from '../Utilities/APICommon';
 
 export const CardContext = createContext();
 
@@ -54,6 +54,7 @@ class CardContextProvider extends Component {
 
 
     componentDidUpdate(prevProps, preState) {
+        // this.setURL();
         //TODO compare states display up/down arrow for reading level
         // console.log('prev state', preState);
         // console.log('prev props', prevProps);
@@ -61,42 +62,49 @@ class CardContextProvider extends Component {
 
     componentWillUnmount() {
         clearInterval(this.cardRefreshTimerID);
-      }
+    }
 
 
     setURL = () => {
         const cardAPI = apiURL+'card-data/cards';
         if (window.location.pathname === webappURL+'index') {
             this.setState({url: cardAPI});
+            return;
         }
-        if (window.location.pathname === webappURL+'device') {
-            const windowLocation = window.location.search;
-            const urlParam = new URLSearchParams(windowLocation);
 
-            const deviceName = urlParam.get('device-id');
-            const deviceGroup = urlParam.get('device-group');
-            const deviceRoom = urlParam.get('device-room');
+        const windowLocation = window.location.search;
+        const urlParam = new URLSearchParams(windowLocation);
 
-            this.setState({url: `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`});
+        const deviceName = urlParam.get('device-id');
+        const deviceGroup = urlParam.get('device-group');
+        const deviceRoom = urlParam.get('device-room');
+
+        const currentGetParameters = `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`;
+
+// DEV needs sorting not proper
+        if (currentGetParameters === `${this.state.url}`) {
+            return;
+        } else {
+            this.setState({url: currentGetParameters});
         }
     }
 
 
+
+
     //Fetches all the card data to be displayed on the index page
     fetchCardData = async () => {
+        this.setURL();
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 
-            if (
-                response.data.length >= 1 &&
-                Array.isArray(response.data)
-                 ) {
-                this.setState({cardData: response.data});
-            }
-            else {
-                this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});
-            }
-        } catch(error) {
+            Array.isArray(response.data) 
+            && response.data.length >= 1
+                ?
+                    this.setState({cardData: response.data})
+                    :
+                    this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});           
+        } catch (error) {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
             }
@@ -256,13 +264,12 @@ class CardContextProvider extends Component {
                 );
             }
         } catch(error) {
-            const badRequestErrors = (!error.response.data.payload.errors.length > 1)
+            const badRequestErrors = (!error.data.errors.length > 1)
                 ? ['something went wrong']
-                : error.response.data.payload.errors;
+                : error.response.data.errors;
 
             if (error.response.status === 400) {
-                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});
-                console.log(this.state.modalStatus.errors, 'we go');
+                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});            
             }
 
             if (error.response.status === 404) {

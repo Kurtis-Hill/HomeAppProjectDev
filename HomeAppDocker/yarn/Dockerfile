@@ -5,6 +5,4 @@ RUN chmod +x /usr/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint"]
 
-CMD ["yarn", "dev-server", "--host=apache"]
-
-EXPOSE 8080
+CMD ["yarn"]

@@ -3,7 +3,7 @@
 namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
-use App\ESPDeviceSensor\Entity\ReadingTypes\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;

@@ -59,7 +59,7 @@ class CardDataController extends AbstractController
         $cardDataDTOs = $cardDataService->prepareCardDTOs($route, $device ?? null, $cardFilters);
 
         if (!empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());
+            return $this->sendInternalServerErrorJsonResponse($cardDataService->getServerErrors());
         }
         if (!empty($cardDataService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
@@ -116,7 +116,7 @@ class CardDataController extends AbstractController
         $cardFormDTO = $cardDataService->getCardViewFormDTO($cardViewObject);
 
         if ($cardFormDTO === null || !empty($cardDataService->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($cardDataService->getServerErrors());
+            return $this->sendInternalServerErrorJsonResponse($cardDataService->getServerErrors());
         }
 
         $encoders = [new JsonEncoder()];
@@ -161,7 +161,7 @@ class CardDataController extends AbstractController
             try {
                 $this->denyAccessUnlessGranted(CardViewVoter::CAN_EDIT_CARD_VIEW_FORM, $cardViewObject);
             } catch (AccessDeniedException) {
-                return $this->sendForbiddenAccessJsonResponse(['errors' => [FormMessages::ACCESS_DENIED]]);
+                return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
             }
         } else {
             return $this->sendBadRequestJsonResponse(['card not found by the id given']);
@@ -196,7 +196,7 @@ class CardDataController extends AbstractController
         }
 
         if (!empty($updateBoundaryReadings->getServerErrors())) {
-            return $this->sendInternelServerErrorJsonResponse($updateBoundaryReadings->getServerErrors());
+            return $this->sendInternalServerErrorJsonResponse($updateBoundaryReadings->getServerErrors());
         }
 
         $em->flush();

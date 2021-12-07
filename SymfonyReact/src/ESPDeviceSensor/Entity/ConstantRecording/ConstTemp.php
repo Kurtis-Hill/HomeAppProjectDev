@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 
 use App\ESPDeviceSensor\Entity\Sensors;
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;

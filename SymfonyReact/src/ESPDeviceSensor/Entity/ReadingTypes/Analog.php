@@ -2,19 +2,20 @@
 
 namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Analog
  *
  * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_6", columns={"deviceNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Sensors\AnalogRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\AnalogRepository")
  */
-class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Analog extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'analog';
 
@@ -122,7 +123,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @return int
      */
-    public function getCurrentReading(): int
+    public function getCurrentReading(): int|float
     {
         return $this->analogReading;
     }
@@ -130,7 +131,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @return int|float
      */
-    public function getHighReading(): int
+    public function getHighReading(): int|float
     {
         return $this->highAnalog;
     }
@@ -138,7 +139,7 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
     /**
      * @return int|float
      */
-    public function getLowReading(): int
+    public function getLowReading(): int|float
     {
         return $this->lowAnalog;
     }
@@ -207,27 +208,6 @@ class Analog implements StandardReadingSensorInterface, AllSensorReadingTypeInte
         $this->constRecord = $constRecord;
     }
 
-    #[Pure] public function getMeasurementDifferenceHighReading(): int|float
-    {
-        return $this->getHighReading() - $this->getCurrentReading();
-    }
-
-    #[Pure] public function getMeasurementDifferenceLowReading(): int|float
-    {
-        return $this->getLowReading() - $this->getCurrentReading();
-    }
-
-    public function isReadingOutOfBounds(): bool
-    {
-        if ($this->getCurrentReading() <= $this->getHighReading()) {
-            return true;
-        }
-        if ($this->getCurrentReading() <= $this->getLowReading()) {
-            return true;
-        }
-
-        return false;
-    }
 
     public function getSensorTypeName(): string
     {

@@ -1,9 +1,8 @@
 import React, { Component, createContext, useContext } from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
 
 import { apiURL } from '../Utilities/URLSCommon';
-import { getAPIHeader, getToken } from '../Utilities/APICommon';
+import { getAPIHeader } from '../Utilities/APICommon';
 
 export const AddNewDeviceContext = createContext();
 
@@ -29,16 +28,6 @@ export default class AddNewDeviceContextProvider extends Component {
     handleNewDeviceFormSubmission = async (event) => {
         event.preventDefault();
 
-        if (this.state.newDeviceModalContent.newDeviceGroup === '') {
-            console.log('its true', this.state.newDeviceModalContent.newDeviceGroup);
-            var newDeviceGroup = document.getElementById("deviceGroup").value;
-        }
-        
-        if (this.state.newDeviceModalContent.newDeviceRoom === '') {
-            console.log('its true 2', this.state.newDeviceModalContent.newDeviceRoom);
-            var newDeviceRoom = document.getElementById("deviceRoom").value;
-        }
-        
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
         const formData = new FormData(event.target);
@@ -51,7 +40,7 @@ export default class AddNewDeviceContextProvider extends Component {
         };
 
         console.log('formdata', jsonFormData);
-      //  try {
+       try {
             const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, jsonFormData, getAPIHeader());
 
             // console.log('ge', newDeviceSubmissionResponse.response);
@@ -64,9 +53,9 @@ export default class AddNewDeviceContextProvider extends Component {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['unexpected response'], formSubmit:false}});
             }
 
-        // } catch(error) {
-        //     this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
-        // }        
+        } catch (error) {
+            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
+        }        
     }
 
     updateNewDeviceModalForm = (event) => {

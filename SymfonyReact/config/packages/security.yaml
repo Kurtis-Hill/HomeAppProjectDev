@@ -1,4 +1,3 @@
-
 security:
     encoders:
         App\Entity\Core\User:
@@ -77,5 +76,6 @@ security:
 #        - { path: ^/HomeApp/api/sensors/update/current-reading, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }
+        - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
         - { path: ^/HomeApp/WebApp, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/HomeApp/api, roles: IS_AUTHENTICATED_FULLY }

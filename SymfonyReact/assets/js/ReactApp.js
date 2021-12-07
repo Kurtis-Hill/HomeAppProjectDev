@@ -16,7 +16,9 @@ import Profilebar from "./components/Profilebar";
 
 import Login from './components/Login';
 import AddNewSensor from './components/AddNewSensor';
+import AddNewRoom from './components/User/Rooms/AddNewRoom';
 import AddNewDevice from './components/AddNewDevice';
+import UpdateUser from './components/User/UpdateUser/UpdateUser';
 
 export default class App extends Component {
     render() {
@@ -25,7 +27,6 @@ export default class App extends Component {
             <Switch>
                 {/* <Route exact path="/HomeApp/WebApp/register"/> */}
                 <Route exact path="/HomeApp/WebApp/login" component={Login}/>
-                {/* <Route exact path="/HomeApp/WebApp/logout" component={removeUserSession()}/> */}
                 <Route path="/HomeApp/WebApp/">
                     <React.Fragment>
                         <div id="page-top">
@@ -53,6 +54,12 @@ export default class App extends Component {
                                                 <AddNewSensor/>
                                             </CardContextProvider>
                                         </Route>
+                                        <Route path="/HomeApp/WebApp/update-user">
+                                            <UpdateUser />
+                                       </Route> 
+                                        <Route path="/HomeApp/WebApp/add-room">
+                                            <AddNewRoom />
+                                       </Route> 
                                     </div>
                                 </div>         
                             </div>

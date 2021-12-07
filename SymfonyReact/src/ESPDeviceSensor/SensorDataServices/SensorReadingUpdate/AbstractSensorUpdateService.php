@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate;
 
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
-use App\ESPDeviceSensor\Entity\ReadingTypes\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
@@ -23,20 +23,10 @@ abstract class AbstractSensorUpdateService
 
     protected SensorRepository $sensorRepository;
 
-    private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
-
-    /**
-     * @var FormFactoryInterface
-     */
     protected FormFactoryInterface $formFactory;
 
+    private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
 
-    /**
-     * AbstractSensorService constructor.
-     * @param SensorRepository $sensorRepository
-     * @param SensorReadingTypeFactoryInterface $sensorReadingTypeFactory
-     * @param FormFactoryInterface $formFactory
-     */
     public function __construct(
         SensorRepository $sensorRepository,
         SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
@@ -47,10 +37,6 @@ abstract class AbstractSensorUpdateService
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * @param array $sensorFormData
-     * @param array $readingTypeObjects
-     */
     protected function processSensorForm(array $sensorFormData, array $readingTypeObjects): void
     {
         foreach ($sensorFormData as $sensorType => $sensorData) {
@@ -62,7 +48,6 @@ abstract class AbstractSensorUpdateService
                         $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($sensorForm->getData()::class);
                         $readingTypeRepository->persist($sensorForm->getData());
                     }
-//                    dd('did not');
                 }
             }
         }
@@ -83,7 +68,6 @@ abstract class AbstractSensorUpdateService
     ])]
     protected function prepareSensorFormData(SensorType $sensorType, array $readingsToUpdate, string $formToProcess): array
     {
-//        dd($readingsToUpdate);
         $sensorType = $sensorType->getSensorType();
         foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorName => $sensorDataArrays) {
             if ($sensorName === $sensorType) {
@@ -106,18 +90,15 @@ abstract class AbstractSensorUpdateService
                                                 'constRecord' => $constRecord
                                             ]
                                         ];
-//                                        dd($sensorFormsData);
                                     }
                                 }
                             }
                             continue;
                         }
-//dd($sensorType);
+
                         if ($formToProcess === SensorType::UPDATE_CURRENT_READING_FORM_ARRAY_KEY) {
                             foreach ($readingsToUpdate['sensorData'] as $sensorData) {
                                 foreach ($formData['readingTypes'] as $readingType => $readingTypeClass) {
-//                                dd('di');
-//                                    dd($sensorData);
                                     if ($readingType === $sensorData['sensorType']) {
                                         $currentReading = $sensorData['currentReading'];
 
@@ -131,8 +112,6 @@ abstract class AbstractSensorUpdateService
                                                 'currentReading' => $currentReading,
                                             ]
                                         ];
-//                                        dd($sensorFormsData);
-                                        continue;
                                     }
                                 }
                             }
@@ -142,14 +121,12 @@ abstract class AbstractSensorUpdateService
                 }
             }
         }
-//    dd($sensorFormsData);
+
         return $sensorFormsData ?? [];
     }
 
+
     /**
-     * @param UpdateSensorReadingDTO $updateSensorReadingDTO
-     * @param $device
-     * @return ArrayCollection
      * @throws SensorNotFoundException
      */
     protected function getSensorReadingTypeObjects(UpdateSensorReadingDTO $updateSensorReadingDTO, $device): ArrayCollection
@@ -179,7 +156,7 @@ abstract class AbstractSensorUpdateService
         array $updateData
     ): void
     {
-        $sensorType = $sensorTypeObjects->get(0)->getSensorObject()->getSensorTypeID();
+        $sensorType = $sensorTypeObjects->get(0)?->getSensorObject()->getSensorTypeID();
 
         $sensorFormData = $this->prepareSensorFormData(
             $sensorType,

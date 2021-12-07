@@ -7,19 +7,20 @@ fi
 
 git config --global url."https://".insteadOf git://
 
-yarn install
+# yarn install
 
 if [ ${APP_ENV} == 'prod' ]; then
-   echo "production enviroment installing yarn assets..."
-   yarn install
+   echo "production environment installing yarn assets..."
+   npm run build
    echo "...finished installing assets"
 fi
 
 if [ ${APP_ENV} == 'dev' ]; then
-   echo "development enviroment setting up webpack dev server..."
+   echo "development environment setting up webpack dev server..."
    yarn install --check-files      
    yarn encore dev --watch
-   yarn encore dev-server --hot --host=apache --port 8080
+   # hot reload working but getting mixed content block
+   # yarn encore dev-server --hot --host=apache --port 8080
    echo "... encore dev server began"
 fi
         

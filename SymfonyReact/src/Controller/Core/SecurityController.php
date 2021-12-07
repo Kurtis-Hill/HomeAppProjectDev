@@ -40,7 +40,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils, Request $request)
     {
          if ($this->getUser()) {
-             return $this->redirectToRoute('index', ['route' => 'index']);
+             return $this->redirectToRoute('spa-view', ['route' => 'index']);
          }
 
         return $this->render('index/index.html.twig');

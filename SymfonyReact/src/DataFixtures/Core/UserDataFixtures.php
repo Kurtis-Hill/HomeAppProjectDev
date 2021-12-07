@@ -26,6 +26,8 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public const REGULAR_GROUP = 'regular-group';
 
+    public const USER_GROUP = 'user-group';
+
     public const SECOND_REGULAR_USER_ISOLATED = 'regular-user-admin-group@gmail.com';
 
     public const USER_ACCOUNTS = [
@@ -76,7 +78,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         //Normal User
         $userGroupName = new GroupNames();
 
-        $userGroupName->setGroupName('user-group');
+        $userGroupName->setGroupName(self::USER_GROUP);
         $userGroupName->setTime();
 
         $regularUser = new User();

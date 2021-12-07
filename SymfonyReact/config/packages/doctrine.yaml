@@ -1,4 +1,3 @@
-#@TODO when ready for production swap out all for .env versions
 doctrine:
   dbal:
     default_table_options:
@@ -11,11 +10,11 @@ doctrine:
     dbname:   "%env(DB_NAME)%"
     user:     "%env(DB_USER)%"
     password: "%env(DB_PASSWORD)%"
-#    options:
-#      1007  : '%env(PRIVATE_KEY)%'
-#      1008  : '%env(CLIENT_CERT)%'
-#      1009  : '%env(CA_CERT)%'
-#      1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
+    # options:
+    #   1007  : '%env(PRIVATE_KEY)%'
+    #   1008  : '%env(CLIENT_CERT)%'
+    #   1009  : '%env(CA_CERT)%'
+    #   1014  : '%env(SSL_VERIFY_SERVER_CERT)%'
 
   orm:
     auto_generate_proxy_classes: '%kernel.debug%'
@@ -35,8 +34,8 @@ doctrine:
         is_bundle: false
         type: annotation
         dir: '%kernel.project_dir%/src/Entity'
-        prefix: 'App\Entity'
         alias: App
+        prefix: App\Entity
       ESPSensorBundle:
         type: annotation
         dir: '%kernel.project_dir%/src/ESPDeviceSensor/Entity'
@@ -47,3 +46,8 @@ doctrine:
         dir: '%kernel.project_dir%/src/Devices/Entity'
         alias: Devices
         prefix: App\Devices\Entity
+      User:
+        type: annotation
+        dir: '%kernel.project_dir%/src/Devices/Entity'
+        alias: User
+        prefix: App\User\Entity
