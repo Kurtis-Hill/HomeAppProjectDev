@@ -8,7 +8,7 @@ use App\User\Entity\Room;
 
 interface AddNewRoomServiceInterface
 {
-    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): ?Room;
+    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): bool;
 
     public function validateAndCreateRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): ?Room;
 

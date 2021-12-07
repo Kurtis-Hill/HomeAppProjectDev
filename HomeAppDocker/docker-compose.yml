@@ -34,7 +34,7 @@ services:
     container_name: '${APP_NAME}-mariadb'
     restart: always
 #    ports:
-#      - '127.0.0.1:${DB_PORT}:3306'
+#      - '127.0.0.1:${DB_PORT}:3306' // @DEV
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
       MYSQL_USER: '${MYSQL_USER}'
@@ -45,6 +45,7 @@ services:
       - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./mariadb/setup.sql:/docker-entrypoint-initdb.d/init.sql:rw,delegated
       - ./mariadb/50config/50-client.cnf:/etc/mysql/mariadb.conf.d/50-client.cnf
+      - ./mariadb/50config/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
       - ../SSL:/etc/mysql/ssl
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD

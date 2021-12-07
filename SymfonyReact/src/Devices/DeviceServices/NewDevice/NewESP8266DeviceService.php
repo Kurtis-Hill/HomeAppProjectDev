@@ -3,12 +3,10 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Forms\AddNewDeviceForm;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Traits\FormProcessorTrait;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -47,14 +45,15 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
             $newDevice = new Devices();
             $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class, $newDevice);
 
+//dd('sd');
             $this->duplicateDeviceCheck($deviceData);
-
             $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
         }
         catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
         }
         catch (ORMException $e) {
+            dd('fa');
             $this->serverErrors[] = 'Failed to process device query';
             error_log($e->getMessage());
         }
@@ -64,8 +63,9 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
 
     private function duplicateDeviceCheck(array $deviceData): void
     {
+//        dd('sd');
         $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck($deviceData);
-
+//dd($currentUserDeviceCheck);
         if ($currentUserDeviceCheck instanceof Devices) {
             throw new BadRequestException(
                 sprintf('Your group already has a device named %s that is in room %s',

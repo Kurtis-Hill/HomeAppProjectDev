@@ -28,9 +28,10 @@ function AddNewSensor(props) {
     }
 
     const getSensorTypes = async () => {
+        console.log("req", `${apiURL}sensors/types`);
         try {
-            const sensorTypeResponse = await axios.get(`${apiURLsensors}/types`, getAPIHeader());
-
+            const sensorTypeResponse = await axios.get(`${apiURL}sensors/all-types`, getAPIHeader());
+            console.log("req2", sensorTypeResponse);
             if (sensorTypeResponse.data) {
                 setSelectedSensorTypes(sensorTypeResponse.data[0].sensorTypeID);
                 setSensorTypes(sensorTypeResponse.data);

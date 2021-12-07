@@ -55,6 +55,11 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         $this->userToken = $responseData['token'];
     }
 
+    /**
+     * @param string $sensorType
+     * @param array $sensorData
+     * @dataProvider successfulUpdateRequestDataProvider
+     */
     public function test_sending_sensor_update_requests(
         string $sensorType,
         array $sensorData,

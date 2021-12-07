@@ -25,15 +25,16 @@ class Room
     private int $roomID;
 
 
-    /**
-     * @Column(type="string")
-     */
+
     #[Assert\Length(
         min: 2,
         max: 20,
         minMessage: 'Room name must be at least {{ limit }} characters long',
         maxMessage: 'Room name cannot be longer than {{ limit }} characters',
     )]
+    /**
+     * @Column(type="string")
+     */
     #[Column(type: "string", length: 20, nullable: false)]
     private string $room;
 

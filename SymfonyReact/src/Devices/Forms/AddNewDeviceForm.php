@@ -5,9 +5,9 @@ namespace App\Devices\Forms;
 
 use App\Devices\Entity\Devices;
 use App\Entity\Core\GroupNames;
-use App\User\Entity;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\FormMessages;
+use App\User\Entity\Room;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AddNewDeviceForm extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('deviceName', TextType::class, [

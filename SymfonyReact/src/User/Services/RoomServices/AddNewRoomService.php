@@ -25,30 +25,32 @@ class AddNewRoomService implements AddNewRoomServiceInterface
         $this->validator = $validator;
     }
 
-    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): ?Room
+    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): bool
     {
         try {
             $this->checkForRoomDuplicates($addNewRoomDTO);
         } catch (DuplicateRoomException $exception) {
             $this->userInputErrors[] = $exception->getMessage();
+            return false;
         }
 
-        return null;
+        return true;
     }
 
     public function validateAndCreateRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): ?Room
     {
         $newRoom = $this->createNewRoom($addNewRoomDTO, $groupName);
 
-        $validated = $this->validateNewRoom($newRoom);
+        $passedValidation = $this->validateNewRoom($newRoom);
 
-        if ($validated) {
+        if ($passedValidation === true) {
             $this->roomRepository->persist($newRoom);
-            $this->roomRepository->flush($newRoom);
+            $this->roomRepository->flush();
+
+            return $newRoom;
         }
 
-
-        return $newRoom;
+        return null;
     }
 
     private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void

@@ -5,10 +5,12 @@ namespace App\User\Controller;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
+use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;
 use App\User\Voters\RoomVoter;
+use Doctrine\ORM\ORMException;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +29,6 @@ class RoomController extends AbstractController
         AddNewRoomServiceInterface $addNewRoomService,
         GroupCheckServiceInterface $groupCheckService,
     ) : Response {
-
         try {
             $roomNameData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
@@ -47,21 +48,29 @@ class RoomController extends AbstractController
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
-        $addNewRoomService->processNewRoomRequest($addNewRoomDTO);
-
-        $newRoom = $addNewRoomService->validateAndCreateRoom($addNewRoomDTO, $groupName);
-
-        if (!empty($addNewRoomService->getUserInputErrors())) {
+        $preProcessRequest = $addNewRoomService->processNewRoomRequest($addNewRoomDTO);
+        if ($preProcessRequest === false && !empty($addNewRoomService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($addNewRoomService->getUserInputErrors());
         }
-        if (!empty($addNewRoomService->getServerErrors())) {
+
+        try {
+            $newRoom = $addNewRoomService->validateAndCreateRoom($addNewRoomDTO, $groupName);
+        } catch (ORMException $exception) {
             return $this->sendInternalServerErrorJsonResponse();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        if (!$newRoom instanceof Room) {
+            $em->remove($newRoom);
+            $em->flush();
+
+            return $this->sendBadRequestJsonResponse($addNewRoomService->getUserInputErrors());
         }
 
         try {
             $this->denyAccessUnlessGranted(RoomVoter::ADD_NEW_ROOM, $newRoom);
         } catch (AccessDeniedException $exception) {
-            $em = $this->getDoctrine()->getManager();
             $em->remove($newRoom);
             $em->flush();
 

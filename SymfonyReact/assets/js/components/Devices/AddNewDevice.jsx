@@ -1,7 +1,7 @@
 import React, { Component, useContext } from 'react';
-import { NavbarContext } from '../contexts/NavbarContext';
-import { AddNewDeviceContext } from '../contexts/AddNewDeviceContext';
-import { webappURL } from '../Utilities/URLSCommon';
+import { NavbarContext } from '../../contexts/NavbarContext';
+import { AddNewDeviceContext } from '../../contexts/AddNewDeviceContext';
+import { webappURL } from '../../Utilities/URLSCommon';
 
 const addNewDevice = () => {
     const navBarContext = useContext(NavbarContext);

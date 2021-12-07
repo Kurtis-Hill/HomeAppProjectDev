@@ -17,7 +17,7 @@ import Profilebar from "./components/Profilebar";
 import Login from './components/Login';
 import AddNewSensor from './components/AddNewSensor';
 import AddNewRoom from './components/User/Rooms/AddNewRoom';
-import AddNewDevice from './components/AddNewDevice';
+import AddNewDevice from './components/Devices/AddNewDevice';
 import UpdateUser from './components/User/UpdateUser/UpdateUser';
 
 export default class App extends Component {

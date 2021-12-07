@@ -31,7 +31,7 @@ class RoomRepository extends EntityRepository
         $expr = $qb->expr();
 
         $qb->select('r')
-            ->innerJoin('r.groupName', 'gn')
+            ->innerJoin('r.groupNameID', 'gn')
             ->where(
                 $expr->eq('r.room' ,':room'),
                 $expr->eq('gn.groupNameID' ,':groupName')
