@@ -25,6 +25,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+//#include <Adafruit_ADS1015.h>
+
 #include <DHT.h>;
 
 
@@ -34,7 +36,7 @@
 
 //Web bits
 // Test
-#define HOMEAPP_HOST "https://192.168.1.172"
+#define HOMEAPP_HOST "https://192.168.1.224"
 // Prod
 //#define HOMEAPP_HOST "https://klh17101990.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
@@ -65,9 +67,9 @@ IPAddress netmask(255,255,255,0);
 
 
 //Sensor sepcific settings
-#define AMOUNT_OF_USABLE_PINS 0
-#define ACTIVE_START_PIN 0
-#define LAST_ACTIVE_PIN 0
+#define AMOUNT_OF_USABLE_PINS 15
+#define ACTIVE_START_PIN 2
+#define LAST_ACTIVE_PIN 4
 
 // DHT
 #define DHTPIN 2
@@ -272,10 +274,6 @@ char webpage[] PROGMEM = R"=====(
 
       var jsonData = {'wifi': wifi, 'sensorData':data, 'deviceCredentials': deviceCredentials};
 
-      // jsonData = JSON.stringify(jsonData)
-
-      // console.log(jsonData);
-
       var xhr = new XMLHttpRequest();
       var url = "/settings";
 
@@ -294,17 +292,17 @@ char webpage[] PROGMEM = R"=====(
 
   </script>
   <style>
-      background-position: 97% center;
-      background-repeat: no-repeat;
-      border: 1px solid #AAA;
-      color: #555;
-      font-size: inherit;
-      margin: 20px;
-      overflow: hidden;
-      padding: 5px 10px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 300px;
+  background-position: 97% center;
+  background-repeat: no-repeat;
+  border: 1px solid #AAA;
+  color: #555;
+  font-size: inherit;
+  margin: 20px;
+  overflow: hidden;
+  padding: 5px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 300px;
 
 
   select#room-color {
@@ -389,27 +387,26 @@ char webpage[] PROGMEM = R"=====(
     cursor: pointer;
   }
 
-  .button-reset:hover {
-    background-color: #1cc88a;
-    color: white;
+.button-reset:hover {
+  background-color: #1cc88a;
+  color: white;
 
-    background-color: #e93313;
-    border: none;
-    color: white;
-    padding: 26px 268px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    cursor: pointer;
-  }
-  .button-holder {
-    text-align: center;
-  }
-
+  background-color: #e93313;
+  border: none;
+  color: white;
+  padding: 26px 268px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button-holder {
+  text-align: center;
+}
 
   body {
   background: #00b4ff;
@@ -420,8 +417,8 @@ char webpage[] PROGMEM = R"=====(
   padding: 0;
   overflow-x: hidden;
 
-    height: 100%;
-    font-family: Trebuchet MS;
+  height: 100%;
+  font-family: Trebuchet MS;
   }
 
   .container {
@@ -631,42 +628,42 @@ char webpage[] PROGMEM = R"=====(
 
 
 
-  .bubble {
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      border-radius: 50%;
+.bubble {
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  
+  -webkit-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
+  -moz-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
 
-          -webkit-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-      -moz-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-
-          height: 200px;
-      position: absolute;
-      width: 200px;
-  }
+  height: 200px;
+  position: absolute;
+  width: 200px;
+}
 
   .bubble:after {
-      background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
-      background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,0.5)), color-stop(70%,rgba(255,255,255,0)));
-      background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      background: radial-gradient(ellipse at center,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffffff', endColorstr='#00ffffff',GradientType=1 );
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,0.5)), color-stop(70%,rgba(255,255,255,0)));
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+    background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+    background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+    background: radial-gradient(ellipse at center,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffffff', endColorstr='#00ffffff',GradientType=1 );
 
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
 
-      -webkit-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-      -moz-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-      box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+    -webkit-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+    -moz-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
 
-      content: "";
-      height: 180px;
-      left: 10px;
-      position: absolute;
-      width: 180px;
+    content: "";
+    height: 180px;
+    left: 10px;
+    position: absolute;
+    width: 180px;
   }
   </style>
 </html>
@@ -742,7 +739,7 @@ bool saveWifiCredentals(DynamicJsonDocument doc) {
   wifiDoc["password"] = password;
 
   File configFile = SPIFFS.open("/wifi.json", "w");
-  
+
   if(serializeJson(wifiDoc, configFile)) {
     Serial.println("Wifi serialization save success");
   } else {
@@ -840,10 +837,6 @@ bool saveDhtSensorData(DynamicJsonDocument dhtData) {
     Serial.println("Dht SPIFF close, sucess");
 
     return true;  
-  
-    Serial.println("No Dht sensor data sent");
-  
-    return true;
 }
 
 
@@ -854,10 +847,10 @@ bool setDhtValues() {
     Serial.println("dht json found");
     StaticJsonDocument<150> dhtDoc;
     DeserializationError error = deserializeJson(dhtDoc, dhtSensorSpiff);
-    dhtSensorSpiff.close();
-    
+
     if (error) {
       Serial.println("deserialization error");
+      dhtSensorSpiff.close();
       return false;
     }
 
@@ -865,6 +858,7 @@ bool setDhtValues() {
 
     if(dhtSensorName == NULL || dhtSensorName == "" || dhtSensorName == "\0" || dhtSensorName == "null") {
       Serial.println("Name check failed skipping dht this sensor");
+      dhtSensorSpiff.close();
       return true;
     }
 
@@ -875,6 +869,8 @@ bool setDhtValues() {
     Serial.println(dhtSensor.sensorName);
     
   }
+  dhtSensorSpiff.close();
+ 
   return true;
 }
 
@@ -914,10 +910,10 @@ bool setDallasValues() {
     Serial.println("Dallas json found");
     StaticJsonDocument<150> dallasDoc;
     DeserializationError error = deserializeJson(dallasDoc, dallasSensor);
-    dallasSensor.close();
+
     if (error) {
       Serial.println("deserialization error");
-//      dallasSensor.close();
+      dallasSensor.close();
       return false;
     }
     
@@ -925,15 +921,16 @@ bool setDallasValues() {
 
     if (dallasTempData.sensorCount == 0) {
       Serial.println("No Sensor count not setting any values");
+      dallasSensor.close();
       return true;
     }
+   
     Serial.print("dallas sensor count ");
     Serial.println(dallasTempData.sensorCount);
 
     for (int i=0; i < dallasTempData.sensorCount; ++i) {
       String nameCheck = dallasDoc["busTempNameArray"][i].as<String>();
-      Serial.print("Name check: ");
-      Serial.println(nameCheck);
+
       if(nameCheck == NULL || nameCheck == "" || nameCheck == "\0" || nameCheck == "null") {
         Serial.println("Name check failed skipping this sensor");
         continue;
@@ -944,6 +941,7 @@ bool setDallasValues() {
       Serial.println(dallasTempData.sensorName[i]);
     }
   }
+  dallasSensor.close();
  
   return true;
 }
@@ -960,14 +958,15 @@ bool setupNetworkConnection(){
     bool networkConnected = connectToNetwork();
 
     if (!networkConnected) {
-      createAccessPoint();      
+      createAccessPoint();
+      
       return false;
     }
     
     return true;
   } else {
     Serial.print("wifi.json not found in SPIFF AP mode activating...");
-    createAccessPoint();
+    
     return false;
   }
 }
@@ -1007,8 +1006,7 @@ bool connectToNetwork() {
     WiFi.begin(ssid, pass);
 
     int retryCounter = 0;
-
-    Serial.println("Begining to conenct to wifi");
+    
     while(WiFi.status() != WL_CONNECTED){
       ++retryCounter;
       delay(500);
@@ -1032,7 +1030,6 @@ bool connectToNetwork() {
       }      
     }
   } else {
-    wifiCredentials.close();
     Serial.println("Wifi failed");
   }
 }
@@ -1041,8 +1038,8 @@ bool connectToNetwork() {
 
 bool deviceLogin(bool externalIpFound) {
   Serial.println("Logging device in");
-  String endpoint = HOMEAPP_LOGIN;
-  String url = buildHomeAppUrl(endpoint);
+//  String endpoint = HOMEAPP_LOGIN;
+  String url = buildHomeAppUrl(HOMEAPP_LOGIN);
   String deviceData = getSerializedSpiff("/device.json");
 
   StaticJsonDocument<128> loginDoc;
@@ -1076,13 +1073,20 @@ bool deviceLogin(bool externalIpFound) {
 
 String buildHomeAppUrl(String endpoint) {
   Serial.println("building url");
-  String url = HOMEAPP_HOST;
-  url += ":";
-  url += HOMEAPP_PORT;
-  url += "/";
-  url += HOMEAPP_URL;
-  url += "/";
-  url += endpoint;
+  String url = sprintf(
+    "%s:%s/%s/%s",
+    HOMEAPP_HOST,
+    HOMEAPP_PORT,
+    HOMEAPP_URL,
+    endpoint
+  );
+//  String url = HOMEAPP_HOST;
+//  url += ":";
+//  url += HOMEAPP_PORT;
+//  url += "/";
+//  url += HOMEAPP_URL;
+//  url += "/";
+//  url += endpoint;
 
   Serial.print("url built: ");
   Serial.println(url);
@@ -1216,12 +1220,7 @@ String buildDallasReadingSensorUpdateRequest() {
       sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperatureReading"] = String(dallasTempData.tempReading[i]);
       Serial.print("temp reading:");
       Serial.println(String(dallasTempData.tempReading[i])); 
-    } else {
-      Serial.println("sensor failed to take reading correctly not sending this data");
     }
-  }
-  if (!sensorUpdateRequest["sensorData"]) {
-    return "";
   }
   String jsonData;
   serializeJson(sensorUpdateRequest, jsonData);
@@ -1265,10 +1264,6 @@ bool sendDallasUpdateRequest() {
   Serial.println("Begining to send Dallas request");
   String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
   String payload = buildDallasReadingSensorUpdateRequest();
-  if (payload == "") {
-    Serial.println("failed to build dallas request");
-    return false;
-  }
   String response = sendHomeAppHttpsRequest(url, payload, true);
   Serial.println("response");
   Serial.println(response);
@@ -1315,12 +1310,11 @@ String buildDhtReadingSensorUpdateRequest() {
 
 
 void resetDevice() {
+  createAccessPoint(); //@DEV
   SPIFFS.remove("/device.json");
   SPIFFS.remove("/wifi.json");
   SPIFFS.remove("/dallas.json");
-  SPIFFS.remove("/dht.json");
   server.send(200, "application/json", "{\"status\":\"device reset\"}"); 
-  ESP.restart;
 }
 
 void restartDevice() {
@@ -1362,12 +1356,12 @@ String getSerializedSpiff(String spiff) {
 
   return deviceJson;
 }
-//<---------- END OF SPIFF Methods ------------------>
+//<---------- END OF SPIFF MEthods ------------------>
 
 //<------- Dallas Sensor Functions -------------->
 bool findDallasSensor() {
   bool sensorSuccess = false;
-  for (uint8_t pin = ACTIVE_START_PIN; pin <= AMOUNT_OF_USABLE_PINS || pin <= LAST_ACTIVE_PIN ; pin++) {
+  for (uint8_t pin = ACTIVE_START_PIN; pin < AMOUNT_OF_USABLE_PINS && pin < LAST_ACTIVE_PIN ; pin++) {
     Serial.println("pin");
     Serial.println(pin);
     sensorSuccess = searchPinForOneWire(pin);
@@ -1448,7 +1442,6 @@ void takeDallasTempReadings() {
 
 //<!------------- DHT Functions --------------!>
 void takeDhtReadings() {
-  Serial.println("Taking DHT Readigns:");
   dhtSensor.tempReading = dht.readTemperature();
   dhtSensor.humidReading = dht.readHumidity();
   Serial.print("Temp is:");
@@ -1535,16 +1528,15 @@ void setup() {
     bool loggedIn = deviceLogin(externalIpSuccess);
 
     if (loggedIn == true) {
-      if (setDhtValues()) {
-        dht.begin();
-      }
-      delay(1000);
       if (setDallasValues()) {
         if (findDallasSensor()) {
           delay(500);
           Serial.println("Begining Dallas sensor");
           sensors.begin();
         }
+      }
+      if (setDhtValues()) {
+        dht.begin();
       }
     }
   }
@@ -1570,7 +1562,6 @@ void loop() {
       sendDhtUpdateRequest();
     }
   }
-
   Serial.println("Loop finished");
   delay(1000);
 }
