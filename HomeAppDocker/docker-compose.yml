@@ -19,7 +19,7 @@ services:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
       - ./apache/sites-enabled:/etc/apache2/sites-enabled
-      - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - ./apache/php-config/php.in  i:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
     depends_on:
       maria-db:
@@ -33,8 +33,8 @@ services:
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
     restart: always
-#    ports:
-#      - '127.0.0.1:${DB_PORT}:3306' // @DEV
+    ports:
+      - '127.0.0.1:${DB_PORT}:3306'  # DEV  
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
       MYSQL_USER: '${MYSQL_USER}'

@@ -3,7 +3,7 @@
 namespace App\Devices\Entity;
 
 use App\Core\UserInterface\APISensorUserInterface;
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Entity\Core\User;
 use App\User\Entity\Room;
 use Doctrine\ORM\Mapping as ORM;
@@ -57,7 +57,7 @@ class Devices implements UserInterface, APISensorUserInterface
     /**
      * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })

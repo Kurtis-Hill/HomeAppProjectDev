@@ -9,22 +9,18 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class ConstantlyRecordRepositoryAnalogRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
-
         parent::__construct($registry, ConstAnalog::class);
     }
 
     public function persist(ConstantlyRecordInterface $sensorReadingData): void
     {
-        $this->registry->getManager()->persist($sensorReadingData);
+        $this->getEntityManager()->persist($sensorReadingData);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 }

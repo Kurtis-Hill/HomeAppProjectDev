@@ -3,8 +3,9 @@
 namespace App\Devices\Controller;
 
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService;
+use App\Devices\DTO\DeviceDTO;
 use App\Devices\Voters\DeviceVoter;
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
 use JsonException;
@@ -58,11 +59,17 @@ class AddNewDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
         }
 
-        $deviceData = [
-            'deviceName' => $deviceName,
-            'groupNameObject' => $deviceGroup,
-            'roomObject' => $deviceRoom
-        ];
+        $deviceData = new DeviceDTO(
+            $deviceName,
+            $deviceGroup,
+            $deviceRoom,
+        );
+
+//        $deviceData = [
+//            'deviceName' => $deviceName,
+//            'groupNameObject' => $deviceGroup,
+//            'roomObject' => $deviceRoom
+//        ];
 
         $device = $deviceService->handleNewDeviceSubmission($deviceData);
 

@@ -8,11 +8,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class RoomRepository extends ServiceEntityRepository implements RoomRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
         parent::__construct($registry, Room::class);
     }
 
@@ -36,11 +33,16 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
 
     public function persist(Room $room): void
     {
-        $this->registry->getManager()->persist($room);
+        $this->getEntityManager()->persist($room);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
+    }
+
+    public function remove(Room $room): void
+    {
+        $this->getEntityManager()->remove($room);
     }
 }

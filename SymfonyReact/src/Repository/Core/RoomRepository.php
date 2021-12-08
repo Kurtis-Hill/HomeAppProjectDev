@@ -3,7 +3,7 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use Doctrine\ORM\EntityRepository;
 
 class RoomRepository extends EntityRepository

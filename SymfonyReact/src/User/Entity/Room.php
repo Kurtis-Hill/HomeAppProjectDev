@@ -2,7 +2,7 @@
 
 namespace App\User\Entity;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping\Column;
@@ -41,7 +41,7 @@ class Room
     /**
      * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })

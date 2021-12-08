@@ -51,7 +51,6 @@ abstract class AbstractSensorUpdateService
                 }
             }
         }
-        $this->sensorRepository->flush();
     }
 
 

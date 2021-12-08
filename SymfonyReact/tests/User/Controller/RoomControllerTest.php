@@ -4,7 +4,7 @@ namespace App\Tests\User\Controller;
 
 use App\Controller\Core\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Entity\Core\User;
 use App\User\Entity\Room;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,9 +20,9 @@ class RoomControllerTest extends WebTestCase
 
     private KernelBrowser $client;
 
-    private string $userToken;
-
     private User $user;
+
+    private string $userToken;
 
     protected function setUp(): void
     {
@@ -205,8 +205,9 @@ class RoomControllerTest extends WebTestCase
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $userName]);
 
+        $roomName = 'Testroom';
         $formRequestData = [
-            'roomName' => 'Testroom',
+            'roomName' => $roomName,
             'groupId' => $user->getGroupNameID()->getGroupNameID(),
         ];
 
@@ -223,7 +224,7 @@ class RoomControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
+        $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => $roomName]);
 
         self::assertNull($newRoom);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);

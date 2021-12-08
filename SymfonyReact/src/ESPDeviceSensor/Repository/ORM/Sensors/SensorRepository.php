@@ -11,28 +11,24 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class SensorRepository extends ServiceEntityRepository implements SensorRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
-
         parent::__construct($registry, Sensors::class);
     }
 
     public function persist(Sensors $sensorReadingData): void
     {
-        $this->registry->getManager()->persist($sensorReadingData);
+        $this->getEntityManager()->persist($sensorReadingData);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function remove(Sensors $sensors): void
     {
-        $this->registry->getManager()->remove($sensors);
+        $this->getEntityManager()->remove($sensors);
     }
 
     public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors

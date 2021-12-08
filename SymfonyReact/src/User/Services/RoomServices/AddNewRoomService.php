@@ -2,11 +2,12 @@
 
 namespace App\User\Services\RoomServices;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AddNewRoomService implements AddNewRoomServiceInterface
@@ -42,7 +43,6 @@ class AddNewRoomService implements AddNewRoomServiceInterface
         $newRoom = $this->createNewRoom($addNewRoomDTO, $groupName);
 
         $passedValidation = $this->validateNewRoom($newRoom);
-
         if ($passedValidation === true) {
             $this->roomRepository->persist($newRoom);
             $this->roomRepository->flush();
@@ -84,6 +84,19 @@ class AddNewRoomService implements AddNewRoomServiceInterface
                 $this->userInputErrors[] = $error->getMessage();
             }
 
+            return false;
+        }
+
+        return true;
+    }
+
+    public function removeRoom(Room $room): bool
+    {
+        try {
+            $this->roomRepository->remove($room);
+            $this->roomRepository->flush();
+        } catch (ORMException $exception) {
+            $this->serverErrors[] = $exception->getMessage();
             return false;
         }
 

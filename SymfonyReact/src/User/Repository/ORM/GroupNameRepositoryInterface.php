@@ -2,7 +2,7 @@
 
 namespace App\User\Repository\ORM;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 
 interface GroupNameRepositoryInterface
 {

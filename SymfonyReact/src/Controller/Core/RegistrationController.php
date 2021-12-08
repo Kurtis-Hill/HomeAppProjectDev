@@ -3,7 +3,7 @@
 namespace App\Controller\Core;
 
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\User;
 use App\Form\RegistrationFormType;

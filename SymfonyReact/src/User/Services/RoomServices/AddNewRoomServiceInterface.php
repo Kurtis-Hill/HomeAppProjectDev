@@ -2,7 +2,7 @@
 
 namespace App\User\Services\RoomServices;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 

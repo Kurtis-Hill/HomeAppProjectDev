@@ -2,7 +2,6 @@
 
 namespace App\Devices\Repository\ORM;
 
-
 use App\Devices\Entity\Devices;
 
 interface DeviceRepositoryInterface
@@ -11,7 +10,7 @@ interface DeviceRepositoryInterface
 
     public function flush(): void;
 
-    public function findDuplicateDeviceNewDeviceCheck(array $deviceDetails): ?Devices;
+    public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices;
 
     public function findOneById(int $id): ?Devices;
 }

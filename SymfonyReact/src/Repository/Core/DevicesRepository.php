@@ -5,7 +5,7 @@ namespace App\Repository\Core;
 
 
 use App\Devices\Entity\Devices;
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;

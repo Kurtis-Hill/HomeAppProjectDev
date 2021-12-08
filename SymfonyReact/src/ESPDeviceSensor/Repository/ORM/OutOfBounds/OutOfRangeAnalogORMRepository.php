@@ -9,21 +9,18 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class OutOfRangeAnalogORMRepository extends ServiceEntityRepository implements OutOfBoundsRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
         parent::__construct($registry, OutOfRangeAnalog::class);
     }
 
     public function persist(OutOfBoundsEntityInterface $outOfBoundsEntity): void
     {
-        $this->registry->getManager()->persist($outOfBoundsEntity);
+        $this->getEntityManager()->persist($outOfBoundsEntity);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 }

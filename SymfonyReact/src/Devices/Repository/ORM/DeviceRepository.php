@@ -9,22 +9,19 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class DeviceRepository extends ServiceEntityRepository implements DeviceRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
         parent::__construct($registry, Devices::class);
     }
 
     public function persist(Devices $device): void
     {
-        $this->registry->getManager()->persist($device);
+        $this->getEntityManager()->persist($device);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function findOneById(int $id): ?Devices
@@ -36,7 +33,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
      * @param array $deviceDetails
      * @return Devices|null
      */
-    public function findDuplicateDeviceNewDeviceCheck(array $deviceDetails): ?Devices
+    public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices
     {
         $qb = $this->createQueryBuilder('devices');
         $expr = $qb->expr();
@@ -45,14 +42,12 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->innerJoin(Room::class, 'room')
             ->where(
                 $expr->eq('devices.deviceName', ':deviceName'),
-//                $expr->eq('devices.groupNameID', ':groupNameID'),
                 $expr->eq('room.roomID', ':roomID')
             )
             ->setParameters(
                 [
-                    'deviceName' => $deviceDetails['deviceName'],
-//                    'groupNameID' => $deviceDetails['groupNameObject'],
-                    'roomID' => $deviceDetails['roomObject']
+                    'deviceName' => $deviceName,
+                    'roomID' => $roomId
                 ]
             );
 

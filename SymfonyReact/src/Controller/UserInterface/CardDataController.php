@@ -28,11 +28,6 @@ class CardDataController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-    /**
-     * @param Request $request
-     * @param CardUserDataService $cardDataService
-     * @return Response|JsonResponse
-     */
     #[Route('/cards', name: 'card-data', methods: [Request::METHOD_GET])]
     public function returnCardDataDTOs(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
@@ -184,7 +179,6 @@ class CardDataController extends AbstractController
         $em->persist($cardViewForm->getData());
 
         $sensorObject = $cardViewObject->getSensorNameID();
-//dd($cardData);
         $updateBoundaryReadings->handleSensorReadingBoundaryUpdate(
             $cardViewObject->getSensorNameID()->getDeviceNameID(),
             $sensorObject->getSensorName(),

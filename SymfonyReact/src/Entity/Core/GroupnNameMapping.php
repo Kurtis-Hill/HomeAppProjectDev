@@ -3,6 +3,7 @@
 namespace App\Entity\Core;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\User\Entity\GroupNames;
 
 /**
  * GroupnNameMapping
@@ -24,7 +25,7 @@ class GroupnNameMapping
     /**
      * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })

@@ -138,12 +138,9 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         return $cardDTOs ?? [];
     }
 
-    private function getIndexPageCardDataObjects($filteredSensorTypes)
+    private function getIndexPageCardDataObjects(array $filteredSensorTypes)
     {
-        $cardRepository = $this->em->getRepository(CardView::class);
-        $standardSensorTypeCards = $this->getStandardSensorTypeData($cardRepository);
-
-        return $standardSensorTypeCards;
+        return $this->getStandardSensorTypeData($filteredSensorTypes);
     }
 
     private function getIndexUserDefaultView(): array
@@ -178,17 +175,17 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     /**
      * @return array
      */
-    private function getStandardSensorTypeData(): array
+    private function getStandardSensorTypeData(array $filteredSensorTypes): array
     {
         $cardRepository = $this->em->getRepository(CardView::class);
-        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, Cardstate::INDEX_ONLY);
+        $cardData = $cardRepository->getAllSensorTypeObjectsForUser($this->getUser(), $filteredSensorTypes, Cardstate::INDEX_ONLY);
 
         return $cardData ?? [];
     }
 
 
     /**
-     * @param int|null $deviceId
+     * @param Devices|null $deviceId
      * @return array
      */
     private function getDevicePageCardDataObjects(?Devices $deviceId = null): array

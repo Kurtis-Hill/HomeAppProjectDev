@@ -3,7 +3,7 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;

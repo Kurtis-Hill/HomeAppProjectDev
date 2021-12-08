@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures\Core;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -179,9 +179,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($secondRegularUser);
         $manager->persist($secondRegularUserGroupName);
 
-
-        $manager->flush();
-
         $this->addReference(self::ADMIN_USER, $adminUser);
         $this->addReference(self::REGULAR_USER, $regularUser);
         $this->addReference(self::SECOND_ADMIN_USER_ISOLATED, $adminUserInAdminGroup);
@@ -189,5 +186,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $this->addReference(self::ADMIN_GROUP, $adminGroupName);
         $this->addReference(self::REGULAR_GROUP, $userGroupName);
         $this->addReference(self::SECOND_REGULAR_USER_ISOLATED, $secondRegularUserGroupName);
+        $manager->flush();
     }
 }

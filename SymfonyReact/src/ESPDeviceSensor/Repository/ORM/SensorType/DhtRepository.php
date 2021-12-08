@@ -9,21 +9,18 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class DhtRepository extends ServiceEntityRepository implements SensorTypeRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
         parent::__construct($registry, Dht::class);
     }
 
     public function persist(SensorInterface $sensor): void
     {
-        $this->registry->getManager()->persist($sensor);
+        $this->getEntityManager()->persist($sensor);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 }

@@ -253,7 +253,6 @@ class CardContextProvider extends Component {
             'constRecrod' : this.state.modalContent.constRecord,
         };
 
-
         try {
             const formSubmissionResult = await axios.put(apiURL+'card-data/update-card-view', jsonFormData, getAPIHeader());
 
@@ -264,7 +263,7 @@ class CardContextProvider extends Component {
                 );
             }
         } catch(error) {
-            const badRequestErrors = (!error.data.errors.length > 1)
+            const badRequestErrors = (!error.response.data.errors.length > 1)
                 ? ['something went wrong']
                 : error.response.data.errors;
 

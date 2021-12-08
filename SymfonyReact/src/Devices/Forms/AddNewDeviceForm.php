@@ -1,10 +1,9 @@
 <?php
 
-
 namespace App\Devices\Forms;
 
 use App\Devices\Entity\Devices;
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\FormMessages;
 use App\User\Entity\Room;

@@ -6,7 +6,7 @@ use App\Core\UserInterface\APISensorUserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints\Json;
+use App\User\Entity\GroupNames;
 
 /**
  * User
@@ -77,7 +77,7 @@ class User implements UserInterface, APISensorUserInterface
     /**
      * @var GroupNames
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\GroupNames")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })

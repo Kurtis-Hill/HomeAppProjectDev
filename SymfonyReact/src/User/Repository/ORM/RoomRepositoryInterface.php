@@ -11,4 +11,6 @@ interface RoomRepositoryInterface
     public function persist(Room $room): void;
 
     public function flush(): void;
+
+    public function remove(Room $room): void;
 }

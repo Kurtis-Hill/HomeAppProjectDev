@@ -52,27 +52,20 @@ class RoomController extends AbstractController
         if ($preProcessRequest === false && !empty($addNewRoomService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($addNewRoomService->getUserInputErrors());
         }
-
         try {
             $newRoom = $addNewRoomService->validateAndCreateRoom($addNewRoomDTO, $groupName);
         } catch (ORMException $exception) {
             return $this->sendInternalServerErrorJsonResponse();
         }
 
-        $em = $this->getDoctrine()->getManager();
-
         if (!$newRoom instanceof Room) {
-            $em->remove($newRoom);
-            $em->flush();
-
             return $this->sendBadRequestJsonResponse($addNewRoomService->getUserInputErrors());
         }
 
         try {
             $this->denyAccessUnlessGranted(RoomVoter::ADD_NEW_ROOM, $newRoom);
         } catch (AccessDeniedException $exception) {
-            $em->remove($newRoom);
-            $em->flush();
+            $addNewRoomService->removeRoom($newRoom);
 
             return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
         }
