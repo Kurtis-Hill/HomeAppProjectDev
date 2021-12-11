@@ -19,7 +19,7 @@ services:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
       - ./apache/sites-enabled:/etc/apache2/sites-enabled
-      - ./apache/php-config/php.in  i:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
     depends_on:
       maria-db:
@@ -38,8 +38,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
       MYSQL_USER: '${MYSQL_USER}'
-      MYSQL_PASSWORD: '${MYSQL_PASS}'
-      MYSQL_DATABASE: '${MYSQL_DB}'
+      MYSQL_PASS: '${MYSQL_PASS}'
+      MYSQL_DB: '${MYSQL_DB}'
     volumes:
       - ./mariadb/db_data:/var/lib/mysql
       - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -48,7 +48,7 @@ services:
       - ./mariadb/50config/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
       - ../SSL:/etc/mysql/ssl
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      test: mysqladmin ping -h 127.0.0.1 -u $MYSQL_USER --password=$$MYSQL_PASS
       interval: 5s
       retries: 5
     networks:
