@@ -18,6 +18,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
+use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use App\Form\FormMessages;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -289,7 +290,11 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString('You already have a sensor named '. $sensor->getSensorName(), $responseData['errors'][0]);
+        self::assertStringContainsString(
+            sprintf(
+                DuplicateSensorException::MESSAGE,
+                $sensor->getSensorName(),
+            ), $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

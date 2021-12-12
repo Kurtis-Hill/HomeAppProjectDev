@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -17,16 +17,23 @@ class SensorTypes extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/all-types', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function returnAllSensorTypes(): Response
     {
         $sensorTypes = $this->getDoctrine()->getManager()->getRepository(SensorType::class)->findAll();
 
-        $encoders = [new JsonEncoder()];
         $normaliser = [new ObjectNormalizer()];
+        $serializer = new Serializer($normaliser);
 
-        $serializer = new Serializer($normaliser, $encoders);
+        try {
+            $normalisedResponse = $serializer->normalize($sensorTypes);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse(['error preparing data']);
+        }
 
-        return $this->sendSuccessfulResponse($serializer->serialize($sensorTypes, 'json'));
+        return $this->sendSuccessfulJsonResponse($normalisedResponse);
     }
 }

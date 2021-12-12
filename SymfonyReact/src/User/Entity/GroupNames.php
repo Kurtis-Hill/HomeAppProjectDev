@@ -3,6 +3,7 @@
 namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * GroupNames.
@@ -42,6 +43,7 @@ class GroupNames
         return $this->groupNameID;
     }
 
+    #[NoReturn]
     public function setGroupNameID(int $groupNameID): void
     {
         $this->groupNameID = $groupNameID;
@@ -55,9 +57,7 @@ class GroupNames
         return $this->groupName;
     }
 
-    /**
-     * @param string $groupName
-     */
+    #[NoReturn]
     public function setGroupName(string $groupName): void
     {
         $this->groupName = $groupName;
@@ -71,9 +71,7 @@ class GroupNames
         return $this->time;
     }
 
-    /**
-     * @param \DateTime $time
-     */
+    #[NoReturn]
     public function setTime(?\DateTime $time = null): void
     {
         $this->time = $time ?? new \DateTime('now');

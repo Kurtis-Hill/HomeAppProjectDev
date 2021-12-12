@@ -11,6 +11,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
 
 /**
@@ -100,6 +101,7 @@ class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
     /**
      * @param Temperature $tempID
      */
+    #[NoReturn]
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;

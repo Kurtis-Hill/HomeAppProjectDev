@@ -6,5 +6,5 @@ use App\ESPDeviceSensor\Entity\Sensors;
 
 interface SensorReadingTypeCreationInterface
 {
-    public function handleSensorReadingTypeCreation(Sensors $sensor): void;
+    public function handleSensorReadingTypeCreation(Sensors $sensor): bool;
 }

@@ -2,6 +2,9 @@
 
 namespace App\User\DTO\RoomDTOs;
 
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
 class AddNewRoomDTO
 {
     private string $roomName;
@@ -14,17 +17,11 @@ class AddNewRoomDTO
         $this->groupNameId = $groupNameId;
     }
 
-    /**
-     * @return string
-     */
     public function getRoomName(): string
     {
         return $this->roomName;
     }
 
-    /**
-     * @return int
-     */
     public function getGroupNameId(): int
     {
         return $this->groupNameId;

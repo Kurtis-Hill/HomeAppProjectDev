@@ -2,7 +2,9 @@
 
 namespace App\ESPDeviceSensor\Exceptions;
 
-class DuplicateSensorException
-{
+use Exception;
 
+class DuplicateSensorException extends Exception
+{
+    public const MESSAGE = 'Sensor with name %s already exists';
 }

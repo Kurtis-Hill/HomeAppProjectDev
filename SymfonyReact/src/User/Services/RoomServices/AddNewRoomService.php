@@ -8,6 +8,7 @@ use App\User\Entity\Room;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AddNewRoomService implements AddNewRoomServiceInterface
@@ -53,6 +54,7 @@ class AddNewRoomService implements AddNewRoomServiceInterface
         return null;
     }
 
+    #[NoReturn]
     private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
     {
         $duplicateCheck = $this->roomRepository->findDuplicateRoom(

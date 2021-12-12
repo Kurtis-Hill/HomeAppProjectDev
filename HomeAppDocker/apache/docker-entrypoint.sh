@@ -41,11 +41,11 @@ if [ ${APP_ENV} == 'dev' ]; then
 	fi
 
 	echo "Querying test database"
-	 if ! php bin/console dbal:run-sql "select firstName from user where firstName = 'admin' limit 1" --env=test | grep -q 'array(1)'; then
+#	 if ! php bin/console dbal:run-sql "select firstName from user where firstName = 'admin' limit 1" --env=test | grep -q 'array(1)'; then
 		echo "No test database found loading fixtures..."
-    	php bin/console doctrine:fixtures:load --no-interaction --env=test
+#    	php bin/console doctrine:fixtures:load --no-interaction --env=test
     	echo "...Fixtures loaded"
-	fi
+#	fi
 	echo "Test database checked"
 fi
 

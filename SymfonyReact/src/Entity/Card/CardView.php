@@ -131,7 +131,7 @@ class CardView
     }
 
     /**
-     * @param User $userID
+     * @param User|null $userID
      */
     public function setUserID(?User $userID): void
     {

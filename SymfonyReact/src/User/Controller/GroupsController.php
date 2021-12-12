@@ -9,9 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route('/HomeApp/api/user-groups/')]
 class GroupsController extends AbstractController
@@ -35,13 +35,15 @@ class GroupsController extends AbstractController
             );
         }
 
-        $encoders = [new JsonEncoder()];
         $normaliser = [new ObjectNormalizer()];
+        $serializer = new Serializer($normaliser);
 
-        $serializer = new Serializer($normaliser, $encoders);
+        try {
+            $normalizedGroupNames = $serializer->normalize($groupNameDTOs);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse(['something went wrong preparing the data']);
+        }
 
-        $serializedGroupNames = $serializer->serialize($groupNameDTOs, 'json');
-
-        return $this->sendSuccessfulResponse($serializedGroupNames);
+        return $this->sendSuccessfulJsonResponse($normalizedGroupNames);
     }
 }

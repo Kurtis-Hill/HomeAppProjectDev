@@ -4,6 +4,7 @@ namespace App\User\Entity;
 
 use App\User\Entity\GroupNames;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping\Column;
 
@@ -56,9 +57,7 @@ class Room
         return $this->roomID;
     }
 
-    /**
-     * @param int $roomID
-     */
+    #[NoReturn]
     public function setRoomID(int $roomID): void
     {
         $this->roomID = $roomID;
@@ -72,9 +71,7 @@ class Room
         return $this->room;
     }
 
-    /**
-     * @param string $room
-     */
+    #[NoReturn]
     public function setRoom(string $room): void
     {
         $this->room = $room;
@@ -88,9 +85,7 @@ class Room
         return $this->groupNameID;
     }
 
-    /**
-     * @param GroupNames $groupNameID
-     */
+    #[NoReturn]
     public function setGroupNameID(GroupNames $groupNameID): void
     {
         $this->groupNameID = $groupNameID;

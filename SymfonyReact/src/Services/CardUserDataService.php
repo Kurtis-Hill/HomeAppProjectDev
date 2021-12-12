@@ -48,7 +48,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     /**
      * @var CardDataFilterService
      */
-    private $cardDataFilterService;
+    private CardDataFilterService $cardDataFilterService;
 
     /**
      * @var EntityManagerInterface
@@ -255,50 +255,32 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     }
 
     /**
-     * @param Sensors $sensorObject
-     * @param User $user
-     * @return CardView|null
+     * @throws ORMException
+     * @throws RuntimeException
      */
-    public function createNewSensorCard(Sensors $sensorObject, User $user): ?CardView
+    public function createNewSensorCard(Sensors $sensorObject, User $user): void
     {
-//        try {
-            $randomIcon = $this->returnRandomIcon();
+        $randomIcon = $this->returnRandomIcon();
 
-            $randomColour = $this->returnRandomColour();
+        $randomColour = $this->returnRandomColour();
 
-            $cardStateRepository = $this->em->getRepository(Cardstate::class);
+        $cardStateRepository = $this->em->getRepository(Cardstate::class);
 
-            $onCardState = $cardStateRepository->findOneBy(['state' => Cardstate::ON]);
+        $onCardState = $cardStateRepository->findOneBy(['state' => Cardstate::ON]);
 
-            if (!$onCardState instanceof Cardstate) {
-                throw new RuntimeException('Something went wrong setting a defualt card state');
-            }
-
-            $newCard = new CardView();
-            $newCard->setSensorNameID($sensorObject);
-            $newCard->setUserID($user);
-            $newCard->setCardIconID($randomIcon);
-            $newCard->setCardColourID($randomColour);
-            $newCard->setCardStateID($onCardState);
-
-            $this->em->persist($newCard);
-
-            return $newCard;
-//        } catch (RuntimeException $exception) {
-//            error_log($exception->getMessage());
-//            $this->serverErrors[] = $exception->getMessage();
-//        }
-//        catch (ORMException $e) {
-//            error_log($e->getMessage());
-//            $this->serverErrors[] = 'Card Data Query Failure';
-//        }
-
-        if (isset($newCard)) {
-            $this->em->remove($newCard);
+        if (!$onCardState instanceof Cardstate) {
+            throw new RuntimeException('Something went wrong setting a default card state');
         }
-        $this->em->remove($sensorObject);
 
-        return null;
+        $newCard = new CardView();
+        $newCard->setSensorNameID($sensorObject);
+        $newCard->setUserID($user);
+        $newCard->setCardIconID($randomIcon);
+        $newCard->setCardColourID($randomColour);
+        $newCard->setCardStateID($onCardState);
+
+        $this->em->persist($newCard);
+        $this->em->flush();
     }
 
     private function returnRandomIcon(): Icons

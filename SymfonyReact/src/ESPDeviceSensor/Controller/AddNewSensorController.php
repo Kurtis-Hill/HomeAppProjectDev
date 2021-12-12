@@ -4,16 +4,17 @@ namespace App\ESPDeviceSensor\Controller;
 
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
-use App\ESPDeviceSensor\Entity\Sensors;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use Doctrine\ORM\ORMException;
 use JsonException;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,13 +32,11 @@ class AddNewSensorController extends AbstractController
         NewSensorCreationServiceInterface $newSensorCreationService,
         SensorReadingTypeCreationInterface $readingTypeCreation,
         DeviceRepositoryInterface $deviceRepository,
-        SensorRepositoryInterface $sensorRepository,
         CardUserDataService $cardDataService
     ): JsonResponse {
         try {
             $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            error_log($exception);
             return $this->sendBadRequestJsonResponse(['Request Format not supported']);
         }
         if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
@@ -60,33 +59,29 @@ class AddNewSensorController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
         }
 
-        $sensor = $newSensorCreationService->createNewSensor($newSensorDTO);
+        try {
+            $sensor = $newSensorCreationService->createNewSensor($newSensorDTO);
+        } catch (DuplicateSensorException $exception) {
+            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse(['error saving sensor, try again later']);
+        }
+
         if (!empty($newSensorCreationService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
         }
-        if (!$sensor instanceof Sensors || !empty($newSensorCreationService->getServerErrors())) {
-            return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors());
+
+        $cratedSensorReadingTypes = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
+        if ($cratedSensorReadingTypes === false || !empty($readingTypeCreation->getUserInputErrors())) {
+            return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
         }
 
-        $newSensorCard = $cardDataService->createNewSensorCard($sensor, $this->getUser());
-
-        if ($newSensorCard === null || !empty($newSensorCreationService->getServerErrors())) {
-            return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
-        }
-
-        $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
-
-        if (!empty($newSensorCreationService->getUserInputErrors())) {
-            $sensorRepository->remove($sensor);
-            $sensorRepository->flush();
-
-            return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
-        }
-        if (!empty($newSensorCreationService->getServerErrors())) {
-            $sensorRepository->remove($sensor);
-            $sensorRepository->flush();
-
-            return $this->sendInternalServerErrorJsonResponse($newSensorCreationService->getServerErrors() ?? ['errors' => 'Something went wrong please try again']);
+        try {
+            $cardDataService->createNewSensorCard($sensor, $this->getUser());
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse(['error creating card for user interface but sensor was created successfully']);
+        } catch (RuntimeException $exception) {
+            return $this->sendInternalServerErrorJsonResponse([$exception->getMessage()]);
         }
 
         $sensorID = $sensor->getSensorNameID();

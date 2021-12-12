@@ -9,11 +9,10 @@ use Exception;
 use JsonException;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Service\Attribute\Required;
 
 #[Route('/HomeApp/api/device/', name: 'device')]
 class ESPSensorUpdateController extends AbstractController
@@ -24,11 +23,14 @@ class ESPSensorUpdateController extends AbstractController
 
     private ProducerInterface $currentReadingAMQPProducer;
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
-    #[Route('esp/update/current-reading', name: 'update-current-reading', methods: [Request::METHOD_PUT, Request::METHOD_POST])]
+    #[Route(
+            'esp/update/current-reading',
+            name: 'update-current-reading',
+            methods: [
+                Request::METHOD_PUT,
+                Request::METHOD_POST
+            ]
+        )]
     public function updateSensorsCurrentReading(Request $request): Response
     {
         try {
@@ -71,9 +73,7 @@ class ESPSensorUpdateController extends AbstractController
         return $this->sendSuccessfulJsonResponse([self::SENSOR_UPDATE_SUCCESS_MESSAGE]);
     }
 
-    /**
-     * @param ProducerInterface $producer
-     */
+    #[Required]
     public function setESPCurrentReadingProducer(ProducerInterface $producer): void
     {
         $this->currentReadingAMQPProducer = $producer;

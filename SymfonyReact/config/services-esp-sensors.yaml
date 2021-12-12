@@ -18,13 +18,13 @@ services:
     resource: '../src/ESPDeviceSensor/Controller'
     tags: [ 'controller.service_arguments' ]
 
-####### not working had to put in main services for now ####### DEV
-  App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
-    calls:
-      - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
+##### not working had to put in main services for now ####### DEV
+#  App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
+#    calls:
+#      - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
 
-  ######################## Producers ######################################################
-  App\ESPDeviceSensor\AMQP\Producers\UpdateCurrentDataProducer:
+  ####################### Producers ######################################################
+  App\ESPDeviceSensor\AMQP\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
 
   ######################## Consumers ######################################################
   App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:

@@ -5,6 +5,7 @@ namespace App\Devices\DeviceServices\NewDevice;
 
 use App\Devices\DTO\DeviceDTO;
 use App\Devices\Entity\Devices;
+use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Forms\AddNewDeviceForm;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Traits\FormProcessorTrait;
@@ -13,6 +14,7 @@ use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 
 
@@ -26,21 +28,23 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
 
     private Security $security;
 
-    private array $userInputErrors = [];
+    private UserPasswordEncoderInterface $passwordEncoder;
 
-    private array $serverErrors = [];
+    private array $userInputErrors = [];
 
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
         FormFactoryInterface $formFactory,
-        Security $security
+        Security $security,
+        UserPasswordEncoderInterface $passwordEncoder
     ) {
         $this->formFactory = $formFactory;
         $this->deviceRepository = $deviceRepository;
         $this->security = $security;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function handleNewDeviceSubmission(DeviceDTO $deviceData): ?Devices
+    public function handleNewDeviceCreation(DeviceDTO $deviceData): ?Devices
     {
         try {
             $newDevice = new Devices();
@@ -51,11 +55,6 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         }
         catch (BadRequestException $e) {
             $this->userInputErrors[] = $e->getMessage();
-        }
-        catch (ORMException $e) {
-            dd('fa');
-            $this->serverErrors[] = 'Failed to process device query';
-            error_log($e->getMessage());
         }
 
         return $newDevice ?? null;
@@ -69,8 +68,9 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         );
 
         if ($currentUserDeviceCheck instanceof Devices) {
-            throw new BadRequestException(
-                sprintf('Your group already has a device named %s that is in room %s',
+            throw new DuplicateDeviceException(
+                sprintf(
+                    DuplicateDeviceException::MESSAGE,
                     $currentUserDeviceCheck->getDeviceName(),
                     $currentUserDeviceCheck->getRoomObject()->getRoom()
                 )
@@ -101,13 +101,31 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         }
     }
 
+    public function encodeAndSaveNewDevice(Devices $newDevice): bool
+    {
+        $this->encodePassword($newDevice);
+        try {
+            $this->deviceRepository->persist($newDevice);
+            $this->deviceRepository->flush();
+
+            return true;
+        } catch (ORMException) {
+            return false;
+        }
+    }
+
+    private function encodePassword(Devices $device): void
+    {
+        $device->setPassword(
+            $this->passwordEncoder->encodePassword(
+                $device,
+                $device->getDeviceSecret()
+            )
+        );
+    }
+
     #[Pure] public function getUserInputErrors(): array
     {
         return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
-    }
-
-    public function getServerErrors(): array
-    {
-        return $this->serverErrors;
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\User\DTO\GroupDTOs;
 
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
 class GroupNameDTO
 {
     private int $groupNameId;
@@ -14,17 +17,11 @@ class GroupNameDTO
         $this->groupName = $groupName;
     }
 
-    /**
-     * @return int
-     */
     public function getGroupNameId(): int
     {
         return $this->groupNameId;
     }
 
-    /**
-     * @return string
-     */
     public function getGroupName(): string
     {
         return $this->groupName;

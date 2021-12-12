@@ -18,13 +18,11 @@ use DateTime;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-class ReadingTypeCreationService implements SensorReadingTypeCreationInterface, APIErrorInterface
+class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
 {
     private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
 
     private SensorTypeFactoryInterface $sensorTypeFactory;
-
-    private array $serverErrors = [];
 
     private array $userInputErrors = [];
 
@@ -36,19 +34,22 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface, 
         $this->sensorTypeFactory = $sensorTypeFactory;
     }
 
-    public function handleSensorReadingTypeCreation(Sensors $sensor): void
+    public function handleSensorReadingTypeCreation(Sensors $sensor): bool
     {
         try {
             $this->createNewSensorReadingTypeData($sensor);
-        } catch (BadRequestException $exception) {
-            $this->userInputErrors[] = $exception->getMessage();
-        } catch (ORMException | SensorTypeException $e) {
-            error_log($e->getMessage());
-            $this->serverErrors[] = $e->getMessage();
+
+            return true;
+        } catch (SensorTypeException $e) {
+            $this->userInputErrors[] = $e->getMessage();
+        } catch (ORMException $e) {
+            $this->userInputErrors[] = 'Failed to save sensor reading types';
         }
+
+        return false;
     }
 
-    private function createNewSensorReadingTypeData(Sensors $sensor)
+    private function createNewSensorReadingTypeData(Sensors $sensor): void
     {
         $dateTimeNow = new DateTime();
 
@@ -98,11 +99,6 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface, 
                 )
             );
         }
-    }
-
-    public function getServerErrors(): array
-    {
-        return $this->serverErrors;
     }
 
     public function getUserInputErrors(): array

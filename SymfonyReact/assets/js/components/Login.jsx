@@ -28,9 +28,17 @@ function Login(props) {
 
         const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})
 
-        loginCheckResponse
-            ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
-            : setError('Login check response error') && setLoading(false);
+        try {
+            
+            loginCheckResponse
+                ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
+                : setError('Login check response error') && setLoading(false);
+        } catch (error) {
+            if (error.status === 401) {
+                setError('Incorrect credentials');
+            }
+            setError('Something went wrong');
+        }
 
         const loginForm = document.getElementById('login-form');
 

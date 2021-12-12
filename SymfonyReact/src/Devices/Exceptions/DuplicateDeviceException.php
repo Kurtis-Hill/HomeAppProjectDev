@@ -2,7 +2,9 @@
 
 namespace App\Devices\Exceptions;
 
-class DuplicateDeviceException
-{
+use Exception;
 
+class DuplicateDeviceException extends Exception
+{
+    public const MESSAGE = 'Your group already has a device named %s that is in room %s';
 }

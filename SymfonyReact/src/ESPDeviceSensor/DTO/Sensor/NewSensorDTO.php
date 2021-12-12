@@ -2,6 +2,9 @@
 
 namespace App\ESPDeviceSensor\DTO\Sensor;
 
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
 class NewSensorDTO
 {
     private ?string $sensorName;
