@@ -46,9 +46,12 @@ SSL/server.pfx
 ##< Docker ###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
+
 HomeAppDocker/rabbitmq/data/*
-HomeAppDocker/test.sh
+HomeAppDocker/rabbitmq/log/*
+
 HomeAppDocker/apache/auth.json
 HomeAppDocker/apache/logs/*
+
 .run/Docker Image.run.xml
 .run/DockerComposeHomeApp.run.xml
