@@ -6,7 +6,7 @@ use App\API\APIErrorMessages;
 use App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceValidatorService;
 use App\Devices\DTO\DeviceDTO;
-use App\Devices\DTO\NewDeviceCheckDTO;
+use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -63,24 +63,18 @@ class AddNewDeviceController extends AbstractController
             ]);
         }
 
-        $newDeviceCheckDTO = new NewDeviceCheckDTO(
+        $newDeviceCheckDTO = new NewDeviceDTO(
+            $this->getUser(),
             $groupNameObject,
             $roomObject,
+            $deviceName,
         );
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {
             return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
         }
-
-        $deviceData = new DeviceDTO(
-            $this->getUser(),
-            $groupNameObject,
-            $roomObject,
-            $deviceName,
-        );
-
-        $device = $newDeviceService->createNewDevice($deviceData);
+        $device = $newDeviceService->createNewDevice($newDeviceCheckDTO);
         $errors = $newDeviceService->validateNewDevice($device);
 
         if (!empty($errors)) {

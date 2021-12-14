@@ -55,7 +55,7 @@ export default class AddNewDeviceContextProvider extends Component {
 
         } catch (error) {
             console.log('errrir', error, error.response, error.response.data);
-            if (error.response.data.errors && Array.isArray(error.response.data.errors)) {
+            if (error.response.data.errors && Array.isArray(error.response.data.errors) && error.response.data.errors.length > 0) {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.errors, formSubmit:false}});
             } else {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['Response not recognised'], formSubmit:false}});
@@ -85,6 +85,7 @@ export default class AddNewDeviceContextProvider extends Component {
     }
 
     toggleNewDeviceModal = () => {
+        console.log('clickedd!', this.state.addNewDeviceModalToggle);
         this.setState({addNewDeviceModalToggle: !this.state.addNewDeviceModalToggle});
     }
 

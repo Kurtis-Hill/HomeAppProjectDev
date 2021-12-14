@@ -2,21 +2,17 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Devices\DTO\DeviceDTO;
+use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Doctrine\ORM\ORMException;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Security;
+ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
 {
     private DeviceRepositoryInterface $deviceRepository;
-
-    private Security $security;
 
     private UserPasswordEncoderInterface $passwordEncoder;
 
@@ -25,46 +21,47 @@ class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
         ValidatorInterface $validator,
-        Security $security,
         UserPasswordEncoderInterface $passwordEncoder
     ) {
         $this->validator = $validator;
         $this->deviceRepository = $deviceRepository;
-        $this->security = $security;
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function createNewDevice(DeviceDTO $deviceDTO): Devices
+    public function createNewDevice(NewDeviceDTO $deviceDTO): Devices
     {
         $newDevice = new Devices();
         $newDevice->setDeviceName($deviceDTO->getDeviceName());
-        $newDevice->setCreatedBy($deviceDTO->getCreatedBy());
-        $newDevice->setGroupNameObject($deviceDTO->getGroupNameId());
-        $newDevice->setRoomObject($deviceDTO->getRoomId());
+        $newDevice->setCreatedBy($deviceDTO->getCreatedByUserObject());
+        $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
+        $newDevice->setRoomObject($deviceDTO->getRoomObject());
 
         return $newDevice;
     }
 
     public function validateNewDevice(Devices $newDevice): array
     {
-        $validatorErrors = (array) $this->validator->validate($newDevice)->getIterator();
+        $userErrors = [];
+        $validatorErrors = $this->validator->validate($newDevice);
 
+        foreach ($validatorErrors as $error) {
+            $userErrors[] = $error->getMessage();
+        }
         try {
             $this->duplicateDeviceCheck($newDevice);
         }
         catch (DuplicateDeviceException $exception) {
-            $validatorErrors[] = $exception->getMessage();
+            $userErrors[] = $exception->getMessage();
         }
 
-        if (empty($validatorErrors)) {
+        if (empty($userErrors)) {
             $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
 
             $newDevice->setDeviceSecret($devicePasswordHash);
-            $newDevice->setCreatedBy($this->security->getUser());
             $newDevice->setRoles([Devices::ROLE]);
         }
 
-        return $validatorErrors;
+        return $userErrors;
     }
 
     private function duplicateDeviceCheck(Devices $deviceData): void
@@ -82,27 +79,6 @@ class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
                     $currentUserDeviceCheck->getRoomObject()->getRoom()
                 )
             );
-        }
-    }
-
-    private function processNewDeviceForm(FormInterface $addNewDeviceForm, Devices $device): void
-    {
-        $addNewDeviceForm->submit([
-            'deviceName' => $device->getDeviceName(),
-            'groupNameObject' => $device->getGroupNameID(),
-            'roomObject' => $device->getRoomID(),
-        ]);
-
-        if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
-            $devicePasswordHash = $this->createDevicePasswordHash($device);
-
-            $validFormData = $addNewDeviceForm->getData();
-            $validFormData->setDeviceSecret($devicePasswordHash);
-            $validFormData->setCreatedBy($this->security->getUser());
-            $validFormData->setRoles([Devices::ROLE]);
-        }
-        else {
-            $this->processFormErrors($addNewDeviceForm);
         }
     }
 

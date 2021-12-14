@@ -3,7 +3,7 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Devices\DTO\DeviceDTO;
+use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Forms\AddNewDeviceForm;
@@ -13,7 +13,6 @@ use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Security;
 
 
 class NewESP8266DeviceFormService implements NewDeviceServiceInterface
@@ -24,29 +23,25 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
 
     private DeviceRepositoryInterface $deviceRepository;
 
-    private Security $security;
-
     private UserPasswordEncoderInterface $passwordEncoder;
 
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
         FormFactoryInterface $formFactory,
-        Security $security,
         UserPasswordEncoderInterface $passwordEncoder
     ) {
         $this->formFactory = $formFactory;
         $this->deviceRepository = $deviceRepository;
-        $this->security = $security;
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function createNewDevice(DeviceDTO $deviceDTO): Devices
+    public function createNewDevice(NewDeviceDTO $deviceDTO): Devices
     {
         $newDevice = new Devices();
         $newDevice->setDeviceName($deviceDTO->getDeviceName());
-        $newDevice->setCreatedBy($deviceDTO->getCreatedBy());
-        $newDevice->setGroupNameObject($deviceDTO->getGroupNameId());
-        $newDevice->setRoomObject($deviceDTO->getRoomId());
+        $newDevice->setCreatedBy($deviceDTO->getCreatedByUserObject());
+        $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
+        $newDevice->setRoomObject($deviceDTO->getRoomObject());
 
         return $newDevice;
     }
@@ -102,7 +97,6 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
 
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setDeviceSecret($devicePasswordHash);
-            $validFormData->setCreatedBy($this->security->getUser());
             $validFormData->setRoles([Devices::ROLE]);
         }
         else {
