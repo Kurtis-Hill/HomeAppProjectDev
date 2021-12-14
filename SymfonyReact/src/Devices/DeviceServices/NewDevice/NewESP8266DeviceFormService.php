@@ -53,7 +53,7 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
 
     public function validateNewDevice(Devices $newDevice): array
     {
-        $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class, $newDevice);
+        $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class);
         $this->processNewDeviceForm($addNewDeviceForm, $newDevice);
 
         if (!empty($this->getAllFormInputErrors())) {
@@ -75,7 +75,7 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
     {
         $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck(
             $deviceData->getDeviceName(),
-            $deviceData->getRoomObject()->getRoomId(),
+            $deviceData->getRoomID(),
         );
 
         if ($currentUserDeviceCheck instanceof Devices) {
@@ -93,8 +93,8 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
     {
         $addNewDeviceForm->submit([
             'deviceName' => $device->getDeviceName(),
-            'groupNameObject' => $device->getGroupNameObject()->getGroupNameID(),
-            'roomObject' => $device->getRoomObject()->getRoomID(),
+            'groupNameObject' => $device->getGroupNameID(),
+            'roomObject' => $device->getRoomID(),
         ]);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {

@@ -5,21 +5,23 @@ namespace App\Devices\DTO;
 use App\Entity\Core\User;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
+use JetBrains\PhpStorm\Immutable;
 
+#[Immutable]
 class DeviceDTO
 {
+    private User|int  $createdBy;
+
+    private GroupNames|int  $groupNameId;
+
+    private Room|int  $roomId;
+
     private ?string $deviceName;
 
-    private GroupNames $groupNameId;
-
-    private Room $roomId;
-
-    private User $createdBy;
-
     public function __construct(
-        User $createdBy,
-        GroupNames $groupNameId,
-        Room $roomId,
+        User|int $createdBy,
+        GroupNames|int $groupNameId,
+        Room|int $roomId,
         ?string $deviceName,
     ) {
         $this->createdBy = $createdBy;
@@ -33,17 +35,17 @@ class DeviceDTO
         return $this->deviceName;
     }
 
-    public function getGroupNameId(): GroupNames
+    public function getGroupNameId(): GroupNames|int
     {
         return $this->groupNameId;
     }
 
-    public function getRoomId(): Room
+    public function getRoomId(): Room|int
     {
         return $this->roomId;
     }
 
-    public function getCreatedBy(): User
+    public function getCreatedBy(): User|int
     {
         return $this->createdBy;
     }
