@@ -32,6 +32,11 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function findOneById(int $id): ?Room
+    {
+        return $this->findOneBy(['roomID' => $id]);
+    }
+
     #[NoReturn]
     public function persist(Room $room): void
     {

@@ -41,4 +41,6 @@ services:
   App\User\Repository\ORM\GroupNameRepositoryInterface:
     alias: 'App\User\Repository\ORM\GroupNameRepository'
 
+  App\User\Repository\ORM\UserInterface\CardViewRepositoryInterface:
+    alias: 'App\User\Repository\ORM\UserInterface\CardViewRepository'
 ######################## End Of Sensors ######################################################################################

@@ -128,7 +128,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserInAdminGroup->setEmail(self::SECOND_ADMIN_USER_ISOLATED);
         $adminUserInAdminGroup->setFirstName('second-admin-user');
         $adminUserInAdminGroup->setLastName('test');
-        $adminUserInAdminGroup->setPassword($this->passwordEncoder->encodePassword($regularUser, self::ADMIN_PASSWORD));
+        $adminUserInAdminGroup->setPassword($this->passwordEncoder->encodePassword($adminUserInAdminGroup, self::ADMIN_PASSWORD));
         $adminUserInAdminGroup->setRoles(['ROLE_ADMIN']);
         $adminUserInAdminGroup->setTime();
         $adminUserInAdminGroup->setGroupNameID($adminUserGroupName);
@@ -159,7 +159,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $secondRegularUser->setEmail(self::SECOND_REGULAR_USER_ISOLATED);
         $secondRegularUser->setFirstName('second-regular-user');
         $secondRegularUser->setLastName('test');
-        $secondRegularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, self::ADMIN_PASSWORD));
+        $secondRegularUser->setPassword($this->passwordEncoder->encodePassword($secondRegularUser, self::REGULAR_PASSWORD));
         $secondRegularUser->setRoles(['ROLE_USER']);
         $secondRegularUser->setTime();
         $secondRegularUser->setGroupNameID($adminUserGroupName);

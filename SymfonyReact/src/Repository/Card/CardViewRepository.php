@@ -4,8 +4,8 @@
 namespace App\Repository\Card;
 
 use App\Devices\Entity\Devices;
-use App\Entity\Card\Cardstate;
-use App\Entity\Card\CardView;
+use App\User\Entity\UserInterface\Card\Cardstate;
+use App\User\Entity\UserInterface\Card\CardView;
 use App\Entity\Core\User;
 use App\ESPDeviceSensor\Entity\Sensors;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -316,7 +316,7 @@ class CardViewRepository extends EntityRepository
 //            )
 //            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
-//            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+//            ->innerJoin('App\User\Entity\UserInterface\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\Entity\Core\SensorType', 'st', Join::WITH,'st.sensortypeid = s.sensortypeid')
 //            ->leftJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
@@ -363,7 +363,7 @@ class CardViewRepository extends EntityRepository
 //            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
-//            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+//            ->innerJoin('App\User\Entity\UserInterface\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\Entity\Core\Devices', 'dv', Join::WITH,'s.sensornameid = dv.devicenameid')
 //        ;
@@ -414,7 +414,7 @@ class CardViewRepository extends EntityRepository
 //            ->leftJoin('App\Entity\Sensors\Analog', 'a', Join::WITH,'a.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
-//            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+//            ->innerJoin('App\User\Entity\UserInterface\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
 //            ->where(
 //                $qb->expr()->orX(
@@ -448,7 +448,7 @@ class CardViewRepository extends EntityRepository
 //            ->innerJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
-//            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+//            ->innerJoin('App\User\Entity\UserInterface\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
 //            ->where(
 //                $qb->expr()->orX(
@@ -482,7 +482,7 @@ class CardViewRepository extends EntityRepository
 //            ->innerJoin('App\Entity\Sensors\Temp', 't', Join::WITH,'t.sensornameid = cv.sensornameid')
 //            ->innerJoin('App\User\Entity', 'r', Join::WITH,'r.roomid = cv.roomid')
 //            ->innerJoin('App\Entity\Core\Icons', 'i', Join::WITH,'i.iconid = cv.cardiconid')
-//            ->innerJoin('App\Entity\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
+//            ->innerJoin('App\User\Entity\UserInterface\Card\CardColour', 'cc', Join::WITH,'cc.colourid = cv.cardcolourid')
 //            ->innerJoin('App\Entity\Core\Sensors', 's', Join::WITH,'s.sensornameid = cv.sensornameid')
 //            ->where(
 //                $qb->expr()->orX(

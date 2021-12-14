@@ -10,15 +10,13 @@ use App\Devices\Forms\AddNewDeviceForm;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\ORMException;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 
 
-class NewESP8266DeviceService implements NewDeviceServiceInterface
+class NewESP8266DeviceFormService implements NewDeviceServiceInterface
 {
     use FormProcessorTrait;
 
@@ -29,8 +27,6 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
     private Security $security;
 
     private UserPasswordEncoderInterface $passwordEncoder;
-
-    private array $userInputErrors = [];
 
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
@@ -44,27 +40,42 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function handleNewDeviceCreation(DeviceDTO $deviceData): ?Devices
+    public function createNewDevice(DeviceDTO $deviceDTO): Devices
     {
-        try {
-            $newDevice = new Devices();
-            $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class, $newDevice);
+        $newDevice = new Devices();
+        $newDevice->setDeviceName($deviceDTO->getDeviceName());
+        $newDevice->setCreatedBy($deviceDTO->getCreatedBy());
+        $newDevice->setGroupNameObject($deviceDTO->getGroupNameId());
+        $newDevice->setRoomObject($deviceDTO->getRoomId());
 
-            $this->duplicateDeviceCheck($deviceData);
-            $this->processNewDeviceForm($addNewDeviceForm, $deviceData);
-        }
-        catch (BadRequestException $e) {
-            $this->userInputErrors[] = $e->getMessage();
-        }
-
-        return $newDevice ?? null;
+        return $newDevice;
     }
 
-    private function duplicateDeviceCheck(DeviceDTO $deviceData): void
+    public function validateNewDevice(Devices $newDevice): array
+    {
+        $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class, $newDevice);
+        $this->processNewDeviceForm($addNewDeviceForm, $newDevice);
+
+        if (!empty($this->getAllFormInputErrors())) {
+            return $this->getAllFormInputErrors();
+        }
+
+        $errors = [];
+        try {
+            $this->duplicateDeviceCheck($newDevice);
+        }
+        catch (DuplicateDeviceException $exception) {
+            $errors[] = $exception->getMessage();
+        }
+
+        return $errors;
+    }
+
+    private function duplicateDeviceCheck(Devices $deviceData): void
     {
         $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck(
             $deviceData->getDeviceName(),
-            $deviceData->getRoomId()
+            $deviceData->getRoomObject()->getRoomId(),
         );
 
         if ($currentUserDeviceCheck instanceof Devices) {
@@ -78,21 +89,19 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         }
     }
 
-    private function processNewDeviceForm(FormInterface $addNewDeviceForm, DeviceDTO $deviceData): void
+    private function processNewDeviceForm(FormInterface $addNewDeviceForm, Devices $device): void
     {
         $addNewDeviceForm->submit([
-            'deviceName' => $deviceData->getDeviceName(),
-            'groupNameObject' => $deviceData->getGroupNameId(),
-            'roomObject' => $deviceData->getRoomId(),
+            'deviceName' => $device->getDeviceName(),
+            'groupNameObject' => $device->getGroupNameObject()->getGroupNameID(),
+            'roomObject' => $device->getRoomObject()->getRoomID(),
         ]);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
-            $secret = $deviceData->getDeviceName();
-            $secret .= time();
-            $secret = hash("md5", $secret);
+            $devicePasswordHash = $this->createDevicePasswordHash($device);
 
             $validFormData = $addNewDeviceForm->getData();
-            $validFormData->setDeviceSecret($secret);
+            $validFormData->setDeviceSecret($devicePasswordHash);
             $validFormData->setCreatedBy($this->security->getUser());
             $validFormData->setRoles([Devices::ROLE]);
         }
@@ -101,9 +110,17 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         }
     }
 
+    private function createDevicePasswordHash(Devices $device): string
+    {
+        $secret = $device->getDeviceName();
+        $secret .= time();
+
+        return hash("md5", $secret);
+    }
+
     public function encodeAndSaveNewDevice(Devices $newDevice): bool
     {
-        $this->encodePassword($newDevice);
+        $this->encodeDevicePassword($newDevice);
         try {
             $this->deviceRepository->persist($newDevice);
             $this->deviceRepository->flush();
@@ -114,7 +131,7 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
         }
     }
 
-    private function encodePassword(Devices $device): void
+    private function encodeDevicePassword(Devices $device): void
     {
         $device->setPassword(
             $this->passwordEncoder->encodePassword(
@@ -122,10 +139,5 @@ class NewESP8266DeviceService implements NewDeviceServiceInterface
                 $device->getDeviceSecret()
             )
         );
-    }
-
-    #[Pure] public function getUserInputErrors(): array
-    {
-        return array_merge($this->getAllFormInputErrors(), $this->userInputErrors);
     }
 }

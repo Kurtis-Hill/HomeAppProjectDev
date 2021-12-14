@@ -79,17 +79,19 @@ function AddNewSensor(props) {
                 setErrors(`unexpected response`);
             }
         } catch (error) {
-            const errors = error.response.data.errors;
+            const errorResponse = error.response;
 
+
+            
+            if (error.response.data.errors && Array.isArray(error.response.data.errors)) {
+                const errors = error.response.data.errors;
+                setErrors(errors);
+            } else {
+                setErrors('Something went wrong');
+            }
+            console.log('erre', error, errors, error.response);
             setSuccessMessage(false);
             setLoading(false);
-            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
-            if (error.response.status === 400) {
-                setErrors(errors);
-            }
-            if (error.response.status === 500) {
-                alert(`Something went wrong try refreshing the browser ${data}`);
-            }
         }
     }
 
@@ -125,7 +127,7 @@ function AddNewSensor(props) {
                                                 </button>
                                             </div>
                                             {
-                                                errors.length > 0
+                                                Array.isArray(errors) &&errors.length > 0
                                                 ?
                                                     <div className="error-container">
                                                         <div className="form-modal-error-box">

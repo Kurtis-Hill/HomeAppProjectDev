@@ -5,12 +5,12 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBound
 use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorUpdateService;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorFormsUpdateService;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
-class UpdateSensorReadingBoundary extends AbstractSensorUpdateService implements UpdateBoundaryReadingsInterface, APIErrorInterface
+class UpdateSensorFormsReadingBoundary extends AbstractSensorFormsUpdateService implements UpdateBoundaryReadingsInterface, APIErrorInterface
 {
     private array $userInputErrors = [];
 

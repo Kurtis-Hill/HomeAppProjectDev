@@ -16,5 +16,5 @@ interface SensorRepositoryInterface
 
     public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors;
 
-    public function getSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array;
+    public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array;
 }

@@ -3,7 +3,7 @@
 
 namespace App\Devices\Voters;
 
-use App\User\Entity\GroupNames;
+use App\Devices\DTO\NewDeviceCheckDTO;
 use App\Entity\Core\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -43,27 +43,27 @@ class DeviceVoter extends Voter
         };
     }
 
-    /**
-     * @param UserInterface $user
-     * @param GroupNames|null $groupNameObject
-     * @return bool
-     */
-    private function canAddNewDevice(UserInterface $user, ?GroupNames $groupNameObject): bool
+    private function canAddNewDevice(UserInterface $user, NewDeviceCheckDTO $newDeviceCheckDTO): bool
     {
         if (!$user instanceof User) {
             return false;
         }
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return true;
+        }
 
-        $isCallable = [$groupNameObject, 'getGroupNameID'];
-        if (!is_callable($isCallable)) {
+        $groupName = $newDeviceCheckDTO->getGroupNames();
+
+        $room = $newDeviceCheckDTO->getRoom();
+
+        if (!in_array($room->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
 
-        if (!in_array($groupNameObject?->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($groupName?->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
 
         return true;
     }
-
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
+namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\Form;
 
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use Doctrine\ORM\ORMException;
 
-interface NewSensorCreationServiceInterface
+interface NewSensorCreationFormServiceInterface
 {
     /**
      * @throws DuplicateSensorException

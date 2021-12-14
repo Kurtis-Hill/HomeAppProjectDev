@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentRead
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 
-interface UpdateCurrentSensorReadingInterface
+interface UpdateCurrentSensorFormReadingInterface
 {
     public function handleUpdateSensorCurrentReading(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool;
 }

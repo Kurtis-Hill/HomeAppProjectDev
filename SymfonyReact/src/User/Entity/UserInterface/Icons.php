@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Card;
+namespace App\User\Entity\UserInterface;
 
 use Doctrine\ORM\Mapping as ORM;
 

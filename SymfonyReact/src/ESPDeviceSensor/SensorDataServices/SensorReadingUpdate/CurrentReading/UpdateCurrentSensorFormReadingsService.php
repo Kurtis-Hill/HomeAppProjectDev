@@ -16,9 +16,8 @@ use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyReco
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorUpdateService;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorFormsUpdateService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use RuntimeException;
@@ -26,7 +25,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
-class UpdateCurrentSensorReadingsService extends AbstractSensorUpdateService implements UpdateCurrentSensorReadingInterface
+class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateService implements UpdateCurrentSensorFormReadingInterface
 {
     private SensorConstantlyRecordServiceService $constantlyRecordService;
 

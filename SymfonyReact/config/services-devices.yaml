@@ -20,4 +20,7 @@ services:
 
   ######################## Services ########################################################################
   App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
-    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceFormService'
+
+  App\Devices\Repository\ORM\DeviceRepositoryInterface:
+    alias: 'App\Devices\Repository\ORM\DeviceRepository'

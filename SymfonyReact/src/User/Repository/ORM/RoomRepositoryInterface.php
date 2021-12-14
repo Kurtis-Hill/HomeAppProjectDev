@@ -17,4 +17,6 @@ interface RoomRepositoryInterface
 
     #[NoReturn]
     public function remove(Room $room): void;
+
+    public function findOneById(int $id): ?Room;
 }

@@ -29,10 +29,6 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         return $this->findOneBy(['deviceNameID' => $id]);
     }
 
-    /**
-     * @param array $deviceDetails
-     * @return Devices|null
-     */
     public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices
     {
         $qb = $this->createQueryBuilder('devices');
@@ -53,5 +49,4 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
 
         return $qb->getQuery()->getOneOrNullResult();
     }
-
 }

@@ -2,42 +2,49 @@
 
 namespace App\Devices\DTO;
 
+use App\Entity\Core\User;
+use App\User\Entity\GroupNames;
+use App\User\Entity\Room;
+
 class DeviceDTO
 {
-    private string $deviceName;
+    private ?string $deviceName;
 
-    private int $groupNameId;
+    private GroupNames $groupNameId;
 
-    private int $roomId;
+    private Room $roomId;
 
-    public function __construct(string $deviceName, int $groupNameId, int $roomId)
-    {
-        $this->deviceName = $deviceName;
+    private User $createdBy;
+
+    public function __construct(
+        User $createdBy,
+        GroupNames $groupNameId,
+        Room $roomId,
+        ?string $deviceName,
+    ) {
+        $this->createdBy = $createdBy;
         $this->groupNameId = $groupNameId;
         $this->roomId = $roomId;
+        $this->deviceName = $deviceName;
     }
 
-    /**
-     * @return string
-     */
-    public function getDeviceName(): string
+    public function getDeviceName(): ?string
     {
         return $this->deviceName;
     }
 
-    /**
-     * @return int
-     */
-    public function getGroupNameId(): int
+    public function getGroupNameId(): GroupNames
     {
         return $this->groupNameId;
     }
 
-    /**
-     * @return int
-     */
-    public function getRoomId(): int
+    public function getRoomId(): Room
     {
         return $this->roomId;
+    }
+
+    public function getCreatedBy(): User
+    {
+        return $this->createdBy;
     }
 }

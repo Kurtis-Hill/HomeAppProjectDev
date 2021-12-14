@@ -1,34 +1,37 @@
 <?php
 
-namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
+namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\Form;
 
-use App\Core\APIInterface\APIErrorInterface;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use App\ESPDeviceSensor\Forms\AddNewSensorForm;
-use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
-use App\Form\FormMessages;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\Traits\FormProcessorTrait;
-use Doctrine\ORM\ORMException;
-use Exception;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class NewSensorCreationService implements NewSensorCreationServiceInterface
+class NewSensorCreationFormService implements NewSensorCreationFormServiceInterface
 {
     use FormProcessorTrait;
 
-    private SensorRepository $sensorRepository;
+    private SensorRepositoryInterface $sensorRepository;
 
     private FormFactoryInterface $formFactory;
 
+    private SensorTypeRepositoryInterface $sensorTypeRepository;
+
     private array $userInputErrors = [];
 
-    public function __construct(SensorRepository $sensorRepository, FormFactoryInterface $formFactory)
-    {
+    public function __construct(
+        SensorRepositoryInterface $sensorRepository,
+        FormFactoryInterface $formFactory,
+    ) {
         $this->sensorRepository = $sensorRepository;
         $this->formFactory = $formFactory;
     }
@@ -38,9 +41,7 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface
         $newSensor = new Sensors();
 
         $addNewSensorForm = $this->formFactory->create(AddNewSensorForm::class, $newSensor);
-
         $handledForm = $this->processNewSensorForm($addNewSensorForm, $newSensorDTO);
-
         if ($handledForm === true) {
             $this->sensorRepository->persist($addNewSensorForm->getData());
             $this->sensorRepository->flush();

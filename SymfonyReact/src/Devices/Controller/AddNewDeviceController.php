@@ -4,11 +4,15 @@ namespace App\Devices\Controller;
 
 use App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface;
 use App\Devices\DTO\DeviceDTO;
+use App\Devices\DTO\NewDeviceCheckDTO;
+use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Voters\DeviceVoter;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use Doctrine\ORM\ORMException;
 use JsonException;
@@ -26,7 +30,8 @@ class AddNewDeviceController extends AbstractController
     #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
-        NewDeviceServiceInterface $deviceService,
+        RoomRepositoryInterface $roomRepository,
+        NewDeviceServiceInterface $newDeviceService,
         GroupCheckServiceInterface $groupCheckService,
     ): JsonResponse {
         try {
@@ -34,13 +39,17 @@ class AddNewDeviceController extends AbstractController
         } catch (JsonException) {
             return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
         }
-
         $deviceName = $newDeviceData['deviceName'] ?? null;
         $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
         $deviceRoom = $newDeviceData['deviceRoom'] ?? null;
 
-        if (!isset($deviceGroup, $deviceRoom)) {
-            return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
+        if (!is_int($deviceGroup)) {
+            $errorMessage = sprintf(FormMessages::MALFORMED_REQUEST_DATA, 'group', 'int');
+            return $this->sendBadRequestJsonResponse([$errorMessage]);
+        }
+        if (!is_int($deviceRoom)) {
+            $errorMessage = sprintf(FormMessages::MALFORMED_REQUEST_DATA, 'room', 'int');
+            return $this->sendBadRequestJsonResponse([$errorMessage]);
         }
 
         try {
@@ -48,31 +57,38 @@ class AddNewDeviceController extends AbstractController
         } catch (GroupNameNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
+
+        $roomObject = $roomRepository->findOneById($deviceRoom);
+
+        if (!$roomObject instanceof Room) {
+            return $this->sendBadRequestJsonResponse(['Room not found']);
+        }
+
+        $newDeviceCheckDTO = new NewDeviceCheckDTO(
+            $groupNameObject,
+            $roomObject,
+        );
         try {
-            $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $groupNameObject);
+            $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {
             return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
         }
 
         $deviceData = new DeviceDTO(
+            $this->getUser(),
+            $groupNameObject,
+            $roomObject,
             $deviceName,
-            $deviceGroup,
-            $deviceRoom,
         );
+        $device = $newDeviceService->createNewDevice($deviceData);
 
-        try {
-            $device = $deviceService->handleNewDeviceCreation($deviceData);
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
-        } catch (DuplicateDeviceException $e) {
-            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+        $errors = $newDeviceService->validateNewDevice($device);
+
+        if (!empty($errors)) {
+            return $this->sendBadRequestJsonResponse($errors);
         }
 
-        if ($device === null || !empty($deviceService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse($deviceService->getUserInputErrors() ?? ['the form you have submitted has failed']);
-        }
-
-        $deviceSaved = $deviceService->encodeAndSaveNewDevice($device);
+        $deviceSaved = $newDeviceService->encodeAndSaveNewDevice($device);
 
         if ($deviceSaved === false) {
             return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);

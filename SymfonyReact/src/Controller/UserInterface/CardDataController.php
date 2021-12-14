@@ -3,7 +3,7 @@
 
 namespace App\Controller\UserInterface;
 
-use App\Entity\Card\CardView;
+use App\User\Entity\UserInterface\Card\CardView;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
@@ -133,7 +133,6 @@ class CardDataController extends AbstractController
     public function updateCardView(
         Request $request,
         UpdateBoundaryReadingsInterface $updateBoundaryReadings,
-//        SensorUserDataUpdateService $sensorDataService,
         CardUserDataService $cardDataService
     ): Response|JsonResponse {
         try {

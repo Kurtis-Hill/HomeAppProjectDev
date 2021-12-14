@@ -8,8 +8,8 @@ use App\ErrorLogs;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingInterface;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingsService;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -17,9 +17,9 @@ use PhpAmqpLib\Message\AMQPMessage;
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
     /**
-     * @var UpdateCurrentSensorReadingsService
+     * @var UpdateCurrentSensorFormReadingsService
      */
-    private UpdateCurrentSensorReadingsService $sensorCurrentReadingUpdateService;
+    private UpdateCurrentSensorFormReadingsService $sensorCurrentReadingUpdateService;
 
     /**
      * @var DeviceRepositoryInterface
@@ -27,11 +27,11 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     private DeviceRepositoryInterface $deviceRepository;
 
     /**
-     * @param UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService
+     * @param UpdateCurrentSensorFormReadingInterface $sensorDeviceDataQueueConsumerService
      * @param DeviceRepositoryInterface $deviceRepository
      */
     public function __construct(
-        UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
+        UpdateCurrentSensorFormReadingInterface $sensorDeviceDataQueueConsumerService,
         DeviceRepositoryInterface $deviceRepository
     ) {
         $this->sensorCurrentReadingUpdateService = $sensorDeviceDataQueueConsumerService;

@@ -54,7 +54,10 @@ export default class AddNewDeviceContextProvider extends Component {
             }
 
         } catch (error) {
-            this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['response error your app may need updating'], formSubmit:false}});
+            console.log('errrir', error, error.response, error.response.data);
+            if (Array.isArray(errors.response.data.errors)) {
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.errors, formSubmit:false}});
+            }
         }        
     }
 

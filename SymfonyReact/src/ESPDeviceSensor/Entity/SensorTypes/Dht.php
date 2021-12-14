@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Entity\SensorTypes;
 
-use App\Entity\Card\CardView;
+use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensors;

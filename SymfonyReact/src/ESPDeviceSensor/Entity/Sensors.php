@@ -5,6 +5,8 @@ namespace App\ESPDeviceSensor\Entity;
 use App\Devices\Entity\Devices;
 use App\Entity\Core\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Sensors.
@@ -22,6 +24,10 @@ class Sensors
 
     public const LATITUDE   = 'Latitude';
 
+    private const SENSOR_NAME_MAX_LENGTH = 20;
+
+    private const SENSOR_NAME_MIN_LENGTH = 2;
+
     /**
      * @var int
      *
@@ -36,6 +42,16 @@ class Sensors
      *
      * @ORM\Column(name="sensorName", type="string", length=20, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::SENSOR_NAME_MIN_LENGTH,
+            max: self::SENSOR_NAME_MAX_LENGTH,
+            minMessage: "Sensor name must be at least {{ limit }} characters long",
+            maxMessage: "Sensor name cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $sensorName;
 
     /**

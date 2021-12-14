@@ -8,6 +8,7 @@ use App\ESPDeviceSensor\Entity\Sensors;
 use App\ESPDeviceSensor\Entity\SensorType;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Humidity
@@ -20,6 +21,10 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     public const READING_TYPE = 'humidity';
 
     public const READING_SYMBOL = '%';
+
+    public const HIGH_READING = 100;
+
+    public const LOW_READING = 0;
 
     public const HUMIDITY_SENSORS = [
         SensorType::BMP_SENSOR,
@@ -40,6 +45,16 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
+    #[
+        Assert\LessThan(
+            value: self::LOW_READING,
+            message: "Humidity reading must not be less than {{ value }}"
+        ),
+        Assert\GreaterThan(
+            value: self::HIGH_READING,
+            message: "Humidity reading must not be greater than {{ value }}"
+        )
+    ]
     private int $currentReading;
 
     /**
@@ -47,6 +62,16 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
+    #[
+        Assert\LessThan(
+            value: self::LOW_READING,
+            message: "Humidity reading must not be less than {{ value }}"
+        ),
+        Assert\GreaterThan(
+            value: self::HIGH_READING,
+            message: "Humidity reading must not be greater than {{ value }}"
+        )
+    ]
     private int $highHumid = 80;
 
     /**
@@ -54,6 +79,16 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
+    #[
+        Assert\LessThan(
+            value: self::LOW_READING,
+            message: "Humidity reading must not be less than {{ value }}"
+        ),
+        Assert\GreaterThan(
+            value: self::HIGH_READING,
+            message: "Humidity reading must not be greater than {{ value }}"
+        )
+    ]
     private int $lowHumid = 10;
 
     /**

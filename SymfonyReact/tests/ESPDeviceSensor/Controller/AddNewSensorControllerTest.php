@@ -7,7 +7,6 @@ use App\Controller\Core\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
-use App\Entity\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
@@ -20,6 +19,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use App\Form\FormMessages;
+use App\User\Entity\UserInterface\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use JsonException;
@@ -256,7 +256,41 @@ class AddNewSensorControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($sensor);
-        self::assertStringContainsString('Sensor name too long', $responseData['errors'][0]);
+        self::assertStringContainsString('Sensor name cannot be at longer than 20 characters', $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider newSensorSimpleDataProvider
+     * @param string $sensorType
+     * @param string $sensorName
+     */
+    public function test_can_not_add_new_sensor_with_long_short(string $sensorType, string $sensorName): void
+    {
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+
+        $formData = [
+            'sensorName' => 'T',
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $this->device->getDeviceNameID(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            'POST',
+            self::ADD_NEW_SENSOR_URL,
+            $formData,
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertNull($sensor);
+        self::assertStringContainsString('Sensor name must be at least 2 characters long', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

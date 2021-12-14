@@ -8,10 +8,10 @@ use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
-use App\Entity\Core\GroupNames;
 use App\Entity\Core\GroupnNameMapping;
 use App\Entity\Core\User;
 use App\Form\FormMessages;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
@@ -28,11 +28,6 @@ class AddNewDeviceController extends WebTestCase
      * @var string|null
      */
     private ?string $userToken = null;
-
-    /**
-     * @var string|null
-     */
-    private ?string $userRefreshToken = null;
 
     /**
      * @var EntityManagerInterface
@@ -65,45 +60,27 @@ class AddNewDeviceController extends WebTestCase
 
         $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findGroupByName(UserDataFixtures::ADMIN_GROUP);
         $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, RoomFixtures::ADMIN_ROOM_NAME);
-        try {
-            $this->setUserToken();
-        } catch (JsonException $e) {
-            error_log($e);
-        }
+        $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
     }
 
-    /**
-     * @return void
-     * @throws JsonException
-     */
-    private function setUserToken(): void
+    private function setUserToken(string $name, string $password): string
     {
-        if ($this->userToken === null) {
-            $this->client->request(
-                'POST',
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-            );
+        $this->client->request(
+            'POST',
+            SecurityController::API_USER_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"'.$name.'","password":"'.$password.'"}'
+        );
 
-            $requestResponse = $this->client->getResponse();
-            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $requestResponse = $this->client->getResponse();
+        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-            $this->userToken = $requestData['token'];
-            $this->userRefreshToken = $requestData['refreshToken'];
-        }
-    }
-
-    public function test_login_token_not_null(): void
-    {
-        self::assertNotNull($this->userToken);
-    }
-
-    public function test_refresh_token_not_null(): void
-    {
-        self::assertNotNull($this->userRefreshToken);
+//        if ($name === UserDataFixtures::SECOND_REGULAR_USER_ISOLATED) {
+//            dd($requestData);
+//        }
+        return $requestData['token'];
     }
 
     //  Add addNewDevice
@@ -188,7 +165,7 @@ class AddNewDeviceController extends WebTestCase
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device'), $responseData['errors'][0]);
+        self::assertStringContainsString('Device name should not be blank', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -213,7 +190,7 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['errors'][0]);
+        self::assertStringContainsString(sprintf(FormMessages::MALFORMED_REQUEST_DATA, 'group', 'int'), $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -239,7 +216,13 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(FormMessages::FORM_PRE_PROCESS_FAILURE, $responseData['errors'][0]);
+        self::assertStringContainsString(
+            sprintf(
+                FormMessages::MALFORMED_REQUEST_DATA,
+                'room',
+                'int'
+            ),
+            $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -265,7 +248,13 @@ class AddNewDeviceController extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
 
-        self::assertStringContainsString('Cannot find group name to add device too', $responseData['errors'][0]);
+        self::assertStringContainsString(
+            sprintf(
+                FormMessages::MALFORMED_REQUEST_DATA,
+                'group',
+                'int',
+            ),
+            $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -292,7 +281,7 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertStringContainsString('Device name too long', $responseData['errors'][0]);
+        self::assertStringContainsString('Device name cannot be longer than 20 characters', $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -326,7 +315,8 @@ class AddNewDeviceController extends WebTestCase
 
     public function test_adding_device_to_group_not_apart_of(): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $userToken = $this->setUserToken(UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupnNameMapping::class);
 
@@ -347,7 +337,7 @@ class AddNewDeviceController extends WebTestCase
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
             $jsonData,
         );
 
@@ -357,6 +347,13 @@ class AddNewDeviceController extends WebTestCase
         self::assertNull($device);
         self::assertStringContainsString(FormMessages::ACCESS_DENIED, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_adding_device_in_room_not_apart_of(): void
+    {
+        $allRooms = $this->entityManager->getRepository(Room::class)->findAll();
+
+
     }
 
 

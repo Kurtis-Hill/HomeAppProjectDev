@@ -2,7 +2,7 @@
 
 namespace App\Repository\Card;
 
-use App\Entity\Card\CardColour;
+use App\User\Entity\UserInterface\Card\CardColour;
 use Doctrine\ORM\EntityRepository;
 
 /**

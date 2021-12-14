@@ -4,14 +4,12 @@ namespace App\Devices\DeviceServices\NewDevice;
 
 use App\Devices\DTO\DeviceDTO;
 use App\Devices\Entity\Devices;
-use App\Devices\Exceptions\DuplicateDeviceException;
-use Doctrine\ORM\ORMException;
 
 interface NewDeviceServiceInterface
 {
-    /**
-     * @throws DuplicateDeviceException
-     * @throws ORMException
-     */
-    public function handleNewDeviceCreation(DeviceDTO $deviceData): ?Devices;
+    public function createNewDevice(DeviceDTO $deviceDTO): Devices;
+
+    public function validateNewDevice(Devices $newDevice): array;
+
+    public function encodeAndSaveNewDevice(Devices $newDevice): bool;
 }

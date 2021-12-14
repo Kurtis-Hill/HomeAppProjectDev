@@ -4,7 +4,7 @@
 namespace App\Repository\Card;
 
 
-use App\Entity\Card\Cardstate;
+use App\User\Entity\UserInterface\Card\Cardstate;
 use App\Entity\Core\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;

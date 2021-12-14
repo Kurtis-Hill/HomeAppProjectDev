@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -20,7 +22,12 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Devices implements UserInterface, APISensorUserInterface
 {
+    private const DEVICE_MIN_LENGTH = 2;
+
+    private const DEVICE_MAX_LENGTH = 20;
+
     public const ROLE = 'ROLE_DEVICE';
+
     /**
      * @var int
      *
@@ -35,7 +42,19 @@ class Devices implements UserInterface, APISensorUserInterface
      *
      * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
      */
-    private string $deviceName;
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\NotBlank(
+            message: 'Device name should not be blank'
+        ),
+        Assert\Length(
+            min: self::DEVICE_MIN_LENGTH,
+            max: self::DEVICE_MAX_LENGTH,
+            minMessage: "Device name must be at least {{ limit }} characters long",
+            maxMessage: "Device name cannot be longer than {{ limit }} characters"
+        )
+    ]
+    private ?string $deviceName;
 
     /**
      * @var string
@@ -62,6 +81,7 @@ class Devices implements UserInterface, APISensorUserInterface
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
      * })
      */
+    #[Assert\NotBlank(message: 'Group name should not be blank')]
     private GroupNames $groupNameID;
 
     /**
@@ -72,6 +92,7 @@ class Devices implements UserInterface, APISensorUserInterface
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
      * })
      */
+    #[Assert\NotBlank(message: 'Room should not be blank')]
     private Room $roomID;
 
     /**
@@ -161,15 +182,15 @@ class Devices implements UserInterface, APISensorUserInterface
     /**
      * @return string
      */
-    public function getDeviceName(): string
+    public function getDeviceName(): ?string
     {
         return $this->deviceName;
     }
 
     /**
-     * @param string $deviceName
+     * @param string|null $deviceName
      */
-    public function setDeviceName(string $deviceName): void
+    public function setDeviceName(?string $deviceName): void
     {
         $this->deviceName = $deviceName;
     }
@@ -249,11 +270,11 @@ class Devices implements UserInterface, APISensorUserInterface
     }
 
     /**
-     * @param Room $roomID
+     * @param Room $room
      */
-    public function setRoomObject(Room $roomID): void
+    public function setRoomObject(Room $room): void
     {
-        $this->roomID = $roomID;
+        $this->roomID = $room;
     }
 
     /**
@@ -323,14 +344,13 @@ class Devices implements UserInterface, APISensorUserInterface
         $this->externalIpAddress = $externalIpAddress;
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata): void
-    {
-        $metadata->addPropertyConstraint('deviceName', new Length([
-            'min' => 2,
-            'max' => 50,
-            'minMessage' => 'Your first name must be at least {{ limit }} characters long',
-            'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
-        ]));
-    }
-
+//    public static function loadValidatorMetadata(ClassMetadata $metadata): void
+//    {
+//        $metadata->addPropertyConstraint('deviceName', new Length([
+//            'min' => 2,
+//            'max' => 50,
+//            'minMessage' => 'Your first name must be at least {{ limit }} characters long',
+//            'maxMessage' => 'Your first name cannot be longer than {{ limit }} characters',
+//        ]));
+//    }
 }

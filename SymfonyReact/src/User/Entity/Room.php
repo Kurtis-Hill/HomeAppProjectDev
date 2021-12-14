@@ -2,7 +2,6 @@
 
 namespace App\User\Entity;
 
-use App\User\Entity\GroupNames;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -36,7 +35,7 @@ class Room
     /**
      * @Column(type="string")
      */
-    #[Column(type: "string", length: 20, nullable: false)]
+    #[Column(type: 'string', length: 20, nullable: false)]
     private string $room;
 
     /**

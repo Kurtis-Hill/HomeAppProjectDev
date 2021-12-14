@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Entity\Card;
+namespace App\User\Entity\UserInterface\Card;
 
 use App\Entity\Core\User;
 use App\ESPDeviceSensor\Entity\Sensors;
+use App\User\Entity\UserInterface\Icons;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Cardview
@@ -57,7 +57,7 @@ class CardView
     /**
      * @var Icons
      *
-     * @ORM\ManyToOne(targetEntity="Icons")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\UserInterface\Icons")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="cardIconID", referencedColumnName="iconID")
      * })

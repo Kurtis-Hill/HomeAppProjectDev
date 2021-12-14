@@ -6,8 +6,9 @@ use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
-use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
+use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
+use App\ESPDeviceSensor\SensorDataServices\NewSensor\Validator\NewSensorCreationValidatorServiceInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
@@ -29,7 +30,7 @@ class AddNewSensorController extends AbstractController
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
-        NewSensorCreationServiceInterface $newSensorCreationService,
+        NewSensorCreationValidatorServiceInterface $newSensorCreationService,
         SensorReadingTypeCreationInterface $readingTypeCreation,
         DeviceRepositoryInterface $deviceRepository,
         CardUserDataService $cardDataService
@@ -49,7 +50,6 @@ class AddNewSensorController extends AbstractController
         );
 
         $device = $deviceRepository->findOneById($newSensorDTO->getDeviceNameID());
-
         if (!$device instanceof Devices) {
             return $this->sendBadRequestJsonResponse(['Cannot find device to add sensor too']);
         }
@@ -58,24 +58,22 @@ class AddNewSensorController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
         }
-
         try {
-            $sensor = $newSensorCreationService->createNewSensor($newSensorDTO);
-        } catch (DuplicateSensorException $exception) {
+            $sensor = $newSensorCreationService->createNewSensor($newSensorDTO, $device);
+        } catch (DuplicateSensorException | SensorTypeException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
-        } catch (ORMException) {
+        } catch (ORMException $exception) {
             return $this->sendInternalServerErrorJsonResponse(['error saving sensor, try again later']);
         }
 
-        if (!empty($newSensorCreationService->getUserInputErrors())) {
+        if ($sensor === null || !empty($newSensorCreationService->getUserInputErrors())) {
             return $this->sendBadRequestJsonResponse($newSensorCreationService->getUserInputErrors());
         }
 
-        $cratedSensorReadingTypes = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
-        if ($cratedSensorReadingTypes === false || !empty($readingTypeCreation->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse($cardDataService->getUserInputErrors());
+        $createdSensorReadingTypes = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
+        if ($createdSensorReadingTypes === false || !empty($readingTypeCreation->getUserInputErrors())) {
+            return $this->sendBadRequestJsonResponse($readingTypeCreation->getUserInputErrors());
         }
-
         try {
             $cardDataService->createNewSensorCard($sensor, $this->getUser());
         } catch (ORMException) {

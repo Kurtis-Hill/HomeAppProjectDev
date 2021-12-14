@@ -30,8 +30,8 @@ services:
   App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
 
   ######################## Update Sensor Reading Services ######################################################
-  App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
+  App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingsService'
 
   App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
     alias: 'App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'
@@ -40,12 +40,14 @@ services:
     alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
 
   App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorReadingBoundary'
+    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
 
   ######################## New Sensor Creation Services ########################################################
-  App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationService'
+  App\ESPDeviceSensor\SensorDataServices\NewSensor\Form\NewSensorCreationFormServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\Form\NewSensorCreationFormService'
 
+  App\ESPDeviceSensor\SensorDataServices\NewSensor\Validator\NewSensorCreationValidatorServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\Validator\NewSensorCreationValidatorService'
   App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
     alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
 
@@ -64,6 +66,9 @@ services:
 
 
 ######################## Repositories ########################################################################
-  App\Devices\Repository\ORM\DeviceRepositoryInterface:
-    alias: 'App\Devices\Repository\ORM\DeviceRepository'
+  App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface:
+    alias: 'App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository'
+
+  App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface:
+    alias: 'App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepository'
 ######################## End Of Sensors ######################################################################################

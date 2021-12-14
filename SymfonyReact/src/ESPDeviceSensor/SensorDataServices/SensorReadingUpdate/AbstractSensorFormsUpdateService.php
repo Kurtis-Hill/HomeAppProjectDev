@@ -17,7 +17,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
 
-abstract class AbstractSensorUpdateService
+abstract class AbstractSensorFormsUpdateService
 {
     use FormProcessorTrait;
 
@@ -183,7 +183,7 @@ abstract class AbstractSensorUpdateService
     protected function getSensorReadingTypeObjectsToUpdate(Devices $device, string $sensorName): ArrayCollection
     {
         return new ArrayCollection(
-            $this->sensorRepository->getSensorReadingTypeObjectsBySensorNameAndDevice(
+            $this->sensorRepository->getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(
                 $device,
                 $sensorName,
                 SensorType::SENSOR_READING_TYPE_DATA
