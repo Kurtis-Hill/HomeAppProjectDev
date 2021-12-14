@@ -1,5 +1,6 @@
 import React, { Component, useContext } from 'react';
 import { NavbarContext } from '../../contexts/NavbarContext';
+import { Link } from 'react-router-dom';
 import { AddNewDeviceContext } from '../../contexts/AddNewDeviceContext';
 import { webappURL } from '../../Utilities/URLSCommon';
 
@@ -30,7 +31,7 @@ const addNewDevice = () => {
                                         <div className="form-modal-error-box">
                                             <ol>
                                                 {newDeviceModalContent.errors.map((error, index) => (
-                                                    <li key={index} className="form-modal-error-text">{error}</li>
+                                                    <li key={index} className="form-modal-error-text">{Object.keys(error).length === 0 ? 'Something has gone wrong' : error}</li>
                                                 ))}
                                             </ol>
                                         </div>
@@ -73,7 +74,7 @@ const addNewDevice = () => {
                                         <p className="font-weight-bold"> {newDeviceModalContent.deviceSecret}</p>
                                         </div>
                                         <div className="center" style={{paddingTop:"2%"}}>
-                                        <a href={newSensorRoute} className="btn-primary modal-submit-center" type="submit" value="submit">Got it!</a>
+                                        <Link to={newSensorRoute} onClick={() => {navBarContext.toggleNewDeviceModal()}} data-dismiss="modal" className="btn-primary modal-submit-center" type="submit" value="submit">Got it!</Link>
                                         </div>
                                     </div>
                                     : null

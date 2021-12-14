@@ -2,11 +2,11 @@
 
 namespace App\Devices\Controller;
 
+use App\API\APIErrorMessages;
 use App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface;
+use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceValidatorService;
 use App\Devices\DTO\DeviceDTO;
-use App\Devices\DTO\NewDeviceCheckDTO;
-use App\Devices\Entity\Devices;
-use App\Devices\Exceptions\DuplicateDeviceException;
+use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\Form\FormMessages;
 use App\Traits\API\HomeAppAPIResponseTrait;
@@ -14,7 +14,6 @@ use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
-use Doctrine\ORM\ORMException;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +30,7 @@ class AddNewDeviceController extends AbstractController
     public function addNewDevice(
         Request $request,
         RoomRepositoryInterface $roomRepository,
-        NewDeviceServiceInterface $newDeviceService,
+        NewESP8266DeviceValidatorService $newDeviceService,
         GroupCheckServiceInterface $groupCheckService,
     ): JsonResponse {
         try {
@@ -43,13 +42,8 @@ class AddNewDeviceController extends AbstractController
         $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
         $deviceRoom = $newDeviceData['deviceRoom'] ?? null;
 
-        if (!is_int($deviceGroup)) {
-            $errorMessage = sprintf(FormMessages::MALFORMED_REQUEST_DATA, 'group', 'int');
-            return $this->sendBadRequestJsonResponse([$errorMessage]);
-        }
-        if (!is_int($deviceRoom)) {
-            $errorMessage = sprintf(FormMessages::MALFORMED_REQUEST_DATA, 'room', 'int');
-            return $this->sendBadRequestJsonResponse([$errorMessage]);
+        if (!is_numeric($deviceGroup) || !is_numeric($deviceRoom)) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
         }
 
         try {
@@ -61,27 +55,26 @@ class AddNewDeviceController extends AbstractController
         $roomObject = $roomRepository->findOneById($deviceRoom);
 
         if (!$roomObject instanceof Room) {
-            return $this->sendBadRequestJsonResponse(['Room not found']);
+            return $this->sendBadRequestJsonResponse([
+                sprintf(
+                    APIErrorMessages::OBJECT_NOT_FOUND,
+                    'Room'
+                ),
+            ]);
         }
 
-        $newDeviceCheckDTO = new NewDeviceCheckDTO(
+        $newDeviceCheckDTO = new NewDeviceDTO(
+            $this->getUser(),
             $groupNameObject,
             $roomObject,
+            $deviceName,
         );
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {
             return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
         }
-
-        $deviceData = new DeviceDTO(
-            $this->getUser(),
-            $groupNameObject,
-            $roomObject,
-            $deviceName,
-        );
-        $device = $newDeviceService->createNewDevice($deviceData);
-
+        $device = $newDeviceService->createNewDevice($newDeviceCheckDTO);
         $errors = $newDeviceService->validateNewDevice($device);
 
         if (!empty($errors)) {
@@ -89,7 +82,6 @@ class AddNewDeviceController extends AbstractController
         }
 
         $deviceSaved = $newDeviceService->encodeAndSaveNewDevice($device);
-
         if ($deviceSaved === false) {
             return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
         }

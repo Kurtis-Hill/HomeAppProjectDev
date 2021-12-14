@@ -33,6 +33,7 @@ class SensorTypes extends AbstractController
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['error preparing data']);
         }
+//        dd($sensorTypes);
 
         return $this->sendSuccessfulJsonResponse($normalisedResponse);
     }
