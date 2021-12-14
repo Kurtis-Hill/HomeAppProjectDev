@@ -177,11 +177,11 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
             $cardColour = new CardColour();
             $cardColour->setColour($iconDetails['colour']);
             $cardColour->setShade($iconDetails['shade']);
+            $hey[] = $cardColour;
 
             $this->setReference($iconDetails['colour'], $cardColour);
             $manager->persist($cardColour);
         }
-
 
         $manager->flush();
     }
