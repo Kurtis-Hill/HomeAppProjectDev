@@ -7,18 +7,18 @@ use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\SensorTypeCardDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\CurrentReadingSensorTypeCardDataDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeCardDataBuilder implements CardBuilderDTOInterface
 {
     /**
-     * @param SensorInterface $sensorData
+     * @param SensorTypeInterface $sensorData
      * @param array $extraSensorData
      * @return SensorTypeCardDTOInterface
      */
-    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): SensorTypeCardDTOInterface
+    public function makeDTO(SensorTypeInterface $sensorData, array $extraSensorData = []): SensorTypeCardDTOInterface
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
 
@@ -31,8 +31,8 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeCardD
 
         return new CurrentReadingSensorTypeCardDataDTO(
             $sensor->getSensorName(),
-            $sensor->getSensorTypeID()->getSensorType(),
-            $sensor->getDeviceNameID()->getRoomObject()->getRoom(),
+            $sensor->getSensorTypeObject()->getSensorType(),
+            $sensor->getDeviceObject()->getRoomObject()->getRoom(),
             $cardViewData->getCardIconID()->getIconName(),
             $cardViewData->getCardColourID()->getColour(),
             $cardViewData->getCardViewID(),

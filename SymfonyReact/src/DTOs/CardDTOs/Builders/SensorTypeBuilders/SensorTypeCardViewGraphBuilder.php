@@ -7,12 +7,12 @@ namespace App\DTOs\CardDTOs\Builders\SensorTypeBuilders;
 use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\AllCardViewDTOInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 
 class SensorTypeCardViewGraphBuilder implements CardBuilderDTOInterface
 {
-    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): AllCardViewDTOInterface
+    public function makeDTO(SensorTypeInterface $sensorData, array $extraSensorData = []): AllCardViewDTOInterface
     {
         throw new NotImplementedException('makeDTO not implemented yet');
     }

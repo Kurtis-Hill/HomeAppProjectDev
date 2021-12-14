@@ -6,7 +6,7 @@ use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Forms\SensorReadingUpdateInterface;
@@ -44,7 +44,7 @@ abstract class AbstractSensorFormsUpdateService
                 if ($sensorType === $sensorObject::class) {
                     $sensorForm = $this->formFactory->create($sensorData['formToProcess'], $sensorObject, ['formSensorType' => new $sensorData['object']]);
                     $handledForm = $this->processForm($sensorForm, $sensorData['formData']);
-                    if ($handledForm === true) {
+                    if (empty($handledForm)) {
                         $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($sensorForm->getData()::class);
                         $readingTypeRepository->persist($sensorForm->getData());
                     }
@@ -57,7 +57,7 @@ abstract class AbstractSensorFormsUpdateService
     #[ArrayShape([
         AllSensorReadingTypeInterface::class => [
             "formToProcess" => SensorReadingUpdateInterface::class,
-            "object" => SensorInterface::class,
+            "object" => SensorTypeInterface::class,
             "formData" => [
                 "highReading" => "int|float",
                 "lowReading" => "int|float",

@@ -2,9 +2,9 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation;
 
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 
 interface SensorReadingTypeCreationInterface
 {
-    public function handleSensorReadingTypeCreation(Sensors $sensor): bool;
+    public function handleSensorReadingTypeCreation(Sensor $sensor): array;
 }

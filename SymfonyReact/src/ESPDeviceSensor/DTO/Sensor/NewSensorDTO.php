@@ -2,48 +2,52 @@
 
 namespace App\ESPDeviceSensor\DTO\Sensor;
 
+use App\Devices\Entity\Devices;
+use App\Entity\Core\User;
+use App\ESPDeviceSensor\Entity\SensorType;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Immutable]
 class NewSensorDTO
 {
     private ?string $sensorName;
 
-    private int $sensorTypeID;
+    private SensorType $sensorTypeID;
 
-    private int $deviceNameID;
+    private Devices $deviceNameID;
+
+    private UserInterface $user;
 
     public function __construct(
         ?string $sensorName,
-        int $sensorTypeID,
-        int $deviceNameID,
+        SensorType $sensorType,
+        Devices $device,
+        UserInterface $user,
     ) {
         $this->sensorName = $sensorName;
-        $this->sensorTypeID = $sensorTypeID;
-        $this->deviceNameID = $deviceNameID;
+        $this->sensorTypeID = $sensorType;
+        $this->deviceNameID = $device;
+        $this->user = $user;
     }
 
-    /**
-     * @return string
-     */
     public function getSensorName(): ?string
     {
         return $this->sensorName;
     }
 
-    /**
-     * @return int
-     */
-    public function getSensorTypeID(): int
+    public function getSensorType(): SensorType
     {
         return $this->sensorTypeID;
     }
 
-    /**
-     * @return int
-     */
-    public function getDeviceNameID(): int
+    public function getDevice(): Devices
     {
         return $this->deviceNameID;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
     }
 }

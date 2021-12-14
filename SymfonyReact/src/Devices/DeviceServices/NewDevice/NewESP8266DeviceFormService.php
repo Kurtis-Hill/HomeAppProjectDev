@@ -48,8 +48,7 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
 
     public function validateNewDevice(Devices $newDevice): array
     {
-        $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class);
-        $this->processNewDeviceForm($addNewDeviceForm, $newDevice);
+        $this->processNewDeviceForm($newDevice);
 
         if (!empty($this->getAllFormInputErrors())) {
             return $this->getAllFormInputErrors();
@@ -70,7 +69,7 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
     {
         $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck(
             $deviceData->getDeviceName(),
-            $deviceData->getRoomID(),
+            $deviceData->getRoomObject()->getRoomId(),
         );
 
         if ($currentUserDeviceCheck instanceof Devices) {
@@ -84,12 +83,14 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
         }
     }
 
-    private function processNewDeviceForm(FormInterface $addNewDeviceForm, Devices $device): void
+    private function processNewDeviceForm(Devices $device): array
     {
+        $addNewDeviceForm = $this->formFactory->create(AddNewDeviceForm::class);
+
         $addNewDeviceForm->submit([
             'deviceName' => $device->getDeviceName(),
-            'groupNameObject' => $device->getGroupNameID(),
-            'roomObject' => $device->getRoomID(),
+            'groupNameObject' => $device->getGroupNameObject(),
+            'roomObject' => $device->getRoomObject(),
         ]);
 
         if ($addNewDeviceForm->isSubmitted() && $addNewDeviceForm->isValid()) {
@@ -98,10 +99,11 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
             $validFormData = $addNewDeviceForm->getData();
             $validFormData->setDeviceSecret($devicePasswordHash);
             $validFormData->setRoles([Devices::ROLE]);
+
+            return [];
         }
-        else {
-            $this->processFormErrors($addNewDeviceForm);
-        }
+
+        return $this->processFormErrors($addNewDeviceForm);
     }
 
     private function createDevicePasswordHash(Devices $device): string

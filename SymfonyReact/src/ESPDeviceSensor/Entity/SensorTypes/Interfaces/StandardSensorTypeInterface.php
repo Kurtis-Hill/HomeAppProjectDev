@@ -4,7 +4,7 @@
 namespace App\ESPDeviceSensor\Entity\SensorTypes\Interfaces;
 
 use App\User\Entity\UserInterface\Card\CardView;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 
 Interface StandardSensorTypeInterface
 {
@@ -12,7 +12,7 @@ Interface StandardSensorTypeInterface
 
     public function setSensorTypeID(int $id): void;
 
-    public function getSensorNameID(): Sensors;
+    public function getSensorNameID(): Sensor;
 
     public function getCardViewObject(): ?CardView;
 

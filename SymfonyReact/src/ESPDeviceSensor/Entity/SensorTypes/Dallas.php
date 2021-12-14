@@ -4,8 +4,8 @@ namespace App\ESPDeviceSensor\Entity\SensorTypes;
 
 use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\Sensor;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,7 +18,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\ReadingType\DallasRepository")
  */
-class Dallas implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
+class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
     public const NAME = 'Dallas';
 
@@ -48,14 +48,14 @@ class Dallas implements SensorInterface, StandardSensorTypeInterface, Temperatur
     private Temperature $tempID;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @var CardView
@@ -79,17 +79,17 @@ class Dallas implements SensorInterface, StandardSensorTypeInterface, Temperatur
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensors $sensor): void
+    public function setSensorObject(Sensor $sensor): void
     {
         $this->sensorNameID = $sensor;
     }
@@ -112,17 +112,17 @@ class Dallas implements SensorInterface, StandardSensorTypeInterface, Temperatur
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensorNameID
+     * @param Sensor $sensorNameID
      */
-    public function setSensorNameID(Sensors $sensorNameID): void
+    public function setSensorNameID(Sensor $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
     }

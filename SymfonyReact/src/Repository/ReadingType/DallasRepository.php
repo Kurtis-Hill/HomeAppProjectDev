@@ -6,9 +6,9 @@ namespace App\Repository\ReadingType;
 
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -18,17 +18,17 @@ class DallasRepository extends EntityRepository
     /**
      * @param string $sensorName
      * @param Devices $devices
-     * @return SensorInterface|null
+     * @return SensorTypeInterface|null
      * @throws NonUniqueResultException
      */
-    public function findSensorBySensorName(string $sensorName, Devices $devices): ?SensorInterface
+    public function findSensorBySensorName(string $sensorName, Devices $devices): ?SensorTypeInterface
     {
         $qb = $this->createQueryBuilder('dallas');
         $expr = $qb->expr();
 
         $qb->select('dallas')
             ->innerJoin(
-                Sensors::class,
+                Sensor::class,
                 'sensor',
                 Join::WITH,
                 'dallas.sensorNameID = sensor.sensorNameID'
@@ -60,18 +60,18 @@ class DallasRepository extends EntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
     /**
-     * @param Sensors $sensor
+     * @param Sensor $sensor
      * @return Dallas|null
      * @throws NonUniqueResultException
      */
-    public function findDallasSensorBySensor(Sensors $sensor): ?Temperature
+    public function findDallasSensorBySensor(Sensor $sensor): ?Temperature
     {
         $qb = $this->createQueryBuilder('d');
         $expr = $qb->expr();
 
         $qb->select('t')
             ->innerJoin(Temperature::class, 't', Join::WITH, 't.tempID = d.tempID')
-            ->innerJoin(Sensors::class, 's', Join::WITH, 's.sensorNameID = t.sensorNameID')
+            ->innerJoin(Sensor::class, 's', Join::WITH, 's.sensorNameID = t.sensorNameID')
             ->where(
                 $expr->eq('d.sensor', ':sensorObject')
             )

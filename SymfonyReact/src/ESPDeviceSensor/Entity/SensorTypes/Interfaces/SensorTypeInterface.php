@@ -3,15 +3,15 @@
 namespace App\ESPDeviceSensor\Entity\SensorTypes\Interfaces;
 
 use App\User\Entity\UserInterface\Card\CardView;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 
-interface SensorInterface
+interface SensorTypeInterface
 {
-    public function setSensorObject(Sensors $sensor);
+    public function setSensorObject(Sensor $sensor);
 
     public function getSensorTypeID(): int;
 
-    public function getSensorObject(): Sensors;
+    public function getSensorObject(): Sensor;
 
     public function getCardViewObject(): ?CardView;
 }

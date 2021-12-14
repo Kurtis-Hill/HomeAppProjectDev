@@ -179,7 +179,7 @@ class CardDataController extends AbstractController
 
         $sensorObject = $cardViewObject->getSensorNameID();
         $updateBoundaryReadings->handleSensorReadingBoundaryUpdate(
-            $cardViewObject->getSensorNameID()->getDeviceNameID(),
+            $cardViewObject->getSensorNameID()->getDeviceObject(),
             $sensorObject->getSensorName(),
             $cardData
         );

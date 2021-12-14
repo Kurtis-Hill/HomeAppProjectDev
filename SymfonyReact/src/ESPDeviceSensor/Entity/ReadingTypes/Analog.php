@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -69,14 +69,14 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
 
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @return int
@@ -101,17 +101,17 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
 
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensorNameID
+     * @param Sensor $sensorNameID
      */
-    public function setSensorNameID(Sensors $sensorNameID): void
+    public function setSensorNameID(Sensor $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
     }

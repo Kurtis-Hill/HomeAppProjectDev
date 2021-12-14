@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use DateTime;
@@ -98,7 +98,7 @@ class ConstTemp implements ConstantlyRecordInterface
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
     public function getSensorReadingTypeID(): Temperature
     {

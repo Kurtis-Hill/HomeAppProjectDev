@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -13,10 +13,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Sensors::class);
+        parent::__construct($registry, Sensor::class);
     }
 
-    public function persist(Sensors $sensorReadingData): void
+    public function persist(Sensor $sensorReadingData): void
     {
         $this->getEntityManager()->persist($sensorReadingData);
     }
@@ -26,12 +26,12 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $this->getEntityManager()->flush();
     }
 
-    public function remove(Sensors $sensors): void
+    public function remove(Sensor $sensors): void
     {
         $this->getEntityManager()->remove($sensors);
     }
 
-    public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors
+    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -45,7 +45,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
-                    'groupName' => $sensorData->getDeviceNameID()->getGroupNameObject(),
+                    'groupName' => $sensorData->getDeviceObject()->getGroupNameObject(),
                 ]
             );
 

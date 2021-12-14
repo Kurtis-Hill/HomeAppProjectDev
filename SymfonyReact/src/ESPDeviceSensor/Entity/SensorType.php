@@ -144,25 +144,25 @@ class SensorType
     ];
 
     public const SENSOR_READING_TYPE_DATA = [
-        Sensors::TEMPERATURE => [
+        Sensor::TEMPERATURE => [
             'alias' => 'temp',
             'object' => Temperature::class,
             'outOfBounds' => OutOfRangeTemp::class,
             'constRecord' => ConstTemp::class
         ],
-        Sensors::HUMIDITY => [
+        Sensor::HUMIDITY => [
             'alias' => 'humid',
             'object' => Humidity::class,
             'outOfBounds' => OutOfRangeHumid::class,
             'constRecord' => ConstHumid::class
         ],
-        Sensors::ANALOG => [
+        Sensor::ANALOG => [
             'alias' => 'analog',
             'object' => Analog::class,
             'outOfBounds' => OutOfRangeAnalog::class,
             'constRecord' => ConstAnalog::class
         ],
-        Sensors::LATITUDE => [
+        Sensor::LATITUDE => [
             'alias' => 'lat',
             'object' => Latitude::class,
             'outOfBounds' => '@OTODO implement',

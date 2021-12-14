@@ -11,7 +11,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
@@ -53,9 +53,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         $sensorCountCardView = 0;
         foreach (self::CARD_VIEW_CHECK as $state => $sensorData) {
             foreach (SensorType::ALL_SENSOR_TYPE_DATA as $name => $sensorDetails) {
-                $sensor = new Sensors();
+                $sensor = new Sensor();
 //dd('gi ');
-                $sensor->setDeviceNameID($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
+                $sensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
                 $sensor->setSensorName($sensorData.$name.$sensorCountCardView);
                 $sensor->setSensorTypeID($this->getReference($name));
                 $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -108,8 +108,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         // sensor reading update sensor
         foreach (self::SENSORS as $sensorType => $name) {
-            $newAdminSensor = new Sensors();
-            $newAdminSensor->setDeviceNameID($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
+            $newAdminSensor = new Sensor();
+            $newAdminSensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
             $newAdminSensor->setSensorName($name);
             $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
             $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -123,8 +123,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
             foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
                 $sensorNameAdminDevice = sprintf('%s%s%d', $sensorType, 'admin', $sensorCounter);
-                $newAdminSensor = new Sensors();
-                $newAdminSensor->setDeviceNameID($this->getReference($device['referenceName']));
+                $newAdminSensor = new Sensor();
+                $newAdminSensor->setDeviceObject($this->getReference($device['referenceName']));
                 $newAdminSensor->setSensorName($sensorNameAdminDevice);
                 $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
                 $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -153,8 +153,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 // Regular created devices with card view set to off to reduce interface noise
                 $sensorNameUserDevice = sprintf('%s%s%d', $sensorType, 'user', $sensorCounter);
-                $newRegularUserSensor = new Sensors();
-                $newRegularUserSensor->setDeviceNameID($this->getReference($device['referenceName']));
+                $newRegularUserSensor = new Sensor();
+                $newRegularUserSensor->setDeviceObject($this->getReference($device['referenceName']));
                 $newRegularUserSensor->setSensorName($sensorNameUserDevice);
                 $newRegularUserSensor->setSensorTypeID($this->getReference($sensorType));
                 $newRegularUserSensor->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));

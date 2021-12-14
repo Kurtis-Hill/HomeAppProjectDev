@@ -73,6 +73,9 @@ services:
     container_name: '${APP_NAME}-rabbitmq'
     ports:
       - '127.0.0.1:${RABBIT_MQ_INTERFACE_PORT}:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq
         - ./rabbitmq/log/:/var/log/rabbitmq

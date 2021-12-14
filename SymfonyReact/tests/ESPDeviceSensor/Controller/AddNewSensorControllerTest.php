@@ -11,7 +11,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
@@ -22,6 +22,7 @@ use App\Form\FormMessages;
 use App\User\Entity\UserInterface\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
+use JetBrains\PhpStorm\NoReturn;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -61,30 +62,31 @@ class AddNewSensorControllerTest extends WebTestCase
 
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
-            $this->setUserToken();
+            $this->userToken = $this->setUserToken(true);
         } catch (JsonException $e) {
             error_log($e);
         }
     }
 
-    private function setUserToken(): void
+    private function setUserToken(bool $forceToken = false): string
     {
-        $this->client->request(
-            'POST',
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-        );
+        if ($forceToken === true) {
+            $this->client->request(
+                'POST',
+                SecurityController::API_USER_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
+            );
 
-        $requestResponse = $this->client->getResponse();
-        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $requestResponse = $this->client->getResponse();
+            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->userToken = $responseData['token'];
+            return $responseData['token'];
+        }
 
-        $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
-
+        return $this->userToken;
     }
 
     /**
@@ -158,6 +160,7 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
+    #[NoReturn]
     public function test_can_add_new_sensor_correct_details(string $sensorType, string $sensorName): void
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
@@ -169,7 +172,6 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         $jsonData = json_encode($formData);
-
         $this->client->request(
             'POST',
             self::ADD_NEW_SENSOR_URL,
@@ -179,13 +181,15 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData
         );
 
+//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
+//dd('sdf', $responseData);
         $sensorID = $responseData['payload']['sensorNameID'];
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
 
-        self::assertInstanceOf(Sensors::class, $sensor);
+        self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
         self::assertArrayHasKey('sensorNameID', $responseData['payload']);
         self::assertIsInt($responseData['payload']['sensorNameID']);
@@ -218,9 +222,10 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData,
         );
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
         self::assertNull($sensor);
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -252,11 +257,11 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData,
         );
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($sensor);
-        self::assertStringContainsString('Sensor name cannot be at longer than 20 characters', $responseData['errors'][0]);
+        self::assertStringContainsString("Sensor name cannot be longer than 20 characters", $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -286,7 +291,7 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData,
         );
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($sensor);
@@ -303,7 +308,7 @@ class AddNewSensorControllerTest extends WebTestCase
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findBy(['deviceNameID' => $device->getDeviceNameID()])[0];
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['deviceNameID' => $device->getDeviceNameID()])[0];
 
         $formData = [
             'sensorName' => $sensor->getSensorName(),
@@ -367,10 +372,10 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         self::assertNull($sensor);
-        self::assertStringContainsString('Cannot find device to add sensor too', $responseData['errors'][0]);
+        self::assertStringContainsString('Device not found', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -405,10 +410,10 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         self::assertNull($sensor);
-        self::assertStringContainsString('This value is not valid', $responseData['errors'][0]);
+        self::assertStringContainsString('SensorType not found', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -444,7 +449,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $sensorID = $responseData['payload']['sensorNameID'];
 
-        $sensor = $this->entityManager->getRepository(Sensors::class)->findOneBy(['sensorNameID' => $sensorID]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
         $dhtSensor = $this->entityManager->getRepository($class)->findOneBy(['sensorNameID' => $sensorID]);
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensorNameID' => $sensorID]);
 
@@ -453,7 +458,7 @@ class AddNewSensorControllerTest extends WebTestCase
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
 
-        self::assertInstanceOf(Sensors::class, $sensor);
+        self::assertInstanceOf(Sensor::class, $sensor);
         self::assertInstanceOf($class, $dhtSensor);
         self::assertInstanceOf(CardView::class, $cardView);
 

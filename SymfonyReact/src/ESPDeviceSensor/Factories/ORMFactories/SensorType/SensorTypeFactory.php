@@ -36,7 +36,6 @@ class SensorTypeFactory implements SensorTypeFactoryInterface
 
     public function getSensorTypeRepository(string $sensorType): SensorTypeRepositoryInterface
     {
-//        dd($sensorType, 'me');
         return match ($sensorType) {
             Dallas::class => $this->dallasRepository,
             Bmp::class => $this->bmpRepository,

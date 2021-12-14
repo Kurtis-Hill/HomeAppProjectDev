@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

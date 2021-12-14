@@ -3,7 +3,7 @@
 namespace App\User\Entity\UserInterface\Card;
 
 use App\Entity\Core\User;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\User\Entity\UserInterface\Icons;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,14 +25,14 @@ class CardView
     private int $cardViewID;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @var Cardstate
@@ -91,17 +91,17 @@ class CardView
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensorNameID
+     * @param Sensor $sensorNameID
      */
-    public function setSensorNameID(Sensors $sensorNameID): void
+    public function setSensorNameID(Sensor $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
     }

@@ -3,16 +3,16 @@
 namespace App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces;
 
 
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 
 interface StandardReadingSensorInterface
 {
     /**
      * Sensor relational Objects
      */
-    public function getSensorObject(): Sensors;
+    public function getSensorObject(): Sensor;
 
-    public function setSensorNameID(Sensors $id);
+    public function setSensorNameID(Sensor $id);
 
 
     /**

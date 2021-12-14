@@ -12,9 +12,9 @@ use App\User\Entity\UserInterface\Card\Cardstate;
 use App\User\Entity\UserInterface\Card\CardView;
 use App\User\Entity\UserInterface\Icons;
 use App\Entity\Core\User;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -229,8 +229,8 @@ class CardDTOCreatorService implements APIErrorInterface, LoggedInUserRequiredIn
     public function getCardViewFormDTO(CardView $cardViewObject): ?CardViewSensorFormDTO
     {
 //        try {
-            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::ALL_SENSOR_TYPE_DATA);
-            if ($cardData instanceof SensorInterface) {
+            $cardData = $this->em->getRepository(Sensor::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::ALL_SENSOR_TYPE_DATA);
+            if ($cardData instanceof SensorTypeInterface) {
                 $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
 

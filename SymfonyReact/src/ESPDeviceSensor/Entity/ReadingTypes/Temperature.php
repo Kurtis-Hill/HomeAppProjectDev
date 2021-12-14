@@ -4,11 +4,12 @@ namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -71,13 +72,13 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     ]
     #[
         Assert\LessThan(
-            value: Bmp::LOW_TEMPERATURE_READING_BOUNDRY,
-            message: 'Temperature settings for Bmp sensor cannot be below '. Bmp::LOW_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+            value: Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
+            message: 'Temperature settings for Bmp sensor cannot be below '. Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
             groups: [Bmp::NAME]
         ),
         Assert\GreaterThan(
-            value: Bmp::HIGH_TEMPERATURE_READING_BOUNDRY,
-            message: 'Temperature settings for Bmp sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+            value: Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
+            message: 'Temperature settings for Bmp sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
             groups: [Bmp::NAME]
         ),
     ]
@@ -100,8 +101,8 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
             groups: [Dallas::NAME]
         ),
         Assert\GreaterThan(
-            value: Bmp::HIGH_TEMPERATURE_READING_BOUNDRY,
-            message: 'Temperature settings for Bmp sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+            value: Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
+            message: 'Temperature settings for Bmp sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
             groups: [Bmp::NAME]
         ),
     ]
@@ -124,8 +125,8 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
             groups: [Dallas::NAME]
         ),
         Assert\LessThan(
-            value: Bmp::LOW_TEMPERATURE_READING_BOUNDRY,
-            message: 'Temperature settings for Bmp sensor cannot be below '. Bmp::LOW_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+            value: Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
+            message: 'Temperature settings for Bmp sensor cannot be below '. Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
             groups: [Bmp::NAME]
         ),
     ]
@@ -139,21 +140,20 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     private bool $constRecord = false;
 
     /**
-     * @var \DateTime
      *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?\DateTime $time;
+    private DateTime $time;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @return int
@@ -172,17 +172,17 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $id
+     * @param Sensor $id
      */
-    public function setSensorNameID(Sensors $id): void
+    public function setSensorNameID(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }
@@ -190,9 +190,6 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     /**
      * Sensor Reading Methods
      */
-
-
-
     #[Pure] public function getCurrentReading(): int|float
     {
         return round($this->currentReading, 2);
@@ -215,7 +212,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getTime(): \DateTimeInterface
     {
@@ -251,11 +248,11 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     }
 
     /**
-     * @param \DateTime|null $time
+     * @param DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**

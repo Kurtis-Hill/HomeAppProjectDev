@@ -43,13 +43,11 @@ services:
     alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
 
   ######################## New Sensor Creation Services ########################################################
-  App\ESPDeviceSensor\SensorDataServices\NewSensor\Form\NewSensorCreationFormServiceInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\Form\NewSensorCreationFormService'
+  App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationValidatorService'
 
-  App\ESPDeviceSensor\SensorDataServices\NewSensor\Validator\NewSensorCreationValidatorServiceInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\Validator\NewSensorCreationValidatorService'
   App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationServiceTwo'
 
   ######################## Factories ###########################################################################
   App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:
@@ -64,6 +62,7 @@ services:
   App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface:
     alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactory'
 
+######################## Builders ########################################################################
 
 ######################## Repositories ########################################################################
   App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface:

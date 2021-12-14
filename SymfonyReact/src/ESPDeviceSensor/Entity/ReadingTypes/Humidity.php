@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -106,14 +106,14 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     private ?DateTime $time;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @return int
@@ -129,17 +129,17 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $id
+     * @param Sensor $id
      */
-    public function setSensorNameID(Sensors $id): void
+    public function setSensorNameID(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }

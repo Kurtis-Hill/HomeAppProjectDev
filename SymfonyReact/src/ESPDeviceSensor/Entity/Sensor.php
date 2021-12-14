@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="sensornames", indexes={@ORM\Index(name="SensorTypes", columns={"sensorTypeID"}), @ORM\Index(name="sensornames_ibfk_1", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\SensorsRepository")
  */
-class Sensors
+class Sensor
 {
     public const TEMPERATURE = 'Temperature';
 
@@ -110,7 +110,7 @@ class Sensors
         $this->sensorName = $sensorName;
     }
 
-    public function getSensorTypeID(): SensorType
+    public function getSensorTypeObject(): SensorType
     {
         return $this->sensorTypeID;
     }
@@ -123,7 +123,7 @@ class Sensors
     /**
      * @return Devices
      */
-    public function getDeviceNameID(): Devices
+    public function getDeviceObject(): Devices
     {
         return $this->deviceNameID;
     }
@@ -131,7 +131,7 @@ class Sensors
     /**
      * @param Devices $deviceNameID
      */
-    public function setDeviceNameID(Devices $deviceNameID): void
+    public function setDeviceObject(Devices $deviceNameID): void
     {
         $this->deviceNameID = $deviceNameID;
     }

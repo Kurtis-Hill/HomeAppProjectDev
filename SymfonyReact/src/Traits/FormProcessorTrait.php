@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -9,35 +10,31 @@ trait FormProcessorTrait
 {
     private array $formInputErrors = [];
 
-    /**
-     * @param FormInterface|FormFactoryInterface $form
-     * @param array $formData
-     * @return bool
-     */
-    public function processForm(FormInterface|FormFactoryInterface $form, array $formData): bool
+    public function processForm(FormInterface|FormFactoryInterface $form, array $formData): array
     {
         $form->submit($formData);
         if ($form->isSubmitted() && !$form->isValid()) {
-            $this->processFormErrors($form);
-            return false;
+            return $this->processFormErrors($form);
         }
 
-        return true;
+        return [];
     }
 
-    /**
-     * @param FormInterface $form
-     */
-    public function processFormErrors(FormInterface $form): void
+    public function processFormErrors(FormInterface $form): array
     {
+        $errors = [];
         foreach ($form->getErrors(true, true) as $error) {
             $this->formInputErrors[] = $error->getMessage();
+            $errors[] = $error->getMessage();
         }
+
+        return $errors;
     }
 
     /**
      * @return array
      */
+    #[Deprecated]
     public function getAllFormInputErrors(): array
     {
         return $this->formInputErrors;

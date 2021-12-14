@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Forms;
 
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\FormMessages;
@@ -42,7 +42,7 @@ class AddNewSensorForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Sensors::class,
+            'data_class' => Sensor::class,
             'csrf_protection' => false,
         ]);
     }

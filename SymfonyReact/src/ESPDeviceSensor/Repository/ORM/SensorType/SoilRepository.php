@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\SensorType;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,7 +14,7 @@ class SoilRepository extends ServiceEntityRepository implements SensorTypeReposi
         parent::__construct($registry, Soil::class);
     }
 
-    public function persist(SensorInterface $sensor): void
+    public function persist(SensorTypeInterface $sensor): void
     {
         $this->getEntityManager()->persist($sensor);
     }

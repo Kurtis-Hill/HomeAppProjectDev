@@ -8,9 +8,9 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface;
@@ -24,8 +24,6 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
 
     private SensorTypeFactoryInterface $sensorTypeFactory;
 
-    private array $userInputErrors = [];
-
     public function __construct(
         SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
         SensorTypeFactoryInterface $sensorTypeFactory,
@@ -34,34 +32,32 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
         $this->sensorTypeFactory = $sensorTypeFactory;
     }
 
-    public function handleSensorReadingTypeCreation(Sensors $sensor): bool
+    public function handleSensorReadingTypeCreation(Sensor $sensor): array
     {
+        $errors = [];
         try {
             $this->createNewSensorReadingTypeData($sensor);
-
-            return true;
         } catch (SensorTypeException $e) {
-            $this->userInputErrors[] = $e->getMessage();
+            $errors[] = $e->getMessage();
         } catch (ORMException $e) {
-            $this->userInputErrors[] = 'Failed to save sensor reading types';
+            $errors[] = 'Failed to save sensor reading types';
         }
 
-        return false;
+        return $errors;
     }
 
-    private function createNewSensorReadingTypeData(Sensors $sensor): void
+    private function createNewSensorReadingTypeData(Sensor $sensor): void
     {
         $dateTimeNow = new DateTime();
 
         foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorNames => $sensorTypeData) {
-            if ($sensorNames === $sensor->getSensorTypeID()->getSensorType()) {
+            if ($sensorNames === $sensor->getSensorTypeObject()->getSensorType()) {
                 $newSensorTypeObject = new $sensorTypeData['object'];
-                if ($newSensorTypeObject instanceof SensorInterface) {
+                if ($newSensorTypeObject instanceof SensorTypeInterface) {
                     $newSensorTypeObject->setSensorObject($sensor);
                     $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeData['object']);
                     foreach ($sensorTypeData['readingTypes'] as $readingType => $readingTypeObject) {
                         $newReadingTypeObject = new $readingTypeObject;
-
                         $sensorReadingRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($readingTypeObject);
 
                         //Adding New Sensor Type
@@ -95,14 +91,9 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
             throw new SensorTypeException(
                 sprintf(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED,
-                    $sensor->getSensorTypeID()->getSensorType()
+                    $sensor->getSensorTypeObject()->getSensorType()
                 )
             );
         }
-    }
-
-    public function getUserInputErrors(): array
-    {
-        return $this->userInputErrors;
     }
 }

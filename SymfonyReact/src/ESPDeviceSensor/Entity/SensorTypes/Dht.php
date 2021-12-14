@@ -5,9 +5,9 @@ namespace App\ESPDeviceSensor\Entity\SensorTypes;
 use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,7 +20,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="dhtsensor", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="cardviewID", columns={"cardviewID"})})
  * @ORM\Entity
  */
-class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
+class Dht implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
 {
     public const NAME = 'Dht';
 
@@ -60,14 +60,14 @@ class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
     private Humidity $humidID;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @var CardView
@@ -110,15 +110,15 @@ class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
     /**
      * @return CardView
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensors $sensor): void
+    public function setSensorObject(Sensor $sensor): void
     {
         $this->sensorNameID = $sensor;
     }
@@ -126,15 +126,15 @@ class Dht implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
     /**
      * @return CardView
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Sensor $sensor
      */
-    public function setSensorNameID(Sensors $sensor): void
+    public function setSensorNameID(Sensor $sensor): void
     {
         $this->sensorNameID = $sensor;
     }

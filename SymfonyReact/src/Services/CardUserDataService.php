@@ -13,9 +13,9 @@ use App\User\Entity\UserInterface\Card\Cardstate;
 use App\User\Entity\UserInterface\Card\CardView;
 use App\User\Entity\UserInterface\Icons;
 use App\Entity\Core\User;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use App\Services\CardServices\CardDataFilterService;
 use App\Services\CardServices\CardDataProviderInterface;
@@ -230,8 +230,8 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     public function getCardViewFormDTO(CardView $cardViewObject): ?CardViewSensorFormDTO
     {
 //        try {
-            $cardData = $this->em->getRepository(Sensors::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::ALL_SENSOR_TYPE_DATA);
-            if ($cardData instanceof SensorInterface) {
+            $cardData = $this->em->getRepository(Sensor::class)->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), SensorType::ALL_SENSOR_TYPE_DATA);
+            if ($cardData instanceof SensorTypeInterface) {
                 $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
 
@@ -258,7 +258,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
      * @throws ORMException
      * @throws RuntimeException
      */
-    public function createNewSensorCard(Sensors $sensorObject, User $user): void
+    public function createNewSensorCard(Sensor $sensorObject, User $user): void
     {
         $randomIcon = $this->returnRandomIcon();
 

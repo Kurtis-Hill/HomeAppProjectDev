@@ -4,9 +4,9 @@ namespace App\ESPDeviceSensor\Entity\SensorTypes;
 
 use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
@@ -17,9 +17,13 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
  * @ORM\Entity
  */
-class Soil implements SensorInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
+class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
 {
     public const NAME = 'Soil';
+
+    private const HIGH_SOIL_READING_BOUNDARY = 9999;
+
+    private const LOW_SOIL_READING_BOUNDARY = 0;
 
     /**
      * @var int
@@ -41,14 +45,14 @@ class Soil implements SensorInterface, StandardSensorTypeInterface, AnalogSensor
     private Analog $analogID;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     private CardView $cardView;
 
@@ -85,17 +89,17 @@ class Soil implements SensorInterface, StandardSensorTypeInterface, AnalogSensor
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensors $sensor): void
+    public function setSensorObject(Sensor $sensor): void
     {
         $this->sensorNameID = $sensor;
     }
@@ -116,10 +120,18 @@ class Soil implements SensorInterface, StandardSensorTypeInterface, AnalogSensor
         $this->cardView = $cardView;
     }
 
-    public function getSensorNameID(): Sensors
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
 
+    public function getMaxAnalog(): float|int
+    {
+        return self::HIGH_SOIL_READING_BOUNDARY;
+    }
 
+    public function getMinAnalog(): float|int
+    {
+        return self::LOW_SOIL_READING_BOUNDARY;
+    }
 }

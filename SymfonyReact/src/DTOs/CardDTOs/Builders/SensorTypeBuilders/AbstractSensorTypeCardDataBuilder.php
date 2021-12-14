@@ -8,16 +8,16 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 
 abstract class AbstractSensorTypeCardDataBuilder
 {
     /**
-     * @param SensorInterface $cardDTOData
+     * @param SensorTypeInterface $cardDTOData
      * @return array
      */
-    protected function filterSensorTypesAndGetData(SensorInterface $cardDTOData): array
+    protected function filterSensorTypesAndGetData(SensorTypeInterface $cardDTOData): array
     {
         if ($cardDTOData instanceof TemperatureSensorTypeInterface) {
             $sensorData[] = $this->setStandardSensorData($cardDTOData->getTempObject(), 'temperature', Temperature::READING_SYMBOL);

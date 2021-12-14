@@ -3,17 +3,17 @@
 namespace App\Repository\Core;
 
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * @method Sensors|null find($id, $lockMode = null, $lockVersion = null)
- * @method Sensors|null findOneBy(array $criteria, array $orderBy = null)
- * @method Sensors[]    findAll()
- * @method Sensors[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Sensor|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Sensor|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Sensor[]    findAll()
+ * @method Sensor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class SensorsRepository extends EntityRepository
 {
@@ -30,7 +30,7 @@ class SensorsRepository extends EntityRepository
         return implode(', ', $sensorAlias);
     }
 
-    public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors
+    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -44,7 +44,7 @@ class SensorsRepository extends EntityRepository
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
-                    'groupName' => $sensorData->getDeviceNameID()->getGroupNameObject(),
+                    'groupName' => $sensorData->getDeviceObject()->getGroupNameObject(),
                 ]
             );
 
@@ -84,11 +84,11 @@ class SensorsRepository extends EntityRepository
     }
 
     /**
-     * @param Sensors $sensors
+     * @param Sensor $sensors
      * @param $sensorData
      * @return array
      */
-    public function getSensorReadingTypeCardFormDataBySensor(Sensors $sensors, $sensorData): StandardSensorTypeInterface
+    public function getSensorReadingTypeCardFormDataBySensor(Sensor $sensors, $sensorData): StandardSensorTypeInterface
     {
         $qb = $this->createQueryBuilder('sensors');
 

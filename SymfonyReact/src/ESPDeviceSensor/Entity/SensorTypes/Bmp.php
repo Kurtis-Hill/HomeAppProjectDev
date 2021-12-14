@@ -6,10 +6,10 @@ use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,13 +21,13 @@ use JetBrains\PhpStorm\NoReturn;
  * @ORM\Table(name="bmp", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="latitudeID", columns={"latitudeID"})})
  * @ORM\Entity
  */
-class Bmp implements SensorInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
+class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
 {
     public const NAME = 'Bmp';
 
-    public const HIGH_TEMPERATURE_READING_BOUNDRY = 85;
+    public const HIGH_TEMPERATURE_READING_BOUNDARY = 85;
 
-    public const LOW_TEMPERATURE_READING_BOUNDRY = -45;
+    public const LOW_TEMPERATURE_READING_BOUNDARY = -45;
 
     /**
      * @var int
@@ -39,14 +39,14 @@ class Bmp implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
     private int $bmpID;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @var Temperature
@@ -100,25 +100,25 @@ class Bmp implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $sensor
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensors $sensor): void
+    public function setSensorObject(Sensor $sensor): void
     {
         $this->sensorNameID = $sensor;
     }
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorNameID(): Sensors
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
@@ -182,5 +182,33 @@ class Bmp implements SensorInterface, StandardSensorTypeInterface, TemperatureSe
         $this->cardView = $cardView;
     }
 
+    public function getMaxTemperature(): float|int
+    {
+        return self::HIGH_TEMPERATURE_READING_BOUNDARY;
+    }
 
+    public function getMinTemperature(): float|int
+    {
+        return self::LOW_TEMPERATURE_READING_BOUNDARY;
+    }
+
+    public function getMaxHumidity(): float|int
+    {
+        return Humidity::HIGH_READING;
+    }
+
+    public function getMinHumidity(): float|int
+    {
+        return Humidity::LOW_READING;
+    }
+
+    public function getMaxLatitude(): float|int
+    {
+        return Latitude::HIGH_LATITUDE_READING_BOUNDARY;
+    }
+
+    public function getMinLatitude(): float|int
+    {
+        return Latitude::LOW_LATITUDE_READING_BOUNDARY;
+    }
 }

@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Repository\ORM\SensorType;
 
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,7 +14,7 @@ class DhtRepository extends ServiceEntityRepository implements SensorTypeReposit
         parent::__construct($registry, Dht::class);
     }
 
-    public function persist(SensorInterface $sensor): void
+    public function persist(SensorTypeInterface $sensor): void
     {
         $this->getEntityManager()->persist($sensor);
     }

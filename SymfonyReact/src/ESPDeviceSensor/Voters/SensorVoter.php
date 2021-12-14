@@ -6,6 +6,7 @@ namespace App\ESPDeviceSensor\Voters;
 
 use App\Devices\Entity\Devices;
 use App\Entity\Core\User;
+use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -47,31 +48,30 @@ class SensorVoter extends Voter
         };
     }
 
-    private function viewDeviceCardData(UserInterface $user, Devices $devices): bool
+    private function viewDeviceCardData(UserInterface $user, NewSensorDTO $newSensorDTO): bool
     {
         if (!$user instanceof User) {
             return false;
         }
 
-        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array(
+            $newSensorDTO->getDevice()->getGroupNameObject()->getGroupNameID(),
+            $user->getGroupNameIds(),
+            true)
+        ) {
             return false;
         }
 
         return true;
     }
 
-    /**
-     * @param UserInterface $user
-     * @param Devices $devices
-     * @return bool
-     */
-    private function canAddNewDevice(UserInterface $user, Devices $devices): bool
+    private function canAddNewDevice(UserInterface $user, NewSensorDTO $newSensorDTO): bool
     {
         if (!$user instanceof User) {
             return false;
         }
 
-        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($newSensorDTO->getDevice()->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
 

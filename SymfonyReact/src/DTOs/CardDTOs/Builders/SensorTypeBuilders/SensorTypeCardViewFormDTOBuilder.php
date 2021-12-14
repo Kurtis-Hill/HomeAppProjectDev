@@ -6,17 +6,17 @@ use App\DTOs\CardDTOs\Builders\CardBuilderDTOInterface;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewFormDTO;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
 class SensorTypeCardViewFormDTOBuilder extends AbstractSensorTypeCardDataBuilder implements CardBuilderDTOInterface
 {
     /**
-     * @param SensorInterface $sensorData
+     * @param SensorTypeInterface $sensorData
      * @param array $extraSensorData
      * @return CardViewSensorFormDTO
      */
-    public function makeDTO(SensorInterface $sensorData, array $extraSensorData = []): CardViewFormDTO
+    public function makeDTO(SensorTypeInterface $sensorData, array $extraSensorData = []): CardViewFormDTO
     {
         $formattedSensorData = $this->filterSensorTypesAndGetData($sensorData);
         $usersCurrentCardDisplaySettings = $this->setUsersCurrentCardViewData($sensorData);
@@ -36,10 +36,10 @@ class SensorTypeCardViewFormDTOBuilder extends AbstractSensorTypeCardDataBuilder
     }
 
     /**
-     * @param SensorInterface $cardDTOData
+     * @param SensorTypeInterface $cardDTOData
      * @return array
      */
-    protected function setUsersCurrentCardViewData(SensorInterface $cardDTOData): array
+    protected function setUsersCurrentCardViewData(SensorTypeInterface $cardDTOData): array
     {
         if ($cardDTOData->getCardViewObject() === null) {
             throw new \RuntimeException('Card View Object Has Not Been Set For The Form DTO');

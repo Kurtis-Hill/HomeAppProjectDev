@@ -7,7 +7,7 @@ use App\Devices\Entity\Devices;
 use App\User\Entity\UserInterface\Card\Cardstate;
 use App\User\Entity\UserInterface\Card\CardView;
 use App\Entity\Core\User;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -19,7 +19,7 @@ class CardViewRepository extends EntityRepository
 {
     private function prepareSensorTypeDataObjectsForQuery(array $sensors, $qb, array $joinCondition): string
     {
-        $qb->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
+        $qb->innerJoin(Sensor::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
 
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
 
@@ -35,7 +35,7 @@ class CardViewRepository extends EntityRepository
     //@TODO after DB refactor can use the sensor type array and build scalar results for the card view to reduce queries
     private function prepareSensorTypeDataScalarForQuery(array $sensors, $qb, array $joinCondition): string
     {
-        $qb->innerJoin(Sensors::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
+        $qb->innerJoin(Sensor::class, 'sensors', Join::WITH, 'sensors.sensorNameID = cv.sensorNameID');
 
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
 

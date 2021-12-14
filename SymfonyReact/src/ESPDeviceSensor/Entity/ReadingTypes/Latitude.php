@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
@@ -18,6 +18,10 @@ use JetBrains\PhpStorm\Pure;
 class Latitude extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'latitude';
+
+    public const HIGH_LATITUDE_READING_BOUNDARY = 90;
+
+    public const LOW_LATITUDE_READING_BOUNDARY = -90;
 
     public const LATITUDE_SENSORS = [
         SensorType::BMP_SENSOR
@@ -61,14 +65,14 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
     private bool $constRecord = false;
 
     /**
-     * @var Sensors
+     * @var Sensor
      *
-     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensors")
+     * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    private Sensors $sensorNameID;
+    private Sensor $sensorNameID;
 
     /**
      * @var \DateTime
@@ -98,17 +102,17 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
      */
 
     /**
-     * @return Sensors
+     * @return Sensor
      */
-    public function getSensorObject(): Sensors
+    public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
     /**
-     * @param Sensors $id
+     * @param Sensor $id
      */
-    public function setSensorNameID(Sensors $id): void
+    public function setSensorNameID(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }

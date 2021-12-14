@@ -4,17 +4,21 @@ namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\Entity\Sensors;
+use App\ESPDeviceSensor\Entity\Sensor;
+use Doctrine\ORM\ORMException;
 
 interface SensorRepositoryInterface
 {
-    public function persist(Sensors $sensorReadingData): void;
+    public function persist(Sensor $sensorReadingData): void;
 
+    /**
+     * @throws ORMException
+     */
     public function flush(): void;
 
-    public function remove(Sensors $sensors): void;
+    public function remove(Sensor $sensors): void;
 
-    public function checkForDuplicateSensorOnDevice(Sensors $sensorData): ?Sensors;
+    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor;
 
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array;
 }
