@@ -64,7 +64,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
                 $errors = [...$errors, $sensorTypeObjectErrors];
             }
         }
-//dd('sa');
+
         return $errors;
     }
 
@@ -78,9 +78,8 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             null,
             $sensorTypeName
         );
-        $errors = [];
+//        $errors = [];
         if (count($validationErrors) > 0) {
-//            dd('we have errors');
             foreach ($validationErrors as $error) {
                 $errors[] = $error->getMessage();
             }
@@ -93,8 +92,6 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 
     private function persistSensorData(AllSensorReadingTypeInterface $sensorType): void
     {
-//dd($sensorType);
-//        dd($sensorType, 'oer' );
         $repository = $this->sensorReadingTypeFactory
             ->getSensorReadingTypeRepository($sensorType::class);
         $repository->persist($sensorType);

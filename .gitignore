@@ -1,6 +1,5 @@
 ###> symfony/framework-bundle ###
 SymfonyReact/.env
-SymfonyReact/.env.test
 SymfonyReact/.env.test.nonelocal
 SymfonyReact/.env.local
 SymfonyReact/.env.nonelocal

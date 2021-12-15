@@ -36,10 +36,10 @@ services:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'  # DEV  
     environment:
-      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
-      MYSQL_USER: '${MYSQL_USER}'
-      MYSQL_PASS: '${MYSQL_PASS}'
-      MYSQL_DB: '${MYSQL_DB}'
+      MARIADB_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+      MARIADB_USER : '${MYSQL_USER}'
+      MARIADB_PASSWORD: '${MYSQL_PASS}'
+      MARIADB_DATABASE: '${MYSQL_DB}'
     volumes:
       - ./mariadb/db_data:/var/lib/mysql
       - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf

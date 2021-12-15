@@ -6,5 +6,5 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
 interface SensorReadingTypesValidatorServiceInterface
 {
-    public function validateReadingTypeObjects(SensorTypeInterface $sensor): array;
+    public function validateReadingTypeObjects(SensorTypeInterface $sensorTypeObject): array;
 }

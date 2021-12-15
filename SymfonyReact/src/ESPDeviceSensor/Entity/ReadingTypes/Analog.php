@@ -150,9 +150,6 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         $this->analogReading = $reading;
     }
 
-    /**
-     * @param int|float|string $reading
-     */
     public function setHighReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
@@ -160,9 +157,6 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         }
     }
 
-    /**
-     * @param int|float|string $reading
-     */
     public function setLowReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
@@ -170,34 +164,20 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         }
     }
 
-    /**
-     * @param DateTime|null $time
-     */
     public function setTime(?DateTime $time = null): void
     {
         $this->time = $time ?? new DateTime('now');
     }
 
-    /**
-     * Sensor Functional Methods
-     */
-
-    /**
-     * @return bool
-     */
     public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
 
-    /**
-     * @param bool $constRecord
-     */
     public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
     }
-
 
     public function getSensorTypeName(): string
     {

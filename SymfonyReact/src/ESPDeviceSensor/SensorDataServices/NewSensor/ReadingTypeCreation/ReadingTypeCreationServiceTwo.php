@@ -32,25 +32,24 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
 
     public function handleSensorReadingTypeCreation(Sensor $sensor): array
     {
-        $errors = [];
         try {
             $sensorTypeObject = $this->createNewSensorReadingTypeData($sensor);
-            $this->validateSensorReadingTypeData($sensorTypeObject);
-//            dd('s');
-            $this->saveSensorTypeObjects($sensorTypeObject);
-//        dd('asdasd');
         } catch (SensorTypeException | SensorTypeBuilderFailureException $e) {
-            $errors[] = $e->getMessage();
-        } catch (SensorReadingTypeValidationException $e) {
-            $errors[] = array_push($errors, $e->getValidationErrors());
+            return [$e->getMessage()];
         } catch (ORMException $e) {
-           $errors[] = 'Failed to create sensor reading types';
+           return ['Failed to create sensor reading types'];
         } catch (\Exception $e) {
             dd($e);
         }
 
+        $validationErrors = $this->validateSensorReadingTypeData($sensorTypeObject);
+
+        if (empty($validationErrors)) {
+            $this->saveSensorTypeObjects($sensorTypeObject);
+        }
+
 //        dd($errors);
-        return $errors;
+        return $validationErrors;
     }
 
     /**
@@ -69,14 +68,14 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
         return $sensorReadingCreationService->buildReadingTypeObjects($sensor);
     }
 
-    private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): void
+    private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array
     {
-        $validationErrors = $this->sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorTypeObject);
+        return $this->sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorTypeObject);
 
-        if (!empty($validationErrors)) {
-//            dd($validationErrors);
-            throw new SensorReadingTypeValidationException($validationErrors);
-        }
+//        if (!empty($validationErrors)) {
+////            dd($validationErrors);
+//            throw new SensorReadingTypeValidationException($validationErrors);
+//        }
     }
 
     /**
@@ -87,6 +86,7 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
 //        dd($sensorTypeObject);
         $sensorTypeObjectAsString = $sensorTypeObject::class;
         $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
+        $sensorTypeRepository->persist($sensorTypeObject);
 //        dd($sensorTypeRepository->seePersistList());
 //        $sensorTypeRepository->seePersistList(), persist($sensorTypeObject);
         $sensorTypeRepository->flush();

@@ -3,7 +3,6 @@
 namespace App\ESPDeviceSensor\Entity\SensorTypes\Interfaces;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use JetBrains\PhpStorm\NoReturn;
 
 interface TemperatureSensorTypeInterface
 {
