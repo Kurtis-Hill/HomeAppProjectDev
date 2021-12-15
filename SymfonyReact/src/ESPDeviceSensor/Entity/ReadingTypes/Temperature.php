@@ -9,6 +9,9 @@ use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
@@ -47,40 +50,15 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
      */
     #[
-        Assert\LessThan(
-        value: Dht::LOW_TEMPERATURE_READING_BOUNDRY,
-        message: 'Temperature settings for Dht sensor cannot exceed '. Dht::HIGH_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-        groups: [Dht::NAME]
+        DallasTemperatureConstraint(
+            groups: [Dallas::NAME]
         ),
-        Assert\GreaterThan(
-            value: Dht::HIGH_TEMPERATURE_READING_BOUNDRY,
-            message:  'Temperature settings for Dht sensor cannot be below '. Dht::LOW_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+        DHTTemperatureConstraint(
             groups: [Dht::NAME]
         ),
-    ]
-    #[
-        Assert\LessThan(
-            value: Dallas::LOW_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Dallas sensor cannot be below ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Dallas::NAME]
-        ),
-        Assert\GreaterThan(
-            value: Dallas::HIGH_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Dallas sensor cannot exceed ' . Dallas::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Dallas::NAME]
-        ),
-    ]
-    #[
-        Assert\LessThan(
-            value: Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Bmp sensor cannot be below '. Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Bmp::NAME]
-        ),
-        Assert\GreaterThan(
-            value: Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Bmp sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Bmp::NAME]
-        ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        )
     ]
     private float $currentReading;
 
@@ -90,21 +68,15 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
      */
     #[
-        Assert\GreaterThan(
-            value: Dht::HIGH_TEMPERATURE_READING_BOUNDRY,
-            message:  'Temperature settings for Dht sensor cannot be below '. Dht::LOW_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Dht::NAME]
-        ),
-        Assert\GreaterThan(
-            value: Dallas::HIGH_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Dallas sensor cannot exceed ' . Dallas::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+        DallasTemperatureConstraint(
             groups: [Dallas::NAME]
         ),
-        Assert\GreaterThan(
-            value: Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Bmp sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Bmp::NAME]
+        DHTTemperatureConstraint(
+            groups: [Dht::NAME]
         ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        )
     ]
     private float $highTemp = 50;
 
@@ -114,21 +86,15 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
      */
     #[
-        Assert\LessThan(
-            value: Dht::LOW_TEMPERATURE_READING_BOUNDRY,
-            message: 'Temperature settings for Dht sensor cannot exceed '. Dht::HIGH_TEMPERATURE_READING_BOUNDRY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Dht::NAME]
-        ),
-        Assert\LessThan(
-            value: Dallas::LOW_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Dallas sensor cannot be below ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
+        DallasTemperatureConstraint(
             groups: [Dallas::NAME]
         ),
-        Assert\LessThan(
-            value: Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
-            message: 'Temperature settings for Bmp sensor cannot be below '. Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered {{ string }}'. Temperature::READING_SYMBOL,
-            groups: [Bmp::NAME]
+        DHTTemperatureConstraint(
+            groups: [Dht::NAME]
         ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        )
     ]
     private float $lowTemp = 10;
 
@@ -164,17 +130,17 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     }
 
     /**
-     * @param int $tempID
+     * @param int $id
      */
-    public function setSensorID(int $tempID): void
+    public function setSensorID(int $id): void
     {
-        $this->tempID = $tempID;
+        $this->tempID = $id;
     }
 
     /**
      * @return Sensor
      */
-    public function getSensorObject(): Sensor
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }

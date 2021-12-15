@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\SensorType;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -11,7 +11,7 @@ class BmpRepository extends ServiceEntityRepository implements SensorTypeReposit
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Dallas::class);
+        parent::__construct($registry, Bmp::class);
     }
 
     public function persist(SensorTypeInterface $sensor): void
@@ -22,5 +22,10 @@ class BmpRepository extends ServiceEntityRepository implements SensorTypeReposit
     public function flush(): void
     {
         $this->getEntityManager()->flush();
+    }
+
+    public function seePersistList()
+    {
+        $em = $this->getEntityManager()->getUnitOfWork()->getScheduledEntityInsertions();
     }
 }

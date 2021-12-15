@@ -2,15 +2,13 @@
 
 namespace App\ESPDeviceSensor\Entity\SensorTypes;
 
-use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\User\Entity\UserInterface\Card\CardView;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\NoReturn;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Dallas
@@ -25,8 +23,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public const HIGH_TEMPERATURE_READING_BOUNDARY = 125;
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -55;
-
-    public const MAX_POSSIBLE_SENSORS = 8;
 
     /**
      * @var int
@@ -78,17 +74,11 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         $this->dallasID = $dallasID;
     }
 
-    /**
-     * @return Sensor
-     */
     public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
-    /**
-     * @param Sensor $sensor
-     */
     public function setSensorObject(Sensor $sensor): void
     {
         $this->sensorNameID = $sensor;
@@ -105,26 +95,9 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     /**
      * @param Temperature $tempID
      */
-    #[NoReturn]
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
-    }
-
-    /**
-     * @return Sensor
-     */
-    public function getSensorNameID(): Sensor
-    {
-        return $this->sensorNameID;
-    }
-
-    /**
-     * @param Sensor $sensorNameID
-     */
-    public function setSensorNameID(Sensor $sensorNameID): void
-    {
-        $this->sensorNameID = $sensorNameID;
     }
 
     public function getCardViewObject(): ?CardView
@@ -137,5 +110,18 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         $this->cardView = $cardView;
     }
 
+    public function getMaxTemperature(): float|int
+    {
+        return self::HIGH_TEMPERATURE_READING_BOUNDARY;
+    }
 
+    public function getMinTemperature(): float|int
+    {
+        return self::LOW_TEMPERATURE_READING_BOUNDARY;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return self::NAME;
+    }
 }

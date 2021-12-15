@@ -94,25 +94,25 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function newSensorSimpleDataProvider(): Generator
     {
-        yield [
-            'sensor' => SensorType::DHT_SENSOR,
-            'sensorName' => 'dhtTest'
-        ];
+//        yield [
+//            'sensor' => SensorType::DHT_SENSOR,
+//            'sensorName' => 'dhtTest'
+//        ];
 
         yield [
             'sensor' => SensorType::BMP_SENSOR,
             'sensorName' => 'bmpTest'
         ];
 
-        yield [
-            'sensor' => SensorType::SOIL_SENSOR,
-            'sensorName' => 'soilTest'
-        ];
-
-        yield [
-            'sensor' => SensorType::DALLAS_TEMPERATURE,
-            'sensorName' => 'dallasTest'
-        ];
+//        yield [
+//            'sensor' => SensorType::SOIL_SENSOR,
+//            'sensorName' => 'soilTest'
+//        ];
+//
+//        yield [
+//            'sensor' => SensorType::DALLAS_TEMPERATURE,
+//            'sensorName' => 'dallasTest'
+//        ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
@@ -160,7 +160,6 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
-    #[NoReturn]
     public function test_can_add_new_sensor_correct_details(string $sensorType, string $sensorName): void
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
@@ -181,10 +180,8 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData
         );
 
-//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-//dd('sdf', $responseData);
+//dd($responseData);
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);

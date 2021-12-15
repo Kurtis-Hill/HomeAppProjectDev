@@ -24,9 +24,9 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 {
     public const NAME = 'Dht';
 
-    public const HIGH_TEMPERATURE_READING_BOUNDRY = 80;
+    public const HIGH_TEMPERATURE_READING_BOUNDARY = 80;
 
-    public const LOW_TEMPERATURE_READING_BOUNDRY = -40;
+    public const LOW_TEMPERATURE_READING_BOUNDARY = -40;
 
     public const SENSOR_TYPE_ID = 1;
 
@@ -101,7 +101,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     /**
      * @param Temperature $tempID
      */
-    #[NoReturn]
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
@@ -116,27 +115,11 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     }
 
     /**
-     * @param Sensor $sensor
+     * @param Sensor $id
      */
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensorObject(Sensor $id): void
     {
-        $this->sensorNameID = $sensor;
-    }
-
-    /**
-     * @return CardView
-     */
-    public function getSensorNameID(): Sensor
-    {
-        return $this->sensorNameID;
-    }
-
-    /**
-     * @param Sensor $sensor
-     */
-    public function setSensorNameID(Sensor $sensor): void
-    {
-        $this->sensorNameID = $sensor;
+        $this->sensorNameID = $id;
     }
 
     /**
@@ -169,5 +152,30 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function setCardViewObject(CardView $cardView): void
     {
         $this->cardView = $cardView;
+    }
+
+    public function getMaxTemperature(): float|int
+    {
+        return self::HIGH_TEMPERATURE_READING_BOUNDARY;
+    }
+
+    public function getMinTemperature(): float|int
+    {
+        return self::LOW_TEMPERATURE_READING_BOUNDARY;
+    }
+
+    public function getMaxHumidity(): float|int
+    {
+        return Humidity::HIGH_READING;
+    }
+
+    public function getMinHumidity(): float|int
+    {
+        return Humidity::LOW_READING;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return self::NAME;
     }
 }

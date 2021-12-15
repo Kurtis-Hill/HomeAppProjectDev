@@ -97,11 +97,11 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     }
 
     /**
-     * @param Sensor $sensor
+     * @param Sensor $id
      */
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensorObject(Sensor $id): void
     {
-        $this->sensorNameID = $sensor;
+        $this->sensorNameID = $id;
     }
 
     /**
@@ -120,10 +120,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
         $this->cardView = $cardView;
     }
 
-    public function getSensorNameID(): Sensor
-    {
-        return $this->sensorNameID;
-    }
 
     public function getMaxAnalog(): float|int
     {
@@ -133,5 +129,10 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     public function getMinAnalog(): float|int
     {
         return self::LOW_SOIL_READING_BOUNDARY;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return self::NAME;
     }
 }

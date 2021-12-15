@@ -9,7 +9,6 @@ interface TemperatureSensorTypeInterface
 {
     public function getTempObject(): Temperature;
 
-    #[NoReturn]
     public function setTempObject(Temperature $tempID): void;
 
     public function getMaxTemperature(): float|int;

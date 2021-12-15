@@ -86,24 +86,14 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         return $this->analogID;
     }
 
-    /**
-     * @param int $analogid
-     */
+
     public function setSensorID(int $analogid): void
     {
         $this->analogID = $analogid;
     }
 
 
-    /**
-     * Sensor relational Objects
-     */
-
-
-    /**
-     * @return Sensor
-     */
-    public function getSensorObject(): Sensor
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }

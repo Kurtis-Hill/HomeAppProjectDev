@@ -13,7 +13,6 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\NoReturn;
 
 /**
  * Bmp
@@ -108,19 +107,11 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     }
 
     /**
-     * @param Sensor $sensor
+     * @param Sensor $id
      */
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensorObject(Sensor $id): void
     {
-        $this->sensorNameID = $sensor;
-    }
-
-    /**
-     * @return Sensor
-     */
-    public function getSensorNameID(): Sensor
-    {
-        return $this->sensorNameID;
+        $this->sensorNameID = $id;
     }
 
     /**
@@ -134,7 +125,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     /**
      * @param Temperature $tempID
      */
-    #[NoReturn]
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
@@ -210,5 +200,10 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function getMinLatitude(): float|int
     {
         return Latitude::LOW_LATITUDE_READING_BOUNDARY;
+    }
+
+    public function getSensorTypeName(): string
+    {
+        return self::NAME;
     }
 }

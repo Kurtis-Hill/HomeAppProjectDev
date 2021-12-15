@@ -1,10 +1,10 @@
 <?php
 
-
 namespace App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators;
 
 use Symfony\Component\Validator\Constraint;
 
+#[\Attribute]
 class SoilContraint extends Constraint
 {
     public string $maxMessage = 'Reading for this sensor cannot be over 9999 you entered "{{ string }}"';

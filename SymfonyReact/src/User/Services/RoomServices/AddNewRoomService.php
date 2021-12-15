@@ -54,7 +54,6 @@ class AddNewRoomService implements AddNewRoomServiceInterface
         return null;
     }
 
-    #[NoReturn]
     private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
     {
         $duplicateCheck = $this->roomRepository->findDuplicateRoom(

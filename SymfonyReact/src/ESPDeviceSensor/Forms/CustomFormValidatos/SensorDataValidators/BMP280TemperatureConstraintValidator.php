@@ -4,6 +4,7 @@
 namespace App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators;
 
 
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -27,14 +28,14 @@ class BMP280TemperatureConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 85) {
+        if ($value > Bmp::HIGH_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < -40) {
+        if ($value < Bmp::LOW_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

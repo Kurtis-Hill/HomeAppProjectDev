@@ -1,10 +1,10 @@
 <?php
 
-
 namespace App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators;
 
 use Symfony\Component\Validator\Constraint;
 
+#[\Attribute]
 class LatitudeConstraint extends Constraint
 {
     public string $maxMessage = 'The highest possible latitude is 90 you entered "{{ string }}"';

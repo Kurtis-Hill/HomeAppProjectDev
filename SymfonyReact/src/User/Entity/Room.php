@@ -56,7 +56,6 @@ class Room
         return $this->roomID;
     }
 
-    #[NoReturn]
     public function setRoomID(int $roomID): void
     {
         $this->roomID = $roomID;
@@ -70,7 +69,6 @@ class Room
         return $this->room;
     }
 
-    #[NoReturn]
     public function setRoom(string $room): void
     {
         $this->room = $room;
@@ -84,7 +82,6 @@ class Room
         return $this->groupNameID;
     }
 
-    #[NoReturn]
     public function setGroupNameID(GroupNames $groupNameID): void
     {
         $this->groupNameID = $groupNameID;

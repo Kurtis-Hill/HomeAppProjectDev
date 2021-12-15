@@ -6,6 +6,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
+use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\BmpRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\DallasRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\DhtRepository;
@@ -41,6 +42,7 @@ class SensorTypeFactory implements SensorTypeFactoryInterface
             Bmp::class => $this->bmpRepository,
             Soil::class => $this->soilRepository,
             Dht::class => $this->dhtRepository,
+            default => throw new SensorTypeException(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME)
         };
     }
 }

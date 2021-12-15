@@ -6,8 +6,8 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Latitude
@@ -15,7 +15,7 @@ use JetBrains\PhpStorm\Pure;
  * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\LatitudeRepository")
  */
-class Latitude extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterface, StandardReadingSensorInterface
 {
     public const READING_TYPE = 'latitude';
 
@@ -48,14 +48,14 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="highLatitude", type="integer", nullable=false)
      */
-    private int|float $highLatitude = 66.932045;
+    private int|float $highLatitude = 90;
 
     /**
      * @var int|float
      *
      * @ORM\Column(name="lowLatitude", type="integer", nullable=false)
      */
-    private int|float $lowLatitude = 58.008098;
+    private int|float $lowLatitude = -90;
 
     /**
      * @var bool
@@ -75,8 +75,6 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
     private Sensor $sensorNameID;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
     private ?\DateTime $time;
@@ -90,11 +88,11 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
     }
 
     /**
-     * @param int $analogid
+     * @param int $id
      */
-    public function setSensorID(int $analogid): void
+    public function setSensorID(int $latitudeId): void
     {
-        $this->latitudeID = $analogid;
+        $this->latitudeID = $latitudeId;
     }
 
     /**
@@ -104,7 +102,7 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
     /**
      * @return Sensor
      */
-    public function getSensorObject(): Sensor
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
@@ -148,7 +146,7 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
     /**
      * @return \DateTime
      */
-    public function getTime(): \DateTimeInterface
+    public function getTime(): DateTimeInterface
     {
         return $this->time;
     }
@@ -188,10 +186,6 @@ class Latitude extends AbstractReadingType implements StandardReadingSensorInter
     {
         $this->time = $time ?? new \DateTime('now');
     }
-
-    /**
-     * Sensor Functional Methods
-     */
 
     /**
      * @return bool

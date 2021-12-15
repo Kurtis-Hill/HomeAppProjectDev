@@ -16,6 +16,7 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
 
     public function persist(AllSensorReadingTypeInterface $sensorReadingType): void
     {
+//        dd('persosing');
         $this->getEntityManager()->persist($sensorReadingType);
     }
 

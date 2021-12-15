@@ -37,19 +37,16 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         return $this->findOneBy(['roomID' => $id]);
     }
 
-    #[NoReturn]
     public function persist(Room $room): void
     {
         $this->getEntityManager()->persist($room);
     }
 
-    #[NoReturn]
     public function flush(): void
     {
         $this->getEntityManager()->flush();
     }
 
-    #[NoReturn]
     public function remove(Room $room): void
     {
         $this->getEntityManager()->remove($room);

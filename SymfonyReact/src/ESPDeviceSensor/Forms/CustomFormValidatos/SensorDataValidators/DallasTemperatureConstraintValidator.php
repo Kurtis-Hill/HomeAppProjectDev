@@ -3,6 +3,7 @@
 
 namespace App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators;
 
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -26,14 +27,14 @@ class DallasTemperatureConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value > 125) {
+        if ($value > Dallas::HIGH_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < -55) {
+        if ($value < Dallas::LOW_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

@@ -9,13 +9,10 @@ interface RoomRepositoryInterface
 {
     public function findDuplicateRoom(string $roomName, int $groupNameId): ?Room;
 
-    #[NoReturn]
     public function persist(Room $room): void;
 
-    #[NoReturn]
     public function flush(): void;
 
-    #[NoReturn]
     public function remove(Room $room): void;
 
     public function findOneById(int $id): ?Room;

@@ -62,6 +62,9 @@ services:
   App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface:
     alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactory'
 
+  App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorService'
+
 ######################## Builders ########################################################################
 
 ######################## Repositories ########################################################################

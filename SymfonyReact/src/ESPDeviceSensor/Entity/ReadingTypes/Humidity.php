@@ -6,6 +6,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -46,14 +47,15 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
     #[
-        Assert\LessThan(
-            value: self::LOW_READING,
-            message: "Humidity reading must not be less than {{ value }}"
-        ),
-        Assert\GreaterThan(
-            value: self::HIGH_READING,
-            message: "Humidity reading must not be greater than {{ value }}"
-        )
+        HumidityConstraint
+//        Assert\LessThan(
+//            value: self::LOW_READING,
+//            message: "Humidity reading must not be less than {{ value }}"
+//        ),
+//        Assert\GreaterThan(
+//            value: self::HIGH_READING,
+//            message: "Humidity reading must not be greater than {{ value }}"
+//        )
     ]
     private int $currentReading;
 
@@ -63,14 +65,15 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
     #[
-        Assert\LessThan(
-            value: self::LOW_READING,
-            message: "Humidity reading must not be less than {{ value }}"
-        ),
-        Assert\GreaterThan(
-            value: self::HIGH_READING,
-            message: "Humidity reading must not be greater than {{ value }}"
-        )
+        HumidityConstraint
+//        Assert\LessThan(
+//            value: self::LOW_READING,
+//            message: "Humidity reading must not be less than {{ value }}"
+//        ),
+//        Assert\GreaterThan(
+//            value: self::HIGH_READING,
+//            message: "Humidity reading must not be greater than {{ value }}"
+//        )
     ]
     private int $highHumid = 80;
 
@@ -80,14 +83,15 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
     #[
-        Assert\LessThan(
-            value: self::LOW_READING,
-            message: "Humidity reading must not be less than {{ value }}"
-        ),
-        Assert\GreaterThan(
-            value: self::HIGH_READING,
-            message: "Humidity reading must not be greater than {{ value }}"
-        )
+        HumidityConstraint
+//        Assert\LessThan(
+//            value: self::LOW_READING,
+//            message: "Humidity reading must not be less than {{ value }}"
+//        ),
+//        Assert\GreaterThan(
+//            value: self::HIGH_READING,
+//            message: "Humidity reading must not be greater than {{ value }}"
+//        )
     ]
     private int $lowHumid = 10;
 
@@ -115,9 +119,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      */
     private Sensor $sensorNameID;
 
-    /**
-     * @return int
-     */
+
     public function getSensorID(): int
     {
         return $this->humidID;
@@ -128,66 +130,41 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         $this->humidID = $id;
     }
 
-    /**
-     * @return Sensor
-     */
-    public function getSensorObject(): Sensor
+    public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
 
-    /**
-     * @param Sensor $id
-     */
     public function setSensorNameID(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }
-
-    /**
-     * Sensor Reading Methods
-     */
 
     public function getCurrentReading(): int|float
     {
         return $this->currentReading;
     }
 
-    /**
-     * @return int|float
-     */
     public function getHighReading(): int|float
     {
         return $this->highHumid;
     }
 
-    /**
-     * @return float|null
-     */
     public function getLowReading(): int|float
     {
         return $this->lowHumid;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getTime(): \DateTimeInterface
     {
         return $this->time;
     }
 
-    /**
-     * @param int|float $reading
-     */
     public function setCurrentReading(int|float $reading): void
     {
         $this->currentReading = $reading;
     }
 
-    /**
-     * @param int|float $reading
-     */
     public function setHighReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
@@ -195,9 +172,6 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         }
     }
 
-    /**
-     * @param int|float|string $reading
-     */
     public function setLowReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
@@ -205,21 +179,12 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         }
     }
 
-    /**
-     * @param DateTime|null $time
-     */
     public function setTime(?DateTime $time = null): void
     {
         $this->time = $time ?? new DateTime('now');
     }
 
-    /**
-     * Sensor Functional Methods
-     */
 
-    /**
-     * @return bool
-     */
     public function getConstRecord(): bool
     {
         return $this->constRecord;

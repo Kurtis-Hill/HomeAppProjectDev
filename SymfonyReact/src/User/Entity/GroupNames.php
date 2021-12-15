@@ -43,7 +43,6 @@ class GroupNames
         return $this->groupNameID;
     }
 
-    #[NoReturn]
     public function setGroupNameID(int $groupNameID): void
     {
         $this->groupNameID = $groupNameID;
@@ -57,7 +56,6 @@ class GroupNames
         return $this->groupName;
     }
 
-    #[NoReturn]
     public function setGroupName(string $groupName): void
     {
         $this->groupName = $groupName;
@@ -71,7 +69,6 @@ class GroupNames
         return $this->time;
     }
 
-    #[NoReturn]
     public function setTime(?\DateTime $time = null): void
     {
         $this->time = $time ?? new \DateTime('now');

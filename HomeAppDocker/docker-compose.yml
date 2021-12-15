@@ -76,9 +76,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    volumes:
-        - ./rabbitmq/data/:/var/lib/rabbitmq
-        - ./rabbitmq/log/:/var/log/rabbitmq
+    # volumes:
+    #     - ./rabbitmq/dataclear/:/var/lib/rabbitmq
+    #     - ./rabbitmq/log/:/var/log/rabbitmq
     networks:
       - HomeAppProjectNetwork
 

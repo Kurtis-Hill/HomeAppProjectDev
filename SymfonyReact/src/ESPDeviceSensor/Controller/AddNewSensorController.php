@@ -7,6 +7,7 @@ use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
@@ -55,7 +56,6 @@ class AddNewSensorController extends AbstractController
                 ),
             ]);
         }
-
         $sensorType = $sensorTypeRepository->findOneById($sensorData['sensorTypeID']);
         if (!$sensorType instanceof SensorType) {
             return $this->sendBadRequestJsonResponse([
@@ -72,7 +72,6 @@ class AddNewSensorController extends AbstractController
             $device,
             $this->getUser()
         );
-
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);
         } catch (AccessDeniedException) {
@@ -92,6 +91,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
+//        dd('s');
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
 
         if (!empty($sensorReadingTypeCreationErrors)) {
@@ -101,8 +101,6 @@ class AddNewSensorController extends AbstractController
             $cardDataService->createNewSensorCard($sensor, $this->getUser());
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse(['error creating card for user interface but sensor was created successfully']);
-        } catch (RuntimeException $exception) {
-            return $this->sendInternalServerErrorJsonResponse([$exception->getMessage()]);
         }
 
         $sensorID = $sensor->getSensorNameID();

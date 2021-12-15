@@ -3,20 +3,21 @@
 namespace App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders;
 
 use App\ESPDeviceSensor\Entity\Sensor;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Exceptions\SensorTypeBuilderFailureException;
-use SebastianBergmann\Comparator\Exception;
+use Exception;
 
-class SoilSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements SensorReadingTypeBuilderInterface
+class DhtSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements SensorReadingTypeBuilderInterface
 {
     public function buildReadingTypeObjects(Sensor $sensor): SensorTypeInterface
     {
-        $soil = new Soil();
-        $this->setSensorObject($soil, $sensor);
+        $dht = new Dht();
+        $this->setSensorObject($dht, $sensor);
         try {
-            $this->buildAnalogSensor($soil);
-        }  catch (Exception) {
+            $this->buildTemperatureSensor($dht);
+            $this->buildHumiditySensor($dht);
+        } catch (Exception) {
             throw new SensorTypeBuilderFailureException(
                 sprintf(
                     SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE,
@@ -25,6 +26,6 @@ class SoilSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder impl
             );
         }
 
-        return $soil;
+        return $dht;
     }
 }
