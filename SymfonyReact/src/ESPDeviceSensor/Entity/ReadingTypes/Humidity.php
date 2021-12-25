@@ -155,7 +155,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->lowHumid;
     }
 
-    public function getTime(): \DateTimeInterface
+    public function getUpdatedAt(): \DateTimeInterface
     {
         return $this->time;
     }
@@ -179,7 +179,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         }
     }
 
-    public function setTime(?DateTime $time = null): void
+    public function setUpdatedAt(?DateTime $time = null): void
     {
         $this->time = $time ?? new DateTime('now');
     }

@@ -79,7 +79,7 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeCardD
                 ? number_format($sensorTypeObject->getMeasurementDifferenceLowReading(), 2)
                 : $sensorTypeObject->getMeasurementDifferenceLowReading(),
             'readingSymbol' => $symbol,
-            'time' => $sensorTypeObject->getTime()->format('d-m H:i:s')
+            'time' => $sensorTypeObject->getUpdatedAt()->format('d-m H:i:s')
         ];
     }
 }

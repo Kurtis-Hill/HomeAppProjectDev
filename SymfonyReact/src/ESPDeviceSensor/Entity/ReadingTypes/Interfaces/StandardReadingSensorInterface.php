@@ -22,7 +22,7 @@ interface StandardReadingSensorInterface
 
     public function getLowReading(): int|float;
 
-    public function getTime(): \DateTimeInterface;
+    public function getUpdatedAt(): \DateTimeInterface;
 
     public function setCurrentReading(int|float $reading): void;
 
@@ -30,7 +30,7 @@ interface StandardReadingSensorInterface
 
     public function setLowReading(int|float|string $reading): void;
 
-    public function setTime(?\DateTime $time = null): void;
+    public function setUpdatedAt(?\DateTime $time = null): void;
 
     /**
      * Sensor Functional Methods

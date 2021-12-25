@@ -28,7 +28,7 @@ class AbstractSensorReadingTypeBuilder
         $temperatureSensor->setCurrentReading(10);
         $temperatureSensor->setHighReading($temperatureSensorType->getMaxTemperature());
         $temperatureSensor->setLowReading($temperatureSensorType->getMinTemperature());
-        $temperatureSensor->setTime();
+        $temperatureSensor->setUpdatedAt();
 
         $temperatureSensorType->setTempObject($temperatureSensor);
     }
@@ -44,7 +44,7 @@ class AbstractSensorReadingTypeBuilder
         $humiditySensor->setCurrentReading(10);
         $humiditySensor->setHighReading($humiditySensorType->getMaxHumidity());
         $humiditySensor->setLowReading($humiditySensorType->getMinHumidity());
-        $humiditySensor->setTime();
+        $humiditySensor->setUpdatedAt();
 
         $humiditySensorType->setHumidObject($humiditySensor);
     }
@@ -60,7 +60,7 @@ class AbstractSensorReadingTypeBuilder
         $latitudeSensor->setCurrentReading(10);
         $latitudeSensor->setHighReading($latitudeSensorType->getMaxLatitude());
         $latitudeSensor->setLowReading($latitudeSensorType->getMinLatitude());
-        $latitudeSensor->setTime();
+        $latitudeSensor->setUpdatedAt();
 
         $latitudeSensorType->setLatitudeObject($latitudeSensor);
     }
@@ -76,7 +76,7 @@ class AbstractSensorReadingTypeBuilder
         $analogSensor->setCurrentReading(10);
         $analogSensor->setHighReading($analogSensorType->getMaxAnalog());
         $analogSensor->setLowReading($analogSensorType->getMinAnalog());
-        $analogSensor->setTime();
+        $analogSensor->setUpdatedAt();
     }
 
     protected function setSensorObject(SensorTypeInterface $sensorType, Sensor $sensor): void

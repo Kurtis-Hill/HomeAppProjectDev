@@ -84,7 +84,7 @@ class ConstTemp implements ConstantlyRecordInterface
     /**
      * @return DateTime
      */
-    public function getTime(): DateTime
+    public function getCreatedAt(): DateTime
     {
         return $this->time;
     }
@@ -92,7 +92,7 @@ class ConstTemp implements ConstantlyRecordInterface
     /**
      * @param DateTime|null $time
      */
-    public function setTime(?DateTime $time = null): void
+    public function setCreatedAt(?DateTime $time = null): void
     {
         $this->time = $time ?? new DateTime('now');
     }

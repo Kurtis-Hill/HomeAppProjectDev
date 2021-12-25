@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Analog
  *
- * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="analog_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="analog_ibfk_6", columns={"deviceNameID"})})
+ * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="analog_ibfk_3", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\AnalogRepository")
  */
 class Analog extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
@@ -35,37 +35,37 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     /**
      * @var float
      *
-     * @ORM\Column(name="analogReading", type="smallint", precision=10, scale=0, nullable=false)
+     * @ORM\Column(name="analogReading", type="smallint", nullable=true, options={"default"="NULL"})
      */
     private float $analogReading;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="highAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="1111"})
+     * @ORM\Column(name="highAnalog", type="smallint", nullable=true, options={"default"="1000"})
      */
     private int $highAnalog = 9999;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="lowAnalog", type="smallint", precision=10, scale=0, nullable=false, options={"default"="2222"})
+     * @ORM\Column(name="lowAnalog", type="smallint", nullable=true, options={"default"="1000"})
      */
     private int $lowAnalog = 1111;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="constRecord", type="boolean", nullable=true, options={"default"="0"})
+     * @ORM\Column(name="constRecord", type="boolean", nullable=true)
      */
     private bool $constRecord = false;
 
     /**
      * @var DateTime
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $time;
+    private DateTime $updatedAt;
 
 
     /**
@@ -137,9 +137,9 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     /**
      * @return DateTime
      */
-    public function getTime(): \DateTimeInterface
+    public function getUpdatedAt(): \DateTimeInterface
     {
-        return $this->time;
+        return $this->updatedAt;
     }
 
     /**
@@ -164,9 +164,9 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         }
     }
 
-    public function setTime(?DateTime $time = null): void
+    public function setUpdatedAt(?DateTime $updatedAt = null): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->updatedAt = $updatedAt ?? new DateTime('now');
     }
 
     public function getConstRecord(): bool

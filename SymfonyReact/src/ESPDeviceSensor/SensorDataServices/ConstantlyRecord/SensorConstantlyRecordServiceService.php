@@ -41,7 +41,7 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
                     }
                     $sensorConstRecordObject->setSensorReadingTypeID($readingType);
                     $sensorConstRecordObject->setSensorReading($readingType->getCurrentReading());
-                    $sensorConstRecordObject->setTime();
+                    $sensorConstRecordObject->setCreatedAt();
 
                     $constORMRepository = $this->constORMRepositoryFactory->getConstRecordServiceRepository($sensorReadingTypeData['object']);
 

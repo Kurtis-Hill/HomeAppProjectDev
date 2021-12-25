@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Devices
  *
- * @ORM\Table(name="devicenames", uniqueConstraints={@ORM\UniqueConstraint(name="deviceSecret", columns={"deviceSecret"})}, indexes={@ORM\Index(name="createdBy", columns={"createdBy"})})
+ * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\DevicesRepository")
  */
 class Devices implements UserInterface, APISensorUserInterface
@@ -102,14 +102,14 @@ class Devices implements UserInterface, APISensorUserInterface
     /**
      * @var string|null
      *
-     * @ORM\Column(name="ipAddress", type="string", nullable=true)
+     * @ORM\Column(name="ipAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
      */
     private ?string $ipAddress = null;
 
     /**
      * @var string|null
      *
-     * @ORM\Column(name="externalIpAddress", type="string", nullable=true)
+     * @ORM\Column(name="externalIpAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
      */
     private ?string $externalIpAddress = null;
 

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Cardview
  *
- * @ORM\Table(name="cardview", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="cardColour", columns={"cardColourID"}), @ORM\Index(name="cardState", columns={"cardStateID"}), @ORM\Index(name="cardIcon", columns={"cardIconID"}), @ORM\Index(name="UserID", columns={"userID"}), @ORM\Index(name="cardview_show", columns={"cardViewID"})})
+ * @ORM\Table(name="cardview", indexes={@ORM\Index(name="FK_E36636B5A356FF88", columns={"cardColourID"}), @ORM\Index(name="FK_E36636B53BE475E6", columns={"sensorNameID"}), @ORM\Index(name="FK_E36636B53casrdState", columns={"cardStateID"}), @ORM\Index(name="UserID", columns={"userID"}), @ORM\Index(name="FK_E36636B5840D9A7A", columns={"cardIconID"}), @ORM\Index(name="cardview_show", columns={"cardViewID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Card\CardViewRepository")
  */
 class CardView

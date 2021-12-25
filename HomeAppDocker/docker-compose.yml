@@ -17,7 +17,7 @@ services:
       - 'APP_ENV=${APP_ENV}'
     volumes:
       - ../SymfonyReact:/var/www/html
-      - ../SSL:/etc/ssl
+      - ../SSL:/etc/ssl:r,delegated
       - ./apache/sites-enabled:/etc/apache2/sites-enabled
       - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
@@ -36,6 +36,10 @@ services:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'  # DEV  
     environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+      MYSQL_USER : '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASS}'
+      MYSQL_DATABASE: '${MYSQL_DB}'
       MARIADB_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
       MARIADB_USER : '${MYSQL_USER}'
       MARIADB_PASSWORD: '${MYSQL_PASS}'

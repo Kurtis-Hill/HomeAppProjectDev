@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Cardstate
  *
- * @ORM\Table(name="cardstate")
+ * @ORM\Table(name="cardstate", uniqueConstraints={@ORM\UniqueConstraint(name="state", columns={"state"})})
  * @ORM\Entity(repositoryClass="App\Repository\Card\CardStateRepository")
  */
 class Cardstate

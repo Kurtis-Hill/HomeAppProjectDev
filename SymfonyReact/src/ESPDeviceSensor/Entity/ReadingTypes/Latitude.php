@@ -146,7 +146,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     /**
      * @return \DateTime
      */
-    public function getTime(): DateTimeInterface
+    public function getUpdatedAt(): DateTimeInterface
     {
         return $this->time;
     }
@@ -182,7 +182,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     /**
      * @param \DateTime|null $time
      */
-    public function setTime(?\DateTime $time = null): void
+    public function setUpdatedAt(?\DateTime $time = null): void
     {
         $this->time = $time ?? new \DateTime('now');
     }

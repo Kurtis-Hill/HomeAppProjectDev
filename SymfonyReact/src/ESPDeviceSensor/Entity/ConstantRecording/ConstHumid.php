@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ConstHumid
  *
- * @ORM\Table(name="consthumid", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
+ * @ORM\Table(name="consthumid", indexes={@ORM\Index(name="sensorID", columns={"humidID"})})
  * @ORM\Entity
  */
 class ConstHumid implements ConstantlyRecordInterface
@@ -83,7 +83,7 @@ class ConstHumid implements ConstantlyRecordInterface
     /**
      * @return \DateTime
      */
-    public function getTime(): DateTime
+    public function getCreatedAt(): DateTime
     {
         return $this->time;
     }
@@ -91,7 +91,7 @@ class ConstHumid implements ConstantlyRecordInterface
     /**
      * @param DateTime|null $time
      */
-    public function setTime(?DateTime $time = null): void
+    public function setCreatedAt(?DateTime $time = null): void
     {
         $this->time = $time ?? new DateTime('now');
     }

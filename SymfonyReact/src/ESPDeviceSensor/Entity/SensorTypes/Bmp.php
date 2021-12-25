@@ -17,8 +17,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Bmp
  *
- * @ORM\Table(name="bmp", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="latitudeID", columns={"latitudeID"})})
- * @ORM\Entity
+ * @ORM\Table(name="bmp", uniqueConstraints={@ORM\UniqueConstraint(name="humidID", columns={"humidID"}), @ORM\UniqueConstraint(name="latitudeID", columns={"latitudeID"}), @ORM\UniqueConstraint(name="tempID*", columns={"tempID"})}, indexes={@ORM\Index(name="bmp_ibfk_1", columns={"sensorNameID"})})
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\SensorType\BmpRepository")
  */
 class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
 {
@@ -154,9 +154,7 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         return $this->latitudeID;
     }
 
-    /**
-     * @param Latitude $latitudeID
-     */
+
     public function setLatitudeObject(Latitude $latitudeID): void
     {
         $this->latitudeID = $latitudeID;
