@@ -60,13 +60,13 @@ class AddNewDeviceController extends AbstractController
                 ),
             ]);
         }
-
         $newDeviceCheckDTO = new NewDeviceDTO(
             $this->getUser(),
             $groupNameObject,
             $roomObject,
             $deviceName,
         );
+
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {

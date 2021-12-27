@@ -25,6 +25,7 @@ use Generator;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class AddNewSensorControllerTest extends WebTestCase
 {
@@ -70,7 +71,7 @@ class AddNewSensorControllerTest extends WebTestCase
     {
         if ($this->userToken === null || $forceToken === true) {
             $this->client->request(
-                'POST',
+                Request::METHOD_POST,
                 SecurityController::API_USER_LOGIN,
                 [],
                 [],
@@ -86,10 +87,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         return $this->userToken;
     }
-
-    /**
-     * @return Generator
-     */
+    
     public function newSensorSimpleDataProvider(): Generator
     {
         yield [
@@ -170,7 +168,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $jsonData = json_encode($formData);
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             [],
             [],
@@ -208,7 +206,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
@@ -243,7 +241,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
@@ -275,7 +273,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
@@ -309,7 +307,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
@@ -353,7 +351,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
@@ -388,7 +386,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
             [],
@@ -421,7 +419,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             [],
             [],
@@ -456,7 +454,7 @@ class AddNewSensorControllerTest extends WebTestCase
     public function test_add_new_sensor_when_not_part_of_associate_group(string $sensorType, string $sensorName): void
     {
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             SecurityController::API_USER_LOGIN,
             [],
             [],
@@ -480,7 +478,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             [],
             [],

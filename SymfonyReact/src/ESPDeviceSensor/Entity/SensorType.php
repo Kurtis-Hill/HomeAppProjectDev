@@ -21,7 +21,7 @@ use App\ESPDeviceSensor\Forms\UpdateReadingForm;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * SensorTypes
+ * GetSensorTypesController
  *
  * @ORM\Table(name="sensortype", uniqueConstraints={@ORM\UniqueConstraint(name="sensorType", columns={"sensorType"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\SensorTypeRepository")
