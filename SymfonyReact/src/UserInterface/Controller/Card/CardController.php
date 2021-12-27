@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Controller;
+namespace App\UserInterface\Controller\Card;
 
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\Entity\Devices;
