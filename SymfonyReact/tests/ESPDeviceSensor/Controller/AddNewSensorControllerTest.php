@@ -51,7 +51,6 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     private ?string $userToken = null;
 
-
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -181,7 +180,6 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData, $this->client->getResponse()->getContent());
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -264,10 +262,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorType
-     * @param string $sensorName
      */
-    public function test_can_not_add_new_sensor_with_long_short(string $sensorType, string $sensorName): void
+    public function test_can_not_add_new_sensor_with_short_name(string $sensorType): void
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
@@ -298,10 +294,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorType
-     * @param string $sensorName
      */
-    public function test_can_add_new_sensor_with_identical_name(string $sensorType, string $sensorName): void
+    public function test_can_add_new_sensor_with_identical_name(string $sensorType): void
     {
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomAdminGroup']['referenceName']]);
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
@@ -341,10 +335,10 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_new_sensor_with_bad_device_id(string $sensorType, string $sensorName): void
     {
-        $randomID = random_int(0, 1000000);
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        while (1) {
+        while (true) {
+            $randomID = random_int(0, 1000000);
             $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $randomID]);
             if (!$device instanceof Devices) {
                 break;
@@ -378,10 +372,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_can_add_new_sensor_with_bad_sensor_type(): void
     {
-        $randomID = random_int(0, 1000000);
-
-        //ensure the random number isnt actually a valid ID
-        while (1) {
+        while (true) {
+            $randomID = random_int(0, 1000000);
             $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $randomID]);
             if (!$sensorType instanceof SensorType) {
                 break;
@@ -416,10 +408,6 @@ class AddNewSensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorExtendedDataProvider
-     * @param string $sensorType
-     * @param string $sensorName
-     * @param string $class
-     * @param array $sensors
      */
     public function test_can_add_sensor_and_card_details(string $sensorType, string $sensorName, string $class, array $sensors): void
     {
