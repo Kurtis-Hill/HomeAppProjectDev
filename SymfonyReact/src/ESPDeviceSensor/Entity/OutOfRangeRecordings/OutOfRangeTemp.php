@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * OutOfRangeTemp.
  *
- * @ORM\Table(name="outofrangetemp", indexes={@ORM\Index(name="outofrangetemp_ibfk_1", columns={"sensorID"})})
+ * @ORM\Table(name="outofrangetemp", indexes={@ORM\Index(name="outofrangetemp_ibfk_1", columns={"tempID"})})
  * @ORM\Entity
  */
 class OutOfRangeTemp implements OutOfBoundsEntityInterface
@@ -34,9 +34,9 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
     /**
      * @var DateTime
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $time;
+    private DateTime $createdAt;
 
     /**
      * @var Temperature
@@ -83,17 +83,17 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
     /**
      * @return DateTime
      */
-    public function getTime(): DateTime
+    public function getCreatedAt(): DateTime
     {
-        return $this->time;
+        return $this->createdAt;
     }
 
     /**
      * @param DateTime|null $time
      */
-    public function setTime(?DateTime $time = null): void
+    public function setCreatedAt(?DateTime $time = null): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->createdAt = $time ?? new DateTime('now');
     }
 
     /**

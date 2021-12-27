@@ -41,7 +41,7 @@ class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterfac
                     }
                     $sensorOutOfBoundsObject->setSensorReadingTypeID($readingType);
                     $sensorOutOfBoundsObject->setSensorReading($readingType->getCurrentReading());
-                    $sensorOutOfBoundsObject->setTime();
+                    $sensorOutOfBoundsObject->setCreatedAt();
 
                     $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($sensorReadingTypeData['object']);
                     $outOfBoundsRepository->persist($sensorOutOfBoundsObject);

@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Temp
  *
- * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="temp_ibfk_6", columns={"deviceNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="GroupName", columns={"groupNameID"})})
+ * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\TemperatureRepository")
  */
 class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
@@ -107,9 +107,9 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
 
     /**
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $time;
+    private DateTime $updatedAt;
 
     /**
      * @var Sensor
@@ -182,7 +182,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      */
     public function getUpdatedAt(): \DateTimeInterface
     {
-        return $this->time;
+        return $this->updatedAt;
     }
 
     /**
@@ -218,7 +218,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      */
     public function setUpdatedAt(?DateTime $time = null): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->updatedAt = $time ?? new DateTime('now');
     }
 
     /**

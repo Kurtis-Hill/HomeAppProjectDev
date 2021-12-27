@@ -14,7 +14,7 @@ use JetBrains\PhpStorm\Pure;
 /**
  * Soil
  *
- * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"cardViewID"})})
+ * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"sensorNameID"})})
  * @ORM\Entity
  */
 class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface

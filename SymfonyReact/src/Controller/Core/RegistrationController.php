@@ -61,7 +61,7 @@ class RegistrationController extends AbstractController
                 $user->setLastName($form->get('lastName')->getData());
                 $user->setRoles(['ROLE_USER']);
                 $user->setGroupNameID($groupNameObject);
-                $user->setTime(new \DateTime());
+                $user->setCreatedAt(new \DateTime());
 
                 $groupNameMapping = new GroupnNameMapping();
 

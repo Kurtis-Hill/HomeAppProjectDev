@@ -90,6 +90,6 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
 //        dd($sensorTypeRepository->seePersistList());
 //        $sensorTypeRepository->seePersistList(), persist($sensorTypeObject);
         //@DEV remove flush
-//        $sensorTypeRepository->flush();
+        $sensorTypeRepository->flush();
     }
 }

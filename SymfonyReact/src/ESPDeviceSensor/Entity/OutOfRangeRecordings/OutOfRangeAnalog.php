@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * OutOfRangeAnalog.
  *
- * @ORM\Table(name="outofrangeanalog", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
+ * @ORM\Table(name="outofrangeanalog", indexes={@ORM\Index(name="sensorID", columns={"analogID"})})
  * @ORM\Entity
  */
 class OutOfRangeAnalog implements OutOfBoundsEntityInterface
@@ -34,9 +34,9 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     /**
      * @var DateTime
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $time;
+    private DateTime $createdAt;
 
     /**
      * @var Analog
@@ -83,17 +83,17 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     /**
      * @return DateTime
      */
-    public function getTime(): DateTime
+    public function getCreatedAt(): DateTime
     {
-        return $this->time;
+        return $this->createdAt;
     }
 
     /**
-     * @param DateTime|null $time
+     * @param DateTime|null $createdAt
      */
-    public function setTime(?DateTime $time = null): void
+    public function setCreatedAt(?DateTime $createdAt = null): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->createdAt = $createdAt ?? new DateTime('now');
     }
 
     /**

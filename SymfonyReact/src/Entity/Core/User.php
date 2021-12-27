@@ -3,6 +3,7 @@
 namespace App\Entity\Core;
 
 use App\Core\UserInterface\APISensorUserInterface;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,7 +12,7 @@ use App\User\Entity\GroupNames;
 /**
  * User
  *
- * @ORM\Table(name="user", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
+ * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="email", columns={"email"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\UserRepository")
  */
 class User implements UserInterface, APISensorUserInterface
@@ -68,11 +69,11 @@ class User implements UserInterface, APISensorUserInterface
     private string $password;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time;
+    private DateTime $createdAt;
 
     /**
      * @var GroupNames
@@ -258,14 +259,14 @@ class User implements UserInterface, APISensorUserInterface
         $this->groupNameID = $groupNameID;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->time;
+        return $this->createdAt;
     }
 
-    public function setTime(?\DateTime $time = null): self
+    public function setCreatedAt(?DateTime $createdAt = null): self
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->createdAt = $createdAt ?? new DateTime('now');
 
         return $this;
     }

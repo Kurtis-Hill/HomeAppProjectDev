@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * OutofRangeHumid
  *
- * @ORM\Table(name="outofrangehumid", indexes={@ORM\Index(name="sensorID", columns={"sensorID"})})
+ * @ORM\Table(name="outofrangehumid", indexes={@ORM\Index(name="sensorID", columns={"humidID"})})
  * @ORM\Entity
  */
 class OutOfRangeHumid implements OutOfBoundsEntityInterface
@@ -34,9 +34,10 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
     /**
      * @var DateTime
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $time;
+    private DateTime $createdAt;
+
 
     /**
      * @var Humidity
@@ -83,17 +84,17 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
     /**
      * @return DateTime
      */
-    public function getTime(): DateTime
+    public function getCreatedAt(): DateTime
     {
-        return $this->time;
+        return $this->createdAt;
     }
 
     /**
      * @param DateTime|null $time
      */
-    public function setTime(?DateTime $time = null): void
+    public function setCreatedAt(?DateTime $time = null): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->createdAt = $time ?? new DateTime('now');
     }
 
     /**

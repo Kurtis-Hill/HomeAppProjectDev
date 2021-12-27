@@ -62,7 +62,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUser->setLastName('test');
         $adminUser->setPassword($this->passwordEncoder->encodePassword($adminUser, self::ADMIN_PASSWORD));
         $adminUser->setRoles(['ROLE_ADMIN']);
-        $adminUser->setTime();
+        $adminUser->setCreatedAt();
         $adminUser->setGroupNameID($adminGroupName);
 
         $firstAminGroupName = new GroupnNameMapping();
@@ -88,7 +88,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUser->setLastName('test');
         $regularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, self::REGULAR_PASSWORD));
         $regularUser->setRoles(['ROLE_USER']);
-        $regularUser->setTime();
+        $regularUser->setCreatedAt();
         $regularUser->setGroupNameID($userGroupName);
 
         $firstRegularGroupMapping = new GroupnNameMapping();
@@ -130,7 +130,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserInAdminGroup->setLastName('test');
         $adminUserInAdminGroup->setPassword($this->passwordEncoder->encodePassword($adminUserInAdminGroup, self::ADMIN_PASSWORD));
         $adminUserInAdminGroup->setRoles(['ROLE_ADMIN']);
-        $adminUserInAdminGroup->setTime();
+        $adminUserInAdminGroup->setCreatedAt();
         $adminUserInAdminGroup->setGroupNameID($adminUserGroupName);
 
         $secondAdminGroupMapping = new GroupnNameMapping();
@@ -161,7 +161,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $secondRegularUser->setLastName('test');
         $secondRegularUser->setPassword($this->passwordEncoder->encodePassword($secondRegularUser, self::REGULAR_PASSWORD));
         $secondRegularUser->setRoles(['ROLE_USER']);
-        $secondRegularUser->setTime();
+        $secondRegularUser->setCreatedAt();
         $secondRegularUser->setGroupNameID($adminUserGroupName);
 
         $secondRegularGroupMapping = new GroupnNameMapping();

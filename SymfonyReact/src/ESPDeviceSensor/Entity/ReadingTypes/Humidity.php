@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Humidity
  *
- * @ORM\Table(name="humid", uniqueConstraints={@ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"}), @ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"}), @ORM\Index(name="humid_ibfk_3", columns={"sensorNameID"}), @ORM\Index(name="Room", columns={"roomID"}), @ORM\Index(name="humid_ibfk_6", columns={"deviceNameID"})})
+ * @ORM\Table(name="humid", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\HumidityRepository")
  */
 class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
@@ -46,17 +46,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
-    #[
-        HumidityConstraint
-//        Assert\LessThan(
-//            value: self::LOW_READING,
-//            message: "Humidity reading must not be less than {{ value }}"
-//        ),
-//        Assert\GreaterThan(
-//            value: self::HIGH_READING,
-//            message: "Humidity reading must not be greater than {{ value }}"
-//        )
-    ]
+    #[HumidityConstraint]
     private int $currentReading;
 
     /**
@@ -64,17 +54,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
-    #[
-        HumidityConstraint
-//        Assert\LessThan(
-//            value: self::LOW_READING,
-//            message: "Humidity reading must not be less than {{ value }}"
-//        ),
-//        Assert\GreaterThan(
-//            value: self::HIGH_READING,
-//            message: "Humidity reading must not be greater than {{ value }}"
-//        )
-    ]
+    #[HumidityConstraint]
     private int $highHumid = 80;
 
     /**
@@ -82,17 +62,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      *
      * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
-    #[
-        HumidityConstraint
-//        Assert\LessThan(
-//            value: self::LOW_READING,
-//            message: "Humidity reading must not be less than {{ value }}"
-//        ),
-//        Assert\GreaterThan(
-//            value: self::HIGH_READING,
-//            message: "Humidity reading must not be greater than {{ value }}"
-//        )
-    ]
+    #[HumidityConstraint]
     private int $lowHumid = 10;
 
     /**
@@ -105,9 +75,9 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     /**
      * @var DateTime|null
      *
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?DateTime $time;
+    private ?DateTime $updateAt;
 
     /**
      * @var Sensor
@@ -157,7 +127,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public function getUpdatedAt(): \DateTimeInterface
     {
-        return $this->time;
+        return $this->updateAt;
     }
 
     public function setCurrentReading(int|float $reading): void
@@ -181,7 +151,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public function setUpdatedAt(?DateTime $time = null): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->updateAt = $time ?? new DateTime('now');
     }
 
 

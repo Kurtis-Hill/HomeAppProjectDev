@@ -6,13 +6,14 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Latitude
  *
- * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="deviceNameID", columns={"deviceNameID"})})
+ * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\LatitudeRepository")
  */
 class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterface, StandardReadingSensorInterface
@@ -75,9 +76,9 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     private Sensor $sensorNameID;
 
     /**
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="updatedAt", type="date", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?\DateTime $time;
+    private ?DateTime $time;
 
     /**
      * @return int
@@ -144,7 +145,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getUpdatedAt(): DateTimeInterface
     {
@@ -180,11 +181,11 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     }
 
     /**
-     * @param \DateTime|null $time
+     * @param DateTime|null $time
      */
-    public function setUpdatedAt(?\DateTime $time = null): void
+    public function setUpdatedAt(?DateTime $time = null): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = $time ?? new DateTime('now');
     }
 
     /**
