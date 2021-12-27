@@ -2,15 +2,15 @@
 
 namespace App\Devices\DTO;
 
-use App\Entity\Core\User;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Immutable]
 class NewDeviceDTO
 {
-    private User  $createdBy;
+    private UserInterface $createdBy;
 
     private GroupNames  $groupNameId;
 
@@ -19,7 +19,7 @@ class NewDeviceDTO
     private ?string $deviceName;
 
     public function __construct(
-        User $createdBy,
+        UserInterface $createdBy,
         GroupNames $groupNameId,
         Room $roomId,
         ?string $deviceName,
@@ -45,7 +45,7 @@ class NewDeviceDTO
         return $this->roomId;
     }
 
-    public function getCreatedByUserObject(): User
+    public function getCreatedByUserObject(): UserInterface
     {
         return $this->createdBy;
     }

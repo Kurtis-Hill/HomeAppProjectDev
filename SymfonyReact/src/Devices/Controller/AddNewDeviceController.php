@@ -5,7 +5,6 @@ namespace App\Devices\Controller;
 use App\API\APIErrorMessages;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceValidatorService;
-use App\Devices\DTO\DeviceDTO;
 use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\Form\FormMessages;
