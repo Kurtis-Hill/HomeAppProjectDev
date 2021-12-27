@@ -75,7 +75,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
                         }
 
                         if ($newReadingTypeObject instanceof StandardReadingSensorInterface) {
-                            $newReadingTypeObject->setSensorNameID($sensor);
+                            $newReadingTypeObject->setSensorObject($sensor);
                             $newReadingTypeObject->setCurrentReading(10);
                             $newReadingTypeObject->setUpdatedAt(clone $dateTimeNow);
 

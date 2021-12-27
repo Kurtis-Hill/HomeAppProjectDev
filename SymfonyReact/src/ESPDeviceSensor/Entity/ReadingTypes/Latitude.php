@@ -111,7 +111,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     /**
      * @param Sensor $id
      */
-    public function setSensorNameID(Sensor $id): void
+    public function setSensorObject(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }

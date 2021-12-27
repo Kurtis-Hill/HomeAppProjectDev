@@ -105,7 +105,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->sensorNameID;
     }
 
-    public function setSensorNameID(Sensor $id): void
+    public function setSensorObject(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }

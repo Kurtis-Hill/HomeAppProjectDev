@@ -12,7 +12,7 @@ interface StandardReadingSensorInterface
      */
     public function getSensorNameID(): Sensor;
 
-    public function setSensorNameID(Sensor $id);
+    public function setSensorObject(Sensor $id);
 
 
     /**

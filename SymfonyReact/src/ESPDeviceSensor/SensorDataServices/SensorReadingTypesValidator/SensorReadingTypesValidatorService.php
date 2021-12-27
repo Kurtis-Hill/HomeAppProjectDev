@@ -72,13 +72,12 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null
     ): array {
-//        dd($sensorReadingType, $sensorTypeName);
         $validationErrors = $this->validator->validate(
             $sensorReadingType,
             null,
             $sensorTypeName
         );
-//        $errors = [];
+
         if (count($validationErrors) > 0) {
             foreach ($validationErrors as $error) {
                 $errors[] = $error->getMessage();

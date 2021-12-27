@@ -76,7 +76,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 foreach ($sensorDetails['readingTypes'] as $object) {
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
-                        $newObject->setSensorNameID($sensor);
+                        $newObject->setSensorObject($sensor);
                         $newObject->setCurrentReading(10);
                         $newObject->setUpdatedAt();
 
@@ -187,7 +187,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 foreach ($sensorDetails['readingTypes'] as $object) {
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
-                        $newObject->setSensorNameID($newAdminSensor);
+                        $newObject->setSensorObject($newAdminSensor);
                         $newObject->setCurrentReading(10);
                         $newObject->setUpdatedAt();
 
@@ -212,7 +212,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     }
                     $newObjectTwo = new $object;
                     if ($newObjectTwo instanceof StandardReadingSensorInterface) {
-                        $newObjectTwo->setSensorNameID($newRegularUserSensor);
+                        $newObjectTwo->setSensorObject($newRegularUserSensor);
                         $newObjectTwo->setCurrentReading(10);
                         $newObjectTwo->setUpdatedAt();
 

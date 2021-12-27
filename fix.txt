@@ -1,3 +1,4 @@
 const humid, text still scuffed
 group name created still has timez
 latitude needs default for const record
+sensorname for reading types needs to be either null or not null

@@ -8,7 +8,7 @@ use App\ESPDeviceSensor\Exceptions\SensorReadingTypeValidationException;
 use App\ESPDeviceSensor\Exceptions\SensorTypeBuilderFailureException;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface;
-use App\ESPDeviceSensor\Factories\ReadingTypeCreationFactory\ReadingTypeCreationFactory;
+use App\ESPDeviceSensor\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use Doctrine\ORM\ORMException;
 
@@ -16,13 +16,13 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
 {
     private SensorTypeFactoryInterface $sensorTypeFactory;
 
-    private ReadingTypeCreationFactory $readingTypeCreationFactory;
+    private SensorTypeCreationFactory $readingTypeCreationFactory;
 
     private SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidatorService;
 
     public function __construct(
         SensorTypeFactoryInterface $sensorTypeFactory,
-        ReadingTypeCreationFactory $readingTypeCreationFactory,
+        SensorTypeCreationFactory $readingTypeCreationFactory,
         SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidator,
     ) {
         $this->sensorTypeFactory = $sensorTypeFactory;
@@ -34,21 +34,21 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
     {
         try {
             $sensorTypeObject = $this->createNewSensorReadingTypeData($sensor);
+            $validationErrors = $this->validateSensorReadingTypeData($sensorTypeObject);
         } catch (SensorTypeException | SensorTypeBuilderFailureException $e) {
             return [$e->getMessage()];
         } catch (ORMException $e) {
            return ['Failed to create sensor reading types'];
-        } catch (\Exception $e) {
-            dd($e);
         }
-
-        $validationErrors = $this->validateSensorReadingTypeData($sensorTypeObject);
 
         if (empty($validationErrors)) {
-            $this->saveSensorTypeObjects($sensorTypeObject);
+            try {
+                $this->saveSensorTypeObjects($sensorTypeObject);
+            } catch (ORMException $e) {
+                return ['Failed to save sensor types'];
+            }
         }
 
-//        dd($errors);
         return $validationErrors;
     }
 
@@ -71,11 +71,6 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
     private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array
     {
         return $this->sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorTypeObject);
-
-//        if (!empty($validationErrors)) {
-////            dd($validationErrors);
-//            throw new SensorReadingTypeValidationException($validationErrors);
-//        }
     }
 
     /**
@@ -83,13 +78,8 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
      */
     private function saveSensorTypeObjects(SensorTypeInterface $sensorTypeObject): void
     {
-//        dd($sensorTypeObject);
         $sensorTypeObjectAsString = $sensorTypeObject::class;
         $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
         $sensorTypeRepository->persist($sensorTypeObject);
-//        dd($sensorTypeRepository->seePersistList());
-//        $sensorTypeRepository->seePersistList(), persist($sensorTypeObject);
-        //@DEV remove flush
-        $sensorTypeRepository->flush();
     }
 }

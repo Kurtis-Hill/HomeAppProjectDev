@@ -17,7 +17,10 @@ class DhtSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder imple
         try {
             $this->buildTemperatureSensor($dht);
             $this->buildHumiditySensor($dht);
-        } catch (Exception) {
+
+//            $this->sensorReadingTypeFactory->flush();
+        } catch (Exception $e) {
+//            dd($e);
             throw new SensorTypeBuilderFailureException(
                 sprintf(
                     SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE,

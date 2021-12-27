@@ -30,7 +30,7 @@ interface OutOfBoundsEntityInterface
     /**
      * @return DateTime
      */
-    public function getCreatedAt(): \DateTime;
+    public function getCreatedAt(): DateTime;
 
     /**
      * @param DateTime|null $time
@@ -40,7 +40,7 @@ interface OutOfBoundsEntityInterface
     /**
      * @return AllSensorReadingTypeInterface
      */
-    public function getSensorReadingTypeID();
+    public function getSensorReadingTypeID(): AllSensorReadingTypeInterface;
 
     /**
      * @param AllSensorReadingTypeInterface $sensorReadingTypeID

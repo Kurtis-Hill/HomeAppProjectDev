@@ -101,7 +101,7 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     /**
      * @param Sensor $sensorNameID
      */
-    public function setSensorNameID(Sensor $sensorNameID): void
+    public function setSensorObject(Sensor $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ESPDeviceSensor\Factories\ReadingTypeCreationFactory;
+namespace App\ESPDeviceSensor\Factories\SensorTypeCreationFactory;
 
 use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\BmpSensorReadingTypeBuilder;
 use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\DallasSensorReadingTypeBuilder;
@@ -13,7 +13,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 
-class ReadingTypeCreationFactory
+class SensorTypeCreationFactory
 {
     private BmpSensorReadingTypeBuilder $bmpSensorReadingTypeBuilder;
 

@@ -14,6 +14,8 @@ class SoilSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder impl
     {
         $soil = new Soil();
         $this->setSensorObject($soil, $sensor);
+
+        $soil->setSensorObject($sensor);
         try {
             $this->buildAnalogSensor($soil);
         }  catch (Exception) {

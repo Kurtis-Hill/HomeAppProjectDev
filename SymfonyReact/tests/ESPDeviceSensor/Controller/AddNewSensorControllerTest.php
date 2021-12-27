@@ -94,25 +94,25 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function newSensorSimpleDataProvider(): Generator
     {
-//        yield [
-//            'sensor' => SensorType::DHT_SENSOR,
-//            'sensorName' => 'dhtTest'
-//        ];
+        yield [
+            'sensor' => SensorType::DHT_SENSOR,
+            'sensorName' => 'dhtTest'
+        ];
 
         yield [
             'sensor' => SensorType::BMP_SENSOR,
             'sensorName' => 'bmpTest'
         ];
 
-//        yield [
-//            'sensor' => SensorType::SOIL_SENSOR,
-//            'sensorName' => 'soilTest'
-//        ];
-//
-//        yield [
-//            'sensor' => SensorType::DALLAS_TEMPERATURE,
-//            'sensorName' => 'dallasTest'
-//        ];
+        yield [
+            'sensor' => SensorType::SOIL_SENSOR,
+            'sensorName' => 'soilTest'
+        ];
+
+        yield [
+            'sensor' => SensorType::DALLAS_TEMPERATURE,
+            'sensorName' => 'dallasTest'
+        ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
@@ -181,7 +181,7 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData);
+//dd($responseData, $this->client->getResponse()->getContent());
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -474,10 +474,11 @@ class AddNewSensorControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.UserDataFixtures::SECOND_REGULAR_USER_ISOLATED.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
+            '{"username":"'.UserDataFixtures::REGULAR_USER.'","password":"'.UserDataFixtures::REGULAR_PASSWORD.'"}'
         );
 
         $requestResponse = $this->client->getResponse();
+//        dd($requestResponse);
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $token = $responseData['token'];

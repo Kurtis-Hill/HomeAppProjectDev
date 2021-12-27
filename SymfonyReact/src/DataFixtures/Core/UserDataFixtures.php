@@ -83,7 +83,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
         $regularUser = new User();
 
-        $regularUser->setEmail('user-test-email@testing.com');
+        $regularUser->setEmail(self::REGULAR_USER);
         $regularUser->setFirstName('user');
         $regularUser->setLastName('test');
         $regularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, self::REGULAR_PASSWORD));
