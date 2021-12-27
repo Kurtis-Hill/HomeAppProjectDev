@@ -2,11 +2,11 @@
 
 namespace App\User\Controller;
 
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\FormMessages;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

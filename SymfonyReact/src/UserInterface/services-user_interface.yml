@@ -6,12 +6,12 @@ services:
     autoconfigure: true
 
   ################### Core ############################
-  App\User\:
-    resource: '../src/UserInterface/*'
-    exclude: '../src/UserInterface/{Traits, DependencyInjection, Entity, Entity/Card, Tests}'
+  App\UserInterface\:
+    resource: './*'
+    exclude: './{Traits, DependencyInjection, Entity, Tests}'
 
   App\User\Controller\:
-    resource: '../src/UserInterface/Controller'
+    resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
 

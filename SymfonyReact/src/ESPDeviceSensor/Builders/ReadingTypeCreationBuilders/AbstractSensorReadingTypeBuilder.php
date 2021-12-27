@@ -99,9 +99,6 @@ class AbstractSensorReadingTypeBuilder
         $analogSensor->setSensorObject($analogSensorType->getSensorObject());
 
         $analogSensorType->setAnalogObject($analogSensor);
-
-//        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($analogSensor::class);
-//        $readingTypeRepository->persist($analogSensor);
     }
 
     protected function setSensorObject(SensorTypeInterface $sensorType, Sensor $sensor): void

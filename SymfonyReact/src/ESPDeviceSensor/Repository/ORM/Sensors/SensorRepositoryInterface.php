@@ -16,6 +16,9 @@ interface SensorRepositoryInterface
      */
     public function flush(): void;
 
+    /**
+     * @throws ORMException
+     */
     public function remove(Sensor $sensors): void;
 
     public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor;

@@ -2,8 +2,8 @@
 
 namespace App\ESPDeviceSensor\Controller\UserControllers;
 
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

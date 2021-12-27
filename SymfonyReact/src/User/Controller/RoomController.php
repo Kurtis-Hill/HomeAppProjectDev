@@ -2,8 +2,8 @@
 
 namespace App\User\Controller;
 
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Form\FormMessages;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;

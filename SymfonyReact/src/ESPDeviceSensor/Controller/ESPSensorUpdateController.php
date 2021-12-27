@@ -2,9 +2,9 @@
 
 namespace App\ESPDeviceSensor\Controller;
 
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use Exception;
 use JsonException;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;

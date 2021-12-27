@@ -3,17 +3,17 @@
 namespace App\ESPDeviceSensor\Controller;
 
 use App\API\APIErrorMessages;
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\ESPDeviceSensor\SensorDataServices\DeleteSensorService\DeleteSensorService;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\FormMessages;
-use App\Services\CardUserDataService;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
 use Doctrine\ORM\ORMException;
 use JsonException;
@@ -35,8 +35,8 @@ class AddNewSensorController extends AbstractController
         SensorReadingTypeCreationInterface $readingTypeCreation,
         DeviceRepositoryInterface $deviceRepository,
         SensorTypeRepositoryInterface $sensorTypeRepository,
-        CardUserDataService $cardDataService,
         CardCreationServiceInterface $cardCreationService,
+        DeleteSensorService $deleteSensorService,
     ): JsonResponse {
         try {
             $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -103,13 +103,14 @@ class AddNewSensorController extends AbstractController
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
 
         if (!empty($sensorReadingTypeCreationErrors)) {
+            $deleteSensorService->deleteSensor($sensor);
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }
-        try {
-            $cardDataService->createNewSensorCard($sensor, $this->getUser());
-//            $cardCreationService->createUserCardForSensor($sensor, $this->getUser());
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse(['error creating card for user interface but sensor was created successfully']);
+
+        $errors = $cardCreationService->createUserCardForSensor($sensor, $this->getUser());
+
+        if (!empty($errors)) {
+            return $this->sendInternalServerErrorJsonResponse($errors);
         }
 
         $sensorID = $sensor->getSensorNameID();

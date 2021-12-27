@@ -4,10 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 imports:
-    - { resource: ./services-user_interface.yml }
     - { resource: ./services-devices.yaml }
     - { resource: ./services-esp-sensors.yaml }
     - { resource: ./services-user.yml }
+    - { resource: ../src/UserInterface/services-user_interface.yml }
 parameters:
 
 services:
@@ -22,7 +22,7 @@ services:
     ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{Traits,DependencyInjection,Entity, Migrations,Tests,Kernel.php}'
+        exclude: '../src/{API/Traits, Traits,DependencyInjection,Entity, Migrations,Tests,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class

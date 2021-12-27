@@ -178,7 +178,6 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData
         );
 
-        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $sensorID = $responseData['payload']['sensorNameID'];
 

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Traits\API;
+namespace App\API\Traits;
 
 use App\API\HTTPStatusCodes;
 use Symfony\Component\HttpFoundation\JsonResponse;

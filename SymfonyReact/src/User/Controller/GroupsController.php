@@ -2,16 +2,16 @@
 
 namespace App\User\Controller;
 
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Entity\Core\User;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use App\User\DTO\GroupDTOs\GroupNameDTO;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route('/HomeApp/api/user-groups/')]
 class GroupsController extends AbstractController

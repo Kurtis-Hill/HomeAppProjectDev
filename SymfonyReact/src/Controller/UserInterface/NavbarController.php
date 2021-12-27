@@ -3,8 +3,8 @@
 
 namespace App\Controller\UserInterface;
 
+use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Services\UserInterfaceService;
-use App\Traits\API\HomeAppAPIResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

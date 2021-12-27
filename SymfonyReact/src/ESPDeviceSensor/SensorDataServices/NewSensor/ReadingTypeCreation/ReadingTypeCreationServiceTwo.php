@@ -43,9 +43,9 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
 
         if (empty($validationErrors)) {
             try {
-                $this->saveSensorTypeObjects($sensorTypeObject);
-            } catch (ORMException $e) {
-                return ['Failed to save sensor types'];
+                $this->persistSensorTypeObjects($sensorTypeObject);
+            } catch (SensorTypeException $e) {
+                return [$e->getMessage()];
             }
         }
 
@@ -74,9 +74,9 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
     }
 
     /**
-     * @throws ORMException|SensorTypeException
+     * @throws SensorTypeException
      */
-    private function saveSensorTypeObjects(SensorTypeInterface $sensorTypeObject): void
+    private function persistSensorTypeObjects(SensorTypeInterface $sensorTypeObject): void
     {
         $sensorTypeObjectAsString = $sensorTypeObject::class;
         $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
