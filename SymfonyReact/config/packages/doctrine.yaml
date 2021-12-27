@@ -48,6 +48,11 @@ doctrine:
         prefix: App\Devices\Entity
       User:
         type: annotation
-        dir: '%kernel.project_dir%/src/Devices/Entity'
+        dir: '%kernel.project_dir%/src/User/Entity'
         alias: User
         prefix: App\User\Entity
+      UserInterface:
+        type: annotation
+        dir: '%kernel.project_dir%/src/UserInterface/Entity'
+        alias: UserInterface
+        prefix: App\UserInterface\Entity

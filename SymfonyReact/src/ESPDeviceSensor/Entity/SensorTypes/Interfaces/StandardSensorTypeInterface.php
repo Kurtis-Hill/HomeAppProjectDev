@@ -3,8 +3,7 @@
 
 namespace App\ESPDeviceSensor\Entity\SensorTypes\Interfaces;
 
-use App\User\Entity\UserInterface\Card\CardView;
-use App\ESPDeviceSensor\Entity\Sensor;
+use App\UserInterface\Entity\Card\CardView;
 
 Interface StandardSensorTypeInterface
 {

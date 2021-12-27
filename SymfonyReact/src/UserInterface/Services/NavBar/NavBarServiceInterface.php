@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\UserServices\NavBar;
+namespace App\UserInterface\Services\NavBar;
 
 interface NavBarServiceInterface
 {

@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
-use App\User\Entity\UserInterface\Card\CardView;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

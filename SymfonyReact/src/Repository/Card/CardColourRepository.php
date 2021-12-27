@@ -2,7 +2,7 @@
 
 namespace App\Repository\Card;
 
-use App\User\Entity\UserInterface\Card\CardColour;
+use App\UserInterface\Entity\Card\CardColour;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -32,7 +32,7 @@ class CardColourRepository extends EntityRepository
 
     public function countAllColours(): int
     {
-        return (int)$this->createQueryBuilder('cardColour')
+        return (int) $this->createQueryBuilder('cardColour')
             ->select('count(cardColour.colourID)')
             ->getQuery()->getSingleScalarResult();
     }

@@ -7,12 +7,9 @@ namespace App\Repository\Core;
 use App\Devices\Entity\Devices;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\Persistence\ManagerRegistry;
 use function Doctrine\ORM\QueryBuilder;
-use App\User\Entity;
 
 class DevicesRepository extends EntityRepository
 {

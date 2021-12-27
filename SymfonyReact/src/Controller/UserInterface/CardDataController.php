@@ -3,7 +3,6 @@
 
 namespace App\Controller\UserInterface;
 
-use App\User\Entity\UserInterface\Card\CardView;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
@@ -11,7 +10,8 @@ use App\Form\CardViewForms\CardViewForm;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
-use App\Voters\CardViewVoter;
+use App\UserInterface\Entity\Card\CardView;
+use App\UserInterface\Voters\CardViewVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

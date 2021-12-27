@@ -1,8 +1,8 @@
 <?php
 
-namespace App\User\Repository\ORM\UserInterface;
+namespace App\UserInterface\Repository\ORM\CardRepositories;
 
-use App\User\Entity\UserInterface\Card\CardView;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

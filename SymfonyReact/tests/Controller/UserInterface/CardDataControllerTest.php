@@ -4,29 +4,7 @@
 namespace App\Tests\Controller\UserInterface;
 
 
-use App\API\HTTPStatusCodes;
-use App\Controller\Core\SecurityController;
-use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Devices\Entity\Devices;
-use App\User\Entity\UserInterface\Card\CardColour;
-use App\User\Entity\UserInterface\Card\Cardstate;
-use App\User\Entity\UserInterface\Card\CardView;
-use App\User\Entity\UserInterface\Icons;
-use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\User;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\Sensor;
-use App\ESPDeviceSensor\Entity\SensorType;
-use App\Form\FormMessages;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Request;
 
 
 class CardDataControllerTest extends WebTestCase

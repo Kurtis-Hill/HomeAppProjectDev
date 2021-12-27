@@ -4,7 +4,6 @@ namespace App\DataFixtures\ESP8266;
 
 use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
-use App\User\Entity;
 use App\Devices\Entity\Devices;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;

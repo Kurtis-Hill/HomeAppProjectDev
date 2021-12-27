@@ -76,8 +76,6 @@ class User implements UserInterface, APISensorUserInterface
     private DateTime $createdAt;
 
     /**
-     * @var GroupNames
-     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")

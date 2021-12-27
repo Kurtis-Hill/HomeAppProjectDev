@@ -10,11 +10,11 @@
 
 namespace App\Form\CardViewForms;
 
-use App\User\Entity\UserInterface\Card\CardColour;
-use App\User\Entity\UserInterface\Card\Cardstate;
-use App\User\Entity\UserInterface\Card\CardView;
-use App\User\Entity\UserInterface\Icons;
 use App\Form\FormMessages;
+use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardView;
+use App\UserInterface\Entity\Icons;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

@@ -2,7 +2,7 @@
 
 namespace App\Controller\UserInterface;
 
-use App\User\Entity;
+use App\User\Entity\Room;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;

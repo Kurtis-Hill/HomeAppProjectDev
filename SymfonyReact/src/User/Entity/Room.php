@@ -3,7 +3,6 @@
 namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping\Column;
 

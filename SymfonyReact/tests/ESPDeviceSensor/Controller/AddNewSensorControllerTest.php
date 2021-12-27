@@ -19,10 +19,9 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use App\Form\FormMessages;
-use App\User\Entity\UserInterface\Card\CardView;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
-use JetBrains\PhpStorm\NoReturn;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -61,7 +60,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
-            $this->userToken = $this->setUserToken(true);
+            $this->userToken = $this->setUserToken();
         } catch (JsonException $e) {
             error_log($e);
         }
@@ -69,7 +68,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
     private function setUserToken(bool $forceToken = false): string
     {
-        if ($forceToken === true) {
+        if ($this->userToken === null || $forceToken === true) {
             $this->client->request(
                 'POST',
                 SecurityController::API_USER_LOGIN,
@@ -179,6 +178,7 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData
         );
 
+        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $sensorID = $responseData['payload']['sensorNameID'];
 
@@ -435,7 +435,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
-        $dhtSensor = $this->entityManager->getRepository($class)->findOneBy(['sensorNameID' => $sensorID]);
+        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensorNameID' => $sensorID]);
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensorNameID' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
@@ -444,7 +444,7 @@ class AddNewSensorControllerTest extends WebTestCase
         }
 
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertInstanceOf($class, $dhtSensor);
+        self::assertInstanceOf($class, $sensorTypeObject);
         self::assertInstanceOf(CardView::class, $cardView);
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
@@ -466,7 +466,6 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-//        dd($requestResponse);
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $token = $responseData['token'];

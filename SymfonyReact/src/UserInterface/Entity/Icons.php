@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Entity\UserInterface;
+namespace App\UserInterface\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

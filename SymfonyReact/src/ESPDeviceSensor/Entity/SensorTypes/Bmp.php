@@ -2,7 +2,6 @@
 
 namespace App\ESPDeviceSensor\Entity\SensorTypes;
 
-use App\User\Entity\UserInterface\Card\CardView;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
@@ -12,6 +11,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

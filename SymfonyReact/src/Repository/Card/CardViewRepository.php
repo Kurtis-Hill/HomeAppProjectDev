@@ -4,13 +4,11 @@
 namespace App\Repository\Card;
 
 use App\Devices\Entity\Devices;
-use App\User\Entity\UserInterface\Card\Cardstate;
-use App\User\Entity\UserInterface\Card\CardView;
 use App\Entity\Core\User;
 use App\ESPDeviceSensor\Entity\Sensor;
-use Doctrine\DBAL\Query\QueryBuilder;
+use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\Security\Core\User\UserInterface;
 use function Doctrine\ORM\QueryBuilder;

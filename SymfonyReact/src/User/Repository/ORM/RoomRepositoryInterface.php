@@ -3,7 +3,6 @@
 namespace App\User\Repository\ORM;
 
 use App\User\Entity\Room;
-use JetBrains\PhpStorm\NoReturn;
 
 interface RoomRepositoryInterface
 {

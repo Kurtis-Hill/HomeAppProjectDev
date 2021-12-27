@@ -14,6 +14,7 @@ use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\Form\FormMessages;
 use App\Services\CardUserDataService;
 use App\Traits\API\HomeAppAPIResponseTrait;
+use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
 use Doctrine\ORM\ORMException;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,7 +35,8 @@ class AddNewSensorController extends AbstractController
         SensorReadingTypeCreationInterface $readingTypeCreation,
         DeviceRepositoryInterface $deviceRepository,
         SensorTypeRepositoryInterface $sensorTypeRepository,
-        CardUserDataService $cardDataService
+        CardUserDataService $cardDataService,
+        CardCreationServiceInterface $cardCreationService,
     ): JsonResponse {
         try {
             $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -54,7 +56,16 @@ class AddNewSensorController extends AbstractController
                 ),
             ]);
         }
-        $sensorType = $sensorTypeRepository->findOneById($sensorData['sensorTypeID']);
+        try {
+            $sensorType = $sensorTypeRepository->findOneById($sensorData['sensorTypeID']);
+        } catch (ORMException) {
+            return $this->sendBadRequestJsonResponse([
+                sprintf(
+                    APIErrorMessages::OBJECT_NOT_FOUND,
+                    'Sensor Type',
+                ),
+            ]);
+        }
         if (!$sensorType instanceof SensorType) {
             return $this->sendBadRequestJsonResponse([
                 sprintf(
@@ -96,6 +107,7 @@ class AddNewSensorController extends AbstractController
         }
         try {
             $cardDataService->createNewSensorCard($sensor, $this->getUser());
+//            $cardCreationService->createUserCardForSensor($sensor, $this->getUser());
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse(['error creating card for user interface but sensor was created successfully']);
         }

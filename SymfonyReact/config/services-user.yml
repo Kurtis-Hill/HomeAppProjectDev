@@ -6,9 +6,6 @@ services:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-  # makes classes in src/ available to be used as services
-  # this creates a service per class whose id is the fully-qualified class name
-
   ################### Core ############################
   App\User\:
     resource: '../src/User/*'
@@ -17,7 +14,6 @@ services:
   App\User\Controller\:
     resource: '../src/User/Controller'
     tags: [ 'controller.service_arguments' ]
-
 
   ######################## Producers ######################################################
 
@@ -30,8 +26,6 @@ services:
   App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface:
     alias: 'App\User\Services\GroupServices\GroupCheck\GroupCheckService'
 
-  ######################## New Sensor Creation Services ########################################################
-
   ######################## Factories ###########################################################################
 
   ######################## Repositories ########################################################################
@@ -40,7 +34,3 @@ services:
 
   App\User\Repository\ORM\GroupNameRepositoryInterface:
     alias: 'App\User\Repository\ORM\GroupNameRepository'
-
-  App\User\Repository\ORM\UserInterface\CardViewRepositoryInterface:
-    alias: 'App\User\Repository\ORM\UserInterface\CardViewRepository'
-######################## End Of Sensors ######################################################################################

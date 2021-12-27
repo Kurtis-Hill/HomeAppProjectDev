@@ -5,7 +5,6 @@ namespace App\User\Repository\ORM;
 use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use JetBrains\PhpStorm\NoReturn;
 
 class RoomRepository extends ServiceEntityRepository implements RoomRepositoryInterface
 {

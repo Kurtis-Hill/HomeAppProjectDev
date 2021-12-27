@@ -2,9 +2,9 @@
 
 namespace App\DataFixtures\Card;
 
-use App\User\Entity\UserInterface\Card\CardColour;
-use App\User\Entity\UserInterface\Card\Cardstate;
-use App\User\Entity\UserInterface\Icons;
+use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

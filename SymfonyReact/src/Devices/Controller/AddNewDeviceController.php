@@ -3,7 +3,6 @@
 namespace App\Devices\Controller;
 
 use App\API\APIErrorMessages;
-use App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceValidatorService;
 use App\Devices\DTO\DeviceDTO;
 use App\Devices\DTO\NewDeviceDTO;
