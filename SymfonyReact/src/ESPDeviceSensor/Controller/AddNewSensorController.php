@@ -89,7 +89,6 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-//        dd('s');
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
 
         if (!empty($sensorReadingTypeCreationErrors)) {

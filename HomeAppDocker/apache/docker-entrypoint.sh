@@ -30,10 +30,10 @@ fi
 if [ ${APP_ENV} == 'dev' ]; then
 	echo "dev container build"
 	echo "Querying test database"
-	 if ! php bin/console dbal:run-sql "select firstName from user where firstName = 'admin' limit 1" --env=test | grep -q 'array(1)'; then
-		echo "No test database found loading fixtures..."
-   			# php bin/console doctrine:fixtures:load --no-interaction --env=test
-    	echo "...Fixtures loaded"
+	 if php bin/console dbal:run-sql "select firstName from user where firstName = 'admin' limit 1" --env=test | grep -q 'array(0)'; then
+		echo "Test database empty loading fixtures..."
+   			 php bin/console doctrine:fixtures:load --no-interaction --env=test
+    echo "...Fixtures loaded"
 	fi
 	echo "Test database checked"
 fi

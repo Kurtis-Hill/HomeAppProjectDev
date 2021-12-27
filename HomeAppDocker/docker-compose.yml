@@ -36,14 +36,14 @@ services:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'  # DEV  
     environment:
-      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
-      MYSQL_USER : '${MYSQL_USER}'
-      MYSQL_PASSWORD: '${MYSQL_PASS}'
-      MYSQL_DATABASE: '${MYSQL_DB}'
-      MARIADB_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
-      MARIADB_USER : '${MYSQL_USER}'
-      MARIADB_PASSWORD: '${MYSQL_PASS}'
-      MARIADB_DATABASE: '${MYSQL_DB}'
+#      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+#      MYSQL_USER : '${MYSQL_USER}'
+#      MYSQL_PASSWORD: '${MYSQL_PASS}'
+#      MYSQL_DATABASE: '${MYSQL_DB}'
+      MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MARIADB_USER : '${MARIADB_USER}'
+      MARIADB_PASSWORD: '${MARIADB_PASSWORD}'
+      MARIADB_DATABASE: '${MARIADB_DATABASE}'
     volumes:
       - ./mariadb/db_data:/var/lib/mysql
       - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -52,7 +52,7 @@ services:
       - ./mariadb/50config/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
       - ../SSL:/etc/mysql/ssl
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u $MYSQL_USER --password=$$MYSQL_PASS
+      test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$$MARIADB_PASSWORD
       interval: 5s
       retries: 5
     networks:
