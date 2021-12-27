@@ -2,7 +2,6 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
-
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
 use Doctrine\ORM\ORMException;

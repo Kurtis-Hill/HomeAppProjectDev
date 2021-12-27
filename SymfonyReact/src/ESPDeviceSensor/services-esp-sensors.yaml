@@ -11,11 +11,11 @@ services:
 
   ################### Core ############################
   App\ESPDeviceSensor\:
-    resource: '../src/ESPDeviceSensor/*'
-    exclude: '../src/ESPDeviceSensor/{Traits,DependencyInjection,Entity,Tests}'
+    resource: './*'
+    exclude: './{Traits,DependencyInjection,Entity,Tests}'
 
   App\ESPDeviceSensor\Controller\:
-    resource: '../src/ESPDeviceSensor/Controller'
+    resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
 ##### not working had to put in main services for now ####### DEV
