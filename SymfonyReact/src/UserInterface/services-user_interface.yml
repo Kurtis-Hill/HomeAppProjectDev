@@ -40,4 +40,4 @@ services:
   App\UserInterface\Repository\ORM\IconsRepositoryInterface:
     alias: App\UserInterface\Repository\ORM\IconsRepository
 
-######################## End Of Sensors ######################################################################################
+  ######################## End Of Sensors ######################################################################################

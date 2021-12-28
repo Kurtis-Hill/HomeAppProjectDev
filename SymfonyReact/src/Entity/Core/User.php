@@ -84,7 +84,7 @@ class User implements UserInterface, APISensorUserInterface
     private GroupNames|int $groupNameID;
 
     /**
-     * @var array
+     * @var array<GroupnNameMapping>
      */
     private array $userGroupMappingEntities = [];
 
@@ -122,10 +122,8 @@ class User implements UserInterface, APISensorUserInterface
      */
     public function getGroupNameAndIds(): array
     {
-        /** @var GroupnNameMapping $entity */
         $groupNames = [];
         foreach ($this->userGroupMappingEntities as $entity) {
-            /** @var GroupnNameMapping $entity */
             $groupNames[] = ['groupNameID' => $entity->getGroupNameID()->getGroupNameID(), 'groupName' => $entity->getGroupNameID()->getGroupName()];
         }
 

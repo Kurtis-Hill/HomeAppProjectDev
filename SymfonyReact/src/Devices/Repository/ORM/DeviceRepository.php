@@ -3,8 +3,10 @@
 namespace App\Devices\Repository\ORM;
 
 use App\Devices\Entity\Devices;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 class DeviceRepository extends ServiceEntityRepository implements DeviceRepositoryInterface
@@ -48,5 +50,20 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             );
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function getAllUsersDevicesByGroupId($groupNameID): array
+    {
+        $qb = $this->createQueryBuilder('dv');
+        $qb->select('dv.deviceNameID', 'dv.deviceName', 'gn.groupNameID', 'r.roomID')
+            ->leftJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
+            ->leftJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupNameID = gn.groupNameID'
+            );
+        $qb->where(
+            $qb->expr()->in('dv.groupNameID', ':groupNameID')
+        )
+            ->setParameters(['groupNameID' => $groupNameID]);
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

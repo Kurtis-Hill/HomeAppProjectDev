@@ -14,7 +14,18 @@ interface DeviceRepositoryInterface
      */
     public function flush(): void;
 
+    /**
+     * @throws ORMException
+     */
     public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices;
 
+    /**
+     * @throws ORMException
+     */
     public function findOneById(int $id): ?Devices;
+
+    /**
+     * @throws ORMException
+     */
+    public function getAllUsersDevicesByGroupId($groupNameID): array;
 }

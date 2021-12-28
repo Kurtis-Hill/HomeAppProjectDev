@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'new-sensor')]
 class AddNewSensorController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -105,6 +105,7 @@ class AddNewSensorController extends AbstractController
 
         if (!empty($sensorReadingTypeCreationErrors)) {
             $deleteSensorService->deleteSensor($sensor);
+
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }
 

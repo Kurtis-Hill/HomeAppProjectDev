@@ -38,5 +38,7 @@ class CardController extends AbstractController
                 return $this->sendBadRequestJsonResponse(['No device found']);
             }
         }
+
+        return $this->sendSuccessfulResponse();
     }
 }

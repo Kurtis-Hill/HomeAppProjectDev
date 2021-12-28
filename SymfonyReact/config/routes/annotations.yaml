@@ -17,6 +17,11 @@ user:
     #    prefix: /api/devices
     type: annotation
 
+user-interface:
+    resource: ../../src/UserInterface/Controller
+    #    prefix: /api/devices
+    type: annotation
+
 kernel:
     resource: ../../src/Kernel.php
     type: annotation

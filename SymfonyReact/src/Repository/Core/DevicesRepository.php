@@ -3,7 +3,6 @@
 
 namespace App\Repository\Core;
 
-
 use App\Devices\Entity\Devices;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;

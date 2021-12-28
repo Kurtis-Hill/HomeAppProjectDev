@@ -126,7 +126,6 @@ class CardContextProvider extends Component {
         }
     }
 
-
     //gets the card form data so users can customize cards
     getCardDataForm = async (cardViewID) => {
         this.setState({modalLoading: cardViewID});
@@ -141,8 +140,6 @@ class CardContextProvider extends Component {
         }
         this.setState({modalLoading: false});
     }
-
-
 
     modalContent = (cardData) => {
         const cardColour = cardData.cardColour.colourID;

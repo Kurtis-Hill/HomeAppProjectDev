@@ -14,54 +14,46 @@ use App\Entity\Core\GroupnNameMapping;
 use App\User\Entity;
 use App\Entity\Core\User;
 use Doctrine\ORM\EntityManagerInterface;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class NavbarControllerTest extends WebTestCase
 {
-    private const NAVBAR_DATA_URL = '/HomeApp/api/user/navbar/navbar-data';
-
-    /**
-     * @var string|null
-     */
-    private ?string $userToken = null;
-
-    /**
-     * @var string|null
-     */
-    private ?string $userRefreshToken = null;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var KernelBrowser
-     */
-    private KernelBrowser $client;
-
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        try {
-            $this->setUserToken();
-        } catch (\JsonException $e) {
-            error_log($e);
-        }
-    }
-
+//    private const NAVBAR_DATA_URL = '/HomeApp/api/user/navbar/navbar-data';
+//
 //    /**
-//     * @return void
-//     * @throws \JsonException
+//     * @var string|null
 //     */
-//    private function setUserToken()
+//    private ?string $userToken = null;
+//
+//    /**
+//     * @var EntityManagerInterface
+//     */
+//    private EntityManagerInterface $entityManager;
+//
+//    /**
+//     * @var KernelBrowser
+//     */
+//    private KernelBrowser $client;
+//
+//
+//    protected function setUp(): void
+//    {
+//        $this->client = static::createClient();
+//
+//        $this->entityManager = static::$kernel->getContainer()
+//            ->get('doctrine')
+//            ->getManager();
+//
+//        try {
+//            $this->setUserToken();
+//        } catch (JsonException $e) {
+//            error_log($e);
+//        }
+//    }
+//
+//    private function setUserToken(): void
 //    {
 //        if ($this->userToken === null) {
 //            $this->client->request(
@@ -77,7 +69,6 @@ class NavbarControllerTest extends WebTestCase
 //            $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 //
 //            $this->userToken = $requestData['token'];
-//            $this->userRefreshToken = $requestData['refreshToken'];
 //        }
 //    }
 //

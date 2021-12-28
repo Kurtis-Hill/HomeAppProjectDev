@@ -79,4 +79,4 @@ security:
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }
         - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
         - { path: ^/HomeApp/WebApp, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/HomeApp/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/HomeApp/api/user, roles: ROLE_USER }

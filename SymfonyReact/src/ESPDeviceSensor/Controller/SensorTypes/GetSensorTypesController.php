@@ -18,7 +18,6 @@ class GetSensorTypesController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-
     #[Route('/all-types', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository): Response
     {
