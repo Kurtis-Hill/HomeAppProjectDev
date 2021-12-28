@@ -36,12 +36,12 @@ security:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
         user_api:
-            pattern: ^/HomeApp/api
+            pattern: ^/HomeApp/api/user
             stateless: true
             anonymous: true
             provider: 'app_user_provider'
             json_login:
-                check_path: /HomeApp/api/login_check
+                check_path: /HomeApp/api/user/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             guard:
@@ -65,14 +65,15 @@ security:
 
 
     access_control:
-        - { path: ^/HomeApp/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/api/user/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/api/device/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/api/user/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/api/device/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/HomeApp/WebApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        DEV
         - { path: ^/HomeApp/ssl, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/csrfToken, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/api/user/csrfToken, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        - { path: ^/HomeApp/api/sensors/update/current-reading, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }

@@ -9,9 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class CardDataControllerTest extends WebTestCase
 {
-//    private const API_CARD_DATA_RETURN_CARD_DTO_ROUTE = '/HomeApp/api/card-data/cards';
+//    private const API_CARD_DATA_RETURN_CARD_DTO_ROUTE = '/HomeApp/api/user/card-data/cards';
 //
-//    private const API_CARD_VIEW_FORM_DTO_URL = '/HomeApp/api/card-data/card-sensor-form';
+//    private const API_CARD_VIEW_FORM_DTO_URL = '/HomeApp/api/user/card-data/card-sensor-form';
 //
 //    private const API_UPDATE_CARD_VIEW_FORM = '/HomeApp/api/card-data/update-card-view';
 //

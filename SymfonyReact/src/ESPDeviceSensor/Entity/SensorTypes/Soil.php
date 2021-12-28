@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Soil
  *
  * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"sensorNameID"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\SensorType\SoilRepository")
  */
 class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
 {

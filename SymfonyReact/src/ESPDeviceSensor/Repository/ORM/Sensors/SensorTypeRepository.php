@@ -18,4 +18,20 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
     {
         return $this->findOneBy(['sensorTypeID' => $id]);
     }
+
+    public function persist(SensorType $sensorType): void
+    {
+        $this->_em->persist($sensorType);
+    }
+
+    public function flush(): void
+    {
+        $this->_em->flush();
+    }
+
+    public function remove(SensorType $sensorType): void
+    {
+        $this->_em->remove($sensorType);
+    }
+
 }

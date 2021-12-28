@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class DallasRepository extends ServiceEntityRepository implements SensorTypeRepositoryInterface
+class DallasRepository extends ServiceEntityRepository implements GenericSensorTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class GroupControllerTest extends WebTestCase
 {
-    private const GET_USER_GROUPS_URL = '/HomeApp/api/user-groups/groups';
+    private const GET_USER_GROUPS_URL = '/HomeApp/api/user/user-groups/groups';
 
     private EntityManagerInterface $entityManager;
 
@@ -65,9 +65,9 @@ class GroupControllerTest extends WebTestCase
 
         self::assertEquals(200, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
-        self::assertEquals(UserDataFixtures::ADMIN_GROUP, $responseData[0]['groupName']);
-        self::assertEquals(UserDataFixtures::USER_GROUP, $responseData[1]['groupName']);
-        self::assertIsNumeric($responseData[0]['groupNameId']);
-        self::assertIsNumeric($responseData[1]['groupNameId']);
+        self::assertEquals(UserDataFixtures::ADMIN_GROUP,$responseData['payload'][0]['groupName']);
+        self::assertEquals(UserDataFixtures::USER_GROUP, $responseData['payload'][1]['groupName']);
+        self::assertIsNumeric($responseData['payload'][0]['groupNameId']);
+        self::assertIsNumeric($responseData['payload'][1]['groupNameId']);
     }
 }

@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AddNewSensorControllerTest extends WebTestCase
 {
-    private const ADD_NEW_SENSOR_URL = '/HomeApp/api/sensors/add-new-sensor';
+    private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensors/add-new-sensor';
 
     /**
      * @var EntityManagerInterface

@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 
-#[Route('/HomeApp/api/card-data')]
+#[Route('/HomeApp/api/user/card-data')]
 class CardDataController extends AbstractController
 {
     use HomeAppAPIResponseTrait;

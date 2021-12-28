@@ -5,14 +5,22 @@ namespace App\User\Services\RoomServices;
 use App\User\Entity\GroupNames;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
+use Doctrine\ORM\ORMException;
 
 interface AddNewRoomServiceInterface
 {
-    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): bool;
+    /**
+     * @throws DuplicateRoomException | ORMException | GroupNameNotFoundException
+     */
+    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): void;
 
-    public function validateAndCreateRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): ?Room;
+    public function validateNewRoom(Room $newRoom): array;
 
-    public function getUserInputErrors(): array;
-
-    public function getServerErrors(): array;
+    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): Room;
+    /**
+     * @throws ORMException
+     */
+    public function saveNewRoom(Room $room): void;
 }

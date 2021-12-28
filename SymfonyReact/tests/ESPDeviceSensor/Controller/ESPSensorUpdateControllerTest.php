@@ -40,24 +40,24 @@ class ESPSensorUpdateControllerTest extends WebTestCase
 
     private function setUserToken(): void
     {
-        $this->client->request(
-            'POST',
-            SecurityController::API_DEVICE_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'].'","password":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'].'"}'
-        );
+        if ($this->userToken === null) {
+            $this->client->request(
+                'POST',
+                SecurityController::API_DEVICE_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'].'","password":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'].'"}'
+            );
 
-        $requestResponse = $this->client->getResponse();
-        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $requestResponse = $this->client->getResponse();
+            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->userToken = $responseData['token'];
+            $this->userToken = $responseData['token'];
+        }
     }
 
     /**
-     * @param string $sensorType
-     * @param array $sensorData
      * @dataProvider successfulUpdateRequestDataProvider
      */
     public function test_sending_sensor_update_requests(

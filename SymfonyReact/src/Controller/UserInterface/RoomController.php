@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/HomeApp/api/user-rooms/')]
+#[Route('/HomeApp/api/user/user-rooms/')]
 class RoomController extends AbstractController
 {
 

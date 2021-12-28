@@ -2,6 +2,7 @@
 
 namespace App\ESPDeviceSensor\Controller;
 
+use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Service\Attribute\Required;
 
-#[Route('/HomeApp/api/device/', name: 'device')]
+#[Route(CommonURL::DEVICE_HOMEAPP_API_URL, name: 'device')]
 class ESPSensorUpdateController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -24,13 +25,13 @@ class ESPSensorUpdateController extends AbstractController
     private ProducerInterface $currentReadingAMQPProducer;
 
     #[Route(
-            'esp/update/current-reading',
-            name: 'update-current-reading',
-            methods: [
-                Request::METHOD_PUT,
-                Request::METHOD_POST
-            ]
-        )]
+        'esp/update/current-reading',
+        name: 'update-current-reading',
+        methods: [
+            Request::METHOD_PUT,
+            Request::METHOD_POST
+        ]
+    )]
     public function updateSensorsCurrentReading(Request $request): Response
     {
         try {

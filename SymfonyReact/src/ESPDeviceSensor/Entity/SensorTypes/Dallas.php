@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Dallas
  *
  * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"})}, indexes={@ORM\Index(name="sensorNameID", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\ReadingType\DallasRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\SensorType\DallasRepository")
  */
 class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {

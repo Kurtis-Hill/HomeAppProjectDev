@@ -39,11 +39,3 @@ export const lowercaseFirstLetter = (string) => {
     }
     return null;
 }
-
-// export const getAPIHeader = (extraHeader = null) => {
-//     return { headers: {"Authorization" : `Bearer ${getToken()}`} };
-// }
-
-// export const webappURL = '/HomeApp/WebApp/';
-
-// export const apiURL = '/HomeApp/api/'

@@ -2,11 +2,14 @@
 
 namespace App\User\Controller;
 
+use App\API\APIErrorMessages;
+use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Form\FormMessages;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;
 use App\User\Voters\RoomVoter;
@@ -18,8 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route('/HomeApp/api/user-rooms/')]
-class RoomController extends AbstractController
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/')]
+class AddNewRoomController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
@@ -48,26 +51,34 @@ class RoomController extends AbstractController
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
-        $preProcessRequest = $addNewRoomService->processNewRoomRequest($addNewRoomDTO);
-        if ($preProcessRequest === false && !empty($addNewRoomService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse($addNewRoomService->getUserInputErrors());
-        }
         try {
-            $newRoom = $addNewRoomService->validateAndCreateRoom($addNewRoomDTO, $groupName);
-        } catch (ORMException $exception) {
-            return $this->sendInternalServerErrorJsonResponse();
+            $addNewRoomService->processNewRoomRequest($addNewRoomDTO);
+        } catch (DuplicateRoomException $exception) {
+            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
+        } catch (ORMException) {
+            return $this->sendBadRequestJsonResponse(['Failed to process room request']);
+        } catch (GroupNameNotFoundException $exception) {
+            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
-        if (!$newRoom instanceof Room) {
-            return $this->sendBadRequestJsonResponse($addNewRoomService->getUserInputErrors());
-        }
+        $newRoom = $addNewRoomService->createNewRoom($addNewRoomDTO, $groupName);
 
         try {
             $this->denyAccessUnlessGranted(RoomVoter::ADD_NEW_ROOM, $newRoom);
         } catch (AccessDeniedException $exception) {
-            $addNewRoomService->removeRoom($newRoom);
-
             return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+        }
+
+        $validationErrors = $addNewRoomService->validateNewRoom($newRoom);
+
+        if (!empty($validationErrors)) {
+            return $this->sendBadRequestJsonResponse($validationErrors);
+        }
+
+        try {
+            $addNewRoomService->saveNewRoom($newRoom);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse();
         }
 
         return $this->sendCreatedResourceJsonResponse(['Room created successfully']);

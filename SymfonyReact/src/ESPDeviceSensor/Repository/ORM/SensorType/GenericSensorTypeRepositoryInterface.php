@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\Repository\ORM\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Doctrine\ORM\ORMException;
 
-interface SensorTypeRepositoryInterface
+interface GenericSensorTypeRepositoryInterface
 {
     public function persist(SensorTypeInterface $sensor): void;
 

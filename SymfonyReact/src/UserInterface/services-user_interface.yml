@@ -10,7 +10,7 @@ services:
     resource: './*'
     exclude: './{Traits, DependencyInjection, Entity, Tests}'
 
-  App\User\Controller\:
+  App\UserInterface\Controller\:
     resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 

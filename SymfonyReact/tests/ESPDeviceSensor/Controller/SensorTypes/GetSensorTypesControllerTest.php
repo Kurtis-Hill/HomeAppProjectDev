@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class GetSensorTypesControllerTest extends WebTestCase
 {
-    private const GET_SENSOR_TYPES_URL = '/HomeApp/api/sensors/sensor-types';
+    private const GET_SENSOR_TYPES_URL = '/HomeApp/api/user/sensor-types/all-types';
 
     /**
      * @var EntityManagerInterface
@@ -85,6 +85,7 @@ class GetSensorTypesControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 

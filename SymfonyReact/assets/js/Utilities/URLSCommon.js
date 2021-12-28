@@ -1,3 +1,3 @@
 export const webappURL = '/HomeApp/WebApp/';
 
-export const apiURL = '/HomeApp/api/'
+export const apiURL = '/HomeApp/api/user/'

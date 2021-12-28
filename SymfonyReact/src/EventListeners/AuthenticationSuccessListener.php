@@ -5,6 +5,7 @@ namespace App\EventListeners;
 use App\Devices\Entity\Devices;
 use App\Entity\Core\User;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -38,14 +39,18 @@ class AuthenticationSuccessListener
             $authenticationSuccessEvent->setData($data);
         }
         if ($user instanceof Devices) {
-            $deviceLoginRequest = json_decode($this->requestStack->getCurrentRequest()->getContent(), true);
+            $deviceLoginRequest = json_decode($this->requestStack->getCurrentRequest()?->getContent(), true);
             $ipAddress = $deviceLoginRequest['ipAddress'] ?? null;
             $externalIpAddress = $deviceLoginRequest["externalIpAddress"] ?? null;
 
-            $user->setIpAddress($ipAddress);
+            $ipAddress === null ?: $user->setIpAddress($ipAddress);
             $externalIpAddress === null ?: $user->setExternalIpAddress($externalIpAddress);
-            $this->deviceRepository->persist($user);
-            $this->deviceRepository->flush();
+            try {
+                $this->deviceRepository->persist($user);
+                $this->deviceRepository->flush();
+            } catch (Exception) {
+                error_log('failed to save login IP address data');
+            }
         }
     }
 }

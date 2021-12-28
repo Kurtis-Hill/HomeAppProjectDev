@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    public const API_USER_LOGIN = '/HomeApp/api/login_check';
+    public const API_USER_LOGIN = '/HomeApp/api/user/login_check';
     public const API_DEVICE_LOGIN = '/HomeApp/api/device/login_check';
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\Controller\Card;
 
+use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route('/HomeApp/api/card-data/v2/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/v2/')]
 class CardController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -37,7 +38,5 @@ class CardController extends AbstractController
                 return $this->sendBadRequestJsonResponse(['No device found']);
             }
         }
-
-
     }
 }

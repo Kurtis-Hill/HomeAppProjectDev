@@ -12,9 +12,9 @@ use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class RoomControllerTest extends WebTestCase
+class AddNewRoomControllerTest extends WebTestCase
 {
-    private const ADD_NEW_ROOM_URL = '/HomeApp/api/user-rooms/add-user-room';
+    private const ADD_NEW_ROOM_URL = '/HomeApp/api/user/user-rooms/add-user-room';
 
     private EntityManagerInterface $entityManager;
 
@@ -198,7 +198,6 @@ class RoomControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $userName
      * @dataProvider addNewRoomNotApartOfDataProvider
      */
     public function test_add_new_room_not_apart_of_group(string $userName): void
@@ -237,6 +236,7 @@ class RoomControllerTest extends WebTestCase
         yield [
             'adminUserName' => UserDataFixtures::SECOND_ADMIN_USER_ISOLATED
         ];
+
         yield [
             'regularUserName' => UserDataFixtures::SECOND_REGULAR_USER_ISOLATED
         ];

@@ -115,8 +115,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUserAdminGroup->setUserID($regularUser);
 
 
-
-
         //Just Admin Groups
         $adminUserGroupName = new GroupNames();
 

@@ -45,8 +45,5 @@ class JWTAuthenticatedListener
                 error_log($exception->getMessage());
             }
         }
-//        if ($user instanceof Devices) {
-//            dd($authenticatedEvent->getPayload());
-//        }
     }
 }

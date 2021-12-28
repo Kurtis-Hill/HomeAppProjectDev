@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class SoilRepository extends ServiceEntityRepository implements SensorTypeRepositoryInterface
+class SoilRepository extends ServiceEntityRepository implements GenericSensorTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

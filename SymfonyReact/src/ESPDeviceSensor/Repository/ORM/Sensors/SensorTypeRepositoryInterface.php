@@ -12,4 +12,16 @@ interface SensorTypeRepositoryInterface
      * @throws  ORMException
      */
     public function findOneById(int $id): ?SensorType;
+
+    public function persist(SensorType $sensorType): void;
+
+    /**
+     * @throws  ORMException
+     */
+    public function flush(): void;
+
+    /**
+     * @throws  ORMException
+     */
+    public function remove(SensorType $sensorType): void;
 }

@@ -20,7 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AddNewDeviceController extends WebTestCase
 {
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user-devices/add-new-device';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices/add-new-device';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 

@@ -10,7 +10,7 @@ use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\BmpRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\DallasRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\DhtRepository;
-use App\ESPDeviceSensor\Repository\ORM\SensorType\SensorTypeRepositoryInterface;
+use App\ESPDeviceSensor\Repository\ORM\SensorType\GenericSensorTypeRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\SoilRepository;
 
 class SensorTypeFactory implements SensorTypeFactoryInterface
@@ -35,7 +35,7 @@ class SensorTypeFactory implements SensorTypeFactoryInterface
         $this->dhtRepository = $dhtRepository;
     }
 
-    public function getSensorTypeRepository(string $sensorType): SensorTypeRepositoryInterface
+    public function getSensorTypeRepository(string $sensorType): GenericSensorTypeRepositoryInterface
     {
         return match ($sensorType) {
             Dallas::class => $this->dallasRepository,

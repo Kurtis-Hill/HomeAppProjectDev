@@ -1,11 +1,15 @@
 api_login_check:
-    path: /HomeApp/api/login_check
+    path: /HomeApp/api/user/login_check
 
 sensor_api_login_check:
   path: /HomeApp/api/device/login_check
 
 gesdinet_jwt_refresh_token:
-  path:       /HomeApp/api/token/refresh
+  path:       /HomeApp/api/user/token/refresh
+  defaults: { _controller: gesdinet.jwtrefreshtoken:refresh }
+
+gesdinet_jwt_refresh_token_device:
+  path:       /HomeApp/api/device/token/refresh
   defaults: { _controller: gesdinet.jwtrefreshtoken:refresh }
 
 ##@Dev work on removing

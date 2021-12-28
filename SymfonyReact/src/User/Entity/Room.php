@@ -23,8 +23,6 @@ class Room
      */
     private int $roomID;
 
-
-
     #[Assert\Length(
         min: 2,
         max: 20,

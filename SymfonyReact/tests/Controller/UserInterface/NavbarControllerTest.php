@@ -19,7 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class NavbarControllerTest extends WebTestCase
 {
-    private const NAVBAR_DATA_URL = '/HomeApp/api/navbar/navbar-data';
+    private const NAVBAR_DATA_URL = '/HomeApp/api/user/navbar/navbar-data';
 
     /**
      * @var string|null

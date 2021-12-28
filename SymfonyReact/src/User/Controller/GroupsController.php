@@ -2,6 +2,7 @@
 
 namespace App\User\Controller;
 
+use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Entity\Core\User;
 use App\User\DTO\GroupDTOs\GroupNameDTO;
@@ -13,7 +14,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-#[Route('/HomeApp/api/user-groups/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-groups/')]
 class GroupsController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
