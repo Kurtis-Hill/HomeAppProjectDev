@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Controller\Core;
+namespace App\User\Controller;
 
-
-use App\User\Entity\GroupNames;
-use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\User;
+use App\Authentication\Entity\GroupNameMapping;
 use App\Form\RegistrationFormType;
+use App\User\Entity\GroupNames;
+use App\User\Entity\User;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -63,7 +62,7 @@ class RegistrationController extends AbstractController
                 $user->setGroupNameID($groupNameObject);
                 $user->setCreatedAt(new \DateTime());
 
-                $groupNameMapping = new GroupnNameMapping();
+                $groupNameMapping = new GroupNameMapping();
 
                 $groupNameMapping->setGroupnameid($groupNameObject);
                 $groupNameMapping->setUserID($user);

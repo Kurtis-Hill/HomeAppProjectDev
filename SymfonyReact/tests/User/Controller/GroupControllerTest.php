@@ -2,9 +2,9 @@
 
 namespace App\Tests\User\Controller;
 
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

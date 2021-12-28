@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Entity\Core;
+namespace App\User\Entity;
 
+use App\Authentication\Entity\GroupNameMapping;
 use App\Core\UserInterface\APISensorUserInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\UserInterface;
-use App\User\Entity\GroupNames;
 
 /**
  * User
@@ -84,12 +84,12 @@ class User implements UserInterface, APISensorUserInterface
     private GroupNames|int $groupNameID;
 
     /**
-     * @var array<GroupnNameMapping>
+     * @var array<GroupNameMapping>
      */
     private array $userGroupMappingEntities = [];
 
 
-    #[ArrayShape([GroupnNameMapping::class])]
+    #[ArrayShape([GroupNameMapping::class])]
     public function getUserGroupMappingEntities(): array
     {
         return $this->userGroupMappingEntities;

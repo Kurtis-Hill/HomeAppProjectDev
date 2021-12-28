@@ -4,12 +4,19 @@ export const getUser = () => {
     else return null;
 }
 
+export const getUserID = () => {
+    const userID = sessionStorage.getItem('user');
+    if (userID) return userID;
+    else return null;
+}
+
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');   
     sessionStorage.removeItem('userID');   
     sessionStorage.removeItem('roles');    
-        
+    window.location.replace('/HomeApp/WebApp/login');
+
     return null;
 }
 

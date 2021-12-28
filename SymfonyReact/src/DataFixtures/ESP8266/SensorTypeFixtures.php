@@ -9,13 +9,6 @@ use Doctrine\Persistence\ObjectManager;
 
 class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 {
-    public const SENSOR_TYPE_DATA_FIXTURES = [
-        SensorType::DHT_SENSOR,
-        SensorType::BMP_SENSOR,
-        SensorType::DALLAS_TEMPERATURE,
-        SensorType::SOIL_SENSOR,
-    ];
-
     public function getOrder(): int
     {
         return 4;

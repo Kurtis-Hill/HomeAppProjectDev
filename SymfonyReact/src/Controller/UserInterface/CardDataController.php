@@ -3,6 +3,7 @@
 
 namespace App\Controller\UserInterface;
 
+use App\API\APIErrorMessages;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface;
@@ -43,7 +44,7 @@ class CardDataController extends AbstractController
                 try {
                     $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
                 } catch (AccessDeniedException $exception) {
-                    return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+                    return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
                 }
             } else {
                 return $this->sendBadRequestJsonResponse(['No device found']);
@@ -102,7 +103,7 @@ class CardDataController extends AbstractController
             try {
                 $this->denyAccessUnlessGranted(CardViewVoter::CAN_VIEW_CARD_VIEW_FORM, $cardViewObject);
             } catch (AccessDeniedException) {
-                return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+                return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
             }
         } else {
             return $this->sendBadRequestJsonResponse(['Card view id not recognised']);
@@ -155,7 +156,7 @@ class CardDataController extends AbstractController
             try {
                 $this->denyAccessUnlessGranted(CardViewVoter::CAN_EDIT_CARD_VIEW_FORM, $cardViewObject);
             } catch (AccessDeniedException) {
-                return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+                return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
             }
         } else {
             return $this->sendBadRequestJsonResponse(['card not found by the id given']);

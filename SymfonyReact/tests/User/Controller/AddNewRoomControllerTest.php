@@ -2,11 +2,11 @@
 
 namespace App\Tests\User\Controller;
 
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\User\Entity\GroupNames;
-use App\Entity\Core\User;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

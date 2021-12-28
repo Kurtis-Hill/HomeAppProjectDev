@@ -3,7 +3,7 @@
 namespace App\Tests\ESPDeviceSensor\Controller;
 
 use App\API\HTTPStatusCodes;
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\DataFixtures\ESP8266\SensorFixtures;
 use App\ESPDeviceSensor\Controller\ESPSensorUpdateController;
@@ -31,9 +31,9 @@ class ESPSensorUpdateControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
 
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+//        $this->entityManager = static::$kernel->getContainer()
+//            ->get('doctrine')
+//            ->getManager();
 
         $this->setUserToken();
     }

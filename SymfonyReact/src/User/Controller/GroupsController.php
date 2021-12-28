@@ -4,8 +4,8 @@ namespace App\User\Controller;
 
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
-use App\Entity\Core\User;
 use App\User\DTO\GroupDTOs\GroupNameDTO;
+use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

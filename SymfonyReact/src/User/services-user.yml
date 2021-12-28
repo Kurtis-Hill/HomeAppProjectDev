@@ -8,11 +8,11 @@ services:
 
   ################### Core ############################
   App\User\:
-    resource: '../src/User/*'
-    exclude: '../src/User/{Traits, DependencyInjection, Entity, Tests}'
+    resource: './*'
+    exclude: './{Traits, DependencyInjection, Entity, Tests}'
 
   App\User\Controller\:
-    resource: '../src/User/Controller'
+    resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
   ######################## Producers ######################################################

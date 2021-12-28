@@ -3,9 +3,9 @@
 namespace App\ESPDeviceSensor\Entity;
 
 use App\Devices\Entity\Devices;
-use App\Entity\Core\User;
-use Doctrine\ORM\Mapping as ORM;
 use App\Form\CustomFormValidators as NoSpecialCharacters;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -77,7 +77,7 @@ class Sensor
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
      * })

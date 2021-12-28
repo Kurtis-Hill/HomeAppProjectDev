@@ -2,6 +2,7 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate;
 
+use App\API\Traits\FormProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -11,7 +12,6 @@ use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Forms\SensorReadingUpdateInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
-use App\Traits\FormProcessorTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;

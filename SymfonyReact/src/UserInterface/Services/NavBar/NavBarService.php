@@ -4,7 +4,7 @@ namespace App\UserInterface\Services\NavBar;
 
 use App\API\APIErrorMessages;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use Doctrine\ORM\ORMException;
@@ -25,7 +25,24 @@ class NavBarService implements NavBarServiceInterface
         $this->deviceRepository = $deviceRepository;
     }
 
-    #[ArrayShape(['rooms' => [], 'devices' => [], 'groupNames' => []])]
+    #[ArrayShape(
+        [
+            'rooms' => [
+                'roomID' => 'string',
+                'room' => 'string',
+            ],
+            'devices' => [
+                'deviceNameID' => 'string',
+                'deviceName' => 'string',
+                'groupNameID' => 'string',
+                'roomID' => 'string',
+            ],
+            'groupNames' => [
+                'groupNames' => ['string'],
+            ],
+            'errors' => ['string'],
+        ]
+    )]
     public function getNavBarData(UserInterface $user): array
     {
         if (!$user instanceof User) {

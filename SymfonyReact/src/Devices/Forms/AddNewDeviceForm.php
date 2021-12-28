@@ -2,6 +2,7 @@
 
 namespace App\Devices\Forms;
 
+use App\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\User\Entity\GroupNames;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
@@ -24,7 +25,7 @@ class AddNewDeviceForm extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersConstraint(),
-                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device')]),
+                    new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'Device')]),
                     new Length(
                         [
                             'min' => 1, 'max' => 20,

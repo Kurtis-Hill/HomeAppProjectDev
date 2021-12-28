@@ -4,7 +4,7 @@
 namespace App\Repository\Core;
 
 use App\User\Entity\GroupNames;
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use function Doctrine\ORM\QueryBuilder;

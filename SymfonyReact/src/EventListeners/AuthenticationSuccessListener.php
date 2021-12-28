@@ -3,8 +3,8 @@
 namespace App\EventListeners;
 
 use App\Devices\Entity\Devices;
-use App\Entity\Core\User;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\User\Entity\User;
 use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -49,7 +49,7 @@ class AuthenticationSuccessListener
                 $this->deviceRepository->persist($user);
                 $this->deviceRepository->flush();
             } catch (Exception) {
-                error_log('failed to save login IP address data');
+                error_log('failed to save login IP address data for: '.$user->getUsername());
             }
         }
     }

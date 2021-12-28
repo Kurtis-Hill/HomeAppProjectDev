@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Entity\Core;
+namespace App\Authentication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\GroupNames;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * GroupnNameMapping
@@ -11,7 +12,7 @@ use App\User\Entity\GroupNames;
  * @ORM\Table(name="groupnnamemapping", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="userID", columns={"userID", "groupNameID"}), @ORM\Index(name="IDX_1C993DEE5FD86D04", columns={"userID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\GroupNameMappingTableRepository")
  */
-class GroupnNameMapping
+class GroupNameMapping
 {
     /**
      * @var int
@@ -35,7 +36,7 @@ class GroupnNameMapping
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="userID", referencedColumnName="userID")
      * })

@@ -9,17 +9,18 @@ esp-device-sensors:
 
 devices:
     resource: ../../src/Devices/Controller
-#    prefix: /api/devices
     type: annotation
 
 user:
     resource: ../../src/User/Controller
-    #    prefix: /api/devices
     type: annotation
 
 user-interface:
     resource: ../../src/UserInterface/Controller
-    #    prefix: /api/devices
+    type: annotation
+
+authentication:
+    resource: ../../src/Authentication/Controller
     type: annotation
 
 kernel:

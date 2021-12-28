@@ -8,13 +8,13 @@ services:
 
 ################### Core ############################
   App\Devices\:
-    resource: '../src/Devices/*'
-    exclude: '../src/Devices/{Traits,DependencyInjection,Entity,Tests}'
+    resource: './*'
+    exclude: './{Traits,DependencyInjection,Entity,Tests}'
 
 
 ################### Devices ############################
   App\Devices\Controller\:
-    resource: '../src/Devices/Controller'
+    resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
 

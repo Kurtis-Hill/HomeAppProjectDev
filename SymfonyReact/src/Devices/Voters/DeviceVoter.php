@@ -4,7 +4,7 @@
 namespace App\Devices\Voters;
 
 use App\Devices\DTO\NewDeviceDTO;
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;

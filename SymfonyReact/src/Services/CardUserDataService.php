@@ -3,19 +3,19 @@
 
 namespace App\Services;
 
+use App\API\Traits\FormProcessorTrait;
 use App\Core\APIInterface\APIErrorInterface;
 use App\Core\UserInterface\APISensorUserInterface;
 use App\Devices\Entity\Devices;
 use App\DTOs\CardDTOs\Factories\CardFactories\CardViewDTOFactory;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
-use App\Entity\Core\User;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
 use App\Services\CardServices\CardDataFilterService;
 use App\Services\CardServices\CardDataProviderInterface;
-use App\Traits\FormProcessorTrait;
+use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
@@ -116,11 +116,12 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         $cardViewDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
         if (!empty($sensorObjects)) {
                 foreach ($sensorObjects as $cardDTO) {
+//                    dd($cardDTO);
                     try {
                         $cardViewObject = $this->em->getRepository(CardView::class)->findOneBy(
                             [
                                 'userID' => $this->getUser(),
-                                'sensorNameID' => $cardDTO->getSensorNameID()
+                                'sensorNameID' => $cardDTO->getSensorObject()
                             ]
                         );
                         if (!$cardViewObject instanceof CardView) {

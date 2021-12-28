@@ -3,14 +3,13 @@
 namespace App\Tests\UserInterface\Controller;
 
 use App\API\HTTPStatusCodes;
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
+use App\Authentication\Entity\GroupNameMapping;
 use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
-use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\User;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -78,7 +77,7 @@ class NavBarControllerTest extends WebTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
 
-        $groupNameMappingEntities = $this->entityManager->getRepository(GroupnNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
+        $groupNameMappingEntities = $this->entityManager->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
         $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
 
         $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getGroupNameIds());
@@ -92,8 +91,6 @@ class NavBarControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
-//        dd($this->client->getResponse()->getContent());
-
         $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
 
         $countMessage = 'user %s count wrong';
@@ -106,5 +103,21 @@ class NavBarControllerTest extends WebTestCase
         self::assertSameSize(UserDataFixtures::USER_ACCOUNTS, $responseData['groupNames']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_navbar_data_response_wrong_token(): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            self::NAVBAR_DATA_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken . '1'],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+        self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
     }
 }

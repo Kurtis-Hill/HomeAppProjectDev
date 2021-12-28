@@ -9,4 +9,8 @@ class APIErrorMessages
     public const OBJECT_NOT_FOUND = '%s not found';
 
     public const FAILED_TO_SAVE_DATA = 'Failed to save data';
+
+    public const ACCESS_DENIED = 'You have been denied permission to perform this action';
+
+    public const SHOULD_NOT_BE_BLANK = '%s name should not be blank';
 }

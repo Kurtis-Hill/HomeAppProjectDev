@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Voters;
 
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardView;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

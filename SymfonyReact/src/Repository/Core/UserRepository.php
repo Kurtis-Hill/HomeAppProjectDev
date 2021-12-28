@@ -2,7 +2,7 @@
 
 namespace App\Repository\Core;
 
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;

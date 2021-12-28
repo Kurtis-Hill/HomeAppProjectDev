@@ -66,7 +66,7 @@ class AddNewRoomController extends AbstractController
         try {
             $this->denyAccessUnlessGranted(RoomVoter::ADD_NEW_ROOM, $newRoom);
         } catch (AccessDeniedException $exception) {
-            return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
         $validationErrors = $addNewRoomService->validateNewRoom($newRoom);

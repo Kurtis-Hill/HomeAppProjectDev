@@ -3,15 +3,14 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
+use App\API\Traits\FormProcessorTrait;
 use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Forms\AddNewDeviceForm;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 

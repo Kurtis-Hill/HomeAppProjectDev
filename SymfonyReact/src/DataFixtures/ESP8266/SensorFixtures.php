@@ -54,7 +54,6 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         foreach (self::CARD_VIEW_CHECK as $state => $sensorData) {
             foreach (SensorType::ALL_SENSOR_TYPE_DATA as $name => $sensorDetails) {
                 $sensor = new Sensor();
-//dd('gi ');
                 $sensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
                 $sensor->setSensorName($sensorData.$name.$sensorCountCardView);
                 $sensor->setSensorTypeID($this->getReference($name));

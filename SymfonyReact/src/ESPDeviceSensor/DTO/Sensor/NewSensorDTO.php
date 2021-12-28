@@ -3,8 +3,8 @@
 namespace App\ESPDeviceSensor\DTO\Sensor;
 
 use App\Devices\Entity\Devices;
-use App\Entity\Core\User;
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\User\Entity\User;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Security\Core\User\UserInterface;
 

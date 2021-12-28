@@ -4,9 +4,8 @@
 namespace App\ESPDeviceSensor\Voters;
 
 
-use App\Devices\Entity\Devices;
-use App\Entity\Core\User;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;

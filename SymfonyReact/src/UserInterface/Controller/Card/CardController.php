@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\Controller\Card;
 
+use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\Entity\Devices;
@@ -32,7 +33,7 @@ class CardController extends AbstractController
                 try {
                     $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
                 } catch (AccessDeniedException $exception) {
-                    return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+                    return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
                 }
             } else {
                 return $this->sendBadRequestJsonResponse(['No device found']);

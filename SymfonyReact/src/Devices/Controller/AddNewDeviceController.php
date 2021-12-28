@@ -71,7 +71,7 @@ class AddNewDeviceController extends AbstractController
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {
-            return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
         $device = $newDeviceService->createNewDevice($newDeviceCheckDTO);
         $errors = $newDeviceService->validateNewDevice($device);

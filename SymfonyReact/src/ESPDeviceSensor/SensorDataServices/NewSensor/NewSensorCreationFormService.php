@@ -2,20 +2,14 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\API\Traits\FormProcessorTrait;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
 use App\ESPDeviceSensor\Forms\AddNewSensorForm;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
-use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
-use App\Traits\FormProcessorTrait;
 use Doctrine\ORM\ORMException;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NewSensorCreationFormService implements NewSensorCreationServiceInterface
 {

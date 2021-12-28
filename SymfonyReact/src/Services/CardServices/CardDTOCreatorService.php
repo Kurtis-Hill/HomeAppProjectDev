@@ -2,17 +2,17 @@
 
 namespace App\Services\CardServices;
 
+use App\API\Traits\FormProcessorTrait;
 use App\Core\APIInterface\APIErrorInterface;
 use App\Core\UserInterface\APISensorUserInterface;
 use App\Devices\Entity\Devices;
 use App\DTOs\CardDTOs\Factories\CardFactories\CardViewDTOFactory;
 use App\DTOs\CardDTOs\Sensors\DTOs\CardViewSensorFormDTO;
-use App\Entity\Core\User;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
-use App\Traits\FormProcessorTrait;
+use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;

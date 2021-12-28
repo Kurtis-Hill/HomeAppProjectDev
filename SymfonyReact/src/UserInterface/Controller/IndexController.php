@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\UserInterface\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,9 +20,6 @@ class IndexController extends AbstractController
     #[Route('/{route}', name: 'spa-view', methods: [Request::METHOD_GET])]
     public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
 
         return $this->render('index/index.html.twig', ['csrfToken' => $token]);

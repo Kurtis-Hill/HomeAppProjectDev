@@ -2,6 +2,7 @@
 
 namespace App\ESPDeviceSensor\Forms;
 
+use App\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
@@ -24,7 +25,7 @@ class AddNewSensorForm extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersConstraint(),
-                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Sensor name')]),
+                    new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'Sensor name')]),
                     new Length(['min' => 1, 'max' => 20,
                         'minMessage' => 'Sensor name too short',
                         'maxMessage' => 'Sensor name too long'])

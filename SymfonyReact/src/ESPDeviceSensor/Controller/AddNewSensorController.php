@@ -85,7 +85,7 @@ class AddNewSensorController extends AbstractController
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);
         } catch (AccessDeniedException) {
-            return $this->sendForbiddenAccessJsonResponse([FormMessages::ACCESS_DENIED]);
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
         $sensor = $newSensorCreationService->createNewSensor($newSensorDTO);

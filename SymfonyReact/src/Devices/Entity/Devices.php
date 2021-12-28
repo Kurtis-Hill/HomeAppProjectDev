@@ -3,13 +3,13 @@
 namespace App\Devices\Entity;
 
 use App\Core\UserInterface\APISensorUserInterface;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
 use App\User\Entity\GroupNames;
-use App\Entity\Core\User;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Security\Core\User\UserInterface;
-use App\Form\CustomFormValidators as NoSpecialCharacters;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -63,7 +63,7 @@ class Devices implements UserInterface, APISensorUserInterface
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Core\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
      * })

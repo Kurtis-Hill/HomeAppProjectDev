@@ -10,6 +10,7 @@
 
 namespace App\Form\CardViewForms;
 
+use App\API\APIErrorMessages;
 use App\Form\FormMessages;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
@@ -30,19 +31,19 @@ class CardViewForm extends AbstractType
             ->add('cardColourID', EntityType::class, [
                 'class' => CardColour::class,
                 'constraints' => [
-                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'card colour')]),
+                    new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card colour')]),
                 ],
             ])
             ->add('cardIconID', EntityType::class, [
                 'class' => Icons::class,
                 'constraints' => [
-                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'card icon')]),
+                    new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card icon')]),
                 ],
             ])
             ->add('cardStateID', EntityType::class, [
                 'class' => Cardstate::class,
                 'constraints' => [
-                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'card state')]),
+                    new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card state')]),
                 ],
             ])
         ;

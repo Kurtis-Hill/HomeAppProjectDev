@@ -56,3 +56,8 @@ doctrine:
         dir: '%kernel.project_dir%/src/UserInterface/Entity'
         alias: UserInterface
         prefix: App\UserInterface\Entity
+      Authentication:
+        type: annotation
+        dir: '%kernel.project_dir%/src/Authentication/Entity'
+        alias: Authentication
+        prefix: App\Authentication\Entity

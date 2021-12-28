@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Controller\Core;
+namespace App\Authentication\Controller;
 
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use function dd;
 
 class SecurityController extends AbstractController
 {
@@ -18,40 +17,21 @@ class SecurityController extends AbstractController
     public const API_DEVICE_LOGIN = '/HomeApp/api/device/login_check';
 
     /**
-     * @param CsrfTokenManagerInterface $csrfTokenManager
-     * @return JsonResponse
-     *
-     * DEV USE ONLY
-     */
-    #[Route('/HomeApp/api/csrfToken', name: 'csrf')]
-    public function getToken(CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
-    {
-        $token = $csrfTokenManager->getToken('authenticate')->getValue();
-
-        return new JsonResponse(['token' => $token]);
-    }
-
-    /**
      * @param AuthenticationUtils $authenticationUtils
      * @param Request $request
-     * @return RedirectResponse|Response
+     * @return Response
      */
     #[Route('/HomeApp/WebApp/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils, Request $request)
+    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
-         if ($this->getUser()) {
-             return $this->redirectToRoute('spa-view', ['route' => 'index']);
-         }
-
         return $this->render('index/index.html.twig');
     }
 
     /**
      * @Route("/HomeApp/WebApp/logout", name="app_logout")
      */
-    public function logout()
+    public function logout(): void
     {
-
     }
 
     /**

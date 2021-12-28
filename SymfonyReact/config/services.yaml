@@ -4,10 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 imports:
-    - { resource: ./services-devices.yaml }
+    - { resource: ../src/Devices/services-devices.yaml }
     - { resource: ../src/ESPDeviceSensor/services-esp-sensors.yaml }
-    - { resource: ./services-user.yml }
+    - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
+    - { resource: ../src/Authentication/services-authentication.yaml }
 parameters:
 
 services:

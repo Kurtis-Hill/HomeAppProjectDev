@@ -2,8 +2,8 @@
 
 namespace App\User\Voters;
 
-use App\Entity\Core\User;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;

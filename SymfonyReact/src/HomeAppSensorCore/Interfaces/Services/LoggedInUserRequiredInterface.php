@@ -4,7 +4,7 @@
 namespace App\HomeAppSensorCore\Interfaces\Services;
 
 
-use App\Entity\Core\User;
+use App\User\Entity\User;
 
 interface LoggedInUserRequiredInterface
 {

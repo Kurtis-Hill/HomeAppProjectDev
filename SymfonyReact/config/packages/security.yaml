@@ -1,6 +1,6 @@
 security:
     encoders:
-        App\Entity\Core\User:
+        App\User\Entity\User:
             algorithm: auto
         App\Devices\Entity\Devices:
             algorithm: auto
@@ -8,7 +8,7 @@ security:
     providers:
         app_user_provider:
             entity:
-                class: App\Entity\Core\User
+                class: App\User\Entity\User
                 property: email
         api_device_provider:
             entity:
@@ -47,16 +47,16 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-        main:
-            pattern: ^/HomeApp/WebApp
-            anonymous: true
-            provider: 'app_user_provider'
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
-            logout:
-                path: app_logout
-                target: app_login
+#        main:
+#            pattern: ^/HomeApp/WebApp
+#            anonymous: true
+#            provider: 'app_user_provider'
+#            guard:
+#                authenticators:
+#                    - App\Security\LoginFormAuthenticator
+#            logout:
+#                path: app_logout
+#                target: app_login
 
 
     role_hierarchy:

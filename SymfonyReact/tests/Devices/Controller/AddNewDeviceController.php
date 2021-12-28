@@ -2,19 +2,19 @@
 
 namespace App\Tests\Devices\Controller;
 
+use App\API\APIErrorMessages;
 use App\API\HTTPStatusCodes;
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
+use App\Authentication\Entity\GroupNameMapping;
 use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
-use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\User;
 use App\Form\FormMessages;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -77,9 +77,6 @@ class AddNewDeviceController extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-//        if ($name === UserDataFixtures::SECOND_REGULAR_USER_ISOLATED) {
-//            dd($requestData);
-//        }
         return $requestData['token'];
     }
 
@@ -190,7 +187,7 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(sprintf(FormMessages::MALFORMED_REQUEST_DATA, 'group', 'int'), $responseData['errors'][0]);
+        self::assertStringContainsString(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -216,13 +213,7 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(
-            sprintf(
-                FormMessages::MALFORMED_REQUEST_DATA,
-                'room',
-                'int'
-            ),
-            $responseData['errors'][0]);
+        self::assertStringContainsString(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -248,13 +239,7 @@ class AddNewDeviceController extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
 
-        self::assertStringContainsString(
-            sprintf(
-                FormMessages::MALFORMED_REQUEST_DATA,
-                'group',
-                'int',
-            ),
-            $responseData['errors'][0]);
+        self::assertStringContainsString(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -318,7 +303,7 @@ class AddNewDeviceController extends WebTestCase
         $userToken = $this->setUserToken(UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupnNameMapping::class);
+        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
         $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
@@ -345,7 +330,7 @@ class AddNewDeviceController extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString(FormMessages::ACCESS_DENIED, $responseData['errors'][0]);
+        self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

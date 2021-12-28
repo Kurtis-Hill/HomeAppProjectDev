@@ -2,9 +2,9 @@
 
 namespace App\DataFixtures\Core;
 
+use App\Authentication\Entity\GroupNameMapping;
 use App\User\Entity\GroupNames;
-use App\Entity\Core\GroupnNameMapping;
-use App\Entity\Core\User;
+use App\User\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -65,7 +65,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUser->setCreatedAt();
         $adminUser->setGroupNameID($adminGroupName);
 
-        $firstAminGroupName = new GroupnNameMapping();
+        $firstAminGroupName = new GroupNameMapping();
 
         $firstAminGroupName->setGroupNameID($adminGroupName);
         $firstAminGroupName->setUserID($adminUser);
@@ -91,7 +91,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUser->setCreatedAt();
         $regularUser->setGroupNameID($userGroupName);
 
-        $firstRegularGroupMapping = new GroupnNameMapping();
+        $firstRegularGroupMapping = new GroupNameMapping();
 
         $firstRegularGroupMapping->setGroupNameID($userGroupName);
         $firstRegularGroupMapping->setUserID($regularUser);
@@ -102,14 +102,14 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
 
         // Joining the two users by group mapping
-        $adminUserInAdminGroup = new GroupnNameMapping();
+        $adminUserInAdminGroup = new GroupNameMapping();
 
         $adminUserInAdminGroup->setGroupNameID($userGroupName);
         $adminUserInAdminGroup->setUserID($adminUser);
 
         $manager->persist($adminUserInAdminGroup);
 
-        $regularUserAdminGroup = new GroupnNameMapping();
+        $regularUserAdminGroup = new GroupNameMapping();
 
         $regularUserAdminGroup->setGroupNameID($adminGroupName);
         $regularUserAdminGroup->setUserID($regularUser);
@@ -131,12 +131,12 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserInAdminGroup->setCreatedAt();
         $adminUserInAdminGroup->setGroupNameID($adminUserGroupName);
 
-        $secondAdminGroupMapping = new GroupnNameMapping();
+        $secondAdminGroupMapping = new GroupNameMapping();
 
         $secondAdminGroupMapping->setGroupNameID($adminUserGroupName);
         $secondAdminGroupMapping->setUserID($adminUserInAdminGroup);
 
-        $adminAdminGroupMapping = new GroupnNameMapping();
+        $adminAdminGroupMapping = new GroupNameMapping();
 
         $adminAdminGroupMapping->setGroupNameID($adminGroupName);
         $adminAdminGroupMapping->setUserID($adminUserInAdminGroup);
@@ -162,12 +162,12 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $secondRegularUser->setCreatedAt();
         $secondRegularUser->setGroupNameID($adminUserGroupName);
 
-        $secondRegularGroupMapping = new GroupnNameMapping();
+        $secondRegularGroupMapping = new GroupNameMapping();
 
         $secondRegularGroupMapping->setGroupNameID($secondRegularUserGroupName);
         $secondRegularGroupMapping->setUserID($secondRegularUser);
 
-        $regularRegularGroupMapping = new GroupnNameMapping();
+        $regularRegularGroupMapping = new GroupNameMapping();
 
         $regularRegularGroupMapping->setGroupNameID($userGroupName);
         $regularRegularGroupMapping->setUserID($secondRegularUser);

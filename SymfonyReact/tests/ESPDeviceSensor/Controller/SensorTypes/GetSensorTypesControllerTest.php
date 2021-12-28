@@ -2,7 +2,7 @@
 
 namespace App\Tests\ESPDeviceSensor\Controller\SensorTypes;
 
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;

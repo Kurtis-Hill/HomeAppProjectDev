@@ -2,8 +2,9 @@
 
 namespace App\Tests\ESPDeviceSensor\Controller;
 
+use App\API\APIErrorMessages;
 use App\API\HTTPStatusCodes;
-use App\Controller\Core\SecurityController;
+use App\Authentication\Controller\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
@@ -489,7 +490,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
-        self::assertStringContainsString(FormMessages::ACCESS_DENIED, $responseData['errors'][0]);
+        self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 }
