@@ -170,7 +170,7 @@ class SensorType
         ],
     ];
 
-    public const ALL_SENSORS = [
+    public const ALL_SENSOR_TYPES = [
         Bmp::NAME,
         Soil::NAME,
         Dallas::NAME,

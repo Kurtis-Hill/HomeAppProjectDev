@@ -33,5 +33,4 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
     {
         $this->_em->remove($sensorType);
     }
-
 }

@@ -44,7 +44,7 @@ class ESPSensorUpdateController extends AbstractController
             return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor']);;
         }
 
-        if (!in_array($requestData['sensorType'], SensorType::ALL_SENSORS, true)) {
+        if (!in_array($requestData['sensorType'], SensorType::ALL_SENSOR_TYPES, true)) {
             return $this->sendBadRequestJsonResponse(['Sensor type not recognised']);
         }
 

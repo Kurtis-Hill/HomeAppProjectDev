@@ -42,7 +42,7 @@ class CardDataController extends AbstractController
 
             if ($device instanceof Devices) {
                 try {
-                    $this->denyAccessUnlessGranted(SensorVoter::VIEW_DEVICE_CARD_DATA, $device);
+                    $this->denyAccessUnlessGranted(CardViewVoter::VIEW_DEVICE_CARD_DATA, $device);
                 } catch (AccessDeniedException $exception) {
                     return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
                 }

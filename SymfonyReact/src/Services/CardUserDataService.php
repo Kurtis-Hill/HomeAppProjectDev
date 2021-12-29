@@ -13,13 +13,13 @@ use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\HomeAppSensorCore\Interfaces\Services\LoggedInUserRequiredInterface;
-use App\Services\CardServices\CardDataFilterService;
 use App\Services\CardServices\CardDataProviderInterface;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
+use App\UserInterface\Services\Cards\CardDataFilterService\CardDataFilterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -200,7 +200,6 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
         $cardData =  $this->em->getRepository(CardView::class)->getAllCardReadingsForDevice($this->getUser(), SensorType::ALL_SENSOR_TYPE_DATA, $deviceId->getDeviceNameID());
 
         return $cardData ?? [];
-
     }
 
     #[ArrayShape(

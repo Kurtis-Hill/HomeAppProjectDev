@@ -64,7 +64,6 @@ class CardViewRepository extends EntityRepository
             ->innerJoin(Devices::class, 'devices', Join::WITH, 'sensors.deviceNameID = devices.deviceNameID')
             ->innerJoin(Cardstate::class, 'cardState', Join::WITH, 'cv.cardStateID = cardState.cardStateID');
 
-        //@TODO card state doesnt work needs relating properly
         $qb->where(
             $expr->orX(
                 $expr->eq('cardState.state', ':cardviewOne'),

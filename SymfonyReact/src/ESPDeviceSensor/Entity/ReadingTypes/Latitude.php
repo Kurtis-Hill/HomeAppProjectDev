@@ -208,4 +208,9 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     {
         return self::READING_TYPE;
     }
+
+    public function getSensorReadingTypeObjectString(): string
+    {
+        return self::class;
+    }
 }

@@ -8,7 +8,7 @@ interface HumiditySensorTypeInterface
 {
     public function getHumidObject(): Humidity;
 
-    public function setHumidObject(Humidity $tempID): void;
+    public function setHumidObject(Humidity $humidID): void;
 
     public function getMaxHumidity(): float|int;
 

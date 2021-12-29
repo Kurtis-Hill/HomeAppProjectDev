@@ -171,4 +171,9 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     {
         return self::READING_TYPE;
     }
+
+    public function getSensorReadingTypeObjectString(): string
+    {
+        return self::class;
+    }
 }

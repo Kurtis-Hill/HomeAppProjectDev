@@ -183,4 +183,9 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     {
         return self::READING_TYPE;
     }
+
+    public function getSensorReadingTypeObjectString(): string
+    {
+        return self::class;
+    }
 }

@@ -204,4 +204,9 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     {
         return self::NAME;
     }
+
+    public function getSensorClass(): string
+    {
+        return self::class;
+    }
 }

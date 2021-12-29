@@ -20,7 +20,7 @@ class TempRepository extends EntityRepository
 //            )
 //            ->setParameter('sensorNameID', $id)
         ;
-dd($qb->getQuery()->getResult(), $id);
+//dd($qb->getQuery()->getResult(), $id);
         return $qb->getQuery()->getOneOrNullResult();
     }
 }

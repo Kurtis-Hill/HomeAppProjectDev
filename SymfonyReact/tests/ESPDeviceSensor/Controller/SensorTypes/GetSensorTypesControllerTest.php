@@ -89,7 +89,7 @@ class GetSensorTypesControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
-        self::assertCount(count(SensorType::ALL_SENSORS), $payload);
+        self::assertCount(count(SensorType::ALL_SENSOR_TYPES), $payload);
     }
 
     public function test_all_data_bases_entries_are_returned(): void

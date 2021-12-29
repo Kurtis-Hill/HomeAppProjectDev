@@ -134,4 +134,9 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     {
         return self::NAME;
     }
+
+    public function getSensorClass(): string
+    {
+        return self::class;
+    }
 }

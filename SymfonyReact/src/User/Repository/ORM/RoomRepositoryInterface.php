@@ -3,6 +3,7 @@
 namespace App\User\Repository\ORM;
 
 use App\User\Entity\Room;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 
 interface RoomRepositoryInterface
@@ -30,7 +31,7 @@ interface RoomRepositoryInterface
     public function remove(Room $room): void;
 
     /**
-     * @throws ORMException
+     * @throws ORMException | NonUniqueResultException
      */
     public function findOneById(int $id): ?Room;
 }

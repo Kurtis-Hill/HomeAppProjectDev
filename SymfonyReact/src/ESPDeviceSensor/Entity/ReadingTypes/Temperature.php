@@ -241,9 +241,13 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         $this->constRecord = $constRecord;
     }
 
-
     public function getSensorTypeName(): string
     {
         return self::READING_TYPE;
+    }
+
+    public function getSensorReadingTypeObjectString(): string
+    {
+        return self::class;
     }
 }

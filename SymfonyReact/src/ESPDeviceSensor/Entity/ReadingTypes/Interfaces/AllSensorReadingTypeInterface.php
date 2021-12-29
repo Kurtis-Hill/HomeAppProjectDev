@@ -18,4 +18,6 @@ interface AllSensorReadingTypeInterface
     public function getCurrentReading(): int|float;
 
     public function isReadingOutOfBounds(): bool;
+
+    public function getSensorReadingTypeObjectString(): string;
 }
