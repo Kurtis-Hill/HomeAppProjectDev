@@ -21,7 +21,7 @@ class SensorVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_SENSOR, self::VIEW_DEVICE_CARD_DATA])) {
+        if (!in_array($attribute, [self::ADD_NEW_SENSOR])) {
             return false;
         }
 

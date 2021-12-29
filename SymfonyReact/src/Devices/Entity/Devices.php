@@ -27,6 +27,8 @@ class Devices implements UserInterface, APISensorUserInterface
 
     public const ROLE = 'ROLE_DEVICE';
 
+    public const ALIAS = 'device';
+
     /**
      * @var int
      *

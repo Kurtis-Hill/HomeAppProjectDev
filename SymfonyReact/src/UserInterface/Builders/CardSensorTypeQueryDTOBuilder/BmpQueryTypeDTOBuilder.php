@@ -3,19 +3,20 @@
 namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
 
 use App\ESPDeviceSensor\Entity\Sensor;
-use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeJoinQueryDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeNotJoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
-class DallasQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilder
+class BmpQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilder
 {
     #[Pure]
     public function buildSensorTypeQueryDTOSensorNameJoin(): CardSensorTypeJoinQueryDTO
     {
         return new CardSensorTypeJoinQueryDTO(
-            Dallas::ALIAS,
-            Dallas::class,
+            Bmp::ALIAS,
+            Bmp::class,
             'sensorNameID',
             Sensor::ALIAS,
         );
@@ -25,7 +26,7 @@ class DallasQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilder
     public function buildSensorTypeQueryExcludeSensorDTO(int $sensorTypeID): CardSensorTypeNotJoinQueryDTO
     {
         return new CardSensorTypeNotJoinQueryDTO(
-            Dallas::ALIAS,
+            Bmp::ALIAS,
             $sensorTypeID
         );
     }

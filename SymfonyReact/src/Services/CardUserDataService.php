@@ -97,7 +97,7 @@ class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInte
     {
         $sensorTypes = SensorType::ALL_SENSOR_TYPE_DATA;
         if (!empty($cardFilters)) {
-            $sensorTypes = $this->cardDataFilterService->filterSensorTypes($sensorTypes, $cardFilters);
+            $sensorTypes = $this->cardDataFilterService->filterSensorsToQuery($sensorTypes, $cardFilters);
         }
 
 //        try {

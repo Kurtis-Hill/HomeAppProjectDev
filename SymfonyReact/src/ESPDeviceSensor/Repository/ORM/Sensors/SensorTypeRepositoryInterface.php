@@ -29,5 +29,5 @@ interface SensorTypeRepositoryInterface
     /**
      * @throws  ORMException
      */
-    public function findAll(): array;
+    public function findAll();
 }

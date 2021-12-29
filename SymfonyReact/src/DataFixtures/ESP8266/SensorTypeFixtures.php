@@ -3,6 +3,7 @@
 namespace App\DataFixtures\ESP8266;
 
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -18,7 +19,7 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
     {
         $dhtSensorType = new SensorType();
 
-        $dhtSensorType->setSensorType(SensorType::DHT_SENSOR);
+        $dhtSensorType->setSensorType(Dht::NAME);
         $dhtSensorType->setDescription('Temperature and Humidity Sensor');
 
         $this->addReference(SensorType::DHT_SENSOR, $dhtSensorType);

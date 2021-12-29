@@ -27,10 +27,6 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public const LOW_READING = 0;
 
-    public const HUMIDITY_SENSORS = [
-        SensorType::BMP_SENSOR,
-        SensorType::DHT_SENSOR
-    ];
 
     /**
      * @var int

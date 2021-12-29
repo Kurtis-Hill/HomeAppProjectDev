@@ -28,6 +28,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SensorType
 {
+    public const ALIAS = 'sensortype';
+
     public const OUT_OF_BOUND_FORM_ARRAY_KEY = 'outOfBounds';
 
     public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
@@ -45,7 +47,7 @@ class SensorType
     // to determine which sensor reading types are about to be updated
     // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array
     public const ALL_SENSOR_TYPE_DATA = [
-        SensorType::DHT_SENSOR => [
+        Dht::NAME => [
             'alias' => 'dht',
             'object' => Dht::class,
             'readingTypes' => [

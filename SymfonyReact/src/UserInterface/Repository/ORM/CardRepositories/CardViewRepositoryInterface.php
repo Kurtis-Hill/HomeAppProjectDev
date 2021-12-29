@@ -3,6 +3,8 @@
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\User\Entity\User;
+use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -20,5 +22,8 @@ interface CardViewRepositoryInterface
      */
     public function flush(): void;
 
-    public function getAllIndexCardDataForUser(User $user, array $filters): array;
+    /**
+     * @throws ORMException
+     */
+    public function getAllCardSensorDataScalar(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO, CardViewTypeFilterDTO $cardViewTypeFilterDTO): array;
 }

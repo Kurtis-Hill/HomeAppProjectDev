@@ -13,9 +13,13 @@ interface SensorTypeInterface
 
     public function getSensorObject(): Sensor;
 
+    // make sure this returns the same data as in the seensortype table in the sensorType column
     public function getSensorTypeName(): string;
 
     public function getCardViewObject(): ?CardView;
 
     public function getSensorClass(): string;
+
+    public function getSensorTypeAlias(): string;
+
 }

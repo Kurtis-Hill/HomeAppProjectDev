@@ -2,9 +2,13 @@
 
 namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
 
-use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeQueryDTO;
+use App\ESPDeviceSensor\Entity\SensorType;
+use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeJoinQueryDTO;
+use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeNotJoinQueryDTO;
 
 interface CardSensorTypeQueryDTOBuilder
 {
-    public function buildSensorTypeQueryDTO(): CardSensorTypeQueryDTO;
+    public function buildSensorTypeQueryDTOSensorNameJoin(): CardSensorTypeJoinQueryDTO;
+
+    public function buildSensorTypeQueryExcludeSensorDTO(int $sensorTypeID): CardSensorTypeNotJoinQueryDTO;
 }

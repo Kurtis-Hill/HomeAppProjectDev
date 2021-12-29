@@ -24,6 +24,8 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 {
     public const NAME = 'Bmp';
 
+    public const ALIAS = 'bmp';
+
     public const HIGH_TEMPERATURE_READING_BOUNDARY = 85;
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -45;
@@ -203,6 +205,11 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function getSensorTypeName(): string
     {
         return self::NAME;
+    }
+
+    public function getSensorTypeAlias(): string
+    {
+        return self::ALIAS;
     }
 
     public function getSensorClass(): string

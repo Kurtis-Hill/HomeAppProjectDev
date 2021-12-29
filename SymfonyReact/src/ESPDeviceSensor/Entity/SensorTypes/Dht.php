@@ -22,6 +22,8 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 {
     public const NAME = 'Dht';
 
+    public const ALIAS = 'dht';
+
     public const HIGH_TEMPERATURE_READING_BOUNDARY = 80;
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -40;
@@ -176,6 +178,12 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     {
         return self::NAME;
     }
+
+    public function getSensorTypeAlias(): string
+    {
+        return self::ALIAS;
+    }
+
 
     public function getSensorClass(): string
     {

@@ -24,7 +24,12 @@ class CardViewVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::CAN_EDIT_CARD_VIEW_FORM, self::CAN_VIEW_CARD_VIEW_FORM])) {
+        if (!in_array($attribute, [
+            self::CAN_EDIT_CARD_VIEW_FORM,
+            self::CAN_VIEW_CARD_VIEW_FORM,
+            self::VIEW_DEVICE_CARD_DATA,
+            self::VIEW_ROOM_CARD_DATA,
+        ])) {
             return false;
         }
 
@@ -84,7 +89,7 @@ class CardViewVoter extends Voter
         }
 
         if (!in_array(
-            $devices->getGroupNameIds(),
+            $devices->getGroupNameObject()->getGroupNameID(),
             $user->getGroupNameIds(),
             true
         )

@@ -10,12 +10,13 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\Room;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;
-use App\UserInterface\Exceptions\FailedToFilterSensorTypesException;
+use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\Cards\CardDataFilterService\CardDataFilterService;
-use App\UserInterface\Services\Cards\CardPreparation\CardPreparationServiceInterface;
+use App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,24 +33,28 @@ class CardController extends AbstractController
 
     private CardDataFilterService $cardDataFilterService;
 
-    private CardPreparationServiceInterface $cardPreparationService;
+    private CardViewPreparationServiceInterface $cardPreparationService;
 
     private Request $request;
 
+    public const ROOM_VIEW = 'room';
+
+    public const DEVICE_VIEW = 'device';
+
     public function __construct(
-        Request $request,
+//        Request $request,
         CardDataFilterService $cardDataFilterService,
-        CardPreparationServiceInterface $cardPreparationService,
+        CardViewPreparationServiceInterface $cardPreparationService,
     ) {
         $this->cardDataFilterService = $cardDataFilterService;
         $this->cardPreparationService = $cardPreparationService;
-        $this->request = $request;
+//        $this->request = $request;
     }
 
     #[Route('device-cards', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
-    public function deviceCards(DeviceRepositoryInterface $deviceRepository): Response
+    public function deviceCards(Request $request, DeviceRepositoryInterface $deviceRepository): Response
     {
-        $deviceId = $this->request->get('device-id');
+        $deviceId = $request->get('device-id');
 
         if (!is_numeric($deviceId)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
@@ -70,7 +75,20 @@ class CardController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $cards = $this->getCardsPreparedForUser();
+        try {
+            $cardDatePreFilterDTO = $this->prepareFilters($request);
+        } catch (JsonException) {
+            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
+        }
+
+        $cardViewTypeFilter = new CardViewTypeFilterDTO(null, $device);
+//        try {
+            $cards = $this->preparedCardsForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::DEVICE_VIEW);
+//        } catch (WrongUserTypeException) {
+//            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+//        } catch (ORMException) {
+//            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+//        }
 
         $responseData = $this->normalizeResponse($cards);
 
@@ -78,15 +96,15 @@ class CardController extends AbstractController
     }
 
     #[Route('room-cards', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
-    public function roomCards(RoomRepositoryInterface $roomRepository): Response
+    public function roomCards(Request $request, RoomRepositoryInterface $roomRepository): Response
     {
-        $deviceId = $this->request->get('room-id');
+        $roomId = $this->request->get('room-id');
 
-        if (!is_numeric($deviceId)) {
+        if (!is_numeric($roomId)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
         }
         try {
-            $room = $roomRepository->findOneById($deviceId);
+            $room = $roomRepository->findOneById($roomId);
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse(['An error occurred while retrieving device data']);
         }
@@ -102,37 +120,55 @@ class CardController extends AbstractController
         }
 
         try {
-            $cards = $this->getCardsPreparedForUser();
+            $cardDatePreFilterDTO = $this->prepareFilters($request);
+        } catch (JsonException) {
+            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
+        }
+
+        $cardViewTypeFilter = new CardViewTypeFilterDTO($room);
+        try {
+            $cards = $this->preparedCardsForUser($cardDatePreFilterDTO, $cardViewTypeFilter,self::ROOM_VIEW);
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
         }
 
         $responseData = $this->normalizeResponse($cards);
 
         return $this->sendSuccessfulResponse($responseData);
     }
-    // filters = [
-    // sensorTypes => [int, 2, 3],
-    // readingTypes => [string <Temperature, Humidity, etc>]
-    //
-    /**
-     * @throws WrongUserTypeException
-     */
-    private function getCardsPreparedForUser(): array
-    {
-        $filters = $this->request->get('filters') ?? [];
-        $view = $this->request->get('view');
 
-        $cardDataFilterDTO = new CardDataPreFilterDTO(
+    /**
+     * @throws ORMException|WrongUserTypeException
+     */
+    private function preparedCardsForUser(
+        CardDataPreFilterDTO $cardDataPreFilterDTO,
+        CardViewTypeFilterDTO $cardViewTypeFilterDTO,
+        string $view,
+    ): array
+    {
+        $postFilterCardDataToQuery = $this->cardDataFilterService->filterSensorsToQuery($cardDataPreFilterDTO);
+
+        $cardData = $this->cardPreparationService->prepareCardsForUser(
+            $this->getUser(),
+            $postFilterCardDataToQuery,
+            $cardViewTypeFilterDTO,
+            $view
+        );
+
+        dd('card controller', $cardData);
+    }
+
+    private function prepareFilters(Request $request): CardDataPreFilterDTO
+    {
+        $filters = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        return new CardDataPreFilterDTO(
             $filters['sensorTypes'] ?? [],
             $filters['readingTypes'] ?? [],
         );
-
-        $postFilterCardDataToQuery = $this->cardDataFilterService->filterSensorTypes($cardDataFilterDTO);
-
-        $cardData = $this->cardPreparationService->prepareCardsForUser($this->getUser(), $postFilterCardDataToQuery, $view);
     }
-
 
     private function normalizeResponse(array $cardDTOs): string
     {

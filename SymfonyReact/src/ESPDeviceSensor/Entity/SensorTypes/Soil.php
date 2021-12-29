@@ -20,6 +20,8 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
 {
     public const NAME = 'Soil';
 
+    public const ALIAS = 'soil';
+
     private const HIGH_SOIL_READING_BOUNDARY = 9999;
 
     private const LOW_SOIL_READING_BOUNDARY = 0;
@@ -133,6 +135,11 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     public function getSensorTypeName(): string
     {
         return self::NAME;
+    }
+
+    public function getSensorTypeAlias(): string
+    {
+        return self::ALIAS;
     }
 
     public function getSensorClass(): string

@@ -20,6 +20,8 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
 {
     public const NAME = 'Dallas';
 
+    public const ALIAS = 'dallas';
+
     public const HIGH_TEMPERATURE_READING_BOUNDARY = 125;
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -55;
@@ -123,6 +125,11 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public function getSensorTypeName(): string
     {
         return self::NAME;
+    }
+
+    public function getSensorTypeAlias(): string
+    {
+        return self::ALIAS;
     }
 
     public function getSensorClass(): string
