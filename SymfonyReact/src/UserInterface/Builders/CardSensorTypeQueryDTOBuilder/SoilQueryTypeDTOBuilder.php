@@ -8,10 +8,10 @@ use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeJoinQueryDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeNotJoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
-class SoilQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilder
+class SoilQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilderInterface
 {
     #[Pure]
-    public function buildSensorTypeQueryDTOSensorNameJoin(): CardSensorTypeJoinQueryDTO
+    public function buildSensorTypeQueryJoinDTO(): CardSensorTypeJoinQueryDTO
     {
         return new CardSensorTypeJoinQueryDTO(
             Soil::ALIAS,
@@ -22,7 +22,7 @@ class SoilQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilder
     }
 
     #[Pure]
-    public function buildSensorTypeQueryExcludeSensorDTO(int $sensorTypeID): CardSensorTypeNotJoinQueryDTO
+    public function buildSensorTypeQueryExcludeDTO(int $sensorTypeID): CardSensorTypeNotJoinQueryDTO
     {
         return new CardSensorTypeNotJoinQueryDTO(
             Soil::ALIAS,

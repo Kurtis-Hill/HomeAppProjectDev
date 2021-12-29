@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ESPDeviceSensor\Exceptions;
+namespace App\UserInterface\Exceptions;
 
 use Exception;
 

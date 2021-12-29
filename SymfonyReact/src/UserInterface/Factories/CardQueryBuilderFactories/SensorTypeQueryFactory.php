@@ -2,17 +2,16 @@
 
 namespace App\UserInterface\Factories\CardQueryBuilderFactories;
 
-use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
-use App\ESPDeviceSensor\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\BmpQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\CardSensorTypeQueryDTOBuilder;
+use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\CardSensorTypeQueryDTOBuilderInterface;
 use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\DallasQueryTypeDTOBuilder;
 use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\DHTQueryTypeDTOBuilder;
 use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\SoilQueryTypeDTOBuilder;
+use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 
 class SensorTypeQueryFactory
 {
@@ -39,7 +38,7 @@ class SensorTypeQueryFactory
     /**
      * @throws SensorTypeBuilderFailureException
      */
-    public function getSensorTypeQueryDTOBuilder(string $sensorType): CardSensorTypeQueryDTOBuilder
+    public function getSensorTypeQueryDTOBuilder(string $sensorType): CardSensorTypeQueryDTOBuilderInterface
     {
         return match ($sensorType) {
             Dht::NAME => $this->dhtQueryTypeDTOBuilder,

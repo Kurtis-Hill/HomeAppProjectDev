@@ -35,6 +35,7 @@ class CardDataQueryEncapsulationFilterDTO
         return $this->sensorTypesToExclude;
     }
 
+    #[ArrayShape([CardSensorTypeJoinQueryDTO::class])]
     public function getReadingTypesToQuery(): array
     {
         return $this->readingTypesToQuery;

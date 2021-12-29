@@ -4,12 +4,11 @@ namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation;
 
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Exceptions\SensorReadingTypeValidationException;
-use App\ESPDeviceSensor\Exceptions\SensorTypeBuilderFailureException;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface;
 use App\ESPDeviceSensor\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
+use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use Doctrine\ORM\ORMException;
 
 class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterface

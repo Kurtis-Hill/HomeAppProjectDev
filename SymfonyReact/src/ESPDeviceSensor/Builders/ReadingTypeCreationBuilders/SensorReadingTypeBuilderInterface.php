@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders;
 
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Exceptions\SensorTypeBuilderFailureException;
+use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 
 interface SensorReadingTypeBuilderInterface
 {

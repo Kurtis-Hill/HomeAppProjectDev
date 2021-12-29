@@ -81,6 +81,12 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
                 $parameters['roomID'] = $cardViewTypeFilterDTO->getRoom()->getRoomID();
             }
         }
+// Just need to joinn to query
+        foreach ($cardDataPostFilterDTO->getReadingTypesToQuery() as $excludedReadingTypes) {
+            /** @var CardSensorTypeJoinQueryDTO $excludedReadingTypes */
+            $qb->leftJoin($excludedReadingTypes->getObject(), $excludedReadingTypes->getAlias(), Join::WITH, $excludedReadingTypes->getAlias().$sensorNameJoinConditionString);
+//            dd('s', $excludedReadingTypes);
+        }
 
         foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {
             $sensorTypeAlias = $excludeSensorType->getAlias();
