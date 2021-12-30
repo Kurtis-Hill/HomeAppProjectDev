@@ -3,12 +3,13 @@
 namespace App\UserInterface\Builders\CardViewBuilders;
 
 use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\UserViewSensorTypeCardDataInterface;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 
-class CardViewFormDTOBuilder implements SensorTypeCardViewDTOBuilder
+class SensorTypeCardViewGraphReadingDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
-    //@DEV @TODO move SensorTypeCardViewFormDTOBuilder into here
     public function makeDTO(array $cardData): ?UserViewSensorTypeCardDataInterface
     {
-        // TODO: Implement makeDTO() method.
+        throw new NotImplementedException('SensorTypeCardViewGraphReadingDTOBuilder:makeDTO');
     }
+
 }

@@ -67,9 +67,8 @@ class CardContextProvider extends Component {
 
     setURL = () => {
         const cardAPI = apiURL+'card-data/v2/';
-        console.log(window.location);
-        if (window.location.pathname === webappURL+'index') {
-            const indexURL = `${cardAPI}index`;
+        if (window.location.pathname === `${webappURL}index`) {
+            const indexURL = `${cardAPI}index?reading-types[]=temperature`;
             this.setState({url:  indexURL});
             return;
         }
@@ -77,14 +76,12 @@ class CardContextProvider extends Component {
         const urlParam = new URLSearchParams(windowLocation);
 
         if (window.location.pathname === webappURL+'device') {
-            console.log('device');
             const deviceName = urlParam.get('device-id');
-            const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}`;
+            const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}&reading-types[]=temperature&reading-types[]=humidity`;
             this.setState({url:  deviceURL});
             return;
         }
         if (window.location.pathname === webappURL+'room') {
-            console.log('device');
             const roomeName = urlParam.get('room-id');
             const roomURL = `${cardAPI}room-cards?room-id=${roomeName}`;
             this.setState({url:  roomURL});
@@ -101,13 +98,10 @@ class CardContextProvider extends Component {
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 
-            console.log("hell", response.data.payload, Array.isArray(response.data.payload));
             Array.isArray(response.data.payload) 
             && response.data.payload.length >= 1
                 ? this.setState({cardData: response.data.payload})
                 : this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});    
-
-                console.log("mey ", this.state.cardData);
         } catch (error) {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
@@ -133,7 +127,7 @@ class CardContextProvider extends Component {
     //gets the card form data so users can customize cards
     getCardDataForm = async (cardViewID) => {
         this.setState({modalLoading: cardViewID});
-        const cardDataFormResponse = await axios.get(`${apiURL}card-data/card-sensor-form?cardViewID=${cardViewID}`, getAPIHeader())
+        const cardDataFormResponse = await axios.get(`${apiURL}card-data/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
     
         if (cardDataFormResponse.status === 200) {
             this.modalContent(cardDataFormResponse.data);

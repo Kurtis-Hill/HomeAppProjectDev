@@ -23,10 +23,10 @@ services:
   App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface:
     alias: App\UserInterface\Services\Cards\CardCreation\CardCreationService
 
-  App\UserInterface\Services\Cards\CardPreparation\CardPreparationServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardPreparation\CardPreparationService
-
   App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationService
+
+  App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface:
     alias: App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationService
 
   App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface:

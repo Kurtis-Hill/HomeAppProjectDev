@@ -23,7 +23,7 @@ services:
     ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{API/Traits, Traits, DependencyInjection, Entity, Migrations, Tests, Kernel.php}'
+        exclude: '../src/{API/Traits, Traits, Common/Traits, DependencyInjection, Entity, Migrations, Tests, Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class

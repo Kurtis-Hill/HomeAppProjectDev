@@ -12,4 +12,6 @@ interface CardDataFilterServiceInterface
      * @throws ORMException
      */
     public function filterSensorsToQuery(CardDataPreFilterDTO $cardFilters): CardDataQueryEncapsulationFilterDTO;
+
+    public function preparePreFilterDTO(array $sensorTypesToFilter, array $readingTypesToFilter): CardDataPreFilterDTO;
 }

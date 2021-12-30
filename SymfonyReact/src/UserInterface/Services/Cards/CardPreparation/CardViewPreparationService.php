@@ -16,9 +16,8 @@ class CardViewPreparationService implements CardViewPreparationServiceInterface
 {
     private CardViewRepositoryInterface $cardViewRepository;
 
-    public function __construct(
-        CardViewRepositoryInterface $cardViewRepository,
-    ) {
+    public function __construct(CardViewRepositoryInterface $cardViewRepository,)
+    {
         $this->cardViewRepository = $cardViewRepository;
     }
 
@@ -43,45 +42,50 @@ class CardViewPreparationService implements CardViewPreparationServiceInterface
         };
     }
 
-    private function getDevicePageCardDataObjects(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO, CardViewTypeFilterDTO $cardViewTypeFilterDTO): array
+    /**
+     * @throws ORMException
+     */
+    private function getIndexPageCardDataObjects(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO): array
     {
-        $cardSensorData = $this->cardViewRepository->getAllCardSensorDataScalar(
+        return $this->cardViewRepository->getAllCardSensorDataScalar(
+            $user,
+            Cardstate::INDEX_ONLY,
+            $cardDataPostFilterDTO,
+        );
+    }
+
+    /**
+     * @throws ORMException
+     */
+    private function getDevicePageCardDataObjects(
+        User $user,
+        CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
+        CardViewTypeFilterDTO $cardViewTypeFilterDTO
+    ): array
+    {
+        return $this->cardViewRepository->getAllCardSensorDataScalar(
             $user,
             Cardstate::DEVICE_ONLY,
             $cardDataPostFilterDTO,
             $cardViewTypeFilterDTO,
         );
 
-        return $cardSensorData;
-
     }
 
     /**
      * @throws ORMException
      */
-    private function getIndexPageCardDataObjects(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO): array
+    private function getRoomCardDataObjects(
+        User $user,
+        CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
+        CardViewTypeFilterDTO $cardViewTypeFilterDTO
+    ): array
     {
-        $cardSensorData = $this->cardViewRepository->getAllCardSensorDataScalar(
-            $user,
-            Cardstate::INDEX_ONLY,
-            $cardDataPostFilterDTO,
-        );
-
-        return $cardSensorData;
-    }
-
-    /**
-     * @throws ORMException
-     */
-    private function getRoomCardDataObjects(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO, CardViewTypeFilterDTO $cardViewTypeFilterDTO): array
-    {
-        $cardSensorData = $this->cardViewRepository->getAllCardSensorDataScalar(
+        return $this->cardViewRepository->getAllCardSensorDataScalar(
             $user,
             Cardstate::ROOM_ONLY,
             $cardDataPostFilterDTO,
             $cardViewTypeFilterDTO
         );
-
-        return $cardSensorData;
     }
 }

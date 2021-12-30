@@ -9,7 +9,6 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeJoinQueryDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
@@ -48,9 +47,9 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO->getReadingTypesToQuery(), $qb);
 
-        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, 'sensors', Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS,)
-            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH,Devices::ALIAS . $this->createJoinConditionString('deviceNameID', Sensor::ALIAS))
-            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('cardStateID',   CardView::ALIAS))
+        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, 'sensors', Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS, )
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceNameID', Sensor::ALIAS))
+            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('cardStateID', CardView::ALIAS))
             ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
             ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
             ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', Room::ALIAS))
@@ -99,7 +98,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
     {
         $alias = [];
         foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
-            /**@var CardSensorTypeJoinQueryDTO $cardSensorTypeQueryDTO  */
+            /** @var  $sensorNameJoinConditionString */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
                 $cardSensorTypeQueryDTO->getJoinConditionId(),
                 $cardSensorTypeQueryDTO->getJoinConditionColumn()
@@ -121,5 +120,10 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             $joinConditionColumn,
             $joinConditionId
         );
+    }
+
+    public function findOneById(int $cardViewID): ?CardView
+    {
+        return $this->findOneBy(['cardViewID' => $cardViewID]);
     }
 }

@@ -12,6 +12,7 @@ use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardQueryBuilderFactories\ReadingTypeQueryFactory;
 use App\UserInterface\Factories\CardQueryBuilderFactories\SensorTypeQueryFactory;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 
 class CardDataFilterService implements CardDataFilterServiceInterface
 {
@@ -39,11 +40,20 @@ class CardDataFilterService implements CardDataFilterServiceInterface
         $allReadingTypes = ReadingTypes::SENSOR_READING_TYPE_DATA;
 
         $readingTypesToQuery = $this->filterSensorByReadingType($allReadingTypes, $cardFilters->getReadingTypesToFilter());
-//        dd('s', $readingTypesToQuery);
+
         return new CardDataQueryEncapsulationFilterDTO(
             $sortedQueryTypes['sensorTypesToQuery'] ?? [],
             $sortedQueryTypes['sensorTypesNotToQuery'] ?? [],
             $readingTypesToQuery,
+        );
+    }
+
+    #[Pure]
+    public function preparePreFilterDTO(array $sensorTypesToFilter, array $readingTypesToFilter): CardDataPreFilterDTO
+    {
+        return new CardDataPreFilterDTO(
+            $sensorTypesToFilter,
+            $readingTypesToFilter,
         );
     }
 
@@ -71,11 +81,8 @@ class CardDataFilterService implements CardDataFilterServiceInterface
         ];
     }
 
-
-        // make new table for different sensor types
     private function filterSensorByReadingType(array $allReadingTypes, array $readingTypesToFilter = []): array
     {
-
         foreach ($allReadingTypes as $sensorReadingType => $readingType) {
             try {
                 $queryTypeBuilder = $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($sensorReadingType);
@@ -89,15 +96,4 @@ class CardDataFilterService implements CardDataFilterServiceInterface
 
         return $readingTypesToQuery ?? [];
     }
-
-
-
-//        return $filteredSensorTypes;
-//        return array_filter($sensorTypes, static function ($sensorType) use ($cardFilters) {
-//            /** @var SensorType $sensorType */
-//            return (!in_array($sensorType->getSensorTypeID(), $cardFilters, true))
-//                ?  $sensorType
-//                : false;
-//        });
-//    }
 }

@@ -8,13 +8,14 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
 use DateTime;
-use JetBrains\PhpStorm\Pure;
 
 abstract class AbstractCardDTOBuilder
 {
-    #[Pure]
-    protected function buildTemperatureSensorData(array $cardData): StandardCardViewDTO
+    protected function buildTemperatureSensorData(array $cardData): ?StandardCardViewDTO
     {
+        if (empty($cardData['temp_tempID'])) {
+            return null;
+        }
         $dateTime = $this->formatDateTime($cardData['temp_updatedAt']);
 
         return new StandardCardViewDTO(
@@ -27,9 +28,11 @@ abstract class AbstractCardDTOBuilder
         );
     }
 
-    #[Pure]
-    protected function buildHumiditySensorData($cardData): StandardCardViewDTO
+    protected function buildHumiditySensorData($cardData): ?StandardCardViewDTO
     {
+        if (empty($cardData['humid_humidID'])) {
+            return null;
+        }
         $dateTime = $this->formatDateTime($cardData['humid_updateAt']);
 
         return new StandardCardViewDTO(
@@ -42,9 +45,11 @@ abstract class AbstractCardDTOBuilder
         );
     }
 
-    #[Pure]
-    protected function buildLatitudeSensorData($cardData): StandardCardViewDTO
+    protected function buildLatitudeSensorData($cardData): ?StandardCardViewDTO
     {
+        if (empty($cardData['lat_latitudeID'])) {
+            return null;
+        }
         $dateTime = $this->formatDateTime($cardData['lat_time']);
 
         return new StandardCardViewDTO(
@@ -56,9 +61,11 @@ abstract class AbstractCardDTOBuilder
         );
     }
 
-    #[Pure]
-    protected function buildAnalogSensorData($cardData): StandardCardViewDTO
+    protected function buildAnalogSensorData($cardData): ?StandardCardViewDTO
     {
+        if (empty($cardData['analog_analogID'])) {
+            return null;
+        }
         $dateTime = $this->formatDateTime($cardData['analog_updatedAt']);
 
         return new StandardCardViewDTO(
