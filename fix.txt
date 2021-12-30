@@ -6,3 +6,5 @@ latitude needs updating from time to upated at and adjust buildLatitudeSensorDat
 outofrangeanalog has nullable reading
 out of range humid & temp timez not created at
 groupname still have timez
+latitude const record needs creating
+latitude out of range table need creating

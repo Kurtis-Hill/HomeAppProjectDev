@@ -1,14 +1,14 @@
 <?php
 
-
 namespace App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators;
+
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class SoilContraintValidator extends ConstraintValidator
+class SoilConstraintValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof SoilConstraint) {
             throw new UnexpectedTypeException($constraint,SoilConstraint::class);

@@ -92,7 +92,7 @@ class AbstractSensorReadingTypeBuilder
             );
         }
         $analogSensor = new Analog();
-        $analogSensor->setCurrentReading(10);
+        $analogSensor->setCurrentReading(1000);
         $analogSensor->setHighReading($analogSensorType->getMaxAnalog());
         $analogSensor->setLowReading($analogSensorType->getMinAnalog());
         $analogSensor->setUpdatedAt();

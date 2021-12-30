@@ -12,15 +12,16 @@ class DhtCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements Card
     #[ArrayShape([StandardCardViewDTO::class])]
     public function formatCardSensorData(array $sensorData): array
     {
-         $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
-         $humiditySensorData = $this->buildHumiditySensorData($sensorData);
+        $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
+        $humiditySensorData = $this->buildHumiditySensorData($sensorData);
 
-         return [
+        return [
              $temperatureSensorData,
              $humiditySensorData
          ];
     }
 
+    #[Pure]
     public function formatCardFormSensorData(array $sensorData): array
     {
         $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);

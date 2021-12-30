@@ -3,6 +3,9 @@
 namespace App\UserInterface\Entity\Card;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * Cardcolour.
@@ -10,8 +13,17 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="cardcolour", uniqueConstraints={@ORM\UniqueConstraint(name="colour", columns={"colour"}), @ORM\UniqueConstraint(name="shade", columns={"shade"})})
  * @ORM\Entity(repositoryClass="App\Repository\Card\CardColourRepository")
  */
+#[UniqueEntity('colour')]
 class CardColour
 {
+    private const COLOUR_MAX_LENGTH = 20;
+
+    private const COLOUR_MIN_LENGTH = 2;
+
+    private const SHADE_MAX_LENGTH = 20;
+
+    private const SHADE_MIN_LENGTH = 2;
+
     public const ALIAS = 'cardcolour';
 
     /**
@@ -28,13 +40,31 @@ class CardColour
      *
      * @ORM\Column(name="colour", type="string", length=20, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::COLOUR_MIN_LENGTH,
+            max: self::COLOUR_MAX_LENGTH,
+            minMessage: "Colour must be at least {{ limit }} characters long",
+            maxMessage: "Colour cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $colour;
 
     /**
-     * @var string
-     *I
      * @ORM\Column(name="shade", type="string", length=20, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::SHADE_MIN_LENGTH,
+            max: self::SHADE_MAX_LENGTH,
+            minMessage: "Colour shade must be at least {{ limit }} characters long",
+            maxMessage: "Colour shade cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $shade;
 
     /**

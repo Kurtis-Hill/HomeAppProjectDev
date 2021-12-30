@@ -31,4 +31,10 @@ interface CardViewRepositoryInterface
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
         CardViewTypeFilterDTO $cardViewTypeFilterDTO = null
     ): array;
+
+    /**
+     * @throws ORMException
+     */
+    public function findOneById(int $cardViewID): ?CardView;
+
 }

@@ -33,7 +33,7 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
     /**
      * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    #[Assert\NotBlank(message: 'out of range humidity date time should not be blank')]
+    #[Assert\NotBlank(message: 'Out of range humidity date time should not be blank')]
     private DateTime $createdAt;
 
 

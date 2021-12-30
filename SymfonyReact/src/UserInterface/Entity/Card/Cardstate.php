@@ -3,6 +3,8 @@
 namespace App\UserInterface\Entity\Card;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * Cardstate
@@ -24,6 +26,10 @@ class Cardstate
 
     public const ALIAS = 'cardstate';
 
+    private const CARD_STATE_MAX_LENGTH = 20;
+
+    private const CARD_STATE_MIN_LENGTH = 2;
+
     /**
      * @var int
      *
@@ -38,6 +44,16 @@ class Cardstate
      *
      * @ORM\Column(name="state", type="string", length=50, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::CARD_STATE_MIN_LENGTH,
+            max: self::CARD_STATE_MAX_LENGTH,
+            minMessage: "Colour shade must be at least {{ limit }} characters long",
+            maxMessage: "Colour shade cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $state;
 
     /**

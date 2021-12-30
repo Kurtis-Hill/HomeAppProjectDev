@@ -8,7 +8,6 @@ use App\API\Traits\HomeAppAPIResponseTrait;
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceValidatorService;
 use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\Voters\DeviceVoter;
-use App\Form\FormMessages;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Repository\ORM\RoomRepositoryInterface;

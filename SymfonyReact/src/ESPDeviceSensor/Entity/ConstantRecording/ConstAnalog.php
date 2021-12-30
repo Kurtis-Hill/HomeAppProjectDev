@@ -6,7 +6,6 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
-use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,9 +35,7 @@ class ConstAnalog implements ConstantlyRecordInterface
     /**
      * @ORM\Column(name="createdAt", type="datetime", nullable=false)
      */
-    #[
-        Assert\NotBlank(message: 'Const analog date time should not be blank'),
-    ]
+    #[Assert\NotBlank(message: 'Const analog date time should not be blank')]
     private DateTimeInterface $createdAt;
 
     /**

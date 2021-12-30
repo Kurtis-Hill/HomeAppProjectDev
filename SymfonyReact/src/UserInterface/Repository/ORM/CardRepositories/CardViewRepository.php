@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
+use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
@@ -9,19 +10,18 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeJoinQueryDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use JetBrains\PhpStorm\Pure;
 
 class CardViewRepository extends ServiceEntityRepository implements CardViewRepositoryInterface
 {
+    use QueryJoinBuilderTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CardView::class);
@@ -48,9 +48,9 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO->getReadingTypesToQuery(), $qb);
 
-        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, 'sensors', Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS,)
-            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH,Devices::ALIAS . $this->createJoinConditionString('deviceNameID', Sensor::ALIAS))
-            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('cardStateID',   CardView::ALIAS))
+        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, 'sensors', Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS, )
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceNameID', Sensor::ALIAS))
+            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('cardStateID', CardView::ALIAS))
             ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
             ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
             ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', Room::ALIAS))
@@ -95,31 +95,36 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         return $qb->getQuery()->getScalarResult();
     }
 
-    private function prepareSensorJoinsForQuery(array $cardDataFilterDTO, QueryBuilder $qb): string
+//    private function prepareSensorJoinsForQuery(array $cardDataFilterDTO, QueryBuilder $qb): string
+//    {
+//        $alias = [];
+//        foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
+//            /** @var  $sensorNameJoinConditionString */
+//            $sensorNameJoinConditionString = $this->createJoinConditionString(
+//                $cardSensorTypeQueryDTO->getJoinConditionId(),
+//                $cardSensorTypeQueryDTO->getJoinConditionColumn()
+//            );
+//
+//            $alias[] = $cardSensorTypeQueryDTO->getAlias();
+//            $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
+//        }
+//
+//        return implode(', ', $alias);
+//    }
+//
+//    #[Pure]
+//    private function createJoinConditionString(string $joinConditionId, string $joinConditionColumn): string
+//    {
+//        return sprintf(
+//            '.%s = %s.%s',
+//            $joinConditionId,
+//            $joinConditionColumn,
+//            $joinConditionId
+//        );
+//    }
+
+    public function findOneById(int $cardViewID): ?CardView
     {
-        $alias = [];
-        foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
-            /**@var CardSensorTypeJoinQueryDTO $cardSensorTypeQueryDTO  */
-            $sensorNameJoinConditionString = $this->createJoinConditionString(
-                $cardSensorTypeQueryDTO->getJoinConditionId(),
-                $cardSensorTypeQueryDTO->getJoinConditionColumn()
-            );
-
-            $alias[] = $cardSensorTypeQueryDTO->getAlias();
-            $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
-        }
-
-        return implode(', ', $alias);
-    }
-
-    #[Pure]
-    private function createJoinConditionString(string $joinConditionId, string $joinConditionColumn): string
-    {
-        return sprintf(
-            '.%s = %s.%s',
-            $joinConditionId,
-            $joinConditionColumn,
-            $joinConditionId
-        );
+        return $this->findOneBy(['cardViewID' => $cardViewID]);
     }
 }

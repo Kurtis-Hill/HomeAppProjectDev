@@ -3,6 +3,8 @@
 namespace App\UserInterface\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Icons
@@ -12,6 +14,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Icons
 {
+    private const ICON_NAME_MAX_LENGTH = 20;
+
+    private const ICON_NAME_MIN_LENGTH = 2;
+
+    private const ICON_DESCRIPTION_MAX_LENGTH = 20;
+
+    private const ICON_DESCRIPTION_MIN_LENGTH = 2;
+
     public const ALIAS = 'icons';
     /**
      * @var int
@@ -27,6 +37,16 @@ class Icons
      *
      * @ORM\Column(name="iconName", type="string", length=20, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::ICON_NAME_MIN_LENGTH,
+            max: self::ICON_NAME_MAX_LENGTH,
+            minMessage: "Colour shade must be at least {{ limit }} characters long",
+            maxMessage: "Colour shade cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $iconName;
 
     /**
@@ -34,6 +54,16 @@ class Icons
      *
      * @ORM\Column(name="description", type="string", length=20, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::ICON_DESCRIPTION_MIN_LENGTH,
+            max: self::ICON_DESCRIPTION_MAX_LENGTH,
+            minMessage: "Colour shade must be at least {{ limit }} characters long",
+            maxMessage: "Colour shade cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $description;
 
     /**

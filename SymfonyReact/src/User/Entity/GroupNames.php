@@ -5,6 +5,7 @@ namespace App\User\Entity;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Form\CustomFormValidators as NoSpecialCharacters;
 
@@ -14,6 +15,7 @@ use App\Form\CustomFormValidators as NoSpecialCharacters;
  * @ORM\Table(name="groupname", uniqueConstraints={@ORM\UniqueConstraint(name="groupName", columns={"groupName"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\GroupNameRepository")
  */
+#[UniqueEntity('groupName')]
 class GroupNames
 {
     public const NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE = 'You are not part of this group';

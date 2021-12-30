@@ -54,6 +54,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
             $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
             $this->userToken = $responseData['token'];
+//            dd($this->userToken);
         }
     }
 

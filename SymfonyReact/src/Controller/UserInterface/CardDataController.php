@@ -87,7 +87,7 @@ class CardDataController extends AbstractController
     #[Route('/card-sensor-form', name: 'card-view-form', methods: [Request::METHOD_GET])]
     public function showCardViewForm(Request $request, CardUserDataService $cardDataService): Response|JsonResponse
     {
-        $cardViewID = $request->query->get('cardViewID');
+        $cardViewID = $request->query->get('card-view-id');
 
         if (empty($cardViewID) || !is_numeric($cardViewID)) {
             return $this->sendBadRequestJsonResponse(['malformed card view id request']);
