@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsHumidityRepository;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsRepositoryInterface;
-use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfRangeAnalogORMRepository;
+use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsAnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsTempORMRepository;
 
 class ORMOutOfBoundsFactory implements OutOfBoundsFactoryInterface
@@ -16,12 +16,12 @@ class ORMOutOfBoundsFactory implements OutOfBoundsFactoryInterface
 
     private OutOfBoundsHumidityRepository $outOfBoundsHumid;
 
-    private OutOfRangeAnalogORMRepository $outOfBoundsAnalog;
+    private OutOfBoundsAnalogRepository $outOfBoundsAnalog;
 
     public function __construct(
       OutOfBoundsTempORMRepository $outBoundsTempORMRepository,
       OutOfBoundsHumidityRepository $outOfBoundsHumidORMRepository,
-      OutOfRangeAnalogORMRepository $outOfBoundsAnalogORMRepository,
+      OutOfBoundsAnalogRepository $outOfBoundsAnalogORMRepository,
     ) {
         $this->outOfBoundsTemp = $outBoundsTempORMRepository;
         $this->outOfBoundsHumid = $outOfBoundsHumidORMRepository;

@@ -13,7 +13,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilContraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -79,7 +79,7 @@ class UpdateReadingForm extends AbstractType implements SensorReadingUpdateInter
                         'mapped' => false,
                         'required' => true,
                         'constraints' => [
-                            new SoilContraint(),
+                            new SoilConstraint(),
                             new NoSpecialCharactersConstraint(),
                             new NotBlank(),
                         ],

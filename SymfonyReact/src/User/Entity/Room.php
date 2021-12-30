@@ -5,6 +5,7 @@ namespace App\User\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping\Column;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * Room
@@ -24,12 +25,16 @@ class Room
      */
     private int $roomID;
 
-    #[Assert\Length(
-        min: 2,
-        max: 20,
-        minMessage: 'Room name must be at least {{ limit }} characters long',
-        maxMessage: 'Room name cannot be longer than {{ limit }} characters',
-    )]
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: 2,
+            max: 20,
+            minMessage: 'Room name must be at least {{ limit }} characters long',
+            maxMessage: 'Room name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
+    ]
     /**
      * @Column(type="string")
      */

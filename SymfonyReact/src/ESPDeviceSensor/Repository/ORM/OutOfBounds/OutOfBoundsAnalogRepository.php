@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class OutOfRangeAnalogORMRepository extends ServiceEntityRepository implements OutOfBoundsRepositoryInterface
+class OutOfBoundsAnalogRepository extends ServiceEntityRepository implements OutOfBoundsRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

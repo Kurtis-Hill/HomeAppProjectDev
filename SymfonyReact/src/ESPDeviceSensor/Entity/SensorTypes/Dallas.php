@@ -27,8 +27,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public const LOW_TEMPERATURE_READING_BOUNDARY = -55;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="dallasID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -36,8 +34,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     private int $dallasID;
 
     /**
-     * @var Temperature
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Temperature", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
@@ -46,8 +42,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     private Temperature $tempID;
 
     /**
-     * @var Sensor
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
@@ -60,9 +54,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
      */
     private CardView $cardView;
 
-    /**
-     * @return int
-     */
     public function getSensorTypeID(): int
     {
         return $this->dallasID;
@@ -86,17 +77,11 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         $this->sensorNameID = $sensor;
     }
 
-    /**
-     * @return Temperature
-     */
     public function getTempObject(): Temperature
     {
         return $this->tempID;
     }
 
-    /**
-     * @param Temperature $tempID
-     */
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;

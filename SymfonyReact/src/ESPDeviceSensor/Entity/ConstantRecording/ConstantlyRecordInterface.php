@@ -5,6 +5,8 @@ namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 
 interface ConstantlyRecordInterface
 {
@@ -28,23 +30,14 @@ interface ConstantlyRecordInterface
      */
     public function setSensorReading(float $sensorReading): void;
 
-    /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): DateTime;
+    public function getCreatedAt(): DateTimeInterface;
 
-    /**
-     * @param DateTime|null $time
-     */
-    public function setCreatedAt(?DateTime $time = null): void;
+    public function setCreatedAt(): void;
 
-    /**
-     * @return Analog
-     */
     public function getSensorReadingTypeID();
 
-    /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
-     */
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void;
+//    /**
+//     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
+//     */
+//    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void;
 }

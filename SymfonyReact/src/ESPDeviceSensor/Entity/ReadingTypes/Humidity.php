@@ -5,9 +5,9 @@ namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
-use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,8 +29,6 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="humidID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -38,46 +36,36 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     private int $humidID;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
     #[HumidityConstraint]
     private int $currentReading;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
      */
     #[HumidityConstraint]
     private int $highHumid = 80;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
      */
     #[HumidityConstraint]
     private int $lowHumid = 10;
 
     /**
-     * @var bool
-     *
      * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
      */
+    #[Assert\Type("bool")]
     private bool $constRecord = false;
 
     /**
-     * @var DateTime|null
-     *
      * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?DateTime $updateAt;
+    #[Assert\NotBlank(message: 'humidity date time should not be blank')]
+    private DateTimeInterface $updateAt;
 
     /**
-     * @var Sensor
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
@@ -121,7 +109,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->lowHumid;
     }
 
-    public function getUpdatedAt(): \DateTimeInterface
+    public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updateAt;
     }
@@ -145,9 +133,9 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         }
     }
 
-    public function setUpdatedAt(?DateTime $time = null): void
+    public function setUpdatedAt(): void
     {
-        $this->updateAt = $time ?? new DateTime('now');
+        $this->updateAt = new DateTimeImmutable('now');
     }
 
 

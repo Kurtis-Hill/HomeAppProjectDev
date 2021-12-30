@@ -4,6 +4,7 @@ namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use DateTime;
+use DateTimeInterface;
 
 interface OutOfBoundsEntityInterface
 {
@@ -30,12 +31,9 @@ interface OutOfBoundsEntityInterface
     /**
      * @return DateTime
      */
-    public function getCreatedAt(): DateTime;
+    public function getCreatedAt(): DateTimeInterface;
 
-    /**
-     * @param DateTime|null $time
-     */
-    public function setCreatedAt(?DateTime $time = null): void;
+    public function setCreatedAt(): void;
 
     /**
      * @return AllSensorReadingTypeInterface

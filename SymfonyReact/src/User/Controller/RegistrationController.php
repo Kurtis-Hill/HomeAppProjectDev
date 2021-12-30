@@ -43,7 +43,7 @@ class RegistrationController extends AbstractController
                 }
 
                 $groupNameObject->setGroupName($groupName);
-                $groupNameObject->setTime(new \DateTime());
+                $groupNameObject->setTime();
 
                 $entityManager->persist($groupNameObject);
                 $entityManager->flush();

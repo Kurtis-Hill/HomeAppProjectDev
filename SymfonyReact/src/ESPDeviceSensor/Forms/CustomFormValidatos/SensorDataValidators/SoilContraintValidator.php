@@ -10,8 +10,8 @@ class SoilContraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof SoilContraint) {
-            throw new UnexpectedTypeException($constraint,SoilContraint::class);
+        if (!$constraint instanceof SoilConstraint) {
+            throw new UnexpectedTypeException($constraint,SoilConstraint::class);
         }
 
         if ($value === null || $value === '') {

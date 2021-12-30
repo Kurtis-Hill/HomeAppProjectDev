@@ -13,8 +13,6 @@ use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Dht
- *
  * @ORM\Table(name="dhtsensor", uniqueConstraints={@ORM\UniqueConstraint(name="cardviewID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\SensorType\DhtRepository")
  */
@@ -31,8 +29,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public const SENSOR_TYPE_ID = 1;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="dhtID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -40,8 +36,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private int $dhtID;
 
     /**
-     * @var Temperature
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
@@ -50,8 +44,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private Temperature $tempID;
 
     /**
-     * @var Humidity
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
@@ -60,8 +52,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private Humidity $humidID;
 
     /**
-     * @var Sensor
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
@@ -69,86 +59,53 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
      */
     private Sensor $sensorNameID;
 
-    /**
-     * @var CardView
-     */
     private CardView $cardView;
 
-    /**
-     * @return int
-     */
     public function getSensorTypeID(): int
     {
         return $this->dhtID;
     }
 
-    /**
-     * @param int $dhtID
-     */
     public function setSensorTypeID(int $dhtID): void
     {
         $this->dhtID = $dhtID;
     }
 
-    /**
-     * @return int
-     */
     public function getTempObject(): Temperature
     {
         return $this->tempID;
     }
 
-    /**
-     * @param Temperature $tempID
-     */
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }
 
-    /**
-     * @return CardView
-     */
     public function getSensorObject(): Sensor
     {
         return $this->sensorNameID;
     }
 
-    /**
-     * @param Sensor $id
-     */
     public function setSensorObject(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }
 
-    /**
-     * @return Humidity
-     */
     public function getHumidObject(): Humidity
     {
         return $this->humidID;
     }
 
-    /**
-     * @param Humidity $humidID
-     */
     public function setHumidObject(Humidity $humidID): void
     {
         $this->humidID = $humidID;
     }
 
-    /**
-     * @return CardView|null
-     */
     public function getCardViewObject(): ?CardView
     {
         return $this->cardView;
     }
 
-    /**
-     * @param CardView $cardView
-     */
     public function setCardViewObject(CardView $cardView): void
     {
         $this->cardView = $cardView;

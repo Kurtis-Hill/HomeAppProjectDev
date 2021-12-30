@@ -6,9 +6,11 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
-use DateTime;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Latitude
@@ -29,8 +31,6 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     ];
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="latitudeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -38,31 +38,27 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     private int $latitudeID;
 
     /**
-     * @var int|float
-     *
      * @ORM\Column(name="latitude", type="integer", nullable=false)
      */
+    #[LatitudeConstraint]
     private int|float $latitude;
 
     /**
-     * @var int|float
-     *
      * @ORM\Column(name="highLatitude", type="integer", nullable=false)
      */
+    #[LatitudeConstraint]
     private int|float $highLatitude = 90;
 
     /**
-     * @var int|float
-     *
      * @ORM\Column(name="lowLatitude", type="integer", nullable=false)
      */
+    #[LatitudeConstraint]
     private int|float $lowLatitude = -90;
 
     /**
-     * @var bool
-     *
      * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
      */
+    #[Assert\Type("bool")]
     private bool $constRecord = false;
 
     /**
@@ -78,19 +74,14 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     /**
      * @ORM\Column(name="updatedAt", type="date", nullable=false, options={"default"="current_timestamp()"})
      */
-    private ?DateTime $time;
+    #[Assert\NotBlank(message: 'Latitude date time should not be blank')]
+    private DateTimeInterface $time;
 
-    /**
-     * @return int
-     */
     public function getSensorID(): int
     {
         return $this->latitudeID;
     }
 
-    /**
-     * @param int $id
-     */
     public function setSensorID(int $latitudeId): void
     {
         $this->latitudeID = $latitudeId;
@@ -100,69 +91,41 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
      * Sensor relational Objects
      */
 
-    /**
-     * @return Sensor
-     */
     public function getSensorNameID(): Sensor
     {
         return $this->sensorNameID;
     }
 
-    /**
-     * @param Sensor $id
-     */
     public function setSensorObject(Sensor $id): void
     {
         $this->sensorNameID = $id;
     }
 
-    /**
-     * Sensor Reading Methods
-     */
-
-    /**
-     * @return float|int
-     */
     public function getCurrentReading(): int
     {
         return $this->latitude;
     }
 
-    /**
-     * @return float|int
-     */
     public function getHighReading(): int
     {
         return $this->highLatitude;
     }
 
-    /**
-     * @return int
-     */
     public function getLowReading(): int
     {
         return $this->lowLatitude;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getUpdatedAt(): DateTimeInterface
     {
         return $this->time;
     }
 
-    /**
-     * @param float|int $reading
-     */
     public function setCurrentReading(int|float $reading): void
     {
         $this->latitude = $reading;
     }
 
-    /**
-     * @param int|float|string $reading
-     */
     public function setHighReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
@@ -170,9 +133,6 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
         }
     }
 
-    /**
-     * @param int|float|string $reading
-     */
     public function setLowReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
@@ -180,25 +140,16 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
         }
     }
 
-    /**
-     * @param DateTime|null $time
-     */
-    public function setUpdatedAt(?DateTime $time = null): void
+    public function setUpdatedAt(): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->time = new DateTimeImmutable('now');
     }
 
-    /**
-     * @return bool
-     */
     public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
 
-    /**
-     * @param bool $constRecord
-     */
     public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;

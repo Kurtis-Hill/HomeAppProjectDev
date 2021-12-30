@@ -4,20 +4,20 @@ namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
-use DateTime;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * OutOfRangeAnalog.
- *
  * @ORM\Table(name="outofrangeanalog", indexes={@ORM\Index(name="sensorID", columns={"analogID"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsAnalogRepository")
  */
 class OutOfRangeAnalog implements OutOfBoundsEntityInterface
 {
     /**
-     * @var int
-     *
      * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -25,88 +25,61 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     private int $outOfRangeID;
 
     /**
-     * @var float
-     *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
      */
+    #[SoilConstraint(groups: [Soil::NAME])]
     private float $sensorReading;
 
     /**
-     * @var DateTime
-     *
      * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $createdAt;
+    #[Assert\NotBlank(message: 'Out of range analog date time name should not be blank')]
+    private DateTimeInterface $createdAt;
 
     /**
-     * @var Analog
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Analog")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="analogID", referencedColumnName="sensorNameID")
      * })
      */
+    #[Assert\NotNull(message: "Out of range Analog Object cannot be null")]
     private Analog $sensorReadingTypeID;
 
-    /**
-     * @return int
-     */
     public function getOutOfRangeID(): int
     {
         return $this->outOfRangeID;
     }
 
-    /**
-     * @param int $outOfRangeID
-     */
     public function setOutOfRangeID(int $outOfRangeID): void
     {
         $this->outOfRangeID = $outOfRangeID;
     }
 
-    /**
-     * @return float
-     */
     public function getSensorReading(): float
     {
         return $this->sensorReading;
     }
 
-    /**
-     * @param float $sensorReading
-     */
     public function setSensorReading(float $sensorReading): void
     {
         $this->sensorReading = $sensorReading;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param DateTime|null $createdAt
-     */
-    public function setCreatedAt(?DateTime $createdAt = null): void
+    public function setCreatedAt(): void
     {
-        $this->createdAt = $createdAt ?? new DateTime('now');
+        $this->createdAt = new DateTimeImmutable('now');
     }
 
-    /**
-     * @return Analog
-     */
     public function getSensorReadingTypeID(): Analog
     {
         return $this->sensorReadingTypeID;
     }
 
-    /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
-     */
     public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Analog) {

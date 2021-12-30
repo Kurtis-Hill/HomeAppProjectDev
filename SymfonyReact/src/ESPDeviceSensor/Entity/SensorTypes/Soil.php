@@ -27,8 +27,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     private const LOW_SOIL_READING_BOUNDARY = 0;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="soilID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -36,8 +34,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     private int $soilID;
 
     /**
-     * @var Analog
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Analog")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="analogID", referencedColumnName="analogID")
@@ -46,8 +42,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     private Analog $analogID;
 
     /**
-     * @var Sensor
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
@@ -120,7 +114,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     {
         $this->cardView = $cardView;
     }
-
 
     public function getMaxAnalog(): float|int
     {

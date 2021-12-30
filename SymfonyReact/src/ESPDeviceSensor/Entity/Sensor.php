@@ -31,8 +31,6 @@ class Sensor
     private const SENSOR_NAME_MIN_LENGTH = 2;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="sensorNameID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -40,8 +38,6 @@ class Sensor
     private int $sensorNameID;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="sensorName", type="string", length=20, nullable=false)
      */
     #[
@@ -86,17 +82,11 @@ class Sensor
      */
     private User $createdBy;
 
-    /**
-     * @return int
-     */
     public function getSensorNameID(): int
     {
         return $this->sensorNameID;
     }
 
-    /**
-     * @param int $sensorNameID
-     */
     public function setSensorNameID(int $sensorNameID): void
     {
         $this->sensorNameID = $sensorNameID;
@@ -122,33 +112,21 @@ class Sensor
         $this->sensorTypeID = $sensorTypeID;
     }
 
-    /**
-     * @return Devices
-     */
     public function getDeviceObject(): Devices
     {
         return $this->deviceNameID;
     }
 
-    /**
-     * @param Devices $deviceNameID
-     */
     public function setDeviceObject(Devices $deviceNameID): void
     {
         $this->deviceNameID = $deviceNameID;
     }
 
-    /**
-     * @return User
-     */
     public function getCreatedBy(): User
     {
         return $this->createdBy;
     }
 
-    /**
-     * @param User $createdBy
-     */
     public function setCreatedBy(User $createdBy): void
     {
         $this->createdBy = $createdBy;

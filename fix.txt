@@ -3,3 +3,6 @@ group name created still has timez
 latitude needs default for const record
 sensorname for reading types needs to be either null or not null
 latitude needs updating from time to upated at and adjust buildLatitudeSensorData method
+outofrangeanalog has nullable reading
+out of range humid & temp timez not created at
+groupname still have timez

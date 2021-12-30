@@ -2,23 +2,28 @@
 
 namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 
-use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use DateTime;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ConstTemp
  *
  * @ORM\Table(name="consttemp", indexes={@ORM\Index(name="consttemp_ibfk_1", columns={"sensorID"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository")
  */
 class ConstTemp implements ConstantlyRecordInterface
 {
     /**
-     * @var int
-     *
      * @ORM\Column(name="constRecordID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -26,88 +31,71 @@ class ConstTemp implements ConstantlyRecordInterface
     private int $constRecordID;
 
     /**
-     * @var float
-     *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
      */
+    #[
+        DallasTemperatureConstraint(
+            groups: [Dallas::NAME]
+        ),
+        DHTTemperatureConstraint(
+            groups: [Dht::NAME]
+        ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        )
+    ]
     private float $sensorReading;
 
     /**
-     * @var DateTime
-     *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $time;
+    #[Assert\NotBlank(message: 'Const temp date time should not be blank')]
+    private DateTimeInterface $time;
 
     /**
-     * @var Temperature
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
      */
+    #[Assert\NotNull(message: "Const Record Temperature Object cannot be null")]
     private Temperature $sensorReadingTypeID;
 
-    /**
-     * @return int
-     */
     public function getConstRecordID(): int
     {
         return $this->constRecordID;
     }
 
-    /**
-     * @param int $constRecordID
-     */
     public function setConstRecordID(int $constRecordID): void
     {
         $this->constRecordID = $constRecordID;
     }
 
-    /**
-     * @return float
-     */
     public function getSensorReading(): float
     {
         return $this->sensorReading;
     }
 
-    /**
-     * @param float $sensorReading
-     */
     public function setSensorReading(float $sensorReading): void
     {
         $this->sensorReading = $sensorReading;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->time;
     }
 
-    /**
-     * @param DateTime|null $time
-     */
-    public function setCreatedAt(?DateTime $time = null): void
+    public function setCreatedAt(): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->time = new DateTimeImmutable('now');
     }
 
-    /**
-     * @return Sensor
-     */
     public function getSensorReadingTypeID(): Temperature
     {
         return $this->sensorReadingTypeID;
     }
 
-    /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
-     */
     public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {

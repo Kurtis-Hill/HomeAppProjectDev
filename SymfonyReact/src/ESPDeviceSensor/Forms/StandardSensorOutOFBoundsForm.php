@@ -17,7 +17,7 @@ use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTem
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
-use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilContraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -134,7 +134,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadin
                     ->add('highReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new SoilContraint(),
+                            new SoilConstraint(),
                             new NotBlank(),
                             $highLowCheck,
                         ],
@@ -143,7 +143,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadin
                     ->add('lowReading', TextType::class, [
                         'required' => true,
                         'constraints' => [
-                            new SoilContraint(),
+                            new SoilConstraint(),
                             new NotBlank(),
                         ],
                     ]);

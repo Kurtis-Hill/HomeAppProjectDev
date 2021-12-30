@@ -4,20 +4,26 @@ namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use DateTime;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * OutOfRangeTemp.
  *
  * @ORM\Table(name="outofrangetemp", indexes={@ORM\Index(name="outofrangetemp_ibfk_1", columns={"tempID"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsTempORMRepository")
  */
 class OutOfRangeTemp implements OutOfBoundsEntityInterface
 {
     /**
-     * @var int
-     *
      * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -25,88 +31,71 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
     private int $outOfRangeID;
 
     /**
-     * @var float
-     *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
      */
+    #[
+        DallasTemperatureConstraint(
+            groups: [Dallas::NAME]
+        ),
+        DHTTemperatureConstraint(
+            groups: [Dht::NAME]
+        ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        )
+    ]
     private float $sensorReading;
 
     /**
-     * @var DateTime
-     *
      * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTime $createdAt;
+    #[Assert\NotBlank(message: 'out of range temp date time should not be blank')]
+    private DateTimeInterface $createdAt;
 
     /**
-     * @var Temperature
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
      * })
      */
+    #[Assert\NotNull(message: "Out of range Temperature Object cannot be null")]
     private Temperature $sensorReadingTypeID;
 
-    /**
-     * @return int
-     */
     public function getOutOfRangeID(): int
     {
         return $this->outOfRangeID;
     }
 
-    /**
-     * @param int $outOfRangeID
-     */
     public function setOutOfRangeID(int $outOfRangeID): void
     {
         $this->outOfRangeID = $outOfRangeID;
     }
 
-    /**
-     * @return int
-     */
     public function getSensorReading(): int
     {
         return $this->sensorReading;
     }
 
-    /**
-     * @param float $sensorReading
-     */
     public function setSensorReading(float $sensorReading): void
     {
         $this->sensorReading = $sensorReading;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param DateTime|null $time
-     */
-    public function setCreatedAt(?DateTime $time = null): void
+    public function setCreatedAt(): void
     {
-        $this->createdAt = $time ?? new DateTime('now');
+        $this->createdAt = new DateTimeImmutable('now');
     }
 
-    /**
-     * @return Temperature
-     */
     public function getSensorReadingTypeID(): Temperature
     {
         return $this->sensorReadingTypeID;
     }
 
-    /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
-     */
     public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {

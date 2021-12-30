@@ -31,8 +31,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public const LOW_TEMPERATURE_READING_BOUNDARY = -45;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="bmpID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -40,8 +38,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private int $bmpID;
 
     /**
-     * @var Sensor
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
@@ -50,8 +46,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private Sensor $sensorNameID;
 
     /**
-     * @var Temperature
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Temperature")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
@@ -60,8 +54,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private Temperature $tempID;
 
     /**
-     * @var Humidity
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Humidity")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
@@ -70,8 +62,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     private Humidity $humidID;
 
     /**
-     * @var Latitude
-     *
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\ReadingTypes\Latitude")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="latitudeID", referencedColumnName="latitudeID")

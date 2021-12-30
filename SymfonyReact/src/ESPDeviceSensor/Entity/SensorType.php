@@ -19,6 +19,8 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Forms\StandardSensorOutOFBoundsForm;
 use App\ESPDeviceSensor\Forms\UpdateReadingForm;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * GetSensorTypesController
@@ -179,9 +181,11 @@ class SensorType
         Dht::NAME,
     ];
 
+    private const SENSOR_TYPE_DESCRIPTION_MIN_LENGTH = 5;
+
+    private const SENSOR_TYPE_DESCRIPTION_MAX_LENGTH = 50;
+
     /**
-     * @var int
-     *
      * @ORM\Column(name="sensorTypeID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -189,62 +193,51 @@ class SensorType
     private int $sensorTypeID;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="sensorType", type="string", length=20, nullable=false)
      */
+    #[NoSpecialCharacters\NoSpecialCharactersConstraint]
     private string $sensorType;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="description", type="string", length=50, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::SENSOR_TYPE_DESCRIPTION_MIN_LENGTH,
+            max: self::SENSOR_TYPE_DESCRIPTION_MAX_LENGTH,
+            minMessage: "Sensor name must be at least {{ limit }} characters long",
+            maxMessage: "Sensor name cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $description;
 
-    /**
-     * @return int
-     */
     public function getSensorTypeID(): int
     {
         return $this->sensorTypeID;
     }
 
-    /**
-     * @param int $sensorTypeID
-     */
     public function setSensorTypeID(int $sensorTypeID): void
     {
         $this->sensorTypeID = $sensorTypeID;
     }
 
-    /**
-     * @return string
-     */
     public function getSensorType(): string
     {
         return $this->sensorType;
     }
 
-    /**
-     * @param string $sensorType
-     */
     public function setSensorType(string $sensorType): void
     {
         $this->sensorType = $sensorType;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
     public function setDescription(string $description): void
     {
         $this->description = $description;

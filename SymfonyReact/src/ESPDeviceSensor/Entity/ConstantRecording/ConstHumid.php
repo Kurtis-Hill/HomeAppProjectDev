@@ -4,20 +4,18 @@ namespace App\ESPDeviceSensor\Entity\ConstantRecording;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
-use DateTime;
+use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ConstHumid
- *
  * @ORM\Table(name="consthumid", indexes={@ORM\Index(name="sensorID", columns={"humidID"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository")
  */
 class ConstHumid implements ConstantlyRecordInterface
 {
     /**
-     * @var int
-     *
      * @ORM\Column(name="constRecordID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -29,14 +27,14 @@ class ConstHumid implements ConstantlyRecordInterface
      *
      * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
      */
+    #[HumidityConstraint]
     private float $sensorReading;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time;
+    #[Assert\NotBlank(message: 'Const humidity date time should not be blank')]
+    private DateTimeImmutable $time;
 
     /**
      * @var Humidity
@@ -46,67 +44,44 @@ class ConstHumid implements ConstantlyRecordInterface
      *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
      * })
      */
+    #[Assert\NotNull(message: "Const Record Humidity Object cannot be null")]
     private Humidity $sensorReadingTypeID;
 
-    /**
-     * @return int
-     */
     public function getConstRecordID(): int
     {
         return $this->constRecordID;
     }
 
-    /**
-     * @param int $constRecordID
-     */
     public function setConstRecordID(int $constRecordID): void
     {
         $this->constRecordID = $constRecordID;
     }
 
-    /**
-     * @return float
-     */
     public function getSensorReading(): float
     {
         return $this->sensorReading;
     }
 
-    /**
-     * @param float $sensorReading
-     */
     public function setSensorReading(float $sensorReading): void
     {
         $this->sensorReading = $sensorReading;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->time;
     }
 
-    /**
-     * @param DateTime|null $time
-     */
-    public function setCreatedAt(?DateTime $time = null): void
+    public function setCreatedAt(): void
     {
-        $this->time = $time ?? new DateTime('now');
+        $this->time = new DateTimeImmutable('now');
     }
 
-    /**
-     * @return Humidity
-     */
     public function getSensorReadingTypeID(): Humidity
     {
         return $this->sensorReadingTypeID;
     }
 
-    /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
-     */
     public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {

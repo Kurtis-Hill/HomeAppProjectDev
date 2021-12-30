@@ -32,7 +32,7 @@ class LatitudeConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value < 0) {
+        if ($value < -90) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

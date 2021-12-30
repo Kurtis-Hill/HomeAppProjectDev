@@ -2,7 +2,11 @@
 
 namespace App\User\Entity;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * GroupNames.
@@ -13,6 +17,10 @@ use Doctrine\ORM\Mapping as ORM;
 class GroupNames
 {
     public const NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE = 'You are not part of this group';
+
+    private const GROUP_NAME_MIN_LENGTH = 2;
+
+    private const GROUP_NAME_MAX_LENGTH = 50;
 
     /**
      * @var int
@@ -28,14 +36,22 @@ class GroupNames
      *
      * @ORM\Column(name="groupName", type="string", length=50, nullable=false)
      */
+    #[
+        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        Assert\Length(
+            min: self::GROUP_NAME_MIN_LENGTH,
+            max: self::GROUP_NAME_MAX_LENGTH,
+            minMessage: "Group name must be at least {{ limit }} characters long",
+            maxMessage: "Group name cannot be longer than {{ limit }} characters"
+        ),
+        Assert\NotBlank,
+    ]
     private string $groupName;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private $time;
+    private DateTimeInterface $time;
 
     public function getGroupNameID(): int
     {
@@ -47,9 +63,6 @@ class GroupNames
         $this->groupNameID = $groupNameID;
     }
 
-    /**
-     * @return string
-     */
     public function getGroupName(): string
     {
         return $this->groupName;
@@ -63,13 +76,13 @@ class GroupNames
     /**
      * @return \DateTime
      */
-    public function getTime()
+    public function getTime(): DateTimeInterface
     {
         return $this->time;
     }
 
-    public function setTime(?\DateTime $time = null): void
+    public function setTime(): void
     {
-        $this->time = $time ?? new \DateTime('now');
+        $this->time = new DateTimeImmutable('now');
     }
 }

@@ -60,6 +60,7 @@ class Devices implements UserInterface, APISensorUserInterface
      *
      * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
+    #[Assert\NotBlank(message: 'Password should not be blank')]
     private string $password;
 
     /**
@@ -70,6 +71,7 @@ class Devices implements UserInterface, APISensorUserInterface
      *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
      * })
      */
+    #[Assert\NotBlank(message: 'User object should not be blank')]
     private User $createdBy;
 
     /**
