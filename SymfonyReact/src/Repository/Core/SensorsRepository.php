@@ -102,7 +102,6 @@ class SensorsRepository extends EntityRepository
 
         $result = array_filter($qb->getQuery()->getResult());
         $result = array_values($result);
-dd($result);
         return $result[0];
     }
 
