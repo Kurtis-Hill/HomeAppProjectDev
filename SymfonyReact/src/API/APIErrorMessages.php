@@ -15,4 +15,6 @@ class APIErrorMessages
     public const SHOULD_NOT_BE_BLANK = '%s name should not be blank';
 
     public const QUERY_FAILURE = '%s Query failure';
+
+    public const FAILED_TO_PREPARE_DATA = 'Failed to prepare data';
 }

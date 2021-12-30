@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Icons
 {
+    public const ALIAS = 'icons';
     /**
      * @var int
      *

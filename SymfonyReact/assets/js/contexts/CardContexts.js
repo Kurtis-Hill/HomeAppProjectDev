@@ -66,26 +66,29 @@ class CardContextProvider extends Component {
 
 
     setURL = () => {
-        const cardAPI = apiURL+'card-data/cards';
+        const cardAPI = apiURL+'card-data/v2/';
+        console.log(window.location);
         if (window.location.pathname === webappURL+'index') {
-            this.setState({url: cardAPI});
+            const indexURL = `${cardAPI}index`;
+            this.setState({url:  indexURL});
             return;
         }
-
         const windowLocation = window.location.search;
         const urlParam = new URLSearchParams(windowLocation);
 
-        const deviceName = urlParam.get('device-id');
-        const deviceGroup = urlParam.get('device-group');
-        const deviceRoom = urlParam.get('device-room');
-
-        const currentGetParameters = `${cardAPI}?device-id=${deviceName}&device-group=${deviceGroup}+&device-room=${deviceRoom}+&view=device`;
-
-// DEV needs sorting not proper
-        if (currentGetParameters === `${this.state.url}`) {
+        if (window.location.pathname === webappURL+'device') {
+            console.log('device');
+            const deviceName = urlParam.get('device-id');
+            const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}`;
+            this.setState({url:  deviceURL});
             return;
-        } else {
-            this.setState({url: currentGetParameters});
+        }
+        if (window.location.pathname === webappURL+'room') {
+            console.log('device');
+            const roomeName = urlParam.get('room-id');
+            const roomURL = `${cardAPI}room-cards?room-id=${roomeName}`;
+            this.setState({url:  roomURL});
+            return;
         }
     }
 
@@ -98,12 +101,13 @@ class CardContextProvider extends Component {
         try {
             const response = await axios.get(this.state.url, getAPIHeader());
 
-            Array.isArray(response.data) 
-            && response.data.length >= 1
-                ?
-                    this.setState({cardData: response.data})
-                    :
-                    this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});           
+            console.log("hell", response.data.payload, Array.isArray(response.data.payload));
+            Array.isArray(response.data.payload) 
+            && response.data.payload.length >= 1
+                ? this.setState({cardData: response.data.payload})
+                : this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});    
+
+                console.log("mey ", this.state.cardData);
         } catch (error) {
             if (error.data == undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});

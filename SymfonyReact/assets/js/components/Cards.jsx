@@ -39,9 +39,9 @@ const cardRender = () => {
                                     <React.Fragment key={index}>
                                         {context.modalLoading !== false && context.modalLoading === cardData.cardViewID ? <div style={{zIndex:"1"}} className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
                                         <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)}>
-                                          {capitalizeFirstLetter(sensorData.sensorType)}: {sensorData.currentReading}{sensorData.readingSymbol}
+                                          {capitalizeFirstLetter(sensorData.readingType)}: {sensorData.currentReading}{sensorData.readingSymbol}
                                         </div>
-                                        <div className="card-font mb-0 text-gray-400">@{sensorData.time}</div>
+                                        <div className="card-font mb-0 text-gray-400">updated@{sensorData.updatedAt}</div>
                                       </React.Fragment>
                                     ))
                                   : <p>No Sensor Data</p>

@@ -37,31 +37,32 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $this->getEntityManager()->flush();
     }
 
-    public function getAllCardSensorDataScalar(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO, CardViewTypeFilterDTO $cardViewTypeFilterDTO = null): array
+    public function getAllCardSensorDataScalar(User $user, string $cardViewTwo, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO, CardViewTypeFilterDTO $cardViewTypeFilterDTO = null): array
     {
         $groupNameIDs = $user->getGroupNameIds();
 
-        $cardViewTwo = Cardstate::DEVICE_ONLY;
-
-        $qb = $this->createQueryBuilder('cv');
+        $qb = $this->createQueryBuilder(CardView::ALIAS);
         $expr = $qb->expr();
-        $sensorTypeAlias = $this->prepareSensorTypesForQuery($cardDataPostFilterDTO, $qb);
 
-        $qb->select($sensorTypeAlias, 'cv', 'cc', 'i', 'sensors', SensorType::ALIAS, Sensor::ALIAS, )
-            ->innerJoin(Devices::class, 'devices', Join::WITH, Sensor::ALIAS.'.deviceNameID = devices.deviceNameID')
-            ->innerJoin(Cardstate::class, 'cardState', Join::WITH, 'cv.cardStateID = cardState.cardStateID')
-            ->innerJoin(CardColour::class, 'cc', Join::WITH, 'cc.colourID = cv.cardColourID')
-            ->innerJoin(Icons::class, 'i', Join::WITH, 'cv.cardIconID = i.iconID')
-            ->innerJoin(Room::class, 'r', Join::WITH, 'devices.roomID = r.roomID')
+        $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensorNameID', CardView::ALIAS));
+
+        $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO->getReadingTypesToQuery(), $qb);
+
+        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, 'sensors', Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS,)
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH,Devices::ALIAS . $this->createJoinConditionString('deviceNameID', Sensor::ALIAS))
+            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('cardStateID',   CardView::ALIAS))
+            ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
+            ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
+            ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', Room::ALIAS))
             ->innerJoin(SensorType::class, SensorType::ALIAS, Join::WITH, SensorType::ALIAS . $this->createJoinConditionString('sensorTypeID', Sensor::ALIAS));
 
         $qb->where(
             $expr->orX(
-                $expr->eq('cardState.state', ':cardViewOne'),
-                $expr->eq('cardState.state', ':cardViewTwo')
+                $expr->eq(Cardstate::ALIAS . '.state', ':cardViewOne'),
+                $expr->eq(Cardstate::ALIAS . '.state', ':cardViewTwo')
             ),
-            $expr->eq('cv.userID', ':userID'),
-            $expr->in('devices.groupNameID', ':groupNameID'),
+            $expr->eq(CardView::ALIAS . '.userID', ':userID'),
+            $expr->in(Devices::ALIAS . '.groupNameID', ':groupNameID'),
         );
 
         $parameters = [
@@ -73,19 +74,13 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
         if ($cardViewTypeFilterDTO !== null) {
             if ($cardViewTypeFilterDTO->getDevice() !== null) {
-                $qb->andWhere($expr->eq('devices.deviceNameID', ':deviceNameID'));
+                $qb->andWhere($expr->eq(Devices::ALIAS . '.deviceNameID', ':deviceNameID'));
                 $parameters['deviceNameID'] = $cardViewTypeFilterDTO->getDevice()->getDeviceNameID();
             }
             if ($cardViewTypeFilterDTO->getRoom() !== null) {
-                $qb->andWhere($expr->eq('room.roomID', ':roomID'));
+                $qb->andWhere($expr->eq(Room::ALIAS . '.roomID', ':roomID'));
                 $parameters['roomID'] = $cardViewTypeFilterDTO->getRoom()->getRoomID();
             }
-        }
-// Just need to joinn to query
-        foreach ($cardDataPostFilterDTO->getReadingTypesToQuery() as $excludedReadingTypes) {
-            /** @var CardSensorTypeJoinQueryDTO $excludedReadingTypes */
-            $qb->leftJoin($excludedReadingTypes->getObject(), $excludedReadingTypes->getAlias(), Join::WITH, $excludedReadingTypes->getAlias().$sensorNameJoinConditionString);
-//            dd('s', $excludedReadingTypes);
         }
 
         foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {
@@ -100,23 +95,21 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         return $qb->getQuery()->getScalarResult();
     }
 
-    private function prepareSensorTypesForQuery(CardDataQueryEncapsulationFilterDTO $cardDataFilterDTO, QueryBuilder $qb): string
+    private function prepareSensorJoinsForQuery(array $cardDataFilterDTO, QueryBuilder $qb): string
     {
-        $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS.'.sensorNameID = cv.sensorNameID');
-
-        $sensorAlias = [];
-        foreach ($cardDataFilterDTO->getSensorTypesToQuery() as $cardSensorTypeQueryDTO) {
+        $alias = [];
+        foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
             /**@var CardSensorTypeJoinQueryDTO $cardSensorTypeQueryDTO  */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
                 $cardSensorTypeQueryDTO->getJoinConditionId(),
                 $cardSensorTypeQueryDTO->getJoinConditionColumn()
             );
 
-            $sensorAlias[] = $cardSensorTypeQueryDTO->getAlias();
+            $alias[] = $cardSensorTypeQueryDTO->getAlias();
             $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
         }
 
-        return implode(', ', $sensorAlias);
+        return implode(', ', $alias);
     }
 
     #[Pure]

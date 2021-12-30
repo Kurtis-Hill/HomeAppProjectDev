@@ -14,7 +14,6 @@ use App\ESPDeviceSensor\SensorDataServices\DeleteSensorService\DeleteSensorServi
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
-use App\Form\FormMessages;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
 use Doctrine\ORM\ORMException;
 use JsonException;

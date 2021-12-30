@@ -22,6 +22,8 @@ class Cardstate
 
     public const DEVICE_ONLY = 'DEVICE_ONLY';
 
+    public const ALIAS = 'cardstate';
+
     /**
      * @var int
      *

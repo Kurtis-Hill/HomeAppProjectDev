@@ -106,7 +106,7 @@ class CardDTOCreatorService implements APIErrorInterface, LoggedInUserRequiredIn
 //            $this->serverErrors[] = 'Card Data Query Failure';
 //        }
 
-        $cardViewDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
+        $cardViewDTOFactory = $this->cardViewDTOFactory->getCardViewBuilderService(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
         if (!empty($sensorObjects)) {
             foreach ($sensorObjects as $cardDTO) {
                 try {
@@ -234,7 +234,7 @@ class CardDTOCreatorService implements APIErrorInterface, LoggedInUserRequiredIn
                 $userSelectionData = $this->getCardSelectionData();
                 $cardData->setCardViewObject($cardViewObject);
 
-                $cardFormDTOFactory = $this->cardViewDTOFactory->build(CardViewDTOFactory::SENSOR_TYPE_READING_FORM_CARD);
+                $cardFormDTOFactory = $this->cardViewDTOFactory->getCardViewBuilderService(CardViewDTOFactory::SENSOR_TYPE_READING_FORM_CARD);
                 $cardViewFormDTO = $cardFormDTOFactory->makeDTO($cardData, $userSelectionData);
             }
             else {

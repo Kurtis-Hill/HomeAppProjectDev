@@ -16,6 +16,6 @@ interface CardViewPreparationServiceInterface
         UserInterface $user,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
         CardViewTypeFilterDTO $cardViewTypeFilterDTO,
-        string $view
+        string $view = null
     ): array;
 }

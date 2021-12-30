@@ -14,6 +14,7 @@ use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\Cards\CardDataFilterService\CardDataFilterService;
 use App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface;
+use App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
 use JsonException;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -35,27 +37,27 @@ class CardController extends AbstractController
 
     private CardViewPreparationServiceInterface $cardPreparationService;
 
-    private Request $request;
+    private CardViewDTOCreationServiceInterface $cardViewDTOCreationService;
 
     public const ROOM_VIEW = 'room';
 
     public const DEVICE_VIEW = 'device';
 
     public function __construct(
-//        Request $request,
         CardDataFilterService $cardDataFilterService,
         CardViewPreparationServiceInterface $cardPreparationService,
+        CardViewDTOCreationServiceInterface $cardViewDTOCreationService,
     ) {
         $this->cardDataFilterService = $cardDataFilterService;
         $this->cardPreparationService = $cardPreparationService;
-//        $this->request = $request;
+        $this->cardViewDTOCreationService = $cardViewDTOCreationService;
     }
 
     #[Route('device-cards', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
     public function deviceCards(Request $request, DeviceRepositoryInterface $deviceRepository): Response
     {
         $deviceId = $request->get('device-id');
-
+//dd($deviceId);
         if (!is_numeric($deviceId)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
         }
@@ -82,23 +84,30 @@ class CardController extends AbstractController
         }
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO(null, $device);
-//        try {
-            $cards = $this->preparedCardsForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::DEVICE_VIEW);
-//        } catch (WrongUserTypeException) {
-//            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-//        } catch (ORMException) {
-//            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
-//        }
+        try {
+            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::DEVICE_VIEW);
+        } catch (WrongUserTypeException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+        }
 
-        $responseData = $this->normalizeResponse($cards);
+        $cardDTOs = $this->createCardDataDTOs($cardData);
 
-        return $this->sendSuccessfulResponse($responseData);
+        try {
+            $responseData = $this->normalizeResponse($cardDTOs);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendSuccessfulJsonResponse($responseData);
+
     }
 
     #[Route('room-cards', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
     public function roomCards(Request $request, RoomRepositoryInterface $roomRepository): Response
     {
-        $roomId = $this->request->get('room-id');
+        $roomId = $request->get('room-id');
 
         if (!is_numeric($roomId)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
@@ -127,42 +136,83 @@ class CardController extends AbstractController
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO($room);
         try {
-            $cards = $this->preparedCardsForUser($cardDatePreFilterDTO, $cardViewTypeFilter,self::ROOM_VIEW);
+            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter,self::ROOM_VIEW);
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
         }
 
-        $responseData = $this->normalizeResponse($cards);
+        $cardDTOs = $this->createCardDataDTOs($cardData);
 
-        return $this->sendSuccessfulResponse($responseData);
+        try {
+            $responseData = $this->normalizeResponse($cardDTOs);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendSuccessfulJsonResponse($responseData);
+    }
+
+    #[Route('index', name: 'index-card-data-v2', methods: [Request::METHOD_GET])]
+    public function indexCards(Request $request)
+    {
+//        dd('asdf');
+        try {
+            $cardDatePreFilterDTO = $this->prepareFilters($request);
+        } catch (JsonException) {
+            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
+        }
+
+        $cardViewTypeFilter = new CardViewTypeFilterDTO();
+        try {
+            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
+        } catch (WrongUserTypeException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+        }
+
+        $cardDTOs = $this->createCardDataDTOs($cardData);
+
+        try {
+            $responseData = $this->normalizeResponse($cardDTOs);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendSuccessfulJsonResponse($responseData);
+    }
+
+    private function createCardDataDTOs(array $cardData): array
+    {
+        return $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);
     }
 
     /**
      * @throws ORMException|WrongUserTypeException
      */
-    private function preparedCardsForUser(
+    private function prepareCardDataForUser(
         CardDataPreFilterDTO $cardDataPreFilterDTO,
         CardViewTypeFilterDTO $cardViewTypeFilterDTO,
-        string $view,
+        string $view = null,
     ): array
     {
         $postFilterCardDataToQuery = $this->cardDataFilterService->filterSensorsToQuery($cardDataPreFilterDTO);
 
-        $cardData = $this->cardPreparationService->prepareCardsForUser(
+        return $this->cardPreparationService->prepareCardsForUser(
             $this->getUser(),
             $postFilterCardDataToQuery,
             $cardViewTypeFilterDTO,
             $view
         );
-
-        dd('card controller', $cardData);
     }
 
     private function prepareFilters(Request $request): CardDataPreFilterDTO
     {
-        $filters = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        if (!empty($request->getContent())) {
+            $filters = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        }
 
         return new CardDataPreFilterDTO(
             $filters['sensorTypes'] ?? [],
@@ -170,13 +220,15 @@ class CardController extends AbstractController
         );
     }
 
-    private function normalizeResponse(array $cardDTOs): string
+    /**
+     * @throws ExceptionInterface
+     */
+    private function normalizeResponse(array $cardDTOs): array
     {
-        $encoders = [new JsonEncoder()];
         $normaliser = [new ObjectNormalizer()];
 
-        $serializer = new Serializer($normaliser, $encoders);
+        $serializer = new Serializer($normaliser);
 
-        return $serializer->serialize($cardDTOs, 'json');
+        return $serializer->normalize($cardDTOs);
     }
 }

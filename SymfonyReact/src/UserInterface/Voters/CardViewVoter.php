@@ -49,13 +49,11 @@ class CardViewVoter extends Voter
         };
     }
 
-    #[Pure]
     private function canUserViewCardViewObject(UserInterface $user, CardView $cardView): bool
     {
         return $this->canUserEditCardViewObject($user, $cardView);
     }
 
-    #[Pure]
     private function canUserEditCardViewObject(UserInterface $user, CardView $cardView): bool
     {
         if (!$user instanceof User) {
@@ -75,7 +73,7 @@ class CardViewVoter extends Voter
             return false;
         }
 
-        if (!in_array($room->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
 

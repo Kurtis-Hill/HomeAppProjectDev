@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CardColour
 {
+    public const ALIAS = 'cardcolour';
+
     /**
      * @var int
      *

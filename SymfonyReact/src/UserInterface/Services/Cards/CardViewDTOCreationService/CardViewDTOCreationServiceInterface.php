@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardViewDTOCreationService;
 
-class CardViewDTOCreationServiceInterface
+interface CardViewDTOCreationServiceInterface
 {
-
+    public function buildCurrentReadingSensorCards(array $sensorData);
 }

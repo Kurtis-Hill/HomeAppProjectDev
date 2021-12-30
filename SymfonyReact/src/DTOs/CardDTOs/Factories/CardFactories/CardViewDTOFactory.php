@@ -17,11 +17,7 @@ class CardViewDTOFactory
 
     public const SENSOR_TYPE_READING_GRAPH_CARD = 'sensorTypeCardSensorGraph';
 
-    /**
-     * @param string $type
-     * @return CardBuilderDTOInterface
-     */
-    public function build(string $type): CardBuilderDTOInterface
+    public function getCardViewBuilderService(string $type): CardBuilderDTOInterface
     {
         switch ($type) {
             case self::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD:

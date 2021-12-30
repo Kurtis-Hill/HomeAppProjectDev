@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping\Column;
  */
 class Room
 {
+    public const ALIAS = 'room';
     /**
      * @var int
      *

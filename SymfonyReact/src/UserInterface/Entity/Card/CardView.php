@@ -15,6 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CardView
 {
+    public const ALIAS = 'cardview';
+
     /**
      * @var int
      *

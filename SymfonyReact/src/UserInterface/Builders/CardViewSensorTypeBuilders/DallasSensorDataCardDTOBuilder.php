@@ -2,7 +2,20 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-class DallasCardDTOBuilder
-{
+use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 
+class DallasSensorDataCardDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
+{
+    #[Pure]
+    #[ArrayShape([StandardCardViewDTO::class])]
+    public function formatCardSensorData(array $sensorData): array
+    {
+        $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
+
+        return [
+            $temperatureSensorData,
+        ];
+    }
 }

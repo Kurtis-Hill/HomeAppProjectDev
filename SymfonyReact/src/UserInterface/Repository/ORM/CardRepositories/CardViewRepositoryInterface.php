@@ -25,5 +25,10 @@ interface CardViewRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllCardSensorDataScalar(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO, CardViewTypeFilterDTO $cardViewTypeFilterDTO): array;
+    public function getAllCardSensorDataScalar(
+        User $user,
+        string $cardViewTwo,
+        CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
+        CardViewTypeFilterDTO $cardViewTypeFilterDTO = null
+    ): array;
 }

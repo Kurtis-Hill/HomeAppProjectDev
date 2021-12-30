@@ -2,7 +2,9 @@
 
 namespace App\UserInterface\Exceptions;
 
-class CardTypeNotRecognisedException
-{
+use Exception;
 
+class CardTypeNotRecognisedException extends Exception
+{
+    public const CARD_TYPE_NOT_RECOGNISED = 'Card type not recognised';
 }

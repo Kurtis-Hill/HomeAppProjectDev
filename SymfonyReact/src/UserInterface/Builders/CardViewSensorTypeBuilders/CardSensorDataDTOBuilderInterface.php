@@ -4,7 +4,7 @@ namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
 use App\UserInterface\DTO\CardViewDTO\FormattedSensorDataDTO;
 
-interface CardDTOBuilderInterface
+interface CardSensorDataDTOBuilderInterface
 {
-    public function formatSensorData(array $sensorData): array;
+    public function formatCardSensorData(array $sensorData): array;
 }

@@ -6,11 +6,11 @@ use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
-class DhtCardDTOBuilder extends AbstractCardDTOBuilder implements CardDTOBuilderInterface
+class DhtCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {
     #[Pure]
     #[ArrayShape([StandardCardViewDTO::class])]
-    public function formatSensorData(array $sensorData): array
+    public function formatCardSensorData(array $sensorData): array
     {
          $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
          $humiditySensorData = $this->buildHumiditySensorData($sensorData);
@@ -19,5 +19,16 @@ class DhtCardDTOBuilder extends AbstractCardDTOBuilder implements CardDTOBuilder
              $temperatureSensorData,
              $humiditySensorData
          ];
+    }
+
+    public function formatCardFormSensorData(array $sensorData): array
+    {
+        $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
+        $humiditySensorData = $this->buildHumiditySensorData($sensorData);
+
+        return [
+            $temperatureSensorData,
+            $humiditySensorData
+        ];
     }
 }
