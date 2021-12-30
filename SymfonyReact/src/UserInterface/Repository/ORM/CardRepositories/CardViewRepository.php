@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
+use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
@@ -15,12 +16,12 @@ use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use JetBrains\PhpStorm\Pure;
 
 class CardViewRepository extends ServiceEntityRepository implements CardViewRepositoryInterface
 {
+    use QueryJoinBuilderTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CardView::class);
@@ -94,33 +95,33 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         return $qb->getQuery()->getScalarResult();
     }
 
-    private function prepareSensorJoinsForQuery(array $cardDataFilterDTO, QueryBuilder $qb): string
-    {
-        $alias = [];
-        foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
-            /** @var  $sensorNameJoinConditionString */
-            $sensorNameJoinConditionString = $this->createJoinConditionString(
-                $cardSensorTypeQueryDTO->getJoinConditionId(),
-                $cardSensorTypeQueryDTO->getJoinConditionColumn()
-            );
-
-            $alias[] = $cardSensorTypeQueryDTO->getAlias();
-            $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
-        }
-
-        return implode(', ', $alias);
-    }
-
-    #[Pure]
-    private function createJoinConditionString(string $joinConditionId, string $joinConditionColumn): string
-    {
-        return sprintf(
-            '.%s = %s.%s',
-            $joinConditionId,
-            $joinConditionColumn,
-            $joinConditionId
-        );
-    }
+//    private function prepareSensorJoinsForQuery(array $cardDataFilterDTO, QueryBuilder $qb): string
+//    {
+//        $alias = [];
+//        foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
+//            /** @var  $sensorNameJoinConditionString */
+//            $sensorNameJoinConditionString = $this->createJoinConditionString(
+//                $cardSensorTypeQueryDTO->getJoinConditionId(),
+//                $cardSensorTypeQueryDTO->getJoinConditionColumn()
+//            );
+//
+//            $alias[] = $cardSensorTypeQueryDTO->getAlias();
+//            $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
+//        }
+//
+//        return implode(', ', $alias);
+//    }
+//
+//    #[Pure]
+//    private function createJoinConditionString(string $joinConditionId, string $joinConditionColumn): string
+//    {
+//        return sprintf(
+//            '.%s = %s.%s',
+//            $joinConditionId,
+//            $joinConditionColumn,
+//            $joinConditionId
+//        );
+//    }
 
     public function findOneById(int $cardViewID): ?CardView
     {
