@@ -51,7 +51,10 @@ class CardViewFormPreparationService implements CardViewFormPreparationServiceIn
             $sensorReadingTypeJoinQueryDTOs[] = $this->prepareSensorTypesQueryBuilder($sensorType);
         }
 
-        $sensorTypeObject = $this->sensorRepository->getSensorReadingTypeCardFormDataBySensor($cardViewObject->getSensorNameID(), $sensorReadingTypeJoinQueryDTOs);
+        $sensorTypeObject = $this->sensorRepository->getSensorReadingTypeCardFormDataBySensor(
+            $cardViewObject->getSensorNameID(),
+            $sensorReadingTypeJoinQueryDTOs
+        );
 
         if (!$sensorTypeObject instanceof SensorTypeInterface) {
             throw new SensorTypeException(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME);
