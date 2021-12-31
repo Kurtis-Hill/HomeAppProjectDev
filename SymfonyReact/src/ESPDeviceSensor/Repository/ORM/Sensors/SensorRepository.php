@@ -2,15 +2,20 @@
 
 namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
+use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\Deprecated;
 
 class SensorRepository extends ServiceEntityRepository implements SensorRepositoryInterface
 {
+    use QueryJoinBuilderTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Sensor::class);
@@ -52,6 +57,24 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getResult()[0] ?? null;
     }
 
+    public function getSensorReadingTypeCardFormDataBySensor(Sensor $sensors, array $sensorTypeJoinDTOs): StandardSensorTypeInterface
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+
+        $sensorAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
+
+        $qb->select($sensorAlias)
+            ->where(
+                $qb->expr()->eq(Sensor::ALIAS. '.sensorNameID', ':id')
+            )
+            ->setParameters(['id' => $sensors]);
+
+        $result = array_filter($qb->getQuery()->getResult());
+        $result = array_values($result);
+        return $result[0];
+    }
+
+    #[Deprecated]
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('sensors');
@@ -76,6 +99,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $result;
     }
 
+    #[Deprecated]
     private function prepareSensorTypeDataObjectsForQuery(array $sensors, QueryBuilder $qb, array $joinCondition): string
     {
         $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];

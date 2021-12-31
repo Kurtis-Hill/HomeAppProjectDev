@@ -6,6 +6,7 @@ use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface IconsRepositoryInterface
 {
@@ -31,4 +32,10 @@ interface IconsRepositoryInterface
      * @throws NoResultException
      */
     public function getFirstIcon(): Icons;
+
+    /**
+     * @throws ORMException
+     */
+    #[ArrayShape([Icons::class])]
+    public function getAllIcons(): array;
 }

@@ -8,9 +8,8 @@ use JetBrains\PhpStorm\Pure;
 
 class DhtCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {
-    #[Pure]
     #[ArrayShape([StandardCardViewDTO::class])]
-    public function formatCardSensorData(array $sensorData): array
+    public function formatScalarCardSensorData(array $sensorData): array
     {
         $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
         $humiditySensorData = $this->buildHumiditySensorData($sensorData);
@@ -22,7 +21,7 @@ class DhtCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements Card
     }
 
     #[Pure]
-    public function formatCardFormSensorData(array $sensorData): array
+    public function formatObjectFormSensorData(array $sensorData): array
     {
         $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
         $humiditySensorData = $this->buildHumiditySensorData($sensorData);

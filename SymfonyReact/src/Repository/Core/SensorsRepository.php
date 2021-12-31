@@ -104,5 +104,4 @@ class SensorsRepository extends EntityRepository
         $result = array_values($result);
         return $result[0];
     }
-
 }

@@ -6,6 +6,9 @@ namespace App\API\Traits;
 use App\API\HTTPStatusCodes;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 trait HomeAppAPIResponseTrait
 {
@@ -263,5 +266,18 @@ trait HomeAppAPIResponseTrait
                 'errors' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_FORBIDDEN);
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    public function normalizeResponse(mixed $data): array
+    {
+        $normaliser = [new ObjectNormalizer()];
+
+        $normaliser = new Serializer($normaliser);
+
+        return $normaliser->normalize($data);
+
     }
 }

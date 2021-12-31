@@ -127,15 +127,19 @@ class CardContextProvider extends Component {
     //gets the card form data so users can customize cards
     getCardDataForm = async (cardViewID) => {
         this.setState({modalLoading: cardViewID});
-        const cardDataFormResponse = await axios.get(`${apiURL}card-data/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
+        try {
+            const cardDataFormResponse = await axios.get(`${apiURL}card-    /sensor-type/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
     
-        if (cardDataFormResponse.status === 200) {
-            this.modalContent(cardDataFormResponse.data);
-            this.setState({modalShow: true});
-        } else {
-            this.setState({alternativeDisplayMessage: 'Failed To Get Data'});
-            alert("Failed Getting Form Please Try Again or Contact System Admin");
+            if (cardDataFormResponse.status === 200) {
+                this.modalContent(cardDataFormResponse.data.payload);
+                this.setState({modalShow: true});
+            } else {
+                this.setState({alternativeDisplayMessage: 'unexpected response, try  logging out and back in again'});
+            }
+        } catch (error) {
+            this.setState({alternativeDisplayMessage: error.data.payload[0]});
         }
+
         this.setState({modalLoading: false});
     }
 

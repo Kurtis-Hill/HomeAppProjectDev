@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Repository\Core;
 
-
 use App\UserInterface\Entity\Icons;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 class IconRepository extends EntityRepository

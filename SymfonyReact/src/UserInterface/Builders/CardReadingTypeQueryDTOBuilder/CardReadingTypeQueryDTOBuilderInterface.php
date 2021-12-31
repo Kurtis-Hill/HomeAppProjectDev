@@ -2,9 +2,9 @@
 
 namespace App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder;
 
-use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeJoinQueryDTO;
+use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 
 interface CardReadingTypeQueryDTOBuilderInterface
 {
-    public function buildReadingTypeJoinQueryDTO(): CardSensorTypeJoinQueryDTO;
+    public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO;
 }

@@ -10,7 +10,7 @@ class SoilCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements Car
 {
     #[Pure]
     #[ArrayShape([StandardCardViewDTO::class])]
-    public function formatCardSensorData(array $sensorData): array
+    public function formatScalarCardSensorData(array $sensorData): array
     {
         $analogSensorData = $this->buildAnalogSensorData($sensorData);
 

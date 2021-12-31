@@ -5,6 +5,7 @@ namespace App\UserInterface\Repository\ORM;
 use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 class IconsRepository extends ServiceEntityRepository implements IconsRepositoryInterface
 {
@@ -42,5 +43,14 @@ class IconsRepository extends ServiceEntityRepository implements IconsRepository
             ->orderBy('icons.iconID', 'ASC')
             ->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
+    }
+
+    #[ArrayShape([Icons::class])]
+    public function getAllIcons(): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->orderBy('i.iconName', 'ASC');
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

@@ -27,11 +27,13 @@ services:
     alias: App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationService
 
   App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationService
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationService
 
   App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface:
     alias: App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationService
 
+  App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionServiceInterface:
+    alias: App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionService
   ######################## New Sensor Creation Services ########################################################
 
   ######################## Factories ###########################################################################

@@ -8,9 +8,8 @@ use JetBrains\PhpStorm\Pure;
 
 class BmpCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {
-    #[Pure]
     #[ArrayShape([StandardCardViewDTO::class])]
-    public function formatCardSensorData(array $sensorData): array
+    public function formatScalarCardSensorData(array $sensorData): array
     {
         $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
         $humidSensorData = $this->buildHumiditySensorData($sensorData);

@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\DTO\CardDataQueryDTO;
 
-class CardSensorTypeJoinQueryDTO
+class JoinQueryDTO
 {
     private string $alias;
 

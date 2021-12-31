@@ -22,7 +22,7 @@ class CardDataQueryEncapsulationFilterDTO
         $this->readingTypesToQuery = $readingTypesToQuery;
     }
 
-    #[ArrayShape([CardSensorTypeJoinQueryDTO::class])]
+    #[ArrayShape([JoinQueryDTO::class])]
     public function getSensorTypesToQuery(): array
     {
         return $this->sensorTypesToQuery;
@@ -35,7 +35,7 @@ class CardDataQueryEncapsulationFilterDTO
         return $this->sensorTypesToExclude;
     }
 
-    #[ArrayShape([CardSensorTypeJoinQueryDTO::class])]
+    #[ArrayShape([JoinQueryDTO::class])]
     public function getReadingTypesToQuery(): array
     {
         return $this->readingTypesToQuery;

@@ -5,6 +5,7 @@ namespace App\UserInterface\Repository\ORM\CardRepositories;
 use App\UserInterface\Entity\Card\CardColour;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 class CardColourRepository extends ServiceEntityRepository implements CardColourRepositoryInterface
 {
@@ -42,5 +43,14 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
         return (int) $this->createQueryBuilder('cardColour')
             ->select('count(cardColour.colourID)')
             ->getQuery()->getSingleScalarResult();
+    }
+
+    #[ArrayShape([CardColour::class])]
+    public function getAllColours(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->orderBy('c.colour', 'ASC');
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

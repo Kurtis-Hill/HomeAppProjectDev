@@ -4,6 +4,7 @@ namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\UserInterface\Entity\Card\Cardstate;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface CardStateRepositoryInterface
 {
@@ -18,4 +19,10 @@ interface CardStateRepositoryInterface
      * @throws ORMException
      */
     public function flush(): void;
+
+    /**
+     * @throws ORMException
+     */
+    #[ArrayShape([Cardstate::class])]
+    public function getAllStates(): array;
 }

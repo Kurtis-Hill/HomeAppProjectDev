@@ -8,10 +8,10 @@ use JetBrains\PhpStorm\Pure;
 
 trait QueryJoinBuilderTrait
 {
-    public function prepareSensorJoinsForQuery(array $cardDataFilterDTO, QueryBuilder $qb): string
+    public function prepareSensorJoinsForQuery(array $joinConditionDTO, QueryBuilder $qb): string
     {
         $alias = [];
-        foreach ($cardDataFilterDTO as $cardSensorTypeQueryDTO) {
+        foreach ($joinConditionDTO as $cardSensorTypeQueryDTO) {
             /** @var  $sensorNameJoinConditionString */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
                 $cardSensorTypeQueryDTO->getJoinConditionId(),
