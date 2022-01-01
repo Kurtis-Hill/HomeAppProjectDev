@@ -13,7 +13,7 @@ use App\ESPDeviceSensor\Repository\ORM\SensorType\DhtRepository;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\GenericSensorTypeRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\SensorType\SoilRepository;
 
-class SensorTypeFactory implements SensorTypeFactoryInterface
+class SensorTypeRepositroyFactory implements SensorTypeRepositroyFactoryInterface
 {
     private DallasRepository $dallasRepository;
 

@@ -12,7 +12,7 @@ use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\DallasQueryTypeDTOB
 use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\DHTQueryTypeDTOBuilder;
 use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\SoilQueryTypeDTOBuilder;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
-
+//@TODO move these to sensors namespace
 class SensorTypeQueryFactory
 {
     private DHTQueryTypeDTOBuilder $dhtQueryTypeDTOBuilder;

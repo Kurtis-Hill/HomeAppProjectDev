@@ -36,6 +36,7 @@ class SensorReadingTypeFactory implements SensorReadingTypeFactoryInterface
 
     public function getSensorReadingTypeRepository(string $sensorType): ReadingTypeRepositoryInterface
     {
+//        dd($sensorType);
         return match ($sensorType) {
             Temperature::class => $this->temperatureRepository,
             Humidity::class => $this->humidityRepository,

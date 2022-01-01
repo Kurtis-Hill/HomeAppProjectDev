@@ -12,7 +12,7 @@ use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\HumidityQueryTypeD
 use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\LatitudeQueryTypeDTOBuilder;
 use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\TemperatureQueryTypeDTOBuilder;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
-
+//@TODO move these to sensors namespace
 class ReadingTypeQueryFactory
 {
     private TemperatureQueryTypeDTOBuilder $temperatureQueryTypeDTOBuilder;

@@ -95,7 +95,6 @@ class CardCreationService implements CardCreationServiceInterface
             foreach ($errors as $error) {
                 $validationErrors[] = $error->getMessage();
             }
-
         }
 
         return $validationErrors ?? [];

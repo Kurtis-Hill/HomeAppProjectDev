@@ -25,6 +25,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 
     public function validateReadingTypeObjects(SensorTypeInterface $sensorTypeObject): array
     {
+//        dd($sensorTypeObject);
         $sensorType = $sensorTypeObject->getSensorTypeName();
 
         $errors = [];
@@ -68,7 +69,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         return $errors;
     }
 
-    protected function performSensorReadingTypeValidation(
+    private function performSensorReadingTypeValidation(
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null
     ): array {

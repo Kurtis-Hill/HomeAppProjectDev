@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeRepositroyFactoryInterface;
 use App\ESPDeviceSensor\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
@@ -13,14 +13,14 @@ use Doctrine\ORM\ORMException;
 
 class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterface
 {
-    private SensorTypeFactoryInterface $sensorTypeFactory;
+    private SensorTypeRepositroyFactoryInterface $sensorTypeFactory;
 
     private SensorTypeCreationFactory $readingTypeCreationFactory;
 
     private SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidatorService;
 
     public function __construct(
-        SensorTypeFactoryInterface $sensorTypeFactory,
+        SensorTypeRepositroyFactoryInterface $sensorTypeFactory,
         SensorTypeCreationFactory $readingTypeCreationFactory,
         SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidator,
     ) {

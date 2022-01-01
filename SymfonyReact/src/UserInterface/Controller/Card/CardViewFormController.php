@@ -6,12 +6,17 @@ use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
+use App\ESPDeviceSensor\Factories\SensorTypeObjectsBuilderFactory;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
+use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
 use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface;
+use App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,7 +79,79 @@ class CardViewFormController extends AbstractController
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponseData);
+    }
 
-//        $cardViewFormDTO =
+    #[Route('sensor-type/update-card-sensor', name: 'card-view-form-v2', methods: [Request::METHOD_GET])]
+    public function updateCardView(
+        Request $request,
+        CardViewRepositoryInterface $cardViewRepository,
+        CardViewUpdateServiceInterface $cardViewUpdateService,
+        CardViewFormPreparationServiceInterface $cardViewFormPreparationService,
+        SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidatorService,
+        SensorTypeObjectsBuilderFactory $sensorTypeObjectsBuilderFactory,
+        UpdateSensorBoundaryReadingsServiceInterface $updateSensorBoundaryReadingsService,
+    ) {
+        try {
+            $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return $this->sendBadRequestJsonResponse(['Format not expected']);
+        }
+        $cardViewID = $cardData['cardViewID'];
+
+        if (empty($cardViewID) || !is_numeric($cardViewID)) {
+            return $this->sendBadRequestJsonResponse(['malformed card view id not recognised']);
+        }
+
+        try {
+            $cardViewObject = $cardViewRepository->findOneById($cardViewID);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        if (!$cardViewObject instanceof CardView) {
+            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'CardView')]);
+        }
+
+        try {
+            $this->denyAccessUnlessGranted(CardViewVoter::CAN_EDIT_CARD_VIEW_FORM, $cardViewObject);
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        }
+        $standardCardUpdateDTO = new StandardCardUpdateDTO(
+            $cardData['cardColour'],
+            $cardData['cardIcon'],
+            $cardData['cardViewState'],
+        );
+
+        $validationErrors = $cardViewUpdateService->handleStandardCardUpdateRequest($standardCardUpdateDTO, $cardViewObject);
+        if (!empty($validationErrors)) {
+            return $this->sendBadRequestJsonResponse([$validationErrors]);
+        }
+
+        try {
+            $cardViewRepository->persist($cardViewObject);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
+        }
+
+        $sensorReadingTypeObjectsDTO = $sensorTypeObjectsBuilderFactory->getReadingTypeObjectBuilders(
+            $cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType()
+        )->buildReadingTypeObjectsDTO();
+
+//dd($sensorReadingTypeObjectsDTO);
+        $sensorReadingJoinQueryDTOs = $updateSensorBoundaryReadingsService->getSensorTypeObjectToUpdateQueryDTO($sensorReadingTypeObjectsDTO);
+
+        dd($sensorReadingJoinQueryDTOs);
+        try {
+//            $sensorTypeObject = $cardViewFormPreparationService->getSensorTypeDataByCardViewObject($cardViewObject);
+        } catch (SensorTypeBuilderFailureException $e) {
+            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+
+        $sensorReadingTypeErrors = $sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorTypeObject);
+        dd($sensorTypeObject, $sensorReadingTypeErrors);
     }
 }

@@ -139,7 +139,7 @@ class CardView
         return $this->cardColourID;
     }
 
-    public function setCardColourID(CardColour|int $cardColourID): void
+    public function setCardColourID(CardColour $cardColourID): void
     {
         $this->cardColourID = $cardColourID;
     }

@@ -26,12 +26,11 @@ class GetReadingTypeController extends AbstractController
                 $readingTypeName
             );
         }
-
         $normaliser = [new ObjectNormalizer()];
         $serializer = new Serializer($normaliser);
 
         try {
-            $normalizedReadingTypesDTOs = $serializer->normalize($readingTypes);
+            $normalizedReadingTypesDTOs = $serializer->normalize($readingTypes ?? []);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['Failed to format response']);
         }

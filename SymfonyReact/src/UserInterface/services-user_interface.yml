@@ -34,6 +34,9 @@ services:
 
   App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionServiceInterface:
     alias: App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionService
+
+  App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateService
   ######################## New Sensor Creation Services ########################################################
 
   ######################## Factories ###########################################################################

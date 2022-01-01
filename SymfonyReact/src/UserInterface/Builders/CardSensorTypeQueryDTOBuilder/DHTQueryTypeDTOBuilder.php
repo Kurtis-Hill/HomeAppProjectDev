@@ -2,6 +2,8 @@
 
 namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
 
+use App\ESPDeviceSensor\Entity\ReadingTypes;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
@@ -29,5 +31,11 @@ class DHTQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilderInterface
             Dht::ALIAS,
             $sensorTypeID
         );
+    }
+
+
+    public function buildReadingTypesToInclude(): array
+    {
+
     }
 }

@@ -6,6 +6,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeNotJoinQueryDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
@@ -57,7 +58,7 @@ class CardDataFilterService implements CardDataFilterServiceInterface
         );
     }
 
-    #[ArrayShape([JoinQueryDTO::class])]
+    #[ArrayShape(['sensorTypesToQuery' => JoinQueryDTO::class, 'sensorTypesNotToQuery' => CardSensorTypeNotJoinQueryDTO::class])]
     private function filterSensorByType(array $sensorTypes, array $sensorTypesToFilter = []): array
     {
         foreach ($sensorTypes as $sensorType) {

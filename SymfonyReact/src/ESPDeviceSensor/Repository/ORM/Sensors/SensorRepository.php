@@ -5,6 +5,7 @@ namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -57,12 +58,13 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getResult()[0] ?? null;
     }
 
-    public function getSensorReadingTypeCardFormDataBySensor(Sensor $sensors, array $sensorTypeJoinDTOs): StandardSensorTypeInterface
+    public function getSensorReadingTypeDataBySensor(Sensor $sensors, array $sensorTypeJoinDTOs): SensorTypeInterface
     {
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
         $sensorAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
-
+//dd($sensorAlias);
+//        $readingAlias = $this->prepareReadingJoinsForQuery($sensorTypeJoinDTOs, $qb);
         $qb->select($sensorAlias)
             ->where(
                 $qb->expr()->eq(Sensor::ALIAS. '.sensorNameID', ':id')
