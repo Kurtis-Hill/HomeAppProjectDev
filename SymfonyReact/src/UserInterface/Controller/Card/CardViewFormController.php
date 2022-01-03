@@ -6,6 +6,7 @@ use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\SensorTypeObjectsBuilderFactory;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
@@ -157,7 +158,7 @@ class CardViewFormController extends AbstractController
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
-        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorReadingTypesToUpdateBoundaryReadings(
+        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorAndReadingTypesToUpdateBoundaryReadings(
             $sensorTypeJoinQueryDTO,
             $sensorReadingJoinQueryDTOs,
             $cardViewObject->getSensorNameID()
@@ -166,15 +167,23 @@ class CardViewFormController extends AbstractController
             $cardViewObject->getSensorNameID()->getSensorName(),
         );
 
+        $sensorObject = array_pop($sensorReadingTypeObjects);
+
+        dd($sensorObject, $sensorReadingTypeObjects);
         foreach ($sensorReadingTypeObjects as $readingTypeObject) {
-            if ($readingTypeObject instanceof AllSensorReadingTypeInterface) {
-                if ($readingTypeObject->getSensorTypeName() === $cardData['sensorData']['sensorType']) {
-
-
+            foreach ($cardData['sensorData'] as $sensorData) {
+                if ($readingTypeObject instanceof StandardReadingSensorInterface) {
+                    if (!$readingTypeObject->getSensorTypeName() === $sensorData['sensorType']) {
+                        continue;
+                    }
+                    $readingTypeObject->setHighReading($sensorData['highReading'] ?? null);
+                    $readingTypeObject->setLowReading($sensorData['lowReading'] ?? null);
+                    $readingTypeObject->setConstRecord($sensorData['constRecord'] ?? null);
                 }
             }
         }
 
+        // get the c
 //        if ($sensorReadingTypeObject[0] instanceof AllSensorReadingTypeInterface) {
 ////            $sensorTypeObject = $sensorReadingTypeObject[0]->getSensorNameID()
 //        }
@@ -199,7 +208,7 @@ class CardViewFormController extends AbstractController
 //        } catch (ORMException) {
 //            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
 //        }
-//        $sensorReadingTypeErrors = $sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorReadingTypeObject);
+        $sensorReadingTypeErrors = $sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorReadingTypeObjects);
 
         if (empty($sensorReadingTypeErrors)) {
             $cardViewRepository->flush();

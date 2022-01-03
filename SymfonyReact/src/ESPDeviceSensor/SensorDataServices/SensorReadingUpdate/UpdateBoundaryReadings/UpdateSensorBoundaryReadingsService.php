@@ -66,9 +66,9 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     }
 
     #[ArrayShape([Temperature::class, Humidity::class])]
-    public function findSensorReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array
+    public function findSensorAndReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array
     {
-        $sensorTypeObjectArray = $this->sensorRepository->getSensorTypeObjects(
+        $sensorTypeObjectArray = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
             $readingTypeJoinQueryDTO,
             $deviceID,
             $readingTypeObjectsJoinDTOs,

@@ -24,7 +24,7 @@ interface UpdateSensorBoundaryReadingsServiceInterface
     public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO;
 
     #[ArrayShape([Temperature::class])]
-    public function findSensorReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
+    public function findSensorAndReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
 
     #[ArrayShape(([UpdateSensorBoundaryReadingsDTO::class]))]
     public function createSensorUpdateBoundaryReadingsDTOs(SensorTypeInterface $sensorTypeObject, array $updateData): array;

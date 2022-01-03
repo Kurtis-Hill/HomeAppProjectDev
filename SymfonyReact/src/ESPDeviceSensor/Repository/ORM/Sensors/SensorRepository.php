@@ -82,15 +82,14 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $result[0];
     }
 
-    public function getSensorTypeObjects(JoinQueryDTO $joinQueryDTO, int $device, array $readingTypeJoinQueryDTOs, string $sensorsName): array
+    public function getSensorTypeAndReadingTypeObjectsForSensor(JoinQueryDTO $joinQueryDTO, int $device, array $readingTypeJoinQueryDTOs, string $sensorsName): array
     {
         $qb = $this->createQueryBuilder('sensors');
 
         $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
         $readingTypeAlias = $this->prepareSensorJoinsForQuery([$joinQueryDTO], $qb);
-//dd($sensorAlias, $readingTypeAlias);
-//        dd($readingTypes, $readingTypeJoinQueryDTOs);
-        $qb->select($readingTypes)
+
+        $qb->select($readingTypeAlias, $readingTypes)
             ->innerJoin(
                 Devices::class,
                 'device',
