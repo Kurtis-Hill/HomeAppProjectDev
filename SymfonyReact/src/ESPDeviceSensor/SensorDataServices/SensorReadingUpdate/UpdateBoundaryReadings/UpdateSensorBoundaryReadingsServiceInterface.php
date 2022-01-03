@@ -4,6 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBound
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
@@ -22,7 +23,8 @@ interface UpdateSensorBoundaryReadingsServiceInterface
      */
     public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO;
 
-    public function findSensorTypeToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): SensorTypeInterface;
+    #[ArrayShape([Temperature::class])]
+    public function findSensorReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
 
     #[ArrayShape(([UpdateSensorBoundaryReadingsDTO::class]))]
     public function createSensorUpdateBoundaryReadingsDTOs(SensorTypeInterface $sensorTypeObject, array $updateData): array;

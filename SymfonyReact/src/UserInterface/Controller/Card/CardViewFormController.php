@@ -5,6 +5,7 @@ namespace App\UserInterface\Controller\Card;
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\SensorTypeObjectsBuilderFactory;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
@@ -20,6 +21,7 @@ use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServ
 use App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
+use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,7 +96,7 @@ class CardViewFormController extends AbstractController
     ) {
         try {
             $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
             return $this->sendBadRequestJsonResponse(['Format not expected']);
         }
         $cardViewID = $cardData['cardViewID'];
@@ -145,15 +147,17 @@ class CardViewFormController extends AbstractController
         $sensorReadingTypeObjectsDTO = $sensorTypeObjectBuilder->buildReadingTypeObjectsDTO();
 
 //dd($sensorReadingTypeObjectsDTO);
+//        if ($readingT)
+//        dd($cardViewObject->getSensorNameID(), $cardViewObject);
         $sensorTypeJoinQueryDTO = $updateSensorBoundaryReadingsService->getReadingTypeObjectJoinQueryDTO($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType());
-
+//dd($sensorTypeJoinQueryDTO);
         try {
             $sensorReadingJoinQueryDTOs = $updateSensorBoundaryReadingsService->getSensorTypeObjectJoinQueryDTO($sensorReadingTypeObjectsDTO);
         } catch (ReadingTypeBuilderFailureException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
-        $sensorTypeObject = $updateSensorBoundaryReadingsService->findSensorTypeToUpdateBoundaryReadings(
+        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorReadingTypesToUpdateBoundaryReadings(
             $sensorTypeJoinQueryDTO,
             $sensorReadingJoinQueryDTOs,
             $cardViewObject->getSensorNameID()
@@ -162,12 +166,27 @@ class CardViewFormController extends AbstractController
             $cardViewObject->getSensorNameID()->getSensorName(),
         );
 
-        $updateReadingDTOs = $updateSensorBoundaryReadingsService->createSensorUpdateBoundaryReadingsDTOs($sensorTypeObject, $cardData['sensorData']);
+        foreach ($sensorReadingTypeObjects as $readingTypeObject) {
+            if ($readingTypeObject instanceof AllSensorReadingTypeInterface) {
+                if ($readingTypeObject->getSensorTypeName() === $cardData['sensorData']['sensorType']) {
 
-        $sensorTypeIDDTOs = $sensorTypeObjectBuilder->buildSensorIDReadingTypeUpdateDTO($sensorTypeObject);
+
+                }
+            }
+        }
+
+//        if ($sensorReadingTypeObject[0] instanceof AllSensorReadingTypeInterface) {
+////            $sensorTypeObject = $sensorReadingTypeObject[0]->getSensorNameID()
+//        }
+
+        dd($sensorReadingTypeObjects, $updateReadingDTOs);
+
+//        $updateReadingDTOs = $updateSensorBoundaryReadingsService->createSensorUpdateBoundaryReadingsDTOs($sensorReadingTypeObject, $cardData['sensorData']);
+
+//        $sensorTypeIDDTOs = $sensorTypeObjectBuilder->buildSensorIDReadingTypeUpdateDTO($sensorReadingTypeObject);
 
 //        dd($sensorTypeIDDTOs, $updateReadingDTOs);
-        $updateSensorBoundaryReadingsService->setNewBoundaryReadings($sensorTypeObject, $updateReadingDTOs);
+//        $updateSensorBoundaryReadingsService->setNewBoundaryReadings($sensorReadingTypeObject, $updateReadingDTOs);
 
 //        dd($sensorTypeObject->getTempObject(),$sensorTypeObject->getHumidObject());
 //        dd($updateReadingDTOs, $sensorReadingTypeObjectsDTO);
@@ -180,7 +199,7 @@ class CardViewFormController extends AbstractController
 //        } catch (ORMException) {
 //            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
 //        }
-        $sensorReadingTypeErrors = $sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorTypeObject);
+//        $sensorReadingTypeErrors = $sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorReadingTypeObject);
 
         if (empty($sensorReadingTypeErrors)) {
             $cardViewRepository->flush();

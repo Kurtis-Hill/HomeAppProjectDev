@@ -4,7 +4,9 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBound
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
@@ -63,7 +65,8 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         return $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorName)->buildSensorTypeQueryJoinDTO();
     }
 
-    public function findSensorTypeToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): SensorTypeInterface
+    #[ArrayShape([Temperature::class, Humidity::class])]
+    public function findSensorReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array
     {
         $sensorTypeObjectArray = $this->sensorRepository->getSensorTypeObjects(
             $readingTypeJoinQueryDTO,
@@ -72,7 +75,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
             $sensorName,
         );
 
-        return array_filter(array_values($sensorTypeObjectArray))[0];
+        return $sensorTypeObjectArray;
     }
 
     #[Pure]
