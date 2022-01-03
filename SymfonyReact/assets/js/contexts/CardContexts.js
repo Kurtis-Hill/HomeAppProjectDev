@@ -128,7 +128,7 @@ class CardContextProvider extends Component {
     getCardDataForm = async (cardViewID) => {
         this.setState({modalLoading: cardViewID});
         try {
-            const cardDataFormResponse = await axios.get(`${apiURL}card-    /sensor-type/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
+            const cardDataFormResponse = await axios.get(`${apiURL}card-data/sensor-type/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
     
             if (cardDataFormResponse.status === 200) {
                 this.modalContent(cardDataFormResponse.data.payload);

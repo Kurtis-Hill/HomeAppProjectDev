@@ -12,16 +12,7 @@ class DallasSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder im
     {
         $dallas = new Dallas();
         $this->setSensorObject($dallas, $sensor);
-//        try {
-            $this->buildTemperatureSensor($dallas);
-//        } catch (Exception) {
-//            throw new SensorTypeBuilderFailureException(
-//                sprintf(
-//                    SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE,
-//                    $sensor->getSensorTypeObject()->getSensorType()
-//                )
-//            );
-//        }
+        $this->buildTemperatureSensor($dallas);
 
         return $dallas;
     }

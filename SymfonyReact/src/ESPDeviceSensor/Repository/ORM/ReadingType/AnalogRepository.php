@@ -23,4 +23,9 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
     {
         $this->getEntityManager()->flush();
     }
+
+    public function findOneById(int $id)
+    {
+        return $this->findOneBy(['analogID' => $id]);
+    }
 }

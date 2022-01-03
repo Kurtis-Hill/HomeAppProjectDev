@@ -11,7 +11,7 @@ trait ValidatorProcessorTrait
         return count($constraintViolationList) > 0;
     }
 
-    public function returnValidationErrorAsArray(ConstraintViolationListInterface $constraintViolationList): array
+    public function getValidationErrorAsArray(ConstraintViolationListInterface $constraintViolationList): array
     {
         foreach ($constraintViolationList as $error) {
             $validationErrors[] = $error->getMessage();

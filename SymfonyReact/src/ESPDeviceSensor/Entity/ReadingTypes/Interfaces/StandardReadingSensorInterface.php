@@ -32,6 +32,13 @@ interface StandardReadingSensorInterface
 
     public function setUpdatedAt(): void;
 
+    public function getConstRecord(): bool;
+
+    public function setConstRecord(bool $constRecord);
+
+    public function getCurrentReading(): int|float;
+
+    public function isReadingOutOfBounds(): bool;
     /**
      * Sensor Functional Methods
      */

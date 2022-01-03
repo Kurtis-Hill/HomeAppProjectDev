@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\AMQP;
 
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingDTO;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingInterface;
@@ -45,7 +45,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            $sensorData = unserialize($msg->getBody(), ['allowed_classes' => [UpdateSensorReadingDTO::class]]);
+            $sensorData = unserialize($msg->getBody(), ['allowed_classes' => [UpdateSensorCurrentReadingDTO::class]]);
         } catch (Exception $exception) {
             error_log(
                 'Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage(),

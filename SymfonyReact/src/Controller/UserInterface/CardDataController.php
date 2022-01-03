@@ -140,6 +140,8 @@ class CardDataController extends AbstractController
             return $this->sendBadRequestJsonResponse(['Format not expected']);
         }
 
+        dd($cardData);
+
         $cardViewID = $cardData['cardViewID'];
 
         if (empty($cardViewID) || !is_numeric($cardViewID)) {

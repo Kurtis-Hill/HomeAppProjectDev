@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentRead
 
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
@@ -48,11 +48,11 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
     }
 
     /**
-     * @param UpdateSensorReadingDTO $updateSensorReadingDTO
+     * @param UpdateSensorCurrentReadingDTO $updateSensorReadingDTO
      * @param Devices $device
      * @return bool
      */
-    public function handleUpdateSensorCurrentReading(UpdateSensorReadingDTO $updateSensorReadingDTO, Devices $device): bool
+    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingDTO $updateSensorReadingDTO, Devices $device): bool
     {
         try {
             $sensorReadingTypeObjects = $this->getSensorReadingTypeObjects($updateSensorReadingDTO, $device);
@@ -80,7 +80,7 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
         return true;
     }
 
-    private function processSensorDataToUpdate(UpdateSensorReadingDTO $updateSensorReadingDTO, ArrayCollection $sensorReadingTypeObjects): void
+    private function processSensorDataToUpdate(UpdateSensorCurrentReadingDTO $updateSensorReadingDTO, ArrayCollection $sensorReadingTypeObjects): void
     {
         if ($sensorReadingTypeObjects->isEmpty()) {
             throw new ReadingTypeNotSupportedException(

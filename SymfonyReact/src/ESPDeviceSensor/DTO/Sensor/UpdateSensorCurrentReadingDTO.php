@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\DTO\Sensor;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateSensorReadingDTO
+class UpdateSensorCurrentReadingDTO
 {
     private string $sensorType;
 

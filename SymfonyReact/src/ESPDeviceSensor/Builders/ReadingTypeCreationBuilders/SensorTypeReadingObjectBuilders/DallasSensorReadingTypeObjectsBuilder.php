@@ -2,11 +2,13 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\SensorTypeReadingObjectBuilders;
 
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingBoundaryIDDTO;
 use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
@@ -27,5 +29,18 @@ class DallasSensorReadingTypeObjectsBuilder implements SensorReadingTypeObjectsB
                 Temperature::READING_TYPE => Temperature::class,
             ]
         );
+    }
+
+    #[ArrayShape([UpdateSensorReadingBoundaryIDDTO::class])]
+    public function buildSensorIDReadingTypeUpdateDTO(SensorTypeInterface $sensorTypeObject): array
+    {
+        return [
+            [
+                new UpdateSensorReadingBoundaryIDDTO(
+                    Temperature::READING_TYPE,
+                    $sensorTypeObject->getTempObject()->getSensorID(),
+                )
+            ],
+        ];
     }
 }

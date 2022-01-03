@@ -2,6 +2,7 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator;
 
+use App\Common\Traits\ValidatorProcessorTrait;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
@@ -13,6 +14,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorServiceInterface
 {
+    use ValidatorProcessorTrait;
+
     private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
 
     private ValidatorInterface $validator;
@@ -43,6 +46,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
                 $sensorTypeObject->getHumidObject(),
                 $sensorType
             );
+//            dd($sensorTypeObjectErrors, $sensorTypeObject->getHumidObject());
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
             }
@@ -78,22 +82,27 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             null,
             $sensorTypeName
         );
+//        dd($validationErrors, $sensorReadingType);
 
-        if (count($validationErrors) > 0) {
-            foreach ($validationErrors as $error) {
-                $errors[] = $error->getMessage();
-            }
-        } else {
-            $this->persistSensorData($sensorReadingType);
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            return $this->getValidationErrorAsArray($validationErrors);
         }
 
-        return $errors ?? [];
+//        if (count($validationErrors) > 0) {
+//            foreach ($validationErrors as $error) {
+//                $errors[] = $error->getMessage();
+//            }
+//        } else {
+        $this->persistSensorData($sensorReadingType);
+//        }
+
+        return [];
     }
 
     private function persistSensorData(AllSensorReadingTypeInterface $sensorType): void
     {
         $repository = $this->sensorReadingTypeFactory
-            ->getSensorReadingTypeRepository($sensorType::class);
+            ->getSensorReadingTypeRepository($sensorType->getSensorTypeName());
         $repository->persist($sensorType);
         $repository->flush();
     }

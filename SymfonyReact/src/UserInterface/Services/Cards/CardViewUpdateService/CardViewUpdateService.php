@@ -52,7 +52,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         $constraintViolationList = $this->validator->validate($cardView);
 
         if ($this->checkIfErrorsArePresent($constraintViolationList)) {
-            return $this->returnValidationErrorAsArray($constraintViolationList);
+            return $this->getValidationErrorAsArray($constraintViolationList);
         }
 
         return [];

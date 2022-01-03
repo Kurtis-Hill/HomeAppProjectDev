@@ -4,9 +4,11 @@ namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -64,7 +66,11 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $sensorAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
 //dd($sensorAlias);
-//        $readingAlias = $this->prepareReadingJoinsForQuery($sensorTypeJoinDTOs, $qb);
+//        if (!empty($sensorTypeJoinDTOs)) {
+//            $readingAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
+//            $qb->addSelect($readingAlias);
+//        }
+
         $qb->select($sensorAlias)
             ->where(
                 $qb->expr()->eq(Sensor::ALIAS. '.sensorNameID', ':id')
@@ -76,7 +82,31 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $result[0];
     }
 
+    public function getSensorTypeObjects(JoinQueryDTO $joinQueryDTO, int $device, array $readingTypeJoinQueryDTOs, string $sensorsName): array
+    {
+        $qb = $this->createQueryBuilder('sensors');
+
+        $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
+        $readingTypeAlias = $this->prepareSensorJoinsForQuery([$joinQueryDTO], $qb);
+//dd($sensorAlias, $readingTypeAlias);
+        $qb->select($readingTypeAlias)
+            ->innerJoin(
+                Devices::class,
+                'device',
+                Join::WITH,
+                'sensors.deviceNameID = device.deviceNameID'
+            )
+            ->where(
+                $qb->expr()->eq('sensors.sensorName', ':sensorName'),
+                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+            )
+            ->setParameters(['sensorName' => $sensorsName, 'deviceID' => $device]);
+
+        return $qb->getQuery()->getResult();
+    }
+
     #[Deprecated]
+    //can remove after sensor boundry work is done
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('sensors');

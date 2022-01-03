@@ -2,15 +2,12 @@
 
 namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
-use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeNotJoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
-
+//@TODO move these into sensors namesapece
 class DHTQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilderInterface
 {
     #[Pure]
@@ -31,11 +28,5 @@ class DHTQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilderInterface
             Dht::ALIAS,
             $sensorTypeID
         );
-    }
-
-
-    public function buildReadingTypesToInclude(): array
-    {
-
     }
 }

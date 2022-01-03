@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Controller;
 
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Exception;
 use JsonException;
@@ -56,7 +56,7 @@ class ESPSensorUpdateController extends AbstractController
         $errors = [];
         foreach ($requestData['sensorData'] as $sensorUpdateData) {
             try {
-                $updateReadingDTO = new UpdateSensorReadingDTO(
+                $updateReadingDTO = new UpdateSensorCurrentReadingDTO(
                     $requestData['sensorType'],
                     $sensorUpdateData['sensorName'],
                     $sensorUpdateData['currentReadings'],

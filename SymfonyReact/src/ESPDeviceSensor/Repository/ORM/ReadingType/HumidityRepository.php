@@ -23,4 +23,9 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
     {
         $this->getEntityManager()->flush();
     }
+
+    public function findOneById(int $id)
+    {
+        return $this->findOneBy(['humidID' => $id]);
+    }
 }

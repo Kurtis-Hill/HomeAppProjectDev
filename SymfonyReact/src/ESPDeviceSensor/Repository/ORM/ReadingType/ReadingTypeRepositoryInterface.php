@@ -10,4 +10,5 @@ interface ReadingTypeRepositoryInterface
 
     public function flush(): void;
 
+    public function findOneById(int $id);
 }
