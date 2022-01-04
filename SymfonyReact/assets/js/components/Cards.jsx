@@ -35,16 +35,16 @@ const cardRender = () => {
                                 <div className="d-flex text text-uppercase mb-1">Room: {cardData.sensorRoom}</div>
                                 {
                                   cardData.sensorData.length >= 1 
-                                  ? cardData.sensorData.map((sensorData, index) => (
-                                    <React.Fragment key={index}>
-                                        {context.modalLoading !== false && context.modalLoading === cardData.cardViewID ? <div style={{zIndex:"1"}} className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-                                        <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)}>
-                                          {capitalizeFirstLetter(sensorData.readingType)}: {sensorData.currentReading}{sensorData.readingSymbol}
-                                        </div>
-                                        <div className="card-font mb-0 text-gray-400">updated@{sensorData.updatedAt}</div>
-                                      </React.Fragment>
-                                    ))
-                                  : <p>No Sensor Data</p>
+                                    ? cardData.sensorData.map((sensorData, index) => (
+                                      <React.Fragment key={index}>
+                                          {context.modalLoading !== false && context.modalLoading === cardData.cardViewID ? <div style={{zIndex:"1"}} className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
+                                          <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)}>
+                                            {capitalizeFirstLetter(sensorData.readingType)}: {sensorData.currentReading}{sensorData.readingSymbol}
+                                          </div>
+                                          <div className="card-font mb-0 text-gray-400">updated@{sensorData.updatedAt}</div>
+                                        </React.Fragment>
+                                      ))
+                                    : <p>No Sensor Data</p>
                                 }
                               </div>
                               <div className="col-auto">
