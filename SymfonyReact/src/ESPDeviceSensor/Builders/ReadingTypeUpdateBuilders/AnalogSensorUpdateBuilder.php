@@ -22,7 +22,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
     public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
     {
         return new UpdateSensorBoundaryReadingsDTO(
-            $sensorTypeObject->getAnalogObject()->getSensorID(),
+            // $sensorTypeObject->getAnalogObject()->getSensorID(),
             $sensorData['sensorType'],
             $sensorData['highReading'],
             $sensorData['lowReading'],

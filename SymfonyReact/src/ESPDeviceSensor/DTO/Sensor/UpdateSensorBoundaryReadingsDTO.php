@@ -18,22 +18,19 @@ class UpdateSensorBoundaryReadingsDTO
     private bool $constRecord;
 
     public function __construct(
-        int $sensorReadingID,
+        // int $sensorReadingID,
         string $sensorType,
         int|float $highReading,
         int|float $lowReading,
         bool $constRecord
     ) {
-        $this->sensorReadingID = $sensorReadingID;
+        // $this->sensorReadingID = $sensorReadingID;
         $this->sensorType = $sensorType;
         $this->highReading = $highReading;
         $this->lowReading = $lowReading;
         $this->constRecord = $constRecord;
     }
 
-    /**
-     * @return int
-     */
     public function getSensorReadingID(): int
     {
         return $this->sensorReadingID;

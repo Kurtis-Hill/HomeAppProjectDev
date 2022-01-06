@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/v2/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . '/v2/card-data')]
 class CardController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -226,13 +226,13 @@ class CardController extends AbstractController
         );
     }
 
-    /**
-     * @throws ExceptionInterface
-     */
-    private function normalizeResponse(array $cardDTOs): array
-    {
-        $normaliser = [new ObjectNormalizer()];
+    // /**
+    //  * @throws ExceptionInterface
+    //  */
+    // private function normalizeResponse(array $cardDTOs): array
+    // {
+    //     $normaliser = [new ObjectNormalizer()];
 
-        return (new Serializer($normaliser))->normalize($cardDTOs);
-    }
+    //     return (new Serializer($normaliser))->normalize($cardDTOs);
+    // }
 }

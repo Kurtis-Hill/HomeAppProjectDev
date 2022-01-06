@@ -29,13 +29,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use TypeError;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-form-data/sensor-type/')]
 class CardViewFormController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
 
-    #[Route('sensor-type/card-sensor-form', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
+    #[Route('card-sensor-form', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(
         Request $request,
         CardViewRepositoryInterface $cardViewRepository,
@@ -85,7 +87,7 @@ class CardViewFormController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponseData);
     }
 
-    #[Route('sensor-type/update-card-sensor', name: 'card-view-form-v2', methods: [Request::METHOD_POST])]
+    #[Route('update-card-sensor', name: 'card-view-form-v2', methods: [Request::METHOD_POST])]
     public function updateCardView(
         Request $request,
         CardViewRepositoryInterface $cardViewRepository,
@@ -102,11 +104,7 @@ class CardViewFormController extends AbstractController
         }
         $cardViewID = $cardData['cardViewID'];
 
-        if (empty($cardViewID) || !is_numeric($cardViewID)) {
-            return $this->sendBadRequestJsonResponse(['malformed card view id not recognised']);
-        }
-
-        if (empty($cardData['sensorData'])) {
+        if (empty($cardData['sensorData'] || empty($cardViewID) || !is_numeric($cardViewID))) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
         }
 
@@ -142,53 +140,74 @@ class CardViewFormController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        $sensorTypeObjectBuilder = $sensorTypeObjectsBuilderFactory->getReadingTypeObjectBuilders(
-            $cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType()
-        );
-        $sensorReadingTypeObjectsDTO = $sensorTypeObjectBuilder->buildReadingTypeObjectsDTO();
-
-//dd($sensorReadingTypeObjectsDTO);
-//        if ($readingT)
-//        dd($cardViewObject->getSensorNameID(), $cardViewObject);
-        $sensorTypeJoinQueryDTO = $updateSensorBoundaryReadingsService->getReadingTypeObjectJoinQueryDTO($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType());
-//dd($sensorTypeJoinQueryDTO);
-        try {
-            $sensorReadingJoinQueryDTOs = $updateSensorBoundaryReadingsService->getSensorTypeObjectJoinQueryDTO($sensorReadingTypeObjectsDTO);
-        } catch (ReadingTypeBuilderFailureException $e) {
-            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
-        }
-
-        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorAndReadingTypesToUpdateBoundaryReadings(
-            $sensorTypeJoinQueryDTO,
-            $sensorReadingJoinQueryDTOs,
-            $cardViewObject->getSensorNameID()
-                ->getDeviceObject()
-                ->getDeviceNameID(),
-            $cardViewObject->getSensorNameID()->getSensorName(),
-        );
-
-        $sensorObject = array_pop($sensorReadingTypeObjects);
-
-        dd($sensorObject, $sensorReadingTypeObjects);
-        foreach ($sensorReadingTypeObjects as $readingTypeObject) {
-            foreach ($cardData['sensorData'] as $sensorData) {
-                if ($readingTypeObject instanceof StandardReadingSensorInterface) {
-                    if (!$readingTypeObject->getSensorTypeName() === $sensorData['sensorType']) {
-                        continue;
-                    }
-                    $readingTypeObject->setHighReading($sensorData['highReading'] ?? null);
-                    $readingTypeObject->setLowReading($sensorData['lowReading'] ?? null);
-                    $readingTypeObject->setConstRecord($sensorData['constRecord'] ?? null);
-                }
+        $updateSensorBoundaryReadingsDTOs = [];
+        foreach ($cardData['sensorData'] as $updateData) {
+            try {
+                $updateSensorBoundaryReadingsDTOs[] = new UpdateSensorBoundaryReadingsDTO(
+                    $updateData['sensorType'],
+                    $updateData['highReading'],
+                    $updateData['lowReading'],
+                    $updateData['constRecord'],
+                );
+            } catch (TypeError) {
+                $updateReadingDTOErrors[] = $updateData['sensorType'] ?? 'no sensor type provided'  . ' is not a valid sensor type';
             }
         }
 
-        // get the c
-//        if ($sensorReadingTypeObject[0] instanceof AllSensorReadingTypeInterface) {
-////            $sensorTypeObject = $sensorReadingTypeObject[0]->getSensorNameID()
-//        }
+        if (empty($updateSensorBoundaryReadingsDTOs)) {
+            return $this->sendBadRequestJsonResponse(['Could not prepare sensor reading data']);
+        }
 
-        dd($sensorReadingTypeObjects, $updateReadingDTOs);
+        
+        //access a factory to return sensor type
+
+//         $sensorTypeObjectBuilder = $sensorTypeObjectsBuilderFactory->getReadingTypeObjectBuilders(
+//             $cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType()
+//         );
+//         $sensorReadingTypeObjectsDTO = $sensorTypeObjectBuilder->buildReadingTypeObjectsDTO();
+
+// //dd($sensorReadingTypeObjectsDTO);
+// //        if ($readingT)
+// //        dd($cardViewObject->getSensorNameID(), $cardViewObject);
+//         $sensorTypeJoinQueryDTO = $updateSensorBoundaryReadingsService->getReadingTypeObjectJoinQueryDTO($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType());
+// //dd($sensorTypeJoinQueryDTO);
+//         try {
+//             $sensorReadingJoinQueryDTOs = $updateSensorBoundaryReadingsService->getSensorTypeObjectJoinQueryDTO($sensorReadingTypeObjectsDTO);
+//         } catch (ReadingTypeBuilderFailureException $e) {
+//             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+//         }
+
+//         $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorAndReadingTypesToUpdateBoundaryReadings(
+//             $sensorTypeJoinQueryDTO,
+//             $sensorReadingJoinQueryDTOs,
+//             $cardViewObject->getSensorNameID()
+//                 ->getDeviceObject()
+//                 ->getDeviceNameID(),
+//             $cardViewObject->getSensorNameID()->getSensorName(),
+//         );
+
+//         $sensorObject = array_pop($sensorReadingTypeObjects);
+
+//         dd($sensorObject, $sensorReadingTypeObjects);
+//         foreach ($sensorReadingTypeObjects as $readingTypeObject) {
+//             foreach ($cardData['sensorData'] as $sensorData) {
+//                 if ($readingTypeObject instanceof StandardReadingSensorInterface) {
+//                     if (!$readingTypeObject->getSensorTypeName() === $sensorData['sensorType']) {
+//                         continue;
+//                     }
+//                     $readingTypeObject->setHighReading($sensorData['highReading'] ?? null);
+//                     $readingTypeObject->setLowReading($sensorData['lowReading'] ?? null);
+//                     $readingTypeObject->setConstRecord($sensorData['constRecord'] ?? null);
+//                 }
+//             }
+//         }
+
+//         // get the c
+// //        if ($sensorReadingTypeObject[0] instanceof AllSensorReadingTypeInterface) {
+// ////            $sensorTypeObject = $sensorReadingTypeObject[0]->getSensorNameID()
+// //        }
+
+//         dd($sensorReadingTypeObjects, $updateReadingDTOs);
 
 //        $updateReadingDTOs = $updateSensorBoundaryReadingsService->createSensorUpdateBoundaryReadingsDTOs($sensorReadingTypeObject, $cardData['sensorData']);
 
@@ -214,8 +233,10 @@ class CardViewFormController extends AbstractController
             $cardViewRepository->flush();
         }
 
+        if (isset($updateReadingDTOErrors) && !empty($updateReadingDTOErrors)) {
+            return $this->sendMultiStatusJsonResponse([$updateReadingDTOErrors]);
+        }
+
         return $this->sendSuccessfulJsonResponse();
-//        dd($sensorReadingTypeErrors, 'he');
-//        dd($sensorTypeObject, $sensorReadingTypeErrors);
     }
 }
