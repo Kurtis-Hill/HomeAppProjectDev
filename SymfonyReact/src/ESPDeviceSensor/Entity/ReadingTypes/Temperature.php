@@ -16,7 +16,9 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * Temp
@@ -202,4 +204,10 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     {
         return self::class;
     }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+//        $resolver->
+    }
+
 }

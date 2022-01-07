@@ -10,6 +10,9 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorServiceInterface
@@ -28,7 +31,6 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 
     public function validateSensorTypeObject(SensorTypeInterface $sensorTypeObject): array
     {
-//        dd($sensorTypeObject);
         $sensorType = $sensorTypeObject->getSensorTypeName();
 
         $errors = [];
@@ -39,6 +41,8 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             );
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
+            } else {
+                $this->saveSensorData($sensorTypeObject->getTempObject());
             }
         }
         if ($sensorTypeObject instanceof HumiditySensorTypeInterface) {
@@ -46,9 +50,10 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
                 $sensorTypeObject->getHumidObject(),
                 $sensorType
             );
-//            dd($sensorTypeObjectErrors, $sensorTypeObject->getHumidObject());
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
+            } else {
+                $this->saveSensorData($sensorTypeObject->getHumidObject());
             }
         }
         if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
@@ -58,6 +63,8 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             );
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
+            } else {
+                $this->saveSensorData($sensorTypeObject->getLatitudeObject());
             }
         }
         if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
@@ -67,50 +74,73 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             );
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
+            } else {
+                $this->saveSensorData($sensorTypeObject->getAnalogObject());
             }
         }
 
         return $errors;
     }
     
+    #[ArrayShape(['string'])]
     public function validateSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeObject, string $sensorType): array
     {
-        $validationErrors = $this->validator->validate($sensorReadingTypeObject, null, $sensorType);
-//dd($validationErrors, $sensorReadingTypeObject, $sensorType);
-        return $this->getValidationErrorAsArray($validationErrors);
+        $validationErrors = $this->performSensorReadingTypeValidation($sensorReadingTypeObject, $sensorType);
+
+        if (empty($validationErrors)) {
+            $this->saveSensorData($sensorReadingTypeObject);
+        }
+
+        return $validationErrors;
     }
 
     private function performSensorReadingTypeValidation(
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null
     ): array {
+        $highLowCheck = $this->highLowCheckConstraint();
+
         $validationErrors = $this->validator->validate(
             $sensorReadingType,
-            null,
+            $highLowCheck,
             $sensorTypeName
         );
-//        dd($validationErrors, $sensorReadingType);
 
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->getValidationErrorAsArray($validationErrors);
         }
 
-//        if (count($validationErrors) > 0) {
-//            foreach ($validationErrors as $error) {
-//                $errors[] = $error->getMessage();
-//            }
-//        } else {
-        $this->persistSensorData($sensorReadingType);
-//        }
+        $this->saveSensorData($sensorReadingType);
 
         return [];
     }
 
-    private function persistSensorData(AllSensorReadingTypeInterface $sensorType): void
+    private function saveSensorData(AllSensorReadingTypeInterface $sensorType): void
     {
         $repository = $this->sensorReadingTypeFactory
             ->getSensorReadingTypeRepository($sensorType->getSensorTypeName());
+
         $repository->persist($sensorType);
         $repository->flush();
+    }
+
+    private function highLowCheckConstraint(): Callback
+    {
+        return new Callback(function(int|float $highReading, ExecutionContextInterface $context) {
+            $lowReading = $context->getRoot()->getData()->getLowReading();
+            $readingType = $context->getRoot()->getData();
+
+            if ($readingType instanceof AllSensorReadingTypeInterface) {
+                if ($highReading < $lowReading) {
+                    $context
+                        ->buildViolation('High reading for ' . $readingType->getSensorTypeName() . ' cannot be lower than low reading')
+                        ->addViolation();
+                }
+            } else {
+                $context
+                    ->buildViolation('App needs updating to support this sensor type')
+                    ->addViolation();
+            }
+        });
     }
 }
