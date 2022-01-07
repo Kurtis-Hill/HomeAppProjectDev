@@ -64,12 +64,12 @@ class ReadingTypeCreationServiceTwo implements SensorReadingTypeCreationInterfac
                 $sensorType
             );
 
-        return $sensorReadingCreationService->buildReadingTypeObjects($sensor);
+        return $sensorReadingCreationService->buildNewReadingTypeObjects($sensor);
     }
 
     private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array
     {
-        return $this->sensorReadingTypesValidatorService->validateReadingTypeObjects($sensorTypeObject);
+        return $this->sensorReadingTypesValidatorService->validateSensorTypeObject($sensorTypeObject);
     }
 
     /**

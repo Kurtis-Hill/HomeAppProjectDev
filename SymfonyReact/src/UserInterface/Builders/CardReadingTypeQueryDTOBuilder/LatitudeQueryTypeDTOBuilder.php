@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\Sensor;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
-class LatitudeQueryTypeDTOBuilder implements CardReadingTypeQueryDTOBuilderInterface
+class LatitudeQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
 {
     #[Pure]
     public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO

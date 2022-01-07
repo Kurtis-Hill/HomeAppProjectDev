@@ -21,16 +21,14 @@ use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . '/v2/card-data')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/')]
 class CardController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -56,7 +54,7 @@ class CardController extends AbstractController
     }
 
     #[Route('device-cards', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
-    public function deviceCards(Request $request, DeviceRepositoryInterface $deviceRepository): Response
+    public function deviceCards(Request $request, DeviceRepositoryInterface $deviceRepository): JsonResponse
     {
         $deviceId = $request->get('device-id');
 
@@ -166,8 +164,8 @@ class CardController extends AbstractController
         return $this->sendSuccessfulJsonResponse($responseData);
     }
 
-    #[Route('index', name: 'index-card-data-v2', methods: [Request::METHOD_GET])]
-    public function indexCards(Request $request)
+    #[Route('index', name: 'index-card-data-v2-boom', methods: [Request::METHOD_GET])]
+    public function indexCards(Request $request): JsonResponse
     {
         try {
             $cardDatePreFilterDTO = $this->prepareFilters($request);
@@ -186,7 +184,7 @@ class CardController extends AbstractController
 
         try {
             $cardDTOs = $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);
-        } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
+        } catch (SensorTypeBuilderFailureException | CardTypeNotRecognisedException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 

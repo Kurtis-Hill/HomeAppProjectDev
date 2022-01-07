@@ -6,12 +6,14 @@ use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\ESPDeviceSensor\Factories\SensorTypeObjectsBuilderFactory;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\ReadingTypeQueryDTOBuilderInterface;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Factories\CardQueryBuilderFactories\ReadingTypeQueryFactory;
 use App\UserInterface\Factories\CardQueryBuilderFactories\SensorTypeQueryFactory;
@@ -47,6 +49,20 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
         $this->sensorReadingTypeFactory = $sensorReadingTypeFactory;
 //        $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
+    }
+
+    public function getReadingTypeQueryDTOBuilder(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): ReadingTypeQueryDTOBuilderInterface
+    {
+        return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getSensorType());
+    }
+
+    public function updateSensorBoundaryReading(
+        StandardReadingSensorInterface $standardReadingSensor,
+        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+    ): void {
+        $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
+        $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
+        $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
     }
 
     #[ArrayShape([JoinQueryDTO::class])]

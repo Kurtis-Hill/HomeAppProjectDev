@@ -5,7 +5,7 @@ namespace App\UserInterface\DTO\CardDataQueryDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class CardSensorTypeNotJoinQueryDTO
+class SensorTypeNotJoinQueryDTO
 {
     private string $alias;
 

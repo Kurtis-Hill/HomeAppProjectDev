@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\AnalogQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\CardReadingTypeQueryDTOBuilderInterface;
+use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\ReadingTypeQueryDTOBuilderInterface;
 use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\HumidityQueryTypeDTOBuilder;
 use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\LatitudeQueryTypeDTOBuilder;
 use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\TemperatureQueryTypeDTOBuilder;
@@ -38,7 +38,7 @@ class ReadingTypeQueryFactory
     /**
      * @throws ReadingTypeBuilderFailureException
      */
-    public function getReadingTypeQueryDTOBuilder(string $readingType): CardReadingTypeQueryDTOBuilderInterface
+    public function getReadingTypeQueryDTOBuilder(string $readingType): ReadingTypeQueryDTOBuilderInterface
     {
         return match ($readingType) {
             Temperature::READING_TYPE => $this->temperatureQueryTypeDTOBuilder,

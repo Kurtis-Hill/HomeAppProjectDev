@@ -5,7 +5,7 @@ namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardSensorTypeNotJoinQueryDTO;
+use App\UserInterface\DTO\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 //@TODO move these into sensors namesapece
 class DHTQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilderInterface
@@ -22,9 +22,9 @@ class DHTQueryTypeDTOBuilder implements CardSensorTypeQueryDTOBuilderInterface
     }
 
     #[Pure]
-    public function buildSensorTypeQueryExcludeDTO(int $sensorTypeID): CardSensorTypeNotJoinQueryDTO
+    public function buildSensorTypeQueryExcludeDTO(int $sensorTypeID): SensorTypeNotJoinQueryDTO
     {
-        return new CardSensorTypeNotJoinQueryDTO(
+        return new SensorTypeNotJoinQueryDTO(
             Dht::ALIAS,
             $sensorTypeID
         );

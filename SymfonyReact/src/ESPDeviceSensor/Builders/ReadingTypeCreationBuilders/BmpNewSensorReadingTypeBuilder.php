@@ -6,9 +6,9 @@ use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-class BmpSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements SensorReadingTypeBuilderInterface
+class BmpNewSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildReadingTypeObjects(Sensor $sensor): SensorTypeInterface
+    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $bmp = new Bmp();
         $this->setSensorObject($bmp, $sensor);

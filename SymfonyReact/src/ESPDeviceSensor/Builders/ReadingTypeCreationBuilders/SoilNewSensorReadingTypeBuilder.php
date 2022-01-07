@@ -9,9 +9,9 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use SebastianBergmann\Comparator\Exception;
 
-class SoilSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements SensorReadingTypeBuilderInterface
+class SoilNewSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildReadingTypeObjects(Sensor $sensor): SensorTypeInterface
+    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $soil = new Soil();
         $this->setSensorObject($soil, $sensor);

@@ -8,7 +8,7 @@ use App\ESPDeviceSensor\Entity\Sensor;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
-class TemperatureQueryTypeDTOBuilder implements CardReadingTypeQueryDTOBuilderInterface
+class TemperatureQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
 {
     #[Pure]
     public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO

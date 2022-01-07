@@ -66,7 +66,7 @@ class CardContextProvider extends Component {
 
 
     setURL = () => {
-        const cardAPI = apiURL+'card-data/v2/';
+        const cardAPI = apiURL+'card-data/';
         if (window.location.pathname === `${webappURL}index`) {
             const indexURL = `${cardAPI}index?reading-types[]=temperature`;
             this.setState({url:  indexURL});
@@ -103,7 +103,7 @@ class CardContextProvider extends Component {
                 ? this.setState({cardData: response.data.payload})
                 : this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});    
         } catch (error) {
-            if (error.data == undefined) {
+            if (error.data === undefined) {
                 this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
             }
             else {
@@ -128,7 +128,7 @@ class CardContextProvider extends Component {
     getCardDataForm = async (cardViewID) => {
         this.setState({modalLoading: cardViewID});
         try {
-            const cardDataFormResponse = await axios.get(`${apiURL}card-data/sensor-type/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
+            const cardDataFormResponse = await axios.get(`${apiURL}card-form-data/sensor-type/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
     
             if (cardDataFormResponse.status === 200) {
                 this.modalContent(cardDataFormResponse.data.payload);
@@ -249,11 +249,11 @@ class CardContextProvider extends Component {
             'cardViewState' : this.state.modalContent.currentViewState.cardStateID,
             'cardIcon' : this.state.modalContent.cardIcon.iconID,
             'sensorData' : this.state.modalContent.sensorData,
-            'constRecrod' : this.state.modalContent.constRecord,
+            // 'constRecrod' : this.state.modalContent.constRecord,
         };
 
         try {
-            const formSubmissionResult = await axios.put(apiURL+'card-data/update-card-view', jsonFormData, getAPIHeader());
+            const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', jsonFormData, getAPIHeader());
 
             if (formSubmissionResult.status === 204) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})

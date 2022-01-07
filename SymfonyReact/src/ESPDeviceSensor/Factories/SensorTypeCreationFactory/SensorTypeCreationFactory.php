@@ -2,11 +2,11 @@
 
 namespace App\ESPDeviceSensor\Factories\SensorTypeCreationFactory;
 
-use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\BmpSensorReadingTypeBuilder;
-use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\DallasSensorReadingTypeBuilder;
-use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\DhtSensorReadingTypeBuilder;
-use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\SensorReadingTypeBuilderInterface;
-use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\SoilSensorReadingTypeBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\BmpNewSensorReadingTypeBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\DallasNewSensorReadingTypeBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\DhtNewSensorReadingTypeBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\NewSensorReadingTypeBuilderInterface;
+use App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\SoilNewSensorReadingTypeBuilder;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
@@ -15,19 +15,19 @@ use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 
 class SensorTypeCreationFactory
 {
-    private BmpSensorReadingTypeBuilder $bmpSensorReadingTypeBuilder;
+    private BmpNewSensorReadingTypeBuilder $bmpSensorReadingTypeBuilder;
 
-    private SoilSensorReadingTypeBuilder $soilSensorReadingTypeBuilder;
+    private SoilNewSensorReadingTypeBuilder $soilSensorReadingTypeBuilder;
 
-    private DhtSensorReadingTypeBuilder $dhtSensorReadingTypeBuilder;
+    private DhtNewSensorReadingTypeBuilder $dhtSensorReadingTypeBuilder;
 
-    private DallasSensorReadingTypeBuilder $dallasSensorReadingTypeBuilder;
+    private DallasNewSensorReadingTypeBuilder $dallasSensorReadingTypeBuilder;
 
     public function __construct(
-        BmpSensorReadingTypeBuilder $bmpSensorReadingTypeBuilder,
-        SoilSensorReadingTypeBuilder $soilSensorReadingTypeBuilder,
-        DallasSensorReadingTypeBuilder $dallasSensorReadingTypeBuilder,
-        DhtSensorReadingTypeBuilder $dhtSensorReadingTypeBuilder,
+        BmpNewSensorReadingTypeBuilder $bmpSensorReadingTypeBuilder,
+        SoilNewSensorReadingTypeBuilder $soilSensorReadingTypeBuilder,
+        DallasNewSensorReadingTypeBuilder $dallasSensorReadingTypeBuilder,
+        DhtNewSensorReadingTypeBuilder $dhtSensorReadingTypeBuilder,
     ) {
         $this->bmpSensorReadingTypeBuilder = $bmpSensorReadingTypeBuilder;
         $this->soilSensorReadingTypeBuilder = $soilSensorReadingTypeBuilder;
@@ -38,7 +38,7 @@ class SensorTypeCreationFactory
     /**
      * @throws SensorTypeException
      */
-    public function getSensorReadingTypeBuilder(string $sensorType): SensorReadingTypeBuilderInterface
+    public function getSensorReadingTypeBuilder(string $sensorType): NewSensorReadingTypeBuilderInterface
     {
         return match ($sensorType) {
             Bmp::NAME => $this->bmpSensorReadingTypeBuilder,

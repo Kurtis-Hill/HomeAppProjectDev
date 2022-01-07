@@ -8,9 +8,9 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use Exception;
 
-class DhtSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements SensorReadingTypeBuilderInterface
+class DhtNewSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildReadingTypeObjects(Sensor $sensor): SensorTypeInterface
+    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $dht = new Dht();
         $this->setSensorObject($dht, $sensor);

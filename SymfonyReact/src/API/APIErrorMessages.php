@@ -17,4 +17,6 @@ class APIErrorMessages
     public const QUERY_FAILURE = '%s Query failure';
 
     public const FAILED_TO_PREPARE_DATA = 'Failed to prepare data';
+
+    public const FORMAT_NOT_SUPPORTED = 'Format not supported';
 }

@@ -7,11 +7,11 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 
-interface SensorReadingTypeBuilderInterface
+interface NewSensorReadingTypeBuilderInterface
 {
     /**
      * @throws SensorTypeBuilderFailureException
      * @throws SensorTypeException
      */
-    public function buildReadingTypeObjects(Sensor $sensor): SensorTypeInterface;
+    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface;
 }

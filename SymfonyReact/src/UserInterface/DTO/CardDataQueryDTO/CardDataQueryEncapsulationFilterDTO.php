@@ -29,7 +29,7 @@ class CardDataQueryEncapsulationFilterDTO
     }
 
 
-    #[ArrayShape([CardSensorTypeNotJoinQueryDTO::class])]
+    #[ArrayShape([SensorTypeNotJoinQueryDTO::class])]
     public function getSensorTypesToExclude(): array
     {
         return $this->sensorTypesToExclude;
