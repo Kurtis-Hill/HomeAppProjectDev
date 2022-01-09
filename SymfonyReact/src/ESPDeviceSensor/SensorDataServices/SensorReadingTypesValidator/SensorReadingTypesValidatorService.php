@@ -3,19 +3,20 @@
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator;
 
 use App\Common\Traits\ValidatorProcessorTrait;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorServiceInterface
 {
@@ -80,7 +81,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
                 $this->saveSensorData($sensorTypeObject->getAnalogObject());
             }
         }
-//dd($errors, 'er');
+
         return $errors;
     }
     
@@ -88,7 +89,6 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
     public function validateSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeObject, string $sensorType): array
     {
         $validationErrors = $this->performSensorReadingTypeValidation($sensorReadingTypeObject, $sensorType);
-//dd($validationErrors);
         if (empty($validationErrors)) {
             $this->saveSensorData($sensorReadingTypeObject);
         }
@@ -100,20 +100,19 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null
     ): array {
-//        $highLowCheck = $this->highLowCheckConstraint();
+        if ($sensorReadingType instanceof Humidity || $sensorReadingType instanceof Latitude) {
+            $validationErrors = $this->validator->validate(
+                $sensorReadingType,
+            );
+        } else {
+            $validationErrors = $this->validator->validate(
+                $sensorReadingType,
+                null,
+                $sensorTypeName
+            );
+        }
 
-//        dd($highLowCheck);
-        $validationErrors = $this->validator->validate(
-            $sensorReadingType,
-//            [$highLowCheck],
-            null,
-            $sensorTypeName
-        );
-
-//        dd('here', $validationErrors, $sensorReadingType);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
-//            dd('[resert');
-//            dd($this->getValidationErrorAsArray($validationErrors));
             return $this->getValidationErrorAsArray($validationErrors);
         }
 
@@ -131,27 +130,42 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         $repository->flush();
     }
 
-    public function validate($object, ExecutionContextInterface $context, $payload)
+    #[Assert\Callback]
+    public static function validate(
+//        $object,
+        ExecutionContextInterface $context,
+        $payload,
+    )
     {
+        if ($object instanceof StandardReadingSensorInterface) {
+            if ($object->getHighReading() < $object->getLowReading()) {
+                $context
+                    ->buildViolation('High reading for ' . $object->getSensorTypeName() . ' cannot be lower than low reading')
+                    ->addViolation();
+            } else {
+                $context
+                    ->buildViolation('App needs updating to support this sensor type')
+                    ->addViolation();
+            }
+        }
 
-//        dd($object, $payload);
-        return new Callback(function($object, ExecutionContextInterface $context) {
-//        dd('s');
-            $lowReading = $context->getRoot()->getData()->getLowReading();
-            $highReading = $context->getRoot()->getData()->getHighReading();
-            $readingType = $context->getRoot()->getData();
-
+//        dd('as');
+//        return new Callback(function($object, ExecutionContextInterface $context) {
+//            $lowReading = $context->getRoot()->getData()->getLowReading();
+//            $highReading = $context->getRoot()->getData()->getHighReading();
+//            $readingType = $context->getRoot()->getData();
+//
 //            if ($readingType instanceof StandardReadingSensorInterface) {
-                if ($highReading < $lowReading) {
-                    $context
-                        ->buildViolation('High reading for ' . $readingType->getSensorTypeName() . ' cannot be lower than low reading')
-                        ->addViolation();
-                }
+//                if ($highReading < $lowReading) {
+//                    $context
+//                        ->buildViolation('High reading for ' . $readingType->getSensorTypeName() . ' cannot be lower than low reading')
+//                        ->addViolation();
+//                }
 //            } else {
 //                $context
 //                    ->buildViolation('App needs updating to support this sensor type')
 //                    ->addViolation();
 //            }
-        });
+//        });
     }
 }

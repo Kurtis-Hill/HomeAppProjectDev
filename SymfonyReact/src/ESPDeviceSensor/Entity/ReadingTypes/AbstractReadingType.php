@@ -2,6 +2,9 @@
 
 namespace App\ESPDeviceSensor\Entity\ReadingTypes;
 
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
 abstract class AbstractReadingType
 {
     abstract public function getCurrentReading(): int|float;
@@ -24,5 +27,15 @@ abstract class AbstractReadingType
     public function getMeasurementDifferenceLowReading(): int|float
     {
         return $this->getLowReading() - $this->getCurrentReading();
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        if ($this->getHighReading() < $this->getLowReading()) {
+            $context
+                ->buildViolation('High reading for ' . $this->getSensorTypeName() . ' cannot be lower than low reading')
+                ->addViolation();
+        }
     }
 }

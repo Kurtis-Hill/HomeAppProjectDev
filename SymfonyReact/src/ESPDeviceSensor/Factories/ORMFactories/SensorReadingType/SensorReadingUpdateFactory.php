@@ -40,7 +40,6 @@ class SensorReadingUpdateFactory
      */
     public function getReadingTypeUpdateBuilder(string $readingType)
     {
-//        dd($readingType);
         return match ($readingType) {
             Temperature::READING_TYPE => $this->temperatureSensorUpdateBuilder,
             Humidity::READING_TYPE => $this->humiditySensorUpdateBuilder,

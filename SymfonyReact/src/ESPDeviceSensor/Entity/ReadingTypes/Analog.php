@@ -6,12 +6,16 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="analog_ibfk_3", columns={"sensorNameID"})})
@@ -162,5 +166,15 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     public function getSensorReadingTypeObjectString(): string
     {
         return self::class;
+    }
+
+    #[Assert\Callback(groups: [Soil::NAME])]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        if ($this->getHighReading() < $this->getLowReading()) {
+            $context
+                ->buildViolation('High reading for ' . $this->getSensorTypeName() . ' cannot be lower than low reading')
+                ->addViolation();
+        }
     }
 }

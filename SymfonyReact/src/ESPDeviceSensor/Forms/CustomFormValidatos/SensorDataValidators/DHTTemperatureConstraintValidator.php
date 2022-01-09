@@ -14,6 +14,7 @@ class DHTTemperatureConstraintValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint): void
     {
 //        $constraint->payloa
+//        dd('asd');
         if (!$constraint instanceof DHTTemperatureConstraint) {
             throw new UnexpectedTypeException($constraint, DHTTemperatureConstraint::class);
         }

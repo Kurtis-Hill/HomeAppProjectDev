@@ -13,6 +13,7 @@ use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorRea
 use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\ESPDeviceSensor\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
+use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use http\Exception\UnexpectedValueException;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
@@ -21,9 +22,9 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
 {
     private ReadingTypeQueryFactory $readingTypeQueryFactory;
 
-    private SensorRepositoryInterface $sensorRepository;
+    private SensorTypeQueryFactory $sensorTypeQueryFactory;
 
-    private SensorTypeQueryFactory $sensorTypeQueryFactory;#
+    private SensorRepositoryInterface $sensorRepository;
 
     private SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidatorService;
 
@@ -32,14 +33,16 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         SensorTypeQueryFactory $sensorTypeQuery,
         SensorRepositoryInterface $sensorRepository,
         SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidatorService,
-    )
-    {
+    ) {
         $this->readingTypeQueryFactory = $readingTypeQuery;
         $this->sensorRepository = $sensorRepository;
         $this->sensorTypeQueryFactory = $sensorTypeQuery;
         $this->sensorReadingTypesValidatorService = $sensorReadingTypesValidatorService;
     }
 
+    /**
+     * @throws ReadingTypeBuilderFailureException
+     */
     private function getReadingTypeQueryDTOBuilder(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): ReadingTypeQueryDTOBuilderInterface
     {
         return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getSensorType());
@@ -48,7 +51,8 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     private function updateSensorBoundaryReading(
         StandardReadingSensorInterface $standardReadingSensor,
         UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void {
+    ): void
+    {
         $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
         $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
         $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
@@ -60,16 +64,19 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     }
 
     #[ArrayShape([Temperature::class, Humidity::class])]
-    public function findSensorAndReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array
+    public function findSensorAndReadingTypesToUpdateBoundaryReadings(
+        JoinQueryDTO $readingTypeJoinQueryDTO,
+        array $readingTypeObjectsJoinDTOs,
+        int $deviceID,
+        string $sensorName
+    ): array
     {
-        $sensorTypeObjectArray = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+        return $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
             $readingTypeJoinQueryDTO,
             $deviceID,
             $readingTypeObjectsJoinDTOs,
             $sensorName,
         );
-
-        return $sensorTypeObjectArray;
     }
 
     #[Pure]
@@ -83,6 +90,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         );
     }
 
+    #[ArrayShape(["errors"])]
     public function processBoundaryReadingDTOs(array $updateSensorBoundaryReadingsDTOs, array $readingTypeObjects, string $sensorTypeName): array
     {
         $validationErrors = [];
@@ -117,7 +125,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
             }
 
         }
-
+dd($validationErrors);
         return $validationErrors ?? [];
     }
 

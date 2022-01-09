@@ -12,15 +12,13 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorService;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Temp
@@ -28,7 +26,6 @@ use Symfony\Component\OptionsResolver\Options;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\TemperatureRepository")
  */
-#[Assert\Callback([SensorReadingTypesValidatorServiceInterface::class, 'validate'])]
 class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'temperature';
@@ -77,7 +74,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
         ),
-        Assert\Callback([SensorReadingTypesValidatorServiceInterface::class, 'validate'])
+        Assert\Callback([self::class, 'validate'])
     ]
     private float $highTemp = 50;
 
@@ -93,7 +90,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
-        )
+        ),
     ]
     private float $lowTemp = 10;
 
@@ -209,9 +206,13 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         return self::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME])]
+    public function validate(ExecutionContextInterface $context): void
     {
-//        $resolver->
+        if ($this->getHighReading() < $this->getLowReading()) {
+            $context
+                ->buildViolation('High reading for ' . $this->getSensorTypeName() . ' cannot be lower than low reading')
+                ->addViolation();
+        }
     }
-
 }
