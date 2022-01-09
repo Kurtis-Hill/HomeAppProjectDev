@@ -12,6 +12,8 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorService;
+use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,6 +28,7 @@ use Symfony\Component\OptionsResolver\Options;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\TemperatureRepository")
  */
+#[Assert\Callback([SensorReadingTypesValidatorServiceInterface::class, 'validate'])]
 class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'temperature';
@@ -73,7 +76,8 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
-        )
+        ),
+        Assert\Callback([SensorReadingTypesValidatorServiceInterface::class, 'validate'])
     ]
     private float $highTemp = 50;
 

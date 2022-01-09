@@ -48,7 +48,7 @@ class NavBarService implements NavBarServiceInterface
         if (!$user instanceof User) {
             throw new WrongUserTypeException(WrongUserTypeException::WRONG_USER_TYPE_MESSAGE);
         }
-        $usersGroupNameIds = $user->getGroupNameIDs();
+        $usersGroupNameIds = $user->getGroupNameAndIds();
 
         try {
             $userRooms = $this->getRoomData($user);

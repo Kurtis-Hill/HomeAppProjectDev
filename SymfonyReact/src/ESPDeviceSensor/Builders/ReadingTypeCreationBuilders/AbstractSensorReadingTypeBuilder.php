@@ -40,7 +40,7 @@ class AbstractSensorReadingTypeBuilder
 
         $temperatureSensorType->setTempObject($temperatureSensor);
 
-        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($temperatureSensor::class);
+        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($temperatureSensor->getSensorTypeName());
         $readingTypeRepository->persist($temperatureSensor);
     }
 
@@ -60,7 +60,7 @@ class AbstractSensorReadingTypeBuilder
 
         $humiditySensorType->setHumidObject($humiditySensor);
 
-        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($humiditySensor::class);
+        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($humiditySensor->getSensorTypeName());
         $readingTypeRepository->persist($humiditySensor);
     }
 
@@ -80,7 +80,7 @@ class AbstractSensorReadingTypeBuilder
 
         $latitudeSensorType->setLatitudeObject($latitudeSensor);
 
-        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($latitudeSensor::class);
+        $readingTypeRepository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository($latitudeSensor->getSensorTypeName());
         $readingTypeRepository->persist($latitudeSensor);
     }
 

@@ -13,8 +13,12 @@ services:
       - '9000'
     working_dir: /var/www/html
     environment:
-      # - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6' #@TODO dont need i think
-      - 'APP_ENV=${APP_ENV}'
+      APP_ENV: ${APP_ENV}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl:r,delegated
@@ -36,10 +40,6 @@ services:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'  # DEV  
     environment:
-#      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
-#      MYSQL_USER : '${MYSQL_USER}'
-#      MYSQL_PASSWORD: '${MYSQL_PASS}'
-#      MYSQL_DATABASE: '${MYSQL_DB}'
       MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
       MARIADB_USER : '${MARIADB_USER}'
       MARIADB_PASSWORD: '${MARIADB_PASSWORD}'
@@ -80,9 +80,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    # volumes:
-    #     - ./rabbitmq/dataclear/:/var/lib/rabbitmq
-    #     - ./rabbitmq/log/:/var/log/rabbitmq
+    volumes:
+        - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
     networks:
       - HomeAppProjectNetwork
 

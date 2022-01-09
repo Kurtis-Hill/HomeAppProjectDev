@@ -19,7 +19,6 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
-use App\Form\FormMessages;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -91,25 +90,25 @@ class AddNewSensorControllerTest extends WebTestCase
     
     public function newSensorSimpleDataProvider(): Generator
     {
-//        yield [
-//            'sensor' => SensorType::DHT_SENSOR,
-//            'sensorName' => 'dhtTest'
-//        ];
-//
-//        yield [
-//            'sensor' => SensorType::BMP_SENSOR,
-//            'sensorName' => 'bmpTest'
-//        ];
+        yield [
+            'sensor' => SensorType::DHT_SENSOR,
+            'sensorName' => 'dhtTest'
+        ];
+
+        yield [
+            'sensor' => SensorType::BMP_SENSOR,
+            'sensorName' => 'bmpTest'
+        ];
 
         yield [
             'sensor' => SensorType::SOIL_SENSOR,
             'sensorName' => 'soilTest'
         ];
 
-//        yield [
-//            'sensor' => SensorType::DALLAS_TEMPERATURE,
-//            'sensorName' => 'dallasTest'
-//        ];
+        yield [
+            'sensor' => SensorType::DALLAS_TEMPERATURE,
+            'sensorName' => 'dallasTest'
+        ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
@@ -176,9 +175,7 @@ class AddNewSensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
-//dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//        dd($responseData);
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -323,7 +320,9 @@ class AddNewSensorControllerTest extends WebTestCase
             sprintf(
                 DuplicateSensorException::MESSAGE,
                 $sensor->getSensorName(),
-            ), $responseData['errors'][0]);
+            ),
+            $responseData['errors'][0]
+        );
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

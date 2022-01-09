@@ -86,25 +86,36 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     public function processBoundaryReadingDTOs(array $updateSensorBoundaryReadingsDTOs, array $readingTypeObjects, string $sensorTypeName): array
     {
         $validationErrors = [];
+
         foreach ($updateSensorBoundaryReadingsDTOs as $updateSensorBoundaryReadingsDTO) {
-            if (!$updateSensorBoundaryReadingsDTO instanceof UpdateSensorBoundaryReadingsDTO) {
-                throw new UnexpectedValueException('You have not passed the correct DTO for this service to process request');
-            }
-            foreach ($readingTypeObjects as $sensorReadingTypeObject) {
-                if (!$sensorReadingTypeObject instanceof StandardReadingSensorInterface || !$sensorReadingTypeObject instanceof AllSensorReadingTypeInterface) {
-                    throw new UnexpectedValueException('You have not passed the correct sensor reading type for this service to process request');
+            try {
+                if (!$updateSensorBoundaryReadingsDTO instanceof UpdateSensorBoundaryReadingsDTO) {
+                    throw new UnexpectedValueException('You have not passed the correct DTO for this service to process request');
                 }
-                if ($sensorReadingTypeObject->getSensorTypeName() === $updateSensorBoundaryReadingsDTO->getSensorType()) {
-                    $this->updateSensorBoundaryReading(
-                        $sensorReadingTypeObject,
-                        $updateSensorBoundaryReadingsDTO
-                    );
-                    $validationErrors[] = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
-                        $sensorReadingTypeObject,
-                        $sensorTypeName
-                    );
+                foreach ($readingTypeObjects as $sensorReadingTypeObject) {
+                    if (!$sensorReadingTypeObject instanceof StandardReadingSensorInterface || !$sensorReadingTypeObject instanceof AllSensorReadingTypeInterface) {
+                        throw new UnexpectedValueException('You have not passed the correct sensor reading type for this service to process request');
+                    }
+                    if ($sensorReadingTypeObject->getSensorTypeName() === $updateSensorBoundaryReadingsDTO->getSensorType()) {
+                        $this->updateSensorBoundaryReading(
+                            $sensorReadingTypeObject,
+                            $updateSensorBoundaryReadingsDTO
+                        );
+                        $validationError = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
+                            $sensorReadingTypeObject,
+                            $sensorTypeName
+                        );
+                        if (!empty($validationError)) {
+                            foreach ($validationError as $error) {
+                                $validationErrors[] = $error;
+                            }
+                        }
+                    }
                 }
+            } catch (UnexpectedValueException $e) {
+                $validationErrors[] = $e->getMessage();
             }
+
         }
 
         return $validationErrors ?? [];

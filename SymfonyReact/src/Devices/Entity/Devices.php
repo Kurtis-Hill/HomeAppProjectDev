@@ -60,7 +60,7 @@ class Devices implements UserInterface, APISensorUserInterface
      *
      * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
-    #[Assert\NotBlank(message: 'Password should not be blank')]
+//    #[Assert\NotBlank(message: 'Password should not be blank')]
     private string $password;
 
     /**

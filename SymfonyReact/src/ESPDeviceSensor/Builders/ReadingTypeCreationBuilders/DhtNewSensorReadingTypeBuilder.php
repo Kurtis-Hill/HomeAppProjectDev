@@ -14,20 +14,20 @@ class DhtNewSensorReadingTypeBuilder extends AbstractSensorReadingTypeBuilder im
     {
         $dht = new Dht();
         $this->setSensorObject($dht, $sensor);
-        try {
+//        try {
             $this->buildTemperatureSensor($dht);
             $this->buildHumiditySensor($dht);
 
 //            $this->sensorReadingTypeFactory->flush();
-        } catch (Exception $e) {
-//            dd($e);
-            throw new SensorTypeBuilderFailureException(
-                sprintf(
-                    SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE,
-                    $sensor->getSensorTypeObject()->getSensorType()
-                )
-            );
-        }
+//        } catch (Exception $e) {
+////            dd($e);
+//            throw new SensorTypeBuilderFailureException(
+//                sprintf(
+//                    SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE,
+//                    $sensor->getSensorTypeObject()->getSensorType()
+//                )
+//            );
+//        }
 
         return $dht;
     }

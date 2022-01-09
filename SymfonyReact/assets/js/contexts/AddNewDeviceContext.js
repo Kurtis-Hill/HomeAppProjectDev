@@ -31,8 +31,7 @@ export default class AddNewDeviceContextProvider extends Component {
         this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:true}});
 
         const formData = new FormData(event.target);
-
-        //@TODO this sends empty data when selecting defaults need to change structure
+        
         const jsonFormData = {
             'deviceName' : this.state.newDeviceModalContent.newDeviceName,
             'deviceRoom' :  this.state.newDeviceModalContent.newDeviceRoom !== '' ? this.state.newDeviceModalContent.newDeviceRoom : document.getElementById("deviceRoom").value ,

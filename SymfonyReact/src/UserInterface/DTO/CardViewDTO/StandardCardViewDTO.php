@@ -2,9 +2,6 @@
 
 namespace App\UserInterface\DTO\CardViewDTO;
 
-use DateTime;
-
-//TODO should be in UserViewReadingSensorTypeCardData
 class StandardCardViewDTO
 {
     private string $readingType;
