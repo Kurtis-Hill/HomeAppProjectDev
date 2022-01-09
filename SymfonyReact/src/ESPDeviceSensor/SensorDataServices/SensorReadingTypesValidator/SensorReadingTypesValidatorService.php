@@ -129,43 +129,4 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         $repository->persist($sensorType);
         $repository->flush();
     }
-
-    #[Assert\Callback]
-    public static function validate(
-//        $object,
-        ExecutionContextInterface $context,
-        $payload,
-    )
-    {
-        if ($object instanceof StandardReadingSensorInterface) {
-            if ($object->getHighReading() < $object->getLowReading()) {
-                $context
-                    ->buildViolation('High reading for ' . $object->getSensorTypeName() . ' cannot be lower than low reading')
-                    ->addViolation();
-            } else {
-                $context
-                    ->buildViolation('App needs updating to support this sensor type')
-                    ->addViolation();
-            }
-        }
-
-//        dd('as');
-//        return new Callback(function($object, ExecutionContextInterface $context) {
-//            $lowReading = $context->getRoot()->getData()->getLowReading();
-//            $highReading = $context->getRoot()->getData()->getHighReading();
-//            $readingType = $context->getRoot()->getData();
-//
-//            if ($readingType instanceof StandardReadingSensorInterface) {
-//                if ($highReading < $lowReading) {
-//                    $context
-//                        ->buildViolation('High reading for ' . $readingType->getSensorTypeName() . ' cannot be lower than low reading')
-//                        ->addViolation();
-//                }
-//            } else {
-//                $context
-//                    ->buildViolation('App needs updating to support this sensor type')
-//                    ->addViolation();
-//            }
-//        });
-    }
 }
