@@ -8,6 +8,7 @@ use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CardViewUpdateService implements CardViewUpdateServiceInterface
@@ -34,6 +35,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         $this->cardStateRepository = $cardStateRepository;
     }
 
+    #[ArrayShape(["string"])]
     public function handleStandardCardUpdateRequest(StandardCardUpdateDTO $cardUpdateDTO, CardView $cardView): array
     {
         $cardColour = $this->cardColourRepository->findOneById($cardUpdateDTO->getCardColourID());

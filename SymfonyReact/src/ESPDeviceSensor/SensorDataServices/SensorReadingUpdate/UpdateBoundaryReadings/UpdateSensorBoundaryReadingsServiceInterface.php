@@ -4,7 +4,10 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBound
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
@@ -21,7 +24,7 @@ interface UpdateSensorBoundaryReadingsServiceInterface
      */
     public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO;
 
-    #[ArrayShape([Temperature::class])]
+    #[ArrayShape([Temperature::class | Humidity::class | Analog::class | Latitude::class])]
     public function findSensorAndReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
 
     /**

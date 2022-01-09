@@ -5,7 +5,6 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
@@ -14,9 +13,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorServiceInterface
 {
@@ -32,6 +29,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         $this->validator = $validator;
     }
 
+    #[ArrayShape(["errors"])]
     public function validateSensorTypeObject(SensorTypeInterface $sensorTypeObject): array
     {
         $sensorType = $sensorTypeObject->getSensorTypeName();

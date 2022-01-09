@@ -255,11 +255,13 @@ class CardContextProvider extends Component {
         try {
             const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', jsonFormData, getAPIHeader());
 
-            if (formSubmissionResult.status === 204) {
+            if (formSubmissionResult.status === 200) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>
                     this.toggleModal(), 1500
                 );
+            } else {
+                this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: ["unexpected response, check too see if the values are updated"]}});
             }
         } catch(error) {
             const badRequestErrors = (!error.response.data.errors.length > 1)

@@ -177,6 +177,6 @@ class CardViewFormController extends AbstractController
             return $this->sendMultiStatusJsonResponse([$updateReadingDTOErrors]);
         }
 
-        return $this->sendSuccessfulJsonResponse();
+        return $this->sendSuccessfulUpdateJsonResponse();
     }
 }

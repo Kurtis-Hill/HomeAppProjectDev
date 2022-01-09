@@ -125,7 +125,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
             }
 
         }
-dd($validationErrors);
+
         return $validationErrors ?? [];
     }
 
