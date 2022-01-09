@@ -1,23 +1,23 @@
 <?php
 
-namespace App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder;
+namespace App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
-class AnalogQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
+class TemperatureQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
 {
     #[Pure]
     public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO
     {
-        $latitudeData = ReadingTypes::SENSOR_READING_TYPE_DATA[Analog::READING_TYPE];
+        $tempData = ReadingTypes::SENSOR_READING_TYPE_DATA[Temperature::READING_TYPE];
 
         return new JoinQueryDTO(
-            $latitudeData['alias'],
-            $latitudeData['object'],
+            $tempData['alias'],
+            $tempData['object'],
             'sensorNameID',
             Sensor::ALIAS,
         );

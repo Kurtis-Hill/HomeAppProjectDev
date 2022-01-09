@@ -3,6 +3,7 @@
 namespace App\UserInterface\Services\Cards\CardDataFilterService;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes;
+use App\ESPDeviceSensor\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
@@ -10,8 +11,7 @@ use App\UserInterface\DTO\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
-use App\UserInterface\Factories\CardQueryBuilderFactories\ReadingTypeQueryFactory;
-use App\UserInterface\Factories\CardQueryBuilderFactories\SensorTypeQueryFactory;
+use App\ESPDeviceSensor\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 

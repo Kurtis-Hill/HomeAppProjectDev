@@ -1,12 +1,12 @@
 <?php
 
-namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
+namespace App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders;
 
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 
-interface CardSensorTypeQueryDTOBuilderInterface
+interface SensorTypeQueryDTOBuilderInterface
 {
     public function buildSensorTypeQueryJoinDTO(): JoinQueryDTO;
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\UserInterface\Factories\CardQueryBuilderFactories;
+namespace App\ESPDeviceSensor\Factories\SensorTypeQueryDTOFactory;
 
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
-use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\BmpQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\CardSensorTypeQueryDTOBuilderInterface;
-use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\DallasQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\DHTQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder\SoilQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders\BmpQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders\SensorTypeQueryDTOBuilderInterface;
+use App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders\DallasQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders\DHTQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders\SoilQueryTypeDTOBuilder;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
-//@TODO move these to sensors namespace
+
 class SensorTypeQueryFactory
 {
     private DHTQueryTypeDTOBuilder $dhtQueryTypeDTOBuilder;
@@ -38,7 +38,7 @@ class SensorTypeQueryFactory
     /**
      * @throws SensorTypeBuilderFailureException
      */
-    public function getSensorTypeQueryDTOBuilder(string $sensorType): CardSensorTypeQueryDTOBuilderInterface
+    public function getSensorTypeQueryDTOBuilder(string $sensorType): SensorTypeQueryDTOBuilderInterface
     {
         return match ($sensorType) {
             Dht::NAME => $this->dhtQueryTypeDTOBuilder,

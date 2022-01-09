@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\ReadingTypeQueryDTOBuilderInterface;
+use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;

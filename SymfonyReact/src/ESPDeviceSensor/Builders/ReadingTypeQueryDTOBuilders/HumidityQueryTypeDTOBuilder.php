@@ -1,22 +1,23 @@
 <?php
 
-namespace App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder;
+namespace App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
-class LatitudeQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
+class HumidityQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
 {
     #[Pure]
     public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO
     {
-        $latitudeData = ReadingTypes::SENSOR_READING_TYPE_DATA[ReadingTypes\Latitude::READING_TYPE];
+        $humidData = ReadingTypes::SENSOR_READING_TYPE_DATA[Humidity::READING_TYPE];
 
         return new JoinQueryDTO(
-            $latitudeData['alias'],
-            $latitudeData['object'],
+            $humidData['alias'],
+            $humidData['object'],
             'sensorNameID',
             Sensor::ALIAS,
         );

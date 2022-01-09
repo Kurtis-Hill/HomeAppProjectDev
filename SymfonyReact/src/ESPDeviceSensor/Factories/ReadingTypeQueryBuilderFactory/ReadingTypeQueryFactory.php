@@ -1,18 +1,19 @@
 <?php
 
-namespace App\UserInterface\Factories\CardQueryBuilderFactories;
+namespace App\ESPDeviceSensor\Factories\ReadingTypeQueryBuilderFactory;
+
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\AnalogQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\ReadingTypeQueryDTOBuilderInterface;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\HumidityQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\LatitudeQueryTypeDTOBuilder;
-use App\UserInterface\Builders\CardReadingTypeQueryDTOBuilder\TemperatureQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\AnalogQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
+use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\HumidityQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\LatitudeQueryTypeDTOBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
-//@TODO move these to sensors namespace
+
 class ReadingTypeQueryFactory
 {
     private TemperatureQueryTypeDTOBuilder $temperatureQueryTypeDTOBuilder;

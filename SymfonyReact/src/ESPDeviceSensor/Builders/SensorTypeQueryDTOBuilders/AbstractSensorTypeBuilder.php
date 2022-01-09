@@ -1,8 +1,9 @@
 <?php
 
-namespace App\UserInterface\Builders\CardSensorTypeQueryDTOBuilder;
+namespace App\ESPDeviceSensor\Builders\SensorTypeQueryDTOBuilders;
 
-use App\UserInterface\Factories\CardQueryBuilderFactories\ReadingTypeQueryFactory;
+use App\ESPDeviceSensor\Factories\ReadingTypeQueryBuilderFactory;
+use App\ESPDeviceSensor\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
 
 abstract class AbstractSensorTypeBuilder
 {
