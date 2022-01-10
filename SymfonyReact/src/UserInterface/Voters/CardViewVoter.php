@@ -59,7 +59,7 @@ class CardViewVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
-
+//dd($user->getUserID(), $cardView->getUserID()->getUserID());
         if ($cardView->getUserID()->getUserID() !== $user->getUserID()) {
             return false;
         }

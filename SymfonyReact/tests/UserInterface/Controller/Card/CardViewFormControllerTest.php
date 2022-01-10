@@ -1,0 +1,230 @@
+<?php
+
+namespace App\Tests\UserInterface\Controller\Card;
+
+use App\API\APIErrorMessages;
+use App\Authentication\Controller\SecurityController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\ESPDeviceSensor\Entity\Sensor;
+use App\ESPDeviceSensor\Entity\SensorType;
+use App\User\Entity\User;
+use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardView;
+use App\UserInterface\Entity\Icons;
+use Doctrine\ORM\EntityManagerInterface;
+use Generator;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class CardViewFormControllerTest extends WebTestCase
+{
+    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/sensor-type/card-sensor-form';
+
+    private const UPDATE_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/sensor-type/update-card-sensor';
+
+    private ?string $userToken = null;
+
+    private EntityManagerInterface $entityManager;
+
+    private KernelBrowser $client;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+
+        $this->entityManager = static::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
+
+        $this->userToken = $this->setUserToken();
+    }
+
+    private function setUserToken(bool $forceToken = false, string $username = null, string $password = null): string
+    {
+        $username = $username ?? UserDataFixtures::ADMIN_USER;
+        $password = $password ?? UserDataFixtures::ADMIN_PASSWORD;
+
+        if ($this->userToken === null || $forceToken === true) {
+            $this->client->request(
+                Request::METHOD_POST,
+                SecurityController::API_USER_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"'.$username.'","password":"'.$password.'"}'
+            );
+
+            $requestResponse = $this->client->getResponse();
+            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+            return $responseData['token'];
+        }
+
+        return $this->userToken;
+    }
+
+    /**
+     * @dataProvider getCardViewFormDataProvider
+     */
+    public function testGetCardViewFormData(string $sensorType): void
+    {
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['sensorTypeID' => $sensorType->getSensorTypeID()])[0];
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensorNameID' => $sensor->getSensorNameID()])[0];
+
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_CARD_FORM_URL,
+            ['card-view-id' => $cardViewObject->getCardViewID()],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+        );
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true)['payload'];
+
+
+        foreach ($responseData['sensorData'] as $sensorData) {
+            self::assertArrayHasKey('sensorType', $sensorData);
+            self::assertIsString($sensorData['sensorType']);
+
+            self::assertArrayHasKey('highReading', $sensorData);
+            self::assertIsInt($sensorData['highReading']);
+
+            self::assertArrayHasKey('lowReading', $sensorData);
+            self::assertIsInt($sensorData['lowReading']);
+
+            self::assertArrayHasKey('constRecord', $sensorData);
+            self::assertIsBool($sensorData['constRecord']);
+        }
+
+
+        $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+        $allCardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+        $allCardState = $this->entityManager->getRepository(Cardstate::class)->findAll();
+
+        self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
+
+        self::assertEquals($cardViewObject->getCardIconID()->getIconID(), $responseData['cardIcon']['iconID']);
+        self::assertCount(count($allIcons), $responseData['iconSelection']);
+
+        self::assertCount(count($allCardState), $responseData['userCardViewSelections']);
+
+        self::assertEquals($cardViewObject->getCardColourID()->getColourID(), $responseData['cardColour']['colourID']);
+        self::assertCount(count($allCardColours), $responseData['userColourSelections']);
+
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function getCardViewFormDataProvider(): Generator
+    {
+        yield ['Dht'];
+
+        yield ['Bmp'];
+
+        yield ['Soil'];
+
+        yield ['Dallas'];
+    }
+
+    /**
+     * @dataProvider getCardViewFormIncorrectCardViewIDDataProvider
+     */
+    public function testGetCardViewFormIncorrectCardViewID(mixed $cardViewID): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_CARD_FORM_URL,
+            ['card-view-id' => $cardViewID],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+        );
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true);
+
+        self::assertEquals(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
+        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function  getCardViewFormIncorrectCardViewIDDataProvider(): Generator
+    {
+        yield [
+            'notAInt',
+        ];
+
+        yield [
+            null
+        ];
+    }
+
+    public function testGetCardViewFormNoneExistentCardViewID(): void
+    {
+        while (true) {
+            $randomNumber = random_int(1, 100000);
+            $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['cardViewID' => $randomNumber]);
+
+            if (!$cardView instanceof CardView) {
+                break;
+            }
+        }
+
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_CARD_FORM_URL,
+            ['card-view-id' => $randomNumber],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+        );
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true);
+
+        self::assertEquals(sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'CardView'), $responseData['errors'][0]);
+        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider userCannotEditOtherUsersCardsDataProvider
+     */
+    public function testUserCannotEditOtherUsersCards(string $username, string $password, $usersCardToAlter): void
+    {
+        $userToken = $this->setUserToken(true, $username, $password);
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
+
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_CARD_FORM_URL,
+            ['card-view-id' => $cardViewObject->getCardViewID()],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
+        );
+
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true);
+
+        self::assertEquals(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
+        self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
+        self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function userCannotEditOtherUsersCardsDataProvider(): Generator
+    {
+        yield [
+            'username' => UserDataFixtures::REGULAR_USER,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
+            'alter' => UserDataFixtures::ADMIN_USER,
+        ];
+
+        yield [
+            'username' => UserDataFixtures::ADMIN_USER,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'alter' => UserDataFixtures::REGULAR_USER,
+        ];
+    }
+}

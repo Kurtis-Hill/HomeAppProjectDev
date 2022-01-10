@@ -19,19 +19,11 @@ use Symfony\Component\HttpFoundation\Request;
 class NavBarControllerTest extends WebTestCase
 {
     private const NAVBAR_DATA_URL =  '/HomeApp/api/user/navbar/navbar-data';
-    /**
-     * @var string|null
-     */
+
     private ?string $userToken = null;
 
-    /**
-     * @var EntityManagerInterface
-     */
     private EntityManagerInterface $entityManager;
 
-    /**
-     * @var KernelBrowser
-     */
     private KernelBrowser $client;
 
 
