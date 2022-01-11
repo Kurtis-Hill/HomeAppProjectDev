@@ -35,7 +35,7 @@ class CardView
      *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
      * })
      */
-    #[Assert\NotNull(message: "Sensor Object cannot be null")]
+    #[Assert\NotNull(message: "Sensor cannot be null")]
     private Sensor $sensorNameID;
 
     /**
@@ -46,7 +46,7 @@ class CardView
      *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
      * })
      */
-    #[Assert\NotNull(message: "CardState Object cannot be null")]
+    #[Assert\NotNull(message: "Card state cannot be null")]
     private Cardstate $cardStateID;
 
     /**
@@ -57,7 +57,7 @@ class CardView
      *   @ORM\JoinColumn(name="userID", referencedColumnName="userID")
      * })
      */
-    #[Assert\NotNull(message: "User Object cannot be null")]
+    #[Assert\NotNull(message: "User cannot be null")]
     private User $userID;
 
     /**
@@ -68,7 +68,7 @@ class CardView
      *   @ORM\JoinColumn(name="cardIconID", referencedColumnName="iconID")
      * })
      */
-    #[Assert\NotNull(message: "Icon Object cannot be null")]
+    #[Assert\NotNull(message: "Icon cannot be null")]
     private Icons $cardIconID;
 
     /**
@@ -79,7 +79,7 @@ class CardView
      *   @ORM\JoinColumn(name="cardColourID", referencedColumnName="colourID")
      * })
      */
-    #[Assert\NotNull(message: "CardColour Object cannot be null")]
+    #[Assert\NotNull(message: "Card colour cannot be null")]
     private CardColour $cardColourID;
 
     public function getCardViewID(): int
