@@ -361,7 +361,6 @@ class CardViewFormControllerTest extends WebTestCase
                 "lowReading" => 20,
                 "constRecord" =>  false
             ]
-            ]
         ];
         $requestData = json_encode($sensorData);
 
