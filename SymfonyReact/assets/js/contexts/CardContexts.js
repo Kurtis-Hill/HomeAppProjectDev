@@ -255,7 +255,7 @@ class CardContextProvider extends Component {
         try {
             const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', jsonFormData, getAPIHeader());
 
-            if (formSubmissionResult.status === 200) {
+            if (formSubmissionResult.status === 204) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>
                     this.toggleModal(), 1500

@@ -47,7 +47,7 @@ class CardView
      * })
      */
     #[Assert\NotNull(message: "Card state cannot be null")]
-    private Cardstate $cardStateID;
+    private ?Cardstate $cardStateID;
 
     /**
      * @var User
@@ -58,7 +58,7 @@ class CardView
      * })
      */
     #[Assert\NotNull(message: "User cannot be null")]
-    private User $userID;
+    private ?User $userID;
 
     /**
      * @var Icons
@@ -69,7 +69,7 @@ class CardView
      * })
      */
     #[Assert\NotNull(message: "Icon cannot be null")]
-    private Icons $cardIconID;
+    private ?Icons $cardIconID;
 
     /**
      * @var CardColour
@@ -80,7 +80,7 @@ class CardView
      * })
      */
     #[Assert\NotNull(message: "Card colour cannot be null")]
-    private CardColour $cardColourID;
+    private ?CardColour $cardColourID;
 
     public function getCardViewID(): int
     {
@@ -107,7 +107,7 @@ class CardView
         return $this->cardStateID;
     }
 
-    public function setCardStateID(Cardstate $cardStateID): void
+    public function setCardStateID(?Cardstate $cardStateID): void
     {
         $this->cardStateID = $cardStateID;
     }
@@ -129,7 +129,7 @@ class CardView
         return $this->cardIconID;
     }
 
-    public function setCardIconID(Icons $cardIconID): void
+    public function setCardIconID(?Icons $cardIconID): void
     {
         $this->cardIconID = $cardIconID;
     }
@@ -139,7 +139,7 @@ class CardView
         return $this->cardColourID;
     }
 
-    public function setCardColourID(CardColour $cardColourID): void
+    public function setCardColourID(?CardColour $cardColourID): void
     {
         $this->cardColourID = $cardColourID;
     }

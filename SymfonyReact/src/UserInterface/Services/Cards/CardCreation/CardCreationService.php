@@ -58,7 +58,7 @@ class CardCreationService implements CardCreationServiceInterface
             return ['There is an issue with the database contact an administrator'];
         }
 
-        $onCardState = $this->cardStateRepository->findOneBy(['state' => Cardstate::ON]);
+        $onCardState = $this->cardStateRepository->findOneByState(Cardstate::ON);
 
         if (!$onCardState instanceof Cardstate) {
             throw new CardStateException(CardStateException::CARD_STATE_NOT_FOUND);

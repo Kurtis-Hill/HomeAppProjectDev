@@ -96,7 +96,7 @@ class CardViewFormController extends AbstractController
         }
         $cardViewID = $cardData['cardViewID'];
 
-        if (empty($cardData['sensorData'] || empty($cardViewID) || !is_numeric($cardViewID))) {
+        if (empty($cardData['sensorData']) || empty($cardViewID) || !is_numeric($cardViewID)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
         }
 
@@ -115,15 +115,16 @@ class CardViewFormController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
+
         $standardCardUpdateDTO = new StandardCardUpdateDTO(
             $cardData['cardColour'],
             $cardData['cardIcon'],
             $cardData['cardViewState'],
         );
 
-        $validationErrors = $cardViewUpdateService->handleStandardCardUpdateRequest($standardCardUpdateDTO, $cardViewObject);
+        $validationErrors = $cardViewUpdateService->updateAllCardViewObjectProperties($standardCardUpdateDTO, $cardViewObject);
         if (!empty($validationErrors)) {
-            return $this->sendBadRequestJsonResponse([$validationErrors]);
+            return $this->sendBadRequestJsonResponse($validationErrors);
         }
 
         try {
@@ -132,6 +133,7 @@ class CardViewFormController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
+        // MOVE THIS OUT TO A ESP SENSOR ENDPOINT
         foreach ($cardData['sensorData'] as $updateData) {
             try {
                 $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryReadingsService->createUpdateSensorBoundaryReadingDTO($updateData);

@@ -9,5 +9,5 @@ use JetBrains\PhpStorm\ArrayShape;
 interface CardViewUpdateServiceInterface
 {
     #[ArrayShape(["string"])]
-    public function handleStandardCardUpdateRequest(StandardCardUpdateDTO $cardUpdateDTO, CardView $cardView): array;
+    public function updateAllCardViewObjectProperties(StandardCardUpdateDTO $cardUpdateDTO, CardView $cardView): array;
 }

@@ -231,17 +231,33 @@ class CardViewFormControllerTest extends WebTestCase
 
     // Start of CardViewController::getCardViewForm() tests
 
+    public function testSendingWrongRequestWrongFormat(): void
+    {
+        $requestData = "{Cardviewid: asd},";
+
+        $this->client->request(
+        Request::METHOD_PUT,
+        self::UPDATE_CARD_FORM_URL,
+        [],
+        [],
+        ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+        $requestData
+        );
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true);
+
+        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['errors'][0]);
+        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
     /**
      * @dataProvider malformedRequestDataProvider
      */
-    public function testSendingMalformedRequest(array $requestData, bool $encode): void
+    public function testSendingMalformedRequest(array $requestData): void
     {
-        if ($encode === true) {
-            $requestData = json_encode($requestData);
-        }
-
+        $requestData = json_encode($requestData);
         $this->client->request(
-            Request::METHOD_GET,
+            Request::METHOD_PUT,
             self::UPDATE_CARD_FORM_URL,
             [],
             [],
@@ -268,7 +284,6 @@ class CardViewFormControllerTest extends WebTestCase
                     "constRecord" =>  false
                 ]
             ],
-            'encode' => true,
         ];
 
         yield [
@@ -281,7 +296,6 @@ class CardViewFormControllerTest extends WebTestCase
                     "constRecord" =>  false
                 ]
             ],
-            'encode' => true,
         ];
 
         yield [
@@ -289,20 +303,6 @@ class CardViewFormControllerTest extends WebTestCase
                 'cardViewID' => 1,
                 'sensorData' => []
             ],
-            'encode' => true,
-        ];
-
-        yield [
-            'requestData' => [
-                'cardViewID' => 1,
-                'sensorData' => [
-                    "sensorType" => "temperature",
-                    "highReading" =>  25,
-                    "lowReading" => 20,
-                    "constRecord" =>  false
-                ]
-            ],
-            'encode' => false,
         ];
     }
 
@@ -328,7 +328,7 @@ class CardViewFormControllerTest extends WebTestCase
         $requestData = json_encode($sensorData);
 
         $this->client->request(
-            Request::METHOD_GET,
+            Request::METHOD_PUT,
             self::UPDATE_CARD_FORM_URL,
             [],
             [],
@@ -356,16 +356,18 @@ class CardViewFormControllerTest extends WebTestCase
         $sensorData = [
             'cardViewID' => $cardViewObject->getCardViewID(),
             'sensorData' => [
-                "sensorType" => "temperature",
-                "highReading" =>  25,
-                "lowReading" => 20,
-                "constRecord" =>  false
+                [
+                    "sensorType" => "temperature",
+                    "highReading" =>  25,
+                    "lowReading" => 20,
+                    "constRecord" =>  false
+                ]
             ]
         ];
         $requestData = json_encode($sensorData);
 
         $this->client->request(
-            Request::METHOD_GET,
+            Request::METHOD_PUT,
             self::UPDATE_CARD_FORM_URL,
             [],
             [],
@@ -380,66 +382,124 @@ class CardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-//    public function testSendingWrongCardDataRequest(
-//        bool $wrongColour,
-//        bool $wrongIcon,
-//        bool $wrongState,
-//        string $errorMessage,
-//    ): void
-//    {
-//        $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
-//        $iconRepository = $this->entityManager->getRepository(Icons::class);
-//        $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
-//
-//        if ($wrongColour === true) {
-//            while (true) {
-//                $randomColour = random_int(1, 10000);
-//                $cardColour = $cardColourRepository->findOneBy(['colourID' => $randomColour]);
-//                if (!$cardColour instanceof CardColour) {
-//                    break;
-//                }
-//            }
-//        } else {
-//            $cardColour = $cardColourRepository->findAll()[0];
-//        }
-//
-//        if ($wrongIcon === true) {
-//            while (true) {
-//                $randomIcon = random_int(1, 10000);
-//                $cardIcon = $iconRepository->findOneBy(['iconID' => $randomIcon]);
-//                if (!$cardIcon instanceof CardColour) {
-//                    break;
-//                }
-//            }
-//        } else {
-//            $cardIcon = $iconRepository->findAll()[0];
-//        }
-//
-//        if ($wrongState === true) {
-//            while (true) {
-//                $randomState = random_int(1, 10000);
-//                $cardState = $cardStateRepository->findOneBy(['cardStateID' => $randomState]);
-//                if (!$cardState instanceof Cardstate) {
-//                    break;
-//                }
-//            }
-//        } else {
-//            $cardState = $cardStateRepository->findAll()[0];
-//        }
-//
-//
-//
-//    }
-//
-//    public function testSendingWrongCardDataRequestDataProvider(): Generator
-//    {
-//        yield [
-//            'wrongColour' => true,
-//            'wrongIcon' => false,
-//            'wrongState' => false,
-//            'errorMessage' => ''
-//        ];
-//    }
+    /**
+     * @param bool $wrongColour
+     * @param bool $wrongIcon
+     * @param bool $wrongState
+     * @param string $errorMessage
+     * @throws \Exception
+     * @dataProvider sendingWrongCardDataRequestDataProvider
+     */
+    public function testSendingWrongCardDataRequest(
+        bool $wrongColour,
+        bool $wrongIcon,
+        bool $wrongState,
+        string $errorMessage,
+    ): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
+
+        $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
+        $iconRepository = $this->entityManager->getRepository(Icons::class);
+        $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
+
+        if ($wrongColour === true) {
+            while (true) {
+                $randomColour = random_int(1, 10000);
+                $cardColour = $cardColourRepository->findOneBy(['colourID' => $randomColour]);
+                if (!$cardColour instanceof CardColour) {
+                    $cardColour = $randomColour;
+                    break;
+                }
+            }
+        } else {
+            $cardColour = $cardColourRepository->findAll()[0]->getColourID();
+        }
+
+        if ($wrongIcon === true) {
+            while (true) {
+                $randomIcon = random_int(1, 10000);
+                $cardIcon = $iconRepository->findOneBy(['iconID' => $randomIcon]);
+                if (!$cardIcon instanceof CardColour) {
+                    $cardIcon = $randomIcon;
+                    break;
+                }
+            }
+        } else {
+            $cardIcon = $iconRepository->findAll()[0]->getIconID();
+        }
+
+        if ($wrongState === true) {
+            while (true) {
+                $randomState = random_int(1, 10000);
+                $cardState = $cardStateRepository->findOneBy(['cardStateID' => $randomState]);
+                if (!$cardState instanceof Cardstate) {
+                    $cardState = $randomState;
+                    break;
+                }
+            }
+        } else {
+            $cardState = $cardStateRepository->findAll()[0]->getCardstateID();
+        }
+
+        $sensorData = [
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $cardColour,
+            'cardIcon' => $cardIcon,
+            'cardViewState' => $cardState,
+            'sensorData' => [
+                [
+                    "sensorType" => "temperature",
+                    "highReading" =>  25,
+                    "lowReading" => 20,
+                    "constRecord" =>  false
+                ]
+            ]
+        ];
+
+        $requestData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            self::UPDATE_CARD_FORM_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $requestData
+        );
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true);
+
+        self::assertEquals($errorMessage, $responseData['errors'][0]);
+        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+
+    }
+
+    public function sendingWrongCardDataRequestDataProvider(): Generator
+    {
+        yield [
+            'wrongColour' => true,
+            'wrongIcon' => false,
+            'wrongState' => false,
+            'errorMessage' => 'Card colour not found'
+        ];
+
+        yield [
+            'wrongColour' => false,
+            'wrongIcon' => true,
+            'wrongState' => false,
+            'errorMessage' => 'Card icon not found'
+        ];
+
+        yield [
+            'wrongColour' => false,
+            'wrongIcon' => false,
+            'wrongState' => true,
+            'errorMessage' => 'Card state not found'
+        ];
+    }
 
     /**
      * @dataProvider sendingNullCardViewDataProvider
@@ -461,19 +521,19 @@ class CardViewFormControllerTest extends WebTestCase
         if ($nullCardColour === true) {
             $cardColour = null;
         } else {
-            $cardColour = $cardColourRepository->findAll()[0];
+            $cardColour = $cardColourRepository->findAll()[0]->getColourID();
         }
 
         if ($nullCardIcon === true) {
             $cardIcon = null;
         } else {
-            $cardIcon = $iconRepository->findAll()[0];
+            $cardIcon = $iconRepository->findAll()[0]->getIconID();
         }
 
         if ($nullCardState === true) {
             $cardState = null;
         } else {
-            $cardState = $cardStateRepository->findAll()[0];
+            $cardState = $cardStateRepository->findAll()[0]->getCardstateID();
         }
 
         $sensorData = [
@@ -482,16 +542,19 @@ class CardViewFormControllerTest extends WebTestCase
             'cardIcon' => $cardIcon,
             'cardViewState' => $cardState,
             'sensorData' => [
-                "sensorType" => "temperature",
-                "highReading" =>  25,
-                "lowReading" => 20,
-                "constRecord" =>  false
+                [
+                    "sensorType" => "temperature",
+                    "highReading" =>  25,
+                    "lowReading" => 20,
+                    "constRecord" =>  false
+                ]
             ]
         ];
+
         $requestData = json_encode($sensorData);
 
         $this->client->request(
-            Request::METHOD_GET,
+            Request::METHOD_PUT,
             self::UPDATE_CARD_FORM_URL,
             [],
             [],
@@ -527,5 +590,48 @@ class CardViewFormControllerTest extends WebTestCase
             'nullCardState' => true,
             'errorMessage' => 'Card state cannot be null'
         ];
+    }
+
+    public function testSendingUpdateRequestNoneExistentSensorTypes(): void
+    {
+        $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
+        $iconRepository = $this->entityManager->getRepository(Icons::class);
+        $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
+        $cardColour = $cardColourRepository->findAll()[0];
+        $cardIcon = $iconRepository->findAll()[0];
+        $cardState = $cardStateRepository->findAll()[0];
+
+        $sensorData = [
+            'cardViewID' => $cardViewObject->getCardViewID(),
+            'cardColour' => $cardColour->getColourID(),
+            'cardIcon' => $cardIcon->getIconID(),
+            'cardViewState' => $cardState->getCardstateID(),
+            'sensorData' => [
+                [
+                    "sensorType" => "randomType",
+                    "highReading" =>  25,
+                    "lowReading" => 20,
+                    "constRecord" =>  false
+                ]
+            ]
+        ];
+        $requestData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            self::UPDATE_CARD_FORM_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $requestData
+        );
+        $responseContent = $this->client->getResponse()->getContent();
+        $responseData = json_decode($responseContent, true);
+
+        self::assertEquals('Could not prepare sensor reading data', $responseData['errors'][0]);
     }
 }

@@ -19,6 +19,11 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
         return $this->findOneBy(['cardStateID' => $id]);
     }
 
+    public function findOneByState(string $state): ?CardState
+    {
+        return $this->findOneBy(['state' => $state]);
+    }
+
     public function persist(Cardstate $cardState): void
     {
         $this->getEntityManager()->persist($cardState);

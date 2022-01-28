@@ -12,5 +12,4 @@ interface CardSensorDataDTOBuilderInterface
 
     #[ArrayShape([])]
     public function formatSensorTypeObjects(SensorTypeInterface $sensorTypeObject): array;
-
 }

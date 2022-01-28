@@ -278,6 +278,5 @@ trait HomeAppAPIResponseTrait
         $normaliser = new Serializer($normaliser);
 
         return $normaliser->normalize($data);
-
     }
 }

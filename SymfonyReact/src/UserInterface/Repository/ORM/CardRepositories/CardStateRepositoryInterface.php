@@ -25,4 +25,6 @@ interface CardStateRepositoryInterface
      */
     #[ArrayShape([Cardstate::class])]
     public function getAllStates(): array;
+
+    public function findOneByState(string $state): ?Cardstate;
 }

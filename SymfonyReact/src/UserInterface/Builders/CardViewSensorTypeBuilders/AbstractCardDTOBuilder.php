@@ -16,6 +16,7 @@ use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
 use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\StandardSensorTypeViewFormDTO;
 use DateTime;
 use JetBrains\PhpStorm\ArrayShape;
+use RuntimeException;
 
 abstract class AbstractCardDTOBuilder
 {
@@ -109,14 +110,12 @@ abstract class AbstractCardDTOBuilder
 //            $sensorData[] = $this->setOnOffSensordata($cardDTOData->getPIRObject(), 'PIR');
 //        }
         if (empty($sensorData)) {
-            throw new \RuntimeException('Sensor type not recognised, the app needs updating to support the new feature');
+            throw new RuntimeException('Sensor type not recognised, the app needs updating to support the new feature');
         }
 
         return $sensorData;
     }
 
-
-    #[ArrayShape([StandardSensorTypeViewFormDTO::class])]
     private function setStandardSensorData(
         StandardReadingSensorInterface $sensorTypeObject,
         string $type,
@@ -132,6 +131,7 @@ abstract class AbstractCardDTOBuilder
                 ? number_format($sensorTypeObject->getLowReading(), 2)
                 : $sensorTypeObject->getLowReading(),
             $sensorTypeObject->getConstRecord(),
+            $symbol
         );
     }
 }

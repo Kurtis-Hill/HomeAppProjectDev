@@ -4,11 +4,11 @@ namespace App\UserInterface\DTO\CardUpdateDTO;
 
 class StandardCardUpdateDTO
 {
-    private int $cardColourID;
+    private ?int $cardColourID;
 
-    private int $cardIconID;
+    private ?int $cardIconID;
 
-    private int $cardStateID;
+    private ?int $cardStateID;
 
     public function __construct(
         ?int $cardColourID,
