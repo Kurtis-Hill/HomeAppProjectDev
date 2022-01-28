@@ -155,7 +155,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
         $this->constRecord = $constRecord;
     }
 
-    public function getSensorTypeName(): string
+    public function getReadingType(): string
     {
         return self::READING_TYPE;
     }

@@ -133,51 +133,51 @@ class CardViewFormController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        // MOVE THIS OUT TO A ESP SENSOR ENDPOINT
-        foreach ($cardData['sensorData'] as $updateData) {
-            try {
-                $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryReadingsService->createUpdateSensorBoundaryReadingDTO($updateData);
-
-                $readingTypeQueryDTOs[] = $updateSensorBoundaryReadingsService->createReadingTypeQueryDTO($updateSensorBoundaryReadingsDTO);
-                $updateSensorBoundaryReadingsDTOs[] = $updateSensorBoundaryReadingsDTO;
-            } catch (ReadingTypeBuilderFailureException) {
-                $updateReadingDTOErrors[] = $updateData['sensorType'] ?? 'no sensor type provided'  . ' is not a valid sensor type';
-            }
-        }
-
-        if (empty($updateSensorBoundaryReadingsDTOs) || empty($readingTypeQueryDTOs)) {
-            return $this->sendBadRequestJsonResponse(['Could not prepare sensor reading data']);
-        }
-
-        try {
-            $sensorTypeJoinQueryDTO = $updateSensorBoundaryReadingsService->getReadingTypeObjectJoinQueryDTO($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType());
-        } catch (SensorTypeBuilderFailureException $e) {
-            return $this->sendInternalServerErrorJsonResponse([$e->getMessage()]);
-        }
-
-        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorAndReadingTypesToUpdateBoundaryReadings(
-             $sensorTypeJoinQueryDTO,
-            $readingTypeQueryDTOs,
-             $cardViewObject->getSensorNameID()
-                 ->getDeviceObject()
-                 ->getDeviceNameID(),
-             $cardViewObject->getSensorNameID()->getSensorName(),
-         );
-
-        $sensorObject = array_pop($sensorReadingTypeObjects);
-
-        if (!$sensorObject instanceof StandardSensorTypeInterface) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
-        }
-        $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs($updateSensorBoundaryReadingsDTOs, $sensorReadingTypeObjects, $sensorObject->getSensorTypeName());
-
-        if (!empty($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($validationErrors);
-        }
-
-        if (!empty($updateReadingDTOErrors)) {
-            return $this->sendMultiStatusJsonResponse([$updateReadingDTOErrors]);
-        }
+//        // MOVE THIS OUT TO A ESP SENSOR ENDPOINT
+//        foreach ($cardData['sensorData'] as $updateData) {
+//            try {
+//                $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryReadingsService->createUpdateSensorBoundaryReadingDTO($updateData);
+//
+//                $readingTypeQueryDTOs[] = $updateSensorBoundaryReadingsService->createReadingTypeQueryDTO($updateSensorBoundaryReadingsDTO);
+//                $updateSensorBoundaryReadingsDTOs[] = $updateSensorBoundaryReadingsDTO;
+//            } catch (ReadingTypeBuilderFailureException) {
+//                $updateReadingDTOErrors[] = $updateData['sensorType'] ?? 'no sensor type provided'  . ' is not a valid sensor type';
+//            }
+//        }
+//
+//        if (empty($updateSensorBoundaryReadingsDTOs) || empty($readingTypeQueryDTOs)) {
+//            return $this->sendBadRequestJsonResponse(['Could not prepare sensor reading data']);
+//        }
+//
+//        try {
+//            $sensorTypeJoinQueryDTO = $updateSensorBoundaryReadingsService->getReadingTypeObjectJoinQueryDTO($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType());
+//        } catch (SensorTypeBuilderFailureException $e) {
+//            return $this->sendInternalServerErrorJsonResponse([$e->getMessage()]);
+//        }
+//
+//        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorAndReadingTypesToUpdateBoundaryReadings(
+//             $sensorTypeJoinQueryDTO,
+//            $readingTypeQueryDTOs,
+//             $cardViewObject->getSensorNameID()
+//                 ->getDeviceObject()
+//                 ->getDeviceNameID(),
+//             $cardViewObject->getSensorNameID()->getSensorName(),
+//         );
+//
+//        $sensorObject = array_pop($sensorReadingTypeObjects);
+//
+//        if (!$sensorObject instanceof StandardSensorTypeInterface) {
+//            return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+//        }
+//        $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs($updateSensorBoundaryReadingsDTOs, $sensorReadingTypeObjects, $sensorObject->getSensorTypeName());
+//
+//        if (!empty($validationErrors)) {
+//            return $this->sendBadRequestJsonResponse($validationErrors);
+//        }
+//
+//        if (!empty($updateReadingDTOErrors)) {
+//            return $this->sendMultiStatusJsonResponse([$updateReadingDTOErrors]);
+//        }
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }

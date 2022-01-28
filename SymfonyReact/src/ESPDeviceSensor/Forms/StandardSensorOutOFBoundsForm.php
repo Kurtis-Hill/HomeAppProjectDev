@@ -37,7 +37,7 @@ class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadin
             if ($readingType instanceof AllSensorReadingTypeInterface) {
                 if ($highReading < $lowReading) {
                     $context
-                        ->buildViolation('High reading for ' . $readingType->getSensorTypeName() . ' cannot be lower than low reading')
+                        ->buildViolation('High reading for ' . $readingType->getReadingType() . ' cannot be lower than low reading')
                         ->addViolation();
                 }
             } else {

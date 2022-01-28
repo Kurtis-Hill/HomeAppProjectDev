@@ -122,7 +122,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
     private function saveSensorData(AllSensorReadingTypeInterface $sensorType): void
     {
         $repository = $this->sensorReadingTypeFactory
-            ->getSensorReadingTypeRepository($sensorType->getSensorTypeName());
+            ->getSensorReadingTypeRepository($sensorType->getReadingType());
 
         $repository->persist($sensorType);
         $repository->flush();

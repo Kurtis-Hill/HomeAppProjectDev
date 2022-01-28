@@ -196,7 +196,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         $this->constRecord = $constRecord;
     }
 
-    public function getSensorTypeName(): string
+    public function getReadingType(): string
     {
         return self::READING_TYPE;
     }
@@ -211,7 +211,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     {
         if ($this->getHighReading() < $this->getLowReading()) {
             $context
-                ->buildViolation('High reading for ' . $this->getSensorTypeName() . ' cannot be lower than low reading')
+                ->buildViolation('High reading for ' . $this->getReadingType() . ' cannot be lower than low reading')
                 ->addViolation();
         }
     }

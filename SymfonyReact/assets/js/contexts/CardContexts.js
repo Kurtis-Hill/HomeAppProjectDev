@@ -242,20 +242,22 @@ class CardContextProvider extends Component {
         event.preventDefault();
         this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: []}});
 
-        // console.log(this.state.modalContent);
-        const jsonFormData = {
+        const cardFormData = {
             'cardViewID' : this.state.modalContent.cardViewID,
             'cardColour' : this.state.modalContent.cardColour,
             'cardViewState' : this.state.modalContent.currentViewState.cardStateID,
             'cardIcon' : this.state.modalContent.cardIcon.iconID,
-            'sensorData' : this.state.modalContent.sensorData,
-            // 'constRecrod' : this.state.modalContent.constRecord,
         };
 
-        try {
-            const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', jsonFormData, getAPIHeader());
+        const sensorBoundaryUpdateData = {
+            'sensorData' : this.state.modalContent.sensorData,
+        }
 
-            if (formSubmissionResult.status === 204) {
+        try {
+            const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', cardFormData, getAPIHeader());
+
+            const boundaryFormSubmissionResult = await axios.put(apiURL+'sensors/boundary-update', sensorBoundaryUpdateData, getAPIHeader());
+            if (formSubmissionResult.status === 204 && boundaryFormSubmissionResult.status === 204) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>
                     this.toggleModal(), 1500

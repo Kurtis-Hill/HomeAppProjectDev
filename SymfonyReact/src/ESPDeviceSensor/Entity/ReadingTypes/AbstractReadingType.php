@@ -34,7 +34,7 @@ abstract class AbstractReadingType
     {
         if ($this->getHighReading() < $this->getLowReading()) {
             $context
-                ->buildViolation('High reading for ' . $this->getSensorTypeName() . ' cannot be lower than low reading')
+                ->buildViolation('High reading for ' . $this->getReadingType() . ' cannot be lower than low reading')
                 ->addViolation();
         }
     }

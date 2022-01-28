@@ -45,7 +45,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
      */
     private function getReadingTypeQueryDTOBuilder(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): ReadingTypeQueryDTOBuilderInterface
     {
-        return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getSensorType());
+        return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getReadingType());
     }
 
     private function updateSensorBoundaryReading(
@@ -104,7 +104,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
                     if (!$sensorReadingTypeObject instanceof StandardReadingSensorInterface || !$sensorReadingTypeObject instanceof AllSensorReadingTypeInterface) {
                         throw new UnexpectedValueException('You have not passed the correct sensor reading type for this service to process request');
                     }
-                    if ($sensorReadingTypeObject->getSensorTypeName() === $updateSensorBoundaryReadingsDTO->getSensorType()) {
+                    if ($sensorReadingTypeObject->getReadingType() === $updateSensorBoundaryReadingsDTO->getReadingType()) {
                         $this->updateSensorBoundaryReading(
                             $sensorReadingTypeObject,
                             $updateSensorBoundaryReadingsDTO

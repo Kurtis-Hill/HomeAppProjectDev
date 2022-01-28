@@ -13,7 +13,7 @@ interface AllSensorReadingTypeInterface
 
     public function setSensorID(int $id);
 
-    public function getSensorTypeName(): string;
+    public function getReadingType(): string;
 
     public function getConstRecord(): bool;
 

@@ -56,7 +56,7 @@ class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterfac
                 throw new ReadingTypeNotSupportedException(
                     sprintf(
                         ReadingTypeNotSupportedException::READEING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
-                        $readingType->getSensorTypeName()
+                        $readingType->getReadingType()
                     )
                 );
         }

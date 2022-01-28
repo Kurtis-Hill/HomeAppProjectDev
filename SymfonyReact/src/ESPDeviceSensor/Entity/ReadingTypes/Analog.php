@@ -158,7 +158,7 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         $this->constRecord = $constRecord;
     }
 
-    public function getSensorTypeName(): string
+    public function getReadingType(): string
     {
         return self::READING_TYPE;
     }
@@ -173,7 +173,7 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     {
         if ($this->getHighReading() < $this->getLowReading()) {
             $context
-                ->buildViolation('High reading for ' . $this->getSensorTypeName() . ' cannot be lower than low reading')
+                ->buildViolation('High reading for ' . $this->getReadingType() . ' cannot be lower than low reading')
                 ->addViolation();
         }
     }
