@@ -6,7 +6,7 @@ use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\AbstractStandardSensorTypeBuilder;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
 
 class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
@@ -21,12 +21,14 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
 
     public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
     {
-        return new UpdateSensorBoundaryReadingsDTO(
-            // $sensorTypeObject->getAnalogObject()->getSensorID(),
-            $sensorData['sensorType'],
-            $sensorData['highReading'],
-            $sensorData['lowReading'],
-            $sensorData['constRecord'],
-        );
+        if (!is_callable([$sensorTypeObject, 'getAnalogObject'], true)) {
+            throw new ReadingTypeObjectBuilderException(
+                sprintf(
+                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
+                    $sensorTypeObject->getSensorTypeName()
+                )
+            );
+        }
+        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getAnalogObject(), $sensorData);
     }
 }

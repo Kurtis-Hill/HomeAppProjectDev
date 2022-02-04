@@ -12,11 +12,15 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -25,17 +29,17 @@ use Doctrine\Persistence\ObjectManager;
 class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
     public const SENSORS = [
-        'Dht' => 'AdminDHTSensor',
-        'Dallas' => 'AdminDallasSensor',
-        'Soil' => 'AdminSoilSensor',
-        'Bmp' => 'AdminBmpSensor'
+        Dht::NAME => 'AdminDHTSensor',
+        Dallas::NAME => 'AdminDallasSensor',
+        Soil::NAME => 'AdminSoilSensor',
+        Bmp::NAME => 'AdminBmpSensor'
     ];
 
     private const CARD_VIEW_CHECK = [
         'on' => 'S1ON',
         'off' => 'S2OFF',
         'device' => 'S3DeviceONLY',
-        'room' => 'S4ROOMONLY,'
+        'room' => 'S4ROOMONLY'
     ];
 
     public function getOrder(): int
@@ -100,7 +104,6 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     }
                 }
             }
-//            dd('hi');
             ++$sensorCountCardView;
         }
 

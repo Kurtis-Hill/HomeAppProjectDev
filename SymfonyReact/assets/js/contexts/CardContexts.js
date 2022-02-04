@@ -13,6 +13,7 @@ const emptyModalContent = {
     cardIcon: [],
     cardColour: '',
     currentViewState: [],
+    sensorId: null,
 };
 
 const emptyUserSelectionData = {
@@ -66,7 +67,7 @@ class CardContextProvider extends Component {
 
 
     setURL = () => {
-        const cardAPI = apiURL+'card-data/';
+        const cardAPI = `${apiURL}card-data/`;
         if (window.location.pathname === `${webappURL}index`) {
             const indexURL = `${cardAPI}index?reading-types[]=temperature`;
             this.setState({url:  indexURL});
@@ -75,13 +76,13 @@ class CardContextProvider extends Component {
         const windowLocation = window.location.search;
         const urlParam = new URLSearchParams(windowLocation);
 
-        if (window.location.pathname === webappURL+'device') {
+        if (window.location.pathname ===`${webappURL}device`) {
             const deviceName = urlParam.get('device-id');
             const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}&reading-types[]=temperature&reading-types[]=humidity`;
             this.setState({url:  deviceURL});
             return;
         }
-        if (window.location.pathname === webappURL+'room') {
+        if (window.location.pathname === `${webappURL}room`) {
             const roomeName = urlParam.get('room-id');
             const roomURL = `${cardAPI}room-cards?room-id=${roomeName}`;
             this.setState({url:  roomURL});
@@ -138,12 +139,14 @@ class CardContextProvider extends Component {
             }
         } catch (error) {
             this.setState({alternativeDisplayMessage: error.data.payload[0]});
+            this.setState({modalLoading: false});
         }
 
         this.setState({modalLoading: false});
     }
 
     modalContent = (cardData) => {
+        const sensorId = cardData.sensorId;
         const cardColour = cardData.cardColour.colourID;
         const cardIcon = cardData.cardIcon;
         const cardViewID = cardData.cardViewID;
@@ -163,7 +166,9 @@ class CardContextProvider extends Component {
         });
 
         this.setState({
-            modalContent:{...this.state.modalContent,
+            modalContent:{
+                ...this.state.modalContent,
+                sensorId,
                 cardColour,
                 cardIcon,
                 cardViewID,
@@ -250,6 +255,7 @@ class CardContextProvider extends Component {
         };
 
         const sensorBoundaryUpdateData = {
+            'sensorId' : this.state.modalContent.sensorId,
             'sensorData' : this.state.modalContent.sensorData,
         }
 
@@ -266,7 +272,8 @@ class CardContextProvider extends Component {
                 this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: ["unexpected response, check too see if the values are updated"]}});
             }
         } catch(error) {
-            const badRequestErrors = (!error.response.data.errors.length > 1)
+            console.log(error.response.data, "boom");
+            const badRequestErrors = !Array.isArray(error.response.data.errors) || !error.response.data.errors.length > 1
                 ? ['something went wrong']
                 : error.response.data.errors;
 
@@ -277,7 +284,7 @@ class CardContextProvider extends Component {
             if (error.response.status === 404) {
                 this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
                 this.toggleModal();
-                alert('Could not handle request please try again');
+                alert('Route missing, please contact the system administrator');
             }
 
             if (error.response.status === 500) {
@@ -287,7 +294,9 @@ class CardContextProvider extends Component {
                     this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false, errors: badRequestErrors}});
                 }
             }
+            this.setState({modalStatus:{...this.state.modalStatus, modalLoading: false, modalSubmit: false}});
         }
+        this.setState({modalStatus:{...this.state.modalStatus, modalLoading: false, modalSubmit: false}});
     }
 
     render() {
@@ -302,8 +311,7 @@ class CardContextProvider extends Component {
                         toggleModal: this.toggleModal,
                         modalContent: this.state.modalContent,
                         handleSubmissionModalForm: this.handleSubmissionModalForm,
-                        updateModalForm: this.updateModalForm,
-                        handleModalFormInput: this.handleModalFormInput,
+                        updateModalForm: this.updateModalForm,                    
                         errors: this.state.errors,
                         alternativeDisplayMessage: this.state.alternativeDisplayMessage,
                         userSelectionData: this.state.userSelectionData,

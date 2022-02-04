@@ -45,4 +45,6 @@ interface StandardReadingSensorInterface
     public function getMeasurementDifferenceHighReading(): int|float;
 
     public function getMeasurementDifferenceLowReading(): int|float;
+
+    public function getReadingType(): string;
 }

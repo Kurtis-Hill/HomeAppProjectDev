@@ -122,6 +122,9 @@ abstract class AbstractCardDTOBuilder
         string $symbol = null
     ): StandardSensorTypeViewFormDTO
     {
+//        dd($sensorTypeObject->getLowReading(), $sensorTypeObject->getHighReading(),
+//             number_format($sensorTypeObject->getHighReading(), 2)
+//        );
         return new StandardSensorTypeViewFormDTO(
             $type,
             is_float($sensorTypeObject->getHighReading())

@@ -4,6 +4,8 @@ namespace App\UserInterface\DTO\CardViewDTO;
 
 class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
 {
+    private int $sensorId;
+
     private array $sensorData;
 
     private array $currentCardIcon;
@@ -21,6 +23,7 @@ class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
     private array $cardStates;
 
     public function __construct(
+        int $sensorId,
         array $currentCardIcon,
         array $currentCardColour,
         array $currentState,
@@ -30,6 +33,7 @@ class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
         array $cardStates,
         array $sensorData,
     ) {
+        $this->sensorId = $sensorId;
         $this->currentCardIcon = $currentCardIcon;
         $this->currentCardColour = $currentCardColour;
         $this->currentState = $currentState;
@@ -38,6 +42,11 @@ class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
         $this->colourSelection = $colourSelection;
         $this->cardStates = $cardStates;
         $this->sensorData = $sensorData;
+    }
+
+    public function getSensorId(): int
+    {
+        return $this->sensorId;
     }
 
     public function getSensorData(): array

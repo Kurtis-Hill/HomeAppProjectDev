@@ -36,10 +36,6 @@ class SensorReadingTypeFactory implements SensorReadingTypeFactoryInterface
         $this->latitudeRepository = $latitudeRepository;
     }
 
-    /**
-     * @throws SensorReadingTypeValidationException
-     * @throws SensorReadingTypeRepositoryFactoryException
-     */
     public function getSensorReadingTypeRepository(string $sensorType): ReadingTypeRepositoryInterface
     {
         return match ($sensorType) {
@@ -47,7 +43,11 @@ class SensorReadingTypeFactory implements SensorReadingTypeFactoryInterface
             Humidity::READING_TYPE => $this->humidityRepository,
             Analog::READING_TYPE => $this->analogRepository,
             Latitude::READING_TYPE => $this->latitudeRepository,
-            default => throw new SensorReadingTypeRepositoryFactoryException(sprintf(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND, $sensorType))
+            default => throw new SensorReadingTypeRepositoryFactoryException(
+                sprintf(
+                    SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND,
+                    $sensorType)
+            )
         };
     }
 }

@@ -17,24 +17,12 @@ class GetSensorTypesControllerTest extends WebTestCase
 {
     private const GET_SENSOR_TYPES_URL = '/HomeApp/api/user/sensor-types/all-types';
 
-    /**
-     * @var EntityManagerInterface
-     */
     private EntityManagerInterface $entityManager;
 
-    /**
-     * @var KernelBrowser
-     */
     private KernelBrowser $client;
 
-    /**
-     * @var ?Devices
-     */
     private ?Devices $device;
 
-    /**
-     * @var string|null
-     */
     private ?string $userToken = null;
 
     protected function setUp(): void
@@ -92,7 +80,7 @@ class GetSensorTypesControllerTest extends WebTestCase
         self::assertCount(count(SensorType::ALL_SENSOR_TYPES), $payload);
     }
 
-    public function test_all_data_bases_entries_are_returned(): void
+    public function test_all_data_base_entries_are_returned(): void
     {
         $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
 

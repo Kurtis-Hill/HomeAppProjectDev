@@ -6,20 +6,20 @@ class StandardSensorTypeViewFormDTO
 {
     private string $sensorType;
 
-    private int|float $highReading;
+    private int|float|string $highReading;
 
-    private int|float $lowReading;
+    private int|float|string $lowReading;
 
     private bool $constRecord;
 
-    private string $sensorSymbol;
+    private ?string $sensorSymbol;
 
     public function __construct(
         string $sensorType,
-        int|float $highReading,
-        int|float $lowReading,
+        int|float|string $highReading,
+        int|float|string $lowReading,
         bool $constRecord,
-        string $sensorSymbol,
+        ?string $sensorSymbol,
     ) {
         $this->sensorType = $sensorType;
         $this->highReading = $highReading;
@@ -33,12 +33,12 @@ class StandardSensorTypeViewFormDTO
         return $this->sensorType;
     }
 
-    public function getHighReading(): float|int
+    public function getHighReading(): float|int|string
     {
         return $this->highReading;
     }
 
-    public function getLowReading(): float|int
+    public function getLowReading(): float|int|string
     {
         return $this->lowReading;
     }
@@ -48,7 +48,7 @@ class StandardSensorTypeViewFormDTO
         return $this->constRecord;
     }
 
-    public function getSensorSymbol(): string
+    public function getSensorSymbol(): ?string
     {
         return $this->sensorSymbol;
     }

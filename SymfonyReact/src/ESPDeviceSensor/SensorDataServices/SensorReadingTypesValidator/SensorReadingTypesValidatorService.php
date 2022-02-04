@@ -11,6 +11,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -29,6 +30,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         $this->validator = $validator;
     }
 
+    //@TODO needs moving to its own class
     #[ArrayShape(["errors"])]
     public function validateSensorTypeObject(SensorTypeInterface $sensorTypeObject): array
     {
@@ -43,7 +45,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [$sensorTypeObjectErrors];
             } else {
-                $this->saveSensorData($sensorTypeObject->getTempObject());
+                $this->saveReadingType($sensorTypeObject->getTempObject());
             }
         }
         if ($sensorTypeObject instanceof HumiditySensorTypeInterface) {
@@ -54,7 +56,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
             } else {
-                $this->saveSensorData($sensorTypeObject->getHumidObject());
+                $this->saveReadingType($sensorTypeObject->getHumidObject());
             }
         }
         if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
@@ -65,7 +67,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
             } else {
-                $this->saveSensorData($sensorTypeObject->getLatitudeObject());
+                $this->saveReadingType($sensorTypeObject->getLatitudeObject());
             }
         }
         if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
@@ -76,7 +78,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             if (!empty($sensorTypeObjectErrors)) {
                 $errors = [...$errors, $sensorTypeObjectErrors];
             } else {
-                $this->saveSensorData($sensorTypeObject->getAnalogObject());
+                $this->saveReadingType($sensorTypeObject->getAnalogObject());
             }
         }
 
@@ -84,11 +86,28 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
     }
     
     #[ArrayShape(['string'])]
-    public function validateSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeObject, string $sensorType): array
+    public function validateSensorReadingTypeObject(
+        AllSensorReadingTypeInterface $sensorReadingTypeObject,
+        string $sensorType
+    ): array
     {
-        $validationErrors = $this->performSensorReadingTypeValidation($sensorReadingTypeObject, $sensorType);
+        $validationErrors = $this->performSensorReadingTypeValidation(
+            $sensorReadingTypeObject,
+            $sensorType
+        );
+//        dd($sensorReadingTypeObject);
+        if ($sensorReadingTypeObject instanceof Humidity) {
+
+//            dd($sensorReadingTypeObject, $validationErrors);
+        }
         if (empty($validationErrors)) {
-            $this->saveSensorData($sensorReadingTypeObject);
+            try {
+                $this->saveReadingType($sensorReadingTypeObject);
+            } catch (SensorReadingTypeRepositoryFactoryException $e) {
+                return [$e->getMessage()];
+            }
+        } else {
+            $this->removeItemFromPersist($sensorReadingTypeObject);
         }
 
         return $validationErrors;
@@ -110,21 +129,31 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             );
         }
 
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->getValidationErrorAsArray($validationErrors);
-        }
-
-        $this->saveSensorData($sensorReadingType);
-
-        return [];
+        return $this->checkIfErrorsArePresent($validationErrors)
+            ? $this->getValidationErrorAsArray($validationErrors)
+            : [];
     }
 
-    private function saveSensorData(AllSensorReadingTypeInterface $sensorType): void
+    /**
+     * @throws SensorReadingTypeRepositoryFactoryException
+     */
+    private function saveReadingType(AllSensorReadingTypeInterface $readingTyeObject): void
     {
-        $repository = $this->sensorReadingTypeFactory
-            ->getSensorReadingTypeRepository($sensorType->getReadingType());
+        $repository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository(
+            $readingTyeObject->getReadingType()
+        );
+//dd($repository, $sensorType);
+        $repository->persist($readingTyeObject);
+//        $repository->flush();
+    }
 
-        $repository->persist($sensorType);
-        $repository->flush();
+    private function removeItemFromPersist(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $repository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository(
+            $readingTypeObject->getReadingType()
+        );
+//        $repository->detatch($readingTypeObject);
+
+//        $repository->removeObject($readingTypeObject);
     }
 }

@@ -18,6 +18,7 @@ class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder im
         $usersCurrentCardDisplaySettings = $this->setUsersCurrentCardViewData($cardViewObject);
 
         return new StandardCardViewSensorFormDTO(
+            $sensorTypeObject->getSensorObject()->getSensorNameID(),
             $usersCurrentCardDisplaySettings['cardIcon'],
             $usersCurrentCardDisplaySettings['colours'],
             $usersCurrentCardDisplaySettings['states'],

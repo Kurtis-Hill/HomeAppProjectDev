@@ -6,11 +6,14 @@ use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\AbstractStandardSensorTypeBuilder;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
 
 class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
-    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
+    public function setNewBoundaryForReadingType(
+        SensorTypeInterface $sensorTypeObject,
+        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+    ): void
     {
         if (!$sensorTypeObject instanceof TemperatureSensorTypeInterface) {
             throw new ReadingTypeNotExpectedException(ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED);
@@ -21,13 +24,15 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
 
     public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
     {
-//        dd($sensorData);
-        return new UpdateSensorBoundaryReadingsDTO(
-                $sensorTypeObject->getTempObject()->getSensorID(),
-                $sensorData['sensorType'],
-                $sensorData['highReading'],
-                $sensorData['lowReading'],
-                $sensorData['constRecord'],
+        if (!is_callable([$sensorTypeObject, 'getTempObject'], true)) {
+            throw new ReadingTypeObjectBuilderException(
+                sprintf(
+                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
+                    $sensorTypeObject->getSensorTypeName()
+                )
             );
+        }
+
+        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getTempObject(), $sensorData);
     }
 }

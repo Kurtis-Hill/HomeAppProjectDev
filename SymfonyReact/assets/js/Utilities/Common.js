@@ -34,14 +34,14 @@ export const setUserSession = (token, refreshToken, userData) => {
 }
 
 export const capitalizeFirstLetter = (string) => {
-    if (string != undefined) {
+    if (string !== undefined) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
     return null;
 }
 
 export const lowercaseFirstLetter = (string) => {
-    if (string != undefined) {
+    if (string !== undefined) {
         return string.charAt(0).toLowerCase() + string.slice(1);
     }
     return null;

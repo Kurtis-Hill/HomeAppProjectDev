@@ -3,12 +3,10 @@
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\AbstractStandardSensorTypeBuilder;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
 
 class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
@@ -23,12 +21,15 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
 
     public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
     {
-        return new UpdateSensorBoundaryReadingsDTO(
-            $sensorTypeObject->getHumidObject()->getSensorID(),
-            $sensorData['sensorType'],
-            $sensorData['highReading'],
-            $sensorData['lowReading'],
-            $sensorData['constRecord'],
-        );
+        if (!is_callable([$sensorTypeObject, 'getHumidObject'], true)) {
+            throw new ReadingTypeObjectBuilderException(
+                sprintf(
+                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
+                    $sensorTypeObject->getSensorTypeName()
+                )
+            );
+        }
+
+        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getHumidObject(), $sensorData);
     }
 }

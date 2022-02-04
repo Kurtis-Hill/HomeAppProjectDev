@@ -6,7 +6,7 @@ use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\AbstractStandardSensorTypeBuilder;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
 
 class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
@@ -21,12 +21,15 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
 
     public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
     {
-        return new UpdateSensorBoundaryReadingsDTO(
-            $sensorTypeObject->getLatitudeObject()->getSensorID(),
-            $sensorData['sensorType'],
-            $sensorData['highReading'],
-            $sensorData['lowReading'],
-            $sensorData['constRecord'],
-        );
+        if (!is_callable([$sensorTypeObject, 'getLatitudeObject'], true)) {
+            throw new ReadingTypeObjectBuilderException(
+                sprintf(
+                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
+                    $sensorTypeObject->getSensorTypeName()
+                )
+            );
+        }
+
+        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getLatitudeObject(), $sensorData);
     }
 }

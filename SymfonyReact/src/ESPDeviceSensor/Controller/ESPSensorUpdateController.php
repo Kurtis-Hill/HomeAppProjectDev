@@ -67,8 +67,11 @@ class ESPSensorUpdateController extends AbstractController
                 $errors[] = $exception->getMessage();
             }
         }
+        if (count($errors) === count($requestData['sensorData'])) {
+            return $this->sendBadRequestJsonResponse(['None of the update requests could be processed']);
+        }
         if (!empty($errors)) {
-            return $this->sendMultiStatusJsonResponse(['Only partial content processed']);
+            return $this->sendMultiStatusJsonResponse(['Only part of the content could be processed']);
         }
 
         return $this->sendSuccessfulJsonResponse([self::SENSOR_UPDATE_SUCCESS_MESSAGE]);

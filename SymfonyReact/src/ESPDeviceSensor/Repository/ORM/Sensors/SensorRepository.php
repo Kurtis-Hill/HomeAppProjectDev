@@ -29,6 +29,11 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $this->getEntityManager()->persist($sensorReadingData);
     }
 
+    public function findOneById(int $id): ?Sensor
+    {
+        return $this->findOneBy(['sensorNameID' => $id]);
+    }
+
     public function flush(): void
     {
         $this->getEntityManager()->flush();
@@ -79,6 +84,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $result = array_filter($qb->getQuery()->getResult());
         $result = array_values($result);
+
         return $result[0];
     }
 
@@ -143,5 +149,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         }
 
         return implode(', ', $sensorAlias);
+    }
+
+    public function checkPersistance()
+    {
+        dd($this->getEntityManager()->getUnitOfWork()->getScheduledEntityInsertions());
     }
 }

@@ -5,13 +5,11 @@ namespace App\UserInterface\Controller\Card;
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
 use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
-use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
@@ -96,7 +94,7 @@ class CardViewFormController extends AbstractController
         }
         $cardViewID = $cardData['cardViewID'];
 
-        if (empty($cardData['sensorData']) || empty($cardViewID) || !is_numeric($cardViewID)) {
+        if (empty($cardViewID) || !is_numeric($cardViewID)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
         }
 
@@ -129,55 +127,10 @@ class CardViewFormController extends AbstractController
 
         try {
             $cardViewRepository->persist($cardViewObject);
+            $cardViewRepository->flush();
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
-
-//        // MOVE THIS OUT TO A ESP SENSOR ENDPOINT
-//        foreach ($cardData['sensorData'] as $updateData) {
-//            try {
-//                $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryReadingsService->createUpdateSensorBoundaryReadingDTO($updateData);
-//
-//                $readingTypeQueryDTOs[] = $updateSensorBoundaryReadingsService->createReadingTypeQueryDTO($updateSensorBoundaryReadingsDTO);
-//                $updateSensorBoundaryReadingsDTOs[] = $updateSensorBoundaryReadingsDTO;
-//            } catch (ReadingTypeBuilderFailureException) {
-//                $updateReadingDTOErrors[] = $updateData['sensorType'] ?? 'no sensor type provided'  . ' is not a valid sensor type';
-//            }
-//        }
-//
-//        if (empty($updateSensorBoundaryReadingsDTOs) || empty($readingTypeQueryDTOs)) {
-//            return $this->sendBadRequestJsonResponse(['Could not prepare sensor reading data']);
-//        }
-//
-//        try {
-//            $sensorTypeJoinQueryDTO = $updateSensorBoundaryReadingsService->getReadingTypeObjectJoinQueryDTO($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType());
-//        } catch (SensorTypeBuilderFailureException $e) {
-//            return $this->sendInternalServerErrorJsonResponse([$e->getMessage()]);
-//        }
-//
-//        $sensorReadingTypeObjects = $updateSensorBoundaryReadingsService->findSensorAndReadingTypesToUpdateBoundaryReadings(
-//             $sensorTypeJoinQueryDTO,
-//            $readingTypeQueryDTOs,
-//             $cardViewObject->getSensorNameID()
-//                 ->getDeviceObject()
-//                 ->getDeviceNameID(),
-//             $cardViewObject->getSensorNameID()->getSensorName(),
-//         );
-//
-//        $sensorObject = array_pop($sensorReadingTypeObjects);
-//
-//        if (!$sensorObject instanceof StandardSensorTypeInterface) {
-//            return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
-//        }
-//        $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs($updateSensorBoundaryReadingsDTOs, $sensorReadingTypeObjects, $sensorObject->getSensorTypeName());
-//
-//        if (!empty($validationErrors)) {
-//            return $this->sendBadRequestJsonResponse($validationErrors);
-//        }
-//
-//        if (!empty($updateReadingDTOErrors)) {
-//            return $this->sendMultiStatusJsonResponse([$updateReadingDTOErrors]);
-//        }
 
         return $this->sendSuccessfulUpdateJsonResponse();
     }

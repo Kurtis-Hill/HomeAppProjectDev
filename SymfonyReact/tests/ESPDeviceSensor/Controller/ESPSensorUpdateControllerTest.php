@@ -8,19 +8,24 @@ use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\DataFixtures\ESP8266\SensorFixtures;
 use App\ESPDeviceSensor\Controller\ESPSensorUpdateController;
 use App\ESPDeviceSensor\Entity\SensorType;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
+use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ESPSensorUpdateControllerTest extends WebTestCase
 {
     private const ESP_SENSOR_UPDATE = '/HomeApp/api/device/esp/update/current-reading';
 
-    /**
-     * @var KernelBrowser
-     */
     private KernelBrowser $client;
+
+    private EntityManagerInterface $entityManager;
 
     /**
      * @var string|null
@@ -31,9 +36,9 @@ class ESPSensorUpdateControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
 
-//        $this->entityManager = static::$kernel->getContainer()
-//            ->get('doctrine')
-//            ->getManager();
+        $this->entityManager = static::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
 
         $this->setUserToken();
     }
@@ -42,7 +47,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
     {
         if ($this->userToken === null) {
             $this->client->request(
-                'POST',
+                Request::METHOD_POST,
                 SecurityController::API_DEVICE_LOGIN,
                 [],
                 [],
@@ -54,7 +59,6 @@ class ESPSensorUpdateControllerTest extends WebTestCase
             $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
             $this->userToken = $responseData['token'];
-//            dd($this->userToken);
         }
     }
 
@@ -71,7 +75,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         $jsonData = json_encode($sendData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
             [],
             [],
@@ -92,7 +96,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         yield [
             'sensorType' => SensorType::DHT_SENSOR,
             'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Dht'],
+                'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
                 'currentReadings' => [
                     'temperatureReading' => 15.5,
                     'humidityReading' => 50
@@ -102,7 +106,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         yield [
             'sensorType' => SensorType::DALLAS_TEMPERATURE,
             'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Dallas'],
+                'sensorName' => SensorFixtures::SENSORS[Dallas::NAME],
                 'currentReadings' => [
                     'temperatureReading' => 15.5,
                 ]
@@ -111,18 +115,20 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         yield [
             'sensorType' => SensorType::BMP_SENSOR,
             'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Bmp'],
+                'sensorName' => SensorFixtures::SENSORS[Bmp::NAME],
                 'currentReadings' => [
                     'temperatureReading' => 15.5,
+                    'humidityReading' => 50,
+                    'latitudeReading' => 50.556,
                 ]
             ]
         ];
         yield [
             'sensorType' => SensorType::SOIL_SENSOR,
             'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Soil'],
+                'sensorName' => SensorFixtures::SENSORS[Soil::NAME],
                 'currentReadings' => [
-                    'temperatureReading' => 15.5,
+                    'soilReading' => 155,
                 ]
             ]
         ];
@@ -152,7 +158,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         $jsonData = json_encode($dataToSend, JSON_THROW_ON_ERROR);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
             [],
             [],
@@ -198,9 +204,30 @@ class ESPSensorUpdateControllerTest extends WebTestCase
             'sensorData' => [
                 'sensorName' => SensorFixtures::SENSORS['Bmp'],
             ],
+            'title' => 'Bad Request No Data Returned',
+            'message' => 'None of the update requests could be processed',
+            'responseCode' => HTTPStatusCodes::HTTP_BAD_REQUEST
+        ];
+
+        yield [
+            'sensorType' => SensorType::DHT_SENSOR,
+            'sensorData' => [
+                'sensorName' => SensorFixtures::SENSORS['Dht'],
+                'currentReadings' => [
+                    'temperatureReading' => 15.5,
+                    'humidityReading' => 50
+                ],
+            ],
+            [
+                'sensorName' => SensorFixtures::SENSORS['Dht'],
+                'sensorReadings' => [
+                    'temperatureReading' => 15.5,
+                    'humidityReading' => 50
+                ]
+            ],
             'title' => 'Part of the request was accepted',
-            'message' => 'Only partial content processed',
-            'responseCode' => HTTPStatusCodes::HTTP_MULTI_STATUS_CONTENT
+            'message' => 'Only part of the content could be processed',
+            'responseCode' => Response::HTTP_MULTI_STATUS
         ];
     }
 }

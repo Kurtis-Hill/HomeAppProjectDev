@@ -140,7 +140,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      */
     #[Pure] public function getCurrentReading(): int|float
     {
-        return round($this->currentReading, 2);
+        return $this->currentReading;
     }
 
     public function getHighReading(): int|float
@@ -185,7 +185,6 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     /**
      * Sensor Functional Methods
      */
-
     public function getConstRecord(): bool
     {
         return $this->constRecord;
