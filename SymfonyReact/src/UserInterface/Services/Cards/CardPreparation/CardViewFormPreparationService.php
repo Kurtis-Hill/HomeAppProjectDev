@@ -59,15 +59,6 @@ class CardViewFormPreparationService implements CardViewFormPreparationServiceIn
         return $cardViewFormDTOBuilder->makeFormDTO($sensorTypeObject, $cardViewObject,  $usersCardSelections);
     }
 
-    public function getSensorTypeDataByCardViewObject(CardView $cardView): SensorTypeInterface
-    {
-//        $sensorTypeName = $cardView->getSensorNameID()->getSensorTypeObject()->getSensorType();
-//        $allReadingTypes = ReadingTypes::SENSOR_READING_TYPE_DATA;
-//
-//        $readingTypesToQuery = $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder()
-//        return $this->findStandardSensorTypeObjectByCardView($cardView);
-    }
-
     /**
      * @throws SensorTypeBuilderFailureException
      * @throws ORMException

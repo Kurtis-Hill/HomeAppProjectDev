@@ -2,11 +2,11 @@
 
 namespace App\UserInterface\DTO\CardViewDTO;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
 {
     private int $sensorId;
-
-    private array $sensorData;
 
     private array $currentCardIcon;
 
@@ -21,6 +21,9 @@ class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
     private array $colourSelection;
 
     private array $cardStates;
+
+    #[ArrayShape([StandardCardViewDTO::class])]
+    private array $sensorData;
 
     public function __construct(
         int $sensorId,

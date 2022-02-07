@@ -3,10 +3,12 @@
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
-use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
+use JetBrains\PhpStorm\Pure;
 
 class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
@@ -19,16 +21,21 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
         $this->updateStandardSensor($sensorTypeObject->getAnalogObject(), $updateSensorBoundaryReadingsDTO);
     }
 
-    public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
+    public function buildUpdateSensorBoundaryReadingsDTO(
+        array $sensorData,
+        AllSensorReadingTypeInterface $sensorReadingTypeObject
+    ): UpdateSensorBoundaryReadingsDTO
     {
-        if (!is_callable([$sensorTypeObject, 'getAnalogObject'], true)) {
-            throw new ReadingTypeObjectBuilderException(
+        if (!$sensorReadingTypeObject instanceof Analog) {
+            throw new ReadingTypeNotExpectedException(
                 sprintf(
-                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
-                    $sensorTypeObject->getSensorTypeName()
+                    ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
+                    $sensorReadingTypeObject->getReadingType(),
+                    $sensorData['readingType'],
                 )
             );
         }
-        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getAnalogObject(), $sensorData);
+
+        return $this->buildStandardSensorUpdateReadingDTO($sensorData, $sensorReadingTypeObject);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\Repository\ORM\ReadingType;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 
 interface ReadingTypeRepositoryInterface
@@ -17,6 +18,13 @@ interface ReadingTypeRepositoryInterface
      * @throws ORMException
      */
     public function removeObject(AllSensorReadingTypeInterface $readingTypeObject);
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getOneBySensorNameID(int $sensorNameID);
+
+//    public function findOneByNamr
 
 //    public function findAllBySensorName(string $name);
 }

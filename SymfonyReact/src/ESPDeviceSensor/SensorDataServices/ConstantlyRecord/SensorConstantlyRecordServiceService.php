@@ -55,7 +55,7 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
             $processed ??
                 throw new ReadingTypeNotSupportedException(
                     sprintf(
-                        ReadingTypeNotSupportedException::READEING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
+                        ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
                         $readingType->getReadingType()
                         )
                     );

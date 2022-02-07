@@ -5,7 +5,7 @@ namespace App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType;
 use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\ReadingTypeRepositoryInterface;
 
-interface SensorReadingTypeFactoryInterface
+interface SensorReadingTypeRepositoryFactoryInterface
 {
     /**
      * @throws SensorReadingTypeRepositoryFactoryException

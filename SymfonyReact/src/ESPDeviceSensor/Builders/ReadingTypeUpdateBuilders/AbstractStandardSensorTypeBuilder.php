@@ -4,14 +4,15 @@ namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use JetBrains\PhpStorm\Pure;
 
 abstract class AbstractStandardSensorTypeBuilder
 {
-    protected function buildStandardSensorUpdateReadingDTO(StandardReadingSensorInterface $standardReadingSensor, array $sensorData): UpdateSensorBoundaryReadingsDTO
+    #[Pure]
+    protected function buildStandardSensorUpdateReadingDTO(array $sensorData, StandardReadingSensorInterface $standardReadingSensor): UpdateSensorBoundaryReadingsDTO
     {
         return new UpdateSensorBoundaryReadingsDTO(
-            $standardReadingSensor->getSensorID(),
-            $sensorData['sensorType'],
+            $sensorData['readingType'],
             $sensorData['highReading'],
             $sensorData['lowReading'],
             $sensorData['constRecord'],
@@ -19,6 +20,7 @@ abstract class AbstractStandardSensorTypeBuilder
             $standardReadingSensor->getLowReading(),
         );
     }
+
     protected function updateStandardSensor(StandardReadingSensorInterface $standardReadingSensor, UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
     {
         $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());

@@ -70,11 +70,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
         $sensorAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
-//dd($sensorAlias);
-//        if (!empty($sensorTypeJoinDTOs)) {
-//            $readingAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
-//            $qb->addSelect($readingAlias);
-//        }
 
         $qb->select($sensorAlias)
             ->where(
@@ -88,10 +83,14 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $result[0];
     }
 
-    public function getSensorTypeAndReadingTypeObjectsForSensor(JoinQueryDTO $joinQueryDTO, int $device, array $readingTypeJoinQueryDTOs, string $sensorsName): array
+    public function getSensorTypeAndReadingTypeObjectsForSensor(
+        JoinQueryDTO $joinQueryDTO,
+        int $device,
+        array $readingTypeJoinQueryDTOs,
+        string $sensorsName
+    ): array
     {
         $qb = $this->createQueryBuilder('sensors');
-//dd($readingTypeJoinQueryDTOs);
         $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
         $readingTypeAlias = $this->prepareSensorJoinsForQuery([$joinQueryDTO], $qb);
 

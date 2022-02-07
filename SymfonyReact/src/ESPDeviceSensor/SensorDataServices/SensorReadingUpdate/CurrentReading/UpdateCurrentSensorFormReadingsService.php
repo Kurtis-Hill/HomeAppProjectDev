@@ -10,7 +10,7 @@ use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService;
@@ -33,7 +33,7 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
 
     #[Pure] public function __construct(
         SensorRepository $sensorRepository,
-        SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
+        SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory,
         FormFactoryInterface $formFactory,
         SensorConstantlyRecordServiceInterface $constantlyRecordService,
         OutOfBoundsSensorServiceInterface $outOfBoundsServiceService,
@@ -85,7 +85,7 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
         if ($sensorReadingTypeObjects->isEmpty()) {
             throw new ReadingTypeNotSupportedException(
                 sprintf(
-                    ReadingTypeNotSupportedException::READEING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
+                    ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
                     $updateSensorReadingDTO->getSensorName()
                 )
             );

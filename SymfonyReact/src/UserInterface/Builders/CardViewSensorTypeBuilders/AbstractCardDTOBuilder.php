@@ -13,7 +13,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
-use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\StandardSensorTypeViewFormDTO;
+use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\StandardSensorTypeBoundaryViewFormDTO;
 use DateTime;
 use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
@@ -120,12 +120,9 @@ abstract class AbstractCardDTOBuilder
         StandardReadingSensorInterface $sensorTypeObject,
         string $type,
         string $symbol = null
-    ): StandardSensorTypeViewFormDTO
+    ): StandardSensorTypeBoundaryViewFormDTO
     {
-//        dd($sensorTypeObject->getLowReading(), $sensorTypeObject->getHighReading(),
-//             number_format($sensorTypeObject->getHighReading(), 2)
-//        );
-        return new StandardSensorTypeViewFormDTO(
+        return new StandardSensorTypeBoundaryViewFormDTO(
             $type,
             is_float($sensorTypeObject->getHighReading())
                 ? number_format($sensorTypeObject->getHighReading(), 2)

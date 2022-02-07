@@ -3,6 +3,8 @@
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
@@ -19,17 +21,21 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
         $this->updateStandardSensor($sensorTypeObject->getLatitudeObject(), $updateSensorBoundaryReadingsDTO);
     }
 
-    public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
+    public function buildUpdateSensorBoundaryReadingsDTO(
+        array $sensorData,
+        AllSensorReadingTypeInterface $sensorReadingTypeObject,
+    ): UpdateSensorBoundaryReadingsDTO
     {
-        if (!is_callable([$sensorTypeObject, 'getLatitudeObject'], true)) {
-            throw new ReadingTypeObjectBuilderException(
+        if (!$sensorReadingTypeObject instanceof Latitude) {
+            throw new ReadingTypeNotExpectedException(
                 sprintf(
-                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
-                    $sensorTypeObject->getSensorTypeName()
+                    ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
+                    $sensorReadingTypeObject->getReadingType(),
+                    $sensorData['readingType'],
                 )
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getLatitudeObject(), $sensorData);
+        return $this->buildStandardSensorUpdateReadingDTO($sensorReadingTypeObject->getLatitudeObject(), $sensorData);
     }
 }

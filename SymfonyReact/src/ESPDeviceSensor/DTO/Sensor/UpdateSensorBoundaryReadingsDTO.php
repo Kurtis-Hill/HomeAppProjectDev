@@ -11,26 +11,26 @@ class UpdateSensorBoundaryReadingsDTO
 
     private string $readingType;
 
-    private int|float $highReading;
+    private int|float|null $highReading;
 
-    private int|float $lowReading;
+    private int|float|null $lowReading;
 
     private int|float|null $currentHighReading;
 
     private int|float|null $currentLowReading;
 
-    private bool $constRecord;
+    private ?bool $constRecord;
 
     public function __construct(
-        int $sensorReadingID,
+//        int $sensorReadingID,
         string $readingType,
-        int|float $highReading,
-        int|float $lowReading,
-        bool $constRecord,
+        int|float|null $highReading,
+        int|float|null $lowReading,
+        ?bool $constRecord,
         int|float|null $currentHighReading = null,
         int|float|null $currentLowReading = null,
     ) {
-        $this->sensorReadingID = $sensorReadingID;
+//        $this->sensorReadingID = $sensorReadingID;
         $this->readingType = $readingType;
         $this->highReading = $highReading;
         $this->lowReading = $lowReading;
@@ -49,17 +49,17 @@ class UpdateSensorBoundaryReadingsDTO
         return $this->readingType;
     }
 
-    public function getHighReading(): float|int
+    public function getHighReading(): float|int|null
     {
         return $this->highReading;
     }
 
-    public function getLowReading(): float|int
+    public function getLowReading(): float|int|null
     {
         return $this->lowReading;
     }
 
-    public function getConstRecord(): bool
+    public function getConstRecord(): ?bool
     {
         return $this->constRecord;
     }

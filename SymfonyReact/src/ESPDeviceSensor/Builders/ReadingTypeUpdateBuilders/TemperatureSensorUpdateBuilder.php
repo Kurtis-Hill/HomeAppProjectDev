@@ -3,6 +3,8 @@
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
@@ -22,17 +24,21 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
         $this->updateStandardSensor($sensorTypeObject->getTempObject(), $updateSensorBoundaryReadingsDTO);
     }
 
-    public function buildUpdateSensorBoundaryReadingsDTO(array $sensorData, SensorTypeInterface $sensorTypeObject): UpdateSensorBoundaryReadingsDTO
+    public function buildUpdateSensorBoundaryReadingsDTO(
+        array $sensorData,
+        AllSensorReadingTypeInterface $sensorReadingTypeObject,
+    ): UpdateSensorBoundaryReadingsDTO
     {
-        if (!is_callable([$sensorTypeObject, 'getTempObject'], true)) {
-            throw new ReadingTypeObjectBuilderException(
+        if (!$sensorReadingTypeObject instanceof Temperature) {
+            throw new ReadingTypeNotExpectedException(
                 sprintf(
-                    ReadingTypeObjectBuilderException::OBJECT_NOT_FOUND_MESSAGE,
-                    $sensorTypeObject->getSensorTypeName()
+                    ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
+                    $sensorReadingTypeObject->getReadingType(),
+                    $sensorData['readingType'],
                 )
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($sensorTypeObject->getTempObject(), $sensorData);
+        return $this->buildStandardSensorUpdateReadingDTO($sensorData, $sensorReadingTypeObject);
     }
 }

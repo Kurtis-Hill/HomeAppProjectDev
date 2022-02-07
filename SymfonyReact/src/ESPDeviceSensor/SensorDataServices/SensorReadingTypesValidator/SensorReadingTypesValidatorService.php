@@ -12,7 +12,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -20,11 +20,11 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 {
     use ValidatorProcessorTrait;
 
-    private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
+    private SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory;
 
     private ValidatorInterface $validator;
 
-    public function __construct(SensorReadingTypeFactoryInterface $readingTypeFactory, ValidatorInterface $validator,)
+    public function __construct(SensorReadingTypeRepositoryFactoryInterface $readingTypeFactory, ValidatorInterface $validator,)
     {
         $this->sensorReadingTypeFactory = $readingTypeFactory;
         $this->validator = $validator;
@@ -95,22 +95,16 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             $sensorReadingTypeObject,
             $sensorType
         );
-//        dd($sensorReadingTypeObject);
-        if ($sensorReadingTypeObject instanceof Humidity) {
 
-//            dd($sensorReadingTypeObject, $validationErrors);
-        }
         if (empty($validationErrors)) {
             try {
                 $this->saveReadingType($sensorReadingTypeObject);
             } catch (SensorReadingTypeRepositoryFactoryException $e) {
                 return [$e->getMessage()];
             }
-        } else {
-            $this->removeItemFromPersist($sensorReadingTypeObject);
         }
 
-        return $validationErrors;
+        return $this->getValidationErrorAsArray($validationErrors);
     }
 
     private function performSensorReadingTypeValidation(
@@ -142,18 +136,6 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         $repository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository(
             $readingTyeObject->getReadingType()
         );
-//dd($repository, $sensorType);
         $repository->persist($readingTyeObject);
-//        $repository->flush();
-    }
-
-    private function removeItemFromPersist(AllSensorReadingTypeInterface $readingTypeObject): void
-    {
-        $repository = $this->sensorReadingTypeFactory->getSensorReadingTypeRepository(
-            $readingTypeObject->getReadingType()
-        );
-//        $repository->detatch($readingTypeObject);
-
-//        $repository->removeObject($readingTypeObject);
     }
 }

@@ -9,7 +9,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorNotFoundException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 use App\ESPDeviceSensor\Forms\SensorReadingUpdateInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,11 +25,11 @@ abstract class AbstractSensorFormsUpdateService
 
     protected FormFactoryInterface $formFactory;
 
-    private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
+    private SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory;
 
     public function __construct(
         SensorRepository $sensorRepository,
-        SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
+        SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory,
         FormFactoryInterface $formFactory
     ) {
         $this->sensorRepository = $sensorRepository;

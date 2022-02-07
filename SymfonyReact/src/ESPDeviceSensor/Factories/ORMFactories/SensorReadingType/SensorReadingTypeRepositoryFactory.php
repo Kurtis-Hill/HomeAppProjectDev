@@ -14,7 +14,7 @@ use App\ESPDeviceSensor\Repository\ORM\ReadingType\LatitudeRepository;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\ReadingTypeRepositoryInterface;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\TemperatureRepository;
 
-class SensorReadingTypeFactory implements SensorReadingTypeFactoryInterface
+class SensorReadingTypeRepositoryFactory implements SensorReadingTypeRepositoryFactoryInterface
 {
     private TemperatureRepository $temperatureRepository;
 

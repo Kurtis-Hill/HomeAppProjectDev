@@ -2,18 +2,20 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
+use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
-use App\ESPDeviceSensor\DTO\SensorReadingTypeObjects\SensorReadingTypeObjectsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
+use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
+use App\ESPDeviceSensor\Exceptions\SensorReadingUpdateFactoryException;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
+use Doctrine\ORM\NonUniqueResultException;
 use JetBrains\PhpStorm\ArrayShape;
 use TypeError;
 
@@ -28,16 +30,25 @@ interface UpdateSensorBoundaryReadingsServiceInterface
     public function findSensorAndReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
 
     /**
-     * @throws TypeError
-     * @throws ReadingTypeBuilderFailureException
+     * @throws SensorReadingUpdateFactoryException
      */
-    public function createUpdateSensorBoundaryReadingDTO(array $updateData): UpdateSensorBoundaryReadingsDTO;
+    public function getUpdateBoundaryReadingBuilder(string $sensorType): SensorUpdateBuilderInterface;
 
     #[ArrayShape(["errors"])]
-    public function processBoundaryReadingDTOs(array $updateSensorBoundaryReadingsDTOs, array $readingTypeObjects, string $sensorTypeName): array;
+    public function processBoundaryReadingDTOs(
+        AllSensorReadingTypeInterface $sensorReadingTypeObject,
+        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
+        string $sensorTypeName
+    ): array;
 
     /**
      * @throws ReadingTypeBuilderFailureException
      */
     public function createReadingTypeQueryDTO(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     */
+    public function getSensorReadingTypeObject(int $sensorID, string $readingType): ?AllSensorReadingTypeInterface;
 }

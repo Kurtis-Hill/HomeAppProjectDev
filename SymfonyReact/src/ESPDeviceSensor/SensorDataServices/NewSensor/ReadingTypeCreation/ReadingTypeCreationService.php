@@ -12,7 +12,7 @@ use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeRepositroyFactoryInterface;
 use DateTime;
 use Doctrine\ORM\ORMException;
@@ -20,12 +20,12 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
 {
-    private SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
+    private SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory;
 
     private SensorTypeRepositroyFactoryInterface $sensorTypeFactory;
 
     public function __construct(
-        SensorReadingTypeFactoryInterface $sensorReadingTypeFactory,
+        SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory,
         SensorTypeRepositroyFactoryInterface $sensorTypeFactory,
     ) {
         $this->sensorReadingTypeFactory = $sensorReadingTypeFactory;

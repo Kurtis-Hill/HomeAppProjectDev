@@ -177,7 +177,7 @@ class CardContextProvider extends Component {
             }
         });
 
-        console.log('modal constent22', userIconSelections);
+        console.log('modal constent22', this.modalContent);
     }
 
 
@@ -213,7 +213,7 @@ class CardContextProvider extends Component {
 
             case sensorType+"-high-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
-                    if (currentModalData.sensorType === sensorType) {
+                    if (currentModalData.readingType === sensorType) {
                         currentModalData.highReading = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
@@ -223,7 +223,7 @@ class CardContextProvider extends Component {
 
             case sensorType+"-low-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
-                    if (currentModalData.sensorType === sensorType) {
+                    if (currentModalData.readingType === sensorType) {
                         currentModalData.lowReading = value;
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
@@ -233,7 +233,7 @@ class CardContextProvider extends Component {
 
             case sensorType+"-const-record":
                 for (const currentModalData of this.state.modalContent.sensorData) {
-                    if (currentModalData.sensorType === sensorType) {
+                    if (currentModalData.readingType === sensorType) {
                         currentModalData.constRecord = value === 'true';
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;

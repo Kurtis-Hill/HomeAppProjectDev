@@ -37,4 +37,22 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
     {
         $this->getEntityManager()->remove($readingTypeObject);
     }
+
+    public function getOneBySensorNameID(int $sensorNameID): ?Analog
+    {
+        $qb = $this->createQueryBuilder(Analog::READING_TYPE);
+        $expr = $qb->expr();
+
+        $qb->select(Analog::READING_TYPE)
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Analog::READING_TYPE.'.sensorNameID = '.Sensor::ALIAS.'.sensorNameID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorNameID',
+                    ':sensorNameID'
+                )
+            )
+            ->setParameters(['sensorNameID' => $sensorNameID]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

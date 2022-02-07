@@ -13,13 +13,13 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
-use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 
 class AbstractSensorReadingTypeBuilder
 {
-    protected SensorReadingTypeFactoryInterface $sensorReadingTypeFactory;
+    protected SensorReadingTypeRepositoryFactoryInterface $sensorReadingTypeFactory;
 
-    public function __construct(SensorReadingTypeFactoryInterface $readingTypeFactory)
+    public function __construct(SensorReadingTypeRepositoryFactoryInterface $readingTypeFactory)
     {
         $this->sensorReadingTypeFactory = $readingTypeFactory;
     }

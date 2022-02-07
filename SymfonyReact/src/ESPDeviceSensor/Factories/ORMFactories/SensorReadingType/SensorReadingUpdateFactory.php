@@ -5,6 +5,7 @@ namespace App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType;
 use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\AnalogSensorUpdateBuilder;
 use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\HumiditySensorUpdateBuilder;
 use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\LatitudeSensorUpdateBuilder;
+use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
 use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\TemperatureSensorUpdateBuilder;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
@@ -38,7 +39,7 @@ class SensorReadingUpdateFactory
     /**
      * @throws SensorReadingUpdateFactoryException
      */
-    public function getReadingTypeUpdateBuilder(string $readingType)
+    public function getReadingTypeUpdateBuilder(string $readingType): SensorUpdateBuilderInterface
     {
         return match ($readingType) {
             Temperature::READING_TYPE => $this->temperatureSensorUpdateBuilder,

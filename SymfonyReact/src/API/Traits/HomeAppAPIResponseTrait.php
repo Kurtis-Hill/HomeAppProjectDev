@@ -51,7 +51,7 @@ trait HomeAppAPIResponseTrait
                     'title' => 'Request Successful',
                     'payload' => $data
                 ],
-                HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY
+                Response::HTTP_ACCEPTED
             );
         }
 
@@ -60,7 +60,7 @@ trait HomeAppAPIResponseTrait
                 'title' => 'Request Successful',
                 'payload' => 'No Response Message'
             ],
-            HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY
+            Response::HTTP_ACCEPTED
         );
     }
 

@@ -7,6 +7,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeRepositoryInterface
@@ -34,5 +35,23 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
     public function removeObject(AllSensorReadingTypeInterface $readingTypeObject)
     {
         $this->getEntityManager()->remove($readingTypeObject);
+    }
+
+    public function getOneBySensorNameID(int $sensorNameID): ?Latitude
+    {
+        $qb = $this->createQueryBuilder(Temperature::READING_TYPE);
+        $expr = $qb->expr();
+
+        $qb->select(Latitude::READING_TYPE)
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Latitude::READING_TYPE.'.sensorNameID = '.Sensor::ALIAS.'.sensorNameID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorNameID',
+                    ':sensorNameID'
+                )
+            )
+            ->setParameters(['sensorNameID' => $sensorNameID]);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

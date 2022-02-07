@@ -39,7 +39,12 @@ class AddNewSensorController extends AbstractController
         DeleteSensorService $deleteSensorService,
     ): JsonResponse {
         try {
-            $sensorData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $sensorData = json_decode(
+                $request->getContent(),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
         } catch (JsonException) {
             return $this->sendBadRequestJsonResponse(['Request Format not supported']);
         }
