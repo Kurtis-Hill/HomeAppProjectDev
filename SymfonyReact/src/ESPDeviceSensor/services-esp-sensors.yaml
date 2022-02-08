@@ -56,8 +56,8 @@ services:
   App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface:
     alias: 'App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\ORMOutOfBoundsFactory'
 
-  App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactoryInterface:
-    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeFactory'
+  App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface:
+    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactory'
 
   App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface:
     alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorService'
