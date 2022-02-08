@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
@@ -12,7 +12,7 @@ use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
 
 class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
-    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
+    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
     {
         if (!$sensorTypeObject instanceof LatitudeSensorTypeInterface) {
             throw new ReadingTypeNotExpectedException(ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED);
@@ -24,7 +24,7 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-    ): UpdateSensorBoundaryReadingsDTO
+    ): UpdateStandardSensorBoundaryReadingsDTO
     {
         if (!$sensorReadingTypeObject instanceof Latitude) {
             throw new ReadingTypeNotExpectedException(

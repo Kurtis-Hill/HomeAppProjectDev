@@ -104,7 +104,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
             }
         }
 
-        return $this->getValidationErrorAsArray($validationErrors);
+        return $validationErrors;
     }
 
     private function performSensorReadingTypeValidation(

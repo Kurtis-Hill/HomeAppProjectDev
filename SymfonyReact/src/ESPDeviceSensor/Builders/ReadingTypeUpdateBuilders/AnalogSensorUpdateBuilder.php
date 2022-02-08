@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\Pure;
 
 class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
-    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
+    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
     {
         if (!$sensorTypeObject instanceof AnalogSensorTypeInterface) {
             throw new ReadingTypeNotExpectedException(ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED);
@@ -24,7 +24,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject
-    ): UpdateSensorBoundaryReadingsDTO
+    ): UpdateStandardSensorBoundaryReadingsDTO
     {
         if (!$sensorReadingTypeObject instanceof Analog) {
             throw new ReadingTypeNotExpectedException(

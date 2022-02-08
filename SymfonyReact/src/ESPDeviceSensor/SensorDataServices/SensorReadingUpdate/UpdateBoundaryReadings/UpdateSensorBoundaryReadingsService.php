@@ -2,15 +2,18 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Common\Traits\ValidatorProcessorTrait;
 use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\ESPDeviceSensor\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
@@ -20,9 +23,7 @@ use App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTO
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use App\ESPDeviceSensor\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
-use http\Exception\UnexpectedValueException;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReadingsServiceInterface
 {
@@ -54,11 +55,6 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
     }
 
-    public function getUpdateBoundaryReadingBuilder(string $sensorType): SensorUpdateBuilderInterface
-    {
-        return $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($sensorType);
-    }
-
     public function getSensorReadingTypeObject(int $sensorID, string $readingType): ?AllSensorReadingTypeInterface
     {
         $repository = $this->sensorReadingUpdateRepositoryFactory->getSensorReadingTypeRepository($readingType);
@@ -66,61 +62,21 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         return $repository->getOneBySensorNameID($sensorID);
     }
 
-    /**
-     * @throws ReadingTypeBuilderFailureException
-     */
-    private function getReadingTypeQueryDTOBuilder(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): ReadingTypeQueryDTOBuilderInterface
-    {
-        return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getReadingType());
-    }
 
-    private function updateSensorBoundaryReading(
-        StandardReadingSensorInterface $standardReadingSensor,
-        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void
+    public function getUpdateBoundaryReadingBuilder(string $sensorType): SensorUpdateBuilderInterface
     {
-        $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
-        $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
-        $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
-    }
-
-    public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO
-    {
-        return $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorName)->buildSensorTypeQueryJoinDTO();
-    }
-
-    #[ArrayShape([Temperature::class, Humidity::class, Latitude::class, Analog::class])]
-    public function findSensorAndReadingTypesToUpdateBoundaryReadings(
-        JoinQueryDTO $readingTypeJoinQueryDTO,
-        array $readingTypeObjectsJoinDTOs,
-        int $deviceID,
-        string $sensorName
-    ): array
-    {
-        return $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
-            $readingTypeJoinQueryDTO,
-            $deviceID,
-            $readingTypeObjectsJoinDTOs,
-            $sensorName,
-        );
-    }
-
-    public function createReadingTypeQueryDTO(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO
-    {
-        $sensorTypeQueryDTOBuilder = $this->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO);
-
-        return $sensorTypeQueryDTOBuilder->buildReadingTypeJoinQueryDTO();
+        return $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($sensorType);
     }
 
     #[ArrayShape(["errors"])]
     public function processBoundaryReadingDTOs(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
         string $sensorTypeName
     ): array
     {
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
-            $this->updateSensorBoundaryReading(
+            $this->updateStandardSensorBoundaryReading(
                 $sensorReadingTypeObject,
                 $updateSensorBoundaryReadingsDTO
             );
@@ -139,52 +95,69 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         }
 
         return $validationError;
+    }
 
-//            try {
-//                if (!$updateSensorBoundaryReadingsDTO instanceof UpdateSensorBoundaryReadingsDTO) {
-//                    throw new UnexpectedValueException('You have not passed the correct DTO for this service to process request');
-//                }
-//                foreach ($readingTypeObjects as $sensorReadingTypeObject) {
-//                    if (!$sensorReadingTypeObject instanceof StandardReadingSensorInterface || !$sensorReadingTypeObject instanceof AllSensorReadingTypeInterface) {
-//                        throw new UnexpectedValueException('You have not passed the correct sensor reading type for this service to process request');
-//                    }
-//                    if ($sensorReadingTypeObject->getReadingType() === $updateSensorBoundaryReadingsDTO->getReadingType()) {
-//                        $this->updateSensorBoundaryReading(
-//                            $sensorReadingTypeObject,
-//                            $updateSensorBoundaryReadingsDTO
-//                        );
-//                        $validationError = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
-//                            $sensorReadingTypeObject,
-//                            $sensorTypeName
-//                        );
-//                        if (!empty($validationError)) {
-//                            $this->resetEntityBackToOriginalStatus(
-//                                $sensorReadingTypeObject,
-//                                $updateSensorBoundaryReadingsDTO
-//                            );
-//                            foreach ($validationError as $error) {
-//                                $validationErrors[] = $error;
-//                            }
-//                        }
-//                    }
-//                }
-//            } catch (UnexpectedValueException $e) {
-//                $validationErrors[] = $e->getMessage();
-//            }
+    /**
+     * @throws ReadingTypeBuilderFailureException
+     */
+    private function getReadingTypeQueryDTOBuilder(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): ReadingTypeQueryDTOBuilderInterface
+    {
+        return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getReadingType());
+    }
 
-//        $this->sensorRepository->flush();
-
-        return $validationErrors ?? [];
+    private function updateStandardSensorBoundaryReading(
+        StandardReadingSensorInterface $standardReadingSensor,
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+    ): void
+    {
+        $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
+        $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
+        $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
     }
 
     private function resetEntityBackToOriginalStatus(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
     ): void
     {
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
             $sensorReadingTypeObject->setHighReading($updateSensorBoundaryReadingsDTO->getCurrentHighReading());
             $sensorReadingTypeObject->setLowReading($updateSensorBoundaryReadingsDTO->getCurrentLowReading());
         }
+    }
+
+    public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO
+    {
+        return $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorName)->buildSensorTypeQueryJoinDTO();
+    }
+
+    #[ArrayShape(
+        [
+            Dht::class|Bmp::class|Dallas::class|Soil::class,
+            Temperature::class,
+            Humidity::class,
+            Latitude::class,
+            Analog::class
+        ])]
+    public function findSensorTypeAndReadingTypes(
+        JoinQueryDTO $readingTypeJoinQueryDTO,
+        array $readingTypeObjectsJoinDTOs,
+        int $deviceID,
+        string $sensorName
+    ): array
+    {
+        return $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+            $readingTypeJoinQueryDTO,
+            $deviceID,
+            $readingTypeObjectsJoinDTOs,
+            $sensorName,
+        );
+    }
+
+    public function createReadingTypeQueryDTO(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO
+    {
+        $sensorTypeQueryDTOBuilder = $this->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO);
+
+        return $sensorTypeQueryDTOBuilder->buildReadingTypeJoinQueryDTO();
     }
 }

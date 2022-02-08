@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
@@ -13,7 +13,7 @@ interface SensorUpdateBuilderInterface
     /**
      * @throws ReadingTypeNotExpectedException
      */
-    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void;
+    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void;
 
     /**
      * @throws ReadingTypeNotExpectedException
@@ -21,5 +21,5 @@ interface SensorUpdateBuilderInterface
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject
-    ): UpdateSensorBoundaryReadingsDTO;
+    ): UpdateStandardSensorBoundaryReadingsDTO;
 }

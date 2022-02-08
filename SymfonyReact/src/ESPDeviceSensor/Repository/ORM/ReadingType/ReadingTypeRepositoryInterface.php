@@ -15,11 +15,6 @@ interface ReadingTypeRepositoryInterface
     public function findOneById(int $id);
 
     /**
-     * @throws ORMException
-     */
-    public function removeObject(AllSensorReadingTypeInterface $readingTypeObject);
-
-    /**
      * @throws NonUniqueResultException
      */
     public function getOneBySensorNameID(int $sensorNameID);

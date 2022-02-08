@@ -32,19 +32,10 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
         return $this->findOneBy(['humidID' => $id]);
     }
 
-    public function checkPersistance()
-    {
-        $this->getEntityManager()->getUnitOfWork()->getScheduledEntityInsertions();
-    }
-
-    public function removeObject(AllSensorReadingTypeInterface $readingTypeObject)
-    {
-        $this->getEntityManager()->remove($readingTypeObject);
-    }
 
     public function getOneBySensorNameID(int $sensorNameID): ?Humidity
     {
-        $qb = $this->createQueryBuilder(Temperature::READING_TYPE);
+        $qb = $this->createQueryBuilder(Humidity::READING_TYPE);
         $expr = $qb->expr();
 
         $qb->select(Humidity::READING_TYPE)

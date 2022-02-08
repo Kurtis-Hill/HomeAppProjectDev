@@ -149,15 +149,11 @@ trait HomeAppAPIResponseTrait
         );
     }
 
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
-    public function sendMultiStatusJsonResponse(array $errors = [], array $data = []): JsonResponse
+    public function sendMultiStatusJsonResponse(array $errors = [], array $data = [], string $title = 'Part of the request was accepted'): JsonResponse
     {
         return new JsonResponse(
             [
-                'title' => 'Part of the request was accepted',
+                'title' => $title,
                 'payload' => $data,
                 'errors' => $errors
             ],
@@ -188,7 +184,7 @@ trait HomeAppAPIResponseTrait
     }
 
     // 40x Client Error Response
-    public function sendBadRequestJsonResponse(array $errors = []): JsonResponse
+    public function sendBadRequestJsonResponse(array $errors = [], string $title = 'Bad Request No Data Returned'): JsonResponse
     {
         if (!empty($errors)) {
             return new JsonResponse(
@@ -200,7 +196,7 @@ trait HomeAppAPIResponseTrait
             );
         }
 
-        return new JsonResponse(['title' => 'Bad Request No Data Returned', 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
+        return new JsonResponse(['title' => $title, 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
     }
 
     /**

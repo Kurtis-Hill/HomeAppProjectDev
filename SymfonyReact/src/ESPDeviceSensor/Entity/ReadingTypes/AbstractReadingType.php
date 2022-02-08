@@ -7,6 +7,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class AbstractReadingType
 {
+    protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
+
+    abstract public function getReadingType(): string;
+
     abstract public function getCurrentReading(): int|float;
 
     abstract public function getHighReading(): int|float;
@@ -34,7 +38,7 @@ abstract class AbstractReadingType
     {
         if ($this->getHighReading() < $this->getLowReading()) {
             $context
-                ->buildViolation('High reading for ' . $this->getReadingType() . ' cannot be lower than low reading')
+                ->buildViolation(sprintf(self::HIGHER_LOWER_THAN_LOWER, $this->getReadingType()))
                 ->addViolation();
         }
     }

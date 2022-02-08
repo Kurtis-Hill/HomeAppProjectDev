@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
@@ -14,7 +14,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
 {
     public function setNewBoundaryForReadingType(
         SensorTypeInterface $sensorTypeObject,
-        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
     ): void
     {
         if (!$sensorTypeObject instanceof TemperatureSensorTypeInterface) {
@@ -27,7 +27,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-    ): UpdateSensorBoundaryReadingsDTO
+    ): UpdateStandardSensorBoundaryReadingsDTO
     {
         if (!$sensorReadingTypeObject instanceof Temperature) {
             throw new ReadingTypeNotExpectedException(

@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
 use App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -27,7 +27,7 @@ interface UpdateSensorBoundaryReadingsServiceInterface
     public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO;
 
     #[ArrayShape([Temperature::class | Humidity::class | Analog::class | Latitude::class])]
-    public function findSensorAndReadingTypesToUpdateBoundaryReadings(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
+    public function findSensorTypeAndReadingTypes(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
 
     /**
      * @throws SensorReadingUpdateFactoryException
@@ -37,14 +37,14 @@ interface UpdateSensorBoundaryReadingsServiceInterface
     #[ArrayShape(["errors"])]
     public function processBoundaryReadingDTOs(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
         string $sensorTypeName
     ): array;
 
     /**
      * @throws ReadingTypeBuilderFailureException
      */
-    public function createReadingTypeQueryDTO(UpdateSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
+    public function createReadingTypeQueryDTO(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
 
     /**
      * @throws NonUniqueResultException

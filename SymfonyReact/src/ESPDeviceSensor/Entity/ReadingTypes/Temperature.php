@@ -210,7 +210,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     {
         if ($this->getHighReading() < $this->getLowReading()) {
             $context
-                ->buildViolation('High reading for ' . $this->getReadingType() . ' cannot be lower than low reading')
+                ->buildViolation(sprintf(self::HIGHER_LOWER_THAN_LOWER, $this->getReadingType()))
                 ->addViolation();
         }
     }

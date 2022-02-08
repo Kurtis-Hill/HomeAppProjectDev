@@ -5,15 +5,17 @@ namespace App\ESPDeviceSensor\DTO\Sensor;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateSensorBoundaryReadingsDTO
+class UpdateStandardSensorBoundaryReadingsDTO
 {
     private int $sensorReadingID;
 
     private string $readingType;
 
-    private int|float|null $highReading;
+    private int|float $highReading;
 
-    private int|float|null $lowReading;
+    private int|float $lowReading;
+
+    private bool $currentConstRecord;
 
     private int|float|null $currentHighReading;
 
@@ -22,18 +24,18 @@ class UpdateSensorBoundaryReadingsDTO
     private ?bool $constRecord;
 
     public function __construct(
-//        int $sensorReadingID,
         string $readingType,
+        int|float $currentHighReading,
+        int|float $currentLowReading,
+        bool $currentConstRecord,
         int|float|null $highReading,
         int|float|null $lowReading,
         ?bool $constRecord,
-        int|float|null $currentHighReading = null,
-        int|float|null $currentLowReading = null,
     ) {
-//        $this->sensorReadingID = $sensorReadingID;
         $this->readingType = $readingType;
         $this->highReading = $highReading;
         $this->lowReading = $lowReading;
+        $this->currentConstRecord = $currentConstRecord;
         $this->constRecord = $constRecord;
         $this->currentHighReading = $currentHighReading;
         $this->currentLowReading = $currentLowReading;
@@ -64,13 +66,20 @@ class UpdateSensorBoundaryReadingsDTO
         return $this->constRecord;
     }
 
-    public function getCurrentHighReading(): float|int|null
+    public function isCurrentConstRecord(): bool
+    {
+        return $this->currentConstRecord;
+    }
+
+    public function getCurrentHighReading(): float|int
     {
         return $this->currentHighReading;
     }
 
-    public function getCurrentLowReading(): float|int|null
+    public function getCurrentLowReading(): float|int
     {
         return $this->currentLowReading;
     }
+
+
 }

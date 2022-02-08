@@ -39,7 +39,7 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
 
     public function getOneBySensorNameID(int $sensorNameID): ?Latitude
     {
-        $qb = $this->createQueryBuilder(Temperature::READING_TYPE);
+        $qb = $this->createQueryBuilder(Latitude::READING_TYPE);
         $expr = $qb->expr();
 
         $qb->select(Latitude::READING_TYPE)
