@@ -21,7 +21,6 @@ interface AllSensorReadingTypeInterface
 
     public function getCurrentReading(): int|float;
 
-    public function isReadingOutOfBounds(): bool;
-
-    public function getSensorReadingTypeObjectString(): string;
+    // @TODO remove from other entities
+//    public function getSensorReadingTypeObjectString(): string;
 }

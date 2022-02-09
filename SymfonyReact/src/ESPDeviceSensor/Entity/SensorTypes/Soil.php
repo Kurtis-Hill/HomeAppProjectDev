@@ -22,9 +22,9 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
 
     public const ALIAS = 'soil';
 
-    private const HIGH_SOIL_READING_BOUNDARY = 9999;
+    public const HIGH_SOIL_READING_BOUNDARY = 9999;
 
-    private const LOW_SOIL_READING_BOUNDARY = 1000;
+    public const LOW_SOIL_READING_BOUNDARY = 1000;
 
     /**
      * @ORM\Column(name="soilID", type="integer", nullable=false)

@@ -84,7 +84,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                     throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND);
                 }
                 $updateSensorBoundaryBuilder = $updateSensorBoundaryReadingsService->getUpdateBoundaryReadingBuilder($updateData['readingType']);
-
                 $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryBuilder->buildUpdateSensorBoundaryReadingsDTO($updateData, $sensorReadingTypeObject);
 
                 $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs(
@@ -93,6 +92,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                     $sensorObject->getSensorTypeObject()->getSensorType()
                 );
 
+//        dd('sdf');
                 if (!empty($validationErrors)) {
                     $sensorProcessingErrors[$readingType] = $validationErrors;
                 } else {
@@ -118,8 +118,10 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 );
             }
         }
-
+//dd('sdf');
+//dd($successfulTypes, $sensorProcessingErrors);
         if (empty($successfulTypes) && !empty($sensorProcessingErrors)) {
+//            dd('sdf');
             return $this->sendBadRequestJsonResponse($sensorProcessingErrors, 'All sensor boundary update requests failed');
         }
 

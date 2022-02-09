@@ -22,9 +22,9 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
 {
     public const READING_TYPE = 'latitude';
 
-    public const HIGH_LATITUDE_READING_BOUNDARY = 90;
+    public const HIGH_READING = 90;
 
-    public const LOW_LATITUDE_READING_BOUNDARY = -90;
+    public const LOW_READING = -90;
 
     public const LATITUDE_SENSORS = [
         SensorType::BMP_SENSOR

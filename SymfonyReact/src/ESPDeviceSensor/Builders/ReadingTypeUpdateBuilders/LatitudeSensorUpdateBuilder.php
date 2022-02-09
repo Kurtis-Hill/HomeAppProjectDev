@@ -36,6 +36,6 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($sensorReadingTypeObject->getLatitudeObject(), $sensorData);
+        return $this->buildStandardSensorUpdateReadingDTO($sensorData, $sensorReadingTypeObject);
     }
 }

@@ -80,7 +80,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
                         $newObject->setSensorObject($sensor);
-                        $newObject->setCurrentReading(10);
+                        $newObject->setCurrentReading($newObject instanceof Analog ? 1001 : 10);
                         $newObject->setUpdatedAt();
 
                         if ($newSensorType instanceof StandardSensorTypeInterface) {
@@ -190,21 +190,24 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
                         $newObject->setSensorObject($newAdminSensor);
-                        $newObject->setCurrentReading(10);
                         $newObject->setUpdatedAt();
 
                         if ($newSensorType instanceof StandardSensorTypeInterface) {
                             $newSensorType->setSensorObject($newAdminSensor);
                             if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
+                                $newObject->setCurrentReading(10);
                                 $newSensorType->setTempObject($newObject);
                             }
                             if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
+                                $newObject->setCurrentReading(10);
                                 $newSensorType->setHumidObject($newObject);
                             }
                             if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
+                                $newObject->setCurrentReading(10);
                                 $newSensorType->setLatitudeObject($newObject);
                             }
                             if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
+                                $newObject->setCurrentReading(1001);
                                 $newSensorType->setAnalogObject($newObject);
                             }
                         }
@@ -215,21 +218,24 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     $newObjectTwo = new $object;
                     if ($newObjectTwo instanceof StandardReadingSensorInterface) {
                         $newObjectTwo->setSensorObject($newRegularUserSensor);
-                        $newObjectTwo->setCurrentReading(10);
                         $newObjectTwo->setUpdatedAt();
 
                         if ($newSensorTypeTwo instanceof StandardSensorTypeInterface) {
                             $newSensorTypeTwo->setSensorObject($newRegularUserSensor);
                             if ($newSensorTypeTwo instanceof TemperatureSensorTypeInterface && $newObjectTwo instanceof Temperature) {
+                                $newObjectTwo->setCurrentReading(10);
                                 $newSensorTypeTwo->setTempObject($newObjectTwo);
                             }
                             if ($newSensorTypeTwo instanceof HumiditySensorTypeInterface && $newObjectTwo instanceof Humidity) {
+                                $newObjectTwo->setCurrentReading(10);
                                 $newSensorTypeTwo->setHumidObject($newObjectTwo);
                             }
                             if ($newSensorTypeTwo instanceof LatitudeSensorTypeInterface && $newObjectTwo instanceof Latitude) {
+                                $newObjectTwo->setCurrentReading(10);
                                 $newSensorTypeTwo->setLatitudeObject($newObjectTwo);
                             }
                             if ($newSensorTypeTwo instanceof AnalogSensorTypeInterface && $newObjectTwo instanceof Analog) {
+                                $newObjectTwo->setCurrentReading(1001);
                                 $newSensorTypeTwo->setAnalogObject($newObjectTwo);
                             }
                         }

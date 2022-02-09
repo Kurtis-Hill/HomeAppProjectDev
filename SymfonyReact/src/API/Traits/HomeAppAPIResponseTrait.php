@@ -189,7 +189,7 @@ trait HomeAppAPIResponseTrait
         if (!empty($errors)) {
             return new JsonResponse(
                 [
-                    'title' => 'Bad Request No Data Returned',
+                    'title' => $title,
                     'errors' => $errors,
                 ],
                 HTTPStatusCodes::HTTP_BAD_REQUEST

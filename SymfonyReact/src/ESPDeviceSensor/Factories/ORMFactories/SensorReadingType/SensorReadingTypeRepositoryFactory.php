@@ -7,7 +7,6 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
-use App\ESPDeviceSensor\Exceptions\SensorReadingTypeValidationException;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\AnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\HumidityRepository;
 use App\ESPDeviceSensor\Repository\ORM\ReadingType\LatitudeRepository;

@@ -17,7 +17,6 @@ class LatitudeConstraintValidator extends ConstraintValidator
         if ($value === null || $value === '') {
             return;
         }
-
         if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
                 ->setParameter('{{ string }}', $value)

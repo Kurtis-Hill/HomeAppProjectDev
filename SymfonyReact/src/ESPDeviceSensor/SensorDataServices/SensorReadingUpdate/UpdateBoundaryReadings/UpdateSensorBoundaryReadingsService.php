@@ -81,7 +81,6 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
                 $updateSensorBoundaryReadingsDTO
             );
         }
-
         $validationError = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
             $sensorReadingTypeObject,
             $sensorTypeName
@@ -110,9 +109,15 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
     ): void
     {
-        $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
-        $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
-        $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
+            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
+            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
+            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        }
     }
 
     private function resetEntityBackToOriginalStatus(

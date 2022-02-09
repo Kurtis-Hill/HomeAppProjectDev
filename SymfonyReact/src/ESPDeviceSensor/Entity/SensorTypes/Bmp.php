@@ -184,12 +184,12 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 
     public function getMaxLatitude(): float|int
     {
-        return Latitude::HIGH_LATITUDE_READING_BOUNDARY;
+        return Latitude::HIGH_READING;
     }
 
     public function getMinLatitude(): float|int
     {
-        return Latitude::LOW_LATITUDE_READING_BOUNDARY;
+        return Latitude::LOW_READING;
     }
 
     public function getSensorTypeName(): string

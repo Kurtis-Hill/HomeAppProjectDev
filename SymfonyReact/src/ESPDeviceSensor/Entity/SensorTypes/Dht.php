@@ -34,7 +34,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    #[ORM\Column(name:"dhtID", type:"integer", nullable:false)]
     private int $dhtID;
 
     /**
