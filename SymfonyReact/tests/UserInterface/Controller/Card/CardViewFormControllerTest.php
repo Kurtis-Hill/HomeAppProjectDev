@@ -86,17 +86,18 @@ class CardViewFormControllerTest extends WebTestCase
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true)['payload'];
 
+//        dd($responseData);
         self::assertNotEmpty($responseData['sensorData']);
 
         foreach ($responseData['sensorData'] as $sensorData) {
-            self::assertArrayHasKey('sensorType', $sensorData);
-            self::assertIsString($sensorData['sensorType']);
+            self::assertArrayHasKey('readingType', $sensorData);
+            self::assertIsString($sensorData['readingType']);
 
             self::assertArrayHasKey('highReading', $sensorData);
-            self::assertIsInt($sensorData['highReading']);
+            self::assertIsNumeric($sensorData['highReading']);
 
             self::assertArrayHasKey('lowReading', $sensorData);
-            self::assertIsInt($sensorData['lowReading']);
+            self::assertIsNumeric($sensorData['lowReading']);
 
             self::assertArrayHasKey('constRecord', $sensorData);
             self::assertIsBool($sensorData['constRecord']);
@@ -278,7 +279,7 @@ class CardViewFormControllerTest extends WebTestCase
             'requestData' => [
                 'cardViewID' => 'notAInt',
                 'sensorData' => [
-                    "sensorType" => "temperature",
+                    "readingType" => "temperature",
                     "highReading" =>  25,
                     "lowReading" => 20,
                     "constRecord" =>  false
@@ -290,18 +291,11 @@ class CardViewFormControllerTest extends WebTestCase
             'requestData' => [
                 'cardViewID' => null,
                 'sensorData' => [
-                    "sensorType" => "temperature",
+                    "readingType" => "temperature",
                     "highReading" =>  25,
                     "lowReading" => 20,
                     "constRecord" =>  false
                 ]
-            ],
-        ];
-
-        yield [
-            'requestData' => [
-                'cardViewID' => 1,
-                'sensorData' => []
             ],
         ];
     }
@@ -319,7 +313,7 @@ class CardViewFormControllerTest extends WebTestCase
         $sensorData = [
             'cardViewID' => $cardViewID,
             'sensorData' => [
-                "sensorType" => "temperature",
+                "readingType" => "temperature",
                 "highReading" =>  25,
                 "lowReading" => 20,
                 "constRecord" =>  false
@@ -357,7 +351,7 @@ class CardViewFormControllerTest extends WebTestCase
             'cardViewID' => $cardViewObject->getCardViewID(),
             'sensorData' => [
                 [
-                    "sensorType" => "temperature",
+                    "readingType" => "temperature",
                     "highReading" =>  25,
                     "lowReading" => 20,
                     "constRecord" =>  false
@@ -450,7 +444,7 @@ class CardViewFormControllerTest extends WebTestCase
             'cardViewState' => $cardState,
             'sensorData' => [
                 [
-                    "sensorType" => "temperature",
+                    "readingType" => "temperature",
                     "highReading" =>  25,
                     "lowReading" => 20,
                     "constRecord" =>  false
@@ -543,7 +537,7 @@ class CardViewFormControllerTest extends WebTestCase
             'cardViewState' => $cardState,
             'sensorData' => [
                 [
-                    "sensorType" => "temperature",
+                    "readingType" => "temperature",
                     "highReading" =>  25,
                     "lowReading" => 20,
                     "constRecord" =>  false
@@ -592,46 +586,4 @@ class CardViewFormControllerTest extends WebTestCase
         ];
     }
 
-    public function testSendingUpdateRequestNoneExistentSensorTypes(): void
-    {
-        $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
-        $iconRepository = $this->entityManager->getRepository(Icons::class);
-        $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
-
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
-        $cardColour = $cardColourRepository->findAll()[0];
-        $cardIcon = $iconRepository->findAll()[0];
-        $cardState = $cardStateRepository->findAll()[0];
-
-        $sensorData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
-            'cardColour' => $cardColour->getColourID(),
-            'cardIcon' => $cardIcon->getIconID(),
-            'cardViewState' => $cardState->getCardstateID(),
-            'sensorData' => [
-                [
-                    "sensorType" => "randomType",
-                    "highReading" =>  25,
-                    "lowReading" => 20,
-                    "constRecord" =>  false
-                ]
-            ]
-        ];
-        $requestData = json_encode($sensorData);
-
-        $this->client->request(
-            Request::METHOD_PUT,
-            self::UPDATE_CARD_FORM_URL,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $requestData
-        );
-        $responseContent = $this->client->getResponse()->getContent();
-        $responseData = json_decode($responseContent, true);
-
-        self::assertEquals('Could not prepare sensor reading data', $responseData['errors'][0]);
-    }
 }

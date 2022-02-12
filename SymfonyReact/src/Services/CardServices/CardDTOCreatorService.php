@@ -20,9 +20,11 @@ use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
 
+#[Deprecated]
 class CardDTOCreatorService implements APIErrorInterface, LoggedInUserRequiredInterface, CardDataProviderInterface
 {
     use FormProcessorTrait;

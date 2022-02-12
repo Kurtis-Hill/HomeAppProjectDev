@@ -111,7 +111,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     }
 
     #[Deprecated]
-    //can remove after sensor boundry work is done
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('sensors');
@@ -150,8 +149,4 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return implode(', ', $sensorAlias);
     }
 
-    public function checkPersistance()
-    {
-        dd($this->getEntityManager()->getUnitOfWork()->getScheduledEntityInsertions());
-    }
 }

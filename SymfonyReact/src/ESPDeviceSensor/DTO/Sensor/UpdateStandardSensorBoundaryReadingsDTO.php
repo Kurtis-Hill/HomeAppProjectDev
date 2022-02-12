@@ -11,9 +11,9 @@ class UpdateStandardSensorBoundaryReadingsDTO
 
     private string $readingType;
 
-    private int|float $highReading;
+    private int|float|null $highReading;
 
-    private int|float $lowReading;
+    private int|float|null $lowReading;
 
     private bool $currentConstRecord;
 

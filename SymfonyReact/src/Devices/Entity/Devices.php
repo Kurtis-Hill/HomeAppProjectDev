@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
  * @ORM\Entity(repositoryClass="App\Repository\Core\DevicesRepository")
  */
-class Devices implements UserInterface, APISensorUserInterface
+class Devices implements UserInterface
 {
     private const DEVICE_MIN_LENGTH = 2;
 
@@ -60,7 +60,7 @@ class Devices implements UserInterface, APISensorUserInterface
      *
      * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
-//    #[Assert\NotBlank(message: 'Password should not be blank')]
+    #[Assert\NotBlank(message: 'Password should not be blank', groups: ['final-check'])]
     private string $password;
 
     /**

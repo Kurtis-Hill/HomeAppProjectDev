@@ -147,7 +147,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         if (!empty($sensorData)) {
             $dataToSend = [
                 'sensorType' => $sensorType,
-                'sensorData' => [$sensorData]
+                'sensorData' => $sensorData
             ];
         } else {
             $dataToSend = [
@@ -156,7 +156,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         }
 
         $jsonData = json_encode($dataToSend, JSON_THROW_ON_ERROR);
-
+//dd($jsonData);
         $this->client->request(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
@@ -167,7 +167,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-
+//dd($requestResponse);
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($responseCode, $requestResponse->getStatusCode());
@@ -179,11 +179,13 @@ class ESPSensorUpdateControllerTest extends WebTestCase
     {
         yield [
             'sensorType' => SensorType::DHT_SENSOR . '1',
-            'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Dht'],
-                'currentReadings' => [
-                    'temperatureReading' => 15.5,
-                    'humidityReading' => 50
+            [
+                'sensorData' => [
+                    'sensorName' => SensorFixtures::SENSORS['Dht'],
+                    'currentReadings' => [
+                        'temperatureReading' => 15.5,
+                        'humidityReading' => 50
+                    ]
                 ]
             ],
             'title' => 'Bad Request No Data Returned',
@@ -201,8 +203,10 @@ class ESPSensorUpdateControllerTest extends WebTestCase
 
         yield [
             'sensorType' => SensorType::BMP_SENSOR,
-            'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Bmp'],
+            [
+                'sensorData' => [
+                    'sensorName' => SensorFixtures::SENSORS['Bmp'],
+                ],
             ],
             'title' => 'Bad Request No Data Returned',
             'message' => 'None of the update requests could be processed',
@@ -212,18 +216,18 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         yield [
             'sensorType' => SensorType::DHT_SENSOR,
             'sensorData' => [
-                'sensorName' => SensorFixtures::SENSORS['Dht'],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
+                    'currentReadings' => [
+                        'temperatureReading' => 15.5,
+                        'humidityReading' => 50
+                    ],
+                ],
+                'sensorName' => [SensorFixtures::SENSORS[Dht::NAME]],
                 'currentReadings' => [
                     'temperatureReading' => 15.5,
                     'humidityReading' => 50
                 ],
-            ],
-            [
-                'sensorName' => SensorFixtures::SENSORS['Dht'],
-                'sensorReadings' => [
-                    'temperatureReading' => 15.5,
-                    'humidityReading' => 50
-                ]
             ],
             'title' => 'Part of the request was accepted',
             'message' => 'Only part of the content could be processed',

@@ -47,7 +47,7 @@ services:
     alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationValidatorService'
 
   App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationServiceTwo'
+    alias: 'App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
 
   ######################## Factories ###########################################################################
   App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:

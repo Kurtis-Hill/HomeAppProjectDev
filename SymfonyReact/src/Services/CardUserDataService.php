@@ -23,6 +23,7 @@ use App\UserInterface\Services\Cards\CardDataFilterService\CardDataFilterService
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Deprecated;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Security\Core\Security;
@@ -31,6 +32,7 @@ use Symfony\Component\Security\Core\Security;
 /**
  * Class CardDataService.
  */
+#[Deprecated]
 class CardUserDataService implements APIErrorInterface, LoggedInUserRequiredInterface, CardDataProviderInterface
 {
     use FormProcessorTrait;
