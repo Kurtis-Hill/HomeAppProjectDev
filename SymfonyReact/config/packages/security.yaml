@@ -53,7 +53,7 @@ security:
 #            provider: 'app_user_provider'
 #            guard:
 #                authenticators:
-#                    - App\Security\LoginFormAuthenticator
+#                    - App\Authentication\Security\LoginFormAuthenticator
 #            logout:
 #                path: app_logout
 #                target: app_login

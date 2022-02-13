@@ -152,10 +152,10 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     ): array
     {
         return $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
-            $readingTypeJoinQueryDTO,
             $deviceID,
-            $readingTypeObjectsJoinDTOs,
             $sensorName,
+            $readingTypeJoinQueryDTO,
+            $readingTypeObjectsJoinDTOs,
         );
     }
 

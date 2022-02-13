@@ -2,7 +2,6 @@
 
 namespace App\Devices\Entity;
 
-use App\Core\UserInterface\APISensorUserInterface;
 use App\Form\CustomFormValidators as NoSpecialCharacters;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
@@ -17,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Devices
  *
  * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\DevicesRepository")
+ * @ORM\Entity(repositoryClass="App\Devices\Repository\ORM\DeviceRepository")
  */
 class Devices implements UserInterface
 {

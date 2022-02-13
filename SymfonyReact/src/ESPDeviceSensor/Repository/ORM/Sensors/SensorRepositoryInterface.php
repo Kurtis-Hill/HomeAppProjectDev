@@ -25,4 +25,9 @@ interface SensorRepositoryInterface
     public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor;
 
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array;
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findSensorObjectByDeviceIdAndSensorName(int $deviceId, string $sensorName): ?Sensor;
 }

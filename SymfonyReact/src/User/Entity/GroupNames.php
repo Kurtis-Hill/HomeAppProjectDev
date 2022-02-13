@@ -13,7 +13,7 @@ use App\Form\CustomFormValidators as NoSpecialCharacters;
  * GroupNames.
  *
  * @ORM\Table(name="groupname", uniqueConstraints={@ORM\UniqueConstraint(name="groupName", columns={"groupName"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\GroupNameRepository")
+ * @ORM\Entity(repositoryClass="App\User\Repository\ORM\GroupNameRepository")
  */
 #[UniqueEntity('groupName')]
 class GroupNames

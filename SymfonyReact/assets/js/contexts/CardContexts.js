@@ -25,6 +25,7 @@ const emptyUserSelectionData = {
 const emptyModalStatus = {
     submitSuccess: false,
     errors: [],
+    success: [],
     modalSubmit: false,
 }
 
@@ -245,7 +246,7 @@ class CardContextProvider extends Component {
 
     handleSubmissionModalForm = async (event) => {
         event.preventDefault();
-        this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: []}});
+        this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: [], success: []}});
 
         const cardFormData = {
             'cardViewID' : this.state.modalContent.cardViewID,
@@ -263,16 +264,40 @@ class CardContextProvider extends Component {
             const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', cardFormData, getAPIHeader());
 
             const boundaryFormSubmissionResult = await axios.put(apiURL+'sensors/boundary-update', sensorBoundaryUpdateData, getAPIHeader());
-            if (formSubmissionResult.status === 204 && boundaryFormSubmissionResult.status === 204) {
+            if (formSubmissionResult.status === 202 && boundaryFormSubmissionResult.status === 202) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>
                     this.toggleModal(), 1500
                 );
+            }
+            if (formSubmissionResult.status === 202 && boundaryFormSubmissionResult.status === 207) {
+                console.log("correct multi response", boundaryFormSubmissionResult.data);
+                const badRequestErrors = !boundaryFormSubmissionResult.data.errors
+                ? ['something went wrong']
+                : boundaryFormSubmissionResult.data.errors;
+
+                console.log("after bad reqquest set")
+
+                const successRequestAttempts = !boundaryFormSubmissionResult.data.payload
+                ? []
+                : boundaryFormSubmissionResult.data.payload;
+                
+
+                console.log("before set state")
+                this.setState({modalStatus:{
+                    ...this.state.modalStatus,
+                    modalSubmit: false,
+                    submitSuccess: false,
+                    errors: badRequestErrors,
+                    success: successRequestAttempts.successfullyUpdated
+                    }})
+                    console.log('modal states', successRequestAttempts, this.state.modalStatus.success)
             } else {
                 this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: ["unexpected response, check too see if the values are updated"]}});
             }
         } catch(error) {
-            console.log(error.response.data, "boom");
+            console.log(error.response, "error catch");
+
             const badRequestErrors = !Array.isArray(error.response.data.errors) || !error.response.data.errors.length > 1
                 ? ['something went wrong']
                 : error.response.data.errors;

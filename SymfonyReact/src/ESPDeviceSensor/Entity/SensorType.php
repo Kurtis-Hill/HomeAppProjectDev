@@ -26,7 +26,7 @@ use App\Form\CustomFormValidators as NoSpecialCharacters;
  * GetSensorTypesController
  *
  * @ORM\Table(name="sensortype", uniqueConstraints={@ORM\UniqueConstraint(name="sensorType", columns={"sensorType"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\SensorTypeRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepository")
  */
 class SensorType
 {

@@ -69,7 +69,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
 
     private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array
     {
-        return $this->sensorReadingTypesValidatorService->validateSensorTypeObject($sensorTypeObject);
+        return $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObjectsBySensorTypeObject($sensorTypeObject);
     }
 
     /**

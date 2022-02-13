@@ -19,13 +19,15 @@ use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorSe
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorFormsUpdateService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\Deprecated;
 use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
-class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateService implements UpdateCurrentSensorFormReadingInterface
+#[Deprecated]
+class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateService implements UpdateCurrentSensorReadingInterface
 {
     private SensorConstantlyRecordServiceService $constantlyRecordService;
 
@@ -54,8 +56,9 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
      */
     public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingDTO $updateSensorReadingDTO, Devices $device): bool
     {
-        try {
+//        try {
             $sensorReadingTypeObjects = $this->getSensorReadingTypeObjects($updateSensorReadingDTO, $device);
+//            dd($sensorReadingTypeObjects);
             $this->processSensorDataToUpdate($updateSensorReadingDTO, $sensorReadingTypeObjects);
             $this->handleOutOfBoundsReadingsCheck($sensorReadingTypeObjects);
             $this->handleConstRecordReadingsCheck($sensorReadingTypeObjects);
@@ -63,19 +66,19 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
             $this->sensorRepository->flush();
 
             return true;
-        } catch (
-            BadRequestException
-            | SensorNotFoundException
-            | UnexpectedValueException $exception
-        ) {
-            error_log($exception->getMessage(), 0, ErrorLogs::USER_INPUT_ERROR_LOG_LOCATION);
-
-        } catch (
-            ORMException
-            | RuntimeException
-            | ReadingTypeNotSupportedException $exception) {
-            error_log($exception->getMessage(), 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
-        }
+//        } catch (
+//            BadRequestException
+//            | SensorNotFoundException
+//            | UnexpectedValueException $exception
+//        ) {
+//            error_log($exception->getMessage(), 0, ErrorLogs::USER_INPUT_ERROR_LOG_LOCATION);
+//
+//        } catch (
+//            ORMException
+//            | RuntimeException
+//            | ReadingTypeNotSupportedException $exception) {
+//            error_log($exception->getMessage(), 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+//        }
 
         return true;
     }

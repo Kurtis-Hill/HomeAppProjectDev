@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Sensors.
  *
  * @ORM\Table(name="sensornames", indexes={@ORM\Index(name="sensornames_ibfk_2", columns={"createdBy"}), @ORM\Index(name="SensorType", columns={"sensorTypeID"}), @ORM\Index(name="sensornames_ibfk_1", columns={"deviceNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\SensorsRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository")
  */
 class Sensor
 {

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * GroupnNameMapping
  *
  * @ORM\Table(name="groupnnamemapping", indexes={@ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="userID", columns={"userID", "groupNameID"}), @ORM\Index(name="IDX_1C993DEE5FD86D04", columns={"userID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\GroupNameMappingTableRepository")
+ * @ORM\Entity(repositoryClass="App\Authentication\Repository\ORM\GroupNameMappingTableRepository")
  */
 class GroupNameMapping
 {

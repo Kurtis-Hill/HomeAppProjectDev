@@ -14,9 +14,11 @@ use App\ESPDeviceSensor\Forms\SensorReadingUpdateInterface;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Deprecated;
 use RuntimeException;
 use Symfony\Component\Form\FormFactoryInterface;
 
+#[Deprecated]
 abstract class AbstractSensorFormsUpdateService
 {
     use FormProcessorTrait;

@@ -65,7 +65,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getResult()[0] ?? null;
     }
 
-    public function getSensorReadingTypeDataBySensor(Sensor $sensors, array $sensorTypeJoinDTOs): SensorTypeInterface
+    public function getSensorReadingTypeDataBySensor(
+        Sensor $sensors,
+        array $sensorTypeJoinDTOs
+    ): SensorTypeInterface
     {
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
@@ -84,18 +87,25 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     }
 
     public function getSensorTypeAndReadingTypeObjectsForSensor(
-        JoinQueryDTO $joinQueryDTO,
         int $device,
-        array $readingTypeJoinQueryDTOs,
-        string $sensorsName
+        string $sensorsName,
+        JoinQueryDTO $joinQueryDTO = null,
+        array $readingTypeJoinQueryDTOs = [],
     ): array
     {
         $qb = $this->createQueryBuilder('sensors');
-        $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
-        $readingTypeAlias = $this->prepareSensorJoinsForQuery([$joinQueryDTO], $qb);
 
-        $qb->select($readingTypeAlias, $readingTypes)
-            ->innerJoin(
+        if (!empty($readingTypeJoinQueryDTOs)) {
+            $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
+            $selects[] = $readingTypes;
+        }
+        if ($joinQueryDTO !== null) {
+            $sensorTypes = $this->prepareSensorJoinsForQuery([$joinQueryDTO], $qb);
+            $selects[] = $sensorTypes;
+        }
+
+        $qb->select($selects ?? ['']);
+            $qb->innerJoin(
                 Devices::class,
                 'device',
                 Join::WITH,
@@ -108,6 +118,29 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->setParameters(['sensorName' => $sensorsName, 'deviceID' => $device]);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findSensorObjectByDeviceIdAndSensorName(int $deviceId, string $sensorName): ?Sensor
+    {
+        $qb = $this->createQueryBuilder('sensor');
+
+        $qb->select('sensor')
+            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->where(
+                $qb->expr()->eq('sensor.sensorName', ':sensorName'),
+                $qb->expr()->eq('device.deviceNameID', ':deviceID')
+            )
+            ->setParameters(
+                [
+                    'sensorName' => $sensorName,
+                    'deviceID' => $deviceId,
+                ]
+            );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     #[Deprecated]

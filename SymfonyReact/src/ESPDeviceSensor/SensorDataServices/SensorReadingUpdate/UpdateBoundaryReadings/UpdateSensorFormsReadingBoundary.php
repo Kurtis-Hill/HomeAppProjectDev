@@ -2,16 +2,16 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Core\APIInterface\APIErrorInterface;
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\AbstractSensorFormsUpdateService;
+use JetBrains\PhpStorm\Deprecated;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use UnexpectedValueException;
 
-//@TODO can delete
-class UpdateSensorFormsReadingBoundary extends AbstractSensorFormsUpdateService implements UpdateBoundaryReadingsInterface, APIErrorInterface
+#[Deprecated]
+class UpdateSensorFormsReadingBoundary extends AbstractSensorFormsUpdateService implements UpdateBoundaryReadingsInterface
 {
     private array $userInputErrors = [];
 

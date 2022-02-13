@@ -42,7 +42,6 @@ class TokenController extends AbstractController
 
         $userName = $user->getUsername();
 
-
         $token = $JWTEncoder->encode(['username' => $user->getUsername(), 'exp' => time() + 3600]);
 
         return new JsonResponse(['token' => $token]);

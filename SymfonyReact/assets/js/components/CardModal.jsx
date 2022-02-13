@@ -45,6 +45,23 @@ const cardModal = () => {
                   </div>
                 : null
             }
+            
+            {
+              modalStatus.success.length > 0 
+                ?
+                  <div className="error-container">
+                    <div className="form-modal-success-box">
+                      <ol>
+                      {
+                        modalStatus.success.map((success, index) => (
+                          <li key={index} className="form-modal-error-text">request data accepted for {success}</li>
+                        ))
+                      }
+                      </ol>
+                    </div>
+                  </div>
+                : null
+            }
 
             {modalStatus.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
               <React.Fragment>

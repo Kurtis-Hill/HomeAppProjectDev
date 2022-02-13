@@ -11,7 +11,7 @@ use App\Form\CustomFormValidators as NoSpecialCharacters;
  * Cardcolour.
  *
  * @ORM\Table(name="cardcolour", uniqueConstraints={@ORM\UniqueConstraint(name="colour", columns={"colour"}), @ORM\UniqueConstraint(name="shade", columns={"shade"})})
- * @ORM\Entity(repositoryClass="App\Repository\Card\CardColourRepository")
+ * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository")
  */
 #[UniqueEntity('colour')]
 class CardColour

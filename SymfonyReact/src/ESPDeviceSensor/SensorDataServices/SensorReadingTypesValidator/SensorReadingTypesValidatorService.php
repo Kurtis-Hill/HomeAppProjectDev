@@ -30,9 +30,8 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         $this->validator = $validator;
     }
 
-    //@TODO needs moving to its own class
     #[ArrayShape(["errors"])]
-    public function validateSensorTypeObject(SensorTypeInterface $sensorTypeObject): array
+    public function validateSensorReadingTypeObjectsBySensorTypeObject(SensorTypeInterface $sensorTypeObject): array
     {
         $sensorType = $sensorTypeObject->getSensorTypeName();
 
@@ -84,7 +83,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 
         return $errors;
     }
-    
+
     #[ArrayShape(['string'])]
     public function validateSensorReadingTypeObject(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,

@@ -2,6 +2,7 @@
 
 namespace App\ESPDeviceSensor\DTO\Sensor;
 
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -11,7 +12,14 @@ class UpdateSensorCurrentReadingDTO
 
     private string $sensorName;
 
-    private array $sensorData;
+    #[ArrayShape(
+        [
+            "temperatureReading" => "float",
+            "humidityReading" => "float",
+            "analogReading" => "int",
+        ]
+    )]
+    private array $currentReadings;
 
     private int $deviceId;
 
@@ -23,7 +31,7 @@ class UpdateSensorCurrentReadingDTO
     )
     {
         $this->sensorType = $sensorType;
-        $this->sensorData = $currentReadings;
+        $this->currentReadings = $currentReadings;
         $this->deviceId = $deviceId;
         $this->sensorName = $sensorName;
     }
@@ -33,9 +41,16 @@ class UpdateSensorCurrentReadingDTO
         return $this->sensorType;
     }
 
+    #[ArrayShape(
+        [
+            "temperatureReading" => "float",
+            "humidityReading" => "float",
+            "analogReading" => "int",
+        ]
+    )]
     public function getCurrentReadings(): array
     {
-        return $this->sensorData;
+        return $this->currentReadings;
     }
 
     public function getDeviceId(): int

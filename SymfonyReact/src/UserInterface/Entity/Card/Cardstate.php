@@ -10,7 +10,7 @@ use App\Form\CustomFormValidators as NoSpecialCharacters;
  * Cardstate
  *
  * @ORM\Table(name="cardstate", uniqueConstraints={@ORM\UniqueConstraint(name="state", columns={"state"})})
- * @ORM\Entity(repositoryClass="App\Repository\Card\CardStateRepository")
+ * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository")
  */
 class Cardstate
 {

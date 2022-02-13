@@ -11,7 +11,7 @@ use App\Form\CustomFormValidators as NoSpecialCharacters;
  * Room
  *
  * @ORM\Table(name="room", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\RoomRepository")
+ * @ORM\Entity(repositoryClass="App\User\Repository\ORM\RoomRepository")
  */
 class Room
 {

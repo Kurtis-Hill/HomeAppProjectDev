@@ -3,7 +3,6 @@
 namespace App\User\Entity;
 
 use App\Authentication\Entity\GroupNameMapping;
-use App\Core\UserInterface\APISensorUserInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
@@ -14,10 +13,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * User
  *
  * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="email", columns={"email"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\UserRepository")
+ * @ORM\Entity(repositoryClass="App\User\Repository\ORM\UserRepository")
  */
 #[UniqueEntity('email')]
-class User implements UserInterface, APISensorUserInterface
+class User implements UserInterface
 {
     /**
      * @var int

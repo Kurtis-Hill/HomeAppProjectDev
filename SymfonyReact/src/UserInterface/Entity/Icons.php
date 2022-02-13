@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Icons
  *
  * @ORM\Table(name="icons", uniqueConstraints={@ORM\UniqueConstraint(name="iconName_2", columns={"iconName"})})
- * @ORM\Entity(repositoryClass="App\Repository\Core\IconRepository")
+ * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\IconsRepository")
  */
 class Icons
 {

@@ -27,11 +27,11 @@ services:
   App\ESPDeviceSensor\AMQP\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
 
   ######################## Consumers ######################################################
-  App\ESPDeviceSensor\AMQP\UploadCurrentReadingSensorDataConsumer:
+  App\ESPDeviceSensor\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer:
 
   ######################## Update Sensor Reading Services ######################################################
-  App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorFormReadingsService'
+  App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
+    alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
 
   App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
     alias: 'App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorOutOfBoundsSensorService'

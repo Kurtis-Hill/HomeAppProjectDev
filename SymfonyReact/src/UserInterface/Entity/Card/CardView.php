@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Cardview
  *
  * @ORM\Table(name="cardview", indexes={@ORM\Index(name="FK_E36636B5A356FF88", columns={"cardColourID"}), @ORM\Index(name="FK_E36636B53BE475E6", columns={"sensorNameID"}), @ORM\Index(name="FK_E36636B53casrdState", columns={"cardStateID"}), @ORM\Index(name="UserID", columns={"userID"}), @ORM\Index(name="FK_E36636B5840D9A7A", columns={"cardIconID"}), @ORM\Index(name="cardview_show", columns={"cardViewID"})})
- * @ORM\Entity(repositoryClass="App\Repository\Card\CardViewRepository")
+ * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository")
  */
 class CardView
 {

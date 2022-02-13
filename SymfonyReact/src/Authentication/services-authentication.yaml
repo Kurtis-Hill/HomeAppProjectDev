@@ -15,6 +15,14 @@ services:
     tags: [ 'controller.service_arguments' ]
 
 
+  App\Authentication\EventListeners\AuthenticationSuccessListener:
+    arguments: [ '@request_stack' ]
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+
+  App\Authentication\EventListeners\JWTAuthenticatedListener:
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
   ######################## Producers ######################################################
 
   ######################## Consumers ######################################################

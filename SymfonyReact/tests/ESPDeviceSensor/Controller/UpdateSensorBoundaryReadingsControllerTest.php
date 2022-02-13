@@ -210,15 +210,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'dataPayloadMessage' => [
-                "Successfully updated sensor boundary readings" => [
+                "successfullyUpdated" => [
                     "temperature"
                 ]
             ],
             'errorsPayloadMessage' => [
-                "humidity" => [
-                    "Humidity for this sensor cannot be over 100 you entered 105%",
-                    "Humidity for this sensor cannot be under 0 you entered -5%"
-                ]
+                "Humidity for this sensor cannot be over 100 you entered 105%",
+                "Humidity for this sensor cannot be under 0 you entered -5%"
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -242,15 +240,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'dataPayloadMessage' => [
-                "Successfully updated sensor boundary readings" => [
+                "successfullyUpdated" => [
                     "humidity"
                 ]
             ],
             'errorsPayloadMessage' => [
-                "temperature" => [
-                    "Temperature settings for Dht sensor cannot exceed 80°C you entered 85°C",
-                    "Temperature settings for Dht sensor cannot be below -40°C you entered -45°C"
-                ]
+                "Temperature settings for Dht sensor cannot exceed 80°C you entered 85°C",
+                "Temperature settings for Dht sensor cannot be below -40°C you entered -45°C"
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -275,14 +271,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                "temperature" => [
-                    "Temperature settings for Dht sensor cannot exceed 80°C you entered 85°C",
-                    "Temperature settings for Dht sensor cannot be below -40°C you entered -45°C"
-                ],
-                "humidity" => [
-                    "Humidity for this sensor cannot be over 100 you entered 105%",
-                    "Humidity for this sensor cannot be under 0 you entered -5%"
-                ]
+                "Temperature settings for Dht sensor cannot exceed 80°C you entered 85°C",
+                "Temperature settings for Dht sensor cannot be below -40°C you entered -45°C",
+                "Humidity for this sensor cannot be over 100 you entered 105%",
+                "Humidity for this sensor cannot be under 0 you entered -5%",
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
@@ -367,10 +359,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                "temperature" => [
-                    "Temperature settings for Dallas sensor cannot exceed 125°C you entered 130°C",
-                    "Temperature settings for Dallas sensor cannot be below -55°C you entered -60°C"
-                ]
+                "Temperature settings for Dallas sensor cannot exceed 125°C you entered 130°C",
+                "Temperature settings for Dallas sensor cannot be below -55°C you entered -60°C",
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
@@ -450,16 +440,14 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'dataPayloadMessage' => [
-                "Successfully updated sensor boundary readings" => [
+                "successfullyUpdated" => [
                     "temperature",
                     "latitude"
                 ]
             ],
             'errorsPayloadMessage' => [
-                "humidity" => [
-                    "Humidity for this sensor cannot be over 100 you entered 105%",
-                    "Humidity for this sensor cannot be under 0 you entered -5%"
-                ]
+                "Humidity for this sensor cannot be over 100 you entered 105%",
+                "Humidity for this sensor cannot be under 0 you entered -5%",
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -489,16 +477,14 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'dataPayloadMessage' => [
-                "Successfully updated sensor boundary readings" => [
+                "successfullyUpdated" => [
                     "humidity",
                     "latitude"
                 ]
             ],
             'errorsPayloadMessage' => [
-                "temperature" => [
-                    "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
-                    "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C"
-                ]
+                "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
+                "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C"
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -529,16 +515,14 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'dataPayloadMessage' => [
-                "Successfully updated sensor boundary readings" => [
+                "successfullyUpdated" => [
                     "temperature",
                     "latitude"
                 ]
             ],
             'errorsPayloadMessage' => [
-                "humidity" => [
-                    "Humidity for this sensor cannot be over 100 you entered 105%",
-                    "Humidity for this sensor cannot be under 0 you entered -5%"
-                ]
+                "Humidity for this sensor cannot be over 100 you entered 105%",
+                "Humidity for this sensor cannot be under 0 you entered -5%"
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -568,16 +552,14 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'dataPayloadMessage' => [
-                "Successfully updated sensor boundary readings" => [
+                "successfullyUpdated" => [
                     "temperature",
                     "humidity",
                 ]
             ],
             'errorsPayloadMessage' => [
-                "latitude" => [
-                    "The highest possible latitude is 90 you entered 95",
-                    "The lowest possible latitude is -90 you entered -95"
-                ],
+                "The highest possible latitude is 90 you entered 95",
+                "The lowest possible latitude is -90 you entered -95"
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -608,18 +590,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                "latitude" => [
-                    "The highest possible latitude is 90 you entered 95",
-                    "The lowest possible latitude is -90 you entered -95"
-                ],
-                "temperature" => [
-                    "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
-                    "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C"
-                ],
-                "humidity" => [
-                    "Humidity for this sensor cannot be over 100 you entered 105%",
-                    "Humidity for this sensor cannot be under 0 you entered -5%"
-                ]
+                "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
+                "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C",
+                "Humidity for this sensor cannot be over 100 you entered 105%",
+                "Humidity for this sensor cannot be under 0 you entered -5%",
+                "The highest possible latitude is 90 you entered 95",
+                "The lowest possible latitude is -90 you entered -95",
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
@@ -769,10 +745,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                "analog" => [
-                    "Reading for this sensor cannot be over 9999 you entered 10004",
-                    "Reading for this sensor cannot be under 1000 you entered 995"
-                ]
+                "Reading for this sensor cannot be over 9999 you entered 10004",
+                "Reading for this sensor cannot be under 1000 you entered 995"
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_BAD_REQUEST,

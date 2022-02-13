@@ -79,7 +79,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 }
                 $readingType = $updateData['readingType'];
 
-                $sensorReadingTypeObject = $sensorRepository->getSelectedSensorReadingTypeObjectsBySensorNameAndDevice();
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject($sensorObject->getSensorNameID(), $readingType);
                 if ($sensorReadingTypeObject === null) {
                     throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND);
@@ -94,11 +93,10 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 );
 
                 if (!empty($validationErrors)) {
-                    $sensorProcessingErrors[$readingType] = $validationErrors;
+                    $sensorProcessingErrors =  array_merge($sensorProcessingErrors, $validationErrors);
                 } else {
                     $successfulTypes[] = $readingType;
                 }
-
             } catch (ReadingTypeNotGivenException) {
                 $sensorProcessingErrors[] = sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
@@ -132,7 +130,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         if (count($successfulTypes) !== count($sensorBoundaryUpdateData['sensorData'])) {
             return $this->sendMultiStatusJsonResponse(
                 $sensorProcessingErrors,
-                ['Successfully updated sensor boundary readings' => $successfulTypes],
+                ['successfullyUpdated' => $successfulTypes],
                 'Some sensor boundary update requests failed'
             );
         }
