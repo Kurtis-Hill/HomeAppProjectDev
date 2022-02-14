@@ -75,12 +75,12 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         string $sensorTypeName
     ): array
     {
-        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
-            $this->updateStandardSensorBoundaryReading(
-                $sensorReadingTypeObject,
-                $updateSensorBoundaryReadingsDTO
-            );
-        }
+//        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+//            $this->updateStandardSensorBoundaryReading(
+//                $sensorReadingTypeObject,
+//                $updateSensorBoundaryReadingsDTO
+//            );
+//        }
         $validationError = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
             $sensorReadingTypeObject,
             $sensorTypeName
@@ -96,29 +96,22 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         return $validationError;
     }
 
-    /**
-     * @throws ReadingTypeBuilderFailureException
-     */
-    private function getReadingTypeQueryDTOBuilder(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): ReadingTypeQueryDTOBuilderInterface
-    {
-        return $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getReadingType());
-    }
 
-    private function updateStandardSensorBoundaryReading(
-        StandardReadingSensorInterface $standardReadingSensor,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void
-    {
-        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
-            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
-        }
-        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
-            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
-        }
-        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
-            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
-        }
-    }
+//    private function updateStandardSensorBoundaryReading(
+//        StandardReadingSensorInterface $standardReadingSensor,
+//        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+//    ): void
+//    {
+//        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
+//            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
+//        }
+//        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
+//            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
+//        }
+//        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
+//            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+//        }
+//    }
 
     private function resetEntityBackToOriginalStatus(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
@@ -161,7 +154,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
 
     public function createReadingTypeQueryDTO(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO
     {
-        $sensorTypeQueryDTOBuilder = $this->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO);
+        $sensorTypeQueryDTOBuilder = $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getReadingType());
 
         return $sensorTypeQueryDTOBuilder->buildReadingTypeJoinQueryDTO();
     }

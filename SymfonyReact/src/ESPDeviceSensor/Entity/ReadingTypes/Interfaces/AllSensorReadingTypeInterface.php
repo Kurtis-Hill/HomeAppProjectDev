@@ -19,7 +19,9 @@ interface AllSensorReadingTypeInterface
 
     public function setConstRecord(bool $constRecord);
 
-    public function getCurrentReading(): int|float;
+    public function getCurrentReading(): int|float|string;
+
+    public function setCurrentReading(int|float|string $currentReading);
 
     // @TODO remove from other entities
 //    public function getSensorReadingTypeObjectString(): string;

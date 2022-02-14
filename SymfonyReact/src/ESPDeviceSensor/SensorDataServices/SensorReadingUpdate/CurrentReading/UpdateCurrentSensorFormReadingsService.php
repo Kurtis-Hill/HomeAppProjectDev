@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentRead
 
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ConstRecordEntityException;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
@@ -50,16 +50,16 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
     }
 
     /**
-     * @param UpdateSensorCurrentReadingDTO $updateSensorReadingDTO
+     * @param UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorCurrentReadingConsumerDTO
      * @param Devices $device
      * @return bool
      */
-    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingDTO $updateSensorReadingDTO, Devices $device): bool
+    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorCurrentReadingConsumerDTO, Devices $device): bool
     {
 //        try {
-            $sensorReadingTypeObjects = $this->getSensorReadingTypeObjects($updateSensorReadingDTO, $device);
+            $sensorReadingTypeObjects = $this->getSensorReadingTypeObjects($updateSensorCurrentReadingConsumerDTO, $device);
 //            dd($sensorReadingTypeObjects);
-            $this->processSensorDataToUpdate($updateSensorReadingDTO, $sensorReadingTypeObjects);
+            $this->processSensorDataToUpdate($updateSensorCurrentReadingConsumerDTO, $sensorReadingTypeObjects);
             $this->handleOutOfBoundsReadingsCheck($sensorReadingTypeObjects);
             $this->handleConstRecordReadingsCheck($sensorReadingTypeObjects);
 
@@ -83,7 +83,7 @@ class UpdateCurrentSensorFormReadingsService extends AbstractSensorFormsUpdateSe
         return true;
     }
 
-    private function processSensorDataToUpdate(UpdateSensorCurrentReadingDTO $updateSensorReadingDTO, ArrayCollection $sensorReadingTypeObjects): void
+    private function processSensorDataToUpdate(UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorReadingDTO, ArrayCollection $sensorReadingTypeObjects): void
     {
         if ($sensorReadingTypeObjects->isEmpty()) {
             throw new ReadingTypeNotSupportedException(

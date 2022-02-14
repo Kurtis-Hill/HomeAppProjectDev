@@ -1,12 +1,12 @@
 <?php
 
-namespace App\ESPDeviceSensor\DTO\Sensor;
+namespace App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO;
 
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateSensorCurrentReadingDTO
+class UpdateSensorCurrentReadingConsumerMessageDTO
 {
     private string $sensorType;
 

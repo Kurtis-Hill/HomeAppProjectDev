@@ -4,15 +4,23 @@ namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
+use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
+use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Deprecated;
 
 class SensorRepository extends ServiceEntityRepository implements SensorRepositoryInterface
@@ -86,6 +94,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $result[0];
     }
 
+    #[ArrayShape([
+        Sensor::class | Dht::class | Bmp::class | Dallas::class | Soil::class,
+        Temperature::class, Analog::class, Humidity::class, Latitude::class,
+    ])]
     public function getSensorTypeAndReadingTypeObjectsForSensor(
         int $device,
         string $sensorsName,

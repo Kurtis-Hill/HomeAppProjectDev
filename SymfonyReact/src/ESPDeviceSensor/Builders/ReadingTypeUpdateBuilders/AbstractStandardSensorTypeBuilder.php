@@ -2,9 +2,10 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeUpdateBuilders;
 
+use App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO\UpdateReadingTypeCurrentReadingDTO;
 use App\ESPDeviceSensor\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use JetBrains\PhpStorm\Pure;
 
 abstract class AbstractStandardSensorTypeBuilder
 {
@@ -24,10 +25,31 @@ abstract class AbstractStandardSensorTypeBuilder
         );
     }
 
-    protected function updateStandardSensor(StandardReadingSensorInterface $standardReadingSensor, UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
+    protected function updateStandardSensor(
+        StandardReadingSensorInterface $standardReadingSensor,
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+    ): void
     {
-        $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
-        $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
-        $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
+            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
+            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
+            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        }
+    }
+
+    protected function updateStandardSensorCurrentReading(
+        AllSensorReadingTypeInterface $standardReadingSensor,
+        string $reading
+    ): UpdateReadingTypeCurrentReadingDTO
+    {
+        return new UpdateReadingTypeCurrentReadingDTO(
+            $standardReadingSensor->getCurrentReading(),
+            $reading,
+            $standardReadingSensor
+        );
     }
 }

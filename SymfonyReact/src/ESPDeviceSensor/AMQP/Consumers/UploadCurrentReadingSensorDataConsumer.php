@@ -5,10 +5,12 @@ namespace App\ESPDeviceSensor\AMQP\Consumers;
 
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingDTO;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -44,7 +46,10 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            $sensorData = unserialize($msg->getBody(), ['allowed_classes' => [UpdateSensorCurrentReadingDTO::class]]);
+            $sensorData = unserialize(
+                $msg->getBody(),
+                ['allowed_classes' => [UpdateSensorCurrentReadingConsumerMessageDTO::class]]
+            );
         } catch (Exception $exception) {
             error_log(
                 'Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage(),
@@ -55,10 +60,17 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
             return true;
         }
 
-        $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
+        try {
+            $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
+        } catch (NonUniqueResultException | ORMException $e) {
+            return true;
+        }
 
         if ($device instanceof Devices) {
-            return $this->sensorCurrentReadingUpdateService->handleUpdateSensorCurrentReading($sensorData, $device);
+            return $this->sensorCurrentReadingUpdateService->handleUpdateSensorCurrentReading(
+                $sensorData,
+                $device
+            );
         }
 
         return false;

@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate;
 
 use App\API\Traits\FormProcessorTrait;
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingDTO;
+use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
@@ -130,7 +130,7 @@ abstract class AbstractSensorFormsUpdateService
     /**
      * @throws SensorNotFoundException
      */
-    protected function getSensorReadingTypeObjects(UpdateSensorCurrentReadingDTO $updateSensorReadingDTO, $device): ArrayCollection
+    protected function getSensorReadingTypeObjects(UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorReadingDTO, $device): ArrayCollection
     {
         $sensorTypeObjects = $this->getSensorReadingTypeObjectsToUpdate($device, $updateSensorReadingDTO->getSensorName());
 
@@ -148,12 +148,12 @@ abstract class AbstractSensorFormsUpdateService
 
     /**
      * @param ArrayCollection $sensorTypeObjects
-     * @param UpdateSensorCurrentReadingDTO $updateSensorReadingDTO
+     * @param UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorReadingDTO
      * @param array $updateData
      */
     protected function prepareAndProcessSensorForms(
         ArrayCollection $sensorTypeObjects,
-        UpdateSensorCurrentReadingDTO $updateSensorReadingDTO,
+        UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorReadingDTO,
         array $updateData
     ): void
     {
