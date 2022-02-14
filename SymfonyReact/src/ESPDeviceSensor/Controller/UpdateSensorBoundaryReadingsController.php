@@ -86,8 +86,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 $updateSensorBoundaryBuilder = $updateSensorBoundaryReadingsService->getUpdateBoundaryReadingBuilder($updateData['readingType']);
                 $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryBuilder->buildUpdateSensorBoundaryReadingsDTO($updateData, $sensorReadingTypeObject);
 
-                $updateSensorBoundaryBuilder->setNewBoundaryForReadingType($sensorObject, $updateSensorBoundaryReadingsDTO);
-
                 $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs(
                     $sensorReadingTypeObject,
                     $updateSensorBoundaryReadingsDTO,

@@ -117,7 +117,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-
+//dd($responseData, $sensorReadingsToUpdate);
         $title = $responseData['title'];
         $dataPayload = $responseData['payload'] ?? null;
         $errorsPayload = $responseData['errors'] ?? null;

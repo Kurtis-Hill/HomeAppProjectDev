@@ -124,7 +124,7 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float $reading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
         $this->analogReading = $reading;
     }

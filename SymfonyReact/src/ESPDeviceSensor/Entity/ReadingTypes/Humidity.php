@@ -118,7 +118,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->updateAt;
     }
 
-    public function setCurrentReading(int|float $reading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
         $this->currentReading = $reading;
     }

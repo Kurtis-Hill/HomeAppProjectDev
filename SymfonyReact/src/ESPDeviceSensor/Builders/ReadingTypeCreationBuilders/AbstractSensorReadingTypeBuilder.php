@@ -12,6 +12,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterfac
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 
@@ -24,6 +25,10 @@ class AbstractSensorReadingTypeBuilder
         $this->sensorReadingTypeFactory = $readingTypeFactory;
     }
 
+    /**
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeException
+     */
     public function buildTemperatureSensor(TemperatureSensorTypeInterface $temperatureSensorType): void
     {
         if (!$temperatureSensorType instanceof SensorTypeInterface) {
@@ -44,6 +49,10 @@ class AbstractSensorReadingTypeBuilder
         $readingTypeRepository->persist($temperatureSensor);
     }
 
+    /**
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeException
+     */
     public function buildHumiditySensor(HumiditySensorTypeInterface $humiditySensorType): void
     {
         if (!$humiditySensorType instanceof SensorTypeInterface) {
@@ -64,6 +73,10 @@ class AbstractSensorReadingTypeBuilder
         $readingTypeRepository->persist($humiditySensor);
     }
 
+    /**
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeException
+     */
     public function buildLatitudeSensor(LatitudeSensorTypeInterface $latitudeSensorType): void
     {
         if (!$latitudeSensorType instanceof SensorTypeInterface) {
@@ -84,6 +97,9 @@ class AbstractSensorReadingTypeBuilder
         $readingTypeRepository->persist($latitudeSensor);
     }
 
+    /**
+     * @throws SensorTypeException
+     */
     public function buildAnalogSensor(AnalogSensorTypeInterface $analogSensorType): void
     {
         if (!$analogSensorType instanceof SensorTypeInterface) {

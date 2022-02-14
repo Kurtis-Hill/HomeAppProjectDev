@@ -75,12 +75,12 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         string $sensorTypeName
     ): array
     {
-//        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
-//            $this->updateStandardSensorBoundaryReading(
-//                $sensorReadingTypeObject,
-//                $updateSensorBoundaryReadingsDTO
-//            );
-//        }
+        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+            $this->updateStandardSensorBoundaryReading(
+                $sensorReadingTypeObject,
+                $updateSensorBoundaryReadingsDTO
+            );
+        }
         $validationError = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
             $sensorReadingTypeObject,
             $sensorTypeName
@@ -96,22 +96,21 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         return $validationError;
     }
 
-
-//    private function updateStandardSensorBoundaryReading(
-//        StandardReadingSensorInterface $standardReadingSensor,
-//        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-//    ): void
-//    {
-//        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
-//            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
-//        }
-//        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
-//            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
-//        }
-//        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
-//            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
-//        }
-//    }
+    private function updateStandardSensorBoundaryReading(
+        StandardReadingSensorInterface $standardReadingSensor,
+        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+    ): void
+    {
+        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
+            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
+            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
+            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        }
+    }
 
     private function resetEntityBackToOriginalStatus(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,

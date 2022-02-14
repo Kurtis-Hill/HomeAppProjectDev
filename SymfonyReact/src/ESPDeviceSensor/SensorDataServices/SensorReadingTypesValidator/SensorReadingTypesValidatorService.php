@@ -37,51 +37,67 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 
         $errors = [];
         if ($sensorTypeObject instanceof TemperatureSensorTypeInterface) {
-            $sensorTypeObjectErrors = $this->performSensorReadingTypeValidation(
+            $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
                 $sensorTypeObject->getTempObject(),
                 $sensorType
             );
-            if (!empty($sensorTypeObjectErrors)) {
-                $errors = [$sensorTypeObjectErrors];
-            } else {
-                $this->saveReadingType($sensorTypeObject->getTempObject());
-            }
-        }
-        if ($sensorTypeObject instanceof HumiditySensorTypeInterface) {
-            $sensorTypeObjectErrors = $this->performSensorReadingTypeValidation(
-                $sensorTypeObject->getHumidObject(),
-                $sensorType
-            );
-            if (!empty($sensorTypeObjectErrors)) {
-                $errors = [...$errors, $sensorTypeObjectErrors];
-            } else {
-                $this->saveReadingType($sensorTypeObject->getHumidObject());
-            }
-        }
-        if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
-            $sensorTypeObjectErrors = $this->performSensorReadingTypeValidation(
-                $sensorTypeObject->getLatitudeObject(),
-                $sensorType
-            );
-            if (!empty($sensorTypeObjectErrors)) {
-                $errors = [...$errors, $sensorTypeObjectErrors];
-            } else {
-                $this->saveReadingType($sensorTypeObject->getLatitudeObject());
-            }
-        }
-        if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
-            $sensorTypeObjectErrors = $this->performSensorReadingTypeValidation(
-                $sensorTypeObject->getAnalogObject(),
-                $sensorType
-            );
-            if (!empty($sensorTypeObjectErrors)) {
-                $errors = [...$errors, $sensorTypeObjectErrors];
-            } else {
-                $this->saveReadingType($sensorTypeObject->getAnalogObject());
+
+            if (!empty($validationErrors)) {
+                $errors = array_merge($errors, $validationErrors);
             }
         }
 
+        if ($sensorTypeObject instanceof HumiditySensorTypeInterface) {
+            $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
+                $sensorTypeObject->getHumidObject(),
+                $sensorType
+            );
+
+            if (!empty($validationErrors)) {
+                $errors = array_merge($errors, $validationErrors);
+            }
+        }
+        if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
+            $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
+                $sensorTypeObject->getLatitudeObject(),
+                $sensorType
+            );
+
+            if (!empty($validationErrors)) {
+                $errors = array_merge($errors, $validationErrors);
+            }
+        }
+        if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
+            $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
+                $sensorTypeObject->getAnalogObject(),
+                $sensorType
+            );
+
+            if (!empty($validationErrors)) {
+                $errors = array_merge($errors, $validationErrors);
+            }
+        }
         return $errors;
+    }
+
+    private function performSensorReadingTypeObjectValidatorAndSave(
+        AllSensorReadingTypeInterface $sensorReadingTypeObject,
+        string $sensorType,
+    ): array {
+        $sensorTypeObjectErrors = $this->performSensorReadingTypeValidation(
+            $sensorReadingTypeObject,
+            $sensorType
+        );
+        if (!empty($sensorTypeObjectErrors)) {
+            $errors = $sensorTypeObjectErrors;
+        } else {
+            try {
+                $this->saveReadingType($sensorReadingTypeObject);
+            } catch (SensorReadingTypeRepositoryFactoryException $e) {
+                $errors = [$e->getMessage()];
+            }
+        }
+        return $errors ?? [];
     }
 
     #[ArrayShape(['string'])]
