@@ -2,9 +2,9 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 
 interface OutOfBoundsSensorServiceInterface
 {
-    public function checkAndHandleSensorReadingOutOfBounds(AllSensorReadingTypeInterface $readingType): void;
+    public function checkAndHandleSensorReadingOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void;
 }

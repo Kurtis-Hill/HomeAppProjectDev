@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
 use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
@@ -96,7 +97,7 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
         return $this->sensorReadingTypeID;
     }
 
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {
             $this->sensorReadingTypeID = $sensorReadingTypeID;

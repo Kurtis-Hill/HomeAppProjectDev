@@ -12,10 +12,11 @@ use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeObjectBuilderException;
 use App\ESPDeviceSensor\Exceptions\SensorReadingUpdateFactoryException;
 use App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface;
-use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactoryInterface;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\ESPDeviceSensor\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\ESPDeviceSensor\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 
 //@TODO make rabbit mq autoload docker config
@@ -29,17 +30,14 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
 
     private SensorReadingTypesValidatorServiceInterface $readingTypesValidator;
 
-    private ORMConstRecordFactoryInterface $constRecordFactory;
-
-    private OutOfBoundsFactoryInterface $outOfBoundsFactory;
+    private OutOfBoundsSensorServiceInterface $outOfBoundsSensorService;
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         SensorTypeQueryFactory $readingTypeQueryFactory,
         SensorReadingUpdateFactory $readingUpdateFactory,
         SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
-        ORMConstRecordFactoryInterface $constRecordFactory,
-        OutOfBoundsFactoryInterface $outOfBoundsFactory,
+        OutOfBoundsSensorServiceInterface $outOfBoundsSensorService
 
     )
     {
@@ -47,8 +45,6 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
         $this->sensorTypeQueryFactory = $readingTypeQueryFactory;
         $this->readingUpdateFactory = $readingUpdateFactory;
         $this->readingTypesValidator = $readingTypesValidator;
-        $this->constRecordFactory = $constRecordFactory;
-        $this->outOfBoundsFactory = $outOfBoundsFactory;
     }
 
     public function handleUpdateSensorCurrentReading(
@@ -99,8 +95,9 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                 }
 
                 if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
-                    $this->checkIfSensorIsConstantlyRecorded($updateReadingTypeCurrentReadingDTO);
-                    $this->checkIfSensorIsOutOfBounds($updateReadingTypeCurrentReadingDTO);
+                    $this->outOfBoundsSensorService->checkAndHandleSensorReadingOutOfBounds($sensorReadingObject);
+//                    $this->checkIfSensorIsConstantlyRecorded($updateReadingTypeCurrentReadingDTO);
+//                    $this->checkIfSensorIsOutOfBounds($updateReadingTypeCurrentReadingDTO);
                 }
             } catch (
                 ReadingTypeNotExpectedException
@@ -109,6 +106,8 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                 continue;
             }
         }
+
+        $this->sensorRepository->flush();
 
         return true;
     }

@@ -77,12 +77,12 @@ class ConstAnalog implements ConstantlyRecordInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeID(): Analog
+    public function getSensorReadingTypeObject(): Analog
     {
         return $this->sensorReadingTypeID;
     }
 
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Analog) {
             $this->sensorReadingTypeID = $sensorReadingTypeID;

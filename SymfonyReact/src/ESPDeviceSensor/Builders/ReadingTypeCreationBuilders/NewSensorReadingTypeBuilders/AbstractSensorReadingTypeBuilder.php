@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders;
+namespace App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\NewSensorReadingTypeBuilders;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;

@@ -77,12 +77,12 @@ class ConstHumid implements ConstantlyRecordInterface
         $this->time = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeID(): Humidity
+    public function getSensorReadingTypeObject(): Humidity
     {
         return $this->sensorReadingTypeID;
     }
 
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {
             $this->sensorReadingTypeID = $sensorReadingTypeID;

@@ -3,44 +3,38 @@
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
 use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Exceptions\OutOfBoundsEntityException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
-use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface;
+use App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactoryInterface;
 
 class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterface
 {
-    private OutOfBoundsFactoryInterface $outOfBoundsFactory;
+    private OutOfBoundsORMFactoryInterface $outOfBoundsFactory;
 
-    public function __construct(OutOfBoundsFactoryInterface $outOfBoundsFactory)
+    public function __construct(OutOfBoundsORMFactoryInterface $outOfBoundsFactory)
     {
         $this->outOfBoundsFactory = $outOfBoundsFactory;
     }
 
-    /**
-     * @param AllSensorReadingTypeInterface $readingType
-     * @return void
-     * @throws OutOfBoundsEntityException
-     * @throws ReadingTypeNotSupportedException
-     */
-    public function checkAndHandleSensorReadingOutOfBounds(AllSensorReadingTypeInterface $readingType): void
+    public function checkAndHandleSensorReadingOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
     {
-        if ($readingType->isReadingOutOfBounds()) {
+        if ($readingTypeObject->isReadingOutOfBounds()) {
             foreach (SensorType::SENSOR_READING_TYPE_DATA as $sensorReadingTypeData) {
-                if ($sensorReadingTypeData['object'] === $readingType::class) {
+                if ($sensorReadingTypeData['object'] === $readingTypeObject::class) {
                     $sensorOutOfBoundsObject = new $sensorReadingTypeData['outOfBounds'];
 
                     if (!$sensorOutOfBoundsObject instanceof OutOfBoundsEntityInterface) {
                         throw new OutOfBoundsEntityException(
                             sprintf(
                                 OutOfBoundsEntityException::OUT_OF_BOUNDS_ENTITY_NOT_FOUND_MESSAGE,
-                                $readingType->getSensorID()
+                                $readingTypeObject->getSensorID()
                             )
                         );
                     }
-                    $sensorOutOfBoundsObject->setSensorReadingTypeID($readingType);
-                    $sensorOutOfBoundsObject->setSensorReading($readingType->getCurrentReading());
+                    $sensorOutOfBoundsObject->setSensorReadingTypeID($readingTypeObject);
+                    $sensorOutOfBoundsObject->setSensorReading($readingTypeObject->getCurrentReading());
                     $sensorOutOfBoundsObject->setCreatedAt();
 
                     $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($sensorReadingTypeData['object']);
@@ -56,7 +50,7 @@ class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterfac
                 throw new ReadingTypeNotSupportedException(
                     sprintf(
                         ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
-                        $readingType->getReadingType()
+                        $readingTypeObject->getReadingType()
                     )
                 );
         }

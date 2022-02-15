@@ -17,20 +17,10 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
-    /**
-     * @var UpdateCurrentSensorReadingsService
-     */
     private UpdateCurrentSensorReadingInterface $sensorCurrentReadingUpdateService;
 
-    /**
-     * @var DeviceRepositoryInterface
-     */
     private DeviceRepositoryInterface $deviceRepository;
 
-    /**
-     * @param UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService
-     * @param DeviceRepositoryInterface $deviceRepository
-     */
     public function __construct(
         UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
         DeviceRepositoryInterface $deviceRepository

@@ -6,5 +6,5 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 
 interface SensorConstantlyRecordServiceInterface
 {
-    public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): void;
+    public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingTypeObject): void;
 }

@@ -10,7 +10,7 @@ use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsRepositoryInterfac
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsAnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\OutOfBounds\OutOfBoundsTempORMRepository;
 
-class ORMOutOfBoundsFactory implements OutOfBoundsFactoryInterface
+class OutOfBoundsORMFactory implements OutOfBoundsORMFactoryInterface
 {
     private OutOfBoundsTempORMRepository $outOfBoundsTemp;
 
