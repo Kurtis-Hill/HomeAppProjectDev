@@ -6,6 +6,8 @@ namespace App\API\Traits;
 use App\API\HTTPStatusCodes;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -270,9 +272,18 @@ trait HomeAppAPIResponseTrait
     public function normalizeResponse(mixed $data): array
     {
         $normaliser = [new ObjectNormalizer()];
-
         $normaliser = new Serializer($normaliser);
 
         return $normaliser->normalize($data);
+    }
+
+    public function deserializeRequest(mixed $data, mixed $class, string $format, array $extraContexts = [])
+    {
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+
+        $serializer = new Serializer($normalizers, $encoders);
+//dd('sdf');
+        return $serializer->deserialize($data, $class, $format, $extraContexts);
     }
 }

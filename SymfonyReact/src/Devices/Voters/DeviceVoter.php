@@ -52,7 +52,7 @@ class DeviceVoter extends Voter
             return true;
         }
 
-        $groupName = $newDeviceCheckDTO->getGroupNamesObject();
+        $groupName = $newDeviceCheckDTO->getGroupNameObject();
 
         $room = $newDeviceCheckDTO->getRoomObject();
 

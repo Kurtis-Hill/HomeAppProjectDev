@@ -37,7 +37,7 @@ services:
     alias: 'App\ESPDeviceSensor\SensorDataServices\OutOfBounds\SensorReadingTypeOutOfBoundsService'
 
   App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
-    alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceService'
+    alias: 'App\ESPDeviceSensor\SensorDataServices\ConstantlyRecord\ConstRecordReadingTypeService'
 
   App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
     alias: 'App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'

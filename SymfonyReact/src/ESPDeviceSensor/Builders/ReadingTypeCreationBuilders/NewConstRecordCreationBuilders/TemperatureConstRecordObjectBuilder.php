@@ -8,7 +8,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
 
-class TemperatureConstRecordObjectBuilder implements ConstRecordObjectBuilderInterface
+class TemperatureConstRecordObjectBuilder extends AbstractStandardConstRecordBuilder implements ConstRecordObjectBuilderInterface
 {
     public function buildConstRecordObject(AllSensorReadingTypeInterface $sensorReadingTypeObject): ConstantlyRecordInterface
     {
@@ -22,6 +22,13 @@ class TemperatureConstRecordObjectBuilder implements ConstRecordObjectBuilderInt
             );
         }
 
-        return new ConstTemp();
+        $constRecordObject = new ConstTemp();
+
+        $this->buildStandardConstRecordObject(
+            $constRecordObject,
+            $sensorReadingTypeObject
+        );
+
+        return $constRecordObject;
     }
 }

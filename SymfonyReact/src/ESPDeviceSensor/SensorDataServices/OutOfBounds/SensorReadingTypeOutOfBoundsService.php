@@ -20,18 +20,13 @@ class SensorReadingTypeOutOfBoundsService implements OutOfBoundsSensorServiceInt
         $this->outOfBoundsCreationFactory = $outOfBoundsCreationFactory;
     }
 
-
     public function checkAndHandleSensorReadingOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
     {
         if ($readingTypeObject->isReadingOutOfBounds()) {
             $readingType = $readingTypeObject->getReadingType();
-
             $outOfBoundsObjectBuilder = $this->outOfBoundsCreationFactory->getConstRecordObjectBuilder($readingType);
-            $outOfBoundsObject = $outOfBoundsObjectBuilder->buildOutOfBoundsObject();
 
-            $outOfBoundsObject->setSensorReading($readingTypeObject->getCurrentReading());
-            $outOfBoundsObject->setSensorReadingTypeID($readingTypeObject);
-            $outOfBoundsObject->setCreatedAt();
+            $outOfBoundsObject = $outOfBoundsObjectBuilder->buildOutOfBoundsObject($readingTypeObject);
 
             $outOfBoundsRepository = $this->outOfBoundsORMFactory->getOutOfBoundsServiceRepository($readingType);
             $outOfBoundsRepository->persist($outOfBoundsObject);

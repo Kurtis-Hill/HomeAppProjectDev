@@ -63,4 +63,22 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
     {
         $this->getEntityManager()->remove($room);
     }
+
+    public function findOneByRoomNameAndGroupNameId(int $groupNameId, string $roomName): ?Room
+    {
+        $qb = $this->createQueryBuilder('room');
+        $expr = $qb->expr();
+
+        $qb->select('room')
+            ->where(
+                $expr->eq('room.room', ':roomName'),
+                $expr->eq('room.groupNameID', ':groupNameId')
+            );
+        $qb->setParameters([
+            'roomName' => $roomName,
+            'groupNameId' => $groupNameId
+        ]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

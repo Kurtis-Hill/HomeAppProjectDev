@@ -8,7 +8,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
 
-class HumidityConstRecordObjectBuilder implements ConstRecordObjectBuilderInterface
+class HumidityConstRecordObjectBuilder extends AbstractStandardConstRecordBuilder implements ConstRecordObjectBuilderInterface
 {
     public function buildConstRecordObject(AllSensorReadingTypeInterface $sensorReadingTypeObject): ConstantlyRecordInterface
     {
@@ -22,6 +22,13 @@ class HumidityConstRecordObjectBuilder implements ConstRecordObjectBuilderInterf
             );
         }
 
-        return new ConstHumid();
+        $constRecordObject = new ConstHumid();
+
+        $this->buildStandardConstRecordObject(
+            $constRecordObject,
+            $sensorReadingTypeObject
+        );
+
+        return $constRecordObject;
     }
 }

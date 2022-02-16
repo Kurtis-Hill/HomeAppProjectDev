@@ -21,14 +21,14 @@ class ConstRecordReadingTypeService implements SensorConstantlyRecordServiceInte
         $this->ormConstRecordFactory = $ormConstRecordFactory;
     }
 
-
     public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingTypeObject): void
     {
+//        dd($readingTypeObject->getConstRecord());
         if ($readingTypeObject->getConstRecord() === true) {
             $readingType = $readingTypeObject->getReadingType();
 
             $constRecordObjectBuilder = $this->constRecordCreationFactory->getConstRecordObjectBuilder($readingType);
-            $constRecordObject = $constRecordObjectBuilder->buildConstRecordObject();
+            $constRecordObject = $constRecordObjectBuilder->buildConstRecordObject($readingTypeObject);
 
             $constRecordRepository = $this->ormConstRecordFactory->getConstRecordServiceRepository($readingType);
             $constRecordRepository->persist($constRecordObject);

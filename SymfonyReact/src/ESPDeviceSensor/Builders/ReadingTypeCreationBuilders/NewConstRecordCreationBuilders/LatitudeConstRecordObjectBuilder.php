@@ -7,7 +7,7 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
 
-class LatitudeConstRecordObjectBuilder implements ConstRecordObjectBuilderInterface
+class LatitudeConstRecordObjectBuilder extends AbstractStandardConstRecordBuilder implements ConstRecordObjectBuilderInterface
 {
     public function buildConstRecordObject(AllSensorReadingTypeInterface $sensorReadingTypeObject): ConstantlyRecordInterface
     {
@@ -21,6 +21,13 @@ class LatitudeConstRecordObjectBuilder implements ConstRecordObjectBuilderInterf
             );
         }
 
-//        return new Const
+//        $constRecordObject = new ConstLatitude();
+//
+//        $this->buildStandardConstRecordObject(
+//            $constRecordObject,
+//            $sensorReadingTypeObject
+//        );
+//
+//        return $constRecordObject;
     }
 }
