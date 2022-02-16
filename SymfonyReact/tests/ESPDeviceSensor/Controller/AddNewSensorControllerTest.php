@@ -31,24 +31,12 @@ class AddNewSensorControllerTest extends WebTestCase
 {
     private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensors/add-new-sensor';
 
-    /**
-     * @var EntityManagerInterface
-     */
     private EntityManagerInterface $entityManager;
 
-    /**
-     * @var KernelBrowser
-     */
     private KernelBrowser $client;
 
-    /**
-     * @var ?Devices
-     */
     private ?Devices $device;
 
-    /**
-     * @var string|null
-     */
     private ?string $userToken = null;
 
     protected function setUp(): void

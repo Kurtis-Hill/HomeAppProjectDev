@@ -262,19 +262,19 @@ trait HomeAppAPIResponseTrait
      */
     public function normalizeResponse(mixed $data): array
     {
-        $normaliser = [new ObjectNormalizer()];
-        $normaliser = new Serializer($normaliser);
+        $normalizer = [new ObjectNormalizer()];
+        $normalizer = new Serializer($normalizer);
 
-        return $normaliser->normalize($data);
+        return $normalizer->normalize($data);
     }
 
-    public function deserializeRequest(mixed $data, mixed $class, string $format, array $extraContexts = [])
+    public function deserializeRequest(string $data, string $class, string $format, array $extraContexts = []): mixed
     {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normalizers, $encoders);
-//dd('sdf');
+
         return $serializer->deserialize($data, $class, $format, $extraContexts);
     }
 }
