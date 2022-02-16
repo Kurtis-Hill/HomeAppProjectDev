@@ -1,10 +1,10 @@
-const humid, text still scuffed
+const humid const temp changed timez to createdAt
 group name created still has timez
-latitude needs default for const record
-sensorname for reading types needs to be either null or not null
+latitude needs default for const record -- NO NEED
+sensorname for reading types needs to be either null or not null -- NOT SURE WHAT THIS MEANS
 latitude needs updating from time to upated at and adjust buildLatitudeSensorData method
 outofrangeanalog has nullable reading
-out of range humid & temp timez not created at
+out of range humid & temp timez not created at -- ALREADY DONE
 groupname still have timez
 latitude const record needs creating
 latitude out of range table need creating
