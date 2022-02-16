@@ -70,7 +70,7 @@ class CardContextProvider extends Component {
     setURL = () => {
         const cardAPI = `${apiURL}card-data/`;
         if (window.location.pathname === `${webappURL}index`) {
-            const indexURL = `${cardAPI}index?reading-types[]=temperature`;
+            const indexURL = `${cardAPI}index`;
             this.setState({url:  indexURL});
             return;
         }
@@ -79,13 +79,13 @@ class CardContextProvider extends Component {
 
         if (window.location.pathname ===`${webappURL}device`) {
             const deviceName = urlParam.get('device-id');
-            const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}&reading-types[]=temperature&reading-types[]=humidity`;
+            const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}`;
             this.setState({url:  deviceURL});
             return;
         }
         if (window.location.pathname === `${webappURL}room`) {
-            const roomeName = urlParam.get('room-id');
-            const roomURL = `${cardAPI}room-cards?room-id=${roomeName}`;
+            const roomName = urlParam.get('room-id');
+            const roomURL = `${cardAPI}room-cards?room-id=${roomName}`;
             this.setState({url:  roomURL});
             return;
         }

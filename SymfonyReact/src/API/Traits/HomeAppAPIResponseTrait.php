@@ -13,10 +13,6 @@ use Symfony\Component\Serializer\Serializer;
 trait HomeAppAPIResponseTrait
 {
     // 20x Successfull
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
     public function sendSuccessfulJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -36,13 +32,8 @@ trait HomeAppAPIResponseTrait
             ],
             HTTPStatusCodes::HTTP_OK
         );
-
     }
 
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
     public function sendSuccessfulUpdateJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -64,17 +55,12 @@ trait HomeAppAPIResponseTrait
         );
     }
 
-    // 20x Successfull
-
-    /**
-     * @param string|null $data
-     * @return JsonResponse
-     */
+    // 20x Successful
     public function sendSuccessfulResponse(string $data = null): Response
     {
         if ($data !== null) {
             return new Response(
-                    $data,
+                $data,
                 HTTPStatusCodes::HTTP_OK
             );
         }
@@ -136,7 +122,8 @@ trait HomeAppAPIResponseTrait
                     'errors' => $errors,
                     'payload' => $data
                 ],
-                HTTPStatusCodes::HTTP_PARTIAL_CONTENT);
+                HTTPStatusCodes::HTTP_PARTIAL_CONTENT
+            );
         }
 
         return new JsonResponse(
@@ -234,7 +221,8 @@ trait HomeAppAPIResponseTrait
                     'title' => 'Server Error Please Try Again',
                     'errors' => $data
                 ],
-                HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
+                HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         return new JsonResponse(
@@ -242,7 +230,8 @@ trait HomeAppAPIResponseTrait
                 'title' => 'Server Error Please Try Again',
                 'errors' => 'No Response Message'
             ],
-            HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR);
+            HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR
+        );
     }
 
     public function sendForbiddenAccessJsonResponse(array $errors = []): JsonResponse
@@ -253,7 +242,8 @@ trait HomeAppAPIResponseTrait
                     'title' => 'You Are Not Authorised To Be Here',
                     'errors' => $errors,
                 ],
-                HTTPStatusCodes::HTTP_FORBIDDEN);
+                HTTPStatusCodes::HTTP_FORBIDDEN
+            );
         }
 
         return new JsonResponse(
@@ -261,7 +251,8 @@ trait HomeAppAPIResponseTrait
                 'title' => 'You Are Not Authorised To Be Here',
                 'errors' => 'No Response Message'
             ],
-            HTTPStatusCodes::HTTP_FORBIDDEN);
+            HTTPStatusCodes::HTTP_FORBIDDEN
+        );
     }
 
     /**

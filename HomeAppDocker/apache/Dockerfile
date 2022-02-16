@@ -22,7 +22,7 @@ RUN chmod 0444 -R /etc/ssl
 COPY ./docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 
-RUN  a2enmod ssl
+RUN a2enmod ssl
 
 WORKDIR /var/www/html
 
