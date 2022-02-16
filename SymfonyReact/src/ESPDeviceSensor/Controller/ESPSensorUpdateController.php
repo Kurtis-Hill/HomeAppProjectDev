@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Controller;
 
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
-use App\ESPDeviceSensor\DTO\Sensor\UpdateSensorCurrentReadingConsumerMessageDTO;
+use App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Exception;
 use JsonException;

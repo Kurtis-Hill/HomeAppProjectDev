@@ -4,6 +4,7 @@ namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -81,7 +82,7 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
         return $this->sensorReadingTypeID;
     }
 
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {
             $this->sensorReadingTypeID = $sensorReadingTypeID;

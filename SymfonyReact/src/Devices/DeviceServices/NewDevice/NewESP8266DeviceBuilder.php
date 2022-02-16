@@ -2,16 +2,23 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
+use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\DTO\NewDeviceDTO;
+use App\Devices\DTO\RequestDTO\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
+use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\User\Entity\User;
 use Doctrine\ORM\ORMException;
- use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
+class NewESP8266DeviceBuilder implements NewDeviceServiceInterface
 {
+    use ValidatorProcessorTrait;
+
     private DeviceRepositoryInterface $deviceRepository;
 
     private UserPasswordEncoderInterface $passwordEncoder;
@@ -28,11 +35,26 @@ class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
         $this->passwordEncoder = $passwordEncoder;
     }
 
+    #[ArrayShape(["errors"])]
+    public function validateNewDeviceRequest(NewDeviceRequestDTO $deviceRequestDTO): array
+    {
+        $errors = $this->validator->validate($deviceRequestDTO);
+
+        return $this->getValidationErrorAsArray($errors);
+    }
+
     public function createNewDevice(NewDeviceDTO $deviceDTO): Devices
     {
+        $deviceUser = $deviceDTO->getCreatedByUserObject();
+        if (!$deviceUser instanceof User) {
+            throw new DeviceCreationFailureException(
+                DeviceCreationFailureException::DEVICE_FAILED_TO_CREATE
+            );
+        }
+
         $newDevice = new Devices();
         $newDevice->setDeviceName($deviceDTO->getDeviceName());
-        $newDevice->setCreatedBy($deviceDTO->getCreatedByUserObject());
+        $newDevice->setCreatedBy($deviceUser);
         $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($deviceDTO->getRoomObject());
 
@@ -41,17 +63,19 @@ class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
 
     public function validateNewDevice(Devices $newDevice): array
     {
-        $userErrors = [];
         $validatorErrors = $this->validator->validate($newDevice);
 
-        foreach ($validatorErrors as $error) {
-            $userErrors[] = $error->getMessage();
+        if ($this->checkIfErrorsArePresent($validatorErrors)) {
+            $userErrors = $this->getValidationErrorAsArray($validatorErrors);
         }
+
         try {
             $this->duplicateDeviceCheck($newDevice);
         }
         catch (DuplicateDeviceException $exception) {
             $userErrors[] = $exception->getMessage();
+        } catch (ORMException $e) {
+            $userErrors[] = "device check query failed";
         }
 
         if (empty($userErrors)) {
@@ -61,9 +85,13 @@ class NewESP8266DeviceValidatorService implements NewDeviceServiceInterface
             $newDevice->setRoles([Devices::ROLE]);
         }
 
-        return $userErrors;
+        return $userErrors ?? [];
     }
 
+    /**
+     * @throws DuplicateDeviceException
+     * @throws ORMException
+     */
     private function duplicateDeviceCheck(Devices $deviceData): void
     {
         $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck(

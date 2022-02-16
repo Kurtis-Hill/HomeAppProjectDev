@@ -4,6 +4,7 @@ namespace App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation;
 
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\ESPDeviceSensor\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Factories\ORMFactories\SensorType\SensorTypeRepositroyFactoryInterface;
 use App\ESPDeviceSensor\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
@@ -34,7 +35,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
         try {
             $sensorTypeObject = $this->createNewSensorReadingTypeData($sensor);
             $validationErrors = $this->validateSensorReadingTypeData($sensorTypeObject);
-        } catch (SensorTypeException | SensorTypeBuilderFailureException $e) {
+        } catch (SensorTypeException | SensorReadingTypeRepositoryFactoryException $e) {
             return [$e->getMessage()];
         } catch (ORMException $e) {
            return ['Failed to create sensor reading types'];
@@ -52,8 +53,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
     }
 
     /**
-     * @throws SensorTypeBuilderFailureException
-     * @throws SensorTypeException
+     * @throws SensorTypeException|SensorReadingTypeRepositoryFactoryException
      */
     private function createNewSensorReadingTypeData(Sensor $sensor): SensorTypeInterface
     {

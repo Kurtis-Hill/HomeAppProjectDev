@@ -91,12 +91,12 @@ class ConstTemp implements ConstantlyRecordInterface
         $this->time = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeID(): Temperature
+    public function getSensorReadingTypeObject(): Temperature
     {
         return $this->sensorReadingTypeID;
     }
 
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {
             $this->sensorReadingTypeID = $sensorReadingTypeID;

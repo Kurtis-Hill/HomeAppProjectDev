@@ -5,6 +5,7 @@ namespace App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryAnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryInterface;
@@ -32,9 +33,12 @@ class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
     public function getConstRecordServiceRepository(string $sensorReadingTypeObject): ConstantlyRecordRepositoryInterface
     {
         return match ($sensorReadingTypeObject) {
-            Analog::class => $this->constAnalog,
-            Temperature::class => $this->constTemp,
-            Humidity::class => $this->constHumid,
+            Analog::READING_TYPE => $this->constAnalog,
+            Temperature::READING_TYPE => $this->constTemp,
+            Humidity::READING_TYPE => $this->constHumid,
+            default => throw new ReadingTypeNotSupportedException(
+                ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE
+            )
         };
     }
 }

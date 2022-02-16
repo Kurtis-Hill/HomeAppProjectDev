@@ -58,8 +58,8 @@ class AddNewDeviceController extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findGroupByName(UserDataFixtures::ADMIN_GROUP);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByGroupNameAndName($this->groupName, RoomFixtures::ADMIN_ROOM_NAME);
+        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP);
+        $this->room = $this->entityManager->getRepository(Room::class)->findOneByRoomNameAndGroupNameId($this->groupName->getGroupNameID(), RoomFixtures::ADMIN_ROOM_NAME);
         $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
     }
 
@@ -162,7 +162,7 @@ class AddNewDeviceController extends WebTestCase
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString('Device name should not be blank', $responseData['errors'][0]);
+        self::assertStringContainsString('Device name cannot be null', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -187,7 +187,7 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
+        self::assertStringContainsString('Device group cannot be null', $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -213,7 +213,7 @@ class AddNewDeviceController extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertStringContainsString(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
+        self::assertStringContainsString('Device room cannot be null', $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -239,7 +239,7 @@ class AddNewDeviceController extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
 
-        self::assertStringContainsString(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
+        self::assertStringContainsString('Device group value is "string" is not a valid integer', $responseData['errors'][0]);
         self::assertNull($device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -336,8 +336,6 @@ class AddNewDeviceController extends WebTestCase
 
     public function test_adding_device_in_room_not_apart_of(): void
     {
-        $allRooms = $this->entityManager->getRepository(Room::class)->findAll();
-
 
     }
 

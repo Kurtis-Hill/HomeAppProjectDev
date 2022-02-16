@@ -2,9 +2,15 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\OutOfBounds;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
+use Doctrine\ORM\ORMException;
 
 interface OutOfBoundsSensorServiceInterface
 {
-    public function checkAndHandleSensorReadingOutOfBounds(AllSensorReadingTypeInterface $readingType): void;
+    /**
+     * @throws ReadingTypeNotExpectedException
+     * @throws ORMException
+     */
+    public function checkAndHandleSensorReadingOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void;
 }

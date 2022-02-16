@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\Entity\OutOfRangeRecordings;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use DateTime;
 use DateTimeInterface;
 
@@ -41,8 +42,8 @@ interface OutOfBoundsEntityInterface
     public function getSensorReadingTypeID(): AllSensorReadingTypeInterface;
 
     /**
-     * @param AllSensorReadingTypeInterface $sensorReadingTypeID
+     * @param StandardReadingSensorInterface $sensorReadingTypeID
      */
-    public function setSensorReadingTypeID(AllSensorReadingTypeInterface $sensorReadingTypeID): void;
+    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void;
 
 }

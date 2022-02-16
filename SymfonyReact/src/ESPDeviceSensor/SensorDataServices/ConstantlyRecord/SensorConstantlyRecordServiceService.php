@@ -19,28 +19,28 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
     }
 
     /**
-     * @param AllSensorReadingTypeInterface $readingType
+     * @param AllSensorReadingTypeInterface $readingTypeObject
      * @return void
      * @throws ConstRecordEntityException
      * @throws ReadingTypeNotSupportedException
      */
-    public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingType): void
+    public function checkAndProcessConstRecord(AllSensorReadingTypeInterface $readingTypeObject): void
     {
-        if (!$readingType->getConstRecord()) {
+        if (!$readingTypeObject->getConstRecord()) {
             foreach (SensorType::SENSOR_READING_TYPE_DATA as $sensorReadingTypeData) {
-                if ($sensorReadingTypeData['object'] === $readingType::class) {
+                if ($sensorReadingTypeData['object'] === $readingTypeObject::class) {
                     $sensorConstRecordObject = new $sensorReadingTypeData['constRecord'];
 
                     if (!$sensorConstRecordObject instanceof ConstantlyRecordInterface) {
                         throw new ConstRecordEntityException(
                             sprintf(
                                 ConstRecordEntityException::CONST_RECORD_ENTITY_NOT_FOUND_MESSAGE,
-                                $readingType->getSensorID()
+                                $readingTypeObject->getSensorID()
                             )
                         );
                     }
-                    $sensorConstRecordObject->setSensorReadingTypeID($readingType);
-                    $sensorConstRecordObject->setSensorReading($readingType->getCurrentReading());
+                    $sensorConstRecordObject->setSensorReadingTypeObject($readingTypeObject);
+                    $sensorConstRecordObject->setSensorReading($readingTypeObject->getCurrentReading());
                     $sensorConstRecordObject->setCreatedAt();
 
                     $constORMRepository = $this->constORMRepositoryFactory->getConstRecordServiceRepository($sensorReadingTypeData['object']);
@@ -56,7 +56,7 @@ class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServ
                 throw new ReadingTypeNotSupportedException(
                     sprintf(
                         ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
-                        $readingType->getReadingType()
+                        $readingTypeObject->getReadingType()
                         )
                     );
         }

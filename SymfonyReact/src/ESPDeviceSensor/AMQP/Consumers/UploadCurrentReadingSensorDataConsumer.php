@@ -8,7 +8,6 @@ use App\ErrorLogs;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
-use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Exception;
@@ -17,20 +16,10 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
-    /**
-     * @var UpdateCurrentSensorReadingsService
-     */
     private UpdateCurrentSensorReadingInterface $sensorCurrentReadingUpdateService;
 
-    /**
-     * @var DeviceRepositoryInterface
-     */
     private DeviceRepositoryInterface $deviceRepository;
 
-    /**
-     * @param UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService
-     * @param DeviceRepositoryInterface $deviceRepository
-     */
     public function __construct(
         UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
         DeviceRepositoryInterface $deviceRepository
