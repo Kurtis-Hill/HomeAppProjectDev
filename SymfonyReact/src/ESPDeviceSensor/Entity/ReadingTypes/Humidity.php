@@ -31,7 +31,6 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public const LOW_READING = 0;
 
-
     /**
      * @ORM\Column(name="humidID", type="integer", nullable=false)
      * @ORM\Id
@@ -67,7 +66,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
     #[Assert\NotBlank(message: 'humidity date time should not be blank')]
-    private DateTimeInterface $updateAt;
+    private DateTimeInterface $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\ESPDeviceSensor\Entity\Sensor")
@@ -115,7 +114,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public function getUpdatedAt(): DateTimeInterface
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
     public function setCurrentReading(int|float|string $reading): void
@@ -139,7 +138,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public function setUpdatedAt(): void
     {
-        $this->updateAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTimeImmutable('now');
     }
 
 

@@ -72,7 +72,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     private Sensor $sensorNameID;
 
     /**
-     * @ORM\Column(name="updatedAt", type="date", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
     #[Assert\NotBlank(message: 'Latitude date time should not be blank')]
     private DateTimeInterface $time;
@@ -158,10 +158,5 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     public function getReadingType(): string
     {
         return self::READING_TYPE;
-    }
-
-    public function getSensorReadingTypeObjectString(): string
-    {
-        return self::class;
     }
 }

@@ -6,9 +6,6 @@ use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInter
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Entity\SensorType;
-use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
-use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
-use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\ESPDeviceSensor\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use DateTimeImmutable;
@@ -161,11 +158,6 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     public function getReadingType(): string
     {
         return self::READING_TYPE;
-    }
-
-    public function getSensorReadingTypeObjectString(): string
-    {
-        return self::class;
     }
 
     #[Assert\Callback(groups: [Soil::NAME])]
