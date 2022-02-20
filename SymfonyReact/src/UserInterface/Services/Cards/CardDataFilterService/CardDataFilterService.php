@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardDataFilterService;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes;
+use App\ESPDeviceSensor\Entity\ReadingTypes\ReadingTypes;
 use App\ESPDeviceSensor\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;

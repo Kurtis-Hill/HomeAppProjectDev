@@ -16,11 +16,6 @@ class SecurityController extends AbstractController
     public const API_USER_LOGIN = '/HomeApp/api/user/login_check';
     public const API_DEVICE_LOGIN = '/HomeApp/api/device/login_check';
 
-    /**
-     * @param AuthenticationUtils $authenticationUtils
-     * @param Request $request
-     * @return Response
-     */
     #[Route('/HomeApp/WebApp/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {

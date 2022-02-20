@@ -51,9 +51,9 @@ class GroupNames
     private string $groupName;
 
     /**
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
-    private DateTimeInterface $time;
+    private DateTimeInterface $createdAt;
 
     public function getGroupNameID(): int
     {
@@ -78,13 +78,13 @@ class GroupNames
     /**
      * @return \DateTime
      */
-    public function getTime(): DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
-        return $this->time;
+        return $this->createdAt;
     }
 
-    public function setTime(): void
+    public function setCreatedAt(): void
     {
-        $this->time = new DateTimeImmutable('now');
+        $this->createdAt = new DateTimeImmutable('now');
     }
 }

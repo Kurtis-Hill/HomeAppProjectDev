@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Devices\DTO\ResponseDTO;
+namespace App\Devices\DTO\Response;
 
 use JetBrains\PhpStorm\Immutable;
 

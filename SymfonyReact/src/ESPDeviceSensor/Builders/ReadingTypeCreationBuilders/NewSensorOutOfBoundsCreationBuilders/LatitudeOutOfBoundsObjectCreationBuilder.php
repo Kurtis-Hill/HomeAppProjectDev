@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\Builders\ReadingTypeCreationBuilders\NewSensorOutOfBoundsCreationBuilders;
 
 use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
+use App\ESPDeviceSensor\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
@@ -22,13 +23,13 @@ class LatitudeOutOfBoundsObjectCreationBuilder extends AbstractStandardSensorOut
             );
         }
 
-//        $outOfBoundsObject = new OutOfRangeLatitude();
-//
-//        $this->buildStandardOutOfBoundObject(
-//            $sensorReadingTypeObject,
-//            $outOfBoundsObject,
-//        );
-//
-//        return $outOfBoundsObject;
+        $outOfBoundsObject = new OutOfRangeLatitude();
+
+        $this->buildStandardOutOfBoundObject(
+            $sensorReadingTypeObject,
+            $outOfBoundsObject,
+        );
+
+        return $outOfBoundsObject;
     }
 }

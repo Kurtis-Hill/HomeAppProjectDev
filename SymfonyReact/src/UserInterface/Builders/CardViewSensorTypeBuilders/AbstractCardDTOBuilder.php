@@ -42,7 +42,7 @@ abstract class AbstractCardDTOBuilder
         if (empty($cardData['humid_humidID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['humid_updateAt']);
+        $dateTime = $this->formatDateTime($cardData['humid_updatedAt']);
 
         return new StandardCardViewDTO(
             Humidity::READING_TYPE,
@@ -59,7 +59,8 @@ abstract class AbstractCardDTOBuilder
         if (empty($cardData['lat_latitudeID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['lat_time']);
+//        dd($cardData);
+        $dateTime = $this->formatDateTime($cardData['lat_updatedAt']);
 
         return new StandardCardViewDTO(
             Latitude::READING_TYPE,

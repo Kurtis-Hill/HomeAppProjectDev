@@ -2,7 +2,7 @@
 
 namespace App\ESPDeviceSensor\Builders\ReadingTypeQueryDTOBuilders;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes;
+use App\ESPDeviceSensor\Entity\ReadingTypes\ReadingTypes;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;

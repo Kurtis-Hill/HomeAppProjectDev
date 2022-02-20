@@ -31,7 +31,7 @@ class NewSensorCreationFormService implements NewSensorCreationServiceInterface
     {
         $sensor = new Sensor();
         $sensor->setSensorName($newSensorDTO->getSensorName());
-        $sensor->setSensorTypeID($newSensorDTO->getSensorType());
+        $sensor->setSensorType($newSensorDTO->getSensorType());
         $sensor->setDeviceObject($newSensorDTO->getDevice());
         $sensor->setCreatedBy($newSensorDTO->getUser());
 

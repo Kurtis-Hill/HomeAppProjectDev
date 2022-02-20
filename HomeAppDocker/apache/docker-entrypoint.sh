@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-
+#dont think i need this anymore
 sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
 
 if [ "${1#-}" != "$1" ]; then

@@ -174,13 +174,13 @@ class CardController extends AbstractController
         }
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO();
-        try {
+//        try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
-        } catch (WrongUserTypeException) {
-            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
-        }
+//        } catch (WrongUserTypeException) {
+//            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+//        } catch (ORMException) {
+//            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+//        }
 
         try {
             $cardDTOs = $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);

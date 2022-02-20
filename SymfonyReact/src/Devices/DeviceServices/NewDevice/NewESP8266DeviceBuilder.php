@@ -4,7 +4,7 @@ namespace App\Devices\DeviceServices\NewDevice;
 
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\DTO\NewDeviceDTO;
-use App\Devices\DTO\RequestDTO\NewDeviceRequestDTO;
+use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;

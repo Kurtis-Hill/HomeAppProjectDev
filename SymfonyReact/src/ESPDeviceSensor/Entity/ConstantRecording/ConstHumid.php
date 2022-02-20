@@ -31,10 +31,10 @@ class ConstHumid implements ConstantlyRecordInterface
     private float $sensorReading;
 
     /**
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
     #[Assert\NotBlank(message: 'Const humidity date time should not be blank')]
-    private DateTimeImmutable $time;
+    private DateTimeImmutable $createdAt;
 
     /**
      * @var Humidity
@@ -69,12 +69,12 @@ class ConstHumid implements ConstantlyRecordInterface
 
     public function getCreatedAt(): DateTimeImmutable
     {
-        return $this->time;
+        return $this->createdAt;
     }
 
     public function setCreatedAt(): void
     {
-        $this->time = new DateTimeImmutable('now');
+        $this->createdAt = new DateTimeImmutable('now');
     }
 
     public function getSensorReadingTypeObject(): Humidity

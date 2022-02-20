@@ -53,7 +53,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminGroupName = new GroupNames();
 
         $adminGroupName->setGroupName(self::ADMIN_GROUP);
-        $adminGroupName->setTime();
+        $adminGroupName->setCreatedAt();
 
         $adminUser = new User();
 
@@ -79,7 +79,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $userGroupName = new GroupNames();
 
         $userGroupName->setGroupName(self::USER_GROUP);
-        $userGroupName->setTime();
+        $userGroupName->setCreatedAt();
 
         $regularUser = new User();
 
@@ -119,7 +119,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserGroupName = new GroupNames();
 
         $adminUserGroupName->setGroupName('second-admin-user-group');
-        $adminUserGroupName->setTime();
+        $adminUserGroupName->setCreatedAt();
 
         $adminUserInAdminGroup = new User();
 
@@ -150,7 +150,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $secondRegularUserGroupName = new GroupNames();
 
         $secondRegularUserGroupName->setGroupName(self::SECOND_REGULAR_USER_ISOLATED);
-        $secondRegularUserGroupName->setTime();
+        $secondRegularUserGroupName->setCreatedAt();
 
         $secondRegularUser = new User();
 

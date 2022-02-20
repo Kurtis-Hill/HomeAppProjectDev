@@ -20,7 +20,7 @@ if [ ${APP_ENV} == 'dev' ]; then
    yarn install --check-files      
    yarn encore dev --watch
    # hot reload working but getting mixed content block
-   # yarn encore dev-server --hot --host=apache --port 8080
+   # yarn encore dev-server --hot --host=apache --port ${HTTPS_APP_PORT}
    echo "... encore dev server began"
 fi
         

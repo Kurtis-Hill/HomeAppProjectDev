@@ -8,3 +8,5 @@ out of range humid & temp timez not created at -- ALREADY DONE
 groupname still have timez
 latitude const record needs creating
 latitude out of range table need creating
+
+humidity has a type updateAt should be

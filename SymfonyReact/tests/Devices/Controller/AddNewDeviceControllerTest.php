@@ -10,7 +10,6 @@ use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
-use App\Form\FormMessages;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -18,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class AddNewDeviceController extends WebTestCase
+class AddNewDeviceControllerTest extends WebTestCase
 {
     private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices/add-new-device';
 

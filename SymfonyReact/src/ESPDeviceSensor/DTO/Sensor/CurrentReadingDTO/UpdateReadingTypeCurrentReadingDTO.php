@@ -15,13 +15,13 @@ class UpdateReadingTypeCurrentReadingDTO
     private AllSensorReadingTypeInterface $sensorReadingObject;
 
     public function __construct(
-        string $currentReading,
         string $newCurrentReading,
+        string $currentReading,
         AllSensorReadingTypeInterface $sensorObject,
     )
     {
-        $this->newCurrentReading = $currentReading;
         $this->currentReading = $newCurrentReading;
+        $this->newCurrentReading = $currentReading;
         $this->sensorReadingObject = $sensorObject;
     }
 

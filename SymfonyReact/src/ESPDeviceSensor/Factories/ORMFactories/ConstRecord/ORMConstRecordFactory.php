@@ -4,11 +4,13 @@ namespace App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
+use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotSupportedException;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryAnalogRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryInterface;
+use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryLatitudeRepository;
 use App\ESPDeviceSensor\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository;
 
 class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
@@ -19,15 +21,18 @@ class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
 
     private ConstantlyRecordRepositoryHumidRepository $constHumid;
 
+    private ConstantlyRecordRepositoryLatitudeRepository $constLatitude;
+
     public function __construct(
         ConstantlyRecordRepositoryAnalogRepository $constAnalog,
         ConstantlyRecordRepositoryTempRepository   $constTemp,
         ConstantlyRecordRepositoryHumidRepository  $constHumid,
-    )
-    {
+        ConstantlyRecordRepositoryLatitudeRepository $constLatitude,
+    ) {
         $this->constAnalog = $constAnalog;
         $this->constTemp = $constTemp;
         $this->constHumid = $constHumid;
+        $this->constLatitude = $constLatitude;
     }
 
     public function getConstRecordServiceRepository(string $sensorReadingTypeObject): ConstantlyRecordRepositoryInterface
@@ -36,6 +41,7 @@ class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
             Analog::READING_TYPE => $this->constAnalog,
             Temperature::READING_TYPE => $this->constTemp,
             Humidity::READING_TYPE => $this->constHumid,
+            Latitude::READING_TYPE => $this->constLatitude,
             default => throw new ReadingTypeNotSupportedException(
                 ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE
             )

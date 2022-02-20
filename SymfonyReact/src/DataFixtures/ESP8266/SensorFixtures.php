@@ -60,7 +60,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $sensor = new Sensor();
                 $sensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
                 $sensor->setSensorName($sensorData.$name.$sensorCountCardView);
-                $sensor->setSensorTypeID($this->getReference($name));
+                $sensor->setSensorType($this->getReference($name));
                 $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
                 $manager->persist($sensor);
@@ -113,7 +113,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $newAdminSensor = new Sensor();
             $newAdminSensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
             $newAdminSensor->setSensorName($name);
-            $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
+            $newAdminSensor->setSensorType($this->getReference($sensorType));
             $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
             $this->addReference($name, $newAdminSensor);
@@ -128,7 +128,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newAdminSensor = new Sensor();
                 $newAdminSensor->setDeviceObject($this->getReference($device['referenceName']));
                 $newAdminSensor->setSensorName($sensorNameAdminDevice);
-                $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
+                $newAdminSensor->setSensorType($this->getReference($sensorType));
                 $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
                 $manager->persist($newAdminSensor);
@@ -158,7 +158,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newRegularUserSensor = new Sensor();
                 $newRegularUserSensor->setDeviceObject($this->getReference($device['referenceName']));
                 $newRegularUserSensor->setSensorName($sensorNameUserDevice);
-                $newRegularUserSensor->setSensorTypeID($this->getReference($sensorType));
+                $newRegularUserSensor->setSensorType($this->getReference($sensorType));
                 $newRegularUserSensor->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
 
                 $manager->persist($newRegularUserSensor);

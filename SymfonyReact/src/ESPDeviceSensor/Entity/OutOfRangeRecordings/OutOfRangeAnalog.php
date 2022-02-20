@@ -26,7 +26,7 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     private int $outOfRangeID;
 
     /**
-     * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false, options={"default"="NULL"})
      */
     #[SoilConstraint(groups: [Soil::NAME])]
     private float $sensorReading;

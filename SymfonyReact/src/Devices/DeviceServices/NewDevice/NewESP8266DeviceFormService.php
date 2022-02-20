@@ -10,10 +10,11 @@ use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Forms\AddNewDeviceForm;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-
+#[Deprecated]
 class NewESP8266DeviceFormService implements NewDeviceServiceInterface
 {
     use FormProcessorTrait;

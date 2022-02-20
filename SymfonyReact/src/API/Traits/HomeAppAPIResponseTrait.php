@@ -283,7 +283,7 @@ trait HomeAppAPIResponseTrait
         $normalizers = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normalizers, $encoders);
-//dd('sdf');
+
         return $serializer->deserialize($data, $class, $format, $extraContexts);
     }
 }

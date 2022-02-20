@@ -68,7 +68,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
             null,
             $sensorReadingTypeQueryDTOs,
         );
-
+//dd($updateSensorCurrentReadingConsumerDTO);
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             try {
                 if (!$sensorReadingObject instanceof AllSensorReadingTypeInterface) {
@@ -88,16 +88,17 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                 $updateReadingTypeCurrentReadingDTO->getSensorReadingObject()->setCurrentReading(
                     $updateReadingTypeCurrentReadingDTO->getNewCurrentReading()
                 );
-
+//dd($sensorReadingObject, $updateReadingTypeCurrentReadingDTO);
                 $validationErrors = $this->readingTypesValidator->validateSensorReadingTypeObject(
                     $sensorReadingObject,
                     $updateSensorCurrentReadingConsumerDTO->getSensorType()
                 );
 
+//                    dd($updateReadingTypeCurrentReadingDTO, $validationErrors);
                 if (!empty($validationErrors)) {
                     $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
                 }
-
+//dd($sensorReadingObject);
                 if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
                     try {
                         $this->outOfBoundsSensorService->checkAndHandleSensorReadingOutOfBounds($sensorReadingObject);
