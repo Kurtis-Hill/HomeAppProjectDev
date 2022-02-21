@@ -2,7 +2,9 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-class CardControllerTest
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class CardControllerTest extends WebTestCase
 {
 
 }

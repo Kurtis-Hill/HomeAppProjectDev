@@ -3,6 +3,7 @@
 namespace App\Devices\DeviceServices\NewDevice;
 
 use App\Common\Traits\ValidatorProcessorTrait;
+use App\Devices\DeviceServices\AbstractESPDeviceBuilder;
 use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
@@ -15,34 +16,8 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class NewESP8266DeviceBuilder implements NewDeviceServiceInterface
+class NewESP8266DeviceBuilder extends AbstractESPDeviceBuilder implements NewDeviceBuilderInterface
 {
-    use ValidatorProcessorTrait;
-
-    private DeviceRepositoryInterface $deviceRepository;
-
-    private UserPasswordEncoderInterface $passwordEncoder;
-
-    private ValidatorInterface $validator;
-
-    public function __construct(
-        DeviceRepositoryInterface $deviceRepository,
-        ValidatorInterface $validator,
-        UserPasswordEncoderInterface $passwordEncoder
-    ) {
-        $this->validator = $validator;
-        $this->deviceRepository = $deviceRepository;
-        $this->passwordEncoder = $passwordEncoder;
-    }
-
-    #[ArrayShape(["errors"])]
-    public function validateNewDeviceRequest(NewDeviceRequestDTO $deviceRequestDTO): array
-    {
-        $errors = $this->validator->validate($deviceRequestDTO);
-
-        return $this->getValidationErrorAsArray($errors);
-    }
-
     public function createNewDevice(NewDeviceDTO $deviceDTO): Devices
     {
         $deviceUser = $deviceDTO->getCreatedByUserObject();
@@ -70,7 +45,10 @@ class NewESP8266DeviceBuilder implements NewDeviceServiceInterface
         }
 
         try {
-            $this->duplicateDeviceCheck($newDevice);
+            $this->duplicateDeviceCheck(
+                $newDevice->getDeviceName(),
+                $newDevice->getRoomObject()->getRoomID()
+            );
         }
         catch (DuplicateDeviceException $exception) {
             $userErrors[] = $exception->getMessage();
@@ -88,27 +66,6 @@ class NewESP8266DeviceBuilder implements NewDeviceServiceInterface
         return $userErrors ?? [];
     }
 
-    /**
-     * @throws DuplicateDeviceException
-     * @throws ORMException
-     */
-    private function duplicateDeviceCheck(Devices $deviceData): void
-    {
-        $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck(
-            $deviceData->getDeviceName(),
-            $deviceData->getRoomObject()->getRoomId(),
-        );
-
-        if ($currentUserDeviceCheck instanceof Devices) {
-            throw new DuplicateDeviceException(
-                sprintf(
-                    DuplicateDeviceException::MESSAGE,
-                    $currentUserDeviceCheck->getDeviceName(),
-                    $currentUserDeviceCheck->getRoomObject()->getRoom()
-                )
-            );
-        }
-    }
 
     private function createDevicePasswordHash(Devices $device): string
     {
@@ -116,28 +73,5 @@ class NewESP8266DeviceBuilder implements NewDeviceServiceInterface
         $secret .= time();
 
         return hash("md5", $secret);
-    }
-
-    public function encodeAndSaveNewDevice(Devices $newDevice): bool
-    {
-        $this->encodeDevicePassword($newDevice);
-        try {
-            $this->deviceRepository->persist($newDevice);
-            $this->deviceRepository->flush();
-
-            return true;
-        } catch (ORMException) {
-            return false;
-        }
-    }
-
-    private function encodeDevicePassword(Devices $device): void
-    {
-        $device->setPassword(
-            $this->passwordEncoder->encodePassword(
-                $device,
-                $device->getDeviceSecret()
-            )
-        );
     }
 }

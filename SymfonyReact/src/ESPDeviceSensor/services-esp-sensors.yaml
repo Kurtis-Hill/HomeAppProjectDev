@@ -53,8 +53,8 @@ services:
   App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:
     alias: 'App\ESPDeviceSensor\Factories\ORMFactories\ConstRecord\ORMConstRecordFactory'
 
-  App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsFactoryInterface:
-    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\ORMOutOfBoundsFactory'
+  App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactoryInterface:
+    alias: 'App\ESPDeviceSensor\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactory'
 
   App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface:
     alias: 'App\ESPDeviceSensor\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactory'
@@ -69,4 +69,7 @@ services:
 
   App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface:
     alias: 'App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepository'
+
+  App\ESPDeviceSensor\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface:
+    alias: 'App\ESPDeviceSensor\Repository\ORM\SensorReadingType\ReadingTypeRepository'
 ######################## End Of Sensors ######################################################################################

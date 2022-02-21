@@ -5,6 +5,7 @@ namespace App\Devices\DeviceServices\NewDevice;
 
 use App\API\Traits\FormProcessorTrait;
 use App\Devices\DTO\NewDeviceDTO;
+use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Forms\AddNewDeviceForm;
@@ -15,7 +16,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 #[Deprecated]
-class NewESP8266DeviceFormService implements NewDeviceServiceInterface
+class NewESP8266DeviceFormBuilder implements NewDeviceBuilderInterface
 {
     use FormProcessorTrait;
 
@@ -135,5 +136,15 @@ class NewESP8266DeviceFormService implements NewDeviceServiceInterface
                 $device->getDeviceSecret()
             )
         );
+    }
+
+    public function validateDeviceRequestObject(DeviceRequestDTOInterface $deviceRequestDTO): array
+    {
+        // TODO: Implement validateDeviceRequestObject() method.
+    }
+
+    public function saveNewDevice(Devices $device): bool
+    {
+        // TODO: Implement saveNewDevice() method.
     }
 }

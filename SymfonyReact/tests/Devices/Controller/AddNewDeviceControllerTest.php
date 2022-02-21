@@ -330,12 +330,106 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertNull($device);
         self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_in_room_not_apart_of(): void
+    public function test_adding_device_in_room_not_apart_of_admin(): void
     {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 
+        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+
+        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+
+        $rooms = $this->entityManager->getRepository(Room::class)->findAll();
+
+        foreach ($rooms as $room) {
+            if (($room instanceof Room) && !in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+                $roomNotApartOf = $room->getRoomID();
+            }
+        }
+
+        if (!isset($roomNotApartOf)) {
+            self::fail('No room found for user that is not apart of');
+        }
+        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
+
+        $formData = [
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
+            'deviceRoom' => $roomNotApartOf,
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            'POST',
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            $jsonData,
+        );
+
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals($responseData['title'], 'Request Accepted Successfully Created');
+        self::assertArrayHasKey('secret', $responseData['payload']);
+        self::assertArrayHasKey('deviceID', $responseData['payload']);
+        self::assertEquals($this->client->getResponse()->getStatusCode(), HTTPStatusCodes::HTTP_CREATED);
+        self::assertInstanceOf(Devices::class, $device);
+    }
+
+    public function test_adding_device_in_room_not_apart_of_none_admin(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
+
+        $userToken = $this->setUserToken(UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
+        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+
+        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+
+        $rooms = $this->entityManager->getRepository(Room::class)->findAll();
+
+        foreach ($rooms as $room) {
+            if (($room instanceof Room) && !in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+                $roomNotApartOf = $room->getRoomID();
+            }
+        }
+
+        if (!isset($roomNotApartOf)) {
+            self::fail('No room found for user that is not apart of');
+        }
+        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
+
+        $formData = [
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
+            'deviceRoom' => $roomNotApartOf,
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            'POST',
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+            $jsonData,
+
+        );
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals($responseData['title'], 'You Are Not Authorised To Be Here');
+        self::assertArrayHasKey('errors', $responseData);
+        self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
+        self::assertEquals($this->client->getResponse()->getStatusCode(), HTTPStatusCodes::HTTP_FORBIDDEN);
+        self::assertNull($device);
     }
 
 

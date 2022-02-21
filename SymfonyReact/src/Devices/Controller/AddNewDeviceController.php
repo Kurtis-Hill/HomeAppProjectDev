@@ -5,6 +5,8 @@ namespace App\Devices\Controller;
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPIResponseTrait;
+use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
+use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceBuilder;
 use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
@@ -27,7 +29,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
 class AddNewDeviceController extends AbstractController
 {
     use HomeAppAPIResponseTrait;
@@ -36,8 +38,9 @@ class AddNewDeviceController extends AbstractController
     public function addNewDevice(
         Request $request,
         RoomRepositoryInterface $roomRepository,
-        NewESP8266DeviceBuilder $newDeviceService,
+        NewDeviceBuilderInterface $newDeviceBuilder,
         GroupCheckServiceInterface $groupCheckService,
+        DevicePasswordEncoderInterface $devicePasswordEncoder,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
 
@@ -48,7 +51,7 @@ class AddNewDeviceController extends AbstractController
             [AbstractNormalizer::OBJECT_TO_POPULATE => $newDeviceRequestDTO]
         );
 
-        $requestValidationErrors = $newDeviceService->validateNewDeviceRequest($newDeviceRequestDTO);
+        $requestValidationErrors = $newDeviceBuilder->validateDeviceRequestObject($newDeviceRequestDTO);
         if (!empty($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($requestValidationErrors);
         }
@@ -79,16 +82,17 @@ class AddNewDeviceController extends AbstractController
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-        $device = $newDeviceService->createNewDevice($newDeviceCheckDTO);
-        $errors = $newDeviceService->validateNewDevice($device);
+        $device = $newDeviceBuilder->createNewDevice($newDeviceCheckDTO);
+        $errors = $newDeviceBuilder->validateNewDevice($device);
 
         if (!empty($errors)) {
             return $this->sendBadRequestJsonResponse($errors);
         }
 
-        $deviceSaved = $newDeviceService->encodeAndSaveNewDevice($device);
+        $devicePasswordEncoder->encodeDevicePassword($device);
+        $deviceSaved = $newDeviceBuilder->saveNewDevice($device);
         if ($deviceSaved === false) {
             return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
         }

@@ -19,8 +19,14 @@ services:
 
 
   ######################## Services ########################################################################
-  App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
-    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceValidatorService'
+  App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface:
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceBuilder'
 
   App\Devices\Repository\ORM\DeviceRepositoryInterface:
     alias: 'App\Devices\Repository\ORM\DeviceRepository'
+
+  App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface:
+    alias: 'App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoder'
+
+  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface:
+    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilder'

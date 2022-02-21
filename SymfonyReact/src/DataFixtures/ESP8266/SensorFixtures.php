@@ -28,6 +28,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
+    private const FIXTURE_ORDER = 5;
     public const SENSORS = [
         Dht::NAME => 'AdminDHTSensor',
         Dallas::NAME => 'AdminDallasSensor',
@@ -44,7 +45,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 5;
+        return self::FIXTURE_ORDER;
     }
 
     public function load(ObjectManager $manager): void
@@ -60,7 +61,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $sensor = new Sensor();
                 $sensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
                 $sensor->setSensorName($sensorData.$name.$sensorCountCardView);
-                $sensor->setSensorType($this->getReference($name));
+                $sensor->setSensorTypeID($this->getReference($name));
                 $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
                 $manager->persist($sensor);
@@ -113,7 +114,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $newAdminSensor = new Sensor();
             $newAdminSensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
             $newAdminSensor->setSensorName($name);
-            $newAdminSensor->setSensorType($this->getReference($sensorType));
+            $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
             $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
             $this->addReference($name, $newAdminSensor);
@@ -128,7 +129,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newAdminSensor = new Sensor();
                 $newAdminSensor->setDeviceObject($this->getReference($device['referenceName']));
                 $newAdminSensor->setSensorName($sensorNameAdminDevice);
-                $newAdminSensor->setSensorType($this->getReference($sensorType));
+                $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
                 $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
                 $manager->persist($newAdminSensor);
@@ -158,7 +159,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newRegularUserSensor = new Sensor();
                 $newRegularUserSensor->setDeviceObject($this->getReference($device['referenceName']));
                 $newRegularUserSensor->setSensorName($sensorNameUserDevice);
-                $newRegularUserSensor->setSensorType($this->getReference($sensorType));
+                $newRegularUserSensor->setSensorTypeID($this->getReference($sensorType));
                 $newRegularUserSensor->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
 
                 $manager->persist($newRegularUserSensor);

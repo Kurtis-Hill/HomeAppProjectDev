@@ -52,13 +52,13 @@ class NavBarService implements NavBarServiceInterface
 
         try {
             $userRooms = $this->getRoomData($user);
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             $userRooms[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms');
             $errors[] = 'Rooms query failed';
         }
         try {
             $userDevices = $this->getDeviceData($user);
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             $userDevices[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices');
             $errors[] = 'Device query failed';
         }

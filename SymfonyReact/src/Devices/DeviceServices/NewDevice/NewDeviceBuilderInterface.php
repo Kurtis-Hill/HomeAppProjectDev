@@ -3,11 +3,14 @@
 namespace App\Devices\DeviceServices\NewDevice;
 
 use App\Devices\DTO\NewDeviceDTO;
+use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 
-interface NewDeviceServiceInterface
+interface NewDeviceBuilderInterface
 {
+    public function validateDeviceRequestObject(DeviceRequestDTOInterface $deviceRequestDTO): array;
+
     /**
      * @throws DeviceCreationFailureException
      */
@@ -15,5 +18,5 @@ interface NewDeviceServiceInterface
 
     public function validateNewDevice(Devices $newDevice): array;
 
-    public function encodeAndSaveNewDevice(Devices $newDevice): bool;
+    public function saveNewDevice(Devices $device): bool;
 }

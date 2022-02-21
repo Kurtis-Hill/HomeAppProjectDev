@@ -11,6 +11,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class CardFixtures extends Fixture implements OrderedFixtureInterface
 {
+    private const FIXTURES_ORDER = 4;
+
     public const ICONS = [
         [
             'name' => 'air-freshener',
@@ -148,9 +150,9 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
     ];
 
 
-    public function getOrder()
+    public function getOrder(): int
     {
-        return 4;
+        return self::FIXTURES_ORDER;
     }
 
     public function load(ObjectManager $manager)

@@ -29,4 +29,9 @@ interface DeviceRepositoryInterface
      * @throws ORMException
      */
     public function getAllUsersDevicesByGroupId($groupNameID): array;
+
+    /**
+     * @throws ORMException
+     */
+    public function remove(Devices $device): void;
 }

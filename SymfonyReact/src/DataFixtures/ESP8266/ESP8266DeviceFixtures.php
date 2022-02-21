@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 {
+    private const FIXTURES_ORDER = 3;
     public const LOGIN_TEST_ACCOUNT_NAME = [
         'name' => 'apiLoginTest',
         'password' => 'device1234'
@@ -74,7 +75,7 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
     public function getOrder()
     {
-        return 3;
+        return self::FIXTURES_ORDER;
     }
 
     public function load(ObjectManager $manager)

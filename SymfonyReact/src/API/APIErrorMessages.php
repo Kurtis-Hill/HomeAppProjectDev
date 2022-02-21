@@ -23,4 +23,6 @@ class APIErrorMessages
     public const FORMAT_NOT_SUPPORTED = 'Format not supported';
 
     public const CONTACT_SYSTEM_ADMIN = '%s Contact your system admin';
+
+    public const SERIALIZATION_FAILURE = '%s Serialization failure';
 }

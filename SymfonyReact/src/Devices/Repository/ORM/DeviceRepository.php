@@ -66,4 +66,9 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
 
         return $qb->getQuery()->getArrayResult();
     }
+
+    public function remove(Devices $devices): void
+    {
+        $this->getEntityManager()->remove($devices);
+    }
 }

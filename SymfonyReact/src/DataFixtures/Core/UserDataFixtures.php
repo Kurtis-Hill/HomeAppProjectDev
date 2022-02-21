@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 {
+    private const FIXTURE_ORDER = 1;
+
     public const ADMIN_USER = 'admin-user@gmail.com';
 
     public const SECOND_ADMIN_USER_ISOLATED = 'admin-regular-test-email@testing.com';
@@ -44,7 +46,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 1;
+        return self::FIXTURE_ORDER;
     }
 
     public function load(ObjectManager $manager)

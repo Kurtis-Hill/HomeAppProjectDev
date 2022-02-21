@@ -4,7 +4,7 @@ namespace App\Devices\DTO\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class NewDeviceRequestDTO
+class NewDeviceRequestDTO implements DeviceRequestDTOInterface
 {
     #[
         Assert\NotNull(
@@ -18,7 +18,7 @@ class NewDeviceRequestDTO
             message: 'Device name value is {{ value }} is not a valid {{ type }}'
         ),
     ]
-    private $deviceName;
+    private mixed $deviceName;
 
     #[
         Assert\NotNull(
@@ -32,7 +32,7 @@ class NewDeviceRequestDTO
             message: 'Device group value is {{ value }} is not a valid {{ type }}'
         ),
     ]
-    private $deviceGroup;
+    private mixed $deviceGroup;
 
     #[
         Assert\NotNull(
@@ -46,19 +46,19 @@ class NewDeviceRequestDTO
             message: 'Device room value is {{ value }} is not a valid {{ type }}'
         ),
     ]
-    private $deviceRoom;
+    private mixed $deviceRoom;
 
-    public function getDeviceName()
+    public function getDeviceName(): mixed
     {
         return $this->deviceName;
     }
 
-    public function getDeviceGroup()
+    public function getDeviceGroup(): mixed
     {
         return $this->deviceGroup;
     }
 
-    public function getDeviceRoom()
+    public function getDeviceRoom(): mixed
     {
         return $this->deviceRoom;
     }

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="ReadingTypes")
- * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\ReadingType\ReadingTypeRepository")
+ * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\SensorReadingType\ReadingTypeRepository")
  */
 class ReadingTypes
 {
@@ -44,4 +44,24 @@ class ReadingTypes
      * @ORM\Column(name="readingType", type="string", length=50, nullable=false)
      */
     private string $readingType;
+
+    public function getReadingTypeID(): int
+    {
+        return $this->readingTypeID;
+    }
+
+    public function setReadingTypeID(int $readingTypeID): void
+    {
+        $this->readingTypeID = $readingTypeID;
+    }
+
+    public function getReadingType(): string
+    {
+        return $this->readingType;
+    }
+
+    public function setReadingType(string $readingType): void
+    {
+        $this->readingType = $readingType;
+    }
 }

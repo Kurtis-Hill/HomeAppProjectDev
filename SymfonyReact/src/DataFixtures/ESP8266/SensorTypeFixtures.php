@@ -10,9 +10,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 {
+    private const FIXTURES_ORDER = 4;
+
     public function getOrder(): int
     {
-        return 4;
+        return self::FIXTURES_ORDER;
     }
 
     public function load(ObjectManager $manager): void

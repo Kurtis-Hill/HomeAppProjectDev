@@ -11,6 +11,7 @@ use App\User\Entity\Room;
 
 class RoomFixtures extends Fixture implements OrderedFixtureInterface
 {
+    private const FIXTURES_ORDER = 2;
     public const ADMIN_ROOM = 'admin-room';
 
     public const ADMIN_ROOM_NAME = 'LivingRoom';
@@ -46,7 +47,7 @@ class RoomFixtures extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 2;
+        return self::FIXTURES_ORDER;
     }
 
 }
