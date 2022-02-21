@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Controller;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'new-sensor')]
 class AddNewSensorController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(

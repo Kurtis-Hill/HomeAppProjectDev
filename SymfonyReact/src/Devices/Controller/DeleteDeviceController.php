@@ -4,7 +4,7 @@ namespace App\Devices\Controller;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface;
 use App\Devices\DTO\Request\DeleteDeviceRequestDTO;
 use App\Devices\Entity\Devices;
@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'delete-user-devices')]
 class DeleteDeviceController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('/delete-device', name: 'delete-esp-device', methods: [Request::METHOD_POST])]
     public function deleteDevice(

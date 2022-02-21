@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Controller\SensorTypes;
 
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Serializer;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-types')]
 class GetSensorTypesController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
     #[Route('/all-sensor-types', name: 'get-sensor-types', methods: [Request::METHOD_GET])]

@@ -4,7 +4,7 @@ namespace App\Devices\Controller;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
 use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceBuilder;
@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Serializer;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
 class AddNewDeviceController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(

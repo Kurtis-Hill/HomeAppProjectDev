@@ -4,7 +4,7 @@ namespace App\UserInterface\Controller\Card;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
 use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-form-data/sensor-type/')]
 class CardViewFormController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('card-sensor-form', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(

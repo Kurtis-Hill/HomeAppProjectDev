@@ -4,7 +4,7 @@ namespace App\UserInterface\Controller\Card;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\Room;
@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/')]
 class CardController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     private CardDataFilterService $cardDataFilterService;
 

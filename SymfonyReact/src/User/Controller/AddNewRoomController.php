@@ -4,7 +4,7 @@ namespace App\User\Controller;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\Form\FormMessages;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/')]
 class AddNewRoomController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('add-user-room', name:'add-new-room', methods: [Request::METHOD_POST])]
     public function addNewRoom(

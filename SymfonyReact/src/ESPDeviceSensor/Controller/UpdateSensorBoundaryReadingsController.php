@@ -4,7 +4,7 @@ namespace App\ESPDeviceSensor\Controller;
 
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotGivenException;
@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors/', name: 'boundary-controller')]
 class UpdateSensorBoundaryReadingsController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
     public function updateSensorReadingBoundary(

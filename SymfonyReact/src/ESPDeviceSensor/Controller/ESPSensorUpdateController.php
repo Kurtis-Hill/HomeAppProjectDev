@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Controller;
 
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Exception;
@@ -18,7 +18,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 #[Route(CommonURL::DEVICE_HOMEAPP_API_URL, name: 'device')]
 class ESPSensorUpdateController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     public const SENSOR_UPDATE_SUCCESS_MESSAGE = 'Sensor data accepted';
 

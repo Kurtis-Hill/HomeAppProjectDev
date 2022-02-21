@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-trait HomeAppAPIResponseTrait
+trait HomeAppAPITrait
 {
     // 20x Successfull
     public function sendSuccessfulJsonResponse(array $data = []): JsonResponse

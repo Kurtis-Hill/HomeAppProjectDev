@@ -3,7 +3,7 @@
 namespace App\ESPDeviceSensor\Controller\ReadingTypes;
 
 use App\API\CommonURL;
-use App\API\Traits\HomeAppAPIResponseTrait;
+use App\API\Traits\HomeAppAPITrait;
 use App\ESPDeviceSensor\DTO\Response\ReadingTypes\ReadingTypeResponseDTO;
 use App\ESPDeviceSensor\Entity\ReadingTypes;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Serializer;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'reading-types/', name: 'reading_types')]
 class GetReadingTypeController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
+    use HomeAppAPITrait;
 
     #[Route('all', name: 'all-reading-types')]
     public function getReadingTypes(): JsonResponse
