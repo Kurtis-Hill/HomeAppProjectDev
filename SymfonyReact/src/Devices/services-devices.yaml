@@ -1,7 +1,6 @@
 parameters:
 
 services:
-  # default configuration for services in *this* file
   _defaults:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
@@ -22,11 +21,14 @@ services:
   App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface:
     alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceBuilder'
 
+  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilderInterface:
+    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilder'
+
+  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface:
+    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilder'
+
   App\Devices\Repository\ORM\DeviceRepositoryInterface:
     alias: 'App\Devices\Repository\ORM\DeviceRepository'
 
   App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface:
     alias: 'App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoder'
-
-  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface:
-    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilder'

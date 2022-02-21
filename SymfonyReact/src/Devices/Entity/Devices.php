@@ -8,13 +8,11 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 /**
- * Devices
- *
  * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
  * @ORM\Entity(repositoryClass="App\Devices\Repository\ORM\DeviceRepository")
  */
@@ -29,8 +27,6 @@ class Devices implements UserInterface
     public const ALIAS = 'device';
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="deviceNameID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -55,16 +51,12 @@ class Devices implements UserInterface
     private ?string $deviceName;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
     #[Assert\NotBlank(message: 'Password should not be blank', groups: ['final-check'])]
     private string $password;
 
     /**
-     * @var User
-     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
@@ -74,8 +66,6 @@ class Devices implements UserInterface
     private User $createdBy;
 
     /**
-     * @var GroupNames
-     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
@@ -85,8 +75,6 @@ class Devices implements UserInterface
     private GroupNames $groupNameID;
 
     /**
-     * @var Room
-     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\Room")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
@@ -96,22 +84,16 @@ class Devices implements UserInterface
     private Room $roomID;
 
     /**
-     * @var array
-     *
      * @ORM\Column(name="roles", type="json", nullable=false)
      */
     private array $roles;
 
     /**
-     * @var string|null
-     *
      * @ORM\Column(name="ipAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
      */
     private ?string $ipAddress = null;
 
     /**
-     * @var string|null
-     *
      * @ORM\Column(name="externalIpAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
      */
     private ?string $externalIpAddress = null;
@@ -188,14 +170,13 @@ class Devices implements UserInterface
         return $this;
     }
 
-    #[Pure]
-    public function getCreatedById(): int
+    public function getCreatedById(): ?int
     {
         if ($this->createdBy instanceof User) {
             return $this->createdBy->getUserID();
         }
 
-        return $this->createdBy;
+        return null;
     }
 
     public function getCreatedBy(): User
@@ -242,7 +223,7 @@ class Devices implements UserInterface
 
     public function getSalt()
     {
-        // TODO: Implement getSalt() method.
+        throw new NotImplementedException('get salt not implemented');
     }
 
     public function getUsername(): string
@@ -253,28 +234,19 @@ class Devices implements UserInterface
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        throw new NotImplementedException('Erase credentials not implemented');
     }
 
-    /**
-     * @return string|null
-     */
     public function getIpAddress(): ?string
     {
         return $this->ipAddress;
     }
 
-    /**
-     * @param ?string $ipAddress
-     */
     public function setIpAddress(?string $ipAddress): void
     {
         $this->ipAddress = $ipAddress;
     }
 
-    /**
-     * @return string|null
-     */
     public function getExternalIpAddress(): ?string
     {
         return $this->externalIpAddress;

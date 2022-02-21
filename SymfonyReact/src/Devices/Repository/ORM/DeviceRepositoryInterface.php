@@ -8,6 +8,9 @@ use Doctrine\ORM\ORMException;
 
 interface DeviceRepositoryInterface
 {
+    /**
+     * @throws ORMException
+     */
     public function persist(Devices $device): void;
 
     /**

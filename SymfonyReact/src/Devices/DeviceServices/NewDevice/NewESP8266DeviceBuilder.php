@@ -36,6 +36,7 @@ class NewESP8266DeviceBuilder extends AbstractESPDeviceBuilder implements NewDev
         return $newDevice;
     }
 
+    #[ArrayShape(["errors"])]
     public function validateNewDevice(Devices $newDevice): array
     {
         $validatorErrors = $this->validator->validate($newDevice);
