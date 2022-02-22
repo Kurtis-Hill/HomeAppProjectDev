@@ -7,7 +7,6 @@ use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -34,15 +33,6 @@ class AbstractESPDeviceBuilder
         $errors = $this->validator->validate($deviceRequestDTO);
 
         return $this->getValidationErrorAsArray($errors);
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws ORMException
-     */
-    public function findDeviceToUpdate(int $deviceID): ?Devices
-    {
-        return $this->deviceRepository->findOneById($deviceID);
     }
 
     /**

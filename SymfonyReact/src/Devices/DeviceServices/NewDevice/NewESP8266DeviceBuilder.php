@@ -2,19 +2,14 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\DeviceServices\AbstractESPDeviceBuilder;
 use App\Devices\DTO\NewDeviceDTO;
-use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NewESP8266DeviceBuilder extends AbstractESPDeviceBuilder implements NewDeviceBuilderInterface
 {

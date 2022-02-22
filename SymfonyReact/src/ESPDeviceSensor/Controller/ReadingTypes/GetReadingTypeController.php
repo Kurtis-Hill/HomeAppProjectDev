@@ -2,10 +2,12 @@
 
 namespace App\ESPDeviceSensor\Controller\ReadingTypes;
 
+use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
 use App\ESPDeviceSensor\DTO\Response\ReadingTypes\ReadingTypeResponseDTO;
-use App\ESPDeviceSensor\Entity\ReadingTypes;
+use App\ESPDeviceSensor\Entity\ReadingTypes\ReadingTypes;
+use App\ESPDeviceSensor\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,28 +15,33 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-//@TODO FINISH THIS CONTROLLER
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'reading-types/', name: 'reading_types')]
 class GetReadingTypeController extends AbstractController
 {
     use HomeAppAPITrait;
 
     #[Route('all', name: 'all-reading-types')]
-    public function getReadingTypes(): JsonResponse
+    public function getReadingTypes(ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
     {
-        foreach (ReadingTypes::SENSOR_READING_TYPE_DATA as $readingTypeName =>$readingType) {
-            $readingTypes[] = new ReadingTypeResponseDTO(
-                1,
-                $readingTypeName
-            );
+        $allReadingTypes = $readingTypeRepository->findAll();
+
+        foreach ($allReadingTypes as $readingTypeObject) {
+            if ($readingTypeObject instanceof ReadingTypes) {
+                $readingTypeResponseDTO[] = new ReadingTypeResponseDTO(
+                    $readingTypeObject->getReadingTypeID(),
+                    $readingTypeObject->getReadingType(),
+                );
+            }
         }
-        $normaliser = [new ObjectNormalizer()];
-        $serializer = new Serializer($normaliser);
+
+        if (empty($readingTypeResponseDTO)) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Reading types')]);
+        }
 
         try {
-            $normalizedReadingTypesDTOs = $serializer->normalize($readingTypes ?? []);
+            $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO);
         } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse(['Failed to format response']);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedReadingTypesDTOs);

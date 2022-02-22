@@ -27,8 +27,15 @@ class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('/update-device', name: 'update-esp-device', methods: [Request::METHOD_PUT])]
+    #[
+        Route(
+            path: '/update-device/{deviceNameID}',
+            name: 'update-esp-device',
+            methods: [Request::METHOD_PUT]
+        )
+    ]
     public function updateDevice(
+        Devices $deviceToUpdate,
         Request $request,
         UpdateDeviceObjectBuilderInterface $updateDeviceObjectBuilder,
         RoomRepositoryInterface $roomRepository,
@@ -46,22 +53,6 @@ class UpdateDeviceController extends AbstractController
 
         if (!empty($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($requestValidationErrors);
-        }
-
-        try {
-            $deviceToUpdate = $updateDeviceObjectBuilder->findDeviceToUpdate($deviceUpdateRequestDTO->getDeviceNameID());
-        } catch (NonUniqueResultException | ORMException) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::CONTACT_SYSTEM_ADMIN, 'Failed to find device to update query error')]);
-        }
-
-        if (!$deviceToUpdate instanceof Devices) {
-            return $this->sendBadRequestJsonResponse([
-                    sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                        'Device',
-                    )
-                ]
-            );
         }
 
         if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {

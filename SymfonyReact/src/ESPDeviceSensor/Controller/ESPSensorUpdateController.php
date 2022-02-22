@@ -25,7 +25,7 @@ class ESPSensorUpdateController extends AbstractController
     private ProducerInterface $currentReadingAMQPProducer;
 
     #[Route(
-        'esp/update/current-reading',
+        path: 'esp/update/current-reading',
         name: 'update-current-reading',
         methods: [
             Request::METHOD_PUT,

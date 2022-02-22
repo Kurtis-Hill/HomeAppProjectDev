@@ -18,7 +18,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
             message: 'Device name value is {{ value }} is not a valid {{ type }}'
         ),
     ]
-    private mixed $deviceName;
+    private mixed $deviceName = null;
 
     #[
         Assert\NotNull(
@@ -32,7 +32,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
             message: 'Device group value is {{ value }} is not a valid {{ type }}'
         ),
     ]
-    private mixed $deviceGroup;
+    private mixed $deviceGroup = null;
 
     #[
         Assert\NotNull(
@@ -46,7 +46,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
             message: 'Device room value is {{ value }} is not a valid {{ type }}'
         ),
     ]
-    private mixed $deviceRoom;
+    private mixed $deviceRoom = null;
 
     public function getDeviceName(): mixed
     {

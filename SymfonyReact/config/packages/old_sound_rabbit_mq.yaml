@@ -7,7 +7,7 @@ old_sound_rabbit_mq:
             read_write_timeout: 3
             heartbeat: 2
 
-        use_socket: true # default false
+        use_socket: true
 
 ##### Update Sensor Reading Request ##########
     producers:

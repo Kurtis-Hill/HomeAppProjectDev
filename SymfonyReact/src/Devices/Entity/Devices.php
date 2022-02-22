@@ -223,7 +223,6 @@ class Devices implements UserInterface
 
     public function getSalt()
     {
-        throw new NotImplementedException('get salt not implemented');
     }
 
     public function getUsername(): string
@@ -234,7 +233,6 @@ class Devices implements UserInterface
 
     public function eraseCredentials()
     {
-        throw new NotImplementedException('Erase credentials not implemented');
     }
 
     public function getIpAddress(): ?string

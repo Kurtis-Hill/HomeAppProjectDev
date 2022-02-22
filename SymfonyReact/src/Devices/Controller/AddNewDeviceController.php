@@ -7,7 +7,6 @@ use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
-use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceBuilder;
 use App\Devices\DTO\NewDeviceDTO;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\DTO\Response\NewDeviceSuccessResponseDTO;
@@ -16,18 +15,13 @@ use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
 class AddNewDeviceController extends AbstractController

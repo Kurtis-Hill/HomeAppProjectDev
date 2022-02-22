@@ -23,7 +23,7 @@ class DeviceVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_DEVICE, self::UPDATE_DEVICE])) {
+        if (!in_array($attribute, [self::ADD_NEW_DEVICE, self::UPDATE_DEVICE, self::DELETE_DEVICE])) {
             return false;
         }
 
@@ -84,7 +84,7 @@ class DeviceVoter extends Voter
             return false;
         }
 
-        return false;
+        return true;
     }
 
     private function cadDeleteDevice(UserInterface $user, Devices $devices): bool
@@ -95,13 +95,9 @@ class DeviceVoter extends Voter
         );
     }
 
-    private function checkUserIsApartOfProposedRoom(User $user, Room $proposedRoom): bool
+    private function checkUserIsApartOfProposedRoom(User $user, ?Room $proposedRoom): bool
     {
-        if (!in_array($proposedRoom->getGroupNameID(), $user->getGroupNameIds(), true)) {
-            return false;
-        }
-
-        return true;
+        return !($proposedRoom !== null && !in_array($proposedRoom->getGroupNameID(), $user->getGroupNameIds(), true));
     }
 
     private function checkCommon(UserInterface $user, GroupNames $proposedGroupName): ?bool

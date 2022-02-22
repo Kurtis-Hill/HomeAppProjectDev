@@ -12,8 +12,7 @@ abstract class AbstractStandardSensorTypeBuilder
     protected function buildStandardSensorUpdateReadingDTO(
         array $sensorData,
         StandardReadingSensorInterface $standardReadingSensor
-    ): UpdateStandardSensorBoundaryReadingsDTO
-    {
+    ): UpdateStandardSensorBoundaryReadingsDTO {
         return new UpdateStandardSensorBoundaryReadingsDTO(
             $sensorData['readingType'],
             $standardReadingSensor->getHighReading(),
@@ -28,8 +27,7 @@ abstract class AbstractStandardSensorTypeBuilder
     protected function updateStandardSensor(
         StandardReadingSensorInterface $standardReadingSensor,
         UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void
-    {
+    ): void {
         if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
             $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
         }

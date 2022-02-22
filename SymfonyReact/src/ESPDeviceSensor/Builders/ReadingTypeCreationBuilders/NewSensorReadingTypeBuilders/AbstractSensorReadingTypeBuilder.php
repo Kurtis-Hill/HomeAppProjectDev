@@ -29,7 +29,7 @@ class AbstractSensorReadingTypeBuilder
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
-    public function buildTemperatureSensor(TemperatureSensorTypeInterface $temperatureSensorType): void
+    public function buildTemperatureSensor(TemperatureSensorTypeInterface $temperatureSensorType, int|float $currentReading = 10): void
     {
         if (!$temperatureSensorType instanceof SensorTypeInterface) {
             throw new SensorTypeException(
@@ -37,7 +37,7 @@ class AbstractSensorReadingTypeBuilder
             );
         }
         $temperatureSensor = new Temperature();
-        $temperatureSensor->setCurrentReading(10);
+        $temperatureSensor->setCurrentReading($currentReading);
         $temperatureSensor->setHighReading($temperatureSensorType->getMaxTemperature());
         $temperatureSensor->setLowReading($temperatureSensorType->getMinTemperature());
         $temperatureSensor->setUpdatedAt();
@@ -53,7 +53,7 @@ class AbstractSensorReadingTypeBuilder
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
-    public function buildHumiditySensor(HumiditySensorTypeInterface $humiditySensorType): void
+    public function buildHumiditySensor(HumiditySensorTypeInterface $humiditySensorType, int|float $currentReading = 10): void
     {
         if (!$humiditySensorType instanceof SensorTypeInterface) {
             throw new SensorTypeException(
@@ -61,7 +61,7 @@ class AbstractSensorReadingTypeBuilder
             );
         }
         $humiditySensor = new Humidity();
-        $humiditySensor->setCurrentReading(10);
+        $humiditySensor->setCurrentReading($currentReading);
         $humiditySensor->setHighReading($humiditySensorType->getMaxHumidity());
         $humiditySensor->setLowReading($humiditySensorType->getMinHumidity());
         $humiditySensor->setUpdatedAt();
@@ -77,7 +77,7 @@ class AbstractSensorReadingTypeBuilder
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
-    public function buildLatitudeSensor(LatitudeSensorTypeInterface $latitudeSensorType): void
+    public function buildLatitudeSensor(LatitudeSensorTypeInterface $latitudeSensorType, int|float $currentReading = 10): void
     {
         if (!$latitudeSensorType instanceof SensorTypeInterface) {
             throw new SensorTypeException(
@@ -85,7 +85,7 @@ class AbstractSensorReadingTypeBuilder
             );
         }
         $latitudeSensor = new Latitude();
-        $latitudeSensor->setCurrentReading(10);
+        $latitudeSensor->setCurrentReading($currentReading);
         $latitudeSensor->setHighReading($latitudeSensorType->getMaxLatitude());
         $latitudeSensor->setLowReading($latitudeSensorType->getMinLatitude());
         $latitudeSensor->setUpdatedAt();
@@ -100,7 +100,7 @@ class AbstractSensorReadingTypeBuilder
     /**
      * @throws SensorTypeException
      */
-    public function buildAnalogSensor(AnalogSensorTypeInterface $analogSensorType): void
+    public function buildAnalogSensor(AnalogSensorTypeInterface $analogSensorType, int|float $currentReading = 1000): void
     {
         if (!$analogSensorType instanceof SensorTypeInterface) {
             throw new SensorTypeException(
@@ -108,7 +108,7 @@ class AbstractSensorReadingTypeBuilder
             );
         }
         $analogSensor = new Analog();
-        $analogSensor->setCurrentReading(1000);
+        $analogSensor->setCurrentReading($currentReading);
         $analogSensor->setHighReading($analogSensorType->getMaxAnalog());
         $analogSensor->setLowReading($analogSensorType->getMinAnalog());
         $analogSensor->setUpdatedAt();

@@ -4,6 +4,7 @@
 namespace App\API\Traits;
 
 use App\API\HTTPStatusCodes;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -260,6 +261,7 @@ trait HomeAppAPITrait
     /**
      * @throws ExceptionInterface
      */
+    #[ArrayShape(["mixed"])]
     public function normalizeResponse(mixed $data): array
     {
         $normalizer = [new ObjectNormalizer()];

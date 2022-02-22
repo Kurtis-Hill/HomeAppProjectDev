@@ -24,7 +24,6 @@ class AnalogConstRecordObjectBuilder extends AbstractStandardConstRecordBuilder 
 
         $constRecordObject = new ConstAnalog();
 
-
         $this->buildStandardConstRecordObject(
             $constRecordObject,
             $sensorReadingTypeObject

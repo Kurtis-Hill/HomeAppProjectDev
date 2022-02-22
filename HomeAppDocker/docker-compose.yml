@@ -73,6 +73,7 @@ services:
       - HomeAppProjectNetwork
 
   rabbitmq:
+    context: ./rabbitmq
     image: rabbitmq:3-management-alpine
     container_name: '${APP_NAME}-rabbitmq'
     ports:
@@ -81,7 +82,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
-        - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
+        - ./data/:/var/lib/rabbitmq:rw,delegated
+        - ./HomeAppRabbitMQ.json:/opt/definitions.json:ro
     networks:
       - HomeAppProjectNetwork
 

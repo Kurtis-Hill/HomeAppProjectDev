@@ -18,8 +18,7 @@ class AuthenticationSuccessListener
     public function __construct(
         RequestStack $requestStack,
         DeviceRepositoryInterface $deviceRepository,
-    )
-    {
+    ) {
         $this->requestStack = $requestStack;
         $this->deviceRepository = $deviceRepository;
     }

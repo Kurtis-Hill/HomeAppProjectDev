@@ -13,12 +13,6 @@ interface UpdateDeviceObjectBuilderInterface
 {
     public function validateDeviceRequestObject(DeviceRequestDTOInterface $deviceUpdateRequestDTO): array;
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws ORMException
-     */
-    public function findDeviceToUpdate(int $deviceID): ?Devices;
-
     public function updateDeviceAndValidate(UpdateDeviceDTO $deviceUpdateRequestDTO): array;
 
     public function saveNewDevice(Devices $device): bool;

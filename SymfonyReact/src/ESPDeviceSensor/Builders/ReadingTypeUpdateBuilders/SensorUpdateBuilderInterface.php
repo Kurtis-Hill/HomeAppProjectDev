@@ -32,7 +32,7 @@ interface SensorUpdateBuilderInterface
      * @throws ReadingTypeNotExpectedException
      */
     public function buildCurrentReadingUpdateDTO(
-        AllSensorReadingTypeInterface $allSensorReadingTypeSensorReadingType,
+        AllSensorReadingTypeInterface $allSensorReadingType,
         array $sensorData
     ): UpdateReadingTypeCurrentReadingDTO;
 }

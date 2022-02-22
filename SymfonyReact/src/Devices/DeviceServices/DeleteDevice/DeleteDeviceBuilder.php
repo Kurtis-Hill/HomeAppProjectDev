@@ -12,6 +12,7 @@ class DeleteDeviceBuilder extends AbstractESPDeviceBuilder implements DeleteDevi
     {
         try {
             $this->deviceRepository->remove($devices);
+            $this->deviceRepository->flush();
         } catch (ORMException) {
             return false;
         }

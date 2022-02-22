@@ -1,46 +1,26 @@
 <?php
 
 namespace App\Devices\DTO\Request;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 class DeviceUpdateRequestDTO implements DeviceRequestDTOInterface
 {
-    #[
-        Assert\NotNull(
-            message: 'Device ID needs to be included in the request'
-        ),
-        Assert\Type(
-            type: 'integer',
-            message: 'Device ID must be an integer'
-        )
-    ]
-    private mixed $deviceNameID;
-
     #[Assert\Type(type: ['string', "null"])]
     private mixed $deviceName;
 
     #[Assert\Type(type: ['string', "null"])]
-    private mixed $password;
+    private mixed $password = null;
 
     #[Assert\Type(type: ['integer', "null"])]
-    private mixed $deviceGroup;
+    private mixed $deviceGroup = null;
 
     #[Assert\Type(type: ['integer', "null"])]
-    private mixed $deviceRoom;
-
-    public function getDeviceNameID(): mixed
-    {
-        return $this->deviceNameID;
-    }
-
-    public function setDeviceNameID($deviceNameID): void
-    {
-        $this->deviceNameID = $deviceNameID;
-    }
+    private mixed $deviceRoom = null;
 
     public function getDeviceName(): mixed
     {
-        return $this->deviceName;
+        return $this->deviceName = null;
     }
 
     public function setDeviceName($deviceName): void

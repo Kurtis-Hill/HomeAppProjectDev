@@ -3,8 +3,10 @@
 namespace App\ESPDeviceSensor\Repository\ORM\ReadingType;
 
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\ESPDeviceSensor\Entity\ReadingTypes\ReadingTypes;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface ReadingTypeRepositoryInterface
 {
@@ -18,6 +20,9 @@ interface ReadingTypeRepositoryInterface
      * @throws NonUniqueResultException
      */
     public function getOneBySensorNameID(int $sensorNameID);
+
+    #[ArrayShape([ReadingTypes::class])]
+    public function findAll();
 
 //    public function findOneByNamr
 
