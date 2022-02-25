@@ -51,6 +51,7 @@ HomeAppDocker/rabbitmq/log/*
 
 HomeAppDocker/apache/auth.json
 HomeAppDocker/apache/logs/*
+HomeAppDocker/docker-compose.override.yml
 
 .run/Docker Image.run.xml
 .run/DockerComposeHomeApp.run.xml

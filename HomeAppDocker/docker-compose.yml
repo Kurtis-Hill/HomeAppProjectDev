@@ -19,6 +19,9 @@ services:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_TEST_USER: ${MARIADB_TEST_USER}
+      MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
+      MARIA_DB_TEST_DATABASE: ${MARIA_DB_TEST_DATABASE}
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl:r,delegated
@@ -40,6 +43,7 @@ services:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'  # DEV  
     environment:
+      APP_ENV: ${APP_ENV}
       MYSQL_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
       MYSQL_USER : '${MARIADB_USER}'
       MYSQL_PASSWORD: '${MARIADB_PASSWORD}'

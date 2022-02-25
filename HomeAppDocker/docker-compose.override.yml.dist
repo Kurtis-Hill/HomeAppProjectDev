@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  apache:
+    ports:
+      - '9000'
+    environment:
+      MARIADB_TEST_USER: ${MARIADB_TEST_USER}
+      MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
+      MARIA_DB_TEST_DATABASE: ${MARIA_DB_TEST_DATABASE}
+
+
+  yarn:
+    ports:
+      - '8080:8080'
+
+
