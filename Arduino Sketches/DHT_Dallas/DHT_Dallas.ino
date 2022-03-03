@@ -36,16 +36,18 @@
 
 //Web bits
 // Test
-#define HOMEAPP_HOST "https://192.168.1.224"
+#define HOMEAPP_HOST "https://192.168.1.172"
 // Prod
 //#define HOMEAPP_HOST "https://klh17101990.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
-#define HOME_APP_CURRENT_READING "api/device/esp/update/current-reading"
 
+#define HOME_APP_CURRENT_READING "api/device/esp/update/current-reading"
 #define HOMEAPP_LOGIN "api/device/login_check"
 #define HOMEAPP_REFRESH_TOKEN "api/token/refresh"
 #define HOMEAPP_IP_UPDATE "api/device/ipupdate"
+
+#define EXTERNAL_IP_URL "https://api.ipify.org/?format=json"
 
 const char fingerprint[] PROGMEM = "60ee151bee994d6ca826a69abce1e724173721ca";
 
@@ -67,12 +69,15 @@ IPAddress netmask(255,255,255,0);
 
 
 //Sensor sepcific settings
-#define AMOUNT_OF_USABLE_PINS 15
+//#define ACTIVE_START_PIN 2
+//#define LAST_ACTIVE_PIN 4
+
 #define ACTIVE_START_PIN 2
-#define LAST_ACTIVE_PIN 4
+#define LAST_ACTIVE_PIN 2
+
 
 // DHT
-#define DHTPIN 2
+#define DHTPIN 0
 #define DHTTYPE DHT22 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -914,6 +919,7 @@ bool setDallasValues() {
     if (error) {
       Serial.println("deserialization error");
       dallasSensor.close();
+      
       return false;
     }
     
@@ -922,6 +928,7 @@ bool setDallasValues() {
     if (dallasTempData.sensorCount == 0) {
       Serial.println("No Sensor count not setting any values");
       dallasSensor.close();
+      
       return true;
     }
    
@@ -942,7 +949,8 @@ bool setDallasValues() {
     }
   }
   dallasSensor.close();
- 
+
+ delay(500);
   return true;
 }
 // End of Dallas functions
@@ -1038,16 +1046,17 @@ bool connectToNetwork() {
 
 bool deviceLogin(bool externalIpFound) {
   Serial.println("Logging device in");
-//  String endpoint = HOMEAPP_LOGIN;
   String url = buildHomeAppUrl(HOMEAPP_LOGIN);
   String deviceData = getSerializedSpiff("/device.json");
 
-  StaticJsonDocument<128> loginDoc;
+  StaticJsonDocument<256> loginDoc;
   DeserializationError error = deserializeJson(loginDoc, deviceData);
 
   loginDoc["ipAddress"] = ipAddress;
 
   if(externalIpFound) {
+    Serial.print("addinng external ip to request... ");
+    Serial.println(publicIpAddress);
     loginDoc["externalIpAddress"] = publicIpAddress;
   }
 
@@ -1073,20 +1082,20 @@ bool deviceLogin(bool externalIpFound) {
 
 String buildHomeAppUrl(String endpoint) {
   Serial.println("building url");
-  String url = sprintf(
-    "%s:%s/%s/%s",
-    HOMEAPP_HOST,
-    HOMEAPP_PORT,
-    HOMEAPP_URL,
-    endpoint
-  );
-//  String url = HOMEAPP_HOST;
-//  url += ":";
-//  url += HOMEAPP_PORT;
-//  url += "/";
-//  url += HOMEAPP_URL;
-//  url += "/";
-//  url += endpoint;
+//  String url = sprintf(
+//    "%s:%s/%s/%s",
+//    HOMEAPP_HOST,
+//    HOMEAPP_PORT,
+//    HOMEAPP_URL,
+//    endpoint
+//  );
+  String url = HOMEAPP_HOST;
+  url += ":";
+  url += HOMEAPP_PORT;
+  url += "/";
+  url += HOMEAPP_URL;
+  url += "/";
+  url += endpoint;
 
   Serial.print("url built: ");
   Serial.println(url);
@@ -1213,7 +1222,7 @@ String buildDallasReadingSensorUpdateRequest() {
   sensorUpdateRequest["sensorType"] = "Dallas";
 
   for (int i = 0; i < dallasTempData.sensorCount; ++i) {
-    if (dallasTempData.tempReading[i] != -127) {
+    if (dallasTempData.tempReading[i] != -127 || !isnan(dallasTempData.tempReading[i])) {
       Serial.print("sensor name:");
       Serial.println(dallasTempData.sensorName[i]);
       sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
@@ -1361,12 +1370,12 @@ String getSerializedSpiff(String spiff) {
 //<------- Dallas Sensor Functions -------------->
 bool findDallasSensor() {
   bool sensorSuccess = false;
-  for (uint8_t pin = ACTIVE_START_PIN; pin < AMOUNT_OF_USABLE_PINS && pin < LAST_ACTIVE_PIN ; pin++) {
-    Serial.println("pin");
+  for (uint8_t pin = ACTIVE_START_PIN; pin <= LAST_ACTIVE_PIN ; pin++) {
+    Serial.print("pin ");
     Serial.println(pin);
     sensorSuccess = searchPinForOneWire(pin);
     if(sensorSuccess == true) {
-      Serial.println("Dallas sensor found marking it as active");
+      Serial.println("Dallas sensor found marking sensor satus as active");
       DallasTemperature sensors(&oneWire);
       dallasTempData.sensorActive = true;
       return true;
@@ -1468,7 +1477,7 @@ bool getExternalIP() {
   Serial.print("[HTTPS] begin connecting to... ");
   Serial.println("https://api.ipify.org/?format=json");
   
-  http.begin(client, "http://api.ipify.org/?format=json");
+  http.begin(client, "https://api.ipify.org/?format=json");
   
   Serial.println("[HTTPS] GET...");
   int httpCode = http.GET();
@@ -1488,8 +1497,12 @@ bool getExternalIP() {
         Serial.println("external ip address deserialization error");
         return false;
       }
-      
-      publicIpAddress = responsePayload["ip"].as<String>();     
+
+      Serial.print("Reponse Payload: ");
+      Serial.println(responsePayload["ip"].as<String>());
+      publicIpAddress = responsePayload["ip"].as<String>();
+      Serial.print("New pulicIpAddress");
+      Serial.println(publicIpAddress);     
     }
   } else {
       Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
@@ -1525,18 +1538,21 @@ void setup() {
 
   if (setupNetworkConnection()) {
     bool externalIpSuccess = getExternalIP();
+
+    Serial.print("Getting ExternalIP Address Success... ");
+    Serial.println(String(externalIpSuccess));
     bool loggedIn = deviceLogin(externalIpSuccess);
 
     if (loggedIn == true) {
+      if (setDhtValues()) {
+        dht.begin();
+      }
       if (setDallasValues()) {
         if (findDallasSensor()) {
           delay(500);
           Serial.println("Begining Dallas sensor");
           sensors.begin();
         }
-      }
-      if (setDhtValues()) {
-        dht.begin();
       }
     }
   }
