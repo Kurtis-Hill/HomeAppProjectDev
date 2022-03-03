@@ -28,7 +28,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
             message: 'Device group is a required field'
         ),
         Assert\Type(
-            type: ['integer', 'string'],
+            type: ['integer'],
             message: 'Device group value is {{ value }} is not a valid {{ type }}'
         ),
     ]
@@ -42,7 +42,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
             message: 'Device room is a required field'
         ),
         Assert\Type(
-            type: ['integer', 'string'],
+            type: ['integer'],
             message: 'Device room value is {{ value }} is not a valid {{ type }}'
         ),
     ]

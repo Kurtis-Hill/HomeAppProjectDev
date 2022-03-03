@@ -2,13 +2,13 @@
 #dont think i need this anymore
 sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
 
-sleep 5
+sleep 10
 
 if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
-if [ ${APP_ENV} == 'prod' ]; then
+if [ ${APP_ENV} = 'prod' ]; then
   echo "Removing xdebug config"
   rm -r /usr/local/etc/php/conf.d/xdebug.ini
   echo "Executing database migrations production..."
@@ -17,8 +17,7 @@ if [ ${APP_ENV} == 'prod' ]; then
 fi
 
 
-if [ ${APP_ENV} == 'dev' ]; then
-	sleep 5
+if [ ${APP_ENV} = 'dev' ]; then
 	echo "dev container build"
 	echo "Executing database migrations dev enviromennt..."
 	bin/console d:m:m --no-interaction --env=test
@@ -39,4 +38,5 @@ fi
 if [ ! -f /etc/logs/user-input-errors.log ]; then
     touch /etc/logs/user-input-errors.log
 fi
+
 exec /usr/local/bin/docker-php-entrypoint "$@"

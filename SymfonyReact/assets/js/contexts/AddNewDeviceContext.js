@@ -34,15 +34,14 @@ export default class AddNewDeviceContextProvider extends Component {
         
         const jsonFormData = {
             'deviceName' : this.state.newDeviceModalContent.newDeviceName,
-            'deviceRoom' :  this.state.newDeviceModalContent.newDeviceRoom !== '' ? this.state.newDeviceModalContent.newDeviceRoom : document.getElementById("deviceRoom").value ,
-            'deviceGroup' :  this.state.newDeviceModalContent.newDeviceGroup !== '' ? this.state.newDeviceModalContent.newDeviceGroup : document.getElementById("deviceGroup").value,
+            'deviceRoom' :  this.state.newDeviceModalContent.newDeviceRoom !== '' ? parseInt(this.state.newDeviceModalContent.newDeviceRoom) : parseInt(document.getElementById("deviceRoom").value),
+            'deviceGroup' :  this.state.newDeviceModalContent.newDeviceGroup !== '' ? parseInt(this.state.newDeviceModalContent.newDeviceGroup) : parseInt(document.getElementById("deviceGroup").value),
         };
 
         console.log('formdata', jsonFormData);
        try {
             const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, jsonFormData, getAPIHeader());
 
-            // console.log('ge', newDeviceSubmissionResponse.response);
             if (newDeviceSubmissionResponse.status === 201) {
                 const responseData = newDeviceSubmissionResponse.data.payload;
                 console.log('hey response', responseData);
