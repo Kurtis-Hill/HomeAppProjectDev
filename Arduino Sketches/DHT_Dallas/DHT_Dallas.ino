@@ -29,10 +29,8 @@
 
 #include <DHT.h>;
 
-
 #define NODE_MCU_SERIAL 115200
 #define MICRO_ESP_SERIAL 9600
-
 
 //Web bits
 // Test
@@ -1512,7 +1510,6 @@ bool getExternalIP() {
   
   return true;
 }
-
 
 
 
