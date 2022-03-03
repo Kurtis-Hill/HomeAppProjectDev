@@ -41,6 +41,7 @@ SSL/client-key.pem
 SSL/server-cert.pem
 SSL/server-key.pem
 SSL/server.pfx
+SSL/ca-cert.pem
 
 ##< Docker ###
 HomeAppDocker/.env
