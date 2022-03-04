@@ -31,9 +31,14 @@ so to be able to get JWT tokens to authenticate you will need to adjust this man
 Do this for production builds too.
 
 <h2>Running the front end</h2>
-to sign into the front end the admin username is : admin
-and the password is : admin1234
-
+to sign in to the front end the admin username is : 
+<code>
+admin
+</code>
+and the password is: 
+<code>
+admin1234
+</code>
 
 when adding a new sensor to the system and updating the current readings use the following format to adjust the reading:
 'readingType'Reading
