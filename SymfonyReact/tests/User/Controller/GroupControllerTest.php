@@ -8,10 +8,11 @@ use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class GroupControllerTest extends WebTestCase
 {
-    private const GET_USER_GROUPS_URL = '/HomeApp/api/user/user-groups/groups';
+    private const GET_USER_GROUPS_URL = '/HomeApp/api/user/user-groups/all';
 
     private EntityManagerInterface $entityManager;
 
@@ -53,7 +54,7 @@ class GroupControllerTest extends WebTestCase
     public function test_user_groups_are_correct(): void
     {
         $this->client->request(
-            'GET',
+            Request::METHOD_GET,
             self::GET_USER_GROUPS_URL,
             [],
             [],
