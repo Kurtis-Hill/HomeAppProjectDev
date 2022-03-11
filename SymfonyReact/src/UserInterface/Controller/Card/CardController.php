@@ -53,24 +53,9 @@ class CardController extends AbstractController
         $this->cardViewDTOCreationService = $cardViewDTOCreationService;
     }
 
-    #[Route('device-cards', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
-    public function deviceCards(Request $request, DeviceRepositoryInterface $deviceRepository): JsonResponse
+    #[Route('device-cards/${id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
+    public function deviceCards(Devices $device, Request $request): JsonResponse
     {
-        $deviceId = $request->get('device-id');
-
-        if (!is_numeric($deviceId)) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
-        }
-        try {
-            $device = $deviceRepository->findOneById($deviceId);
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse(['An error occurred while retrieving device data']);
-        }
-
-        if (!$device instanceof Devices) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Device')]);
-        }
-
         try {
             $this->denyAccessUnlessGranted(CardViewVoter::VIEW_DEVICE_CARD_DATA, $device);
         } catch (AccessDeniedException) {
@@ -98,7 +83,6 @@ class CardController extends AbstractController
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
-
         try {
             $responseData = $this->normalizeResponse($cardDTOs);
         } catch (ExceptionInterface) {
@@ -109,24 +93,9 @@ class CardController extends AbstractController
 
     }
 
-    #[Route('room-cards', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
-    public function roomCards(Request $request, RoomRepositoryInterface $roomRepository): Response
+    #[Route('room-cards/{$id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
+    public function roomCards(Room $room, Request $request): Response
     {
-        $roomId = $request->get('room-id');
-
-        if (!is_numeric($roomId)) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
-        }
-        try {
-            $room = $roomRepository->findOneById($roomId);
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse(['An error occurred while retrieving device data']);
-        }
-
-        if (!$room instanceof Room) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Room')]);
-        }
-
         try {
             $this->denyAccessUnlessGranted(CardViewVoter::VIEW_ROOM_CARD_DATA, $room);
         } catch (AccessDeniedException) {
@@ -154,7 +123,6 @@ class CardController extends AbstractController
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
-
         try {
             $responseData = $this->normalizeResponse($cardDTOs);
         } catch (ExceptionInterface) {
@@ -174,13 +142,13 @@ class CardController extends AbstractController
         }
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO();
-//        try {
+        try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
-//        } catch (WrongUserTypeException) {
-//            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-//        } catch (ORMException) {
-//            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
-//        }
+        } catch (WrongUserTypeException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+        }
 
         try {
             $cardDTOs = $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);
@@ -204,8 +172,7 @@ class CardController extends AbstractController
         CardDataPreFilterDTO $cardDataPreFilterDTO,
         CardViewTypeFilterDTO $cardViewTypeFilterDTO,
         string $view = null,
-    ): array
-    {
+    ): array {
         $postFilterCardDataToQuery = $this->cardDataFilterService->filterSensorsToQuery($cardDataPreFilterDTO);
 
         return $this->cardPreparationService->prepareCardsForUser(
@@ -223,14 +190,4 @@ class CardController extends AbstractController
             $request->get('reading-types') ?? [],
         );
     }
-
-    // /**
-    //  * @throws ExceptionInterface
-    //  */
-    // private function normalizeResponse(array $cardDTOs): array
-    // {
-    //     $normaliser = [new ObjectNormalizer()];
-
-    //     return (new Serializer($normaliser))->normalize($cardDTOs);
-    // }
 }

@@ -79,20 +79,17 @@ class CardContextProvider extends Component {
 
         if (window.location.pathname ===`${webappURL}device`) {
             const deviceName = urlParam.get('device-id');
-            const deviceURL = `${cardAPI}device-cards?device-id=${deviceName}`;
+            const deviceURL = `${cardAPI}device-cards/${deviceName}`;
             this.setState({url:  deviceURL});
             return;
         }
         if (window.location.pathname === `${webappURL}room`) {
             const roomName = urlParam.get('room-id');
-            const roomURL = `${cardAPI}room-cards?room-id=${roomName}`;
+            const roomURL = `${cardAPI}room-cards/${roomName}`;
             this.setState({url:  roomURL});
             return;
         }
     }
-
-
-
 
     //Fetches all the card data to be displayed on the index page
     fetchCardData = async () => {
