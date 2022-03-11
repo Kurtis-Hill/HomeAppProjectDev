@@ -6,11 +6,16 @@ use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface SensorRepositoryInterface
 {
     public function findOneById(int $id): ?Sensor;
 
+    /**
+     * @throws ORMInvalidArgumentException
+     * @throws ORMException
+     */
     public function persist(Sensor $sensorReadingData): void;
 
     /**

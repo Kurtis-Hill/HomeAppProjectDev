@@ -14,14 +14,6 @@ class UpdateSensorReadingBoundaryRequestDTO
     ]
     private mixed $sensorData = null;
 
-    #[
-        Assert\Type(type: 'int', message: 'sensorId must be a {{ type }} you have provided {{ value }}'),
-        Assert\NotNull(
-            message: "sensorId cannot be null"
-        ),
-    ]
-    private mixed $sensorId = null;
-
     public function getSensorData(): mixed
     {
         return $this->sensorData;
@@ -30,15 +22,5 @@ class UpdateSensorReadingBoundaryRequestDTO
     public function setSensorData(mixed $sensorData): void
     {
         $this->sensorData = $sensorData;
-    }
-
-    public function getSensorId(): mixed
-    {
-        return $this->sensorId;
-    }
-
-    public function setSensorId(mixed $sensorId): void
-    {
-        $this->sensorId = $sensorId;
     }
 }

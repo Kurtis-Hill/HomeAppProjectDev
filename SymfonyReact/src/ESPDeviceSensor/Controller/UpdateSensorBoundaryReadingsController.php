@@ -18,7 +18,6 @@ use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryRea
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,14 +27,15 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors/', name: 'boundary-controller')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor/', name: 'boundary-controller')]
 class UpdateSensorBoundaryReadingsController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
+    #[Route('{id}/boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
     public function updateSensorReadingBoundary(
+        Sensor $sensorObject,
         Request $request,
         UpdateSensorBoundaryReadingsServiceInterface $updateSensorBoundaryReadingsService,
         SensorRepositoryInterface $sensorRepository,
@@ -57,21 +57,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         $validationErrors = $validator->validate($updateBoundaryReadingRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
-
-        try {
-            $sensorObject = $sensorRepository->findOneById($updateBoundaryReadingRequestDTO->getSensorId());
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse(['Sensor query failed']);
-        }
-
-        if (!$sensorObject instanceof Sensor) {
-            return $this->sendBadRequestJsonResponse([
-                sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    'Sensor',
-                )
-            ]);
         }
 
         try {

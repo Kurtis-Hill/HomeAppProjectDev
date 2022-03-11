@@ -130,7 +130,7 @@ class CardContextProvider extends Component {
     getCardDataForm = async (cardViewID) => {
         this.setState({modalLoading: cardViewID});
         try {
-            const cardDataFormResponse = await axios.get(`${apiURL}card-form-data/sensor-type/card-sensor-form?card-view-id=${cardViewID}`, getAPIHeader())
+            const cardDataFormResponse = await axios.get(`${apiURL}card-form-data/get/${cardViewID}`, getAPIHeader())
     
             if (cardDataFormResponse.status === 200) {
                 this.modalContent(cardDataFormResponse.data.payload);
@@ -249,21 +249,19 @@ class CardContextProvider extends Component {
         this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: [], success: []}});
 
         const cardFormData = {
-            'cardViewID' : this.state.modalContent.cardViewID,
             'cardColour' : this.state.modalContent.cardColour,
             'cardViewState' : this.state.modalContent.currentViewState.cardStateID,
             'cardIcon' : this.state.modalContent.cardIcon.iconID,
         };
 
         const sensorBoundaryUpdateData = {
-            'sensorId' : this.state.modalContent.sensorId,
             'sensorData' : this.state.modalContent.sensorData,
         }
 
         try {
-            const formSubmissionResult = await axios.put(apiURL+'card-form-data/sensor-type/update-card-sensor', cardFormData, getAPIHeader());
+            const formSubmissionResult = await axios.put(`${apiURL}'card-form-data/update/${this.state.modalContent.cardViewID}`, cardFormData, getAPIHeader());
 
-            const boundaryFormSubmissionResult = await axios.put(apiURL+'sensors/boundary-update', sensorBoundaryUpdateData, getAPIHeader());
+            const boundaryFormSubmissionResult = await axios.put(`${apiURL}sensor/${this.state.modalContent.sensorId}/boundary-update`, sensorBoundaryUpdateData, getAPIHeader());
             if (formSubmissionResult.status === 202 && boundaryFormSubmissionResult.status === 202) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>

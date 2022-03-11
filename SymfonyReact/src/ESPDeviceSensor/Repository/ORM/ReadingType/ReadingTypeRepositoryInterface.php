@@ -5,13 +5,23 @@ namespace App\ESPDeviceSensor\Repository\ORM\ReadingType;
 use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\ESPDeviceSensor\Entity\ReadingTypes\ReadingTypes;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
 interface ReadingTypeRepositoryInterface
 {
+    /**
+     * @throws ORMInvalidArgumentException
+     * @throws ORMException
+     */
     public function persist(AllSensorReadingTypeInterface $readingTypeObject): void;
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function flush(): void;
 
     public function findOneById(int $id);

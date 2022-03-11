@@ -6,12 +6,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CardViewRequestDTO
 {
-    #[
-        Assert\NotNull(message: "cardViewID cannot be null"),
-        Assert\Type(type: ['int'], message: 'cardViewID must be an {{ type }} you have provided {{ value }}')
-    ]
-    private mixed $cardViewID = null;
-
     #[Assert\Type(type: ['int', "null"], message: 'cardColour must be an {{ type }} you have provided {{ value }}')]
     private mixed $cardColour = null;
 
@@ -19,17 +13,7 @@ class CardViewRequestDTO
     private mixed $cardIcon = null;
 
     #[Assert\Type(type: ['int', "null"], message: 'cardViewID must be an {{ type }} you have provided {{ value }}')]
-    private $cardViewState = null;
-
-    public function getCardViewID(): mixed
-    {
-        return $this->cardViewID;
-    }
-
-    public function setCardViewID(mixed $cardViewID): void
-    {
-        $this->cardViewID = $cardViewID;
-    }
+    private mixed $cardViewState = null;
 
     public function getCardColour(): mixed
     {
@@ -51,12 +35,12 @@ class CardViewRequestDTO
         $this->cardIcon = $cardIcon;
     }
 
-    public function getCardViewState()
+    public function getCardViewState(): mixed
     {
         return $this->cardViewState;
     }
 
-    public function setCardViewState($cardViewState): void
+    public function setCardViewState(mixed $cardViewState): void
     {
         $this->cardViewState = $cardViewState;
     }

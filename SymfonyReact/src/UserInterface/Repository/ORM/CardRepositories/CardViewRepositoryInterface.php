@@ -8,10 +8,12 @@ use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface CardViewRepositoryInterface
 {
     /**
+     * @throws ORMInvalidArgumentException
      * @throws ORMException
      */
     public function persist(CardView $cardView): void;

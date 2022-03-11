@@ -66,11 +66,11 @@ class ESPSensorUpdateController extends AbstractController
             return $this->sendBadRequestJsonResponse(['the format sent is not expected, please send requests in JSON']);
         }
 
-        if (empty($requestData['sensorData'])) {
+        if (empty($sensorUpdateRequestDTO->getSensorData())) {
             return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor']);;
         }
 
-        if (!in_array($requestData['sensorType'], SensorType::ALL_SENSOR_TYPES, true)) {
+        if (!in_array($sensorUpdateRequestDTO->getSensorType(), SensorType::ALL_SENSOR_TYPES, true)) {
             return $this->sendBadRequestJsonResponse(['Sensor type not recognised']);
         }
 
@@ -80,7 +80,7 @@ class ESPSensorUpdateController extends AbstractController
         $deviceId = $this->getUser()?->getDeviceNameID();
 
         $errors = [];
-        foreach ($requestData['sensorData'] as $sensorUpdateData) {
+        foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             try {
                 $updateReadingDTO = new UpdateSensorCurrentReadingConsumerMessageDTO(
                     $requestData['sensorType'],

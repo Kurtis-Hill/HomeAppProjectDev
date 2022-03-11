@@ -30,33 +30,17 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-form-data/sensor-type/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-form-data/')]
 class CardViewFormController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('card-sensor-form', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
+    #[Route('get/{id}', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(
-        Request $request,
-        CardViewRepositoryInterface $cardViewRepository,
+        CardView $cardViewObject,
         CardViewFormPreparationServiceInterface $cardViewFormPreparationService,
     ): JsonResponse {
-        $cardViewID = $request->query->get('card-view-id');
-
-        if (empty($cardViewID) || !is_numeric($cardViewID)) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
-        }
-
-        try {
-            $cardViewObject = $cardViewRepository->findOneById($cardViewID);
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Card view')]);
-        }
-        if (!$cardViewObject instanceof CardView) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'CardView')]);
-        }
-
         try {
             $this->denyAccessUnlessGranted(CardViewVoter::CAN_VIEW_CARD_VIEW_FORM, $cardViewObject);
         } catch (AccessDeniedException) {
@@ -86,8 +70,9 @@ class CardViewFormController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponseData);
     }
 
-    #[Route('update-card-sensor', name: 'card-view-form-v2', methods: [Request::METHOD_PUT])]
+    #[Route('update/{id}', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateCardView(
+        CardView $cardViewObject,
         Request $request,
         CardViewRepositoryInterface $cardViewRepository,
         CardViewUpdateServiceInterface $cardViewUpdateService,
@@ -108,16 +93,6 @@ class CardViewFormController extends AbstractController
         $validationErrors = $validator->validate($cardViewRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
-
-        try {
-            $cardViewObject = $cardViewRepository->findOneById($cardViewRequestDTO->getCardViewID());
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
-        }
-
-        if (!$cardViewObject instanceof CardView) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'CardView')]);
         }
 
         try {

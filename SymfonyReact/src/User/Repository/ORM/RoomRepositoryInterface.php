@@ -4,7 +4,9 @@ namespace App\User\Repository\ORM;
 
 use App\User\Entity\Room;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface RoomRepositoryInterface
 {
@@ -18,9 +20,14 @@ interface RoomRepositoryInterface
      */
     public function getAllUserRoomsByGroupId($groupNameId): array;
 
+    /**
+     * @throws ORMInvalidArgumentException
+     * @throws ORMException
+     */
     public function persist(Room $room): void;
 
     /**
+     * @throws OptimisticLockException
      * @throws ORMException
      */
     public function flush(): void;

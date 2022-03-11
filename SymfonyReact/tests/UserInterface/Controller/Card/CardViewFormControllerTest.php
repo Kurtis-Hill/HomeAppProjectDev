@@ -21,9 +21,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CardViewFormControllerTest extends WebTestCase
 {
-    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/sensor-type/card-sensor-form';
+    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/get/%d';
 
-    private const UPDATE_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/sensor-type/update-card-sensor';
+    private const UPDATE_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/update/%d';
 
     private ?string $userToken = null;
 
@@ -78,15 +78,14 @@ class CardViewFormControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_CARD_FORM_URL,
-            ['card-view-id' => $cardViewObject->getCardViewID()],
+            sprintf(self::GET_CARD_FORM_URL, $cardViewObject->getCardViewID()),
+            [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true)['payload'];
 
-//        dd($responseData);
         self::assertNotEmpty($responseData['sensorData']);
 
         foreach ($responseData['sensorData'] as $sensorData) {
@@ -139,17 +138,13 @@ class CardViewFormControllerTest extends WebTestCase
     {
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_CARD_FORM_URL,
-            ['card-view-id' => $cardViewID],
+            sprintf(self::GET_CARD_FORM_URL, $cardViewID),
+            [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
-        $responseContent = $this->client->getResponse()->getContent();
-        $responseData = json_decode($responseContent, true);
 
-        self::assertEquals(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
-        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
     public function  getCardViewFormIncorrectCardViewIDDataProvider(): Generator
@@ -175,18 +170,15 @@ class CardViewFormControllerTest extends WebTestCase
         }
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_CARD_FORM_URL,
-            ['card-view-id' => $randomNumber],
+            sprintf(self::GET_CARD_FORM_URL, $randomNumber),
+            [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         $responseContent = $this->client->getResponse()->getContent();
-        $responseData = json_decode($responseContent, true);
 
-        self::assertEquals(sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'CardView'), $responseData['errors'][0]);
-        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -201,7 +193,7 @@ class CardViewFormControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_CARD_FORM_URL,
+            sprintf(self::GET_CARD_FORM_URL, $cardViewObject->getCardViewID()),
             ['card-view-id' => $cardViewObject->getCardViewID()],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -231,46 +223,22 @@ class CardViewFormControllerTest extends WebTestCase
     }
 
     // Start of CardViewController::getCardViewForm() tests
-
-    public function testSendingWrongRequestWrongFormat(): void
-    {
-        $requestData = "{Cardviewid: asd},";
-
-        $this->client->request(
-        Request::METHOD_PUT,
-        self::UPDATE_CARD_FORM_URL,
-        [],
-        [],
-        ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-        $requestData
-        );
-        $responseContent = $this->client->getResponse()->getContent();
-        $responseData = json_decode($responseContent, true);
-
-        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['errors'][0]);
-        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
     /**
      * @dataProvider malformedRequestDataProvider
      */
     public function testSendingMalformedRequest(array $requestData, string $errorMessage): void
     {
-        $requestData = json_encode($requestData);
+        $jsonRequestData = json_encode($requestData);
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_CARD_FORM_URL,
+            sprintf(self::UPDATE_CARD_FORM_URL, $requestData['cardViewID']),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $requestData
+            $jsonRequestData
         );
 
-        $responseContent = $this->client->getResponse()->getContent();
-        $responseData = json_decode($responseContent, true);
-
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals($errorMessage, $responseData['errors'][0]);
+        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
     public function malformedRequestDataProvider(): Generator
@@ -313,7 +281,6 @@ class CardViewFormControllerTest extends WebTestCase
         }
 
         $sensorData = [
-            'cardViewID' => $cardViewID,
             'sensorData' => [
                 "readingType" => "temperature",
                 "highReading" =>  25,
@@ -325,7 +292,7 @@ class CardViewFormControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_CARD_FORM_URL,
+            sprintf(self::UPDATE_CARD_FORM_URL, $cardViewID),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -350,7 +317,6 @@ class CardViewFormControllerTest extends WebTestCase
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
         $sensorData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
             'sensorData' => [
                 [
                     "readingType" => "temperature",
@@ -364,7 +330,7 @@ class CardViewFormControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_CARD_FORM_URL,
+            sprintf(self::UPDATE_CARD_FORM_URL, $cardViewObject->getCardViewID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -379,11 +345,6 @@ class CardViewFormControllerTest extends WebTestCase
     }
 
     /**
-     * @param bool $wrongColour
-     * @param bool $wrongIcon
-     * @param bool $wrongState
-     * @param string $errorMessage
-     * @throws \Exception
      * @dataProvider sendingWrongCardDataRequestDataProvider
      */
     public function testSendingWrongCardDataRequest(
@@ -391,8 +352,7 @@ class CardViewFormControllerTest extends WebTestCase
         bool $wrongIcon,
         bool $wrongState,
         string $errorMessage,
-    ): void
-    {
+    ): void {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
@@ -440,7 +400,6 @@ class CardViewFormControllerTest extends WebTestCase
         }
 
         $sensorData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
             'cardColour' => $cardColour,
             'cardIcon' => $cardIcon,
             'cardViewState' => $cardState,
@@ -458,7 +417,7 @@ class CardViewFormControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_CARD_FORM_URL,
+            sprintf(self::UPDATE_CARD_FORM_URL, $cardViewObject->getCardViewID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -505,8 +464,7 @@ class CardViewFormControllerTest extends WebTestCase
         bool $nullCardIcon,
         bool $nullCardState,
         string $errorMessage,
-    ): void
-    {
+    ): void {
         $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
         $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
@@ -533,7 +491,6 @@ class CardViewFormControllerTest extends WebTestCase
         }
 
         $sensorData = [
-            'cardViewID' => $cardViewObject->getCardViewID(),
             'cardColour' => $cardColour,
             'cardIcon' => $cardIcon,
             'cardViewState' => $cardState,
@@ -551,7 +508,7 @@ class CardViewFormControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_CARD_FORM_URL,
+            sprintf(self::UPDATE_CARD_FORM_URL, $cardViewObject->getCardViewID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],

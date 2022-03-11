@@ -14,7 +14,6 @@ use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;
 use App\User\Voters\RoomVoter;
 use Doctrine\ORM\ORMException;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,17 +49,17 @@ class AddNewRoomController extends AbstractController
         }
 
         $validationErrors = $validator->validate($addNewRoomRequestDTO);
-//dd($validationErrors, $addNewRoomRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors), 'Validation Errors Occurred');
         }
-        $roomName = $addNewRoomRequestDTO->getRoomName();
-        $groupId = $addNewRoomRequestDTO->getGroupId();
-        $addNewRoomDTO = new AddNewRoomDTO($roomName, $groupId);
 
-//dd('asd');
+        $addNewRoomDTO = new AddNewRoomDTO(
+             $addNewRoomRequestDTO->getRoomName(),
+            $addNewRoomRequestDTO->getGroupId(),
+        );
+
         try {
-            $groupName = $groupCheckService->checkForGroupById($groupId);
+            $groupName = $groupCheckService->checkForGroupById($addNewRoomRequestDTO->getGroupId());
         } catch (GroupNameNotFoundException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }

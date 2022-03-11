@@ -6,6 +6,7 @@ use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
+//@TODO move to common
 trait FormProcessorTrait
 {
     private array $formInputErrors = [];

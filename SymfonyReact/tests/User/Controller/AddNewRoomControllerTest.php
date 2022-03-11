@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AddNewRoomControllerTest extends WebTestCase
@@ -41,7 +42,7 @@ class AddNewRoomControllerTest extends WebTestCase
     private function setUserToken(): void
     {
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             SecurityController::API_USER_LOGIN,
             [],
             [],
@@ -75,7 +76,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $jsonData = json_encode($formRequestData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],
@@ -100,7 +101,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $jsonData = json_encode($formRequestData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],
@@ -125,7 +126,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $jsonData = json_encode($formRequestData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],
@@ -143,7 +144,7 @@ class AddNewRoomControllerTest extends WebTestCase
     public function test_add_new_room_wrong_format(): void
     {
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],
@@ -171,7 +172,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $jsonData = json_encode($formRequestData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],
@@ -180,7 +181,7 @@ class AddNewRoomControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData);
+
         self::assertEquals('Validation Errors Occurred', $responseData['title']);
         self::assertEquals($errorMessage, $responseData['errors'][0]);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -216,7 +217,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $jsonData = json_encode($formRequestData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],
@@ -255,7 +256,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $jsonData = json_encode($formRequestData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_ROOM_URL,
             [],
             [],

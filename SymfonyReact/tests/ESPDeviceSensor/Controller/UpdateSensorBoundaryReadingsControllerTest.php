@@ -24,6 +24,7 @@ use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInter
 use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -32,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 {
-    private const UPDATE_SENSOR_BOUNDARY_READING_URL = '/HomeApp/api/user/sensors/boundary-update';
+    private const UPDATE_SENSOR_BOUNDARY_READING_URL = '/HomeApp/api/user/sensor/%d/boundary-update';
 
     private KernelBrowser $client;
 
@@ -96,7 +97,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
-                'sensorId' => $sensorTypeObject->getSensorObject()->getSensorNameID(),
                 'sensorData' => $sensorReadingsToUpdate,
             ];
         }
@@ -104,7 +104,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_SENSOR_BOUNDARY_READING_URL,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -117,7 +117,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-//dd($responseData, $sensorReadingsToUpdate);
+
         $title = $responseData['title'];
         $dataPayload = $responseData['payload'] ?? null;
         $errorsPayload = $responseData['errors'] ?? null;
@@ -755,9 +755,11 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
     public function test_sending_malformed_request(): void
     {
+        $sensorObject = $this->entityManager->getRepository(Sensor::class)->findAll()[0];
+
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_SENSOR_BOUNDARY_READING_URL,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObject->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/form-data'],
@@ -793,7 +795,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_SENSOR_BOUNDARY_READING_URL,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -810,7 +812,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertEquals('sensorData cannot be empty', $responseData['errors'][0]);
-        self::assertEquals('sensorId cannot be null', $responseData['errors'][1]);
     }
 
     public function sendingMissingDataSetsDataProvider(): Generator
@@ -824,10 +825,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ]
-        ];
-
-        yield [
-            ['sensorId' => 1]
         ];
     }
 
@@ -844,7 +841,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         $sensorData = [
-            'sensorId' => $wrongSensorId,
             'sensorData' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
@@ -859,29 +855,14 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_SENSOR_BOUNDARY_READING_URL,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $wrongSensorId),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData,
         );
 
-        $responseData = json_decode(
-            $this->client->getResponse()->getContent(),
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
-
-        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(
-            sprintf(
-                APIErrorMessages::OBJECT_NOT_FOUND,
-                'Sensor',
-            ),
-            $responseData['errors'][0]
-        );
+        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_sending_request_not_recognized_sensor_type(): void
@@ -891,7 +872,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $readingType = 'total-random-string';
         $sensorData = [
-            'sensorId' => $sensorTypeObject->getSensorNameID(),
             'sensorData' => [
                 [
                     'readingType' => $readingType,
@@ -906,7 +886,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_SENSOR_BOUNDARY_READING_URL,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -936,7 +916,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $deviceObject = $deviceRepository->findBy(['groupNameID' => $loggedInUser->getGroupNameID()])[0];
 
         if (in_array($deviceObject->getGroupNameObject()->getGroupNameID(), $userNotInGroup->getGroupNameIds(), true)) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
@@ -959,7 +939,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $token = $this->setUserToken(true,  UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD  );
         $this->client->request(
             Request::METHOD_PUT,
-            self::UPDATE_SENSOR_BOUNDARY_READING_URL,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObjectLoggedInUser->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $token, 'CONTENT_TYPE' => 'application/json'],
@@ -975,6 +955,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
-        self::assertEquals("You have been denied permission to perform this action", $responseData['errors'][0]);
+        self::assertEquals(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
     }
 }
