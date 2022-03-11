@@ -474,7 +474,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function sendingPatchRequestDataProvider(): Generator
     {
-
+        yield [];
     }
 
 
