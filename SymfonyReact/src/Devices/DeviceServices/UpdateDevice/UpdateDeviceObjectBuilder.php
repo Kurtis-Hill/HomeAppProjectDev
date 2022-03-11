@@ -36,7 +36,7 @@ class UpdateDeviceObjectBuilder extends AbstractESPDeviceBuilder implements Upda
         }
 
         if ($deviceUpdateRequestDTO->getProposedUpdatedRoom() !== null) {
-            $deviceToUpdate->setRoomObject($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getDeviceRoom());
+            $deviceToUpdate->setRoomObject($deviceUpdateRequestDTO->getProposedUpdatedRoom());
         }
         try {
             $this->duplicateDeviceCheck($deviceToUpdate->getDeviceName(), $deviceToUpdate->getRoomObject()->getRoomID());
@@ -46,8 +46,8 @@ class UpdateDeviceObjectBuilder extends AbstractESPDeviceBuilder implements Upda
             $errors[] = sprintf(APIErrorMessages::QUERY_FAILURE, 'Device');
         }
 
-        if (!empty($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getDeviceGroup())) {
-            $deviceToUpdate->setGroupNameObject($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getDeviceGroup());
+        if (!empty($deviceUpdateRequestDTO->getProposedGroupNameToUpdateTo() !== null)) {
+            $deviceToUpdate->setGroupNameObject($deviceUpdateRequestDTO->getProposedGroupNameToUpdateTo());
         }
 
         if (!empty($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getPassword())) {

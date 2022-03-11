@@ -6,21 +6,41 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class DeviceUpdateRequestDTO implements DeviceRequestDTOInterface
 {
-    #[Assert\Type(type: ['string', "null"])]
+    #[
+        Assert\Type(
+            type: ['string', "null"],
+            message: "deviceName must be of type {{ type }} you provided {{ value }}"
+        )
+    ]
     private mixed $deviceName;
 
-    #[Assert\Type(type: ['string', "null"])]
+    #[
+        Assert\Type(
+            type: ['string', "null"],
+            message: "password must be of type {{ type }} you provided {{ value }}"
+        )
+    ]
     private mixed $password = null;
 
-    #[Assert\Type(type: ['integer', "null"])]
+    #[
+        Assert\Type(
+            type: ['integer', "null"],
+            message: "deviceGroup must be of type {{ type }} you provided {{ value }}"
+        )
+    ]
     private mixed $deviceGroup = null;
 
-    #[Assert\Type(type: ['integer', "null"])]
+    #[
+        Assert\Type(
+            type: ['integer', "null"],
+            message: "deviceRoom must be of type {{ type }} you provided {{ value }}"
+        )
+    ]
     private mixed $deviceRoom = null;
 
     public function getDeviceName(): mixed
     {
-        return $this->deviceName = null;
+        return $this->deviceName;
     }
 
     public function setDeviceName($deviceName): void

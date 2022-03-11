@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GroupControllerTest extends WebTestCase
 {
@@ -64,7 +65,7 @@ class GroupControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
 
-        self::assertEquals(200, $requestResponse->getStatusCode());
+        self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
         self::assertEquals(UserDataFixtures::ADMIN_GROUP,$responseData['payload'][0]['groupName']);
         self::assertEquals(UserDataFixtures::USER_GROUP, $responseData['payload'][1]['groupName']);

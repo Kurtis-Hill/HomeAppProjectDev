@@ -10,7 +10,9 @@ use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\DTO\UpdateDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
+use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
@@ -40,6 +42,7 @@ class UpdateDeviceController extends AbstractController
         Request $request,
         UpdateDeviceObjectBuilderInterface $updateDeviceObjectBuilder,
         RoomRepositoryInterface $roomRepository,
+        GroupNameRepositoryInterface $groupNameRepository
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -57,20 +60,37 @@ class UpdateDeviceController extends AbstractController
         $requestValidationErrors = $updateDeviceObjectBuilder->validateDeviceRequestObject($deviceUpdateRequestDTO);
 
         if (!empty($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($requestValidationErrors);
+            return $this->sendBadRequestJsonResponse($requestValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
         if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
             try {
                 $room = $roomRepository->findOneById($deviceUpdateRequestDTO->getDeviceRoom());
-            } catch (NonUniqueResultException | ORMException $e) {
+            } catch (NonUniqueResultException | ORMException) {
                 return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room')]);
             }
             if (!$room instanceof Room) {
-                $validationErrors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Room')];
+                return $this->sendBadRequestJsonResponse(['The id provided for room doesnt match any room we have'], 'Room not found');
             }
         }
-        $updateDeviceDTO = new UpdateDeviceDTO($deviceUpdateRequestDTO, $deviceToUpdate, $room ?? null);
+        if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
+            try {
+                $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceRoom());
+            } catch (NonUniqueResultException | ORMException) {
+                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room')]);
+            }
+            if (!$groupName instanceof GroupNames) {
+                return $this->sendBadRequestJsonResponse(['The id provided for groupname doesnt match any groupname we have'], 'Group name not found');
+            }
+        }
+
+        $updateDeviceDTO = new UpdateDeviceDTO(
+            $deviceUpdateRequestDTO,
+            $deviceToUpdate,
+            $room ?? null,
+            $groupName ?? null
+        );
+
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::UPDATE_DEVICE, $updateDeviceDTO);
         } catch (AccessDeniedException) {
@@ -79,11 +99,8 @@ class UpdateDeviceController extends AbstractController
 
         $deviceUpdateValidationErrors = $updateDeviceObjectBuilder->updateDeviceAndValidate($updateDeviceDTO);
 
-        if (!empty($validationErrors)) {
-            $deviceUpdateValidationErrors = array_merge($deviceUpdateValidationErrors, $validationErrors);
-        }
         if (!empty($deviceUpdateValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors);
+            return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
         $savedDevice = $updateDeviceObjectBuilder->saveNewDevice($deviceToUpdate);
@@ -100,6 +117,6 @@ class UpdateDeviceController extends AbstractController
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
+        return $this->sendSuccessfulJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

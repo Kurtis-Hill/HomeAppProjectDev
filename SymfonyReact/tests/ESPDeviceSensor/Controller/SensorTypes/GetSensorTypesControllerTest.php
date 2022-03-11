@@ -12,6 +12,7 @@ use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GetSensorTypesControllerTest extends WebTestCase
 {
@@ -73,11 +74,12 @@ class GetSensorTypesControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-//dd($requestResponse);
+
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
         self::assertCount(count(SensorType::ALL_SENSOR_TYPES), $payload);
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_all_data_base_entries_are_returned(): void
@@ -97,5 +99,6 @@ class GetSensorTypesControllerTest extends WebTestCase
         $payload = $responseData['payload'];
 
         self::assertCount(count($sensorTypes), $payload);
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 }

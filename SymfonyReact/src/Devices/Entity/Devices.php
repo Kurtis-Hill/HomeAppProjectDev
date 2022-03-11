@@ -53,7 +53,15 @@ class Devices implements UserInterface
     /**
      * @ORM\Column(name="password", type="text", length=100, nullable=false)
      */
-    #[Assert\NotBlank(message: 'Password should not be blank', groups: ['final-check'])]
+    #[
+        Assert\NotBlank(message: 'Password should not be blank', groups: ['final-check']),
+        Assert\Length(
+            min: 5,
+            max: 100,
+            minMessage: "Device name must be at least {{ limit }} characters long",
+            maxMessage: "Device name cannot be longer than {{ limit }} characters"
+        )
+    ]
     private string $password;
 
     /**

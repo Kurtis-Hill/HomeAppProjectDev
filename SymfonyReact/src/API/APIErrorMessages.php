@@ -25,4 +25,6 @@ class APIErrorMessages
     public const CONTACT_SYSTEM_ADMIN = '%s Contact your system admin';
 
     public const SERIALIZATION_FAILURE = '%s Serialization failure';
+
+    public const VALIDATION_ERRORS = 'Validation errors occurred';
 }

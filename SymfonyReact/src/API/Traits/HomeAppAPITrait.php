@@ -16,12 +16,12 @@ use Symfony\Component\Serializer\Serializer;
 trait HomeAppAPITrait
 {
     // 20x Successfull
-    public function sendSuccessfulJsonResponse(array $data = []): JsonResponse
+    public function sendSuccessfulJsonResponse(array $data = [], $title = 'Request Successful'): JsonResponse
     {
         if (!empty($data)) {
             return new JsonResponse(
                 [
-                    'title' => 'Request Successful',
+                    'title' => $title,
                     'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_OK
@@ -30,19 +30,19 @@ trait HomeAppAPITrait
 
         return new JsonResponse(
             [
-                'title' => 'Request Successful',
+                'title' => $title,
                 'payload' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_OK
         );
     }
 
-    public function sendSuccessfulUpdateJsonResponse(array $data = []): JsonResponse
+    public function sendSuccessfulUpdateJsonResponse(array $data = [], string $title = 'Request Successful'): JsonResponse
     {
         if (!empty($data)) {
             return new JsonResponse(
                 [
-                    'title' => 'Request Successful',
+                    'title' => $title,
                     'payload' => $data
                 ],
                 Response::HTTP_ACCEPTED
@@ -51,7 +51,7 @@ trait HomeAppAPITrait
 
         return new JsonResponse(
             [
-                'title' => 'Request Successful',
+                'title' => $title,
                 'payload' => 'No Response Message'
             ],
             Response::HTTP_ACCEPTED

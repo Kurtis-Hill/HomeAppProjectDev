@@ -173,7 +173,7 @@ class DeleteDeviceControllerTest extends WebTestCase
     private function setUserToken(string $name, string $password): string
     {
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             SecurityController::API_USER_LOGIN,
             [],
             [],

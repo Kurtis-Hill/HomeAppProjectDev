@@ -56,16 +56,16 @@ class DeviceVoter extends Voter
             $user,
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject(),
         );
-        if ($commonSuccess === false) {
+        if ($commonSuccess !== null) {
             return $commonSuccess;
         }
 
+        dd('sadf');
         $checkedRoom = $this->checkUserIsApartOfProposedRoom($user, $updateDeviceDTO->getProposedUpdatedRoom());
 
         if ($checkedRoom === false) {
             return false;
         }
-
         if (!in_array(
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
             $user->getGroupNameIds(),
@@ -84,7 +84,7 @@ class DeviceVoter extends Voter
             return false;
         }
 
-        return true;
+        return $commonSuccess;
     }
 
     private function cadDeleteDevice(UserInterface $user, Devices $devices): bool
@@ -113,6 +113,6 @@ class DeviceVoter extends Voter
             return false;
         }
 
-        return true;
+        return null;
     }
 }

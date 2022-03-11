@@ -4,6 +4,7 @@ namespace App\Devices\DTO;
 
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
 
@@ -14,16 +15,20 @@ class UpdateDeviceDTO
 
     private Devices $devices;
 
-    private ?Room $proposedUpdatedRoom;
+    private ?Room $proposedRoomToUpdateTo;
+
+    private ?GroupNames $proposedGroupNameToUpdateTo;
 
     public function __construct(
         DeviceUpdateRequestDTO $updateDeviceDTO,
         Devices $devices,
         ?Room $room,
+        ?GroupNames $groupName
     ) {
         $this->deviceUpdateRequestDTO = $updateDeviceDTO;
         $this->devices = $devices;
-        $this->proposedUpdatedRoom = $room;
+        $this->proposedRoomToUpdateTo = $room;
+        $this->proposedGroupNameToUpdateTo = $groupName;
     }
 
     public function getDeviceUpdateRequestDTO(): DeviceUpdateRequestDTO
@@ -38,6 +43,11 @@ class UpdateDeviceDTO
 
     public function getProposedUpdatedRoom(): ?Room
     {
-        return $this->proposedUpdatedRoom;
+        return $this->proposedRoomToUpdateTo;
+    }
+
+    public function getProposedGroupNameToUpdateTo(): ?GroupNames
+    {
+        return $this->proposedGroupNameToUpdateTo;
     }
 }
