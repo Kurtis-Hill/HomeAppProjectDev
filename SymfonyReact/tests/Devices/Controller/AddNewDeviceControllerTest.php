@@ -16,6 +16,7 @@ use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class AddNewDeviceControllerTest extends WebTestCase
 {
@@ -65,7 +66,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     private function setUserToken(string $name, string $password): string
     {
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             SecurityController::API_USER_LOGIN,
             [],
             [],
@@ -91,7 +92,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -120,7 +121,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $jsonData = json_encode($formData);
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -152,7 +153,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -175,7 +176,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -201,7 +202,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -217,7 +218,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_sending_malfomed_group_id_string(): void
+    public function test_adding_device_sending_malformed_group_id_string(): void
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -228,7 +229,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -254,7 +255,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -281,7 +282,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             $formData,
             [],
@@ -317,7 +318,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -364,7 +365,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -414,7 +415,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -444,7 +445,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -469,7 +470,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -493,7 +494,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             [],
             [],
@@ -516,7 +517,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $jsonData = json_encode($formData);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             SecurityController::API_DEVICE_LOGIN,
             [],
             [],

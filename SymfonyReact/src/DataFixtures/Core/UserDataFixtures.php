@@ -49,7 +49,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         return self::FIXTURE_ORDER;
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         // Admin User
         $adminGroupName = new GroupNames();

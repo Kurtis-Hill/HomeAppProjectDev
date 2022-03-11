@@ -16,7 +16,7 @@ class GroupNameMappingTableRepository extends ServiceEntityRepository
         parent::__construct($registry, GroupNameMapping::class);
     }
 
-    public function getAllGroupMappingEntitiesForUser(User $user)
+    public function getAllGroupMappingEntitiesForUser(User $user): array
     {
         $qb = $this->createQueryBuilder('gmt');
 
@@ -31,7 +31,7 @@ class GroupNameMappingTableRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findGroupsUserIsNotApartOf(array $groups)
+    public function findGroupsUserIsNotApartOf(array $groups): array
     {
         $qb = $this->createQueryBuilder('gmt');
 
