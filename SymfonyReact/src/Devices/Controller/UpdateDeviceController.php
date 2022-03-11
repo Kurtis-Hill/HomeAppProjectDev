@@ -32,7 +32,7 @@ class UpdateDeviceController extends AbstractController
         Route(
             path: '/update-device/{deviceNameID}',
             name: 'update-esp-device',
-            methods: [Request::METHOD_PUT]
+            methods: [Request::METHOD_PUT, Request::METHOD_PATCH]
         )
     ]
     public function updateDevice(
@@ -99,6 +99,7 @@ class UpdateDeviceController extends AbstractController
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
+
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
     }
 }
