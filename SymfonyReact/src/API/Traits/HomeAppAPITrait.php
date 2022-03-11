@@ -71,10 +71,6 @@ trait HomeAppAPITrait
         return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
     }
 
-    /**
-     * @param $data
-     * @return JsonResponse
-     */
     public function sendSuccessfulUpdatedResponse(string $data = null): Response
     {
         if ($data !== null) {
@@ -87,10 +83,6 @@ trait HomeAppAPITrait
         return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
     }
 
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
     public function sendCreatedResourceJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -112,10 +104,6 @@ trait HomeAppAPITrait
         );
     }
 
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
     public function sendPartialContentJsonResponse(array $errors = [], array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -151,10 +139,6 @@ trait HomeAppAPITrait
         );
     }
 
-    /**
-     * @param string|null $data
-     * @return Response
-     */
     public function sendPartialContentResponse(string $data = null): Response
     {
         if ($data !== null) {
@@ -189,10 +173,6 @@ trait HomeAppAPITrait
         return new JsonResponse(['title' => $title, 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
     }
 
-    /**
-     * @param array $errors
-     * @return JsonResponse
-     */
     public function sendNotFoundResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
@@ -215,7 +195,6 @@ trait HomeAppAPITrait
     }
 
     // 50x Server Error Response
-
     public function sendInternalServerErrorJsonResponse(array $data = []): JsonResponse
     {
         if (!empty($data)) {

@@ -7,6 +7,7 @@ use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\ESPDeviceSensor\DTO\Request\AddNewSensorRequestDTO;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
@@ -15,13 +16,15 @@ use App\ESPDeviceSensor\SensorDataServices\NewSensor\NewSensorCreationServiceInt
 use App\ESPDeviceSensor\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\ESPDeviceSensor\Voters\SensorVoter;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'new-sensor')]
 class AddNewSensorController extends AbstractController
@@ -38,21 +41,31 @@ class AddNewSensorController extends AbstractController
         CardCreationServiceInterface $cardCreationService,
         DeleteSensorService $deleteSensorService,
     ): JsonResponse {
+        $newSensorRequestDTO = new AddNewSensorRequestDTO();
+
         try {
-            $sensorData = json_decode(
+            $this->deserializeRequest(
                 $request->getContent(),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
+                AddNewSensorRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $newSensorRequestDTO]
             );
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['Request Format not supported']);
-        }
-        if (empty($sensorData['sensorTypeID'] || $sensorData['deviceNameID'])) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $device = $deviceRepository->findOneById($sensorData['deviceNameID']);
+        $requestValidationErrors = $newSensorCreationService->validateNewSensorRequestDTO($newSensorRequestDTO);
+
+        if (!empty($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($requestValidationErrors);
+        }
+
+        try {
+            $device = $deviceRepository->findOneById($newSensorRequestDTO->getDeviceNameID());
+        } catch (NonUniqueResultException | ORMException) {
+            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::CONTACT_SYSTEM_ADMIN, 'device query failed')]);
+        }
+
         if (!$device instanceof Devices) {
             return $this->sendBadRequestJsonResponse([
                 sprintf(
@@ -62,7 +75,7 @@ class AddNewSensorController extends AbstractController
             ]);
         }
         try {
-            $sensorType = $sensorTypeRepository->findOneById($sensorData['sensorTypeID']);
+            $sensorType = $sensorTypeRepository->findOneById($newSensorRequestDTO->getSensorTypeID());
         } catch (ORMException) {
             return $this->sendBadRequestJsonResponse([
                 sprintf(
@@ -81,7 +94,7 @@ class AddNewSensorController extends AbstractController
         }
 
         $newSensorDTO = new NewSensorDTO(
-            $sensorData['sensorName'],
+            $newSensorRequestDTO->getSensorName(),
             $sensorType,
             $device,
             $this->getUser()

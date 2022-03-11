@@ -2,6 +2,7 @@
 
 namespace App\Tests\User\Controller;
 
+use App\API\APIErrorMessages;
 use App\Authentication\Controller\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\User\Entity\GroupNames;
@@ -11,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class AddNewRoomControllerTest extends WebTestCase
 {
@@ -60,7 +62,6 @@ class AddNewRoomControllerTest extends WebTestCase
             $randomGroup = random_int(0, 1000);
 
             $groupName = $this->entityManager->getRepository(GroupNames::class)->findOneBy(['groupNameID' => $randomGroup]);
-
             if (!$groupName instanceof GroupNames) {
                 break;
             }
@@ -81,12 +82,12 @@ class AddNewRoomControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
-
+//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertEquals('Group name not found for id '.$randomGroup, $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(400, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_new_room_name_too_long(): void
@@ -111,7 +112,7 @@ class AddNewRoomControllerTest extends WebTestCase
 
         self::assertEquals('Room name cannot be longer than 20 characters', $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(400, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_new_room_name_too_short(): void
@@ -136,7 +137,7 @@ class AddNewRoomControllerTest extends WebTestCase
 
         self::assertEquals('Room name must be at least 2 characters long', $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(400, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_new_room_wrong_format(): void
@@ -152,15 +153,15 @@ class AddNewRoomControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertEquals('Request Format not supported', $responseData['errors'][0]);
+        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(400, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @dataProvider addNewRoomMissingDataProvider
      */
-    public function test_add_new_room_missing_data(?int $groupNameId, ?string $roomName): void
+    public function test_add_new_room_missing_data(?int $groupNameId, ?string $roomName, string $errorMessage): void
     {
         $formRequestData = [
             'roomName' => $roomName,
@@ -179,10 +180,10 @@ class AddNewRoomControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertEquals('Missing request data', $responseData['errors'][0]);
-        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(400, $this->client->getResponse()->getStatusCode());
+//dd($responseData);
+        self::assertEquals('Validation Errors Occurred', $responseData['title']);
+        self::assertEquals($errorMessage, $responseData['errors'][0]);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function addNewRoomMissingDataProvider(): Generator
@@ -190,10 +191,12 @@ class AddNewRoomControllerTest extends WebTestCase
         yield [
             'groupId' => 1,
             'roomName' => null,
+            'errorMessage' => 'roomName cannot be null'
         ];
         yield [
             'groupId' => null,
             'roomName' => 'Testroom',
+            'errorMessage' => 'groupId cannot be null'
         ];
     }
 

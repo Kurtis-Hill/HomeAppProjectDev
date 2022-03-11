@@ -14,12 +14,11 @@ final class Version20220303160823 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Initial database file to get the base HomeApp working';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
@@ -133,12 +132,6 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE migration_versions (version VARCHAR(14) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, executed_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', PRIMARY KEY(version)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
-        $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
-        );
-
         $this->addSql('CREATE TABLE outofrangeanalog (outofrangeID INT AUTO_INCREMENT NOT NULL, analogID INT NOT NULL, sensorReading DOUBLE PRECISION NOT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX sensorID (analogID), PRIMARY KEY(outofrangeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
@@ -204,7 +197,6 @@ final class Version20220303160823 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."

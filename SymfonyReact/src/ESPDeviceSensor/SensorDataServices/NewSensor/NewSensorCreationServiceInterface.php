@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
 use App\Devices\Entity\Devices;
+use App\ESPDeviceSensor\DTO\Request\AddNewSensorRequestDTO;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
@@ -11,6 +12,8 @@ use Doctrine\ORM\ORMException;
 
 interface NewSensorCreationServiceInterface
 {
+    public function validateNewSensorRequestDTO(AddNewSensorRequestDTO $addNewSensorRequestDTO): array;
+
     public function validateSensor(Sensor $sensor): array;
 
     public function createNewSensor(NewSensorDTO $newSensorDTO): Sensor;

@@ -3,6 +3,7 @@
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
 use App\API\Traits\FormProcessorTrait;
+use App\ESPDeviceSensor\DTO\Request\AddNewSensorRequestDTO;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
@@ -94,4 +95,10 @@ class NewSensorCreationFormService implements NewSensorCreationServiceInterface
             return false;
         }
     }
+
+    public function validateNewSensorRequestDTO(AddNewSensorRequestDTO $addNewSensorRequestDTO): array
+    {
+        // TODO: Implement validateNewSensorRequestDTO() method.
+    }
+
 }

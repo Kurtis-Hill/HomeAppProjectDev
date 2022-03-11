@@ -2,18 +2,18 @@
 
 namespace App\User\Services\RoomServices;
 
-use App\API\Traits\ObjectValidatorTrait;
+use App\Common\Traits\ValidatorProcessorTrait;
 use App\User\Entity\GroupNames;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AddNewRoomService implements AddNewRoomServiceInterface
 {
-    use ObjectValidatorTrait;
+    use ValidatorProcessorTrait;
 
     private RoomRepositoryInterface $roomRepository;
 
@@ -21,7 +21,6 @@ class AddNewRoomService implements AddNewRoomServiceInterface
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
-        GroupCheckServiceInterface $groupCheckService,
         ValidatorInterface $validator,
     ) {
         $this->roomRepository = $roomRepository;
@@ -31,6 +30,21 @@ class AddNewRoomService implements AddNewRoomServiceInterface
     public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): void
     {
         $this->checkForRoomDuplicates($addNewRoomDTO);
+    }
+
+    /**
+     * @throws DuplicateRoomException|ORMException
+     */
+    private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
+    {
+        $duplicateCheck = $this->roomRepository->findDuplicateRoom(
+            $addNewRoomDTO->getRoomName(),
+            $addNewRoomDTO->getGroupNameId()
+        );
+
+        if ($duplicateCheck instanceof Room) {
+            throw new DuplicateRoomException(sprintf(DuplicateRoomException::MESSAGE, $addNewRoomDTO->getRoomName()));
+        }
     }
 
     public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): Room
@@ -45,29 +59,14 @@ class AddNewRoomService implements AddNewRoomServiceInterface
 
     public function validateNewRoom(Room $newRoom): array
     {
-        $validationErrors = $this->validateObjectReturnErrorsArray($this->validator, $newRoom);
+        $validationErrors = $this->validator->validate($newRoom);
 
-        return $validationErrors ?? [];
+        return $this->getValidationErrorAsArray($validationErrors);
     }
 
     public function saveNewRoom(Room $room): void
     {
         $this->roomRepository->persist($room);
         $this->roomRepository->flush();
-    }
-
-    /**
-     * @throws DuplicateRoomException
-     */
-    private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
-    {
-        $duplicateCheck = $this->roomRepository->findDuplicateRoom(
-            $addNewRoomDTO->getRoomName(),
-            $addNewRoomDTO->getGroupNameId()
-        );
-
-        if ($duplicateCheck instanceof Room) {
-            throw new DuplicateRoomException(sprintf(DuplicateRoomException::MESSAGE, $addNewRoomDTO->getRoomName()));
-        }
     }
 }

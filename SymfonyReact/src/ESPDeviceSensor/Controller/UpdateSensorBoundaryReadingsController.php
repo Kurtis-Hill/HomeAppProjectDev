@@ -5,6 +5,8 @@ namespace App\ESPDeviceSensor\Controller;
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\ESPDeviceSensor\DTO\Request\UpdateSensorReadingBoundaryRequestDTO;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotExpectedException;
 use App\ESPDeviceSensor\Exceptions\ReadingTypeNotGivenException;
@@ -22,35 +24,43 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors/', name: 'boundary-controller')]
 class UpdateSensorBoundaryReadingsController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     #[Route('boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
     public function updateSensorReadingBoundary(
         Request $request,
         UpdateSensorBoundaryReadingsServiceInterface $updateSensorBoundaryReadingsService,
         SensorRepositoryInterface $sensorRepository,
+        ValidatorInterface $validator,
     ): Response {
+        $updateBoundaryReadingRequestDTO = new UpdateSensorReadingBoundaryRequestDTO();
+
         try {
-            $sensorBoundaryUpdateData = json_decode(
+            $this->deserializeRequest(
                 $request->getContent(),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
+                UpdateSensorReadingBoundaryRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $updateBoundaryReadingRequestDTO]
             );
-        } catch (JsonException) {
+        } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        if (empty($sensorBoundaryUpdateData['sensorData']) || !isset($sensorBoundaryUpdateData['sensorId']) || !is_numeric($sensorBoundaryUpdateData['sensorId'])) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
+        $validationErrors = $validator->validate($updateBoundaryReadingRequestDTO);
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
 
         try {
-            $sensorObject = $sensorRepository->findOneById($sensorBoundaryUpdateData['sensorId']);
+            $sensorObject = $sensorRepository->findOneById($updateBoundaryReadingRequestDTO->getSensorId());
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse(['Sensor query failed']);
         }
@@ -72,7 +82,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
         $sensorProcessingErrors = [];
         $successfulTypes = [];
-        foreach ($sensorBoundaryUpdateData['sensorData'] as $updateData) {
+        foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
             try {
                 if (!isset($updateData['readingType'])) {
                     throw new ReadingTypeNotGivenException(ReadingTypeNotGivenException::MESSAGE);
@@ -109,7 +119,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 | ReadingTypeNotExpectedException $e
             ) {
                 $sensorProcessingErrors[] = $e->getMessage();
-            } catch (NonUniqueResultException $e) {
+            } catch (NonUniqueResultException) {
                 $sensorProcessingErrors[] = sprintf(
                     APIErrorMessages::CONTACT_SYSTEM_ADMIN,
                     'None unique result found for sensor reading type query',
@@ -127,7 +137,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([$e->getMessage()]);
         }
 
-        if (count($successfulTypes) !== count($sensorBoundaryUpdateData['sensorData'])) {
+        if (count($successfulTypes) !== count($updateBoundaryReadingRequestDTO->getSensorData())) {
             return $this->sendMultiStatusJsonResponse(
                 $sensorProcessingErrors,
                 ['successfullyUpdated' => $successfulTypes],

@@ -5,9 +5,9 @@ namespace App\User\Controller;
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
-use App\Form\FormMessages;
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\User\DTO\RequestDTOs\AddNewRoomRequestDTO;
 use App\User\DTO\RoomDTOs\AddNewRoomDTO;
-use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
@@ -20,31 +20,45 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/')]
 class AddNewRoomController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     #[Route('add-user-room', name:'add-new-room', methods: [Request::METHOD_POST])]
     public function addNewRoom(
         Request $request,
         AddNewRoomServiceInterface $addNewRoomService,
         GroupCheckServiceInterface $groupCheckService,
-    ) : Response {
+        ValidatorInterface $validator,
+    ): Response {
+        $addNewRoomRequestDTO = new AddNewRoomRequestDTO();
         try {
-            $roomNameData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['Request Format not supported']);
+            $this->deserializeRequest(
+                $request->getContent(),
+                AddNewRoomRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $addNewRoomRequestDTO]
+            );
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        if ($roomNameData['roomName'] === null || $roomNameData['groupId'] === null) {
-            return $this->sendBadRequestJsonResponse(['Missing request data']);
+        $validationErrors = $validator->validate($addNewRoomRequestDTO);
+//dd($validationErrors, $addNewRoomRequestDTO);
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors), 'Validation Errors Occurred');
         }
-        $roomName = $roomNameData['roomName'];
-        $groupId = $roomNameData['groupId'];
+        $roomName = $addNewRoomRequestDTO->getRoomName();
+        $groupId = $addNewRoomRequestDTO->getGroupId();
         $addNewRoomDTO = new AddNewRoomDTO($roomName, $groupId);
 
+//dd('asd');
         try {
             $groupName = $groupCheckService->checkForGroupById($groupId);
         } catch (GroupNameNotFoundException $exception) {

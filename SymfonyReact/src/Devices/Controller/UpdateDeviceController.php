@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'update-user-devices')]
@@ -42,12 +43,16 @@ class UpdateDeviceController extends AbstractController
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
-        $this->deserializeRequest(
-            $request->getContent(),
-            DeviceUpdateRequestDTO::class,
-            'json',
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
-        );
+        try {
+            $this->deserializeRequest(
+                $request->getContent(),
+                DeviceUpdateRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
+            );
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        }
 
         $requestValidationErrors = $updateDeviceObjectBuilder->validateDeviceRequestObject($deviceUpdateRequestDTO);
 

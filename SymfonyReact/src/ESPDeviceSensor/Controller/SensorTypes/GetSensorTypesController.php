@@ -16,7 +16,6 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class GetSensorTypesController extends AbstractController
 {
     use HomeAppAPITrait;
-    use ValidatorProcessorTrait;
 
     #[Route('/all-sensor-types', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository): Response

@@ -773,11 +773,11 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals("Bad Request No Data Returned", $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals('Format not supported', $responseData['errors'][0]);
+        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['errors'][0]);
     }
 
     /**
-     * @dataProvider sendingEmptyDataSetsDataProvider
+     * @dataProvider sendingMissingDataSetsDataProvider
      */
     public function test_sending_empty_sensor_data(array $sensorDataToSend): void
     {
@@ -809,10 +809,11 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
+        self::assertEquals('sensorData cannot be empty', $responseData['errors'][0]);
+        self::assertEquals('sensorId cannot be null', $responseData['errors'][1]);
     }
 
-    public function sendingEmptyDataSetsDataProvider(): Generator
+    public function sendingMissingDataSetsDataProvider(): Generator
     {
         yield [
             'sensorData' => [

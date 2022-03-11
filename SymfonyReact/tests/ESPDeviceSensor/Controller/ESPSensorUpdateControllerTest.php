@@ -197,7 +197,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
             'sensorType' => SensorType::DALLAS_TEMPERATURE,
             'sensorData' => [],
             'title' => 'Bad Request No Data Returned',
-            'message' => 'you have not provided the correct information to update the sensor',
+            'message' => 'sensorData cannot be empty',
             'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 

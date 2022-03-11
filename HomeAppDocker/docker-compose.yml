@@ -77,7 +77,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
-        - ./rabbitmq//HomeAppRabbitMQ.json:/opt/definitions.json:ro
+#        - ./rabbitmq/HomeAppRabbitMQ.json:/opt/definitions.json:ro
     networks:
       - HomeAppProjectNetwork
 

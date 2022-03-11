@@ -2,8 +2,11 @@
 
 namespace App\ESPDeviceSensor\Controller;
 
+use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\ESPDeviceSensor\DTO\Request\SensorUpdateRequestDTO;
 use App\ESPDeviceSensor\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
 use App\ESPDeviceSensor\Entity\SensorType;
 use Exception;
@@ -13,12 +16,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
 #[Route(CommonURL::DEVICE_HOMEAPP_API_URL, name: 'device')]
 class ESPSensorUpdateController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     public const SENSOR_UPDATE_SUCCESS_MESSAGE = 'Sensor data accepted';
 
@@ -32,8 +39,27 @@ class ESPSensorUpdateController extends AbstractController
             Request::METHOD_POST
         ]
     )]
-    public function updateSensorsCurrentReading(Request $request): Response
+    public function updateSensorsCurrentReading(Request $request, ValidatorInterface $validator): Response
     {
+        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
+
+        try {
+            $this->deserializeRequest(
+                $request->getContent(),
+                SensorUpdateRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO]
+            );
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        }
+
+        $validationErrors = $validator->validate($sensorUpdateRequestDTO);
+
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+        }
+
         try {
             $requestData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {

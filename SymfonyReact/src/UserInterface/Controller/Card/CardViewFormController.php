@@ -5,9 +5,11 @@ namespace App\UserInterface\Controller\Card;
 use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
+use App\Common\Traits\ValidatorProcessorTrait;
 use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
 use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
+use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
@@ -24,11 +26,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-form-data/sensor-type/')]
 class CardViewFormController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     #[Route('card-sensor-form', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(
@@ -85,21 +91,27 @@ class CardViewFormController extends AbstractController
         Request $request,
         CardViewRepositoryInterface $cardViewRepository,
         CardViewUpdateServiceInterface $cardViewUpdateService,
-        UpdateSensorBoundaryReadingsServiceInterface $updateSensorBoundaryReadingsService,
+        ValidatorInterface $validator,
     ): JsonResponse {
+        $cardViewRequestDTO = new CardViewRequestDTO();
         try {
-            $cardData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
+            $this->deserializeRequest(
+                $request->getContent(),
+                CardViewRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $cardViewRequestDTO]
+            );
+        } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
-        $cardViewID = $cardData['cardViewID'];
 
-        if (empty($cardViewID) || !is_numeric($cardViewID)) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA]);
+        $validationErrors = $validator->validate($cardViewRequestDTO);
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
 
         try {
-            $cardViewObject = $cardViewRepository->findOneById($cardViewID);
+            $cardViewObject = $cardViewRepository->findOneById($cardViewRequestDTO->getCardViewID());
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
@@ -115,9 +127,9 @@ class CardViewFormController extends AbstractController
         }
 
         $standardCardUpdateDTO = new StandardCardUpdateDTO(
-            $cardData['cardColour'],
-            $cardData['cardIcon'],
-            $cardData['cardViewState'],
+            $cardViewRequestDTO->getCardColour(),
+            $cardViewRequestDTO->getCardIcon(),
+            $cardViewRequestDTO->getCardViewState(),
         );
 
         $validationErrors = $cardViewUpdateService->updateAllCardViewObjectProperties($standardCardUpdateDTO, $cardViewObject);

@@ -2,21 +2,20 @@
 
 namespace App\ESPDeviceSensor\SensorDataServices\NewSensor;
 
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\ESPDeviceSensor\DTO\Request\AddNewSensorRequestDTO;
 use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
 use App\ESPDeviceSensor\Entity\Sensor;
 use App\ESPDeviceSensor\Exceptions\DuplicateSensorException;
-use App\ESPDeviceSensor\Exceptions\SensorTypeException;
 use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorRepositoryInterface;
-use App\ESPDeviceSensor\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NewSensorCreationValidatorService implements NewSensorCreationServiceInterface
 {
+    use ValidatorProcessorTrait;
+
     private SensorRepositoryInterface $sensorRepository;
 
     private ValidatorInterface $validator;
@@ -27,6 +26,13 @@ class NewSensorCreationValidatorService implements NewSensorCreationServiceInter
     ) {
         $this->sensorRepository = $sensorRepository;
         $this->validator = $validator;
+    }
+
+    public function validateNewSensorRequestDTO(AddNewSensorRequestDTO $addNewSensorRequestDTO): array
+    {
+        $validationErrors = $this->validator->validate($addNewSensorRequestDTO);
+
+        return $this->getValidationErrorAsArray($validationErrors);
     }
 
     public function createNewSensor(NewSensorDTO $newSensorDTO): Sensor
@@ -81,7 +87,7 @@ class NewSensorCreationValidatorService implements NewSensorCreationServiceInter
             $this->sensorRepository->flush();
 
             return true;
-        } catch (ORMException) {
+        } catch (ORMException | OptimisticLockException) {
             return false;
         }
     }

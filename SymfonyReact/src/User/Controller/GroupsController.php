@@ -36,11 +36,8 @@ class GroupsController extends AbstractController
             );
         }
 
-        $normaliser = [new ObjectNormalizer()];
-        $serializer = new Serializer($normaliser);
-
         try {
-            $normalizedGroupNames = $serializer->normalize($groupNameDTOs);
+            $normalizedGroupNames = $this->normalizeResponse($groupNameDTOs);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['something went wrong preparing the data']);
         }

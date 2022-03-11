@@ -254,7 +254,7 @@ class CardViewFormControllerTest extends WebTestCase
     /**
      * @dataProvider malformedRequestDataProvider
      */
-    public function testSendingMalformedRequest(array $requestData): void
+    public function testSendingMalformedRequest(array $requestData, string $errorMessage): void
     {
         $requestData = json_encode($requestData);
         $this->client->request(
@@ -270,7 +270,7 @@ class CardViewFormControllerTest extends WebTestCase
         $responseData = json_decode($responseContent, true);
 
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(APIErrorMessages::MALFORMED_REQUEST_MISSING_DATA, $responseData['errors'][0]);
+        self::assertEquals($errorMessage, $responseData['errors'][0]);
     }
 
     public function malformedRequestDataProvider(): Generator
@@ -285,6 +285,7 @@ class CardViewFormControllerTest extends WebTestCase
                     "constRecord" =>  false
                 ]
             ],
+            'errorMessage' => 'cardViewID must be an int you have provided "notAInt"'
         ];
 
         yield [
@@ -297,6 +298,7 @@ class CardViewFormControllerTest extends WebTestCase
                     "constRecord" =>  false
                 ]
             ],
+            'errorMessage' => 'cardViewID cannot be null'
         ];
     }
 

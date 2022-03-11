@@ -55,6 +55,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
     }
 
+
     public function getSensorReadingTypeObject(int $sensorID, string $readingType): ?AllSensorReadingTypeInterface
     {
         $repository = $this->sensorReadingUpdateRepositoryFactory->getSensorReadingTypeRepository($readingType);
@@ -73,8 +74,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
         UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
         string $sensorTypeName
-    ): array
-    {
+    ): array {
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
             $this->updateStandardSensorBoundaryReading(
                 $sensorReadingTypeObject,
@@ -99,8 +99,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     private function updateStandardSensorBoundaryReading(
         StandardReadingSensorInterface $standardReadingSensor,
         UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void
-    {
+    ): void {
         if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
             $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
         }
@@ -115,8 +114,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     private function resetEntityBackToOriginalStatus(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
         UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void
-    {
+    ): void {
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
             $sensorReadingTypeObject->setHighReading($updateSensorBoundaryReadingsDTO->getCurrentHighReading());
             $sensorReadingTypeObject->setLowReading($updateSensorBoundaryReadingsDTO->getCurrentLowReading());
@@ -135,7 +133,8 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
             Humidity::class,
             Latitude::class,
             Analog::class
-        ])]
+        ]
+    )]
     public function findSensorTypeAndReadingTypes(
         JoinQueryDTO $readingTypeJoinQueryDTO,
         array $readingTypeObjectsJoinDTOs,

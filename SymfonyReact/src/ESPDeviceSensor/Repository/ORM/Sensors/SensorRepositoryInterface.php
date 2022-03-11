@@ -4,6 +4,7 @@ namespace App\ESPDeviceSensor\Repository\ORM\Sensors;
 
 use App\Devices\Entity\Devices;
 use App\ESPDeviceSensor\Entity\Sensor;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
 interface SensorRepositoryInterface
@@ -14,6 +15,7 @@ interface SensorRepositoryInterface
 
     /**
      * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function flush(): void;
 
