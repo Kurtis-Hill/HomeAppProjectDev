@@ -45,7 +45,8 @@ class SensorReadingTypeRepositoryFactory implements SensorReadingTypeRepositoryF
             default => throw new SensorReadingTypeRepositoryFactoryException(
                 sprintf(
                     SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND,
-                    $sensorType)
+                    $sensorType
+                )
             )
         };
     }

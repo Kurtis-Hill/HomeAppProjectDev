@@ -19,7 +19,7 @@ class GroupsController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('groups', name: 'get-user-groups')]
+    #[Route('all', name: 'get-user-groups')]
     public function getUsersGroups(Security $token): Response
     {
         $user = $token->getUser();
