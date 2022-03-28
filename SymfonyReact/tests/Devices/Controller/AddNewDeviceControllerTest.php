@@ -24,29 +24,14 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
-    /**
-     * @var string|null
-     */
     private ?string $userToken = null;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
-    /**
-     * @var KernelBrowser
-     */
     private KernelBrowser $client;
 
-    /**
-     * @var GroupNames
-     */
     private GroupNames $groupName;
 
-    /**
-     * @var Room
-     */
     private Room $room;
 
 
@@ -532,5 +517,12 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertArrayHasKey('token', $responseData);
         self::assertArrayHasKey('refreshToken', $responseData);
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $requestCode);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

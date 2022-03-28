@@ -19,7 +19,7 @@ class AuthenticationTests extends WebTestCase
 
     private KernelBrowser $client;
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
@@ -193,5 +193,12 @@ class AuthenticationTests extends WebTestCase
             'password' => UserDataFixtures::REGULAR_PASSWORD,
             'roles' => ['ROLE_USER'],
         ];
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

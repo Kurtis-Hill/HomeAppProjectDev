@@ -31,7 +31,7 @@ class AddNewSensorControllerTest extends WebTestCase
 {
     private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensors/add-new-sensor';
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -480,5 +480,12 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

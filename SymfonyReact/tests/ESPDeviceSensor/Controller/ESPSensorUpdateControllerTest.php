@@ -25,7 +25,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
 
     private KernelBrowser $client;
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     /**
      * @var string|null
@@ -233,5 +233,12 @@ class ESPSensorUpdateControllerTest extends WebTestCase
             'message' => 'Only part of the content could be processed',
             'responseCode' => Response::HTTP_MULTI_STATUS
         ];
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

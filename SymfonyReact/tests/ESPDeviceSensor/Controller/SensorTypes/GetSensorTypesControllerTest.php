@@ -18,7 +18,7 @@ class GetSensorTypesControllerTest extends WebTestCase
 {
     private const GET_SENSOR_TYPES_URL = '/HomeApp/api/user/sensor-types/all';
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -100,5 +100,12 @@ class GetSensorTypesControllerTest extends WebTestCase
 
         self::assertCount(count($sensorTypes), $payload);
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

@@ -39,7 +39,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
     private ?string $userToken = null;
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
@@ -956,5 +956,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

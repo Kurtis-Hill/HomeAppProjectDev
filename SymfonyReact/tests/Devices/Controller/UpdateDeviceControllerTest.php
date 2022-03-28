@@ -458,7 +458,6 @@ class UpdateDeviceControllerTest extends WebTestCase
             self::assertArrayHasKey('token', $responseData);
             self::assertArrayHasKey('refreshToken', $responseData);
             self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-
         } else {
             throw new RuntimeException('Device was not updated correctly');
         }
@@ -476,12 +475,6 @@ class UpdateDeviceControllerTest extends WebTestCase
     {
         yield [];
     }
-
-
-
-
-
-
 
 
 

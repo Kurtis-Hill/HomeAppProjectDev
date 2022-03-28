@@ -15,7 +15,7 @@ class GroupControllerTest extends WebTestCase
 {
     private const GET_USER_GROUPS_URL = '/HomeApp/api/user/user-groups/all';
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -71,5 +71,12 @@ class GroupControllerTest extends WebTestCase
         self::assertEquals(UserDataFixtures::USER_GROUP, $responseData['payload'][1]['groupName']);
         self::assertIsNumeric($responseData['payload'][0]['groupNameId']);
         self::assertIsNumeric($responseData['payload'][1]['groupNameId']);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

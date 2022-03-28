@@ -27,7 +27,7 @@ class CardViewFormControllerTest extends WebTestCase
 
     private ?string $userToken = null;
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -545,4 +545,10 @@ class CardViewFormControllerTest extends WebTestCase
         ];
     }
 
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
+    }
 }

@@ -20,7 +20,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     private ?string $userToken = null;
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -185,5 +185,12 @@ class DeleteDeviceControllerTest extends WebTestCase
         $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         return $requestData['token'];
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

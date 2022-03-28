@@ -22,7 +22,7 @@ class NavBarControllerTest extends WebTestCase
 
     private ?string $userToken = null;
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -111,5 +111,12 @@ class NavBarControllerTest extends WebTestCase
 
         self::assertEquals('Invalid JWT Token', $responseData['message']);
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

@@ -19,7 +19,7 @@ class AddNewRoomControllerTest extends WebTestCase
 {
     private const ADD_NEW_ROOM_URL = '/HomeApp/api/user/user-rooms/add-user-room';
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -274,4 +274,11 @@ class AddNewRoomControllerTest extends WebTestCase
         self::assertEquals(201, $this->client->getResponse()->getStatusCode());
     }
     // End Of AddNewRoomTests
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
+    }
 }
