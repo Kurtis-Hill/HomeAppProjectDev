@@ -49,7 +49,7 @@ services:
       - ./mariadb/50config/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
       - ../SSL:/etc/mysql/ssl
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u $MYSQL_USER --password=$$MYSQL_PASSWORD
+      test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$$MYSQL_PASSWORD
       interval: 5s
       retries: 5
     networks:
