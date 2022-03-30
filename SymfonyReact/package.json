@@ -4,7 +4,7 @@
         "@babel/plugin-proposal-class-properties": "^7.8.3",
         "@babel/preset-env": "^7.9.5",
         "@babel/preset-react": "^7.9.4",
-        "@symfony/webpack-encore": "^0.28.2",
+        "@symfony/webpack-encore": "^1.8.2",
         "@types/bootstrap": "^4.3.2",
         "babel-loader": "^8.1.0",
         "core-js": "^3.6.5",
@@ -39,5 +39,8 @@
         "sass-loader": "7.0.1",
         "startbootstrap-sb-admin-2": "^4.0.7",
         "webkit": "^0.0.0"
-    }
+    },
+    "name": "src",
+    "version": "1.0.0",
+    "main": "index.js"
 }
