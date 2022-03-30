@@ -20,7 +20,7 @@ if [ ${APP_ENV} = 'dev' ]; then
    echo "development environment setting up webpack dev server..."
    yarn install --dev --check-files
    yarn watch
-#    hot reload working but getting mixed content block
+#    hot reload working but getting mixed content block https needs to be set for webpack
 #    yarn encore dev-server --hot --host=apache --port ${HTTPS_APP_PORT}
 #    yarn encore dev-server --hot  --disable-host-check --port ${HTTPS_APP_PORT}
    echo "... encore dev server began"

@@ -20,25 +20,24 @@ first we need to create; client server and ca-certificates these can be signed o
 </ul>
 you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github  
 
-navigate to the root of the project directory and then change directory to HomeAppDocker.
-In this directory run <code>docker-compose up --build</code>
+<h2>Running the application</h2>
+Remember to set the APP_ENV variable in the HomeAppDocker/.env file to <b>prod|dev</b> depending on your intentions.
+Once your variables are set run
+<code>HomeAppDocker/docker-compose up --build</code>
+from the root project directory.
 
-This should have; created all the necessary containers, loaded up the initial database file with an admin user and also loaded the fixtures up for running tests.
+This should have; created all the necessary containers, loaded up the initial database file with an admin user and also loaded the fixtures up for running tests (if in dev mode).
 
-<h2>Before we can do anything</h2>
+<h2>Before using the application</h2>
 There is a compatibility issue in the JWT refresh token library we are using with Doctrine 3 since doctrine common 3.0, Doctrine\Common\Persistence\ObjectManager became Doctrine\Persistence\ObjectManager
-so to be able to get JWT tokens to authenticate you will need to adjust this manually in <code>SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Doctrine/RefreshTokenManager.php</code>
+so to be able to get JWT tokens to authenticate you will need to adjust this use statement manually in <code>SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Doctrine/RefreshTokenManager.php</code>
 Do this for production builds too.
 
 <h2>Running the front end</h2>
 to sign in to the front end the admin username is : 
-<code>
-admin
-</code>
+<code>admin</code>
 and the password is: 
-<code>
-admin1234
-</code>
+<code>admin1234</code>
 
 when adding a new sensor to the system and updating the current readings use the following format to adjust the reading:
 'readingType'Reading
