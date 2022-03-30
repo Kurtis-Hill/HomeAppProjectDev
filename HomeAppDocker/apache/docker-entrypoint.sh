@@ -11,6 +11,8 @@ fi
 if [ ${APP_ENV} = 'prod' ]; then
   echo "Removing xdebug config"
   rm -r /usr/local/etc/php/conf.d/xdebug.ini
+  echo "installing composer packages..."
+  composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
   echo "Executing database migrations production..."
   bin/console d:m:m --no-interaction
   echo "...Migrations complete"

@@ -19,7 +19,7 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
       - ../SymfonyReact:/var/www/html
-      - ../SSL:/etc/ssl:r,delegated
+      - ../SSL:/etc/ssl
       - ./apache/sites-enabled:/etc/apache2/sites-enabled
       - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
