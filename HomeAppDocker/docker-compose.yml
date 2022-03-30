@@ -61,11 +61,13 @@ services:
     container_name: '${APP_NAME}-yarn'
     working_dir: /home/node/app/src
     environment:
-      - 'APP_ENV=${APP_ENV}'
+      APP_ENV: ${APP_ENV}
     volumes:
-      - ../SymfonyReact:/home/node/app
+      - ../SymfonyReact:/home/node/app/src
     networks:
       - HomeAppProjectNetwork
+    depends_on:
+      - apache
 
   rabbitmq:
     image: rabbitmq:3-management-alpine

@@ -29,5 +29,8 @@ services:
       MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
 
   yarn:
+    environment:
+      APP_ENV: ${APP_ENV}
+      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
     ports:
       - '8080:8080'

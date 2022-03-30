@@ -1,26 +1,28 @@
 #!/bin/bash
 set -e
-
 if [ "${1#-}" != "$1" ]; then
         set -- node "$@"
 fi
 
 git config --global url."https://".insteadOf git://
 
-# yarn install
-
+## If having trouble building for production drop the yarn.lock file and remove node_modules
 if [ ${APP_ENV} = 'prod' ]; then
    echo "production environment installing yarn assets..."
-   npm run build
+   yarn install --production --frozen-lockfile --check-files
+#   yarn add --dev @symfony/webpack-encore
+   yarn add @symfony/webpack-encore
+   yarn build
    echo "...finished installing assets"
 fi
 
 if [ ${APP_ENV} = 'dev' ]; then
    echo "development environment setting up webpack dev server..."
-   yarn install --check-files      
-   yarn encore dev --watch
-   # hot reload working but getting mixed content block
-   # yarn encore dev-server --hot --host=apache --port ${HTTPS_APP_PORT}
+   yarn install --dev --check-files
+   yarn watch
+#    hot reload working but getting mixed content block
+#    yarn encore dev-server --hot --host=apache --port ${HTTPS_APP_PORT}
+#    yarn encore dev-server --hot  --disable-host-check --port ${HTTPS_APP_PORT}
    echo "... encore dev server began"
 fi
 
