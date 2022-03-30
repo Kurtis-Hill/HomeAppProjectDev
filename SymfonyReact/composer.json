@@ -57,12 +57,18 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/"
-        }
+        },
+        "exclude-from-classmap": [
+            "/src/Migrations/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "App\\Tests\\": "tests/"
-        }
+        },
+        "exclude-from-classmap": [
+            "/src/Migrations/"
+        ]
     },
     "replace": {
         "paragonie/random_compat": "2.*",
