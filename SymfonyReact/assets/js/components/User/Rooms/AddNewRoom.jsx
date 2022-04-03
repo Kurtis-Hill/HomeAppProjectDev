@@ -22,6 +22,7 @@ function AddNewRoom(props) {
                 const payload = userGroupsResponse.data.payload; 
                 setGroups(payload);
                 setSelectedGroup(payload[0].groupNameId);
+                setErrors([]);
             }
         } catch (error) {
             const statusCode = error.status;
