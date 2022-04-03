@@ -378,10 +378,10 @@ CREATE TABLE `outofrangetemp` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ReadingTypes`
+-- Table structure for table `readingtypes`
 --
 
-CREATE TABLE `ReadingTypes` (
+CREATE TABLE `readingtypes` (
   `readingTypeID` int(11) NOT NULL,
   `readingType` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -663,9 +663,9 @@ ALTER TABLE `outofrangetemp`
   ADD KEY `outofrangetemp_ibfk_1` (`tempID`);
 
 --
--- Indexes for table `ReadingTypes`
+-- Indexes for table `readingtypes`
 --
-ALTER TABLE `ReadingTypes`
+ALTER TABLE `readingtypes`
   ADD PRIMARY KEY (`readingTypeID`);
 
 --
@@ -852,9 +852,9 @@ ALTER TABLE `outofrangetemp`
   MODIFY `outofrangeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `ReadingTypes`
+-- AUTO_INCREMENT for table `readingtypes`
 --
-ALTER TABLE `ReadingTypes`
+ALTER TABLE `readingtypes`
   MODIFY `readingTypeID` int(11) NOT NULL AUTO_INCREMENT;
 
 --

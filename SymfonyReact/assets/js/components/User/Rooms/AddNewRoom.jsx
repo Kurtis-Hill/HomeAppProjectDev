@@ -17,7 +17,7 @@ function AddNewRoom(props) {
 
     const getUserGroups = async () => {
         try {
-            const userGroupsResponse = await axios.get(`${apiURL}user-groups/groups`, getAPIHeader());
+            const userGroupsResponse = await axios.get(`${apiURL}user-groups/all`, getAPIHeader());
             if (userGroupsResponse.data && Array.isArray(userGroupsResponse.data.payload)) {
                 const payload = userGroupsResponse.data.payload; 
                 setGroups(payload);

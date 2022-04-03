@@ -53,7 +53,7 @@ class CardController extends AbstractController
         $this->cardViewDTOCreationService = $cardViewDTOCreationService;
     }
 
-    #[Route('device-cards/${id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
+    #[Route('device-cards/{id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
     public function deviceCards(Devices $device, Request $request): JsonResponse
     {
         try {
@@ -93,7 +93,7 @@ class CardController extends AbstractController
 
     }
 
-    #[Route('room-cards/{$id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
+    #[Route('room-cards/{id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
     public function roomCards(Room $room, Request $request): Response
     {
         try {
