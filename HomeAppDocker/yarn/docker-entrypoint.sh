@@ -8,13 +8,16 @@ git config --global url."https://".insteadOf git://
 
 ## If having trouble building for production drop the yarn.lock file and remove node_modules
 if [ ${APP_ENV} = 'prod' ]; then
-   echo "production environment installing yarn assets..."
+   echo "production environment installing..."
    yarn install --production --frozen-lockfile --check-files
+   echo "setting network timeout for slower devices..."
    yarn config set network-timeout 600000 -g
 #   yarn add --dev @symfony/webpack-encore
    yarn add @symfony/webpack-encore
+   echo "building assets..."
    yarn build
-   echo "...finished installing assets"
+   echo "...finished building assets"
+   echo "yarn finished opertations"
 fi
 
 if [ ${APP_ENV} = 'dev' ]; then
