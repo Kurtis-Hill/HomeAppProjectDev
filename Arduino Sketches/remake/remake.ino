@@ -63,7 +63,7 @@ String token;
 String refreshToken;
 
 
-// Access ponint network bits
+// Access point network bits
 #define ACCESSPOINT_SSID "ESP8266-HomeApp-D-AP"
 #define ACCESSPOINT_PASSWORD "HomeApp1234"
 
