@@ -10,6 +10,7 @@ git config --global url."https://".insteadOf git://
 if [ ${APP_ENV} = 'prod' ]; then
    echo "production environment installing yarn assets..."
    yarn install --production --frozen-lockfile --check-files
+   yarn config set network-timeout 600000 -g
 #   yarn add --dev @symfony/webpack-encore
    yarn add @symfony/webpack-encore
    yarn build
