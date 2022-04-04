@@ -1,16 +1,18 @@
 #!/bin/sh
-#dont think i need this anymore
-sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
 
+# sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
+
+echo "Setting server name to ${APP_NAME}"
 echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/site.conf
 
-sleep 10
+sleep 20
 
 if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
 fi
 
 if [ ${APP_ENV} = 'prod' ]; then
+# dont need xdebug removal either
   echo "Removing xdebug config"
   rm -r /usr/local/etc/php/conf.d/xdebug.ini
   echo "installing composer packages..."
@@ -23,14 +25,17 @@ fi
 
 if [ ${APP_ENV} = 'dev' ]; then
 	echo "dev container build"
-	echo "Executing database migrations dev enviromennt..."
+	echo "Executing database migrations for test enviroment..."
 	bin/console d:m:m --no-interaction --env=test
-	echo "...Migrations complete"
+	echo "...Test migrations complete"
+	echo "Executing database migrations for local enviroment..."
+	bin/console d:m:m --no-interaction --env=local
+	echo "...Local migrations complete"
 
 	echo "Querying test database"
-	if php bin/console dbal:run-sql "select firstName from user where firstName = 'admin' limit 1" --env=test | grep -q 'array(0)'; then
+	if php bin/console dbal:run-sql "select firstName from user where firstName = 'user' limit 1" --env=test | grep -q 'array(0)'; then
 		echo "Test database empty loading fixtures..."
-   			 php bin/console doctrine:fixtures:load --no-interaction --env=test
+   		php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"
 	fi
 	echo "Test database checked"

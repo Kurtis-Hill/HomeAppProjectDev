@@ -23,7 +23,9 @@ COPY ./auth.json /root/.composer/auth.json
 
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
-COPY ./apache/sites-enabled /etc/apache2/sites-enabled
+COPY ./sites-enabled/site.conf /etc/apache2/sites-enabled/site.conf
+
+COPY ./php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
 
 RUN chmod 0444 -R /etc/ssl
 
