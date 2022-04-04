@@ -75,6 +75,8 @@ services:
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
         - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+    depends_on:
+      - apache
     networks:
       - HomeAppProjectNetwork
 

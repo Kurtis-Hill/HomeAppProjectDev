@@ -38,4 +38,4 @@ WORKDIR /var/www/html
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]
 
-# CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord"]
