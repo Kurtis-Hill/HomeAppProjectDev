@@ -83,7 +83,7 @@ services:
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
         # - ./rabbitmq/HomeAppRabbitMQ.json:/opt/definitions.json:ro
-        # - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - HomeAppProjectNetwork
 
