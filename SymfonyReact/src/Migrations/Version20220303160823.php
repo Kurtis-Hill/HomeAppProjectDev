@@ -24,7 +24,8 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE ReadingTypes (readingTypeID INT AUTO_INCREMENT NOT NULL, readingType VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, PRIMARY KEY(readingTypeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('DROP DATABASE IF EXISTS HomeApp');
+        $this->addSql('CREATE TABLE readingtypes (readingTypeID INT AUTO_INCREMENT NOT NULL, readingType VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, PRIMARY KEY(readingTypeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
@@ -193,6 +194,81 @@ final class Version20220303160823 extends AbstractMigration
         );
 
         $this->addSql('CREATE TABLE user (userID INT AUTO_INCREMENT NOT NULL, firstName VARCHAR(20) NOT NULL, lastName VARCHAR(20) NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, groupNameID INT DEFAULT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX GroupName (groupNameID), UNIQUE INDEX email (email), PRIMARY KEY(userID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+
+        $this->addSql('
+            INSERT INTO `cardcolour` 
+                (`colourID`, `colour`, `shade`) 
+            VALUES
+                (1, danger, red),
+                (2, success, green),
+                (3, warning, Yellow),
+                (4, primary, blue);
+        ');
+
+        $this->addSql('
+            INSERT INTO `cardstate` 
+                (`cardStateID`, `state`) 
+            VALUES
+                (3, DEVICE_ONLY),
+                (2, OFF),
+                (1, ON),
+                (4, ROOM_ONLY);
+        ');
+
+        $this->addSql('
+            INSERT INTO `groupname` 
+                (groupNameID, groupName) 
+            VALUES
+                (1, admin);
+        ');
+
+        $this->addSql('
+        INSERT INTO `groupnnamemapping` 
+            (`groupNameMappingID`, `userID`, `groupNameID`) 
+        VALUES
+            (1, 1, 1);
+        ');
+
+        $this->addSql('
+
+            INSERT INTO `icons` 
+                (`iconID`, `iconName`, `description`) 
+            VALUES
+                (1, air-freshener, Christmas tree),
+                (2, warehouse, warehouse),
+                (3, archway, archway),
+                (4, baby, baby),
+                (5, bath, `bath and shower`),
+                (6, bed, bed),
+                (7, cannabis, cannabis leaf),
+                (8, camera, camera),
+                (9, carrot, carrot),
+                (10, campground, tent),
+                (11, chart-pie, graph),
+                (12, crosshairs, crosshair),
+                (13, database, symbol),
+                (14, dog, doggie),
+                (15, dove, bird),
+                (16, download, download logo),
+                (17, fish, fishys),
+                (18, flask, science beaker),
+                (19, fort-awesome, castle),
+                (20, mobile-alt, mobile phone),
+                (21, php, php logo),
+                (22, Playstation, ps1 logo),
+                (23, power-off, shutdown logo),
+                (24, raspberry-pi, pi logo),
+                (25, xbox, xbox logo),
+                (26, skull-crossbones, skull and bones),
+                (27, smoking, smoking);
+        ');
+
+        $this->addSql('
+            INSERT INTO `user` 
+                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `groupNameID`, `createdAt`) 
+            VALUES
+                (1, admin, admin, admin, `[\"ROLE_ADMIN\"]`, /assets/pictures/users/guest.jpg, $argon2id$v=19$m=65536,t=4,p=1$7zx+pasSn547DYfLgO9MuQ$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw, NULL, 1, );        
+        ');
     }
 
     public function down(Schema $schema): void
@@ -202,7 +278,7 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('DROP TABLE ReadingTypes');
+        $this->addSql('DROP TABLE readingtypes');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."

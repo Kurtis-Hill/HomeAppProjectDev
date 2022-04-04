@@ -19,7 +19,7 @@ services:
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
-      - ./apache/sites-enabled:/etc/apache2/sites-enabled
+      # - ./apache/sites-enabled:/etc/apache2/sites-enabled
       - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
     depends_on:
@@ -57,8 +57,8 @@ services:
   yarn:
     build:
       context: ./yarn
+      dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-yarn'
-    working_dir: /home/node/app/src
     environment:
       APP_ENV: ${APP_ENV}
     volumes:
@@ -69,17 +69,20 @@ services:
       - apache
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    build:
+      context: ./rabbitmq
+      dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-rabbitmq'
     ports:
       - '${RABBIT_MQ_INTERFACE_PORT}:15672'
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      # RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: rabbitmq_management load_definitions "/tmp/rabbit.definitions.json"
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
         # - ./rabbitmq/HomeAppRabbitMQ.json:/opt/definitions.json:ro
-        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        # - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - HomeAppProjectNetwork
 

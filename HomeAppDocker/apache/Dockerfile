@@ -4,7 +4,13 @@ RUN a2enmod rewrite
 
 RUN mkdir /etc/logs
 
-RUN apt-get update && apt-get install -y git unzip zip nano iputils-ping
+RUN apt-get update && apt-get install -y \
+git \
+unzip \
+zip \
+nano \
+iputils-ping \
+supervisor
 
 RUN pecl install xdebug
 
@@ -16,6 +22,8 @@ COPY ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY ./auth.json /root/.composer/auth.json
 
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
+
+COPY ./apache/sites-enabled /etc/apache2/sites-enabled
 
 RUN chmod 0444 -R /etc/ssl
 
