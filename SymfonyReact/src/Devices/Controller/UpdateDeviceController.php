@@ -75,10 +75,10 @@ class UpdateDeviceController extends AbstractController
         }
         if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
             try {
-                $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceRoom());
+                $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceGroup());
             } catch (NonUniqueResultException | ORMException) {
-                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room')]);
-            }
+                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Group name')]);
+            }        
             if (!$groupName instanceof GroupNames) {
                 return $this->sendBadRequestJsonResponse(['The id provided for groupname doesnt match any groupname we have'], 'Group name not found');
             }

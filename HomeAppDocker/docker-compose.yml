@@ -19,10 +19,7 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
-      - ../SSL:/etc/ssl
-      # - ./apache/sites-enabled:/etc/apache2/sites-enabled
-      # - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
-      # - ./apache/logs:/etc/logs
+      - ../SSL:/etc/ssl:ro
     depends_on:
       maria-db:
         condition: service_healthy
@@ -42,12 +39,8 @@ services:
       MYSQL_PASSWORD: ${MARIADB_PASSWORD}
       MYSQL_DATABASE: ${MARIADB_DATABASE}
     volumes:
-      - ./mariadb/db_data:/var/lib/mysql
-      # - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
-      # - ./mariadb/setup.sql:/docker-entrypoint-initdb.d/init.sql:rw,delegated
-      # - ./mariadb/50config/50-client.cnf:/etc/mysql/mariadb.conf.d/50-client.cnf
-      # - ./mariadb/50config/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
-      - ../SSL:/etc/mysql/ssl
+      - ./mariadb/db_data:/var/lib/mysql:rw,delegated
+      - ../SSL:/etc/mysql/ssl:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD
       interval: 5s
@@ -63,7 +56,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
     volumes:
-      - ../SymfonyReact:/home/node/app/src
+      - ../SymfonyReact:/home/node/app/src:cached
     networks:
       - HomeAppProjectNetwork
     depends_on:
@@ -79,10 +72,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-      # RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: rabbitmq_management load_definitions "/tmp/rabbit.definitions.json"
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
-        # - ./rabbitmq/HomeAppRabbitMQ.json:/opt/definitions.json:ro
         - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - HomeAppProjectNetwork

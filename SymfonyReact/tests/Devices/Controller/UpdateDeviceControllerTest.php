@@ -40,7 +40,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testSendingWrongTypesToUpdateDataProvider
+     * @dataProvider sendingWrongTypesToUpdateDataProvider
      */
     public function testSendingWrongTypesToUpdate(
         mixed $deviceName,
@@ -81,7 +81,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals(APIErrorMessages::VALIDATION_ERRORS, $responseData['title']);
     }
 
-    public function testSendingWrongTypesToUpdateDataProvider(): Generator
+    public function sendingWrongTypesToUpdateDataProvider(): Generator
     {
         yield [
             'deviceName' => [],
@@ -295,6 +295,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['deviceName' => ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']]
         );
 
+        // dd($user->getGroupNameID()->getGroupNameID());
         $requestData = [
             'deviceName' => $deviceName,
             'password' => 'NewPassword',

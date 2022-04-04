@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 //@TODO change to sensortype
 /**
- * @ORM\Table(name="ReadingTypes")
+ * @ORM\Table(name="readingtypes")
  * @ORM\Entity(repositoryClass="App\ESPDeviceSensor\Repository\ORM\SensorReadingType\ReadingTypeRepository")
  */
 class ReadingTypes

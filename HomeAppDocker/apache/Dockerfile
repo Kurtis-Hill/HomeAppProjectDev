@@ -37,3 +37,5 @@ RUN a2enmod ssl
 WORKDIR /var/www/html
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]
+
+# CMD ["/usr/bin/supervisord"]
