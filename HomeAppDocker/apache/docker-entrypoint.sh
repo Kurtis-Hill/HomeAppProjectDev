@@ -1,11 +1,7 @@
 #!/bin/sh
 
-# sed -E '/xdebug\.remote_host=.+/d' /usr/local/etc/php/conf.d/xdebug.ini > /usr/local/etc/php/conf.d/xdebug.ini.tmp && mv /usr/local/etc/php/conf.d/xdebug.ini.tmp /usr/local/etc/php/conf.d/xdebug.ini
-
 echo "Setting server name to ${APP_NAME}"
 echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/site.conf
-
-sleep 20
 
 if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"
@@ -47,5 +43,9 @@ fi
 if [ ! -f /etc/logs/user-input-errors.log ]; then
     touch /etc/logs/user-input-errors.log
 fi
+
+echo "Starting supervisor..."
+supervisord -n&
+echo "Supervisor Started..."
 
 exec /usr/local/bin/docker-php-entrypoint "$@"

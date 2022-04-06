@@ -117,7 +117,7 @@ class CardContextProvider extends Component {
                     });
                 }
                 else {
-                  //  window.location.replace('/HomeApp/logout');
+                   window.location.replace('/HomeApp/logout');
                 }
             }
         }
@@ -174,10 +174,7 @@ class CardContextProvider extends Component {
                 sensorData,
             }
         });
-
-        console.log('modal constent22', this.modalContent);
     }
-
 
     toggleModal = () => {
         this.setState({modalContent: emptyModalContent, modalShow: !this.state.modalShow});
@@ -256,67 +253,56 @@ class CardContextProvider extends Component {
         }
 
         try {
-            const formSubmissionResult = await axios.put(`${apiURL}'card-form-data/update/${this.state.modalContent.cardViewID}`, cardFormData, getAPIHeader());
-
-            const boundaryFormSubmissionResult = await axios.put(`${apiURL}sensor/${this.state.modalContent.sensorId}/boundary-update`, sensorBoundaryUpdateData, getAPIHeader());
-            if (formSubmissionResult.status === 202 && boundaryFormSubmissionResult.status === 202) {
+            const cardRequestResponse = await axios.put(`${apiURL}card-form-data/update/${this.state.modalContent.cardViewID}`, cardFormData, getAPIHeader());
+            const sensorReadingUpdateResponse = await axios.put(`${apiURL}sensor/${this.state.modalContent.sensorId}/boundary-update`, sensorBoundaryUpdateData, getAPIHeader());
+            
+            if (cardRequestResponse.status === 202 && sensorReadingUpdateResponse.status === 202) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>
                     this.toggleModal(), 1500
                 );
-            }
-            if (formSubmissionResult.status === 202 && boundaryFormSubmissionResult.status === 207) {
-                console.log("correct multi response", boundaryFormSubmissionResult.data);
-                const badRequestErrors = !boundaryFormSubmissionResult.data.errors
-                ? ['something went wrong']
-                : boundaryFormSubmissionResult.data.errors;
+            } else {            
+                const sensorBoundaryRequestErrors = Array.isArray(sensorReadingUpdateResponse.data.errors)
+                ? sensorReadingUpdateResponse.data.errors
+                : null;
 
-                console.log("after bad reqquest set")
+                const sensorBoundaryRequestSuccess = Array.isArray(sensorReadingUpdateResponse.data.payload)
+                ? sensorReadingUpdateResponse.data.payload
+                : null;
 
-                const successRequestAttempts = !boundaryFormSubmissionResult.data.payload
-                ? []
-                : boundaryFormSubmissionResult.data.payload;
-                
 
-                console.log("before set state")
+                const cardRequestErrors = Array.isArray(cardRequestResponse.data.errors)
+                ? cardRequestResponse.data.errors
+                : null;
+
+                const cardRequestSuccess = Array.isArray(cardRequestResponse.data.payload)
+                ? cardRequestResponse.data.payload
+                : null;
+
                 this.setState({modalStatus:{
                     ...this.state.modalStatus,
                     modalSubmit: false,
                     submitSuccess: false,
-                    errors: badRequestErrors,
-                    success: successRequestAttempts.successfullyUpdated
-                    }})
-                    console.log('modal states', successRequestAttempts, this.state.modalStatus.success)
-            } else {
-                this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: ["unexpected response, check too see if the values are updated"]}});
+                    errors: sensorBoundaryRequestErrors.concat(cardRequestErrors),
+                    success: sensorBoundaryRequestSuccess.concat(cardRequestSuccess),
+                }})
             }
         } catch(error) {
-            console.log(error.response, "error catch");
-
             const badRequestErrors = !Array.isArray(error.response.data.errors) || !error.response.data.errors.length > 1
-                ? ['something went wrong']
+                ? ['Something went wrong, unexpected response']
                 : error.response.data.errors;
 
-            if (error.response.status === 400) {
-                this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, errors: badRequestErrors}});            
-            }
-
-            if (error.response.status === 404) {
-                this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false,  errors: badRequestErrors}});
-                this.toggleModal();
-                alert('Route missing, please contact the system administrator');
-            }
-
-            if (error.response.status === 500) {
-                if (error.response.data === undefined) {
-                    alert('Please logout something went wrong');
-                } else {
-                    this.setState({modalStatus:{...this.state.modalStatus,  modalSubmit: false, errors: badRequestErrors}});
+            this.setState({
+                modalStatus:{
+                    ...this.state.modalStatus,
+                    modalSubmit: false,
+                    errors: badRequestErrors
                 }
-            }
-            this.setState({modalStatus:{...this.state.modalStatus, modalLoading: false, modalSubmit: false}});
+            });
+            if (error.response.status === 500) {
+                alert('Please logout something went wrong');
+            }    
         }
-        this.setState({modalStatus:{...this.state.modalStatus, modalLoading: false, modalSubmit: false}});
     }
 
     render() {
