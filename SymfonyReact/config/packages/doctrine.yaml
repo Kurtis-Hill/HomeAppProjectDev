@@ -30,7 +30,7 @@ doctrine:
       product_sms_filter: App\Doctrine\ProductSmsFilter
       product_category_filter: App\Doctrine\ProductCategoryFilter
     mappings:
-      ESPSensorBundle:
+      ESPSensor:
         type: annotation
         dir: '%kernel.project_dir%/src/ESPDeviceSensor/Entity'
         alias: ESPSensor
