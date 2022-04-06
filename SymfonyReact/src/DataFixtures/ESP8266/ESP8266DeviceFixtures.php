@@ -74,12 +74,12 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return self::FIXTURES_ORDER;
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         //these devices are for permission checks one device for each scenario
         //Create a Admin Owned Device Admin Group Admin Room

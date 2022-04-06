@@ -230,8 +230,9 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSalt()
+    public function getSalt(): ?string
     {
+        return null;
     }
 
     public function getUsername(): string
@@ -265,5 +266,10 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     public function setExternalIpAddress(?string $externalIpAddress): void
     {
         $this->externalIpAddress = $externalIpAddress;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->deviceNameID;
     }
 }

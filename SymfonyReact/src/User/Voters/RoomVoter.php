@@ -14,7 +14,7 @@ class RoomVoter extends Voter
 
     public const VIEW_USER_ROOMS = 'view-users-rooms';
 
-    protected function supports(string $attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         if (!in_array($attribute, [self::ADD_NEW_ROOM, self::VIEW_USER_ROOMS], true)) {
             return false;
