@@ -23,6 +23,8 @@ services:
     depends_on:
       maria-db:
         condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
     networks:
       - HomeAppProjectNetwork
 
