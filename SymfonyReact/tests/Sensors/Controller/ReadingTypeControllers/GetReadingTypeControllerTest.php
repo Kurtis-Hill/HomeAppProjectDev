@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\ESPDeviceSensor\Controller\ReadingTypeControllers;
+namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
 
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class GetReadingTypeControllerTest extends WebTestCase
 {
-    private const GET_READING_TYPES_URL = '/HomeApp/api/user/sensor-types/all';
+    private const GET_READING_TYPES_URL = '/HomeApp/api/user/reading-types/all';
 
     private ?EntityManagerInterface $entityManager;
 
