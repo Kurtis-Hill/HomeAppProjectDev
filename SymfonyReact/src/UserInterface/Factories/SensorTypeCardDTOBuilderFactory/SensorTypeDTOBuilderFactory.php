@@ -2,10 +2,10 @@
 
 namespace App\UserInterface\Factories\SensorTypeCardDTOBuilderFactory;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Bmp;
-use App\ESPDeviceSensor\Entity\SensorTypes\Dallas;
-use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
-use App\ESPDeviceSensor\Entity\SensorTypes\Soil;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Soil;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\BmpCardSensorDataDTOBuilder;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\CardSensorDataDTOBuilderInterface;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\DallasSensorDataCardDTOBuilder;

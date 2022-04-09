@@ -3,8 +3,8 @@
 namespace App\User\Services\RoomServices;
 
 use App\Common\Traits\ValidatorProcessorTrait;
+use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\GroupNames;
-use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\RoomRepositoryInterface;

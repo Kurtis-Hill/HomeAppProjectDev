@@ -2,8 +2,8 @@
 
 namespace App\Tests\User\Controller;
 
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\DataFixtures\Core\UserDataFixtures;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardCreation;
 
-use App\ESPDeviceSensor\Entity\Sensor;
+use App\Sensors\Entity\Sensor;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;

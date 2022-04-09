@@ -2,9 +2,9 @@
 
 namespace App\Tests;
 
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;

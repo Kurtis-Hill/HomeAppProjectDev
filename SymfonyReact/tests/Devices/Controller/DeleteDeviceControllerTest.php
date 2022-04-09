@@ -2,9 +2,9 @@
 
 namespace App\Tests\Devices\Controller;
 
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
-use App\DataFixtures\Core\UserDataFixtures;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;

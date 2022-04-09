@@ -4,8 +4,8 @@ namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\Common\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\Entity\Sensor;
-use App\ESPDeviceSensor\Entity\SensorType;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorType;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;

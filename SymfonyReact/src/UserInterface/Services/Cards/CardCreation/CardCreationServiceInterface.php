@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardCreation;
 
-use App\ESPDeviceSensor\Entity\Sensor;
+use App\Sensors\Entity\Sensor;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 interface CardCreationServiceInterface

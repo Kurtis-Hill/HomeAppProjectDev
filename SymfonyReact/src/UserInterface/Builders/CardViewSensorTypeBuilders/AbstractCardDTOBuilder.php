@@ -2,16 +2,16 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\ESPDeviceSensor\Entity\ReadingTypes\Analog;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Humidity;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Latitude;
-use App\ESPDeviceSensor\Entity\ReadingTypes\Temperature;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
 use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\StandardSensorTypeBoundaryViewFormDTO;
 use DateTime;

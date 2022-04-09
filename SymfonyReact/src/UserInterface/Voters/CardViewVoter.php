@@ -3,7 +3,7 @@
 namespace App\UserInterface\Voters;
 
 use App\Devices\Entity\Devices;
-use App\ESPDeviceSensor\DTO\Sensor\NewSensorDTO;
+use App\Sensors\DTO\Sensor\NewSensorDTO;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardView;

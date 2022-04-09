@@ -109,7 +109,7 @@ class CardDataControllerTest extends WebTestCase
 ////    dd($cardData['sensorName']);
 ////}
 //            foreach ($cardData['sensorData'] as $sensorData) {
-//                $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
+//                $readingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //                if ($readingTypeObject instanceof StandardReadingSensorInterface) {
 //                    self::assertEquals($readingTypeObject->getHighReading(), $sensorData['highReading']);
@@ -167,7 +167,7 @@ class CardDataControllerTest extends WebTestCase
 //            $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //            foreach ($cardData['sensorData'] as $sensorData) {
-//                $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
+//                $readingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //                if ($readingTypeObject instanceof StandardReadingSensorInterface) {
 //                    self::assertEquals($readingTypeObject->getHighReading(), $sensorData['highReading']);
@@ -276,7 +276,7 @@ class CardDataControllerTest extends WebTestCase
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 //
 //        foreach ($responseData['sensorData'] as $sensorData) {
-//            $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
+//            $readingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //            if ($readingTypeObject instanceof StandardReadingSensorInterface) {
 //                self::assertEquals($readingTypeObject->getHighReading(), $sensorData['highReading']);
@@ -328,7 +328,7 @@ class CardDataControllerTest extends WebTestCase
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 //
 //        foreach ($responseData['sensorData'] as $sensorData) {
-//            $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
+//            $readingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //            if ($readingTypeObject instanceof StandardReadingSensorInterface) {
 //                self::assertEquals($readingTypeObject->getHighReading(), $sensorData['highReading']);
@@ -379,7 +379,7 @@ class CardDataControllerTest extends WebTestCase
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 //
 //        foreach ($responseData['sensorData'] as $sensorData) {
-//            $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
+//            $readingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //            if ($readingTypeObject instanceof StandardReadingSensorInterface) {
 //                self::assertEquals($readingTypeObject->getHighReading(), $sensorData['highReading']);
@@ -430,7 +430,7 @@ class CardDataControllerTest extends WebTestCase
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 //
 //        foreach ($responseData['sensorData'] as $sensorData) {
-//            $readingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
+//            $readingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\ReadingTypes\\' . ucfirst($sensorData['sensorType']))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //            if ($readingTypeObject instanceof StandardReadingSensorInterface) {
 //                self::assertEquals($readingTypeObject->getHighReading(), $sensorData['highReading']);
@@ -562,7 +562,7 @@ class CardDataControllerTest extends WebTestCase
 //            'cardViewState' => $newState,
 //        ];
 //
-//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
 //        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
@@ -610,7 +610,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
@@ -697,7 +697,7 @@ class CardDataControllerTest extends WebTestCase
 //            'cardViewState' => $newState,
 //        ];
 //
-//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
 //        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
@@ -745,7 +745,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
@@ -833,7 +833,7 @@ class CardDataControllerTest extends WebTestCase
 //            'cardViewState' => $newState,
 //        ];
 //
-//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
 //        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
@@ -881,7 +881,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
@@ -968,7 +968,7 @@ class CardDataControllerTest extends WebTestCase
 //            'cardViewState' => $newState,
 //        ];
 //
-//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $sensorName = $sensorReadingTypeObject->getSensorObject()->getSensorName();
 //        if ($sensorReadingTypeObject instanceof TemperatureSensorTypeInterface) {
@@ -1016,7 +1016,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorReadingTypeAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . ucfirst($sensorType))->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $cardViewObjectAfter = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
@@ -1101,7 +1101,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-//        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $humidityObject = $sensorTypeObject->getHumidObject();
 //        $latitudeObject = $sensorTypeObject->getLatitudeObject();
 //
@@ -1135,7 +1135,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -1246,7 +1246,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -1325,7 +1325,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-//        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $humidityObject = $sensorTypeObject->getHumidObject();
 //
 //        $highReading = 85;
@@ -1354,7 +1354,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -1439,7 +1439,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-////        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+////        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //
 //        $highReading = 20;
 //        $lowReading = 30;
@@ -1467,7 +1467,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -1532,7 +1532,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-//        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $temperatureObject = $sensorTypeObject->getTempObject();
 //        $latitudeObject = $sensorTypeObject->getLatitudeObject();
 //
@@ -1566,7 +1566,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -1646,7 +1646,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-//        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $temperatureObject = $sensorTypeObject->getTempObject();
 //
 //        $highReading = 110;
@@ -1675,7 +1675,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -1750,7 +1750,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-//        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $temperatureObject = $sensorTypeObject->getTempObject();
 //
 //        $highReading = 30;
@@ -1779,7 +1779,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
 //
@@ -1841,7 +1841,7 @@ class CardDataControllerTest extends WebTestCase
 //            }
 //        }
 //
-//        $sensorTypeObject = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObject = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $temperatureObject = $sensorTypeObject->getTempObject();
 //        $humidObject = $sensorTypeObject->getHumidObject();
 //
@@ -1875,7 +1875,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
 //
@@ -1969,7 +1969,7 @@ class CardDataControllerTest extends WebTestCase
 //            ['CONTENT_TYPE' => 'application/x-www-form-urlencoded', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
 //        );
 //
-//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\ESPDeviceSensor\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
+//        $sensorTypeObjectAfter = $this->entityManager->getRepository('App\Sensors\Entity\GetSensorTypesController\\' . $sensorType)->findOneBy(['sensorNameID' => $sensorObject]);
 //        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['userID' => $this->testUser, 'sensorNameID' => $sensorObject]);
 //        $responseData = json_decode($this->client->getResponse()->getContent(), true);
 //

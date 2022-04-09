@@ -4,11 +4,11 @@ namespace App\Tests\Devices\Controller;
 
 use App\API\APIErrorMessages;
 use App\API\HTTPStatusCodes;
+use App\AppConfig\DataFixtures\Core\RoomFixtures;
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
-use App\DataFixtures\Core\RoomFixtures;
-use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;

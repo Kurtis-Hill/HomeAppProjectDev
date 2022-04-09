@@ -2,8 +2,8 @@
 
 namespace App\User\Services\RoomServices;
 
+use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\GroupNames;
-use App\User\DTO\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
