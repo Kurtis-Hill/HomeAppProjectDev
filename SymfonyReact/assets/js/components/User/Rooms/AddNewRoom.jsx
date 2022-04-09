@@ -96,7 +96,7 @@ function AddNewRoom(props) {
                         <div className='success-container'>
                             <div className='form-modal-success-box'>
                                 <ol>
-                                    <li style={{"listStyle":"none"}}><h5>New room has been added</h5></li>
+                                    <li style={{"listStyle":"none", "color": "white"}}><h5>New room has been added</h5></li>
                                 </ol>
                             </div>
                         </div>  

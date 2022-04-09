@@ -28,10 +28,13 @@ function Login(props) {
                 setError('Login check response error')
             }
             setLoading(false);
+            console.log("ERROR")
         } catch (error) {
+            const errorResponse = error.response;
             setLoading(false);
-            if (error.status === 401) {
-                setError('Incorrect credentials');
+            console.log(error, error.status)
+            if (errorResponse.status === 401) {
+                setError(errorResponse.data.message);
             } else {
                 setError('Something went wrong');
             }

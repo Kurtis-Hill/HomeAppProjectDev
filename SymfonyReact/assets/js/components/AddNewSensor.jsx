@@ -56,8 +56,8 @@ function AddNewSensor(props) {
         const deviceName = new URLSearchParams(window.location.search).get('device-id');
 
         const jsonRequestData = {
-            'deviceNameID' : deviceName,
-            'sensorTypeID' : selectedSensorTypes,
+            'deviceNameID' : parseInt(deviceName),
+            'sensorTypeID' : parseInt(selectedSensorTypes),
             'sensorName' : sensorName.value,
         }
 

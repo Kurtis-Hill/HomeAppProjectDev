@@ -21,6 +21,7 @@ class GetSensorTypesController extends AbstractController
     {
         $sensorTypes = $sensorTypeRepository->findAll();
 
+//        dd($sensorTypes, $sensorTypeRepository->findOneById(1));
         try {
             $normalisedResponse = $this->normalizeResponse($sensorTypes);
         } catch (ExceptionInterface) {
