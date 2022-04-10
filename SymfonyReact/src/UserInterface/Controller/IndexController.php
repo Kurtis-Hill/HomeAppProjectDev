@@ -11,17 +11,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 #[Route('/HomeApp/WebApp', name: 'home')]
 class IndexController extends AbstractController
 {
-    /**
-     * @param Request $request
-     * @param CsrfTokenManagerInterface $csrfTokenManager
-     * @param $route
-     * @return Response
-     */
     #[Route('/{route}', name: 'spa-view', methods: [Request::METHOD_GET])]
-    public function indexAction(Request $request, CsrfTokenManagerInterface $csrfTokenManager, $route): Response
+    public function indexAction(Request $request, string $route): Response
     {
-        $token = $csrfTokenManager->getToken('authenticate')->getValue();
-
-        return $this->render('index/index.html.twig', ['csrfToken' => $token]);
+        return $this->render('index/index.html.twig');
     }
 }

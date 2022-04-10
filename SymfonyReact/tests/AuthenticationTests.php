@@ -30,6 +30,13 @@ class AuthenticationTests extends WebTestCase
             ->getManager();
     }
 
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
+    }
+
     /**
      * @dataProvider userCredentialsDataProvider
      */
@@ -193,12 +200,5 @@ class AuthenticationTests extends WebTestCase
             'password' => UserDataFixtures::REGULAR_PASSWORD,
             'roles' => ['ROLE_USER'],
         ];
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
     }
 }

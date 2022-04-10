@@ -8,7 +8,6 @@ use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use Doctrine\ORM\Mapping as ORM;
 
-//@TODO change to sensortype
 /**
  * @ORM\Table(name="readingtypes")
  * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepository")

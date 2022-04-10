@@ -2,15 +2,21 @@
 
 namespace App\Authentication\EventListeners;
 
+use App\API\APIErrorMessages;
+use App\API\Traits\HomeAppAPITrait;
+use App\Authentication\DTOs\Response\UserAuthenticationResponseDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use Exception;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class AuthenticationSuccessListener
 {
+    use HomeAppAPITrait;
+
     private RequestStack $requestStack;
 
     private DeviceRepositoryInterface $deviceRepository;
@@ -27,13 +33,15 @@ class AuthenticationSuccessListener
     public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $authenticationSuccessEvent): void
     {
         $user = $authenticationSuccessEvent->getUser();
-        $data = $authenticationSuccessEvent->getData();
 
         if ($user instanceof User) {
-            $data['userData'] = [
-                'userID' => $user->getUserID(),
-                'roles' => $user->getRoles(),
-            ];
+            $data = new UserAuthenticationResponseDTO($user->getUserID(), $user->getRoles());
+
+            try {
+                $data = $this->normalizeResponse($data);
+            } catch (ExceptionInterface) {
+                $data = ['error' => sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'User data')];
+            }
 
             $authenticationSuccessEvent->setData($data);
         }

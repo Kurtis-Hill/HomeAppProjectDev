@@ -182,9 +182,6 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         $this->updatedAt = new DateTimeImmutable('now');
     }
 
-    /**
-     * Sensor Functional Methods
-     */
     public function getConstRecord(): bool
     {
         return $this->constRecord;
