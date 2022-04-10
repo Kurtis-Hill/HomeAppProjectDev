@@ -19,7 +19,6 @@ use App\Sensors\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use Doctrine\ORM\ORMException;
 
-//@TODO make rabbit mq autoload docker config
 class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingInterface
 {
     private SensorRepositoryInterface $sensorRepository;
@@ -41,8 +40,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
         SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
         OutOfBoundsSensorServiceInterface $outOfBoundsSensorService,
         SensorConstantlyRecordServiceInterface $constantlyRecordService,
-    )
-    {
+    ) {
         $this->sensorRepository = $sensorRepository;
         $this->sensorTypeQueryFactory = $readingTypeQueryFactory;
         $this->readingUpdateFactory = $readingUpdateFactory;
@@ -68,7 +66,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
             null,
             $sensorReadingTypeQueryDTOs,
         );
-//dd($updateSensorCurrentReadingConsumerDTO);
+
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             try {
                 if (!$sensorReadingObject instanceof AllSensorReadingTypeInterface) {
@@ -88,27 +86,23 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                 $updateReadingTypeCurrentReadingDTO->getSensorReadingObject()->setCurrentReading(
                     $updateReadingTypeCurrentReadingDTO->getNewCurrentReading()
                 );
-//dd($sensorReadingObject, $updateReadingTypeCurrentReadingDTO);
                 $validationErrors = $this->readingTypesValidator->validateSensorReadingTypeObject(
                     $sensorReadingObject,
                     $updateSensorCurrentReadingConsumerDTO->getSensorType()
                 );
 
-//                    dd($updateReadingTypeCurrentReadingDTO, $validationErrors);
                 if (!empty($validationErrors)) {
                     $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
                 }
-//dd($sensorReadingObject);
                 if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
                     try {
-                        $this->outOfBoundsSensorService->checkAndHandleSensorReadingOutOfBounds($sensorReadingObject);
+                        $this->outOfBoundsSensorService->checkAndProcessOutOfBounds($sensorReadingObject);
                     } catch (ORMException $e) {
                         error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
                     }
                     try {
-//                        dd('asd');
                         $this->constantlyRecordService->checkAndProcessConstRecord($sensorReadingObject);
-                    } catch (ORMException) {
+                    } catch (ORMException $e) {
                         error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
                     }
                 }

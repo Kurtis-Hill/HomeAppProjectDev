@@ -6,7 +6,7 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateReadingTypeCurrentReadingDTO
+class ReadingTypeUpdateCurrentReadingDTO
 {
     private string $currentReading;
 

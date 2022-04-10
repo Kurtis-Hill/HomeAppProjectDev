@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\Authentication\EventListeners\Tests;
 
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -62,7 +62,8 @@ class AuthenticationTests extends WebTestCase
         self::assertArrayHasKey('userData', $responseData);
         self::assertNotNull($responseData['token']);
         self::assertNotNull($responseData['refreshToken']);
-        self::assertNotNull($responseData['userData']);
+        self::assertNotNull($responseData['userData']['userID']);
+        self::assertNotNull($responseData['userData']['roles']);
 
         self::assertEquals($testUser->getUserID(), $responseData['userData']['userID']);
         self::assertEquals($role, $responseData['userData']['roles']);
@@ -90,11 +91,15 @@ class AuthenticationTests extends WebTestCase
 
         self::assertArrayHasKey('token', $responseData);
         self::assertArrayHasKey('refreshToken', $responseData);
+        self::assertArrayHasKey('deviceIps', $responseData);
         self::assertNotNull($responseData['token']);
         self::assertNotNull($responseData['refreshToken']);
 
         self::assertEquals($device->getIpAddress(), $ipAddress);
         self::assertEquals($device->getExternalIpAddress(), $externalIpAddress);
+
+        self::assertEquals($device->getIpAddress(), $responseData['deviceIps']['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $responseData['deviceIps']['externalIpAddress']);
 
         self::assertEquals(200, $requestResponse->getStatusCode());
     }

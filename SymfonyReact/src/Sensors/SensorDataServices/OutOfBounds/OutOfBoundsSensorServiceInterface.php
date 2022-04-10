@@ -12,5 +12,5 @@ interface OutOfBoundsSensorServiceInterface
      * @throws ReadingTypeNotExpectedException
      * @throws ORMException
      */
-    public function checkAndHandleSensorReadingOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void;
+    public function checkAndProcessOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void;
 }

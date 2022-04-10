@@ -6,7 +6,7 @@ use App\API\HTTPStatusCodes;
 use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\AppConfig\DataFixtures\ESP8266\SensorFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\Sensors\Controller\SensorControllers\ESPSensorUpdateController;
+use App\Sensors\Controller\SensorControllers\ESPSensorCurrentReadingUpdateController;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -87,7 +87,7 @@ class ESPSensorUpdateControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
-        self::assertEquals(ESPSensorUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE, $responseData['payload'][0]);
+        self::assertEquals(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE, $responseData['payload'][0]);
         self::assertEquals('Request Successful', $responseData['title']);
     }
 

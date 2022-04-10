@@ -9,7 +9,7 @@ use App\Sensors\Exceptions\ConstRecordEntityException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface;
 
-class SensorConstantlyRecordServiceService implements SensorConstantlyRecordServiceInterface
+class SensorConstantlyRecordService implements SensorConstantlyRecordServiceInterface
 {
     private ORMConstRecordFactoryInterface $constORMRepositoryFactory;
 

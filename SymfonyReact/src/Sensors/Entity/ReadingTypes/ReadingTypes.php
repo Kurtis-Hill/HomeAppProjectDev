@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ReadingTypes
 {
+    //Add all new sensor reading types here
     public const SENSOR_READING_TYPE_DATA = [
         Temperature::READING_TYPE => [
             'alias' => 'temp',

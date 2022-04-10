@@ -7,21 +7,23 @@ use JetBrains\PhpStorm\Immutable;
 #[Immutable]
 class UserAuthenticationResponseDTO
 {
-    public function __construct(int $userID, array $roles)
+    private UserDataDTO $userData;
+
+    private string $token;
+
+    public function __construct(UserDataDTO $userDataDTO, string $token)
     {
-        $this->userID = $userID;
-        $this->roles = $roles;
+        $this->userData = $userDataDTO;
+        $this->token = $token;
     }
 
-    public function getRoles(): array
+    public function getUserData(): UserDataDTO
     {
-        return $this->roles;
+        return $this->userData;
     }
 
-    public function getUserID(): int
+    public function getToken(): string
     {
-        return $this->userID;
+        return $this->token;
     }
-
-
 }

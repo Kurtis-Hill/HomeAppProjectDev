@@ -23,6 +23,11 @@ interface SensorTypeRepositoryInterface
     public function persist(SensorType $sensorType): void;
 
     /**
+     * @throws ORMException
+     */
+    public function getAllSensorTypeNames(): array;
+
+    /**
      * @throws OptimisticLockException
      * @throws ORMException
      */

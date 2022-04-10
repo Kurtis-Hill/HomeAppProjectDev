@@ -18,7 +18,7 @@ class SensorOutOfBoundsSensorService implements OutOfBoundsSensorServiceInterfac
         $this->outOfBoundsFactory = $outOfBoundsFactory;
     }
 
-    public function checkAndHandleSensorReadingOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
+    public function checkAndProcessOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
     {
         if ($readingTypeObject->isReadingOutOfBounds()) {
             foreach (SensorType::SENSOR_READING_TYPE_DATA as $sensorReadingTypeData) {

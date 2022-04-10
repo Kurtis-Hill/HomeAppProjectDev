@@ -2,23 +2,15 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateReadingTypeCurrentReadingDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequest;
+use App\Sensors\DTO\Sensor\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 
 interface SensorUpdateBuilderInterface
 {
-    /**
-     * @throws ReadingTypeNotExpectedException
-     */
-    public function setNewBoundaryForReadingType(
-        SensorTypeInterface $sensorTypeObject,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-    ): void;
-
     /**
      * @throws ReadingTypeNotExpectedException
      */
@@ -34,5 +26,7 @@ interface SensorUpdateBuilderInterface
     public function buildCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         array $sensorData
-    ): UpdateReadingTypeCurrentReadingDTO;
+    ): ReadingTypeUpdateCurrentReadingDTO;
+
+    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequest;
 }

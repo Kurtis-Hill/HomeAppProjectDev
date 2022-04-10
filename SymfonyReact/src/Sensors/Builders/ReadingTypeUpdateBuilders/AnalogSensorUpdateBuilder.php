@@ -2,28 +2,17 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateReadingTypeCurrentReadingDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequest;
+use App\Sensors\DTO\Request\CurrentReadingRequest\AnalogCurrentReadingUpdateDTORequest;
+use App\Sensors\DTO\Sensor\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
-use JetBrains\PhpStorm\Pure;
 
 class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
 {
-    public function setNewBoundaryForReadingType(SensorTypeInterface $sensorTypeObject, UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): void
-    {
-        if (!$sensorTypeObject instanceof AnalogSensorTypeInterface) {
-            throw new ReadingTypeNotExpectedException(ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED);
-        }
-
-        $this->updateStandardSensor($sensorTypeObject->getAnalogObject(), $updateSensorBoundaryReadingsDTO);
-    }
-
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject
@@ -45,7 +34,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
     public function buildCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         array $sensorData
-    ): UpdateReadingTypeCurrentReadingDTO
+    ): ReadingTypeUpdateCurrentReadingDTO
     {
         if (!$allSensorReadingType instanceof Analog) {
             throw new ReadingTypeNotExpectedException(
@@ -69,5 +58,10 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
             $allSensorReadingType,
             $sensorData['analogReading']
         );
+    }
+
+    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequest
+    {
+        return new AnalogCurrentReadingUpdateDTORequest($currentReading);
     }
 }

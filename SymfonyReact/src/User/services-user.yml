@@ -34,3 +34,6 @@ services:
 
   App\User\Repository\ORM\GroupNameRepositoryInterface:
     alias: 'App\User\Repository\ORM\GroupNameRepository'
+
+  App\User\Repository\ORM\UserRepositoryInterface:
+    alias: 'App\User\Repository\ORM\UserRepository'

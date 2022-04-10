@@ -4,9 +4,11 @@ namespace App\Sensors\Entity;
 
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;
 use App\Sensors\Entity\ConstantRecording\ConstHumid;
+use App\Sensors\Entity\ConstantRecording\ConstLatitude;
 use App\Sensors\Entity\ConstantRecording\ConstTemp;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
+use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeTemp;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
@@ -169,8 +171,8 @@ class SensorType
         Sensor::LATITUDE => [
             'alias' => 'lat',
             'object' => Latitude::class,
-            'outOfBounds' => '@OTODO implement',
-            'constRecord' => 'TOOD implement'
+            'outOfBounds' => OutOfRangeLatitude::class,
+            'constRecord' => ConstLatitude::class
         ],
     ];
 

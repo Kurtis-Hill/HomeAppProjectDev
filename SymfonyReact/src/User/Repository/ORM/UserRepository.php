@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -25,7 +25,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
-     * @throws ORMException
+     * @throws ORMException|UnsupportedUserException
      */
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
@@ -48,6 +48,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $result = $stmt->execute();
 
         return $stmt->fetchAll();
+    }
 
+    public function findOneById(int $id): ?User
+    {
+        return $this->findOneBy(['userID' => $id]);
+    }
+
+    public function persist(User $user): void
+    {
+        $this->getEntityManager()->persist($user);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 }

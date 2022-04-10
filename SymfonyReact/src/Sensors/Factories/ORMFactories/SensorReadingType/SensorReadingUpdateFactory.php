@@ -47,7 +47,7 @@ class SensorReadingUpdateFactory
             Latitude::READING_TYPE => $this->latitudeSensorUpdateBuilder,
             Analog::READING_TYPE => $this->analogSensorUpdateBuilder,
             default => throw new SensorReadingUpdateFactoryException(
-        SensorReadingUpdateFactoryException::MESSAGE
+        sprintf(SensorReadingUpdateFactoryException::MESSAGE, $readingType),
             )
         };
     }
