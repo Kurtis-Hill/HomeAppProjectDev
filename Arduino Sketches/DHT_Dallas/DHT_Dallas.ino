@@ -32,6 +32,9 @@
 #define NODE_MCU_SERIAL 115200
 #define MICRO_ESP_SERIAL 9600
 
+#define DALLASNNAME "Dallas"
+#define DHTNAME "Dht"
+
 //Web bits
 // Test
 #define HOMEAPP_HOST "https://192.168.1.172"
@@ -1217,14 +1220,13 @@ String buildDallasReadingSensorUpdateRequest() {
   Serial.println("Building Dallas request");
   DynamicJsonDocument sensorUpdateRequest(1024);
 
-  sensorUpdateRequest["sensorType"] = "Dallas";
-
   for (int i = 0; i < dallasTempData.sensorCount; ++i) {
     if (dallasTempData.tempReading[i] != -127 || !isnan(dallasTempData.tempReading[i])) {
       Serial.print("sensor name:");
       Serial.println(dallasTempData.sensorName[i]);
+      sensorUpdateRequest["sensorType"][i] = DALLASNNAME;
       sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
-      sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperatureReading"] = String(dallasTempData.tempReading[i]);
+      sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperature"] = String(dallasTempData.tempReading[i]);
       Serial.print("temp reading:");
       Serial.println(String(dallasTempData.tempReading[i])); 
     }
@@ -1295,14 +1297,13 @@ String buildDhtReadingSensorUpdateRequest() {
   Serial.println("Building dht request");
   DynamicJsonDocument sensorUpdateRequest(1024);
 
-  sensorUpdateRequest["sensorType"] = "Dht";
-
   if (!isnan(dhtSensor.tempReading) && !isnan(dhtSensor.humidReading)) {
     Serial.print("sensor name:");
     Serial.println(dhtSensor.sensorName);
+    sensorUpdateRequest["sensorType"][0] = DHTNAME;
     sensorUpdateRequest["sensorData"][0]["sensorName"] = dhtSensor.sensorName;
-    sensorUpdateRequest["sensorData"][0]["currentReadings"]["temperatureReading"] = String(dhtSensor.tempReading);
-    sensorUpdateRequest["sensorData"][0]["currentReadings"]["humidityReading"] = String(dhtSensor.humidReading);
+    sensorUpdateRequest["sensorData"][0]["currentReadings"]["temperature"] = String(dhtSensor.tempReading);
+    sensorUpdateRequest["sensorData"][0]["currentReadings"]["humidity"] = String(dhtSensor.humidReading);
     
     String jsonData;
     serializeJson(sensorUpdateRequest, jsonData);
@@ -1461,8 +1462,9 @@ void takeDhtReadings() {
 
 String ipToString(IPAddress ip){
   String stringIP = "";
-  for (int i=0; i<4; i++)
+  for (int i=0; i<4; i++) {
     stringIP += i  ? "." + String(ip[i]) : String(ip[i]);
+  }
   return stringIP;
 }
 
