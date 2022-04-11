@@ -15,4 +15,6 @@ abstract class AbstractCurrentReadingUpdateRequest
     {
         return $this->readingTypeCurrentReading;
     }
+
+    abstract public function getReadingType(): string;
 }

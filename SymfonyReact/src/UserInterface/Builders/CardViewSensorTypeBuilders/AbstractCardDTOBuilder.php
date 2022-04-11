@@ -13,7 +13,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
-use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\StandardSensorTypeBoundaryViewFormDTO;
+use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\Forms\StandardSensorTypeBoundaryViewFormDTO;
 use DateTime;
 use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;

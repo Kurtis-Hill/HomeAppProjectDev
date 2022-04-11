@@ -1,6 +1,8 @@
 <?php
 
-namespace App\UserInterface\DTO\UserViewReadingSensorTypeCardData;
+namespace App\UserInterface\DTO\UserViewReadingSensorTypeCardData\Cards;
+
+use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\UserViewSensorTypeCardDataInterface;
 
 class CurrentReadingSensorTypeCardDataDTO implements UserViewSensorTypeCardDataInterface
 {
