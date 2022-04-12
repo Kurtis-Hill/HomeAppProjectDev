@@ -10,6 +10,8 @@ class APIErrorMessages
 
     public const OBJECT_NOT_FOUND = '%s not found';
 
+    public const OBJECT_NOT_RECOGNISED = '%s not recognised';
+
     public const FAILED_TO_SAVE_DATA = 'Failed to save data';
 
     public const ACCESS_DENIED = 'You have been denied permission to perform this action';
@@ -27,4 +29,9 @@ class APIErrorMessages
     public const SERIALIZATION_FAILURE = '%s Serialization failure';
 
     public const VALIDATION_ERRORS = 'Validation errors occurred';
+
+    public const COULD_NOT_PROCESS_ANY_CONTENT = 'None of the content could be processed';
+
+    public const PART_OF_CONTENT_PROCESSED = 'Part of the content could not be processed';
+
 }

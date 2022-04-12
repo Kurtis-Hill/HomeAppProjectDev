@@ -43,6 +43,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+//    #[ORM\Column(type: "integer", nullable: false)]
     private int $tempID;
 
     /**

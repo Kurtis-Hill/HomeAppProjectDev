@@ -2,21 +2,21 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 
-use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequest;
+use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\TemperatureCurrentReadingUpdateDTORequest;
 use App\Sensors\DTO\Sensor\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
-use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
+use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 
-class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
+class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements ReadingTypeUpdateBuilderInterface
 {
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-    ): UpdateStandardSensorBoundaryReadingsDTO {
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
         if (!$sensorReadingTypeObject instanceof Temperature) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
@@ -30,7 +30,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
         return $this->buildStandardSensorUpdateReadingDTO($sensorData, $sensorReadingTypeObject);
     }
 
-    public function buildCurrentReadingUpdateDTO(
+    public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         array $sensorData
     ): ReadingTypeUpdateCurrentReadingDTO {
@@ -58,7 +58,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
         );
     }
 
-    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequest
+    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequestDTO
     {
         return new TemperatureCurrentReadingUpdateDTORequest($currentReading);
     }

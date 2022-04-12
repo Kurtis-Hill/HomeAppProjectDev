@@ -2,6 +2,7 @@
 
 namespace App\Sensors\DTO\Sensor\CurrentReadingDTO;
 
+use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequestDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
@@ -12,28 +13,21 @@ class UpdateSensorCurrentReadingConsumerMessageDTO
 
     private string $sensorName;
 
-    #[ArrayShape(
-        [
-            "temperatureReading" => "float",
-            "humidityReading" => "float",
-            "analogReading" => "int",
-        ]
-    )]
+    #[ArrayShape([AbstractCurrentReadingUpdateRequestDTO::class])]
     private array $currentReadings;
 
-    private int $deviceId;
+    private int $deviceID;
 
     public function __construct(
         string $sensorType,
         string $sensorName,
         array $currentReadings,
-        int $deviceId,
-    )
-    {
+        int $deviceID,
+    ) {
+        $this->sensorName = $sensorName;
         $this->sensorType = $sensorType;
         $this->currentReadings = $currentReadings;
-        $this->deviceId = $deviceId;
-        $this->sensorName = $sensorName;
+        $this->deviceID = $deviceID;
     }
 
     public function getSensorType(): string
@@ -41,21 +35,15 @@ class UpdateSensorCurrentReadingConsumerMessageDTO
         return $this->sensorType;
     }
 
-    #[ArrayShape(
-        [
-            "temperatureReading" => "float",
-            "humidityReading" => "float",
-            "analogReading" => "int",
-        ]
-    )]
+    #[ArrayShape([AbstractCurrentReadingUpdateRequestDTO::class])]
     public function getCurrentReadings(): array
     {
         return $this->currentReadings;
     }
 
-    public function getDeviceId(): int
+    public function getDeviceID(): int
     {
-        return $this->deviceId;
+        return $this->deviceID;
     }
 
     public function getSensorName(): string

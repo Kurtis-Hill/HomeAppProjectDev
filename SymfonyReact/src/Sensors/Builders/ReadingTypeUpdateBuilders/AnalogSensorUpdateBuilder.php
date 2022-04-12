@@ -2,21 +2,21 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 
-use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequest;
+use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\AnalogCurrentReadingUpdateDTORequest;
 use App\Sensors\DTO\Sensor\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
-use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
+use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 
-class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements SensorUpdateBuilderInterface
+class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements ReadingTypeUpdateBuilderInterface
 {
     public function buildUpdateSensorBoundaryReadingsDTO(
         array $sensorData,
         AllSensorReadingTypeInterface $sensorReadingTypeObject
-    ): UpdateStandardSensorBoundaryReadingsDTO
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO
     {
         if (!$sensorReadingTypeObject instanceof Analog) {
             throw new ReadingTypeNotExpectedException(
@@ -31,7 +31,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
         return $this->buildStandardSensorUpdateReadingDTO($sensorData, $sensorReadingTypeObject);
     }
 
-    public function buildCurrentReadingUpdateDTO(
+    public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         array $sensorData
     ): ReadingTypeUpdateCurrentReadingDTO
@@ -60,7 +60,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
         );
     }
 
-    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequest
+    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequestDTO
     {
         return new AnalogCurrentReadingUpdateDTORequest($currentReading);
     }

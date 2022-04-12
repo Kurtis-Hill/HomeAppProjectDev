@@ -39,6 +39,7 @@ class SensorType
     public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
 
     // When creating a new sensor add a const here too and set it to the name of the entity
+    //@TODO: change these in each instance for the class consts
     public const DHT_SENSOR = 'Dht';
 
     public const BMP_SENSOR = 'Bmp';

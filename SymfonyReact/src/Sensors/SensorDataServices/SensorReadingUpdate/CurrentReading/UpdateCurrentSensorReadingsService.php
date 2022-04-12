@@ -52,8 +52,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorCurrentReadingConsumerDTO,
         Devices $device
-    ): bool
-    {
+    ): bool {
         $sensorTypeQueryDTOBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder(
             $updateSensorCurrentReadingConsumerDTO->getSensorType()
         );
@@ -61,7 +60,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
         $sensorReadingTypeQueryDTOs = $sensorTypeQueryDTOBuilder->buildSensorReadingTypes();
 
         $sensorReadingObjects = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
-            $updateSensorCurrentReadingConsumerDTO->getDeviceId(),
+            $updateSensorCurrentReadingConsumerDTO->getDeviceID(),
             $updateSensorCurrentReadingConsumerDTO->getSensorName(),
             null,
             $sensorReadingTypeQueryDTOs,
@@ -78,7 +77,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                     $sensorReadingObject->getReadingType()
                 );
 
-                $updateReadingTypeCurrentReadingDTO = $sensorReadingUpdateBuilder->buildCurrentReadingUpdateDTO(
+                $updateReadingTypeCurrentReadingDTO = $sensorReadingUpdateBuilder->buildReadingTypeCurrentReadingUpdateDTO(
                     $sensorReadingObject,
                     $updateSensorCurrentReadingConsumerDTO->getCurrentReadings()
                 );

@@ -3,7 +3,7 @@
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 
 use App\Sensors\DTO\Sensor\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
-use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
+use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 
@@ -12,8 +12,8 @@ abstract class AbstractStandardSensorTypeBuilder
     protected function buildStandardSensorUpdateReadingDTO(
         array $sensorData,
         StandardReadingSensorInterface $standardReadingSensor
-    ): UpdateStandardSensorBoundaryReadingsDTO {
-        return new UpdateStandardSensorBoundaryReadingsDTO(
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
+        return new UpdateStandardReadingTypeBoundaryReadingsDTO(
             $sensorData['readingType'],
             $standardReadingSensor->getHighReading(),
             $standardReadingSensor->getLowReading(),
@@ -26,7 +26,7 @@ abstract class AbstractStandardSensorTypeBuilder
 
     protected function updateStandardSensor(
         StandardReadingSensorInterface $standardReadingSensor,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
     ): void {
         if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
             $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());

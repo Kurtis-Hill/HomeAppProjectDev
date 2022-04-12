@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Request;
+namespace App\Sensors\DTO\Request\CurrentReadingRequest;
 
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -9,7 +9,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SensorDataCurrentReadingUpdateDTO
 {
     #[
-        Assert\Type(type: ["string"]),
+        Assert\Type(
+            type: ["string"],
+            message: "sensorName must be a {{ type }} you have provided {{ value }}"
+        ),
         Assert\NotNull(
             message: "sensorName cannot be empty"
         ),
@@ -17,7 +20,10 @@ class SensorDataCurrentReadingUpdateDTO
     private mixed $sensorName;
 
     #[
-        Assert\Type(type: ["string"], message: "sensorType must be a {{ type }} you have provided {{ value }}"),
+        Assert\Type(
+            type: ["string"],
+            message: "sensorType must be a {{ type }} you have provided {{ value }}"
+        ),
         Assert\NotNull(
             message: "sensorType cannot be empty"
         ),
@@ -25,7 +31,10 @@ class SensorDataCurrentReadingUpdateDTO
     private mixed $sensorType;
 
     #[
-        Assert\Type(type: ["array"], message: "currentReading must be a {{ type }} you have provided {{ value }}"),
+        Assert\Type(
+            type: ["array"],
+            message: "currentReading must be a {{ type }} you have provided {{ value }}"
+        ),
         Assert\NotNull(
             message: "currentReadings cannot be empty"
         ),

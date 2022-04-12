@@ -2,8 +2,8 @@
 
 namespace App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
-use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
+use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -32,19 +32,19 @@ interface UpdateSensorBoundaryReadingsServiceInterface
     /**
      * @throws SensorReadingUpdateFactoryException
      */
-    public function getUpdateBoundaryReadingBuilder(string $sensorType): SensorUpdateBuilderInterface;
+    public function getUpdateBoundaryReadingBuilder(string $sensorType): ReadingTypeUpdateBuilderInterface;
 
     #[ArrayShape(["errors"])]
     public function processBoundaryReadingDTOs(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
+        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
         string $sensorTypeName
     ): array;
 
     /**
      * @throws ReadingTypeBuilderFailureException
      */
-    public function createReadingTypeQueryDTO(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
+    public function createReadingTypeQueryDTO(UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
 
     /**
      * @throws NonUniqueResultException

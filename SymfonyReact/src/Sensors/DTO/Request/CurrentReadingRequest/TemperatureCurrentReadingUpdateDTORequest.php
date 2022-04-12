@@ -3,9 +3,30 @@
 namespace App\Sensors\DTO\Request\CurrentReadingRequest;
 
 use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use JetBrains\PhpStorm\Immutable;
 
-class TemperatureCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequest
+#[Immutable]
+class TemperatureCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequestDTO
 {
+    #[
+        DallasTemperatureConstraint(
+            groups: [Dallas::NAME]
+        ),
+        DHTTemperatureConstraint(
+            groups: [Dht::NAME]
+        ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        ),
+    ]
+    protected float|int|string $readingTypeCurrentReading;
+
     public function getReadingType(): string
     {
         return Temperature::READING_TYPE;

@@ -6,17 +6,13 @@ use App\API\APIErrorMessages;
 use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
+use App\Devices\Entity\Devices;
+use App\ErrorLogs;
+use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorDataCurrentReadingDTOBuilder;
-use App\Sensors\DTO\Request\CurrentReadingUpdateDTO;
-use App\Sensors\DTO\Request\SensorDataCurrentReadingUpdateDTO;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
-use App\Sensors\Entity\SensorType;
-use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
-use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use Exception;
-use JsonException;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +29,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    public const SENSOR_UPDATE_SUCCESS_MESSAGE = 'Sensor data accepted';
+    public const SENSOR_UPDATE_SUCCESS_MESSAGE = '%s data accepted for sensor %s';
 
     private ProducerInterface $currentReadingAMQPProducer;
 
@@ -48,11 +44,14 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
     public function updateSensorsCurrentReading(
         Request $request,
         ValidatorInterface $validator,
-        SensorTypeRepositoryInterface $sensorTypeRepository,
-        SensorReadingUpdateFactory $sensorReadingUpdateFactory,
+        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
     ): Response {
-        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
+        if (!$this->getUser() instanceof Devices) {
+            return $this->sendBadRequestJsonResponse(['You are not supposed to be here']);
+        }
+        $deviceId = $this->getUser()?->getDeviceNameID();
 
+        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {
             $this->deserializeRequest(
                 $request->getContent(),
@@ -69,66 +68,79 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
 
-        if (empty($sensorUpdateRequestDTO->getSensorData())) {
-            return $this->sendBadRequestJsonResponse(['you have not provided the correct information to update the sensor, sensorData empty']);;
-        }
-
-        if (!is_callable([$this->getUser(), 'getDeviceNameID']) || !$this->getUser()?->getDeviceNameID()) {
-            return $this->sendBadRequestJsonResponse(['You are not supposed to be here']);
-        }
-
-        $allSensorTypes = $sensorTypeRepository->getAllSensorTypeNames();
-        $deviceId = $this->getUser()?->getDeviceNameID();
-        $errors = [];
+//        dd('asdsdf', $sensorUpdateRequestDTO);
         $readingTypeCurrentReadingDTOs = [];
+        $successfulRequests = [];
+        $readingTypeRequestAttempt = 0;
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             $sensorDataCurrentReadingUpdateDTO = SensorDataCurrentReadingDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
-
-            $objectValidationErrors = $validator->validate($sensorDataCurrentReadingUpdateDTO);
-            if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
-                $validationErrors[] = $this->getValidationErrorAsArray($objectValidationErrors);
-            }
-            if (!in_array($sensorDataCurrentReadingUpdateDTO->getSensorType(), $allSensorTypes, true)) {
-                $objectValidationErrors = true;
-                $errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Sensor type')];
-            }
-            if ($objectValidationErrors === true || $objectValidationErrors->count() > 0) {
+//            dd('asd');
+//            dd($sensorDataCurrentReadingUpdateDTO, $sensorUpdateData);
+            $sensorPassedValidation = $currentReadingSensorDataRequestHandler->validateSensorDataRequest($sensorDataCurrentReadingUpdateDTO);
+            if ($sensorPassedValidation === false) {
                 continue;
             }
 
             foreach ($sensorDataCurrentReadingUpdateDTO->getCurrentReadings() as $readingType => $currentReading) {
-                try {
-                    $sensorTypeUpdateDTOBuilder = $sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($readingType);
-                } catch (SensorReadingUpdateFactoryException $e) {
-                    $errors[] = [$e->getMessage()];
+                ++$readingTypeRequestAttempt;
+                $sensorTypeUpdateDTOBuilder = $currentReadingSensorDataRequestHandler->getSensorTypeUpdateDTOBuilder($readingType);
+                if ($sensorTypeUpdateDTOBuilder === null) {
+                    continue;
+                }
+                $readingTypeCurrentReadingDTO = $sensorTypeUpdateDTOBuilder->buildRequestCurrentReadingUpdateDTO($currentReading);
+
+                $sensorTypeReadingValidationPassed = $currentReadingSensorDataRequestHandler->validateSensorTypeDTO(
+                    $readingTypeCurrentReadingDTO,
+                    $sensorDataCurrentReadingUpdateDTO->getSensorType()
+                );
+                if ($sensorTypeReadingValidationPassed === false) {
                     continue;
                 }
                 $readingTypeCurrentReadingDTOs[] = $sensorTypeUpdateDTOBuilder->buildRequestCurrentReadingUpdateDTO($currentReading);
+                $successfulRequests[] = sprintf(self::SENSOR_UPDATE_SUCCESS_MESSAGE, $readingTypeCurrentReadingDTO->getReadingType(), $sensorDataCurrentReadingUpdateDTO->getSensorName());
             }
-
+//dd($currentReadingSensorDataRequestHandler->getValidationErrors());
+            $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
+                $sensorDataCurrentReadingUpdateDTO->getSensorType(),
+                $sensorDataCurrentReadingUpdateDTO->getSensorName(),
+                $readingTypeCurrentReadingDTOs,
+                $deviceId,
+            );
             try {
-                $updateReadingDTO = new UpdateSensorCurrentReadingConsumerMessageDTO(
-                    $sensorDataCurrentReadingUpdateDTO->getSensorType(),
-                    $sensorDataCurrentReadingUpdateDTO->getSensorName(),
-                    $readingTypeCurrentReadingDTOs,
-                    $deviceId
-                );
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
-                $successfulRequests[] = $sensorDataCurrentReadingUpdateDTO->getSensorName() . 'Sensor data accepted';
             } catch (Exception $exception) {
-                $errors[] = $exception->getMessage();
+                error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
             }
         }
-//
-//        $errors = array_merge($errors, $validationErrors);
-//        if (count($successfulRequests ?? []) === count($sensorUpdateRequestDTO->getSensorData())) {
-//            return $this->sendBadRequestJsonResponse(['None of the content could be processed']);
-//        }
-//        if (!empty($errors)) {
-//            return $this->sendMultiStatusJsonResponse($errors, $successfulRequests ?? []);
-//        }
 
-        return $this->sendSuccessfulJsonResponse([self::SENSOR_UPDATE_SUCCESS_MESSAGE]);
+        if (
+            isset($sensorDataCurrentReadingUpdateDTO)
+            && empty($currentReadingSensorDataRequestHandler->getErrors())
+            && empty($currentReadingSensorDataRequestHandler->getValidationErrors())
+            && $readingTypeRequestAttempt === count($successfulRequests ?? [])
+        ) {
+            return $this->sendSuccessfulJsonResponse($successfulRequests ?? [], 'All sensor readings handled successfully');
+        }
+
+        if (!empty($successfulRequests)) {
+            return $this->sendMultiStatusJsonResponse(
+                array_merge(
+                    $currentReadingSensorDataRequestHandler->getValidationErrors(),
+                    $currentReadingSensorDataRequestHandler->getErrors()
+                ),
+                $successfulRequests,
+                APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            );
+        }
+
+        return $this->sendBadRequestJsonResponse(
+            array_merge(
+                $currentReadingSensorDataRequestHandler->getValidationErrors(),
+                $currentReadingSensorDataRequestHandler->getErrors()
+            ),
+            APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT
+        );
+
     }
 
     #[Required]

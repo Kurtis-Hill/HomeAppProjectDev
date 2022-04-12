@@ -11,16 +11,12 @@ class SensorUpdateRequestDTO
         Assert\NotNull(
             message: "sensorData cannot be empty"
         ),
+        Assert\Count(
+            min: 1,
+            minMessage: "sensorData must contain at least {{ limit }} elements",
+        )
     ]
     private mixed $sensorData = null;
-
-//    #[
-//        Assert\Type(type: ['string'], message: 'sensorType must be a {{ type }} you have provided {{ value }}'),
-//        Assert\NotNull(
-//            message: "sensorType must be provided"
-//        ),
-//    ]
-//    private mixed $sensorType = null;
 
     public function getSensorData(): mixed
     {
@@ -31,14 +27,4 @@ class SensorUpdateRequestDTO
     {
         $this->sensorData = $sensorData;
     }
-
-//    public function getSensorType(): mixed
-//    {
-//        return $this->sensorType;
-//    }
-//
-//    public function setSensorType(mixed $sensorType): void
-//    {
-//        $this->sensorType = $sensorType;
-//    }
 }

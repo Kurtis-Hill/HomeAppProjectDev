@@ -5,7 +5,7 @@ namespace App\Sensors\Factories\ORMFactories\SensorReadingType;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\AnalogSensorUpdateBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\HumiditySensorUpdateBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\LatitudeSensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\TemperatureSensorUpdateBuilder;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
@@ -39,7 +39,7 @@ class SensorReadingUpdateFactory
     /**
      * @throws SensorReadingUpdateFactoryException
      */
-    public function getReadingTypeUpdateBuilder(string $readingType): SensorUpdateBuilderInterface
+    public function getReadingTypeUpdateBuilder(string $readingType): ReadingTypeUpdateBuilderInterface
     {
         return match ($readingType) {
             Temperature::READING_TYPE => $this->temperatureSensorUpdateBuilder,

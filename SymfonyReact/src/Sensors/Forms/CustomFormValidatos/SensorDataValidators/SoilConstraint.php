@@ -2,14 +2,15 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
+use App\Sensors\Entity\SensorTypes\Soil;
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute]
 class SoilConstraint extends Constraint
 {
-    public string $maxMessage = 'Reading for this sensor cannot be over 9999 you entered {{ string }}';
+    public string $maxMessage = 'Reading for soil sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered {{ string }}';
 
-    public string $minMessage = 'Reading for this sensor cannot be under 1000 you entered {{ string }}';
+    public string $minMessage = 'Reading for soil sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered {{ string }}';
 
     public string $intMessage = 'The submitted value is not a number {{ string }}';
 }

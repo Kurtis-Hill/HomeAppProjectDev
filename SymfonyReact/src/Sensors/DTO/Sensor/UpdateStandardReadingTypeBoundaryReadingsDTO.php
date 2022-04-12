@@ -5,7 +5,7 @@ namespace App\Sensors\DTO\Sensor;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateStandardSensorBoundaryReadingsDTO
+class UpdateStandardReadingTypeBoundaryReadingsDTO
 {
     private int $sensorReadingID;
 

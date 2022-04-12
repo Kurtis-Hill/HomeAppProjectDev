@@ -2,8 +2,8 @@
 
 namespace App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\SensorUpdateBuilderInterface;
-use App\Sensors\DTO\Sensor\UpdateStandardSensorBoundaryReadingsDTO;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
+use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -64,7 +64,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     }
 
 
-    public function getUpdateBoundaryReadingBuilder(string $sensorType): SensorUpdateBuilderInterface
+    public function getUpdateBoundaryReadingBuilder(string $sensorType): ReadingTypeUpdateBuilderInterface
     {
         return $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($sensorType);
     }
@@ -72,7 +72,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
     #[ArrayShape(["errors"])]
     public function processBoundaryReadingDTOs(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
+        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
         string $sensorTypeName
     ): array {
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
@@ -98,7 +98,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
 
     private function updateStandardSensorBoundaryReading(
         StandardReadingSensorInterface $standardReadingSensor,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
     ): void {
         if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
             $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
@@ -113,7 +113,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
 
     private function resetEntityBackToOriginalStatus(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
     ): void {
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
             $sensorReadingTypeObject->setHighReading($updateSensorBoundaryReadingsDTO->getCurrentHighReading());
@@ -150,7 +150,7 @@ class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReading
         );
     }
 
-    public function createReadingTypeQueryDTO(UpdateStandardSensorBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO
+    public function createReadingTypeQueryDTO(UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO
     {
         $sensorTypeQueryDTOBuilder = $this->readingTypeQueryFactory->getReadingTypeQueryDTOBuilder($updateSensorBoundaryReadingsDTO->getReadingType());
 
