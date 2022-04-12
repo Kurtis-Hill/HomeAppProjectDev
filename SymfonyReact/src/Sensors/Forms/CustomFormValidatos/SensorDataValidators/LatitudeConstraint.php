@@ -2,9 +2,10 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute]
+#[Attribute]
 class LatitudeConstraint extends Constraint
 {
     public string $maxMessage = 'The highest possible latitude is 90° you entered {{ string }}°';

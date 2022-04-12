@@ -3,9 +3,10 @@
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
 use App\Sensors\Entity\ReadingTypes\Humidity;
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute]
+#[Attribute]
 class HumidityConstraint extends Constraint
 {
     public string $minMessage = 'Humidity for this sensor cannot be under 0 you entered {{ string }}'. Humidity::READING_SYMBOL;

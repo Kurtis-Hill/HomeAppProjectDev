@@ -287,71 +287,71 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
 
     public function malformedSensorUpdateDataProvider(): Generator
     {
-//        yield [
-//            'sensorData' => [
-//                [
-//                    'sensorType' => SensorType::DHT_SENSOR . '1',
-//                    'sensorName' => SensorFixtures::SENSORS['Dht'],
-//                    'currentReadings' => [
-//                        'temperature' => 15.5,
-//                        'humidity' => 50
-//                    ]
-//                ],
-//            ],
-//            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-//            'errors' => ['Sensor type ' . SensorType::DHT_SENSOR . '1' . ' not recognised'],
-//            'payload' => [],
-//            'responseCode' => Response::HTTP_BAD_REQUEST
-//        ];
-//
-//        yield [
-//            'sensorData' => [],
-//            'title' => 'Bad Request No Data Returned',
-//            'errors' => ['sensorData must contain at least 1 elements'],
-//            'payload' => [],
-//            'responseCode' => Response::HTTP_BAD_REQUEST
-//        ];
-//
-//        yield [
-//            'sensorData' => [
-//                [
-//                    'sensorType' => SensorType::BMP_SENSOR,
-//                    'sensorName' => SensorFixtures::SENSORS['Bmp'],
-//                ],
-//            ],
-//            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-//            'errors' => ['currentReadings cannot be empty'],
-//            'payload' => [],
-//            'responseCode' => HTTPStatusCodes::HTTP_BAD_REQUEST
-//        ];
-//
-//        yield [
-//            'sensorData' => [
-//                [
-//                    'sensorType' => SensorType::DHT_SENSOR,
-//                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
-//                    'currentReadings' => [
-//                        'temperature' => 15.5,
-//                        'humidity' => 50
-//                    ],
-//                ],
-//                [
-//                    'sensorType' => SensorType::DHT_SENSOR,
-//                    'sensorName' => [SensorFixtures::SENSORS[Dht::NAME]],
-//                    'currentReadings' => [
-//                        'temperature' => 15.5,
-//                        'humidity' => 50
-//                    ],
-//                ]
-//            ],
-//            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
-//            'errors' => ['sensorName must be a string you have provided array'],
-//            'payload' => [
-//                sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-//                sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME])
-//                ],
-//            'responseCode' => Response::HTTP_MULTI_STATUS
-//        ];
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::DHT_SENSOR . '1',
+                    'sensorName' => SensorFixtures::SENSORS['Dht'],
+                    'currentReadings' => [
+                        'temperature' => 15.5,
+                        'humidity' => 50
+                    ]
+                ],
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => ['Sensor type ' . SensorType::DHT_SENSOR . '1' . ' not recognised'],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        yield [
+            'sensorData' => [],
+            'title' => 'Bad Request No Data Returned',
+            'errors' => ['sensorData must contain at least 1 elements'],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::BMP_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS['Bmp'],
+                ],
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => ['currentReadings cannot be empty'],
+            'payload' => [],
+            'responseCode' => HTTPStatusCodes::HTTP_BAD_REQUEST
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::DHT_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
+                    'currentReadings' => [
+                        'temperature' => 15.5,
+                        'humidity' => 50
+                    ],
+                ],
+                [
+                    'sensorType' => SensorType::DHT_SENSOR,
+                    'sensorName' => [SensorFixtures::SENSORS[Dht::NAME]],
+                    'currentReadings' => [
+                        'temperature' => 15.5,
+                        'humidity' => 50
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => ['sensorName must be a string you have provided array'],
+            'payload' => [
+                sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME])
+                ],
+            'responseCode' => Response::HTTP_MULTI_STATUS
+        ];
 
         yield [
             'sensorData' => [
