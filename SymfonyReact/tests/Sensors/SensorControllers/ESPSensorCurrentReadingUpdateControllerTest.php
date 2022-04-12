@@ -19,6 +19,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
+use phpseclib3\Crypt\DH;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -276,7 +277,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-//        dd($responseData, $sendData);
+//        dd($responseData);
         self::assertEquals($responseCode, $requestResponse->getStatusCode());
         self::assertEquals($title, $responseData['title']);
         self::assertEquals($errors, $responseData['errors']);
@@ -379,6 +380,179 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
                 sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME] . '2'),
             ],
+            'responseCode' => Response::HTTP_MULTI_STATUS
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::DHT_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
+                    'currentReadings' => [
+                        'temperature' => 'string bing',
+                        'humidity' => []
+                    ],
+                ],
+                [
+                    'sensorType' => SensorType::DHT_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME] .'2',
+                    'currentReadings' => [
+                        'temperature' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15,
+                        'humidity' => 50
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                'The submitted value is not a number "string bing"',
+                'Temperature settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . '°C you entered ' . 'string bing°C',
+                'The submitted value is not a number "array"',
+                'Temperature settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . '°C you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . '°C',
+
+            ],
+            'payload' => [
+                sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME] . '2'),
+            ],
+            'responseCode' => Response::HTTP_MULTI_STATUS
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::DHT_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
+                    'currentReadings' => [
+                        'temperature' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 15,
+                        'humidity' => 'string bing'
+                    ],
+                ],
+                [
+                    'sensorType' => SensorType::DHT_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME] .'2',
+                    'currentReadings' => [
+                        'temperature' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15,
+                        'humidity' => []
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                'The submitted value is not a number "string bing"',
+                'Temperature settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . '°C you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . '°C',
+                'The submitted value is not a number "array"',
+            ],
+            'payload' => [
+                sprintf(ESPSensorCurrentReadingUpdateController::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+            ],
+            'responseCode' => Response::HTTP_MULTI_STATUS
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::SOIL_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Soil::NAME],
+                    'currentReadings' => [
+                        'analog' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => SensorType::SOIL_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Soil::NAME] .'2',
+                    'currentReadings' => [
+                        'analog' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'The submitted value is not a number string bing',
+                'The submitted value is not a number array',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::BMP_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Soil::NAME],
+                    'currentReadings' => [
+                        'latitude' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => SensorType::BMP_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Soil::NAME] .'2',
+                    'currentReadings' => [
+                        'latitude' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'The submitted value is not a number string bing',
+                'The submitted value is not a number array',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+    }
+
+    /**
+     * @dataProvider sendingRequestWithWrongReadingTypesForSensor
+     */
+    public function test_sending_request_with_wrong_reading_types_for_sensor(
+        array $sensorData,
+        string $title,
+        array $errors,
+        array $payload,
+        int $responseCode,
+    ): void {
+        $sendData['sensorData'] = $sensorData;
+        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            self::ESP_SENSOR_UPDATE,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+//        dd($responseData);
+        self::assertEquals($responseCode, $requestResponse->getStatusCode());
+        self::assertEquals($title, $responseData['title']);
+        self::assertEquals($errors, $responseData['errors']);
+        if (!empty($payload)) {
+            self::assertEquals($payload, $responseData['payload']);
+        }
+
+    }
+
+    public function sendingRequestWithWrongReadingTypesForSensor(): Generator
+    {
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => SensorType::BMP_SENSOR,
+                    'sensorName' => SensorFixtures::SENSORS[Soil::NAME],
+                    'currentReadings' => [
+                        'latitude' => Latitude::HIGH_READING,
+                        'analog' => 1234,
+                    ],
+                ],
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                Analog::READING_TYPE . ' reading type not valid for sensor: Bmp',
+            ],
+            'payload' => ['latitude data accepted for sensor ' . SensorFixtures::SENSORS[Soil::NAME]],
             'responseCode' => Response::HTTP_MULTI_STATUS
         ];
     }

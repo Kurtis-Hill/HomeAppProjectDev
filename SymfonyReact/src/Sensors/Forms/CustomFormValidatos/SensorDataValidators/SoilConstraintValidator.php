@@ -8,6 +8,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class SoilConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof SoilConstraint) {
@@ -20,19 +23,19 @@ class SoilConstraintValidator extends ConstraintValidator
 
         if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
-                ->setParameter('{{ string }}', $value)
+                ->setParameter('{{ string }}', is_array($value) ? 'array' : $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value > 9999) {
+        if (is_numeric($value) && $value > 9999) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < 1000) {
+        if (is_numeric($value) && $value < 1000) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

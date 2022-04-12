@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Sensor;
+namespace App\Sensors\DTO\Internal\Sensor;
 
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\SensorType;

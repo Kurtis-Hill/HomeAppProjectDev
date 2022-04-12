@@ -42,9 +42,11 @@ services:
   App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
     alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
 
-  App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingRequestServiceInterface:
-    alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingRequestService'
+  App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface:
+    alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler'
 
+  App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeCheckerInterface:
+    alias: 'App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeChecker'
 
   ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:

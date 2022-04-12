@@ -5,7 +5,7 @@ namespace App\Sensors\Voters;
 
 
 use App\Devices\Entity\Devices;
-use App\Sensors\DTO\Sensor\NewSensorDTO;
+use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

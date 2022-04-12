@@ -2,10 +2,10 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 
-use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\TemperatureCurrentReadingUpdateDTORequest;
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
-use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateDTORequest;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -58,7 +58,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
         );
     }
 
-    public function buildRequestCurrentReadingUpdateDTO(float $currentReading): AbstractCurrentReadingUpdateRequestDTO
+    public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading): AbstractCurrentReadingUpdateRequestDTO
     {
         return new TemperatureCurrentReadingUpdateDTORequest($currentReading);
     }

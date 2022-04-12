@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Sensor\CurrentReadingDTO;
+namespace App\Sensors\DTO\Internal\CurrentReadingDTO;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use JetBrains\PhpStorm\Immutable;

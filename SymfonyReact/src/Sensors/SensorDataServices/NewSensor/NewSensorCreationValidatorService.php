@@ -3,8 +3,8 @@
 namespace App\Sensors\SensorDataServices\NewSensor;
 
 use App\Common\Traits\ValidatorProcessorTrait;
+use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
-use App\Sensors\DTO\Sensor\NewSensorDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;

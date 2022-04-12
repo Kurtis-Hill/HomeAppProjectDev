@@ -9,6 +9,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class HumidityConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof HumidityConstraint) {
@@ -17,7 +20,7 @@ class HumidityConstraintValidator extends ConstraintValidator
 
         if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
-                ->setParameter('{{ string }}', $value)
+                ->setParameter('{{ string }}', is_array($value) ? 'array' : $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }

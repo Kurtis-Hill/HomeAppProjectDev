@@ -27,7 +27,10 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -40;
 
-    public const SENSOR_TYPE_ID = 1;
+    private const ALLOWED_READING_TYPES = [
+        Temperature::READING_TYPE,
+        Humidity::READING_TYPE,
+    ];
 
     /**
      * @ORM\Column(name="dhtID", type="integer", nullable=false)
@@ -142,9 +145,13 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         return self::ALIAS;
     }
 
-
     public function getSensorClass(): string
     {
         return self::class;
+    }
+
+    public static function getAllowedReadingTypes(): array
+    {
+        return self::ALLOWED_READING_TYPES;
     }
 }

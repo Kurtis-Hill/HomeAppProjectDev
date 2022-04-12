@@ -68,14 +68,11 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
 
-//        dd('asdsdf', $sensorUpdateRequestDTO);
         $readingTypeCurrentReadingDTOs = [];
         $successfulRequests = [];
         $readingTypeRequestAttempt = 0;
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             $sensorDataCurrentReadingUpdateDTO = SensorDataCurrentReadingDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
-//            dd('asd');
-//            dd($sensorDataCurrentReadingUpdateDTO, $sensorUpdateData);
             $sensorPassedValidation = $currentReadingSensorDataRequestHandler->validateSensorDataRequest($sensorDataCurrentReadingUpdateDTO);
             if ($sensorPassedValidation === false) {
                 continue;
@@ -83,6 +80,16 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
             foreach ($sensorDataCurrentReadingUpdateDTO->getCurrentReadings() as $readingType => $currentReading) {
                 ++$readingTypeRequestAttempt;
+
+                $readingTypeValidForSensorType = $currentReadingSensorDataRequestHandler->checkSensorReadingTypeIsAllowed(
+                    $readingType,
+                    $sensorDataCurrentReadingUpdateDTO->getSensorType()
+                );
+
+                if ($readingTypeValidForSensorType === false) {
+                    continue;
+                }
+
                 $sensorTypeUpdateDTOBuilder = $currentReadingSensorDataRequestHandler->getSensorTypeUpdateDTOBuilder($readingType);
                 if ($sensorTypeUpdateDTOBuilder === null) {
                     continue;
@@ -99,7 +106,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 $readingTypeCurrentReadingDTOs[] = $sensorTypeUpdateDTOBuilder->buildRequestCurrentReadingUpdateDTO($currentReading);
                 $successfulRequests[] = sprintf(self::SENSOR_UPDATE_SUCCESS_MESSAGE, $readingTypeCurrentReadingDTO->getReadingType(), $sensorDataCurrentReadingUpdateDTO->getSensorName());
             }
-//dd($currentReadingSensorDataRequestHandler->getValidationErrors());
+
             $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
                 $sensorDataCurrentReadingUpdateDTO->getSensorType(),
                 $sensorDataCurrentReadingUpdateDTO->getSensorName(),

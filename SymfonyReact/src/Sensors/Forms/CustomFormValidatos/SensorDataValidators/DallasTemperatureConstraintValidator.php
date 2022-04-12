@@ -10,6 +10,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class DallasTemperatureConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof DallasTemperatureConstraint) {
@@ -22,19 +25,19 @@ class DallasTemperatureConstraintValidator extends ConstraintValidator
 
         if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
-                ->setParameter('{{ string }}', $value)
+                ->setParameter('{{ string }}', is_array($value) ? 'array' : $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value > Dallas::HIGH_TEMPERATURE_READING_BOUNDARY) {
+        if (is_numeric($value) && $value > Dallas::HIGH_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < Dallas::LOW_TEMPERATURE_READING_BOUNDARY) {
+        if (is_numeric($value) && $value < Dallas::LOW_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

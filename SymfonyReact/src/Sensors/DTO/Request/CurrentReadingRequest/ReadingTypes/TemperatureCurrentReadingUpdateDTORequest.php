@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Request\CurrentReadingRequest;
+namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
@@ -25,7 +25,7 @@ class TemperatureCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUp
             groups:[Bmp::NAME]
         ),
     ]
-    protected float|int|string $readingTypeCurrentReading;
+    protected mixed $readingTypeCurrentReading;
 
     public function getReadingType(): string
     {

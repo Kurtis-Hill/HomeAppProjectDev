@@ -26,6 +26,10 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
 
     public const LOW_SOIL_READING_BOUNDARY = 1000;
 
+    private const ALLOWED_READING_TYPES = [
+        Analog::READING_TYPE
+    ];
+
     /**
      * @ORM\Column(name="soilID", type="integer", nullable=false)
      * @ORM\Id
@@ -138,5 +142,10 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     public function getSensorClass(): string
     {
         return self::class;
+    }
+
+    public static function getAllowedReadingTypes(): array
+    {
+        return self::ALLOWED_READING_TYPES;
     }
 }

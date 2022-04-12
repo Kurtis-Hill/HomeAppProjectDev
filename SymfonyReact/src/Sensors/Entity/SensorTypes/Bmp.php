@@ -30,6 +30,12 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -45;
 
+    private const ALLOWED_READING_TYPES = [
+        Temperature::READING_TYPE,
+        Humidity::READING_TYPE,
+        Latitude::READING_TYPE
+    ];
+
     /**
      * @ORM\Column(name="bmpID", type="integer", nullable=false)
      * @ORM\Id
@@ -205,5 +211,10 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function getSensorClass(): string
     {
         return self::class;
+    }
+
+    public static function getAllowedReadingTypes(): array
+    {
+        return self::ALLOWED_READING_TYPES;
     }
 }

@@ -3,13 +3,12 @@
 namespace App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
-use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
-use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
@@ -17,7 +16,6 @@ use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use Doctrine\ORM\NonUniqueResultException;
 use JetBrains\PhpStorm\ArrayShape;
-use TypeError;
 
 interface UpdateSensorBoundaryReadingsServiceInterface
 {

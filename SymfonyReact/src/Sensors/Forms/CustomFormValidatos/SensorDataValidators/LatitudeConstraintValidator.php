@@ -9,6 +9,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class LatitudeConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof LatitudeConstraint) {
@@ -17,21 +20,22 @@ class LatitudeConstraintValidator extends ConstraintValidator
         if ($value === null || $value === '') {
             return;
         }
+
         if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
-                ->setParameter('{{ string }}', $value)
+                ->setParameter('{{ string }}', is_array($value) ? 'array' : $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value > 90) {
+        if (is_numeric($value) && $value > 90) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < -90) {
+        if (is_numeric($value) && $value < -90) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

@@ -4,7 +4,7 @@ namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -50,7 +50,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
     }
 
     public function handleUpdateSensorCurrentReading(
-        UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorCurrentReadingConsumerDTO,
+        UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
         Devices $device
     ): bool {
         $sensorTypeQueryDTOBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder(

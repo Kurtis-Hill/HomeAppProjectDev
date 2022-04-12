@@ -3,9 +3,9 @@
 namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
 use App\Devices\Entity\Devices;
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 
 interface UpdateCurrentSensorReadingInterface
 {
-    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingConsumerMessageDTO $updateSensorCurrentReadingConsumerDTO, Devices $device): bool;
+    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO, Devices $device): bool;
 }

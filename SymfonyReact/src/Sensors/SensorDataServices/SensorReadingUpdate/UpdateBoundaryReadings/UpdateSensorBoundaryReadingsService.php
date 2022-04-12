@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
-use App\Sensors\DTO\Sensor\UpdateStandardReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -17,12 +17,10 @@ use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface;
 use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
+use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
 use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
-use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
-use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class UpdateSensorBoundaryReadingsService implements UpdateSensorBoundaryReadingsServiceInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Devices\DTO;
+namespace App\Devices\DTO\Internal;
 
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;

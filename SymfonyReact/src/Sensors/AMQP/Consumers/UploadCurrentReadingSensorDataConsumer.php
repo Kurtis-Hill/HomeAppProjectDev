@@ -4,9 +4,9 @@
 namespace App\Sensors\AMQP\Consumers;
 
 use App\Devices\Entity\Devices;
-use App\ErrorLogs;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
+use App\ErrorLogs;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
@@ -37,7 +37,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         try {
             $sensorData = unserialize(
                 $msg->getBody(),
-                ['allowed_classes' => [UpdateSensorCurrentReadingConsumerMessageDTO::class]]
+                ['allowed_classes' => [UpdateSensorCurrentReadingMessageDTO::class]]
             );
         } catch (Exception $exception) {
             error_log(

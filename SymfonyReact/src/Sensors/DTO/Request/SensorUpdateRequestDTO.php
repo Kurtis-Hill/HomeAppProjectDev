@@ -13,6 +13,7 @@ class SensorUpdateRequestDTO
         ),
         Assert\Count(
             min: 1,
+            max: 50,
             minMessage: "sensorData must contain at least {{ limit }} elements",
         )
     ]

@@ -26,6 +26,10 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
 
     public const LOW_TEMPERATURE_READING_BOUNDARY = -55;
 
+    private const ALLOWED_READING_TYPES = [
+        Temperature::READING_TYPE
+    ];
+
     /**
      * @ORM\Column(name="dallasID", type="integer", nullable=false)
      * @ORM\Id
@@ -120,5 +124,10 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public function getSensorClass(): string
     {
         return self::class;
+    }
+
+    public static function getAllowedReadingTypes(): array
+    {
+        return self::ALLOWED_READING_TYPES;
     }
 }

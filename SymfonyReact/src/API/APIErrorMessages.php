@@ -34,4 +34,6 @@ class APIErrorMessages
 
     public const PART_OF_CONTENT_PROCESSED = 'Part of the content could not be processed';
 
+    public const READING_TYPE_NOT_VALID_FOR_SENSOR = '%s reading type not valid for sensor: %s';
+
 }

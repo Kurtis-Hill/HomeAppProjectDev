@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Sensors\DTO\Sensor\CurrentReadingDTO;
+namespace App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs;
 
-use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateSensorCurrentReadingConsumerMessageDTO
+class UpdateSensorCurrentReadingMessageDTO
 {
     private string $sensorType;
 

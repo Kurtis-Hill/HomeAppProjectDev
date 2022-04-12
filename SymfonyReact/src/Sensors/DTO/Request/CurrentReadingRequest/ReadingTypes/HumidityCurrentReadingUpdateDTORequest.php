@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Request\CurrentReadingRequest;
+namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\SensorTypes\Bmp;
@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\Immutable;
 class HumidityCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequestDTO
 {
     #[HumidityConstraint(groups: [Bmp::NAME, Dht::NAME])]
-    protected float|int|string $readingTypeCurrentReading;
+    protected mixed $readingTypeCurrentReading;
 
     public function getReadingType(): string
     {

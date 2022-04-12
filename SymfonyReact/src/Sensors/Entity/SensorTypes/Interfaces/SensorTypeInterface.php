@@ -22,4 +22,5 @@ interface SensorTypeInterface
 
     public function getSensorTypeAlias(): string;
 
+    public static function getAllowedReadingTypes(): array;
 }

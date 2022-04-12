@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Builders\MessageDTOBuilders;
 
-use App\Sensors\DTO\Sensor\CurrentReadingDTO\UpdateSensorCurrentReadingConsumerMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 
 class UpdateSensorCurrentReadingDTOBuilder
 {
@@ -11,8 +11,8 @@ class UpdateSensorCurrentReadingDTOBuilder
         string $sensorName,
         array $readingTypeCurrentReadingDTOs,
         int $deviceID,
-    ): UpdateSensorCurrentReadingConsumerMessageDTO {
-        return new UpdateSensorCurrentReadingConsumerMessageDTO(
+    ): UpdateSensorCurrentReadingMessageDTO {
+        return new UpdateSensorCurrentReadingMessageDTO(
             $sensorType,
             $sensorName,
             $readingTypeCurrentReadingDTOs,

@@ -3,8 +3,8 @@
 
 namespace App\Devices\Voters;
 
-use App\Devices\DTO\NewDeviceDTO;
-use App\Devices\DTO\UpdateDeviceDTO;
+use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;

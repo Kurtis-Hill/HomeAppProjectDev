@@ -11,6 +11,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class BMP280TemperatureConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof BMP280TemperatureConstraint) {
@@ -23,19 +26,19 @@ class BMP280TemperatureConstraintValidator extends ConstraintValidator
 
         if (!is_numeric($value)) {
             $this->context->buildViolation($constraint->intMessage)
-                ->setParameter('{{ string }}', $value)
+                ->setParameter('{{ string }}', is_array($value) ? 'array' : $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value > Bmp::HIGH_TEMPERATURE_READING_BOUNDARY) {
+        if (is_numeric($value) && $value > Bmp::HIGH_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if ($value < Bmp::LOW_TEMPERATURE_READING_BOUNDARY) {
+        if (is_numeric($value) && $value < Bmp::LOW_TEMPERATURE_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Sensor;
+namespace App\Sensors\DTO\Internal\BoundaryReadings;
 
 use JetBrains\PhpStorm\Immutable;
 

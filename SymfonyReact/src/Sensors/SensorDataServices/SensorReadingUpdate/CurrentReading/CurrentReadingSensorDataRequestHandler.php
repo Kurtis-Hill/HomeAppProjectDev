@@ -5,10 +5,13 @@ namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 use App\API\APIErrorMessages;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
-use App\Sensors\DTO\Request\CurrentReadingRequest\AbstractCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
+use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
+use App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -22,6 +25,8 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     private SensorReadingUpdateFactory $sensorReadingUpdateFactory;
 
+    private SensorTypeReadingTypeCheckerFactory $sensorTypeReadingTypeCheckerFactory;
+
     private array $allSensorTypes;
 
     private array $validationErrors = [];
@@ -32,9 +37,11 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         ValidatorInterface $validator,
         SensorTypeRepositoryInterface $sensorTypeRepository,
         SensorReadingUpdateFactory $sensorReadingUpdateFactory,
+        SensorTypeReadingTypeCheckerFactory $sensorTypeReadingTypeCheckerFactory,
     ) {
         $this->validator = $validator;
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
+        $this->sensorTypeReadingTypeCheckerFactory = $sensorTypeReadingTypeCheckerFactory;
         try {
             $this->allSensorTypes = $sensorTypeRepository->getAllSensorTypeNames();
         } catch (ORMException) {
@@ -69,6 +76,30 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         }
 
         return null;
+    }
+
+    /**
+     * @throws ReadingTypeNotSupportedException
+     */
+    public function checkSensorReadingTypeIsAllowed(string $readingType, string $sensorType): bool
+    {
+        try {
+            $sensorReadingTypeChecker = $this->sensorTypeReadingTypeCheckerFactory->fetchSensorReadingTypeChecker($sensorType);
+        } catch (SensorTypeNotFoundException $e) {
+            $this->errors[] = $e->getMessage();
+
+            return false;
+        }
+
+        $readingTypeValidForSensorType = $sensorReadingTypeChecker->checkReadingTypeIsValid($readingType);
+
+        if ($readingTypeValidForSensorType === false) {
+            $this->errors[] = sprintf(APIErrorMessages::READING_TYPE_NOT_VALID_FOR_SENSOR, $readingType, $sensorType);
+
+            return false;
+        }
+
+        return true;
     }
 
     public function validateSensorTypeDTO(

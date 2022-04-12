@@ -3,8 +3,8 @@
 namespace App\Sensors\SensorDataServices\NewSensor;
 
 use App\API\Traits\FormProcessorTrait;
+use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
-use App\Sensors\DTO\Sensor\NewSensorDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Forms\AddNewSensorForm;

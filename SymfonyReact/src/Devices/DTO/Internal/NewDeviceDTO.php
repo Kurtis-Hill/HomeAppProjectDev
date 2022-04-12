@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Devices\DTO;
+namespace App\Devices\DTO\Internal;
 
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
