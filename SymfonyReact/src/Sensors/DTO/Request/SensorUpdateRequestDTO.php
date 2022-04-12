@@ -7,7 +7,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SensorUpdateRequestDTO
 {
     #[
-        Assert\Type(type: ['array'], message: 'sensorData must be a {{ type }} you have provided {{ value }}'),
+        Assert\Type(
+            type: ['array'],
+            message: 'sensorData must be a {{ type }} you have provided {{ value }}'
+        ),
         Assert\NotNull(
             message: "sensorData cannot be empty"
         ),
@@ -15,11 +18,12 @@ class SensorUpdateRequestDTO
             min: 1,
             max: 50,
             minMessage: "sensorData must contain at least {{ limit }} elements",
+            maxMessage: "sensorData cannot contain more than {{ limit }} elements"
         )
     ]
     private mixed $sensorData = null;
 
-    public function getSensorData(): mixed
+    public function getSensorData(): array
     {
         return $this->sensorData;
     }

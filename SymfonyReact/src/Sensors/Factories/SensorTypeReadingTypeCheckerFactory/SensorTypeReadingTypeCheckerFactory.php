@@ -37,7 +37,6 @@ class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeChecke
      */
     public function fetchSensorReadingTypeChecker(string $sensorType): AbstractSensorTypeReadingTypeChecker
     {
-//        dd($sensorType);
         return match ($sensorType) {
             Dht::NAME => $this->dhtReadingTypeChecker,
             Bmp::NAME => $this->bmpReadingTypeChecker,

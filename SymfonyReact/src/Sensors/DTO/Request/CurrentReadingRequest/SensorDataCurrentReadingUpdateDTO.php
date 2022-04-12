@@ -58,7 +58,7 @@ class SensorDataCurrentReadingUpdateDTO
         return $this->sensorType;
     }
 
-    public function getCurrentReadings(): mixed
+    public function getCurrentReadings(): array
     {
         return $this->currentReadings;
     }

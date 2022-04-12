@@ -18,9 +18,7 @@ interface SensorTypeInterface
 
     public function getCardViewObject(): ?CardView;
 
-    public function getSensorClass(): string;
-
-    public function getSensorTypeAlias(): string;
+    public static function getSensorTypeAlias(): string;
 
     public static function getAllowedReadingTypes(): array;
 }

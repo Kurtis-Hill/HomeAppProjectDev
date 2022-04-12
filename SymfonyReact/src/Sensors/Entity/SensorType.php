@@ -38,16 +38,6 @@ class SensorType
 
     public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
 
-    // When creating a new sensor add a const here too and set it to the name of the entity
-    //@TODO: change these in each instance for the class consts
-    public const DHT_SENSOR = 'Dht';
-
-    public const BMP_SENSOR = 'Bmp';
-
-    public const DALLAS_TEMPERATURE = 'Dallas';
-
-    public const SOIL_SENSOR = 'Soil';
-
     // Used by service classes to create forms for the sensors and for getting data from the database e.g getting unknown sensor type object (described as object below)
     // to determine which sensor reading types are about to be updated
     // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array
@@ -77,7 +67,7 @@ class SensorType
             ]
         ],
 
-        SensorType::DALLAS_TEMPERATURE => [
+        Dallas::NAME => [
             'alias' => 'dallas',
             'object' => Dallas::class,
             'readingTypes' => [

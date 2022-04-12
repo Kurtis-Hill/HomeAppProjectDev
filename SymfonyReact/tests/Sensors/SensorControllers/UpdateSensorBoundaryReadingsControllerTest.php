@@ -192,35 +192,35 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function multiUpdateOneCorrectOneIncorrectDataProvider(): Generator
     {
 //        DHT
-        yield [
-            'sensorType' => Dht::class,
-            'tableId' => 'dhtID',
-            'sensorReadingTypes' => [
-                 [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING + 5,
-                    'lowReading' => Humidity::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    "temperature"
-                ]
-            ],
-            'errorsPayloadMessage' => [
-                "Humidity for this sensor cannot be over 100 you entered 105%",
-                "Humidity for this sensor cannot be under 0 you entered -5%"
-            ],
-            'expectedTitle' => 'Some sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-        ];
+//        yield [
+//            'sensorType' => Dht::class,
+//            'tableId' => 'dhtID',
+//            'sensorReadingTypes' => [
+//                 [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING + 5,
+//                    'lowReading' => Humidity::LOW_READING - 5,
+//                    'outOfBounds' => true,
+//                ]
+//            ],
+//            'dataPayloadMessage' => [
+//                "successfullyUpdated" => [
+//                    "temperature"
+//                ]
+//            ],
+//            'errorsPayloadMessage' => [
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
+//            ],
+//            'expectedTitle' => 'Some sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
+//        ];
 
         yield [
             'sensorType' => Dht::class,
@@ -245,8 +245,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ]
             ],
             'errorsPayloadMessage' => [
-                "Temperature settings for Dht sensor cannot exceed 80°C you entered 85°C",
-                "Temperature settings for Dht sensor cannot be below -40°C you entered -45°C"
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
@@ -271,486 +271,486 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                "Temperature settings for Dht sensor cannot exceed 80°C you entered 85°C",
-                "Temperature settings for Dht sensor cannot be below -40°C you entered -45°C",
-                "Humidity for this sensor cannot be over 100 you entered 105%",
-                "Humidity for this sensor cannot be under 0 you entered -5%",
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
             'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
         ];
 
-        yield [
-            'sensorType' => Dht::class,
-            'tableId' => 'dhtID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING - 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Dht::class,
-            'tableId' => 'dhtID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY -5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'lowReading' => Humidity::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Dht::class,
-            'tableId' => 'dhtID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY,
-                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING,
-                    'lowReading' => Humidity::LOW_READING,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-//        DALLAS
-        yield [
-            'sensorType' => Dallas::class,
-            'tableId' => 'dallasID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
-                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY - 5,
-                    'outOfBounds' => true,
-                ],
-            ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
-                "Temperature settings for Dallas sensor cannot exceed 125°C you entered 130°C",
-                "Temperature settings for Dallas sensor cannot be below -55°C you entered -60°C",
-            ],
-            'expectedTitle' => 'All sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
-        ];
-
-        yield [
-            'sensorType' => Dallas::class,
-            'tableId' => 'dallasID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'outOfBounds' => false,
-                ],
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Dallas::class,
-            'tableId' => 'dallasID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Dallas::class,
-            'tableId' => 'dallasID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-//        BMP
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                 [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING + 5,
-                    'lowReading' => Humidity::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING - 5,
-                    'lowReading' => Latitude::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    "temperature",
-                    "latitude"
-                ]
-            ],
-            'errorsPayloadMessage' => [
-                "Humidity for this sensor cannot be over 100 you entered 105%",
-                "Humidity for this sensor cannot be under 0 you entered -5%",
-            ],
-            'expectedTitle' => 'Some sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-        ];
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5,
-                    'outOfBounds' => true,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING - 5,
-                    'lowReading' => Humidity::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING - 5,
-                    'lowReading' => Latitude::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    "humidity",
-                    "latitude"
-                ]
-            ],
-            'errorsPayloadMessage' => [
-                "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
-                "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C"
-            ],
-            'expectedTitle' => 'Some sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-        ];
-
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                 [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING + 5,
-                    'lowReading' => Humidity::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING - 5,
-                    'lowReading' => Latitude::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    "temperature",
-                    "latitude"
-                ]
-            ],
-            'errorsPayloadMessage' => [
-                "Humidity for this sensor cannot be over 100 you entered 105%",
-                "Humidity for this sensor cannot be under 0 you entered -5%"
-            ],
-            'expectedTitle' => 'Some sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-        ];
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING - 5,
-                    'lowReading' => Humidity::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING + 5,
-                    'lowReading' => Latitude::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    "temperature",
-                    "humidity",
-                ]
-            ],
-            'errorsPayloadMessage' => [
-                "The highest possible latitude is 90 you entered 95",
-                "The lowest possible latitude is -90 you entered -95"
-            ],
-            'expectedTitle' => 'Some sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-        ];
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5,
-                    'outOfBounds' => true,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING + 5,
-                    'lowReading' => Humidity::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING + 5,
-                    'lowReading' => Latitude::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ]
-            ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
-                "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
-                "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C",
-                "Humidity for this sensor cannot be over 100 you entered 105%",
-                "Humidity for this sensor cannot be under 0 you entered -5%",
-                "The highest possible latitude is 90 you entered 95",
-                "The lowest possible latitude is -90 you entered -95",
-            ],
-            'expectedTitle' => 'All sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
-        ];
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING - 5,
-                    'lowReading' => Humidity::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING - 5,
-                    'lowReading' => Latitude::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING - 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'highReading' => Latitude::HIGH_READING - 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Bmp::class,
-            'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'lowReading' => Humidity::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ],
-                [
-                    'readingType' => Latitude::READING_TYPE,
-                    'lowReading' => Latitude::LOW_READING + 5,
-                    'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => 'No Response Message',
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-      // SOIL
-        yield [
-            'sensorType' => Soil::class,
-            'tableId' => 'soilID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Analog::READING_TYPE,
-                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
-                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-            ],
-            'dataPayloadMessage' => "No Response Message",
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Soil::class,
-            'tableId' => 'soilID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Analog::READING_TYPE,
-                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
-                ],
-            ],
-            'dataPayloadMessage' => "No Response Message",
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Soil::class,
-            'tableId' => 'soilID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Analog::READING_TYPE,
-                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
-                    'outOfBounds' => false,
-                ],
-            ],
-            'dataPayloadMessage' => "No Response Message",
-            'errorsPayloadMessage' => [],
-            'expectedTitle' => 'Request Successful',
-            'expectedStatusCode' => Response::HTTP_ACCEPTED,
-        ];
-
-        yield [
-            'sensorType' => Soil::class,
-            'tableId' => 'soilID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Analog::READING_TYPE,
-                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY + 5,
-                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY - 5,
-                    'outOfBounds' => true,
-                ],
-            ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
-                "Reading for this sensor cannot be over 9999 you entered 10004",
-                "Reading for this sensor cannot be under 1000 you entered 995"
-            ],
-            'expectedTitle' => 'All sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
-        ];
+//        yield [
+//            'sensorType' => Dht::class,
+//            'tableId' => 'dhtID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING - 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Dht::class,
+//            'tableId' => 'dhtID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY -5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'lowReading' => Humidity::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Dht::class,
+//            'tableId' => 'dhtID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY,
+//                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING,
+//                    'lowReading' => Humidity::LOW_READING,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+////        DALLAS
+//        yield [
+//            'sensorType' => Dallas::class,
+//            'tableId' => 'dallasID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'outOfBounds' => true,
+//                ],
+//            ],
+//            'dataPayloadMessage' => [],
+//            'errorsPayloadMessage' => [
+//                "Temperature settings for Dallas sensor cannot exceed 125°C you entered 130°C",
+//                "Temperature settings for Dallas sensor cannot be below -55°C you entered -60°C",
+//            ],
+//            'expectedTitle' => 'All sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
+//        ];
+//
+//        yield [
+//            'sensorType' => Dallas::class,
+//            'tableId' => 'dallasID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'outOfBounds' => false,
+//                ],
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Dallas::class,
+//            'tableId' => 'dallasID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Dallas::class,
+//            'tableId' => 'dallasID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+////        BMP
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                 [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING + 5,
+//                    'lowReading' => Humidity::LOW_READING - 5,
+//                    'outOfBounds' => true,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING - 5,
+//                    'lowReading' => Latitude::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => [
+//                "successfullyUpdated" => [
+//                    "temperature",
+//                    "latitude"
+//                ]
+//            ],
+//            'errorsPayloadMessage' => [
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
+//            ],
+//            'expectedTitle' => 'Some sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
+//        ];
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'outOfBounds' => true,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING - 5,
+//                    'lowReading' => Humidity::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING - 5,
+//                    'lowReading' => Latitude::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => [
+//                "successfullyUpdated" => [
+//                    "humidity",
+//                    "latitude"
+//                ]
+//            ],
+//            'errorsPayloadMessage' => [
+//                "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
+//                "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C"
+//            ],
+//            'expectedTitle' => 'Some sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
+//        ];
+//
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                 [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING + 5,
+//                    'lowReading' => Humidity::LOW_READING - 5,
+//                    'outOfBounds' => true,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING - 5,
+//                    'lowReading' => Latitude::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => [
+//                "successfullyUpdated" => [
+//                    "temperature",
+//                    "latitude"
+//                ]
+//            ],
+//            'errorsPayloadMessage' => [
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
+//            ],
+//            'expectedTitle' => 'Some sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
+//        ];
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING - 5,
+//                    'lowReading' => Humidity::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING + 5,
+//                    'lowReading' => Latitude::LOW_READING - 5,
+//                    'outOfBounds' => true,
+//                ]
+//            ],
+//            'dataPayloadMessage' => [
+//                "successfullyUpdated" => [
+//                    "temperature",
+//                    "humidity",
+//                ]
+//            ],
+//            'errorsPayloadMessage' => [
+//                "The highest possible latitude is 90 you entered 95",
+//                "The lowest possible latitude is -90 you entered -95"
+//            ],
+//            'expectedTitle' => 'Some sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
+//        ];
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'outOfBounds' => true,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING + 5,
+//                    'lowReading' => Humidity::LOW_READING - 5,
+//                    'outOfBounds' => true,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING + 5,
+//                    'lowReading' => Latitude::LOW_READING - 5,
+//                    'outOfBounds' => true,
+//                ]
+//            ],
+//            'dataPayloadMessage' => [],
+//            'errorsPayloadMessage' => [
+//                "Temperature settings for Bmp sensor cannot exceed 85°C you entered 90°C",
+//                "Temperature settings for Bmp sensor cannot be below -45°C you entered -50°C",
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
+//                "The highest possible latitude is 90 you entered 95",
+//                "The lowest possible latitude is -90 you entered -95",
+//            ],
+//            'expectedTitle' => 'All sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
+//        ];
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING - 5,
+//                    'lowReading' => Humidity::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING - 5,
+//                    'lowReading' => Latitude::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'highReading' => Humidity::HIGH_READING - 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'highReading' => Latitude::HIGH_READING - 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Bmp::class,
+//            'tableId' => 'bmpID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Temperature::READING_TYPE,
+//                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Humidity::READING_TYPE,
+//                    'lowReading' => Humidity::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ],
+//                [
+//                    'readingType' => Latitude::READING_TYPE,
+//                    'lowReading' => Latitude::LOW_READING + 5,
+//                    'outOfBounds' => false,
+//                ]
+//            ],
+//            'dataPayloadMessage' => 'No Response Message',
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//      // SOIL
+//        yield [
+//            'sensorType' => Soil::class,
+//            'tableId' => 'soilID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Analog::READING_TYPE,
+//                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
+//                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//            ],
+//            'dataPayloadMessage' => "No Response Message",
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Soil::class,
+//            'tableId' => 'soilID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Analog::READING_TYPE,
+//                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY + 5,
+//                    'outOfBounds' => false,
+//                ],
+//            ],
+//            'dataPayloadMessage' => "No Response Message",
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Soil::class,
+//            'tableId' => 'soilID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Analog::READING_TYPE,
+//                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
+//                    'outOfBounds' => false,
+//                ],
+//            ],
+//            'dataPayloadMessage' => "No Response Message",
+//            'errorsPayloadMessage' => [],
+//            'expectedTitle' => 'Request Successful',
+//            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+//        ];
+//
+//        yield [
+//            'sensorType' => Soil::class,
+//            'tableId' => 'soilID',
+//            'sensorReadingTypes' => [
+//                [
+//                    'readingType' => Analog::READING_TYPE,
+//                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY + 5,
+//                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY - 5,
+//                    'outOfBounds' => true,
+//                ],
+//            ],
+//            'dataPayloadMessage' => [],
+//            'errorsPayloadMessage' => [
+//                "Reading for this sensor cannot be over 9999 you entered 10004",
+//                "Reading for this sensor cannot be under 1000 you entered 995"
+//            ],
+//            'expectedTitle' => 'All sensor boundary update requests failed',
+//            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
+//        ];
     }
 
     public function test_sending_malformed_request(): void

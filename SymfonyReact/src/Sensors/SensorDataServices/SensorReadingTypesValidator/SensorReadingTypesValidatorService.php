@@ -77,6 +77,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
                 $errors = array_merge($errors, $validationErrors);
             }
         }
+
         return $errors;
     }
 
@@ -97,6 +98,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
                 $errors = [$e->getMessage()];
             }
         }
+
         return $errors ?? [];
     }
 

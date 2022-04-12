@@ -22,8 +22,8 @@ trait ValidatorProcessorTrait
         return $validationErrors ?? [];
     }
 
-    public function getValidationErrorsAsStrings(ConstraintViolation $constraintViolation): Generator
+    public function getValidationErrorsAsStrings(ConstraintViolation $constraintViolation): string
     {
-        yield $constraintViolation->getMessage();
+        return $constraintViolation->getMessage();
     }
 }

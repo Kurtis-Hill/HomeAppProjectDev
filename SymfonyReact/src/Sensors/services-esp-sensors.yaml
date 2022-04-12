@@ -45,9 +45,6 @@ services:
   App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface:
     alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler'
 
-  App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeCheckerInterface:
-    alias: 'App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeChecker'
-
   ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
     alias: 'App\Sensors\SensorDataServices\NewSensor\NewSensorCreationValidatorService'
@@ -67,6 +64,10 @@ services:
 
   App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface:
     alias: 'App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorService'
+
+  App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactoryInterface:
+    alias: 'App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactory'
+
 ######################## Builders ########################################################################
 
 ######################## Repositories ########################################################################

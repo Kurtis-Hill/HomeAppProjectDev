@@ -3,7 +3,10 @@
 namespace App\AppConfig\DataFixtures\ESP8266;
 
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -24,31 +27,31 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
         $dhtSensorType->setSensorType(Dht::NAME);
         $dhtSensorType->setDescription('Temperature and Humidity Sensor');
 
-        $this->addReference(SensorType::DHT_SENSOR, $dhtSensorType);
+        $this->addReference(Dht::NAME, $dhtSensorType);
         $manager->persist($dhtSensorType);
 
         $dallasSensorType = new SensorType();
 
-        $dallasSensorType->setSensorType(SensorType::DALLAS_TEMPERATURE);
+        $dallasSensorType->setSensorType(Dallas::NAME);
         $dallasSensorType->setDescription('Water Proof Temperature Sensor');
 
-        $this->addReference(SensorType::DALLAS_TEMPERATURE, $dallasSensorType);
+        $this->addReference(Dallas::NAME, $dallasSensorType);
         $manager->persist($dallasSensorType);
 
         $soilSensorType = new SensorType();
 
-        $soilSensorType->setSensorType(SensorType::SOIL_SENSOR);
+        $soilSensorType->setSensorType(Soil::NAME);
         $soilSensorType->setDescription('Soil Moisture Sensor');
 
-        $this->addReference(SensorType::SOIL_SENSOR, $soilSensorType);
+        $this->addReference(Soil::NAME, $soilSensorType);
         $manager->persist($soilSensorType);
 
         $bmpSensorType = new SensorType();
 
-        $bmpSensorType->setSensorType(SensorType::BMP_SENSOR);
+        $bmpSensorType->setSensorType(Bmp::NAME);
         $bmpSensorType->setDescription('Weather Station Sensor');
 
-        $this->addReference(SensorType::BMP_SENSOR, $bmpSensorType);
+        $this->addReference(Bmp::NAME, $bmpSensorType);
         $manager->persist($bmpSensorType);
 
         $manager->flush();

@@ -116,14 +116,9 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         return self::NAME;
     }
 
-    public function getSensorTypeAlias(): string
+    public static function getSensorTypeAlias(): string
     {
         return self::ALIAS;
-    }
-
-    public function getSensorClass(): string
-    {
-        return self::class;
     }
 
     public static function getAllowedReadingTypes(): array

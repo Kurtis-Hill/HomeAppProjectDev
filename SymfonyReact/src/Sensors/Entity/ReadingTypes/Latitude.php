@@ -6,6 +6,7 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -26,8 +27,10 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
 
     public const LOW_READING = -90;
 
+    public const READING_SYMBOL = '°';
+
     public const LATITUDE_SENSORS = [
-        SensorType::BMP_SENSOR
+        Bmp::NAME
     ];
 
     /**

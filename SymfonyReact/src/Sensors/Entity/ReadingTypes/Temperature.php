@@ -32,11 +32,11 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
 
     public const READING_SYMBOL = '°C';
 
-    public const TEMPERATURE_SENSORS = [
-      SensorType::BMP_SENSOR,
-      SensorType::DALLAS_TEMPERATURE,
-      SensorType::DHT_SENSOR
-    ];
+//    public const TEMPERATURE_SENSORS = [
+//        Bmp::NAME,
+//        Dallas::NAME,
+//      SensorType::Dht::NAME
+//    ];
 
     /**
      * @ORM\Column(name="tempID", type="integer", nullable=false)

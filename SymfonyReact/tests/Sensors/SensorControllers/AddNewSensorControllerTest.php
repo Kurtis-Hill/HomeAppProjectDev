@@ -86,22 +86,22 @@ class AddNewSensorControllerTest extends WebTestCase
     public function newSensorSimpleDataProvider(): Generator
     {
         yield [
-            'sensor' => SensorType::DHT_SENSOR,
+            'sensor' => Dht::NAME,
             'sensorName' => 'dhtTest'
         ];
 
         yield [
-            'sensor' => SensorType::BMP_SENSOR,
+            'sensor' => Bmp::NAME,
             'sensorName' => 'bmpTest'
         ];
 
         yield [
-            'sensor' => SensorType::SOIL_SENSOR,
+            'sensor' => Soil::NAME,
             'sensorName' => 'soilTest'
         ];
 
         yield [
-            'sensor' => SensorType::DALLAS_TEMPERATURE,
+            'sensor' => Dallas::NAME,
             'sensorName' => 'dallasTest'
         ];
     }
@@ -109,7 +109,7 @@ class AddNewSensorControllerTest extends WebTestCase
     public function newSensorExtendedDataProvider(): Generator
     {
         yield [
-            'sensor' => SensorType::DHT_SENSOR,
+            'sensor' => Dht::NAME,
             'sensorName' => 'dhtTest',
             'class' => Dht::class,
             [
@@ -119,7 +119,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => SensorType::BMP_SENSOR,
+            'sensor' => Bmp::NAME,
             'sensorName' => 'bmpTest',
             'class' => Bmp::class,
             [
@@ -130,7 +130,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => SensorType::SOIL_SENSOR,
+            'sensor' => Soil::NAME,
             'sensorName' => 'soilTest',
             'class' => Soil::class,
             [
@@ -139,7 +139,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => SensorType::DALLAS_TEMPERATURE,
+            'sensor' => Dallas::NAME,
             'sensorName' => 'dallasTest',
             'class' => Dallas::class,
             [

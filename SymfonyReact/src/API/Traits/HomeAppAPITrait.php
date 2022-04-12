@@ -195,12 +195,12 @@ trait HomeAppAPITrait
     }
 
     // 50x Server Error Response
-    public function sendInternalServerErrorJsonResponse(array $data = []): JsonResponse
+    public function sendInternalServerErrorJsonResponse(array $data = [], string $title = 'Server Error Please Try Again'): JsonResponse
     {
         if (!empty($data)) {
             return new JsonResponse(
                 [
-                    'title' => 'Server Error Please Try Again',
+                    'title' => $title,
                     'errors' => $data
                 ],
                 HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR
