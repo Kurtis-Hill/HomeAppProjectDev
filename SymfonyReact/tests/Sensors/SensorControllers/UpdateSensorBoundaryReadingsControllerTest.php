@@ -52,6 +52,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $this->setUserToken();
     }
 
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
+    }
+
     private function setUserToken(bool $forceToken = false, ?string $username = null, ?string $password = null): ?string
     {
         if ($this->userToken === null || $forceToken === true) {
@@ -90,7 +97,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         array|string $expectedDataPayloadMessage,
         array $expectedErrorPayloadMessage,
         string $expectedTitle,
-        int $expectedStatusCode,
     ): void
     {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
@@ -122,7 +128,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $dataPayload = $responseData['payload'] ?? null;
         $errorsPayload = $responseData['errors'] ?? null;
 
-        self::assertEquals($expectedStatusCode, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_MULTI_STATUS, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
         if ($dataPayload !== null) {
             self::assertEquals($expectedDataPayloadMessage, $dataPayload);
@@ -156,71 +162,37 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
     }
 
-    private function checkOutOfBoundResult(array $readingUpdates, AllSensorReadingTypeInterface $object, string $sensorReadingType): void
-    {
-        if ($object instanceof StandardReadingSensorInterface) {
-            if ($readingUpdates[$sensorReadingType]['outOfBounds'] === true) {
-                if (!empty($readingUpdates[$sensorReadingType]['highReading'])) {
-                    self::assertNotEquals(
-                        $readingUpdates[$sensorReadingType]['highReading'],
-                        $object->getHighReading()
-                    );
-                }
-                if (!empty($readingUpdates[$sensorReadingType]['lowReading'])) {
-                    self::assertNotEquals(
-                        $readingUpdates[$sensorReadingType]['lowReading'],
-                        $object->getLowReading()
-                    );
-                }
-            } else {
-                if (!empty($readingUpdates[$sensorReadingType]['highReading'])) {
-                    self::assertEquals(
-                        $readingUpdates[$sensorReadingType]['highReading'],
-                        $object->getHighReading()
-                    );
-                }
-                if (!empty($readingUpdates[$sensorReadingType]['lowReading'])) {
-                    self::assertEquals(
-                        $readingUpdates[$sensorReadingType]['lowReading'],
-                        $object->getLowReading()
-                    );
-                }
-            }
-        }
-    }
-
     public function multiUpdateOneCorrectOneIncorrectDataProvider(): Generator
     {
 //        DHT
-//        yield [
-//            'sensorType' => Dht::class,
-//            'tableId' => 'dhtID',
-//            'sensorReadingTypes' => [
-//                 [
-//                    'readingType' => Temperature::READING_TYPE,
-//                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-//                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-//                    'outOfBounds' => false,
-//                ],
-//                [
-//                    'readingType' => Humidity::READING_TYPE,
-//                    'highReading' => Humidity::HIGH_READING + 5,
-//                    'lowReading' => Humidity::LOW_READING - 5,
-//                    'outOfBounds' => true,
-//                ]
-//            ],
-//            'dataPayloadMessage' => [
-//                "successfullyUpdated" => [
-//                    "temperature"
-//                ]
-//            ],
-//            'errorsPayloadMessage' => [
-//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
-//                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
-//            ],
-//            'expectedTitle' => 'Some sensor boundary update requests failed',
-//            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-//        ];
+        yield [
+            'sensorType' => Dht::class,
+            'tableId' => 'dhtID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+                    'outOfBounds' => false,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'highReading' => Humidity::HIGH_READING + 5,
+                    'lowReading' => Humidity::LOW_READING - 5,
+                    'outOfBounds' => true,
+                ]
+            ],
+            'dataPayloadMessage' => [
+                "successfullyUpdated" => [
+                    Temperature::READING_TYPE
+                ]
+            ],
+            'errorsPayloadMessage' => [
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
+            ],
+            'expectedTitle' => 'Some sensor boundary update requests failed',
+        ];
 
         yield [
             'sensorType' => Dht::class,
@@ -241,7 +213,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [
                 "successfullyUpdated" => [
-                    "humidity"
+                    Humidity::READING_TYPE
                 ]
             ],
             'errorsPayloadMessage' => [
@@ -249,35 +221,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_MULTI_STATUS,
-        ];
-
-        yield [
-            'sensorType' => Dht::class,
-            'tableId' => 'dhtID',
-            'sensorReadingTypes' => [
-                [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
-                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5,
-                    'outOfBounds' => true,
-                ],
-                [
-                    'readingType' => Humidity::READING_TYPE,
-                    'highReading' => Humidity::HIGH_READING + 5,
-                    'lowReading' => Humidity::LOW_READING - 5,
-                    'outOfBounds' => true,
-                ]
-            ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
-                ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
-                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
-                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
-            ],
-            'expectedTitle' => 'All sensor boundary update requests failed',
-            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
         ];
 
 //        yield [
@@ -441,7 +384,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //            ],
 //            'dataPayloadMessage' => [
 //                "successfullyUpdated" => [
-//                    "temperature",
+//                    Temperature::READING_TYPE,
 //                    "latitude"
 //                ]
 //            ],
@@ -478,8 +421,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //            ],
 //            'dataPayloadMessage' => [
 //                "successfullyUpdated" => [
-//                    "humidity",
-//                    "latitude"
+//                    Humidity::READING_TYPE,
+//                    Latitude::READING_TYPE
 //                ]
 //            ],
 //            'errorsPayloadMessage' => [
@@ -516,8 +459,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //            ],
 //            'dataPayloadMessage' => [
 //                "successfullyUpdated" => [
-//                    "temperature",
-//                    "latitude"
+//                    Temperature::READING_TYPE,
+//                    Latitude::READING_TYPE
 //                ]
 //            ],
 //            'errorsPayloadMessage' => [
@@ -553,8 +496,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //            ],
 //            'dataPayloadMessage' => [
 //                "successfullyUpdated" => [
-//                    "temperature",
-//                    "humidity",
+//                    Temperature::READING_TYPE,
+//                    Humidity::READING_TYPE,
 //                ]
 //            ],
 //            'errorsPayloadMessage' => [
@@ -752,6 +695,280 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //            'expectedStatusCode' => Response::HTTP_BAD_REQUEST,
 //        ];
     }
+
+    /**
+     * @dataProvider correctUpdateDataDataProvider
+     */
+    public function test_correct_update_data_returns_accepted(
+        string $sensorType,
+        string $tableId,
+        array $sensorReadingsToUpdate,
+        array|string $expectedDataPayloadMessage,
+        array $expectedErrorPayloadMessage,
+        string $expectedTitle,
+    ): void
+    {
+        $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
+        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+            $sensorData = [
+                'sensorData' => $sensorReadingsToUpdate,
+            ];
+        }
+        $jsonData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        $title = $responseData['title'];
+        $dataPayload = $responseData['payload'] ?? null;
+        $errorsPayload = $responseData['errors'] ?? null;
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals($expectedTitle, $title);
+        if ($dataPayload !== null) {
+            self::assertEquals($expectedDataPayloadMessage, $dataPayload);
+        }
+        if ($errorsPayload !== null) {
+            self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
+        }
+
+        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
+
+        $readingUpdates = [];
+        foreach ($sensorReadingsToUpdate as $sensorReading) {
+            $readingUpdates[$sensorReading['readingType']] = [
+                'highReading' => $sensorReading['highReading'] ?? null,
+                'lowReading' => $sensorReading['lowReading'] ?? null,
+                'outOfBounds' => $sensorReading['outOfBounds'],
+            ];
+        }
+
+        if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), 'analog');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
+        }
+    }
+
+
+    public function correctUpdateDataDataProvider(): Generator
+    {
+        yield [
+            'sensorType' => Dht::class,
+            'tableId' => 'dhtID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+                    'outOfBounds' => false,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'highReading' => Humidity::HIGH_READING - 5,
+                    'outOfBounds' => false,
+                ]
+            ],
+            'dataPayloadMessage' => 'No Response Message',
+            'errorsPayloadMessage' => [],
+            'expectedTitle' => 'Request Successful',
+            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+        ];
+
+        yield [
+            'sensorType' => Dht::class,
+            'tableId' => 'dhtID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY -5,
+                    'outOfBounds' => false,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'lowReading' => Humidity::LOW_READING + 5,
+                    'outOfBounds' => false,
+                ]
+            ],
+            'dataPayloadMessage' => 'No Response Message',
+            'errorsPayloadMessage' => [],
+            'expectedTitle' => 'Request Successful',
+            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+        ];
+
+        yield [
+            'sensorType' => Dht::class,
+            'tableId' => 'dhtID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY,
+                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY,
+                    'outOfBounds' => false,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'highReading' => Humidity::HIGH_READING,
+                    'lowReading' => Humidity::LOW_READING,
+                    'outOfBounds' => false,
+                ]
+            ],
+            'dataPayloadMessage' => 'No Response Message',
+            'errorsPayloadMessage' => [],
+            'expectedTitle' => 'Request Successful',
+            'expectedStatusCode' => Response::HTTP_ACCEPTED,
+        ];
+    }
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    /**
+     * @dataProvider sendingEntireWrongReadingPayloadDataProvider
+     */
+    public function test_sending_wrong_data_entire_reading_payload(
+        string $sensorType,
+        string $tableId,
+        array $sensorReadingsToUpdate,
+        array|string $expectedDataPayloadMessage,
+        array $expectedErrorPayloadMessage,
+        string $expectedTitle,
+    ): void
+    {
+        $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
+        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+            $sensorData = [
+                'sensorData' => $sensorReadingsToUpdate,
+            ];
+        }
+        $jsonData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        $title = $responseData['title'];
+        $dataPayload = $responseData['payload'] ?? null;
+        $errorsPayload = $responseData['errors'] ?? null;
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals($expectedTitle, $title);
+        if ($dataPayload !== null) {
+            self::assertEquals($expectedDataPayloadMessage, $dataPayload);
+        }
+        if ($errorsPayload !== null) {
+            self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
+        }
+
+        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
+
+        $readingUpdates = [];
+        foreach ($sensorReadingsToUpdate as $sensorReading) {
+            $readingUpdates[$sensorReading['readingType']] = [
+                'highReading' => $sensorReading['highReading'] ?? null,
+                'lowReading' => $sensorReading['lowReading'] ?? null,
+                'outOfBounds' => $sensorReading['outOfBounds'],
+            ];
+        }
+
+        if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), 'analog');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
+        }
+    }
+
+    public function sendingEntireWrongReadingPayloadDataProvider(): Generator
+    {
+//        DHT
+        yield [
+            'sensorType' => Dht::class,
+            'tableId' => 'dhtID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
+                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5,
+                    'outOfBounds' => true,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'highReading' => Humidity::HIGH_READING + 5,
+                    'lowReading' => Humidity::LOW_READING - 5,
+                    'outOfBounds' => true,
+                ]
+            ],
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
+            ],
+            'expectedTitle' => 'All sensor boundary update requests failed',
+        ];
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function test_sending_malformed_request(): void
     {
@@ -958,10 +1175,36 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
     }
 
-    protected function tearDown(): void
+    private function checkOutOfBoundResult(array $readingUpdates, AllSensorReadingTypeInterface $object, string $sensorReadingType): void
     {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
+        if ($object instanceof StandardReadingSensorInterface) {
+            if ($readingUpdates[$sensorReadingType]['outOfBounds'] === true) {
+                if (!empty($readingUpdates[$sensorReadingType]['highReading'])) {
+                    self::assertNotEquals(
+                        $readingUpdates[$sensorReadingType]['highReading'],
+                        $object->getHighReading()
+                    );
+                }
+                if (!empty($readingUpdates[$sensorReadingType]['lowReading'])) {
+                    self::assertNotEquals(
+                        $readingUpdates[$sensorReadingType]['lowReading'],
+                        $object->getLowReading()
+                    );
+                }
+            } else {
+                if (!empty($readingUpdates[$sensorReadingType]['highReading'])) {
+                    self::assertEquals(
+                        $readingUpdates[$sensorReadingType]['highReading'],
+                        $object->getHighReading()
+                    );
+                }
+                if (!empty($readingUpdates[$sensorReadingType]['lowReading'])) {
+                    self::assertEquals(
+                        $readingUpdates[$sensorReadingType]['lowReading'],
+                        $object->getLowReading()
+                    );
+                }
+            }
+        }
     }
 }
