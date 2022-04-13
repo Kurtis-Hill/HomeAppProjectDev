@@ -45,7 +45,7 @@ if [ ! -f /etc/logs/user-input-errors.log ]; then
 fi
 
 echo "Starting supervisor..."
-supervisord -n&
+# supervisord -n&
 echo "Supervisor Started..."
 
 exec /usr/local/bin/docker-php-entrypoint "$@"

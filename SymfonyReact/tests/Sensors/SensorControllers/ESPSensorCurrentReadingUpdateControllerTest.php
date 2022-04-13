@@ -391,7 +391,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
-            'errors' => ['Temperature settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL],
+            'errors' => [ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL],
             'payload' => [
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
@@ -422,7 +422,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'errors' => [
                 'The submitted value is not a number "string"',
                 'The submitted value is not a number "array"',
-                'Temperature settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
 
             ],
             'payload' => [
@@ -452,7 +452,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
             'errors' => [
                 'The submitted value is not a number "string"',
-                'Temperature settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
                 'The submitted value is not a number "array"',
             ],
             'payload' => [
@@ -685,10 +685,10 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                'Temperature settings for ' . Dht::NAME . ' sensor cannot exceed '. Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '.Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
-                'Humidity for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
-                'Temperature settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
-                'Humidity for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed '. Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '.Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
             ],
         ];
 
@@ -710,8 +710,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                'Temperature settings for ' . Dallas::NAME . ' sensor cannot exceed '. Dallas::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered '.Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
-                'Temperature settings for ' . Dallas::NAME . ' sensor cannot be below ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dallas::NAME . ' sensor cannot exceed '. Dallas::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered '.Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) .' settings for ' . Dallas::NAME . ' sensor cannot be below ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
             ],
         ];
 
@@ -737,12 +737,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                'Temperature settings for ' . Bmp::NAME . ' sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 1 .Temperature::READING_SYMBOL,
-                'Humidity for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL .' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
-                'The highest possible latitude is ' . Latitude::HIGH_READING . '° you entered ' . Latitude::HIGH_READING + 1 . Latitude::READING_SYMBOL,
-                'Temperature settings for ' . Bmp::NAME . ' sensor cannot be below ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
-                'Humidity for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
-                'The lowest possible latitude is ' . Latitude::LOW_READING . '° you entered ' . Latitude::LOW_READING - 1 . Latitude::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 1 .Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL .' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
+                'The highest possible ' . Latitude::READING_TYPE . ' is ' . Latitude::HIGH_READING . Latitude::READING_SYMBOL . ' you entered ' . Latitude::HIGH_READING + 1 . Latitude::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot be below ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
+                'The lowest possible ' . Latitude::READING_TYPE . ' is ' . Latitude::LOW_READING . '° you entered ' . Latitude::LOW_READING - 1 . Latitude::READING_SYMBOL,
             ],
         ];
 
@@ -764,8 +764,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                'Reading for soil sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
-                'Reading for soil sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 1,
+                'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
+                'Reading for ' . Soil::NAME . ' sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 1,
             ],
         ];
     }
