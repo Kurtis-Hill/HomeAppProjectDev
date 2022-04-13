@@ -10,7 +10,6 @@ doctrine:
     dbname:   "%env(DB_NAME)%"
     user:     "%env(DB_USER)%"
     password: "%env(DB_PASSWORD)%"
-    dbname: "%env(MARIADB_TEST_DATASSWORD)%"
 #    options:
 #      1007  : "%env(PRIVATE_KEY)%"
 #      1008  : "%env(CLIENT_CERT)%"
