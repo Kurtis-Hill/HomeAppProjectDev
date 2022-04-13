@@ -69,7 +69,6 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
         if (empty($sensorReadingObjects)) {
             return false;
         }
-//        dd($sensorReadingObjects, $updateSensorCurrentReadingConsumerDTO->getCurrentReadings());
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingDTO) {
                 if ($currentReadingDTO->getReadingType() !== $sensorReadingObject->getReadingType()) {

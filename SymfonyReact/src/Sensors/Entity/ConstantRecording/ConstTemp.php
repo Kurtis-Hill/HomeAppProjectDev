@@ -47,7 +47,7 @@ class ConstTemp implements ConstantlyRecordInterface
     private float $sensorReading;
 
     /**
-     * @ORM\Column(name="timez", type="datetime", nullable=false, options={"default"="current_timestamp()"})
+     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
      */
     #[Assert\NotBlank(message: 'Const temp date time should not be blank')]
     private DateTimeInterface $time;

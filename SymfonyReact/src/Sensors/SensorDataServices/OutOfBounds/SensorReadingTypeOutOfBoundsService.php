@@ -22,7 +22,6 @@ class SensorReadingTypeOutOfBoundsService implements OutOfBoundsSensorServiceInt
 
     public function checkAndProcessOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
     {
-//        dd($readingTypeObject);
         if ($readingTypeObject->isReadingOutOfBounds()) {
             $readingType = $readingTypeObject->getReadingType();
             $outOfBoundsObjectBuilder = $this->outOfBoundsCreationFactory->getConstRecordObjectBuilder($readingType);
