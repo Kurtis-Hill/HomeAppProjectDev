@@ -99,7 +99,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         Temperature::class, Analog::class, Humidity::class, Latitude::class,
     ])]
     public function getSensorTypeAndReadingTypeObjectsForSensor(
-        int $device,
+        int $deviceId,
         string $sensorsName,
         JoinQueryDTO $joinQueryDTO = null,
         array $readingTypeJoinQueryDTOs = [],
@@ -125,10 +125,15 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             )
             ->where(
                 $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+//                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
             )
-            ->setParameters(['sensorName' => $sensorsName, 'deviceID' => $device]);
+            ->setParameters([
+                'sensorName' => $sensorsName,
+//                'deviceID' => $deviceId
+            ]);
 
+//            dd($qb->getQuery()->get);
+//            dd($selects, $sensorsName, $deviceId);
         return $qb->getQuery()->getResult();
     }
 

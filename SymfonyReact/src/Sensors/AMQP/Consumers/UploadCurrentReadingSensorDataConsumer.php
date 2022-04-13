@@ -3,10 +3,16 @@
 
 namespace App\Sensors\AMQP\Consumers;
 
+use App\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
@@ -16,6 +22,8 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
+    use HomeAppAPITrait;
+
     private UpdateCurrentSensorReadingInterface $sensorCurrentReadingUpdateService;
 
     private DeviceRepositoryInterface $deviceRepository;
@@ -28,16 +36,21 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         $this->deviceRepository = $deviceRepository;
     }
 
-    /**
-     * @param AMQPMessage $msg
-     * @return bool
-     */
+    // @ADD new current reading type dtos to allowed_classes array
     public function execute(AMQPMessage $msg): bool
     {
         try {
             $sensorData = unserialize(
                 $msg->getBody(),
-                ['allowed_classes' => [UpdateSensorCurrentReadingMessageDTO::class]]
+                [
+                    'allowed_classes' => [
+                        UpdateSensorCurrentReadingMessageDTO::class,
+                        AnalogCurrentReadingUpdateRequestDTO::class,
+                        HumidityCurrentReadingUpdateRequestDTO::class,
+                        LatitudeCurrentReadingUpdateRequestDTO::class,
+                        TemperatureCurrentReadingUpdateRequestDTO::class,
+                    ]
+                ]
             );
         } catch (Exception $exception) {
             error_log(
@@ -45,10 +58,8 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                 0,
                 ErrorLogs::SERVER_ERROR_LOG_LOCATION
             );
-
             return true;
         }
-
         try {
             $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
         } catch (NonUniqueResultException | ORMException $exception) {
@@ -67,6 +78,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                 $device
             );
         }
+//dd('dsaf');
 
         return false;
     }

@@ -25,7 +25,7 @@ interface ReadingTypeUpdateBuilderInterface
      */
     public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
-        array $sensorData
+        AbstractCurrentReadingUpdateRequestDTO $sensorData
     ): ReadingTypeUpdateCurrentReadingDTO;
 
     public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading): AbstractCurrentReadingUpdateRequestDTO;

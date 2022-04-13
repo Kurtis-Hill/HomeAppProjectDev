@@ -9,7 +9,7 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstrain
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class HumidityCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequestDTO
+class HumidityCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateRequestDTO
 {
     #[HumidityConstraint(groups: [Bmp::NAME, Dht::NAME])]
     protected mixed $readingTypeCurrentReading;

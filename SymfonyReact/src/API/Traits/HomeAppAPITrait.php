@@ -249,7 +249,7 @@ trait HomeAppAPITrait
         return $normalizer->normalize($data);
     }
 
-    public function deserializeRequest(string $data, string $class, string $format, array $extraContexts = []): mixed
+    public function deserializeRequest(string $data, ?string $class = null, ?string $format = null, array $extraContexts = []): mixed
     {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];

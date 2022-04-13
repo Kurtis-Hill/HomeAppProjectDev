@@ -8,7 +8,7 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstrain
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class LatitudeCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequestDTO
+class LatitudeCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateRequestDTO
 {
     #[LatitudeConstraint(groups: [Bmp::NAME])]
     protected mixed $readingTypeCurrentReading;

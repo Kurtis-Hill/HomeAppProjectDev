@@ -37,10 +37,10 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
     ];
 
     private const CARD_VIEW_CHECK = [
-        'on' => 'S1ON',
-        'off' => 'S2OFF',
-        'device' => 'S3DeviceONLY',
-        'room' => 'S4ROOMONLY'
+        'on' => 'ON',
+        'off' => 'OFF',
+        'device' => 'DeviceONLY',
+        'room' => 'RoomONLY',
     ];
 
     public function getOrder(): int
@@ -76,7 +76,6 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $manager->persist($newCard);
                 $newSensorType = new $sensorDetails['object'];
 
-
                 foreach ($sensorDetails['readingTypes'] as $object) {
                     $newObject = new $object;
                     if ($newObject instanceof StandardReadingSensorInterface) {
@@ -110,15 +109,52 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
 
         // sensor reading update sensor
-        foreach (self::SENSORS as $sensorType => $name) {
-            $newAdminSensor = new Sensor();
-            $newAdminSensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
-            $newAdminSensor->setSensorName($name);
-            $newAdminSensor->setSensorTypeID($this->getReference($sensorType));
-            $newAdminSensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
+        foreach (self::SENSORS as $sensorTypeFirst => $name) {
+            $newAdminSensorTwo = new Sensor();
+            $newAdminSensorTwo->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
+            $newAdminSensorTwo->setSensorName($name);
+            $newAdminSensorTwo->setSensorTypeID($this->getReference($sensorTypeFirst));
+            $newAdminSensorTwo->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
 
-            $this->addReference($name, $newAdminSensor);
-            $manager->persist($newAdminSensor);
+            $this->addReference($name, $newAdminSensorTwo);
+            $manager->persist($newAdminSensorTwo);
+
+            foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
+                $newSensorType = new $sensorDetails['object'];
+//                $newSensorTypeTwo = new $sensorDetails['object'];
+                if ($sensorTypeFirst === $sensorType) {
+                    foreach ($sensorDetails['readingTypes'] as $object) {
+                        $newObject = new $object;
+                        if ($newObject instanceof StandardReadingSensorInterface) {
+                            $newObject->setSensorObject($newAdminSensorTwo);
+                            $newObject->setUpdatedAt();
+
+                            if ($newSensorType instanceof StandardSensorTypeInterface) {
+                                $newSensorType->setSensorObject($newAdminSensorTwo);
+                                if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
+                                    $newObject->setCurrentReading(10);
+                                    $newSensorType->setTempObject($newObject);
+                                }
+                                if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
+                                    $newObject->setCurrentReading(10);
+                                    $newSensorType->setHumidObject($newObject);
+                                }
+                                if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
+                                    $newObject->setCurrentReading(10);
+                                    $newSensorType->setLatitudeObject($newObject);
+                                }
+                                if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
+                                    $newObject->setCurrentReading(1001);
+                                    $newSensorType->setAnalogObject($newObject);
+                                }
+                            }
+
+                            $manager->persist($newSensorType);
+                            $manager->persist($newObject);
+                        }
+                    }
+                }
+            }
         }
         // for permissions checks one sensor of each type for each variation of device creation
         $sensorCounter = 0;

@@ -5,7 +5,7 @@ namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateDTORequest;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -33,7 +33,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
 
     public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
-        array $sensorData
+        AbstractCurrentReadingUpdateRequestDTO $sensorData,
     ): ReadingTypeUpdateCurrentReadingDTO
     {
         if (!$allSensorReadingType instanceof Humidity) {
@@ -45,7 +45,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
                 )
             );
         }
-        if (empty($sensorData['humidityReading'])) {
+        if (empty($sensorData->getCurrentReading())) {
             throw new ReadingTypeObjectBuilderException(
                 sprintf(
                     ReadingTypeObjectBuilderException::CURRENT_READING_FAILED_TO_BUILD_FOR_TYPE,
@@ -56,12 +56,12 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
 
         return $this->updateStandardSensorCurrentReading(
             $allSensorReadingType,
-            $sensorData['humidityReading']
+            $sensorData->getCurrentReading()
         );
     }
 
     public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading): AbstractCurrentReadingUpdateRequestDTO
     {
-        return new HumidityCurrentReadingUpdateDTORequest($currentReading);
+        return new HumidityCurrentReadingUpdateRequestDTO($currentReading);
     }
 }

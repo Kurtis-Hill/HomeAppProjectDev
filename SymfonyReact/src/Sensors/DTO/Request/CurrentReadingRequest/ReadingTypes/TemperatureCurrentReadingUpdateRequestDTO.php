@@ -12,7 +12,7 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureCon
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class TemperatureCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequestDTO
+class TemperatureCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateRequestDTO
 {
     #[
         DallasTemperatureConstraint(

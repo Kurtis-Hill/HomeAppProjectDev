@@ -101,11 +101,11 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $adminAdminRegular->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $adminAdminRegular->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $adminAdminRegular->setRoomObject($this->getReference(RoomFixtures::REGULAR_ROOM));
-        $adminAdminRegular->setDeviceName(self::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomRegularGroup']['referenceName']);
-        $adminAdminRegular->setPassword($this->passwordEncoder->encodePassword($adminAdminRegular, self::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomRegularGroup']['password']));
+        $adminAdminRegular->setDeviceName(self::PERMISSION_CHECK_DEVICES['AdminDeviceRegularRoomAdminGroup']['referenceName']);
+        $adminAdminRegular->setPassword($this->passwordEncoder->encodePassword($adminAdminRegular, self::PERMISSION_CHECK_DEVICES['AdminDeviceRegularRoomAdminGroup']['password']));
         $adminAdminRegular->setRoles([Devices::ROLE]);
 
-        $this->addReference(self::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomRegularGroup']['referenceName'], $adminAdminRegular);
+        $this->addReference(self::PERMISSION_CHECK_DEVICES['AdminDeviceRegularRoomAdminGroup']['referenceName'], $adminAdminRegular);
         $manager->persist($adminAdminRegular);
 
 
@@ -129,11 +129,11 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $adminRegularAdmin->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER));
         $adminRegularAdmin->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
         $adminRegularAdmin->setRoomObject($this->getReference(RoomFixtures::ADMIN_ROOM));
-        $adminRegularAdmin->setDeviceName(self::PERMISSION_CHECK_DEVICES['AdminDeviceRegularRoomAdminGroup']['referenceName']);
-        $adminRegularAdmin->setPassword($this->passwordEncoder->encodePassword($adminRegularAdmin, self::PERMISSION_CHECK_DEVICES['AdminDeviceRegularRoomAdminGroup']['password']));
+        $adminRegularAdmin->setDeviceName(self::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomRegularGroup']['referenceName']);
+        $adminRegularAdmin->setPassword($this->passwordEncoder->encodePassword($adminRegularAdmin, self::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomRegularGroup']['password']));
         $adminRegularAdmin->setRoles([Devices::ROLE]);
 
-        $this->addReference(self::PERMISSION_CHECK_DEVICES['AdminDeviceRegularRoomAdminGroup']['referenceName'], $adminRegularRegular);
+        $this->addReference(self::PERMISSION_CHECK_DEVICES['AdminDeviceAdminRoomRegularGroup']['referenceName'], $adminRegularRegular);
         $manager->persist($adminRegularAdmin);
 
 
@@ -156,11 +156,11 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $regularRegularAdmin->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
         $regularRegularAdmin->setGroupNameObject($this->getReference(UserDataFixtures::REGULAR_GROUP));
         $regularRegularAdmin->setRoomObject($this->getReference(RoomFixtures::ADMIN_ROOM));
-        $regularRegularAdmin->setDeviceName(self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomAdminGroup']['referenceName']);
-        $regularRegularAdmin->setPassword($this->passwordEncoder->encodePassword($regularRegularAdmin, self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomAdminGroup']['password']));
+        $regularRegularAdmin->setDeviceName(self::PERMISSION_CHECK_DEVICES['RegularDeviceAdminRoomRegularGroup']['referenceName']);
+        $regularRegularAdmin->setPassword($this->passwordEncoder->encodePassword($regularRegularAdmin, self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomRegularGroup']['password']));
         $regularRegularAdmin->setRoles([Devices::ROLE]);
 
-        $this->addReference(self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomAdminGroup']['referenceName'], $regularRegularAdmin);
+        $this->addReference(self::PERMISSION_CHECK_DEVICES['RegularDeviceAdminRoomRegularGroup']['referenceName'], $regularRegularAdmin);
         $manager->persist($regularRegularAdmin);
 
 
@@ -184,11 +184,11 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $regularAdminRegular->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
         $regularAdminRegular->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP));
         $regularAdminRegular->setRoomObject($this->getReference(RoomFixtures::REGULAR_ROOM));
-        $regularAdminRegular->setDeviceName(self::PERMISSION_CHECK_DEVICES['RegularDeviceAdminRoomRegularGroup']['referenceName']);
-        $regularAdminRegular->setPassword($this->passwordEncoder->encodePassword($regularAdminRegular, self::PERMISSION_CHECK_DEVICES['RegularDeviceAdminRoomRegularGroup']['password']));
+        $regularAdminRegular->setDeviceName(self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomAdminGroup']['referenceName']);
+        $regularAdminRegular->setPassword($this->passwordEncoder->encodePassword($regularAdminRegular, self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomAdminGroup']['password']));
         $regularAdminRegular->setRoles([Devices::ROLE]);
 
-        $this->addReference(self::PERMISSION_CHECK_DEVICES['RegularDeviceAdminRoomRegularGroup']['referenceName'], $regularAdminRegular);
+        $this->addReference(self::PERMISSION_CHECK_DEVICES['RegularDeviceRegularRoomAdminGroup']['referenceName'], $regularAdminRegular);
         $manager->persist($regularAdminRegular);
 
 
@@ -227,7 +227,5 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($userDevice);
 
         $manager->flush();
-
-
     }
 }

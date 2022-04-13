@@ -38,9 +38,7 @@ class SensorType
 
     public const UPDATE_CURRENT_READING_FORM_ARRAY_KEY = 'updateCurrentReading';
 
-    // Used by service classes to create forms for the sensors and for getting data from the database e.g getting unknown sensor type object (described as object below)
-    // to determine which sensor reading types are about to be updated
-    // primarily used by the interface so if your sensor is going to have a view of some kind add it to this array
+    // used for fixtures if you want to test your new sensor types/reading types add them here to be auto loaded
     public const ALL_SENSOR_TYPE_DATA = [
         Dht::NAME => [
             'alias' => 'dht',
@@ -49,22 +47,6 @@ class SensorType
                 'temperature' =>  Temperature::class,
                 'humidity' => Humidity::class,
             ],
-            'forms' => [
-                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
-                    'form' => StandardSensorOutOFBoundsForm::class,
-                    'readingTypes' => [
-                        Temperature::READING_TYPE =>  Temperature::class,
-                        Humidity::READING_TYPE => Humidity::class,
-                    ],
-                ],
-                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
-                    'form' => UpdateReadingForm::class,
-                    'readingTypes' => [
-                        Temperature::READING_TYPE =>  Temperature::class,
-                        Humidity::READING_TYPE => Humidity::class,
-                    ],
-                ]
-            ]
         ],
 
         Dallas::NAME => [
@@ -73,20 +55,6 @@ class SensorType
             'readingTypes' => [
                 Temperature::READING_TYPE =>  Temperature::class,
             ],
-            'forms' => [
-                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
-                    'form' => StandardSensorOutOFBoundsForm::class,
-                    'readingTypes' => [
-                       Temperature::READING_TYPE =>  Temperature::class,
-                    ],
-                ],
-                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
-                    'form' => UpdateReadingForm::class,
-                    'readingTypes' => [
-                        Temperature::READING_TYPE =>  Temperature::class,
-                    ],
-                ]
-            ]
         ],
 
         Soil::NAME => [
@@ -95,20 +63,6 @@ class SensorType
             'readingTypes' => [
                 Analog::READING_TYPE =>  Analog::class,
             ],
-            'forms' => [
-                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
-                    'form' => StandardSensorOutOFBoundsForm::class,
-                    'readingTypes' => [
-                        Analog::READING_TYPE =>  Analog::class,
-                    ],
-                ],
-                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
-                    'form' => UpdateReadingForm::class,
-                    'readingTypes' => [
-                        Analog::READING_TYPE =>  Analog::class,
-                    ],
-                ]
-            ]
         ],
 
         Bmp::NAME => [
@@ -119,24 +73,6 @@ class SensorType
                 'humidity' => Humidity::class,
                 'latitude' => Latitude::class,
             ],
-            'forms' => [
-                self::OUT_OF_BOUND_FORM_ARRAY_KEY => [
-                    'form' => StandardSensorOutOFBoundsForm::class,
-                    'readingTypes' => [
-                        'temperature' =>  Temperature::class,
-                        'humidity' =>  Humidity::class,
-                        'latitude' => Latitude::class,
-                    ],
-                ],
-                self::UPDATE_CURRENT_READING_FORM_ARRAY_KEY => [
-                    'form' => UpdateReadingForm::class,
-                    'readingTypes' => [
-                        Temperature::READING_TYPE =>  Temperature::class,
-                        'humidity' =>  Humidity::class,
-                        'latitude' => Latitude::class,
-                    ],
-                ]
-            ]
         ],
     ];
 

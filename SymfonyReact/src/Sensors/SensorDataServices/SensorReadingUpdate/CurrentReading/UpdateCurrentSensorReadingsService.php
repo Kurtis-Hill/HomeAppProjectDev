@@ -12,7 +12,7 @@ use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
-use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
+use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface;
 use App\Sensors\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
@@ -23,8 +23,6 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
 {
     private SensorRepositoryInterface $sensorRepository;
 
-    private SensorTypeQueryFactory $sensorTypeQueryFactory;
-
     private SensorReadingUpdateFactory $readingUpdateFactory;
 
     private SensorReadingTypesValidatorServiceInterface $readingTypesValidator;
@@ -33,86 +31,89 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
 
     private SensorConstantlyRecordServiceInterface $constantlyRecordService;
 
+    private ReadingTypeQueryFactory $readingTypeQueryBuilderFactory;
+
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
-        SensorTypeQueryFactory $readingTypeQueryFactory,
         SensorReadingUpdateFactory $readingUpdateFactory,
         SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
         OutOfBoundsSensorServiceInterface $outOfBoundsSensorService,
         SensorConstantlyRecordServiceInterface $constantlyRecordService,
+        ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
     ) {
         $this->sensorRepository = $sensorRepository;
-        $this->sensorTypeQueryFactory = $readingTypeQueryFactory;
         $this->readingUpdateFactory = $readingUpdateFactory;
         $this->readingTypesValidator = $readingTypesValidator;
         $this->outOfBoundsSensorService = $outOfBoundsSensorService;
         $this->constantlyRecordService = $constantlyRecordService;
+        $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
     }
 
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
         Devices $device
     ): bool {
-        $sensorTypeQueryDTOBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder(
-            $updateSensorCurrentReadingConsumerDTO->getSensorType()
-        );
-
-        $sensorReadingTypeQueryDTOs = $sensorTypeQueryDTOBuilder->buildSensorReadingTypes();
+        foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateDTO) {
+            $readingTypeQueryDTOBuilder = $this->readingTypeQueryBuilderFactory->getReadingTypeQueryDTOBuilder($currentReadingUpdateDTO->getReadingType());
+            $sensorReadingTypeQueryDTOs[] = $readingTypeQueryDTOBuilder->buildReadingTypeJoinQueryDTO();
+        }
 
         $sensorReadingObjects = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
             $updateSensorCurrentReadingConsumerDTO->getDeviceID(),
             $updateSensorCurrentReadingConsumerDTO->getSensorName(),
             null,
-            $sensorReadingTypeQueryDTOs,
+            $sensorReadingTypeQueryDTOs ?? [],
         );
 
         foreach ($sensorReadingObjects as $sensorReadingObject) {
-            try {
-                if (!$sensorReadingObject instanceof AllSensorReadingTypeInterface) {
-                    throw new ReadingTypeNotExpectedException(
+            foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingDTO) {
+                try {
+                    if (!$sensorReadingObject instanceof AllSensorReadingTypeInterface) {
+                        throw new ReadingTypeNotExpectedException(
                             ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE,
+                        );
+                    }
+                    $sensorReadingUpdateBuilder = $this->readingUpdateFactory->getReadingTypeUpdateBuilder(
+                        $sensorReadingObject->getReadingType()
                     );
-                }
-                $sensorReadingUpdateBuilder = $this->readingUpdateFactory->getReadingTypeUpdateBuilder(
-                    $sensorReadingObject->getReadingType()
-                );
 
-                $updateReadingTypeCurrentReadingDTO = $sensorReadingUpdateBuilder->buildReadingTypeCurrentReadingUpdateDTO(
-                    $sensorReadingObject,
-                    $updateSensorCurrentReadingConsumerDTO->getCurrentReadings()
-                );
+                    $updateReadingTypeCurrentReadingDTO = $sensorReadingUpdateBuilder->buildReadingTypeCurrentReadingUpdateDTO(
+                        $sensorReadingObject,
+                        $currentReadingDTO,
+                    );
 
-                $updateReadingTypeCurrentReadingDTO->getSensorReadingObject()->setCurrentReading(
-                    $updateReadingTypeCurrentReadingDTO->getNewCurrentReading()
-                );
-                $validationErrors = $this->readingTypesValidator->validateSensorReadingTypeObject(
-                    $sensorReadingObject,
-                    $updateSensorCurrentReadingConsumerDTO->getSensorType()
-                );
-
-                if (!empty($validationErrors)) {
-                    $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
-                }
-                if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
-                    try {
-                        $this->outOfBoundsSensorService->checkAndProcessOutOfBounds($sensorReadingObject);
-                    } catch (ORMException $e) {
-                        error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+                    $updateReadingTypeCurrentReadingDTO->getSensorReadingObject()->setCurrentReading(
+                        $updateReadingTypeCurrentReadingDTO->getNewCurrentReading()
+                    );
+                    $validationErrors = $this->readingTypesValidator->validateSensorReadingTypeObject(
+                        $sensorReadingObject,
+                        $updateSensorCurrentReadingConsumerDTO->getSensorType()
+                    );
+                    if (!empty($validationErrors)) {
+                        $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
                     }
-                    try {
-                        $this->constantlyRecordService->checkAndProcessConstRecord($sensorReadingObject);
-                    } catch (ORMException $e) {
-                        error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+                    if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
+                        try {
+                            $this->outOfBoundsSensorService->checkAndProcessOutOfBounds($sensorReadingObject);
+                        } catch (ORMException $e) {
+                            error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+                        }
+                        try {
+                            $this->constantlyRecordService->checkAndProcessConstRecord($sensorReadingObject);
+                        } catch (ORMException $e) {
+                            error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+                        }
                     }
+                } catch (
+                    ReadingTypeNotExpectedException
+                    | SensorReadingUpdateFactoryException
+                    | ReadingTypeObjectBuilderException $e) {
+                    error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+                    dd($e->getMessage());
+                    continue;
                 }
-            } catch (
-                ReadingTypeNotExpectedException
-                | SensorReadingUpdateFactoryException
-                | ReadingTypeObjectBuilderException $e) {
-                continue;
             }
         }
-
         $this->sensorRepository->flush();
 
         return true;

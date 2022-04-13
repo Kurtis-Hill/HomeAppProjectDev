@@ -5,7 +5,7 @@ namespace App\Sensors\Builders\ReadingTypeUpdateBuilders;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateDTORequest;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -33,7 +33,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
 
     public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
-        array $sensorData
+        AbstractCurrentReadingUpdateRequestDTO $sensorData,
     ): ReadingTypeUpdateCurrentReadingDTO
     {
         if (!$allSensorReadingType instanceof Analog) {
@@ -45,7 +45,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
                 )
             );
         }
-        if (empty($sensorData['analogReading'])) {
+        if (empty($sensorData->getCurrentReading())) {
             throw new ReadingTypeObjectBuilderException(
                 sprintf(
                     ReadingTypeObjectBuilderException::CURRENT_READING_FAILED_TO_BUILD_FOR_TYPE,
@@ -56,12 +56,12 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
 
         return $this->updateStandardSensorCurrentReading(
             $allSensorReadingType,
-            $sensorData['analogReading']
+            $sensorData->getCurrentReading()
         );
     }
 
     public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading): AbstractCurrentReadingUpdateRequestDTO
     {
-        return new AnalogCurrentReadingUpdateDTORequest($currentReading);
+        return new AnalogCurrentReadingUpdateRequestDTO($currentReading);
     }
 }

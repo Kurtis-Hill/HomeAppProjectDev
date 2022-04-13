@@ -5,10 +5,10 @@ namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateDTORequest;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateDTORequest;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateDTORequest;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateDTORequest;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -19,10 +19,10 @@ interface CurrentReadingSensorDataRequestHandlerInterface
 
     #[ArrayShape(
         [
-            AnalogCurrentReadingUpdateDTORequest::class,
-            HumidityCurrentReadingUpdateDTORequest::class,
-            LatitudeCurrentReadingUpdateDTORequest::class,
-            TemperatureCurrentReadingUpdateDTORequest::class,
+            AnalogCurrentReadingUpdateRequestDTO::class,
+            HumidityCurrentReadingUpdateRequestDTO::class,
+            LatitudeCurrentReadingUpdateRequestDTO::class,
+            TemperatureCurrentReadingUpdateRequestDTO::class,
         ]
     )]
     public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array;

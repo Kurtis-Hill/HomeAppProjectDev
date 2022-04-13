@@ -8,7 +8,7 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class AnalogCurrentReadingUpdateDTORequest extends AbstractCurrentReadingUpdateRequestDTO
+class AnalogCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateRequestDTO
 {
     #[SoilConstraint(groups: [Soil::NAME])]
     protected mixed $readingTypeCurrentReading;
