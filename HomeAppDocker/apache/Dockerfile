@@ -19,7 +19,7 @@ RUN pecl install xdebug
 RUN a2enmod ssl
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 sockets http
+RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 sockets http apcu
 
 COPY ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 

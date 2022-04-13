@@ -24,22 +24,6 @@ abstract class AbstractStandardSensorTypeBuilder
         );
     }
 
-    //@TODO remove
-//    protected function updateStandardSensor(
-//        StandardReadingSensorInterface $standardReadingSensor,
-//        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
-//    ): void {
-//        if ($updateSensorBoundaryReadingsDTO->getHighReading() !== null) {
-//            $standardReadingSensor->setHighReading($updateSensorBoundaryReadingsDTO->getHighReading());
-//        }
-//        if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
-//            $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
-//        }
-//        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
-//            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
-//        }
-//    }
-
     protected function updateStandardSensorCurrentReading(
         AllSensorReadingTypeInterface $standardReadingSensor,
         string $newSensorReading,

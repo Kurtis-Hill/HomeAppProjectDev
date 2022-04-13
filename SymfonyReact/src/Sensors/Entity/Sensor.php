@@ -106,7 +106,7 @@ class Sensor
     {
         return $this->sensorTypeID;
     }
-    //@TODO needs changing to sensorTypeObject
+
     public function setSensorTypeID(SensorType $sensorTypeID): void
     {
         $this->sensorTypeID = $sensorTypeID;
