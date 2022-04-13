@@ -97,8 +97,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         array|string $expectedDataPayloadMessage,
         array $expectedErrorPayloadMessage,
         string $expectedTitle,
-    ): void
-    {
+    ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
@@ -373,7 +372,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         ];
 
 
-      // SOIL
+        // SOIL
     }
 
     /**
@@ -385,8 +384,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         array $sensorReadingsToUpdate,
         array|string $expectedDataPayloadMessage,
         string $expectedTitle,
-    ): void
-    {
+    ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
@@ -683,8 +681,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         array|string $expectedDataPayloadMessage,
         array $expectedErrorPayloadMessage,
         string $expectedTitle,
-    ): void
-    {
+    ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
@@ -1038,7 +1035,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $jsonData = json_encode($sensorData);
 
-        $token = $this->setUserToken(true,  UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD  );
+        $token = $this->setUserToken(true, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObjectLoggedInUser->getSensorNameID()),

@@ -5,6 +5,7 @@ namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -51,7 +52,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
 
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
-        Devices $device
+        Devices $device,
     ): bool {
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateDTO) {
             $readingTypeQueryDTOBuilder = $this->readingTypeQueryBuilderFactory->getReadingTypeQueryDTOBuilder($currentReadingUpdateDTO->getReadingType());
@@ -65,8 +66,15 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
             $sensorReadingTypeQueryDTOs ?? [],
         );
 
+        if (empty($sensorReadingObjects)) {
+            return false;
+        }
+//        dd($sensorReadingObjects, $updateSensorCurrentReadingConsumerDTO->getCurrentReadings());
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingDTO) {
+                if ($currentReadingDTO->getReadingType() !== $sensorReadingObject->getReadingType()) {
+                    continue;
+                }
                 try {
                     if (!$sensorReadingObject instanceof AllSensorReadingTypeInterface) {
                         throw new ReadingTypeNotExpectedException(

@@ -111,8 +111,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'message' => [
-                    sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-                    sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                    sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                    sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
             ]
         ];
 
@@ -127,7 +127,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'message' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
             ]
         ];
 
@@ -144,9 +144,9 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'message' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Latitude::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Latitude::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
             ]
         ];
 
@@ -161,7 +161,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'message' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
             ]
         ];
 
@@ -200,13 +200,13 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'message' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Latitude::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Latitude::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
             ]
         ];
 
@@ -242,10 +242,10 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'message' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
             ]
         ];
     }
@@ -316,7 +316,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
     /**
      * @dataProvider incorrectPartsOfRequestDataProvider
      */
-    public function test_sending_incorrect_parts_of_request(  array $sensorData,
+    public function test_sending_incorrect_parts_of_request(
+        array $sensorData,
         string $title,
         array $errors,
         array $payload,
@@ -366,8 +367,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
             'errors' => ['sensorName must be a string you have provided array'],
             'payload' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME])
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME])
             ],
         ];
 
@@ -393,9 +394,9 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
             'errors' => [ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL],
             'payload' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME] . '2'),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME] . '2'),
             ],
         ];
 
@@ -426,7 +427,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
 
             ],
             'payload' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME] . '2'),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME] . '2'),
             ],
         ];
 
@@ -456,7 +457,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 'The submitted value is not a number "array"',
             ],
             'payload' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE,Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
             ],
         ];
     }
@@ -464,7 +465,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
     /**
      * @dataProvider sendingWrongDataTypesInCurrentReadingRequestDataProvider
      */
-    public function test_sending_wrong_data_types_in_current_reading_request( array $sensorData,
+    public function test_sending_wrong_data_types_in_current_reading_request(
+        array $sensorData,
         string $title,
         array $errors,
     ): void {
@@ -490,7 +492,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
 
     public function sendingWrongDataTypesInCurrentReadingRequestDataProvider(): Generator
     {
-
         yield [
             'sensorData' => [
                 [

@@ -76,8 +76,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     public function getSensorReadingTypeDataBySensor(
         Sensor $sensors,
         array $sensorTypeJoinDTOs
-    ): SensorTypeInterface
-    {
+    ): SensorTypeInterface {
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
         $sensorAlias = $this->prepareSensorJoinsForQuery($sensorTypeJoinDTOs, $qb);
@@ -103,8 +102,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         string $sensorsName,
         JoinQueryDTO $joinQueryDTO = null,
         array $readingTypeJoinQueryDTOs = [],
-    ): array
-    {
+    ): array {
         $qb = $this->createQueryBuilder('sensors');
 
         if (!empty($readingTypeJoinQueryDTOs)) {
@@ -117,24 +115,24 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         }
 
         $qb->select($selects ?? ['']);
-            $qb->innerJoin(
-                Devices::class,
-                'device',
-                Join::WITH,
-                'sensors.deviceNameID = device.deviceNameID'
-            )
+        $qb->innerJoin(
+            Devices::class,
+            'device',
+            Join::WITH,
+            'sensors.deviceNameID = device.deviceNameID'
+        )
             ->where(
                 $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-//                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
             )
             ->setParameters([
                 'sensorName' => $sensorsName,
-//                'deviceID' => $deviceId
+                'deviceID' => $deviceId
             ]);
 
 //            dd($qb->getQuery()->get);
 //            dd($selects, $sensorsName, $deviceId);
-        return $qb->getQuery()->getResult();
+        return array_filter($qb->getQuery()->getResult());
     }
 
     /**
@@ -198,5 +196,4 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         return implode(', ', $sensorAlias);
     }
-
 }

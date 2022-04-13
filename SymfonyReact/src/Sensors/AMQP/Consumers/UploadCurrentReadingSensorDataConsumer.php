@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Sensors\AMQP\Consumers;
 
 use App\API\Traits\HomeAppAPITrait;
@@ -8,7 +7,6 @@ use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
@@ -78,7 +76,6 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                 $device
             );
         }
-//dd('dsaf');
 
         return false;
     }

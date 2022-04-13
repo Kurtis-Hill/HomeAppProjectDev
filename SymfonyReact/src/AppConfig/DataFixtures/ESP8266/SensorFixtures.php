@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\AppConfig\DataFixtures\ESP8266;
 
 use App\AppConfig\DataFixtures\Card\CardFixtures;
@@ -29,6 +28,7 @@ use Doctrine\Persistence\ObjectManager;
 class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
     private const FIXTURE_ORDER = 5;
+
     public const SENSORS = [
         Dht::NAME => 'AdminDHTSensor',
         Dallas::NAME => 'AdminDallasSensor',
@@ -74,10 +74,10 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newCard->setCardIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
                 $manager->persist($newCard);
-                $newSensorType = new $sensorDetails['object'];
+                $newSensorType = new $sensorDetails['object']();
 
                 foreach ($sensorDetails['readingTypes'] as $object) {
-                    $newObject = new $object;
+                    $newObject = new $object();
                     if ($newObject instanceof StandardReadingSensorInterface) {
                         $newObject->setSensorObject($sensor);
                         $newObject->setCurrentReading($newObject instanceof Analog ? 1001 : 10);
@@ -120,11 +120,11 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $manager->persist($newAdminSensorTwo);
 
             foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
-                $newSensorType = new $sensorDetails['object'];
+                $newSensorType = new $sensorDetails['object']();
 //                $newSensorTypeTwo = new $sensorDetails['object'];
                 if ($sensorTypeFirst === $sensorType) {
                     foreach ($sensorDetails['readingTypes'] as $object) {
-                        $newObject = new $object;
+                        $newObject = new $object();
                         if ($newObject instanceof StandardReadingSensorInterface) {
                             $newObject->setSensorObject($newAdminSensorTwo);
                             $newObject->setUpdatedAt();
@@ -220,11 +220,11 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($otherUserCard);
 
-                $newSensorType = new $sensorDetails['object'];
-                $newSensorTypeTwo = new $sensorDetails['object'];
+                $newSensorType = new $sensorDetails['object']();
+                $newSensorTypeTwo = new $sensorDetails['object']();
 
                 foreach ($sensorDetails['readingTypes'] as $object) {
-                    $newObject = new $object;
+                    $newObject = new $object();
                     if ($newObject instanceof StandardReadingSensorInterface) {
                         $newObject->setSensorObject($newAdminSensor);
                         $newObject->setUpdatedAt();
@@ -252,7 +252,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                         $manager->persist($newSensorType);
                         $manager->persist($newObject);
                     }
-                    $newObjectTwo = new $object;
+                    $newObjectTwo = new $object();
                     if ($newObjectTwo instanceof StandardReadingSensorInterface) {
                         $newObjectTwo->setSensorObject($newRegularUserSensor);
                         $newObjectTwo->setUpdatedAt();
@@ -287,5 +287,4 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         $manager->flush();
     }
-
 }
