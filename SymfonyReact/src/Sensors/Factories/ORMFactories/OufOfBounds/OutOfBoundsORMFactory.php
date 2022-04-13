@@ -24,10 +24,10 @@ class OutOfBoundsORMFactory implements OutOfBoundsORMFactoryInterface
     private OutOfBoundsLatitudeRepository $outOfBoundsLatitude;
 
     public function __construct(
-      OutOfBoundsTempORMRepository $outBoundsTempORMRepository,
-      OutOfBoundsHumidityRepository $outOfBoundsHumidORMRepository,
-      OutOfBoundsAnalogRepository $outOfBoundsAnalogORMRepository,
-      OutOfBoundsLatitudeRepository $outOfBoundsLatitudeORMRepository,
+        OutOfBoundsTempORMRepository $outBoundsTempORMRepository,
+        OutOfBoundsHumidityRepository $outOfBoundsHumidORMRepository,
+        OutOfBoundsAnalogRepository $outOfBoundsAnalogORMRepository,
+        OutOfBoundsLatitudeRepository $outOfBoundsLatitudeORMRepository,
     ) {
         $this->outOfBoundsTemp = $outBoundsTempORMRepository;
         $this->outOfBoundsHumid = $outOfBoundsHumidORMRepository;

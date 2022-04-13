@@ -40,7 +40,7 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Analog")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="analogID", referencedColumnName="sensorNameID")
+     *   @ORM\JoinColumn(name="analogID", referencedColumnName="analogID")
      * })
      */
     #[Assert\NotNull(message: "Out of range Analog Object cannot be null")]

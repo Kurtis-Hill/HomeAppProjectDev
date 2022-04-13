@@ -10,8 +10,7 @@ class AbstractStandardSensorOutOfBoundsObjectCreationBuilder
     protected function buildStandardOutOfBoundObject(
         StandardReadingSensorInterface $sensorReadingObject,
         OutOfBoundsEntityInterface $outOfBoundsObject
-    ): void
-    {
+    ): void {
         $outOfBoundsObject->setSensorReading($sensorReadingObject->getCurrentReading());
         $outOfBoundsObject->setSensorReadingTypeID($sensorReadingObject);
         $outOfBoundsObject->setCreatedAt();

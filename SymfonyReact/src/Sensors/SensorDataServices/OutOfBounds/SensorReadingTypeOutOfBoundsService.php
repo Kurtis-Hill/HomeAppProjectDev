@@ -29,6 +29,7 @@ class SensorReadingTypeOutOfBoundsService implements OutOfBoundsSensorServiceInt
             $outOfBoundsObject = $outOfBoundsObjectBuilder->buildOutOfBoundsObject($readingTypeObject);
 
             $outOfBoundsRepository = $this->outOfBoundsORMFactory->getOutOfBoundsServiceRepository($readingType);
+//            dd($outOfBoundsObject);
             $outOfBoundsRepository->persist($outOfBoundsObject);
         }
     }
