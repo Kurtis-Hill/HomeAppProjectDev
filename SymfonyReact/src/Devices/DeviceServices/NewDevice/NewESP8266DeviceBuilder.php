@@ -3,7 +3,7 @@
 namespace App\Devices\DeviceServices\NewDevice;
 
 use App\Devices\DeviceServices\AbstractESPDeviceBuilder;
-use App\Devices\DTO\NewDeviceDTO;
+use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;

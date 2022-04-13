@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\DTO\CardViewDTO\FormattedSensorDataDTO;
 use JetBrains\PhpStorm\ArrayShape;
 

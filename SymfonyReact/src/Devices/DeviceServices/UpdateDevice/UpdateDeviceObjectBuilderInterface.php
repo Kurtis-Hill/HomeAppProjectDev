@@ -2,12 +2,10 @@
 
 namespace App\Devices\DeviceServices\UpdateDevice;
 
+use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\DTO\Response\DeviceUpdateResponseDTO;
-use App\Devices\DTO\UpdateDeviceDTO;
 use App\Devices\Entity\Devices;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 
 interface UpdateDeviceObjectBuilderInterface
 {

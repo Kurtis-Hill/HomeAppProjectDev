@@ -195,12 +195,12 @@ trait HomeAppAPITrait
     }
 
     // 50x Server Error Response
-    public function sendInternalServerErrorJsonResponse(array $data = []): JsonResponse
+    public function sendInternalServerErrorJsonResponse(array $data = [], string $title = 'Server Error Please Try Again'): JsonResponse
     {
         if (!empty($data)) {
             return new JsonResponse(
                 [
-                    'title' => 'Server Error Please Try Again',
+                    'title' => $title,
                     'errors' => $data
                 ],
                 HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR
@@ -249,7 +249,7 @@ trait HomeAppAPITrait
         return $normalizer->normalize($data);
     }
 
-    public function deserializeRequest(string $data, string $class, string $format, array $extraContexts = []): mixed
+    public function deserializeRequest(string $data, ?string $class = null, ?string $format = null, array $extraContexts = []): mixed
     {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];

@@ -2,9 +2,9 @@
 
 namespace App\UserInterface\Services\Cards\CardPreparation;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
-use App\ESPDeviceSensor\Exceptions\SensorTypeException;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Exceptions\SensorTypeException;
 use App\UserInterface\DTO\CardViewDTO\CardViewSensorFormInterface;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;

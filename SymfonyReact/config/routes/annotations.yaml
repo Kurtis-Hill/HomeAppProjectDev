@@ -1,5 +1,5 @@
 esp-device-sensors:
-    resource: ../../src/ESPDeviceSensor/Controller
+    resource: ../../src/Sensors/Controller
     type: annotation
 
 devices:

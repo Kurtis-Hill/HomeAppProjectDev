@@ -243,9 +243,9 @@ class CardContextProvider extends Component {
         this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: true, errors: [], success: []}});
 
         const cardFormData = {
-            'cardColour' : this.state.modalContent.cardColour,
-            'cardViewState' : this.state.modalContent.currentViewState.cardStateID,
-            'cardIcon' : this.state.modalContent.cardIcon.iconID,
+            'cardColour' : parseInt(this.state.modalContent.cardColour),
+            'cardViewState' : parseInt(this.state.modalContent.currentViewState.cardStateID),
+            'cardIcon' : parseInt(this.state.modalContent.cardIcon.iconID),
         };
 
         const sensorBoundaryUpdateData = {

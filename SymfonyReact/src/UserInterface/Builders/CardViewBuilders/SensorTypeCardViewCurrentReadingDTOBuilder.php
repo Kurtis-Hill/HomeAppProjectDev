@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewBuilders;
 
-use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\CurrentReadingSensorTypeCardDataDTO;
+use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\Cards\CurrentReadingSensorTypeCardDataDTO;
 use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\UserViewSensorTypeCardDataInterface;
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements SensorTypeCardViewDTOBuilder

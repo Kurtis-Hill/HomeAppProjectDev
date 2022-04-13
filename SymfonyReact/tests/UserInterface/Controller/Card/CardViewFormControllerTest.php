@@ -3,10 +3,10 @@
 namespace App\Tests\UserInterface\Controller\Card;
 
 use App\API\APIErrorMessages;
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\DataFixtures\Core\UserDataFixtures;
-use App\ESPDeviceSensor\Entity\Sensor;
-use App\ESPDeviceSensor\Entity\SensorType;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorType;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;

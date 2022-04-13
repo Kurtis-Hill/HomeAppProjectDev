@@ -62,11 +62,7 @@ class CardController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        try {
-            $cardDatePreFilterDTO = $this->prepareFilters($request);
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
-        }
+        $cardDatePreFilterDTO = $this->prepareFilters($request);
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO(null, $device);
         try {
@@ -102,11 +98,7 @@ class CardController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        try {
-            $cardDatePreFilterDTO = $this->prepareFilters($request);
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
-        }
+        $cardDatePreFilterDTO = $this->prepareFilters($request);
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO($room);
         try {
@@ -135,11 +127,7 @@ class CardController extends AbstractController
     #[Route('index', name: 'index-card-data-v2-boom', methods: [Request::METHOD_GET])]
     public function indexCards(Request $request): JsonResponse
     {
-        try {
-            $cardDatePreFilterDTO = $this->prepareFilters($request);
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
-        }
+        $cardDatePreFilterDTO = $this->prepareFilters($request);
 
         $cardViewTypeFilter = new CardViewTypeFilterDTO();
         try {

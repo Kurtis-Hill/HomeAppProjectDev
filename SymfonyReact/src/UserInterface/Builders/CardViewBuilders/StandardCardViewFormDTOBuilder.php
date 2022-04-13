@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewBuilders;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\DTO\CardViewDTO\CardViewSensorFormInterface;
 use App\UserInterface\DTO\CardViewDTO\StandardCardViewSensorFormDTO;
 use App\UserInterface\Entity\Card\CardView;

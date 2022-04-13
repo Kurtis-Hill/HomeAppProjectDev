@@ -141,9 +141,6 @@ class User implements UserInterface
         return $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         return array_unique($this->roles);
@@ -174,9 +171,9 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+        return null;
     }
 
     /**
@@ -266,5 +263,10 @@ class User implements UserInterface
         $this->createdAt = $createdAt ?? new DateTime('now');
 
         return $this;
+    }
+
+    public function getUserIdentifier(): ?string
+    {
+        return $this->email;
     }
 }

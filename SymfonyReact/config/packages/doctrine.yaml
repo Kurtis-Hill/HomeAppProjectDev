@@ -7,9 +7,12 @@ doctrine:
     server_version: "%env(DB_SERVER_V)%"
     host:     "%env(DB_HOST)%"
     port:     "%env(DB_PORT)%"
-    dbname:   "%env(DB_NAME)%"
-    user:     "%env(DB_USER)%"
-    password: "%env(DB_PASSWORD)%"
+#    dbname:   "%env(DB_NAME)%"
+#    user:     "%env(DB_USER)%"
+#    password: "%env(DB_PASSWORD)%"
+    dbname: "%env(MARIADB_TEST_DATABASE)%"
+    user: "%env(MARIADB_TEST_USER)%"
+    password: "%env(MARIADB_TEST_PASSWORD)%"
 #    options:
 #      1007  : "%env(PRIVATE_KEY)%"
 #      1008  : "%env(CLIENT_CERT)%"
@@ -30,11 +33,11 @@ doctrine:
       product_sms_filter: App\Doctrine\ProductSmsFilter
       product_category_filter: App\Doctrine\ProductCategoryFilter
     mappings:
-      ESPSensorBundle:
+      ESPSensor:
         type: annotation
-        dir: '%kernel.project_dir%/src/ESPDeviceSensor/Entity'
+        dir: '%kernel.project_dir%/src/Sensors/Entity'
         alias: ESPSensor
-        prefix: App\ESPDeviceSensor\Entity
+        prefix: App\Sensors\Entity
       Device:
         type: annotation
         dir: '%kernel.project_dir%/src/Devices/Entity'

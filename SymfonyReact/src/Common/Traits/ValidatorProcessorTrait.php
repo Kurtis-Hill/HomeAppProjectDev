@@ -2,6 +2,8 @@
 
 namespace App\Common\Traits;
 
+use Generator;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 trait ValidatorProcessorTrait
@@ -18,5 +20,10 @@ trait ValidatorProcessorTrait
         }
 
         return $validationErrors ?? [];
+    }
+
+    public function getValidationErrorsAsStrings(ConstraintViolation $constraintViolation): string
+    {
+        return $constraintViolation->getMessage();
     }
 }

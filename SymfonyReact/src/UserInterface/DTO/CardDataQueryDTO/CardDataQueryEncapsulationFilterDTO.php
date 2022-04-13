@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\DTO\CardDataQueryDTO;
 
-use App\ESPDeviceSensor\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Dht;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 

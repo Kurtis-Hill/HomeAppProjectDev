@@ -3,8 +3,8 @@
 namespace App\Tests\User\Controller;
 
 use App\API\APIErrorMessages;
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\DataFixtures\Core\UserDataFixtures;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;

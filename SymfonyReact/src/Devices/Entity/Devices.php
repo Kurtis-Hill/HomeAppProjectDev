@@ -9,6 +9,7 @@ use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Intl\Exception\NotImplementedException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
  * @ORM\Entity(repositoryClass="App\Devices\Repository\ORM\DeviceRepository")
  */
-class Devices implements UserInterface
+class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
     private const DEVICE_MIN_LENGTH = 2;
 
@@ -229,8 +230,9 @@ class Devices implements UserInterface
         return $this;
     }
 
-    public function getSalt()
+    public function getSalt(): ?string
     {
+        return null;
     }
 
     public function getUsername(): string
@@ -264,5 +266,10 @@ class Devices implements UserInterface
     public function setExternalIpAddress(?string $externalIpAddress): void
     {
         $this->externalIpAddress = $externalIpAddress;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->deviceNameID;
     }
 }

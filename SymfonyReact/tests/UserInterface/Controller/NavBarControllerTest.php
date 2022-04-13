@@ -3,10 +3,10 @@
 namespace App\Tests\UserInterface\Controller;
 
 use App\API\HTTPStatusCodes;
+use App\AppConfig\DataFixtures\Core\RoomFixtures;
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
-use App\DataFixtures\Core\RoomFixtures;
-use App\DataFixtures\Core\UserDataFixtures;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Room;
 use App\User\Entity\User;

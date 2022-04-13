@@ -7,7 +7,7 @@ use App\API\CommonURL;
 use App\API\Traits\HomeAppAPITrait;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
-use App\Devices\DTO\NewDeviceDTO;
+use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\DTO\Response\NewDeviceSuccessResponseDTO;
 use App\Devices\Voters\DeviceVoter;
