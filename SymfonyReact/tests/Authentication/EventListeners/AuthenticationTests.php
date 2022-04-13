@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Authentication\EventListeners\Tests;
+namespace EventListeners\Tests;
 
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;

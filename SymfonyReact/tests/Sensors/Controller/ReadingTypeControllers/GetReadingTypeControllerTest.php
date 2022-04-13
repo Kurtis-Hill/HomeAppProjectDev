@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
+namespace Sensors\Controller\ReadingTypeControllers;
 
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;

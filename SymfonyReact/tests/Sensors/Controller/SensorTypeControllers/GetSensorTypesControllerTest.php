@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Sensors\Controller\SensorTypeControllers;
+namespace Sensors\Controller\SensorTypeControllers;
 
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;

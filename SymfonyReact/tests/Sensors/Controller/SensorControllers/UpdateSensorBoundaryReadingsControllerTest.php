@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Sensors\SensorControllers;
+namespace Sensors\SensorControllers;
 
 use App\API\APIErrorMessages;
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;

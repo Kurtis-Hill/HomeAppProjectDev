@@ -8,9 +8,6 @@ if [ "${1#-}" != "$1" ]; then
 fi
 
 if [ ${APP_ENV} = 'prod' ]; then
-# dont need xdebug removal either
-  echo "Removing xdebug config"
-  rm -r /usr/local/etc/php/conf.d/xdebug.ini
   echo "installing composer packages..."
   composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
   echo "Executing database migrations production..."

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Devices\Controller;
+namespace Devices\Controller;
 
 use App\API\APIErrorMessages;
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
