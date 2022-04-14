@@ -2,7 +2,7 @@
 
 namespace App\Tests\User\Controller;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;

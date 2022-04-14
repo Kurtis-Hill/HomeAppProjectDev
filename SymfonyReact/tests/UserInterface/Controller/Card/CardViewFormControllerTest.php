@@ -2,7 +2,7 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Sensors\Entity\Sensor;

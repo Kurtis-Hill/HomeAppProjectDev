@@ -2,7 +2,7 @@
 
 namespace Sensors\Controller\ReadingTypeControllers;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use Doctrine\ORM\EntityManagerInterface;

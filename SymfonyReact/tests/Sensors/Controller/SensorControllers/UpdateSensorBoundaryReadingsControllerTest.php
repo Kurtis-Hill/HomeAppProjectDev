@@ -2,7 +2,7 @@
 
 namespace Sensors\SensorControllers;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;

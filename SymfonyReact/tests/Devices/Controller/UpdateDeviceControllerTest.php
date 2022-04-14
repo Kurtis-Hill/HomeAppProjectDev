@@ -2,8 +2,8 @@
 
 namespace Devices\Controller;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
-use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\APIErrorMessages;
@@ -458,7 +458,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
             self::assertArrayHasKey('token', $responseData);
             self::assertArrayHasKey('refreshToken', $responseData);
-            self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
+            self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         } else {
             throw new RuntimeException('Device was not updated correctly');
         }

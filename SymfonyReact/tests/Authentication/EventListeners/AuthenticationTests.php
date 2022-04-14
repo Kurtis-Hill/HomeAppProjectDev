@@ -2,8 +2,8 @@
 
 namespace EventListeners\Tests;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
-use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
