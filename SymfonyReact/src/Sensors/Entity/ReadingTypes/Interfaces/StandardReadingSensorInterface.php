@@ -24,7 +24,7 @@ interface StandardReadingSensorInterface
 
     public function getUpdatedAt(): \DateTimeInterface;
 
-    public function setCurrentReading(int|float|string $reading): void;
+    public function setCurrentReading(int|float|string $currentReading): void;
 
     public function setHighReading(int|float|string $reading): void;
 

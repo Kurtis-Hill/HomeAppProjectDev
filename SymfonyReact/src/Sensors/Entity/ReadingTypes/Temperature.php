@@ -159,9 +159,9 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $reading): void
+    public function setCurrentReading(int|float|string $currentReading): void
     {
-        $this->currentReading = $reading;
+        $this->currentReading = $currentReading;
     }
 
     public function setHighReading(int|float|string $reading): void
