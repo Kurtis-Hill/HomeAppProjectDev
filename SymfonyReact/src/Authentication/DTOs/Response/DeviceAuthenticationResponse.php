@@ -10,12 +10,13 @@ class DeviceAuthenticationResponse
 {
     private string $token;
 
+    private string $refreshToken;
+
     private DeviceAuthenticationIPRequestDTO $deviceIps;
 
-    public function __construct(string $token, ?DeviceAuthenticationIPRequestDTO $deviceIps = null)
+    public function __construct(string $token)
     {
         $this->token = $token;
-        $this->deviceIps = $deviceIps;
     }
 
     public function getToken(): string
@@ -23,8 +24,8 @@ class DeviceAuthenticationResponse
         return $this->token;
     }
 
-    public function getDeviceIps(): DeviceAuthenticationIPRequestDTO
+    public function getRefreshToken(): string
     {
-        return $this->deviceIps;
+        return $this->refreshToken;
     }
 }

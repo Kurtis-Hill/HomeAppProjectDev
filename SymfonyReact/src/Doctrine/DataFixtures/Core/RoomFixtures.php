@@ -1,8 +1,6 @@
 <?php
 
-
-namespace App\AppConfig\DataFixtures\Core;
-
+namespace App\Doctrine\DataFixtures\Core;
 
 use App\User\Entity\Room;
 use Doctrine\Bundle\FixturesBundle\Fixture;

@@ -96,6 +96,8 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                         $sensorReadingObject,
                         $updateSensorCurrentReadingConsumerDTO->getSensorType()
                     );
+
+                    $sensorReadingObject->setUpdatedAt();
                     if (!empty($validationErrors)) {
                         $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
                     }

@@ -79,7 +79,7 @@ class UpdateDeviceController extends AbstractController
                 $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceGroup());
             } catch (NonUniqueResultException | ORMException) {
                 return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Group name')]);
-            }        
+            }
             if (!$groupName instanceof GroupNames) {
                 return $this->sendBadRequestJsonResponse(['The id provided for groupname doesnt match any groupname we have'], 'Group name not found');
             }
@@ -118,6 +118,6 @@ class UpdateDeviceController extends AbstractController
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        return $this->sendSuccessfulJsonResponse($normalizedResponse, 'Device Successfully Updated');
+        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

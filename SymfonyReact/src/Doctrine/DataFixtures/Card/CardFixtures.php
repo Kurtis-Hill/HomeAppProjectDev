@@ -1,6 +1,6 @@
 <?php
 
-namespace App\AppConfig\DataFixtures\Card;
+namespace App\Doctrine\DataFixtures\Card;
 
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;

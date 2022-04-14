@@ -1,9 +1,9 @@
 <?php
 
-namespace App\AppConfig\DataFixtures\ESP8266;
+namespace App\Doctrine\DataFixtures\ESP8266;
 
-use App\AppConfig\DataFixtures\Core\RoomFixtures;
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\RoomFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Devices\Entity\Devices;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;

@@ -12,6 +12,7 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
+use JsonException;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -235,7 +236,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     }
 
     public function testAdminCanUpdateDeviceNotApartOf(): void
-    {    
+    {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER_ISOLATED]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
@@ -278,8 +279,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertArrayHasKey('groupNameID', $responseData['payload']);
         self::assertArrayHasKey('roomID', $responseData['payload']);
         self::assertArrayHasKey('roomName', $responseData['payload']);
-        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-
+        self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -324,7 +324,6 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $responseData['errors']);
         self::assertEquals(APIErrorMessages::VALIDATION_ERRORS, $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-
     }
 
     public function sendingOutOfRangeDeviceUpdateDataProvider(): Generator
@@ -404,9 +403,12 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertArrayHasKey('groupNameID', $responseData['payload']);
         self::assertArrayHasKey('roomID', $responseData['payload']);
         self::assertArrayHasKey('roomName', $responseData['payload']);
-        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * @throws RuntimeException|JsonException
+     */
     public function testDeviceWithPasswordUpdatedCanLogIn(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
@@ -437,7 +439,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             $jsonPayload
         );
 
-        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_ACCEPTED) {
             $this->client->request(
                 Request::METHOD_POST,
                 SecurityController::API_DEVICE_LOGIN,
@@ -456,7 +458,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
             self::assertArrayHasKey('token', $responseData);
             self::assertArrayHasKey('refreshToken', $responseData);
-            self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+            self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
         } else {
             throw new RuntimeException('Device was not updated correctly');
         }
@@ -467,15 +469,12 @@ class UpdateDeviceControllerTest extends WebTestCase
      */
     public function testSendingPatchRequest(): void
     {
-
     }
 
     public function sendingPatchRequestDataProvider(): Generator
     {
         yield [];
     }
-
-
 
     private function setUserToken(string $name, string $password): string
     {

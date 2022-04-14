@@ -1,6 +1,6 @@
 <?php
 
-namespace App\AppConfig\DataFixtures\ESP8266;
+namespace App\Doctrine\DataFixtures\ESP8266;
 
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;

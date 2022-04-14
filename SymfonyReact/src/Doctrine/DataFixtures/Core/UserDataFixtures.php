@@ -1,6 +1,6 @@
 <?php
 
-namespace App\AppConfig\DataFixtures\Core;
+namespace App\Doctrine\DataFixtures\Core;
 
 use App\Authentication\Entity\GroupNameMapping;
 use App\User\Entity\GroupNames;

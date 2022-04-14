@@ -1,9 +1,9 @@
 <?php
 
-namespace App\AppConfig\DataFixtures\ESP8266;
+namespace App\Doctrine\DataFixtures\ESP8266;
 
-use App\AppConfig\DataFixtures\Card\CardFixtures;
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Card\CardFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;

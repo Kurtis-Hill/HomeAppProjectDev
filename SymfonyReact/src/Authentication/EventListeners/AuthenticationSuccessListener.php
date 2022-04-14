@@ -93,7 +93,7 @@ class AuthenticationSuccessListener
                     }
                 }
 
-                $deviceAuthenticationResponse = new DeviceAuthenticationResponse($data['token'], $deviceIpRequestDTO);
+                $deviceAuthenticationResponse = new DeviceAuthenticationResponse($data['token']);
                 try {
                     $responseMessage = $this->normalizeResponse($deviceAuthenticationResponse);
                 } catch (ExceptionInterface) {
