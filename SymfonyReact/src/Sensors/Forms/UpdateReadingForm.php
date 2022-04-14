@@ -3,6 +3,7 @@
 
 namespace App\Sensors\Forms;
 
+use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Temperature;
@@ -14,7 +15,6 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperature
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
-use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\AMQP\Consumers;
 
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ErrorLogs;

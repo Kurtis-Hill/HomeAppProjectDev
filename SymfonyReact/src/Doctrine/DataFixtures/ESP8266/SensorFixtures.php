@@ -170,7 +170,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newAdminSensor);
 
-//                Card for the admin user
+//                Icons for the admin user
                 $newCard = new CardView();
                 $newCard->setSensorNameID($newAdminSensor);
                 $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -180,7 +180,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newCard);
 
-//                Card for the regular user
+//                Icons for the regular user
                 $otherUserCard = new CardView();
                 $otherUserCard->setSensorNameID($newAdminSensor);
                 $otherUserCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER));
@@ -200,7 +200,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newRegularUserSensor);
 
-//                Card for the admin user
+//                Icons for the admin user
                 $newCard = new CardView();
                 $newCard->setSensorNameID($newRegularUserSensor);
                 $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -210,7 +210,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newCard);
 
-//                Card for the regular user
+//                Icons for the regular user
                 $otherUserCard = new CardView();
                 $otherUserCard->setSensorNameID($newRegularUserSensor);
                 $otherUserCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER));

@@ -35,6 +35,10 @@ class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder im
             'iconID' => "int",
             'iconName' => "string",
         ],
+        'colours' => [
+            'colourID' => "int",
+            'colour' => "int",
+        ],
         'states' => [
             'cardStateID' => "int",
             'state' =>  'string',

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Form\CustomFormValidators;
+namespace App\Common\Form\CustomFormValidators;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute]
+#[Attribute]
 class NoSpecialCharactersConstraint extends Constraint
 {
     public string $message = "The name cannot contain any special characters, please choose a different name";

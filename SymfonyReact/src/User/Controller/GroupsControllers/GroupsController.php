@@ -1,9 +1,9 @@
 <?php
 
-namespace App\User\Controller;
+namespace App\User\Controller\GroupsControllers;
 
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameDTO;
 use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

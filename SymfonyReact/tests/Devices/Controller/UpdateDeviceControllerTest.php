@@ -2,11 +2,11 @@
 
 namespace Devices\Controller;
 
-use App\API\APIErrorMessages;
 use App\AppConfig\DataFixtures\Core\UserDataFixtures;
 use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
+use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Room;
 use App\User\Entity\User;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Controller;
+namespace App\User\Controller\UserControllers;
 
 use App\Authentication\Entity\GroupNameMapping;
 use App\Form\RegistrationFormType;

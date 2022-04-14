@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\NavBar;
 
-use App\API\APIErrorMessages;
+use App\Common\API\APIErrorMessages;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;

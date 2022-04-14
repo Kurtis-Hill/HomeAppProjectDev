@@ -1,6 +1,6 @@
 <?php
 
-namespace App\API;
+namespace App\Common\API;
 
 class APIErrorMessages
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\API\Traits;
+namespace App\Common\API\Traits;
 
 use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Form\FormFactoryInterface;

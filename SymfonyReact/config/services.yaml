@@ -23,7 +23,7 @@ services:
     ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{API/Traits, Traits, Common/Traits, DependencyInjection, Entity, AppConfig/Migrations, Tests, Kernel.php}'
+        exclude: '../src/{API/Traits, Traits, Common/Traits, DependencyInjection, Entity, Doctrine/Migrations, Tests, Kernel.php}'
 
     App\Authentication\EventListeners\AuthenticationSuccessListener:
         arguments: [ '@request_stack' ]

@@ -2,9 +2,9 @@
 
 namespace App\Devices\Controller;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
 use App\Devices\DTO\Internal\NewDeviceDTO;

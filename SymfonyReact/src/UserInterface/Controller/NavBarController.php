@@ -2,8 +2,8 @@
 
 namespace App\UserInterface\Controller;
 
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\NavBar\NavBarServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

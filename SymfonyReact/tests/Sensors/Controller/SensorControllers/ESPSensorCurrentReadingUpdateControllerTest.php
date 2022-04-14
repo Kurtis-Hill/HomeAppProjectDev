@@ -2,11 +2,11 @@
 
 namespace Sensors\SensorControllers;
 
-use App\API\APIErrorMessages;
-use App\API\HTTPStatusCodes;
 use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\AppConfig\DataFixtures\ESP8266\SensorFixtures;
 use App\Authentication\Controller\SecurityController;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\HTTPStatusCodes;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Latitude;

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace App\API\Traits;
+namespace App\Common\API\Traits;
 
-use App\API\HTTPStatusCodes;
+use App\Common\API\HTTPStatusCodes;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

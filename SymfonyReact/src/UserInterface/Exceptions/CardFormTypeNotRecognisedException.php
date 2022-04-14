@@ -6,5 +6,5 @@ use Exception;
 
 class CardFormTypeNotRecognisedException extends Exception
 {
-    public const MESSAGE = 'Card form type not recognised';
+    public const MESSAGE = 'Icons form type not recognised';
 }

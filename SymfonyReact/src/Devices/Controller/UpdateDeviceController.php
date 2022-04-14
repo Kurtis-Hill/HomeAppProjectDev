@@ -2,9 +2,10 @@
 
 namespace App\Devices\Controller;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
+use App\Devices\Builders\DeviceUpdate\DeviceUpdateDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilderInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
@@ -109,7 +110,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = $updateDeviceObjectBuilder->buildSensorSuccessResponseDTO($deviceToUpdate);
+        $deviceUpdateSuccessResponseDTO = DeviceUpdateDTOBuilder::buildSensorSuccessResponseDTO($deviceToUpdate);
 
         try {
             $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);

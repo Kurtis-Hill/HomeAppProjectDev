@@ -2,13 +2,10 @@
 
 namespace App\Devices\Entity;
 
-use App\Form\CustomFormValidators as NoSpecialCharacters;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,7 +35,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
      */
     #[
-        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
         Assert\NotBlank(
             message: 'Device name should not be blank'
         ),

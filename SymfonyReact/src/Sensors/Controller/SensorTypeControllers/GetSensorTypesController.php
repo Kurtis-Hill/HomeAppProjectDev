@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Controller\SensorTypeControllers;
 
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

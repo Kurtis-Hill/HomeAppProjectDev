@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Form\CustomFormValidators;
+namespace App\Common\Form\CustomFormValidators;
 
 
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -10,7 +10,10 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class NoSpecialCharactersConstraintValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    /**
+     * @throws UnexpectedTypeException
+     */
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof NoSpecialCharactersConstraint) {
             throw new UnexpectedTypeException($constraint, NoSpecialCharactersConstraint::class);

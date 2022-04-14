@@ -2,9 +2,9 @@
 
 namespace App\User\Controller\RoomControllers;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
 use App\User\DTO\RequestDTOs\AddNewRoomRequestDTO;

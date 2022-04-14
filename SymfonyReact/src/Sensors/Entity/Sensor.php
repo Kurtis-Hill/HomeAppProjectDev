@@ -3,7 +3,6 @@
 namespace App\Sensors\Entity;
 
 use App\Devices\Entity\Devices;
-use App\Form\CustomFormValidators as NoSpecialCharacters;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,7 +40,7 @@ class Sensor
      * @ORM\Column(name="sensorName", type="string", length=20, nullable=false)
      */
     #[
-        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::SENSOR_NAME_MIN_LENGTH,
             max: self::SENSOR_NAME_MAX_LENGTH,
