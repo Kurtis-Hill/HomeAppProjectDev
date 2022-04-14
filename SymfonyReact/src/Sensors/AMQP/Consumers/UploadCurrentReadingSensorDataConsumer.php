@@ -77,6 +77,6 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
             );
         }
 
-        return false;
+        return true;
     }
 }

@@ -67,7 +67,7 @@ class GroupControllerTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
-        self::assertEquals(UserDataFixtures::ADMIN_GROUP,$responseData['payload'][0]['groupName']);
+        self::assertEquals(UserDataFixtures::ADMIN_GROUP, $responseData['payload'][0]['groupName']);
         self::assertEquals(UserDataFixtures::USER_GROUP, $responseData['payload'][1]['groupName']);
         self::assertIsNumeric($responseData['payload'][0]['groupNameId']);
         self::assertIsNumeric($responseData['payload'][1]['groupNameId']);
