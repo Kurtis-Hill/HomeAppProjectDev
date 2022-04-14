@@ -29,8 +29,11 @@
 
 #include <DHT.h>;
 
-#define NODE_MCU_SERIAL 115200
-#define MICRO_ESP_SERIAL 9600
+// NodeMCU
+//#define DEVICE_SERIAL 115200
+
+// ESP8266-01
+#define DEVICE_SERIAL 9600
 
 #define DALLASNNAME "Dallas"
 #define DHTNAME "Dht"
@@ -39,7 +42,7 @@
 // Test
 #define HOMEAPP_HOST "https://192.168.1.172"
 // Prod
-//#define HOMEAPP_HOST "https://klh17101990.asuscomm.com"
+//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
@@ -1193,9 +1196,8 @@ bool saveTokensFromLogin(String payload) {
   char jsonData[1000];
   strcpy(jsonData, payload.c_str());
 
-  DynamicJsonDocument responseTokens(1024);
+  DynamicJsonDocument responseTokens(2048);
   DeserializationError error = deserializeJson(responseTokens, jsonData);
-
   if (error) {
     Serial.println("deserialization error");
     return false;
@@ -1211,7 +1213,6 @@ bool saveTokensFromLogin(String payload) {
   Serial.println(token);
   Serial.println("refreshToken");
   Serial.println(refreshToken);
-
   return true;
 }
 
@@ -1224,7 +1225,7 @@ String buildDallasReadingSensorUpdateRequest() {
     if (dallasTempData.tempReading[i] != -127 || !isnan(dallasTempData.tempReading[i])) {
       Serial.print("sensor name:");
       Serial.println(dallasTempData.sensorName[i]);
-      sensorUpdateRequest["sensorType"][i] = DALLASNNAME;
+      sensorUpdateRequest["sensorData"][i]["sensorType"] = DALLASNNAME;
       sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
       sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperature"] = String(dallasTempData.tempReading[i]);
       Serial.print("temp reading:");
@@ -1243,7 +1244,7 @@ String buildIpAddressUpdateRequest() {
   Serial.println("Building IP update request");
   DynamicJsonDocument ipUpdateRequest(64);
 
-  ipUpdateRequest["IPAddress"] = ipAddress;
+  ipUpdateRequest["ipAddress"] = ipAddress;
 
   String jsonData;
   serializeJson(ipUpdateRequest, jsonData);
@@ -1300,7 +1301,7 @@ String buildDhtReadingSensorUpdateRequest() {
   if (!isnan(dhtSensor.tempReading) && !isnan(dhtSensor.humidReading)) {
     Serial.print("sensor name:");
     Serial.println(dhtSensor.sensorName);
-    sensorUpdateRequest["sensorType"][0] = DHTNAME;
+    sensorUpdateRequest["sensorData"][0]["sensorType"] = DHTNAME;
     sensorUpdateRequest["sensorData"][0]["sensorName"] = dhtSensor.sensorName;
     sensorUpdateRequest["sensorData"][0]["currentReadings"]["temperature"] = String(dhtSensor.tempReading);
     sensorUpdateRequest["sensorData"][0]["currentReadings"]["humidity"] = String(dhtSensor.humidReading);
@@ -1468,56 +1469,129 @@ String ipToString(IPAddress ip){
   return stringIP;
 }
 
-
 bool getExternalIP() {
-  Serial.print("Begining to get external ip in");
   WiFiClient client;
-  HTTPClient http;
-
-  Serial.print("[HTTPS] begin connecting to... ");
-  Serial.println("https://api.ipify.org/?format=json");
-  
-  http.begin(client, "https://api.ipify.org/?format=json");
-  
-  Serial.println("[HTTPS] GET...");
-  int httpCode = http.GET();
-
-  // httpCode will be negative on error
-  if (httpCode > 0) {
-    Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-    if (httpCode == HTTP_CODE_OK) {
-      const String& payload = http.getString();
-      Serial.print("received payload: ");
-      Serial.println(payload);
-
-      DynamicJsonDocument responsePayload(32);
-      DeserializationError error = deserializeJson(responsePayload, payload);
-
-      if (error) {
-        Serial.println("external ip address deserialization error");
+  if (!client.connect("api.ipify.org", 80)) {
+    Serial.println("Failed to connect with 'api.ipify.org' !");
+    return false;
+  }
+  else {
+    int timeout = millis() + 5000;
+    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
+    while (client.available() == 0) {
+      if (timeout - millis() < 0) {
+        Serial.println(">>> Client Timeout !");
+        client.stop();
         return false;
       }
-
-      Serial.print("Reponse Payload: ");
-      Serial.println(responsePayload["ip"].as<String>());
-      publicIpAddress = responsePayload["ip"].as<String>();
-      Serial.print("New pulicIpAddress");
-      Serial.println(publicIpAddress);     
     }
-  } else {
-      Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    uint8_t* msg;
+    int size;
+    while ((size = client.available()) > 0) {
+      msg = (uint8_t*)malloc(size);
+      size = client.read(msg, size);
+      Serial.write(msg, size);
+    }
+    Serial.print("json messaged recieved: ");
+    Serial.println(String((char *)msg));
+    DynamicJsonDocument deserializedJson(1024);
+    DeserializationError error = deserializeJson(deserializedJson, msg);
+
+    if (error) {
+      Serial.println("deserialization error");
       return false;
+    }
+
+    publicIpAddress = deserializedJson["ip"].as<String>();
+    Serial.println("publicIp is");
+    Serial.println(publicIpAddress);
+    free(msg);
+
+    return true;
   }
-  http.end();
-  
-  return true;
 }
+
+
+//bool getExternalIP() {
+//  Serial.print("Begining to get external ip in");
+//  WiFiClient client;
+//
+//  if (!client.connect("api.ipify.org", 80)) {
+//    Serial.println("Failed to connect with 'api.ipify.org' !");
+//  }
+//  else {
+//    int timeout = millis() + 5000;
+//    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
+//    while (client.available() == 0) {
+//      if (timeout - millis() < 0) {
+//        Serial.println(">>> Client Timeout !");
+//        client.stop();
+//      }
+//    }
+//
+//    uint8_t* msg;
+//    int size;
+//    while ((size = client.available()) > 0) {
+//      msg = (uint8_t*)malloc(size);
+//      size = client.read(msg, size);
+//      Serial.write(msg, size);
+//    }
+//
+//    DynamicJsonDocument deserializedJson(512);
+//    DeserializationError error = deserializeJson(deserializedJson, msg);
+////
+////    if (error) {
+////      Serial.println("deserialization error");
+////      return false;
+////    }
+//    publicIpAddress = deserializedJson["ip"].as<String>();
+//    Serial.print("public ip set to:");
+//    Serial.println(publicIpAddress);
+//  }
+//  
+////  HTTPClient http;p
+////
+////  Serial.print("[HTTPS] begin connecting to... ");
+////  Serial.println("https://api.ipify.org/?format=json");
+////  
+////  http.begin(client, "https://api.ipify.org/?format=json");
+////  
+////  Serial.println("[HTTPS] GET...");
+////  int httpCode = http.GET();
+////
+////  // httpCode will be negative on error
+////
+////    Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+////    if (httpCode == HTTP_CODE_OK) {
+////      const String& payload = http.getString();
+////      Serial.print("received payload: ");
+////      Serial.println(payload);
+////
+////      DynamicJsonDocument responsePayload(32);
+////      DeserializationError error = deserializeJson(responsePayload, payload);
+////
+////      if (error) {
+////        Serial.println("external ip address deserialization error");
+////        return false;
+////      }
+////
+////      Serial.print("Reponse Payload: ");
+////      Serial.println(responsePayload["ip"].as<String>());
+////      publicIpAddress = responsePayload["ip"].as<String>();
+////      Serial.print("New pulicIpAddress");
+////      Serial.println(publicIpAddress);     
+////  } else {
+////      Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+////      return false;
+////  }
+//  return true;
+//}
 
 
 
 void setup() {
 //  Serial.begin(9600);
-  Serial.begin(115200); 
+  Serial.begin(DEVICE_SERIAL); 
   Serial.println("Searial started");
   Serial.print("Starting web servers...");
   //Net
