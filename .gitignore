@@ -1,7 +1,5 @@
-
 ###> symfony/framework-bundle ###
 SymfonyReact/.env
-SymfonyReact/.env.test
 SymfonyReact/.env.test.nonelocal
 SymfonyReact/.env.local
 SymfonyReact/.env.nonelocal
@@ -17,8 +15,6 @@ SymfonyReact/public/build/
 SymfonyReact/npm-debug.log
 SymfonyReact/yarn-error.log
 
-#SymfonyReact/composer.lock
-#SymfonyReact/symfony.lock
 SymfonyReact/yarn.lock
 SymfonyReact/package-lock.json
 
@@ -45,11 +41,18 @@ SSL/client-key.pem
 SSL/server-cert.pem
 SSL/server-key.pem
 SSL/server.pfx
+SSL/ca-cert.pem
 
 ##< Docker ###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
+
 HomeAppDocker/rabbitmq/data/*
-HomeAppDocker/test.sh
+HomeAppDocker/rabbitmq/log/*
+
 HomeAppDocker/apache/auth.json
 HomeAppDocker/apache/logs/*
+HomeAppDocker/docker-compose.override.yml
+
+.run/Docker Image.run.xml
+.run/DockerComposeHomeApp.run.xml

@@ -2,9 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Core\User;
-
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\User\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -71,7 +70,6 @@ class RegistrationFormType extends AbstractType
                 ],
                 'error_bubbling' => true,
             ])
-            //@TODO chage this to groupName
             ->add('groupNameID', TextType::class, [
                 'required' => 'true',
                 'constraints' => [
@@ -97,6 +95,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+//            'csrf_protection' => false,
         ]);
     }
 }

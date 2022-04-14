@@ -2,90 +2,110 @@
 
 namespace App\Devices\Controller;
 
-use App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService;
+use App\API\APIErrorMessages;
+use App\API\CommonURL;
+use App\API\Traits\HomeAppAPITrait;
+use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
+use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
+use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Devices\DTO\Request\NewDeviceRequestDTO;
+use App\Devices\DTO\Response\NewDeviceSuccessResponseDTO;
 use App\Devices\Voters\DeviceVoter;
-use App\Entity\Core\GroupNames;
-use App\Form\FormMessages;
-use App\Traits\API\HomeAppAPIResponseTrait;
-use JsonException;
+use App\User\Entity\Room;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Repository\ORM\RoomRepositoryInterface;
+use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
-#[Route('/HomeApp/api/user-devices', name: 'user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
 class AddNewDeviceController extends AbstractController
 {
-    use HomeAppAPIResponseTrait;
-    /**
-     * @param Request $request
-     * @param NewESP8266DeviceService $deviceService
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @return JsonResponse
-     */
+    use HomeAppAPITrait;
+
     #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
-        NewESP8266DeviceService $deviceService,
-        UserPasswordEncoderInterface $passwordEncoder
+        RoomRepositoryInterface $roomRepository,
+        NewDeviceBuilderInterface $newDeviceBuilder,
+        GroupCheckServiceInterface $groupCheckService,
+        DevicePasswordEncoderInterface $devicePasswordEncoder,
     ): JsonResponse {
+        $newDeviceRequestDTO = new NewDeviceRequestDTO();
+
         try {
-            $newDeviceData = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            return $this->sendBadRequestJsonResponse(['Request not formatted correctly']);
+            $this->deserializeRequest(
+                $request->getContent(),
+                NewDeviceRequestDTO::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $newDeviceRequestDTO]
+            );
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $deviceName = $newDeviceData['deviceName'] ?? null;
-        $deviceGroup = $newDeviceData['deviceGroup'] ?? null;
-        $deviceRoom = $newDeviceData['deviceRoom'] ?? null;
-
-        if (!isset($deviceGroup, $deviceRoom)) {
-            return $this->sendBadRequestJsonResponse([FormMessages::FORM_PRE_PROCESS_FAILURE]);
+        $requestValidationErrors = $newDeviceBuilder->validateDeviceRequestObject($newDeviceRequestDTO);
+        if (!empty($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($requestValidationErrors);
         }
 
-        $em = $this->getDoctrine()->getManager();
-
-        $groupNameObject = $em->getRepository(GroupNames::class)->findOneBy(['groupNameID' => $deviceGroup]);
-
-        if (!$groupNameObject instanceof GroupNames) {
-            return $this->sendBadRequestJsonResponse(['Cannot find group name to add device too']);
-        }
         try {
-            $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $groupNameObject);
-        } catch (AccessDeniedException) {
-            return $this->sendBadRequestJsonResponse([FormMessages::ACCESS_DENIED]);
+            $groupNameObject = $groupCheckService->checkForGroupById($newDeviceRequestDTO->getDeviceGroup());
+        } catch (GroupNameNotFoundException $e) {
+            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
-        $deviceData = [
-            'deviceName' => $deviceName,
-            'groupNameObject' => $deviceGroup,
-            'roomObject' => $deviceRoom
-        ];
+        $roomObject = $roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
 
-        $device = $deviceService->handleNewDeviceSubmission($deviceData);
-
-        if ($device === null || !empty($deviceService->getServerErrors())) {
-            return $this->sendInternalServerErrorJsonResponse($deviceService->getServerErrors() ?? ['Something went wrong please try again']);
+        if (!$roomObject instanceof Room) {
+            return $this->sendBadRequestJsonResponse([
+                sprintf(
+                    APIErrorMessages::OBJECT_NOT_FOUND,
+                    'Room'
+                ),
+            ]);
         }
-        if (!empty($deviceService->getUserInputErrors())) {
-            return $this->sendBadRequestJsonResponse($deviceService->getUserInputErrors() ?? ['the form you have submitted has failed']);
-        }
-
-        $device->setPassword(
-            $passwordEncoder->encodePassword(
-                $device,
-                $device->getDeviceSecret()
-            )
+        $newDeviceCheckDTO = new NewDeviceDTO(
+            $this->getUser(),
+            $groupNameObject,
+            $roomObject,
+            $newDeviceRequestDTO->getDeviceName(),
         );
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($device);
-        $em->flush();
 
+        try {
+            $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        }
+        $device = $newDeviceBuilder->createNewDevice($newDeviceCheckDTO);
+        $errors = $newDeviceBuilder->validateNewDevice($device);
+
+        if (!empty($errors)) {
+            return $this->sendBadRequestJsonResponse($errors);
+        }
+
+        $devicePasswordEncoder->encodeDevicePassword($device);
+        $deviceSaved = $newDeviceBuilder->saveNewDevice($device);
+        if ($deviceSaved === false) {
+            return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
+        }
         $secret = $device->getDeviceSecret();
         $deviceID = $device->getDeviceNameID();
 
-        return $this->sendCreatedResourceJsonResponse(['secret' => $secret, 'deviceID' => $deviceID]);
+        $newDeviceResponseDTO = new NewDeviceSuccessResponseDTO($secret, $deviceID);
+
+        try {
+            $response = $this->normalizeResponse($newDeviceResponseDTO);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse(['Failed to normalize response']);
+        }
+
+        return $this->sendCreatedResourceJsonResponse($response);
     }
 }

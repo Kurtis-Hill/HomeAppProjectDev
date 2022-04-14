@@ -1,0 +1,57 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  ################### Core ############################
+  App\UserInterface\:
+    resource: './*'
+    exclude: './{Traits, DependencyInjection, Entity, Tests}'
+
+  App\UserInterface\Controller\:
+    resource: './Controller'
+    tags: [ 'controller.service_arguments' ]
+
+
+  ######################## Producers ######################################################
+
+  ######################## Consumers ######################################################
+
+  ######################## UserInterface Services ######################################################
+  App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardCreation\CardCreationService
+
+  App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationService
+
+  App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationService
+
+  App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationService
+
+  App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionServiceInterface:
+    alias: App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionService
+
+  App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface:
+    alias: App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateService
+  ######################## New Sensor Creation Services ########################################################
+
+  ######################## Factories ###########################################################################
+
+  ######################## Repositories ########################################################################
+  App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository
+
+  App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository
+
+  App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository
+
+  App\UserInterface\Repository\ORM\IconsRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\IconsRepository
+
+  ######################## End Of Sensors ######################################################################################

@@ -1,5 +1,4 @@
 version: '3.9'
-
 services:
   apache:
     build:
@@ -9,21 +8,23 @@ services:
         APP_ENV: ${APP_ENV}
     container_name: '${APP_NAME}-php-apache-server'
     ports:
-      - '127.0.0.1:${HTTPS_APP_PORT}:443'
-      - '9000'
-    working_dir: /var/www/html
+      - '${HTTPS_APP_PORT}:443'
     environment:
-      - 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASS}@db_server:3306/${MYSQL_DB}?serverVersion=10.6' #@TODO dont need i think
-      - 'APP_ENV=${APP_ENV}'
+      APP_ENV: ${APP_ENV}
+      APP_NAME: ${APP_NAME}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
-      - ../SymfonyReact:/var/www/html
-      - ../SSL:/etc/ssl
-      - ./apache/sites-enabled:/etc/apache2/sites-enabled
-      - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
-      - ./apache/logs:/etc/logs
+      - ../SymfonyReact:/var/www/html:cached
+      - ../SSL:/etc/ssl:ro
     depends_on:
       maria-db:
         condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
     networks:
       - HomeAppProjectNetwork
 
@@ -33,21 +34,17 @@ services:
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-mariadb'
     restart: always
-#    ports:
-#      - '127.0.0.1:${DB_PORT}:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
-      MYSQL_USER: '${MYSQL_USER}'
-      MYSQL_PASSWORD: '${MYSQL_PASS}'
-      MYSQL_DATABASE: '${MYSQL_DB}'
+      APP_ENV: ${APP_ENV}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_USER : ${MARIADB_USER}
+      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
+      MYSQL_DATABASE: ${MARIADB_DATABASE}
     volumes:
-      - ./mariadb/db_data:/var/lib/mysql
-      - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./mariadb/setup.sql:/docker-entrypoint-initdb.d/init.sql:rw,delegated
-      - ./mariadb/50config/50-client.cnf:/etc/mysql/mariadb.conf.d/50-client.cnf
-      - ../SSL:/etc/mysql/ssl
+      - ./mariadb/db_data:/var/lib/mysql:rw,delegated
+      - ../SSL:/etc/mysql/ssl:ro
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD
       interval: 5s
       retries: 5
     networks:
@@ -56,25 +53,32 @@ services:
   yarn:
     build:
       context: ./yarn
+      dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-yarn'
-    ports:
-      - '8080:8080'
-    working_dir: /home/node/app/src
     environment:
-      - 'APP_ENV=${APP_ENV}'
+      APP_ENV: ${APP_ENV}
     volumes:
-      - ../SymfonyReact:/home/node/app
+      - ../SymfonyReact:/home/node/app/src:cached
     networks:
       - HomeAppProjectNetwork
+    depends_on:
+      - apache
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    build:
+      context: ./rabbitmq
+      dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-rabbitmq'
     ports:
-      - '127.0.0.1:${RABBIT_MQ_INTERFACE_PORT}:15672'
+      - '${RABBIT_MQ_INTERFACE_PORT}:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
-        - ./rabbitmq/data/:/var/lib/rabbitmq
-        - ./rabbitmq/log/:/var/log/rabbitmq
+        - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
+        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+    depends_on:
+      - apache
     networks:
       - HomeAppProjectNetwork
 

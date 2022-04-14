@@ -17,11 +17,12 @@ function AddNewRoom(props) {
 
     const getUserGroups = async () => {
         try {
-            const userGroupsResponse = await axios.get(`${apiURL}user-groups/groups`, getAPIHeader());
-            if (userGroupsResponse.data && Array.isArray(userGroupsResponse.data)) {
-                const payload = userGroupsResponse.data; 
+            const userGroupsResponse = await axios.get(`${apiURL}user-groups/all`, getAPIHeader());
+            if (userGroupsResponse.data && Array.isArray(userGroupsResponse.data.payload)) {
+                const payload = userGroupsResponse.data.payload; 
                 setGroups(payload);
                 setSelectedGroup(payload[0].groupNameId);
+                setErrors([]);
             }
         } catch (error) {
             const statusCode = error.status;
@@ -95,7 +96,7 @@ function AddNewRoom(props) {
                         <div className='success-container'>
                             <div className='form-modal-success-box'>
                                 <ol>
-                                    <li style={{"listStyle":"none"}}><h5>New room has been added</h5></li>
+                                    <li style={{"listStyle":"none", "color": "white"}}><h5>New room has been added</h5></li>
                                 </ol>
                             </div>
                         </div>  

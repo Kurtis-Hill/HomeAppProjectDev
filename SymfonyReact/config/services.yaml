@@ -4,9 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 imports:
-    - { resource: ./services-devices.yaml }
-    - { resource: ./services-esp-sensors.yaml }
-    - { resource: ./services-user.yml }
+    - { resource: ../src/Devices/services-devices.yaml }
+    - { resource: ../src/Sensors/services-esp-sensors.yaml }
+    - { resource: ../src/User/services-user.yml }
+    - { resource: ../src/UserInterface/services-user_interface.yml }
+    - { resource: ../src/Authentication/services-authentication.yaml }
 parameters:
 
 services:
@@ -21,24 +23,18 @@ services:
     ################### Core ############################
     App\:
         resource: '../src/*'
-        exclude: '../src/{Traits,DependencyInjection,Entity, Migrations,Tests,Kernel.php}'
+        exclude: '../src/{API/Traits, Traits, Common/Traits, DependencyInjection, Entity, AppConfig/Migrations, Tests, Kernel.php}'
 
-    # controllers are imported separately to make sure services can be injected
-    # as action arguments even if you don't extend any base controller class
-    App\Controller\:
-        resource: '../src/Controller'
-        tags: ['controller.service_arguments']
-
-    App\EventListeners\AuthenticationSuccessListener:
+    App\Authentication\EventListeners\AuthenticationSuccessListener:
         arguments: [ '@request_stack' ]
         tags:
              - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
 
-    App\EventListeners\JWTAuthenticatedListener:
+    App\Authentication\EventListeners\JWTAuthenticatedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
 
-## needs removing moved to sensor services doesnt work
-    App\ESPDeviceSensor\Controller\ESPSensorUpdateController:
+# needs removing moved to sensor services doesnt work
+    App\Sensors\Controller\SensorControllers\ESPSensorCurrentReadingUpdateController:
         calls:
             - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]

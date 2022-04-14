@@ -2,7 +2,7 @@
 
 namespace App\User\Services\GroupServices\GroupCheck;
 
-use App\Entity\Core\GroupNames;
+use App\User\Entity\GroupNames;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 
 interface GroupCheckServiceInterface

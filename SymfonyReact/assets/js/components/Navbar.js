@@ -46,7 +46,7 @@ const Navbar = () => {
                     <div className="bg-white py-2 collapse-inner rounded">
                         <h6 className="collapse-header">View Room:</h6>
                         {context.userRooms.map((navRoom) => (
-                            <Link to={`${webappURL}index`} key={navRoom.roomID} className="collapse-item">{navRoom.room}</Link>                            
+                            <Link to={`${webappURL}room?room-id=${navRoom.roomID}`} key={navRoom.roomID} className="collapse-item">{navRoom.room}</Link>                            
                         ))}
                         <Link to={`${webappURL}add-room`} className="collapse-item">+Add New Room</Link>
                     </div>

@@ -18,34 +18,27 @@ function Login(props) {
         setError(null);
         setLoading(true);
 
-        const csrfTokenResponse = await axios.get(apiURL+'csrfToken');
-
-        csrfTokenResponse.status === 200
-            ? setLoading(false)
-            : setLoading(false) && alert('Please Fresher The Browser')
-
-        const formToken = csrfTokenResponse.data.token;
-
-        const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})
-
-        loginCheckResponse
-            ? setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
-            : setError('Login check response error') && setLoading(false);
-
-        const loginForm = document.getElementById('login-form');
-
-        const formData = new FormData(loginForm);
-
-        formData.append('_csrf_token', formToken);
-
-        const loginResponse = await axios.post('/HomeApp/WebApp/login', formData, { headers: { 'content-type': 'multipart/form-data' } });
-
-        // window.history.replaceState(null, "HomeApp", `${webappURL}index`)
-        loginResponse.status === 200
-            ? window.location.replace(webappURL+'index')
-            : alert('setting user data failed') && setLoading(false);
-
-        setLoading(false);
+        try {
+            const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})
+        
+            if (loginCheckResponse.status === 200) {
+                setUserSession(loginCheckResponse.data.token, loginCheckResponse.data.refreshToken, loginCheckResponse.data.userData)
+                window.location.replace(webappURL+'index');
+            } else {
+                setError('Login check response error')
+            }
+            setLoading(false);
+            console.log("ERROR")
+        } catch (error) {
+            const errorResponse = error.response;
+            setLoading(false);
+            console.log(error, error.status)
+            if (errorResponse.status === 401) {
+                setError(errorResponse.data.message);
+            } else {
+                setError('Something went wrong');
+            }
+        }
     }
 
     return (

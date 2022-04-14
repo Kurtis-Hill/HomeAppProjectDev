@@ -6,7 +6,7 @@ const cardModal = () => {
 
   const context = useContext(CardContext);
 
-  const modalSensorType = context.modalContent.sensorType;
+  const modalSensorType = context.modalContent.readingType;
 
   const modalContent = context.modalContent;
 
@@ -45,6 +45,23 @@ const cardModal = () => {
                   </div>
                 : null
             }
+            
+            {
+              modalStatus.success.length > 0 
+                ?
+                  <div className="error-container">
+                    <div className="form-modal-success-box">
+                      <ol>
+                      {
+                        modalStatus.success.map((success, index) => (
+                          <li key={index} className="form-modal-error-text">request data accepted for {success}</li>
+                        ))
+                      }
+                      </ol>
+                    </div>
+                  </div>
+                : null
+            }
 
             {modalStatus.submitSuccess === true ? <div className="modal-success"><h4 style={{ textAlign:"center" }}>Submission Made Successfully</h4> </div> :
               <React.Fragment>
@@ -56,17 +73,16 @@ const cardModal = () => {
                       ?
                         modalContent.sensorData.map((sensorData, index) => (
                           <div key={index} style={{paddingBottom: "10%"}}>
-
-                            <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} High Reading</label>
+                            <label className="large font-weight-bold">{capitalizeFirstLetter(sensorData.readingType)} High Reading</label>
                             <br />
-                            <input type="text" name={sensorData.sensorType+"-high-reading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
+                            <input type="text" name={sensorData.readingType+"-high-reading"} className="form-space" value={sensorData.highReading} onChange={(e) => {context.updateModalForm(e, sensorData.readingType)}} /><sup>{sensorData.readingSymbol}</sup>
                             <br />
-                            <label className="modal-space large font-weight-bold">{capitalizeFirstLetter(sensorData.sensorType)} Low Reading</label>
+                            <label className="modal-space large font-weight-bold">{capitalizeFirstLetter(sensorData.readingType)} Low Reading</label>
                             <br />
-                            <input type="text" name={sensorData.sensorType+"-low-reading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}}></input><sup>{sensorData.readingSymbol}</sup>
+                            <input type="text" name={sensorData.readingType+"-low-reading"} className="form-space" value={sensorData.lowReading} onChange={(e) => {context.updateModalForm(e, sensorData.readingType)}} /><sup>{sensorData.readingSymbol}</sup>
                             <br />
                             <label className="modal-space large font-weight-bold">{modalSensorType} Temperature Constantly Record Data</label>
-                            <select name={sensorData.sensorType+"-const-record"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.sensorType)}} className="form-control">
+                            <select name={sensorData.readingType+"-const-record"} value={sensorData.constRecord} onChange={(e) => {context.updateModalForm(e, sensorData.readingType)}} className="form-control">
                               <option value={false} key="no">No</option>
                               <option value={true} key="yes">Yes</option>
                             </select>

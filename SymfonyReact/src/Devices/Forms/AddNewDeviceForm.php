@@ -1,13 +1,13 @@
 <?php
 
-
 namespace App\Devices\Forms;
 
+use App\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
-use App\Entity\Core\GroupNames;
-use App\User\Entity;
+use App\User\Entity\GroupNames;
 use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\FormMessages;
+use App\User\Entity\Room;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,14 +18,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AddNewDeviceForm extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('deviceName', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NoSpecialCharactersConstraint(),
-                    new NotBlank(['message' => sprintf(FormMessages::SHOULD_NOT_BE_BLANK, 'Device')]),
+                    new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'Device')]),
                     new Length(
                         [
                             'min' => 1, 'max' => 20,
@@ -46,7 +46,7 @@ class AddNewDeviceForm extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Devices::class,

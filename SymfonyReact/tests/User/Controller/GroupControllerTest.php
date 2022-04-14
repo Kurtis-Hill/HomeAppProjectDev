@@ -2,18 +2,20 @@
 
 namespace App\Tests\User\Controller;
 
-use App\Controller\Core\SecurityController;
-use App\DataFixtures\Core\UserDataFixtures;
-use App\Entity\Core\User;
+use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Authentication\Controller\SecurityController;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GroupControllerTest extends WebTestCase
 {
-    private const GET_USER_GROUPS_URL = '/HomeApp/api/user-groups/groups';
+    private const GET_USER_GROUPS_URL = '/HomeApp/api/user/user-groups/all';
 
-    private EntityManagerInterface $entityManager;
+    private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
 
@@ -53,7 +55,7 @@ class GroupControllerTest extends WebTestCase
     public function test_user_groups_are_correct(): void
     {
         $this->client->request(
-            'GET',
+            Request::METHOD_GET,
             self::GET_USER_GROUPS_URL,
             [],
             [],
@@ -63,11 +65,18 @@ class GroupControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
 
-        self::assertEquals(200, $requestResponse->getStatusCode());
+        self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
-        self::assertEquals(UserDataFixtures::ADMIN_GROUP, $responseData[0]['groupName']);
-        self::assertEquals(UserDataFixtures::USER_GROUP, $responseData[1]['groupName']);
-        self::assertIsNumeric($responseData[0]['groupNameId']);
-        self::assertIsNumeric($responseData[1]['groupNameId']);
+        self::assertEquals(UserDataFixtures::ADMIN_GROUP,$responseData['payload'][0]['groupName']);
+        self::assertEquals(UserDataFixtures::USER_GROUP, $responseData['payload'][1]['groupName']);
+        self::assertIsNumeric($responseData['payload'][0]['groupNameId']);
+        self::assertIsNumeric($responseData['payload'][1]['groupNameId']);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

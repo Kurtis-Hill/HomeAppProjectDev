@@ -4,12 +4,19 @@ export const getUser = () => {
     else return null;
 }
 
+export const getUserID = () => {
+    const userID = sessionStorage.getItem('user');
+    if (userID) return userID;
+    else return null;
+}
+
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');   
     sessionStorage.removeItem('userID');   
     sessionStorage.removeItem('roles');    
-        
+    window.location.replace('/HomeApp/WebApp/login');
+
     return null;
 }
 
@@ -27,23 +34,15 @@ export const setUserSession = (token, refreshToken, userData) => {
 }
 
 export const capitalizeFirstLetter = (string) => {
-    if (string != undefined) {
+    if (string !== undefined) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
     return null;
 }
 
 export const lowercaseFirstLetter = (string) => {
-    if (string != undefined) {
+    if (string !== undefined) {
         return string.charAt(0).toLowerCase() + string.slice(1);
     }
     return null;
 }
-
-// export const getAPIHeader = (extraHeader = null) => {
-//     return { headers: {"Authorization" : `Bearer ${getToken()}`} };
-// }
-
-// export const webappURL = '/HomeApp/WebApp/';
-
-// export const apiURL = '/HomeApp/api/'

@@ -1,0 +1,34 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+################### Core ############################
+  App\Devices\:
+    resource: './*'
+    exclude: './{Traits,DependencyInjection,Entity,Tests}'
+
+
+################### Devices ############################
+  App\Devices\Controller\:
+    resource: './Controller'
+    tags: [ 'controller.service_arguments' ]
+
+
+  ######################## Services ########################################################################
+  App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface:
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceBuilder'
+
+  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilderInterface:
+    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilder'
+
+  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface:
+    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilder'
+
+  App\Devices\Repository\ORM\DeviceRepositoryInterface:
+    alias: 'App\Devices\Repository\ORM\DeviceRepository'
+
+  App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface:
+    alias: 'App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoder'

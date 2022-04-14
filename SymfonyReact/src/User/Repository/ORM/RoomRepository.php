@@ -8,11 +8,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class RoomRepository extends ServiceEntityRepository implements RoomRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
         parent::__construct($registry, Room::class);
     }
 
@@ -34,13 +31,54 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function getAllUserRoomsByGroupId($groupNameId): array
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        $qb->select('r.roomID, r.room')
+            ->where(
+                $qb->expr()->in('r.groupNameID', ':groupNameID')
+            )
+            ->setParameter('groupNameID', $groupNameId);
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function findOneById(int $id): ?Room
+    {
+        return $this->findOneBy(['roomID' => $id]);
+    }
+
     public function persist(Room $room): void
     {
-        $this->registry->getManager()->persist($room);
+        $this->getEntityManager()->persist($room);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
+    }
+
+    public function remove(Room $room): void
+    {
+        $this->getEntityManager()->remove($room);
+    }
+
+    public function findOneByRoomNameAndGroupNameId(int $groupNameId, string $roomName): ?Room
+    {
+        $qb = $this->createQueryBuilder('room');
+        $expr = $qb->expr();
+
+        $qb->select('room')
+            ->where(
+                $expr->eq('room.room', ':roomName'),
+                $expr->eq('room.groupNameID', ':groupNameId')
+            );
+        $qb->setParameters([
+            'roomName' => $roomName,
+            'groupNameId' => $groupNameId
+        ]);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

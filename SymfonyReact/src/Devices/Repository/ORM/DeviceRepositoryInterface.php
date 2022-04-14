@@ -2,16 +2,43 @@
 
 namespace App\Devices\Repository\ORM;
 
-
 use App\Devices\Entity\Devices;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface DeviceRepositoryInterface
 {
+    /**
+     * @throws ORMInvalidArgumentException
+     * @throws ORMException
+     */
     public function persist(Devices $device): void;
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function flush(): void;
 
-    public function findDuplicateDeviceNewDeviceCheck(array $deviceDetails): ?Devices;
+    /**
+     * @throws ORMException
+     */
+    public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices;
 
+    /**
+     * @throws ORMException | NonUniqueResultException
+     */
     public function findOneById(int $id): ?Devices;
+
+    /**
+     * @throws ORMException
+     */
+    public function getAllUsersDevicesByGroupId($groupNameID): array;
+
+    /**
+     * @throws ORMException
+     */
+    public function remove(Devices $device): void;
 }

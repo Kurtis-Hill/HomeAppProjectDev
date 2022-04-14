@@ -3,28 +3,27 @@
 namespace App\Devices\Repository\ORM;
 
 use App\Devices\Entity\Devices;
-use App\User\Entity;
+use App\User\Entity\GroupNames;
+use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 class DeviceRepository extends ServiceEntityRepository implements DeviceRepositoryInterface
 {
-    private ManagerRegistry $registry;
-
     public function __construct(ManagerRegistry $registry)
     {
-        $this->registry = $registry;
         parent::__construct($registry, Devices::class);
     }
 
     public function persist(Devices $device): void
     {
-        $this->registry->getManager()->persist($device);
+        $this->getEntityManager()->persist($device);
     }
 
     public function flush(): void
     {
-        $this->registry->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function findOneById(int $id): ?Devices
@@ -32,11 +31,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         return $this->findOneBy(['deviceNameID' => $id]);
     }
 
-    /**
-     * @param array $deviceDetails
-     * @return Devices|null
-     */
-    public function findDuplicateDeviceNewDeviceCheck(array $deviceDetails): ?Devices
+    public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices
     {
         $qb = $this->createQueryBuilder('devices');
         $expr = $qb->expr();
@@ -45,18 +40,34 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->innerJoin(Room::class, 'room')
             ->where(
                 $expr->eq('devices.deviceName', ':deviceName'),
-//                $expr->eq('devices.groupNameID', ':groupNameID'),
                 $expr->eq('room.roomID', ':roomID')
             )
             ->setParameters(
                 [
-                    'deviceName' => $deviceDetails['deviceName'],
-//                    'groupNameID' => $deviceDetails['groupNameObject'],
-                    'roomID' => $deviceDetails['roomObject']
+                    'deviceName' => $deviceName,
+                    'roomID' => $roomId
                 ]
             );
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function getAllUsersDevicesByGroupId($groupNameID): array
+    {
+        $qb = $this->createQueryBuilder('dv');
+        $qb->select('dv.deviceNameID', 'dv.deviceName', 'gn.groupNameID', 'r.roomID')
+            ->leftJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
+            ->leftJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupNameID = gn.groupNameID');
+        $qb->where(
+            $qb->expr()->in('dv.groupNameID', ':groupNameID')
+        )
+            ->setParameters(['groupNameID' => $groupNameID]);
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function remove(Devices $device): void
+    {
+        $this->getEntityManager()->remove($device);
+    }
 }

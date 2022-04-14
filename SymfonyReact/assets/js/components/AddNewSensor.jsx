@@ -29,11 +29,10 @@ function AddNewSensor(props) {
 
     const getSensorTypes = async () => {
         try {
-            const sensorTypeResponse = await axios.get(`${apiURLsensors}/types`, getAPIHeader());
-
-            if (sensorTypeResponse.data) {
-                setSelectedSensorTypes(sensorTypeResponse.data[0].sensorTypeID);
-                setSensorTypes(sensorTypeResponse.data);
+            const sensorTypeResponse = await axios.get(`${apiURL}sensor-types/all`, getAPIHeader());
+            if (sensorTypeResponse.data.payload && Array.isArray(sensorTypeResponse.data.payload)) {
+                setSelectedSensorTypes(sensorTypeResponse.data.payload[0].sensorTypeID);
+                setSensorTypes(sensorTypeResponse.data.payload);
             }
         } catch (error) {
             setErrors(['something has gone wrong getting form field data, unexpected response'])
@@ -57,8 +56,8 @@ function AddNewSensor(props) {
         const deviceName = new URLSearchParams(window.location.search).get('device-id');
 
         const jsonRequestData = {
-            'deviceNameID' : deviceName,
-            'sensorTypeID' : selectedSensorTypes,
+            'deviceNameID' : parseInt(deviceName),
+            'sensorTypeID' : parseInt(selectedSensorTypes),
             'sensorName' : sensorName.value,
         }
 
@@ -80,17 +79,19 @@ function AddNewSensor(props) {
                 setErrors(`unexpected response`);
             }
         } catch (error) {
-            const errors = error.response.data.errors;
+            const errorResponse = error.response;
 
+
+            
+            if (error.response.data.errors && Array.isArray(error.response.data.errors)) {
+                const errors = error.response.data.errors;
+                setErrors(errors);
+            } else {
+                setErrors('Something went wrong');
+            }
+            console.log('erre', error, errors, error.response);
             setSuccessMessage(false);
             setLoading(false);
-            setSelectedSensorTypes(sensorTypes[0].sensorTypeID);
-            if (error.response.status === 400) {
-                setErrors(errors);
-            }
-            if (error.response.status === 500) {
-                alert(`Something went wrong try refreshing the browser ${data}`);
-            }
         }
     }
 
@@ -126,7 +127,7 @@ function AddNewSensor(props) {
                                                 </button>
                                             </div>
                                             {
-                                                errors.length > 0
+                                                Array.isArray(errors) &&errors.length > 0
                                                 ?
                                                     <div className="error-container">
                                                         <div className="form-modal-error-box">

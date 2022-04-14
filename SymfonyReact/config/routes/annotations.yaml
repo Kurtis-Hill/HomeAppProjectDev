@@ -1,20 +1,21 @@
-controllers:
-    resource: ../../src/Controller/
-    type: annotation
-
 esp-device-sensors:
-    resource: ../../src/ESPDeviceSensor/Controller
-#    prefix: /HomeApp/api/sensors
+    resource: ../../src/Sensors/Controller
     type: annotation
 
 devices:
     resource: ../../src/Devices/Controller
-#    prefix: /api/devices
     type: annotation
 
 user:
     resource: ../../src/User/Controller
-    #    prefix: /api/devices
+    type: annotation
+
+user-interface:
+    resource: ../../src/UserInterface/Controller
+    type: annotation
+
+authentication:
+    resource: ../../src/Authentication/Controller
     type: annotation
 
 kernel:
