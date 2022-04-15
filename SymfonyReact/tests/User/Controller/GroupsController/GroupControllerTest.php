@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\User\Controller;
+namespace User\Controller\GroupsController;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;

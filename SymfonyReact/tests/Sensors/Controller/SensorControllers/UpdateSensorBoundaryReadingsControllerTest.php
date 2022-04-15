@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\SensorControllers;
+namespace Sensors\Controller\SensorControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;

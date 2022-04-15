@@ -62,7 +62,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-
+        //@TODO check new device dto gets returned with corrrect response
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
     }

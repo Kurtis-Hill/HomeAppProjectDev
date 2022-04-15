@@ -67,7 +67,6 @@ class GetReadingTypeControllerTest extends WebTestCase
     public function test_getting_all_reading_types(): void
     {
 
-        self::assertResponseIsSuccessful();
 //        self::assertCount(count(ReadingTypes::SENSOR_READING_TYPE_DATA), $responseData['payload'])
     }
 

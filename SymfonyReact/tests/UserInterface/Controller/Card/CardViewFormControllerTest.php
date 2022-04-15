@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\UserInterface\Controller\Card;
+namespace UserInterface\Controller\Card;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
@@ -147,7 +147,7 @@ class CardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
-    public function  getCardViewFormIncorrectCardViewIDDataProvider(): Generator
+    public function getCardViewFormIncorrectCardViewIDDataProvider(): Generator
     {
         yield [
             'notAInt',
@@ -429,7 +429,6 @@ class CardViewFormControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-
     }
 
     public function sendingWrongCardDataRequestDataProvider(): Generator

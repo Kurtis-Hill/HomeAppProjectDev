@@ -82,7 +82,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         return $this->userToken;
     }
-    
+
     public function newSensorSimpleDataProvider(): Generator
     {
         yield [

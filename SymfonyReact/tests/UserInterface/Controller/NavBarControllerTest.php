@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\UserInterface\Controller;
+namespace UserInterface\Controller;
 
 use App\Doctrine\DataFixtures\Core\RoomFixtures;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;

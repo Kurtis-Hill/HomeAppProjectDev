@@ -91,15 +91,11 @@ class AuthenticationTests extends WebTestCase
 
         self::assertArrayHasKey('token', $responseData);
         self::assertArrayHasKey('refreshToken', $responseData);
-        self::assertArrayHasKey('deviceIps', $responseData);
         self::assertNotNull($responseData['token']);
         self::assertNotNull($responseData['refreshToken']);
 
         self::assertEquals($device->getIpAddress(), $ipAddress);
         self::assertEquals($device->getExternalIpAddress(), $externalIpAddress);
-
-        self::assertEquals($device->getIpAddress(), $responseData['deviceIps']['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $responseData['deviceIps']['externalIpAddress']);
 
         self::assertEquals(200, $requestResponse->getStatusCode());
     }
