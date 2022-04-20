@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { apiURL} from '../Utilities/URLSCommon';
 import { getAPIHeader} from '../Utilities/APICommon';
+import { removeUserSession } from '../Utilities/Common';
 
 export const NavbarContext = createContext();
 
@@ -64,6 +65,7 @@ export default class NavbarContextProvider extends Component {
             const navBarResponse = response.data.payload;
             this.setState({devices: navBarResponse.devices, rooms: navBarResponse.rooms, groupNames: navBarResponse.groupNames});
         }).catch(error => {   
+            removeUserSession();
             alert('Failed Getting Navbar Data, '+error.response.data.title);
         })
     }
