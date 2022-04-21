@@ -34,9 +34,6 @@ class ReadingTypeUpdateCurrentReadingDTO
         return $this->sensorReadingObject;
     }
 
-    /**
-     * @return string
-     */
     public function getCurrentReading(): string
     {
         return $this->currentReading;

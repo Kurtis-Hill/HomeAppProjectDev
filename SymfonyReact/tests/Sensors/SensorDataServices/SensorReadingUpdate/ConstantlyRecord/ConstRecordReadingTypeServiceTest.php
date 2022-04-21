@@ -130,7 +130,6 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $tempObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
-
         self::assertNull($constRecordings);
     }
 

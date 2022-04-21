@@ -93,9 +93,10 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                         $this->constantlyRecordService->checkAndProcessConstRecord($sensorReadingObject);
                     }
                 } catch (
-                ReadingTypeNotExpectedException
-                | SensorReadingUpdateFactoryException
-                | ReadingTypeObjectBuilderException $e) {
+                    ReadingTypeNotExpectedException
+                    | SensorReadingUpdateFactoryException
+                    | ReadingTypeObjectBuilderException $e
+                ) {
                     error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
                     continue;
                 }
