@@ -40,15 +40,15 @@
 
 //Web bits
 // Test
-#define HOMEAPP_HOST "https://192.168.1.172"
+//#define HOMEAPP_HOST "https://192.168.1.172"
 // Prod
-//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
+#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
 #define HOME_APP_CURRENT_READING "api/device/esp/update/current-reading"
 #define HOMEAPP_LOGIN "api/device/login_check"
-#define HOMEAPP_REFRESH_TOKEN "api/token/refresh"
+#define HOMEAPP_REFRESH_TOKEN "api/device/token/refresh"
 #define HOMEAPP_IP_UPDATE "api/device/ipupdate"
 
 #define EXTERNAL_IP_URL "https://api.ipify.org/?format=json"
@@ -59,7 +59,7 @@ String ipAddress;
 String publicIpAddress;
 String token;
 String refreshToken;
-
+bool deviceLoggedIn;
 
 // Access ponint network bits
 #define ACCESSPOINT_SSID "HomeApp-D-A-D-AP"
@@ -76,9 +76,6 @@ IPAddress netmask(255,255,255,0);
 //#define ACTIVE_START_PIN 2
 //#define LAST_ACTIVE_PIN 4
 
-#define ACTIVE_START_PIN 2
-#define LAST_ACTIVE_PIN 2
-
 
 // DHT
 #define DHTPIN 0
@@ -93,8 +90,9 @@ struct DhtSensor {
 };
 DhtSensor dhtSensor;
 
-
 // Dallas
+#define ACTIVE_START_PIN 2
+#define LAST_ACTIVE_PIN 2
 OneWire oneWire(0);
 DallasTemperature sensors(&oneWire);
 
@@ -680,7 +678,6 @@ char webpage[] PROGMEM = R"=====(
 
 )=====";
 
-
 // Need to decode this json string (data) and place different parts in different spiffs, wifi and sensor data
 void handleSettingsUpdate(){
   String data = server.arg("plain");
@@ -978,7 +975,7 @@ bool setupNetworkConnection(){
     return true;
   } else {
     Serial.print("wifi.json not found in SPIFF AP mode activating...");
-    
+    createAccessPoint();
     return false;
   }
 }
@@ -997,7 +994,7 @@ void createAccessPoint() {
 bool connectToNetwork() {
   File wifiCredentials = SPIFFS.open("/wifi.json", "r");
   if (wifiCredentials) {
-    Serial.println("wifi file successfull");
+    Serial.println("wifi file successfull");  
     StaticJsonDocument<100> wifiDoc;
     DeserializationError error = deserializeJson(wifiDoc, wifiCredentials);
 
@@ -1047,43 +1044,6 @@ bool connectToNetwork() {
 }
 
 
-
-bool deviceLogin(bool externalIpFound) {
-  Serial.println("Logging device in");
-  String url = buildHomeAppUrl(HOMEAPP_LOGIN);
-  String deviceData = getSerializedSpiff("/device.json");
-
-  StaticJsonDocument<256> loginDoc;
-  DeserializationError error = deserializeJson(loginDoc, deviceData);
-
-  loginDoc["ipAddress"] = ipAddress;
-
-  if(externalIpFound) {
-    Serial.print("addinng external ip to request... ");
-    Serial.println(publicIpAddress);
-    loginDoc["externalIpAddress"] = publicIpAddress;
-  }
-
-  String jsonData;
-  serializeJson(loginDoc, jsonData);
-  
-  String payload = sendHomeAppHttpsRequest(url, jsonData, false);
-
-  if (
-    payload == ""
-    || payload == NULL 
-    || payload == "" 
-    || payload[0] == '\0' 
-    ) {
-    Serial.println("payload empty returning false");
-    Serial.println("Device has failed to login, cannot send any data"); 
-    return false;
-  }
-
-  return saveTokensFromLogin(payload);    
-}
-
-
 String buildHomeAppUrl(String endpoint) {
   Serial.println("building url");
 //  String url = sprintf(
@@ -1118,7 +1078,6 @@ String sendHomeAppHttpsRequest(
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setFingerprint(fingerprint);
   HTTPClient https;
-
   Serial.print("[HTTPS] begin connecting to... ");
   Serial.println(url);
   
@@ -1134,32 +1093,78 @@ String sendHomeAppHttpsRequest(
   Serial.println("[HTTP] POST...");
   int httpCode = https.POST(jsonData);
 
-  // httpCode will be negative on error
+  // cannnot try to re-login on 401 here because of a bug that is in the library so have to do it on next loop
   if (httpCode > 0) {
     Serial.printf("[HTTP] POST... code: %d\n", httpCode);
     if (httpCode == HTTP_CODE_OK) {
-      const String& payload = https.getString();
+      const String payload = https.getString();
       Serial.print("received payload: ");
-      Serial.println(payload);      
+      Serial.println(payload);
       return payload;
     }
     if (httpCode == 401) {
-      Serial.println("server sent back a 401 attempting to refresh token");
-      String urlLoopCheck = buildHomeAppUrl(HOMEAPP_REFRESH_TOKEN);
-      Serial.println("url check");
-      Serial.println(urlLoopCheck);
-      if (url == urlLoopCheck) {
-        deviceLogin(false);
-      }
-      handleRefreshTokens();
+      Serial.println("device has failed to login");
+      deviceLoggedIn = false;
+      Serial.println("faild to send data unauthorized response recieved");
+      const String payload = https.getString();      
+      Serial.print("received payload: ");
+      Serial.println(payload);
     }
   } else {
-      Serial.printf("[HTTP] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
- 
+      Serial.printf("[HTTP] POST... failed, error: %s%d\n", https.errorToString(httpCode).c_str(), httpCode);
   }
   https.end();
   return "";
 }
+
+void deviceLogin() {
+  Serial.println("Logging device in");
+  String url = buildHomeAppUrl(HOMEAPP_LOGIN);
+  String deviceData = getSerializedSpiff("/device.json");
+
+  StaticJsonDocument<256> loginDoc;
+  DeserializationError error = deserializeJson(loginDoc, deviceData);
+
+  if (error) {
+    Serial.println("token destialization failed");
+    Serial.println("device has failed to login");
+    deviceLoggedIn = false;
+  }
+  loginDoc["ipAddress"] = ipAddress;
+
+  if(publicIpAddress != NULL) {
+    Serial.print("addinng external ip to request... ");
+    Serial.println(publicIpAddress);
+    loginDoc["externalIpAddress"] = publicIpAddress;
+  }
+
+  String jsonData;
+  serializeJson(loginDoc, jsonData);
+  
+  String payload = sendHomeAppHttpsRequest(url, jsonData, false);
+
+  if (
+    payload == ""
+    || payload == NULL 
+    || payload == "" 
+    || payload[0] == '\0' 
+    ) {
+    Serial.println("payload empty returning false");
+    Serial.println("Device has failed to login, cannot send any data"); 
+    Serial.println("device has failed to login");
+    deviceLoggedIn = false;
+  }
+  bool saveSuccess = saveTokensFromLogin(payload);
+
+  if(saveSuccess) {
+    Serial.println("Marking devicc as logged in");
+    deviceLoggedIn = true;
+  } else {
+    Serial.println("tokens failed to save");
+    delay(2000);
+  }
+}
+
 
  void handleRefreshTokens() {
   String url = buildHomeAppUrl(HOMEAPP_REFRESH_TOKEN);
@@ -1167,27 +1172,26 @@ String sendHomeAppHttpsRequest(
   Serial.println(url);
 
   DynamicJsonDocument refreshTokenDoc(1024);
-
   refreshTokenDoc["refreshToken"] = refreshToken;
 
   String jsonData;
-
   serializeJson(refreshTokenDoc, jsonData);
 
   Serial.print("serialized refresh token data to send");//@dev
   Serial.print(jsonData);
 
   String tokens = sendHomeAppHttpsRequest(url, jsonData, false);
-
   bool saveSuccess = saveTokensFromLogin(tokens);
 
-  if(!saveSuccess) {
+  if(saveSuccess) {
+    Serial.println("device logged in true");
+    deviceLoggedIn = true;
+  } else {
     Serial.println("tokens failed to save");
     delay(2000);
-    deviceLogin(false);
+    deviceLogin();
   }
-}
-
+ }
 
 
 bool saveTokensFromLogin(String payload) {  
@@ -1196,10 +1200,10 @@ bool saveTokensFromLogin(String payload) {
   char jsonData[1000];
   strcpy(jsonData, payload.c_str());
 
-  DynamicJsonDocument responseTokens(2048);
+  DynamicJsonDocument responseTokens(1024);
   DeserializationError error = deserializeJson(responseTokens, jsonData);
   if (error) {
-    Serial.println("deserialization error");
+    Serial.println("token deserialization error!");
     return false;
   }
   
@@ -1213,10 +1217,57 @@ bool saveTokensFromLogin(String payload) {
   Serial.println(token);
   Serial.println("refreshToken");
   Serial.println(refreshToken);
+  
   return true;
 }
 
+String ipToString(IPAddress ip){
+  String stringIP = "";
+  for (int i=0; i<4; i++) {
+    stringIP += i  ? "." + String(ip[i]) : String(ip[i]);
+  }
+  
+  return stringIP;
+}
 
+void getExternalIP() {
+  WiFiClient client;
+  if (!client.connect("api.ipify.org", 80)) {
+    Serial.println("Failed to connect with 'api.ipify.org' !");
+  }
+  else {
+    int timeout = millis() + 5000;
+    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
+    while (client.available() == 0) {
+      if (timeout - millis() < 0) {
+        Serial.println(">>> Client Timeout !");
+        client.stop();
+      }
+    }
+    uint8_t* msg;
+    int size;
+    while ((size = client.available()) > 0) {
+      msg = (uint8_t*)malloc(size);
+      size = client.read(msg, size);
+      Serial.write(msg, size);
+    }
+    Serial.print("json messaged recieved: ");
+    Serial.println(String((char *)msg));
+    DynamicJsonDocument deserializedJson(1024);
+    DeserializationError error = deserializeJson(deserializedJson, msg);
+
+    if (error) {
+      Serial.println("deserialization error");
+    }
+
+    publicIpAddress = deserializedJson["ip"].as<String>();
+    Serial.println("publicIp is");
+    Serial.println(publicIpAddress);
+    free(msg);
+  }
+}
+
+// Sensor Network Methods
 String buildDallasReadingSensorUpdateRequest() {
   Serial.println("Building Dallas request");
   DynamicJsonDocument sensorUpdateRequest(1024);
@@ -1298,7 +1349,7 @@ String buildDhtReadingSensorUpdateRequest() {
   Serial.println("Building dht request");
   DynamicJsonDocument sensorUpdateRequest(1024);
 
-  if (!isnan(dhtSensor.tempReading) && !isnan(dhtSensor.humidReading)) {
+  if (!isnan(dhtSensor.tempReading) || !isnan(dhtSensor.humidReading)) {
     Serial.print("sensor name:");
     Serial.println(dhtSensor.sensorName);
     sensorUpdateRequest["sensorData"][0]["sensorType"] = DHTNAME;
@@ -1461,56 +1512,6 @@ void takeDhtReadings() {
   Serial.println("%");
 }
 
-String ipToString(IPAddress ip){
-  String stringIP = "";
-  for (int i=0; i<4; i++) {
-    stringIP += i  ? "." + String(ip[i]) : String(ip[i]);
-  }
-  return stringIP;
-}
-
-bool getExternalIP() {
-  WiFiClient client;
-  if (!client.connect("api.ipify.org", 80)) {
-    Serial.println("Failed to connect with 'api.ipify.org' !");
-    return false;
-  }
-  else {
-    int timeout = millis() + 5000;
-    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
-    while (client.available() == 0) {
-      if (timeout - millis() < 0) {
-        Serial.println(">>> Client Timeout !");
-        client.stop();
-        return false;
-      }
-    }
-    uint8_t* msg;
-    int size;
-    while ((size = client.available()) > 0) {
-      msg = (uint8_t*)malloc(size);
-      size = client.read(msg, size);
-      Serial.write(msg, size);
-    }
-    Serial.print("json messaged recieved: ");
-    Serial.println(String((char *)msg));
-    DynamicJsonDocument deserializedJson(1024);
-    DeserializationError error = deserializeJson(deserializedJson, msg);
-
-    if (error) {
-      Serial.println("deserialization error");
-      return false;
-    }
-
-    publicIpAddress = deserializedJson["ip"].as<String>();
-    Serial.println("publicIp is");
-    Serial.println(publicIpAddress);
-    free(msg);
-
-    return true;
-  }
-}
-
 
 //bool getExternalIP() {
 //  Serial.print("Begining to get external ip in");
@@ -1610,22 +1611,18 @@ void setup() {
   Serial.println("Begining device setup");
 
   if (setupNetworkConnection()) {
-    bool externalIpSuccess = getExternalIP();
+    Serial.print("Getting external IP... ");
+    getExternalIP();
+    deviceLogin();
 
-    Serial.print("Getting ExternalIP Address Success... ");
-    Serial.println(String(externalIpSuccess));
-    bool loggedIn = deviceLogin(externalIpSuccess);
-
-    if (loggedIn == true) {
-      if (setDhtValues()) {
-        dht.begin();
-      }
-      if (setDallasValues()) {
-        if (findDallasSensor()) {
-          delay(500);
-          Serial.println("Begining Dallas sensor");
-          sensors.begin();
-        }
+    if (setDhtValues()) {
+      dht.begin();
+    }
+    if (setDallasValues()) {
+      if (findDallasSensor()) {
+        delay(500);
+        Serial.println("Begining Dallas sensor");
+        sensors.begin();
       }
     }
   }
@@ -1641,6 +1638,10 @@ void loop() {
   Serial.println("Server ClientHandled...");
 
   if(WiFi.status()== WL_CONNECTED){
+    if (deviceLoggedIn == false) {
+      Serial.println("Device not loged in attempting to refresh token");
+      handleRefreshTokens();
+    }
     Serial.println("Connected to wifi");
     if (dallasTempData.sensorActive == true) {
       takeDallasTempReadings();
@@ -1650,7 +1651,9 @@ void loop() {
       takeDhtReadings();
       sendDhtUpdateRequest();
     }
+  } else {
+    // delay or webpage server wont show correctly
+    delay(1000);
   }
   Serial.println("Loop finished");
-  delay(1000);
 }
