@@ -34,22 +34,6 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
 
     private ReadingTypeQueryFactory $readingTypeQueryBuilderFactory;
 
-    public function __construct(
-        SensorRepositoryInterface $sensorRepository,
-        SensorReadingUpdateFactory $readingUpdateFactory,
-        SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
-        OutOfBoundsSensorServiceInterface $outOfBoundsSensorService,
-        SensorConstantlyRecordServiceInterface $constantlyRecordService,
-        ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
-    ) {
-        $this->sensorRepository = $sensorRepository;
-        $this->readingUpdateFactory = $readingUpdateFactory;
-        $this->readingTypesValidator = $readingTypesValidator;
-        $this->outOfBoundsSensorService = $outOfBoundsSensorService;
-        $this->constantlyRecordService = $constantlyRecordService;
-        $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
-    }
-
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
         Devices $device,
@@ -59,11 +43,14 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
             $sensorReadingTypeQueryDTOs[] = $readingTypeQueryDTOBuilder->buildReadingTypeJoinQueryDTO();
         }
 
+        if (empty($sensorReadingTypeQueryDTOs)) {
+            return true;
+        }
         $sensorReadingObjects = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
             $updateSensorCurrentReadingConsumerDTO->getDeviceID(),
             $updateSensorCurrentReadingConsumerDTO->getSensorName(),
             null,
-            $sensorReadingTypeQueryDTOs ?? [],
+            $sensorReadingTypeQueryDTOs,
         );
 
         if (empty($sensorReadingObjects)) {
@@ -96,27 +83,21 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                         $sensorReadingObject,
                         $updateSensorCurrentReadingConsumerDTO->getSensorType()
                     );
+
+                    $sensorReadingObject->setUpdatedAt();
                     if (!empty($validationErrors)) {
                         $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
                     }
                     if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
-                        try {
-                            $this->outOfBoundsSensorService->checkAndProcessOutOfBounds($sensorReadingObject);
-                        } catch (ORMException $e) {
-                            error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
-                        }
-                        try {
-                            $this->constantlyRecordService->checkAndProcessConstRecord($sensorReadingObject);
-                        } catch (ORMException $e) {
-                            error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
-                        }
+                        $this->outOfBoundsSensorService->checkAndProcessOutOfBounds($sensorReadingObject);
+                        $this->constantlyRecordService->checkAndProcessConstRecord($sensorReadingObject);
                     }
                 } catch (
                     ReadingTypeNotExpectedException
                     | SensorReadingUpdateFactoryException
-                    | ReadingTypeObjectBuilderException $e) {
+                    | ReadingTypeObjectBuilderException $e
+                ) {
                     error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
-                    dd($e->getMessage());
                     continue;
                 }
             }
@@ -124,5 +105,21 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
         $this->sensorRepository->flush();
 
         return true;
+    }
+
+    public function __construct(
+        SensorRepositoryInterface $sensorRepository,
+        SensorReadingUpdateFactory $readingUpdateFactory,
+        SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
+        OutOfBoundsSensorServiceInterface $outOfBoundsSensorService,
+        SensorConstantlyRecordServiceInterface $constantlyRecordService,
+        ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
+    ) {
+        $this->sensorRepository = $sensorRepository;
+        $this->readingUpdateFactory = $readingUpdateFactory;
+        $this->readingTypesValidator = $readingTypesValidator;
+        $this->outOfBoundsSensorService = $outOfBoundsSensorService;
+        $this->constantlyRecordService = $constantlyRecordService;
+        $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
     }
 }

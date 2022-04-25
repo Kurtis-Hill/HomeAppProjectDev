@@ -4,7 +4,7 @@ services:
   apache:
     ports:
       - '9000'
-      - '127.0.0.1:${HTTPS_APP_PORT}:443'
+ #     - '127.0.0.1:${HTTPS_APP_PORT}:443'
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
@@ -19,10 +19,8 @@ services:
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
-      - ./apache/sites-enabled:/etc/apache2/sites-enabled
       - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
       - ./apache/logs:/etc/logs
-
   maria-db:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'

@@ -2,11 +2,11 @@
 
 namespace App\Devices\Forms;
 
-use App\API\APIErrorMessages;
+use App\Common\API\APIErrorMessages;
+use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
-use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Form\FormMessages;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;

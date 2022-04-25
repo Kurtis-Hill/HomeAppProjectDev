@@ -2,8 +2,8 @@
 
 namespace EventListeners\Tests;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
-use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
@@ -91,15 +91,11 @@ class AuthenticationTests extends WebTestCase
 
         self::assertArrayHasKey('token', $responseData);
         self::assertArrayHasKey('refreshToken', $responseData);
-        self::assertArrayHasKey('deviceIps', $responseData);
         self::assertNotNull($responseData['token']);
         self::assertNotNull($responseData['refreshToken']);
 
         self::assertEquals($device->getIpAddress(), $ipAddress);
         self::assertEquals($device->getExternalIpAddress(), $externalIpAddress);
-
-        self::assertEquals($device->getIpAddress(), $responseData['deviceIps']['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $responseData['deviceIps']['externalIpAddress']);
 
         self::assertEquals(200, $requestResponse->getStatusCode());
     }

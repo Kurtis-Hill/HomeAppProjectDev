@@ -2,7 +2,7 @@
 
 namespace App\Devices\DeviceServices\UpdateDevice;
 
-use App\API\APIErrorMessages;
+use App\Common\API\APIErrorMessages;
 use App\Devices\DeviceServices\AbstractESPDeviceBuilder;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
@@ -52,8 +52,8 @@ class UpdateDeviceObjectBuilder extends AbstractESPDeviceBuilder implements Upda
 
         if (!empty($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getPassword())) {
             $deviceToUpdate->setDeviceSecret(
-                    $deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getPassword()
-                );
+                $deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getPassword()
+            );
             $this->devicePasswordEncoder->encodeDevicePassword($deviceToUpdate);
         }
 
@@ -63,16 +63,5 @@ class UpdateDeviceObjectBuilder extends AbstractESPDeviceBuilder implements Upda
             return array_merge($errors, $this->getValidationErrorAsArray($validationConstraintList));
         }
         return $this->getValidationErrorAsArray($validationConstraintList);
-    }
-
-    public function buildSensorSuccessResponseDTO(Devices $updatedDevice): DeviceUpdateResponseDTO
-    {
-        return new DeviceUpdateResponseDTO(
-            $updatedDevice->getDeviceName(),
-            $updatedDevice->getRoomObject()->getRoom(),
-            $updatedDevice->getRoomObject()->getRoomID(),
-            $updatedDevice->getGroupNameObject()->getGroupName(),
-            $updatedDevice->getGroupNameObject()->getGroupNameID(),
-        );
     }
 }

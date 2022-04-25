@@ -2,7 +2,7 @@
 
 namespace Sensors\AMQP\Consumers;
 
-use App\AppConfig\DataFixtures\ESP8266\SensorFixtures;
+use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
 use App\Devices\Entity\Devices;
 use App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
@@ -185,7 +185,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[Dht::NAME]]);
 
-        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
+        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 23);
         $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
             Dht::NAME,
             SensorFixtures::SENSORS[Dht::NAME],
@@ -323,7 +323,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[Bmp::NAME]]);
 
-        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
+        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 22);
         $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
             Bmp::NAME,
             SensorFixtures::SENSORS[Bmp::NAME],

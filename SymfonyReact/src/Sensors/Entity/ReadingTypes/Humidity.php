@@ -42,7 +42,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
      * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
      */
     #[HumidityConstraint]
-    private int $currentReading;
+    private float $currentReading;
 
     /**
      * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
@@ -117,9 +117,9 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $reading): void
+    public function setCurrentReading(int|float|string $currentReading): void
     {
-        $this->currentReading = $reading;
+        $this->currentReading = $currentReading;
     }
 
     public function setHighReading(int|float|string $reading): void

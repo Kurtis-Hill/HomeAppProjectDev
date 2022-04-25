@@ -2,12 +2,11 @@
 
 namespace App\UserInterface\Controller\Card;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
 use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
@@ -19,7 +18,6 @@ use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServ
 use App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

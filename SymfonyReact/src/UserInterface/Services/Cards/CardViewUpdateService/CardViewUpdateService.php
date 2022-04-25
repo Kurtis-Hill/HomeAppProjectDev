@@ -45,7 +45,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         try {
             $cardColour = $this->cardColourRepository->findOneById($cardUpdateDTO->getCardColourID());
             if (!$cardColour instanceof CardColour) {
-                $errors[] = 'Card colour not found';
+                $errors[] = 'Icons colour not found';
             } else {
                 $cardView->setCardColourID($cardColour);
             }
@@ -55,7 +55,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         try {
             $cardIcon = $this->iconsRepository->findOneById($cardUpdateDTO->getCardIconID());
             if (!$cardIcon instanceof Icons) {
-                $errors[] = 'Card icon not found';
+                $errors[] = 'Icons icon not found';
             } else {
                 $cardView->setCardIconID($cardIcon);
             }
@@ -65,7 +65,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         try {
             $cardState = $this->cardStateRepository->findOneById($cardUpdateDTO->getCardStateID());
             if (!$cardState instanceof Cardstate) {
-                $errors[] = 'Card state not found';
+                $errors[] = 'Icons state not found';
             } else {
                 $cardView->setCardStateID($cardState);
             }

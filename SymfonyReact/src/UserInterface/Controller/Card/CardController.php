@@ -2,13 +2,11 @@
 
 namespace App\UserInterface\Controller\Card;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\Room;
-use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\Exceptions\CardTypeNotRecognisedException;
@@ -19,7 +17,6 @@ use App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceI
 use App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\ORMException;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,7 +67,7 @@ class CardController extends AbstractController
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
         }
 
         try {
@@ -106,7 +103,7 @@ class CardController extends AbstractController
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
         }
 
         try {
@@ -135,7 +132,7 @@ class CardController extends AbstractController
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Card filters')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
         }
 
         try {

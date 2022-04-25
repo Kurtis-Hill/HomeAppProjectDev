@@ -2,9 +2,10 @@
 
 namespace App\Devices\Controller;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
+use App\Devices\Builders\DeviceUpdate\DeviceUpdateDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilderInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
@@ -78,7 +79,7 @@ class UpdateDeviceController extends AbstractController
                 $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceGroup());
             } catch (NonUniqueResultException | ORMException) {
                 return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Group name')]);
-            }        
+            }
             if (!$groupName instanceof GroupNames) {
                 return $this->sendBadRequestJsonResponse(['The id provided for groupname doesnt match any groupname we have'], 'Group name not found');
             }
@@ -109,7 +110,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = $updateDeviceObjectBuilder->buildSensorSuccessResponseDTO($deviceToUpdate);
+        $deviceUpdateSuccessResponseDTO = DeviceUpdateDTOBuilder::buildSensorSuccessResponseDTO($deviceToUpdate);
 
         try {
             $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);
@@ -117,6 +118,6 @@ class UpdateDeviceController extends AbstractController
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        return $this->sendSuccessfulJsonResponse($normalizedResponse, 'Device Successfully Updated');
+        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

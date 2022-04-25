@@ -2,12 +2,12 @@
 
 namespace App\Sensors\Forms;
 
-use App\API\APIErrorMessages;
+use App\Common\API\APIErrorMessages;
+use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\Devices\Entity\Devices;
+use App\Form\FormMessages;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
-use App\Form\CustomFormValidators\NoSpecialCharactersConstraint;
-use App\Form\FormMessages;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

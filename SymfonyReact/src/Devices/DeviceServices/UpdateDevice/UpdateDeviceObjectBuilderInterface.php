@@ -14,6 +14,4 @@ interface UpdateDeviceObjectBuilderInterface
     public function updateDeviceAndValidate(UpdateDeviceDTO $deviceUpdateRequestDTO): array;
 
     public function saveNewDevice(Devices $device): bool;
-
-    public function buildSensorSuccessResponseDTO(Devices $updatedDevice): DeviceUpdateResponseDTO;
 }

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\AMQP\Consumers;
 
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ErrorLogs;
@@ -13,6 +13,7 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentRe
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -71,12 +72,16 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
         }
 
         if ($device instanceof Devices) {
-            return $this->sensorCurrentReadingUpdateService->handleUpdateSensorCurrentReading(
-                $sensorData,
-                $device
-            );
+            try {
+                return $this->sensorCurrentReadingUpdateService->handleUpdateSensorCurrentReading(
+                    $sensorData,
+                    $device
+                );
+            } catch (ORMException|OptimisticLockException) {
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 }

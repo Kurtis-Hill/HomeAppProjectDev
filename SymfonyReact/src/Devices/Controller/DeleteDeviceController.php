@@ -2,9 +2,10 @@
 
 namespace App\Devices\Controller;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'delete-user-devices')]
 class DeleteDeviceController extends AbstractController
@@ -27,21 +29,28 @@ class DeleteDeviceController extends AbstractController
         )
     ]
     public function deleteDevice(
-        Devices $deviceToUpdate,
+        Devices $deviceToDelete,
         DeleteDeviceBuilderInterface $deleteDeviceBuilder,
     ): JsonResponse {
         try {
-            $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToUpdate);
+            $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToUpdate);
+        $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToDelete);
 
         if ($deviceDeleteSuccess !== true) {
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device')]);
         }
 
-        return $this->sendSuccessfulJsonResponse();
+        $deviceDTO = DeviceDTOBuilder::buildDeviceDTO($deviceToDelete);
+        try {
+            $normalizedResponse = $this->normalizeResponse($deviceDTO);
+        } catch (ExceptionInterface $e) {
+            $normalizedResponse = null;
+        }
+
+        return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 }

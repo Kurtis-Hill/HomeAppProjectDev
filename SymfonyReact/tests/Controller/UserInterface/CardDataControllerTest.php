@@ -4,7 +4,6 @@
 namespace App\Tests\Controller\UserInterface;
 
 
-use App\API\APIErrorMessages;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 

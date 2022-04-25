@@ -2,7 +2,7 @@
 
 namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
-use App\API\APIErrorMessages;
+use App\Common\API\APIErrorMessages;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;

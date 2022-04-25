@@ -6,5 +6,5 @@ use Exception;
 
 class CardTypeNotRecognisedException extends Exception
 {
-    public const CARD_TYPE_NOT_RECOGNISED = 'Card type not recognised';
+    public const CARD_TYPE_NOT_RECOGNISED = 'Icons type not recognised';
 }

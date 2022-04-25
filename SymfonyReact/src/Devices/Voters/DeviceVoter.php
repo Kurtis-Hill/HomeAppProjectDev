@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Devices\Voters;
 
 use App\Devices\DTO\Internal\NewDeviceDTO;
@@ -60,7 +59,6 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-        dd('sadf');
         $checkedRoom = $this->checkUserIsApartOfProposedRoom($user, $updateDeviceDTO->getProposedUpdatedRoom());
 
         if ($checkedRoom === false) {
@@ -69,7 +67,8 @@ class DeviceVoter extends Voter
         if (!in_array(
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
             $user->getGroupNameIds(),
-            true)
+            true
+        )
         ) {
             return false;
         }
@@ -79,7 +78,8 @@ class DeviceVoter extends Voter
             && !in_array(
                 $updateDeviceDTO->getProposedUpdatedRoom()->getGroupNameID(),
                 $user->getGroupNameIds(),
-                true)
+                true
+            )
         ) {
             return false;
         }

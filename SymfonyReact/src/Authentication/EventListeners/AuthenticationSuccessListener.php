@@ -2,12 +2,12 @@
 
 namespace App\Authentication\EventListeners;
 
-use App\API\APIErrorMessages;
-use App\API\Traits\HomeAppAPITrait;
 use App\Authentication\DTOs\Request\DeviceAuthenticationIPRequestDTO;
 use App\Authentication\DTOs\Response\DeviceAuthenticationResponse;
 use App\Authentication\DTOs\Response\UserAuthenticationResponseDTO;
 use App\Authentication\DTOs\Response\UserDataDTO;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
@@ -93,7 +93,7 @@ class AuthenticationSuccessListener
                     }
                 }
 
-                $deviceAuthenticationResponse = new DeviceAuthenticationResponse($data['token'], $deviceIpRequestDTO);
+                $deviceAuthenticationResponse = new DeviceAuthenticationResponse($data['token']);
                 try {
                     $responseMessage = $this->normalizeResponse($deviceAuthenticationResponse);
                 } catch (ExceptionInterface) {

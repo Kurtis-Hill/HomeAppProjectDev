@@ -18,11 +18,8 @@ use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Forms\StandardSensorOutOFBoundsForm;
-use App\Sensors\Forms\UpdateReadingForm;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * GetSensorTypesController
@@ -124,14 +121,14 @@ class SensorType
     /**
      * @ORM\Column(name="sensorType", type="string", length=20, nullable=false)
      */
-    #[NoSpecialCharacters\NoSpecialCharactersConstraint]
+    #[\App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint]
     private string $sensorType;
 
     /**
      * @ORM\Column(name="description", type="string", length=50, nullable=false)
      */
     #[
-        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::SENSOR_TYPE_DESCRIPTION_MIN_LENGTH,
             max: self::SENSOR_TYPE_DESCRIPTION_MAX_LENGTH,

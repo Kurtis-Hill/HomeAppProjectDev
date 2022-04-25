@@ -10,7 +10,7 @@
 
 namespace App\UserInterface\Forms\CardViewForms;
 
-use App\API\APIErrorMessages;
+use App\Common\API\APIErrorMessages;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;

@@ -2,7 +2,7 @@
 
 namespace Sensors\Controller\ReadingTypeControllers;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,7 +67,6 @@ class GetReadingTypeControllerTest extends WebTestCase
     public function test_getting_all_reading_types(): void
     {
 
-        self::assertResponseIsSuccessful();
 //        self::assertCount(count(ReadingTypes::SENSOR_READING_TYPE_DATA), $responseData['payload'])
     }
 

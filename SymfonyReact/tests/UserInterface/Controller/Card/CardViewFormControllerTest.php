@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\UserInterface\Controller\Card;
+namespace UserInterface\Controller\Card;
 
-use App\API\APIErrorMessages;
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
+use App\Common\API\APIErrorMessages;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\User\Entity\User;
@@ -147,7 +147,7 @@ class CardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
-    public function  getCardViewFormIncorrectCardViewIDDataProvider(): Generator
+    public function getCardViewFormIncorrectCardViewIDDataProvider(): Generator
     {
         yield [
             'notAInt',
@@ -429,7 +429,6 @@ class CardViewFormControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-
     }
 
     public function sendingWrongCardDataRequestDataProvider(): Generator
@@ -438,21 +437,21 @@ class CardViewFormControllerTest extends WebTestCase
             'wrongColour' => true,
             'wrongIcon' => false,
             'wrongState' => false,
-            'errorMessage' => 'Card colour not found'
+            'errorMessage' => 'Icons colour not found'
         ];
 
         yield [
             'wrongColour' => false,
             'wrongIcon' => true,
             'wrongState' => false,
-            'errorMessage' => 'Card icon not found'
+            'errorMessage' => 'Icons icon not found'
         ];
 
         yield [
             'wrongColour' => false,
             'wrongIcon' => false,
             'wrongState' => true,
-            'errorMessage' => 'Card state not found'
+            'errorMessage' => 'Icons state not found'
         ];
     }
 
@@ -527,7 +526,7 @@ class CardViewFormControllerTest extends WebTestCase
             'nullCardColour' => true,
             'nullCardIcon' => false,
             'nullCardState' => false,
-            'errorMessage' => 'Card colour cannot be null'
+            'errorMessage' => 'Icons colour cannot be null'
         ];
 
         yield [
@@ -541,7 +540,7 @@ class CardViewFormControllerTest extends WebTestCase
             'nullCardColour' => false,
             'nullCardIcon' => false,
             'nullCardState' => true,
-            'errorMessage' => 'Card state cannot be null'
+            'errorMessage' => 'Icons state cannot be null'
         ];
     }
 

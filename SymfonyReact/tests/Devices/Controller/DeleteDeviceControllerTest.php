@@ -2,7 +2,7 @@
 
 namespace Devices\Controller;
 
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Devices\Entity\Devices;
@@ -62,7 +62,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-
+        //@TODO check new device dto gets returned with corrrect response
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
     }

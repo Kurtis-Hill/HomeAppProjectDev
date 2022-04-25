@@ -100,20 +100,21 @@ class CardContextProvider extends Component {
             Array.isArray(response.data.payload) 
             && response.data.payload.length >= 1
                 ? this.setState({cardData: response.data.payload})
-                : this.setState({alternativeDisplayMessage: "No Card Data", cardData: []});    
+                : this.setState({alternativeDisplayMessage: "No Icons Data", cardData: []});
+
         } catch (error) {
-            if (error.data === undefined) {
-                this.setState({alternativeDisplayMessage: "No Card Data server errors", modalContent: emptyModalContent});
+            if (error.response.data === undefined) {
+                this.setState({alternativeDisplayMessage: "No Icons Data server errors", modalContent: emptyModalContent});
             }
             else {
-                if (error.data.status === 401) {
+                if (error.response.status === 401) {
                     axios.post(apiURL+'token/refresh',
                             { refreshToken : getRefreshToken() }
                     )
                     .then(response => {
                         setUserSession(response.data.token, response.data.refreshToken);
                     }).catch((error) => {
-                        this.setState({alternativeDisplayMessage: "No Card Data", modalContent: emptyModalContent});
+                        this.setState({alternativeDisplayMessage: "Failed to re login, please try to do this manually", modalContent: emptyModalContent});
                     });
                 }
                 else {

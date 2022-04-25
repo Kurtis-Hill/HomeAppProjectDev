@@ -2,14 +2,14 @@
 
 namespace App\Devices\Controller;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
+use App\Devices\Builders\NewDeviceDTOBuilder;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
 use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
-use App\Devices\DTO\Response\NewDeviceSuccessResponseDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
@@ -98,7 +98,7 @@ class AddNewDeviceController extends AbstractController
         $secret = $device->getDeviceSecret();
         $deviceID = $device->getDeviceNameID();
 
-        $newDeviceResponseDTO = new NewDeviceSuccessResponseDTO($secret, $deviceID);
+        $newDeviceResponseDTO = NewDeviceDTOBuilder::buildNewDeviceSecretDTO($secret, $deviceID);
 
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);

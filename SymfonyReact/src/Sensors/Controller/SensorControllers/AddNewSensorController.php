@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Controller\SensorControllers;
 
-use App\API\APIErrorMessages;
-use App\API\CommonURL;
-use App\API\Traits\HomeAppAPITrait;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\CommonURL;
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;

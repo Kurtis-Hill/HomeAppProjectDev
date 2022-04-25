@@ -3,9 +3,8 @@
 namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping\Column;
-use App\Form\CustomFormValidators as NoSpecialCharacters;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Room
@@ -26,7 +25,7 @@ class Room
     private int $roomID;
 
     #[
-        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
         Assert\Length(
             min: 2,
             max: 20,

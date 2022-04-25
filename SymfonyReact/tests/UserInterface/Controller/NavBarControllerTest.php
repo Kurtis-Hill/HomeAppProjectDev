@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\UserInterface\Controller;
+namespace UserInterface\Controller;
 
-use App\API\HTTPStatusCodes;
-use App\AppConfig\DataFixtures\Core\RoomFixtures;
-use App\AppConfig\DataFixtures\Core\UserDataFixtures;
+use App\Doctrine\DataFixtures\Core\RoomFixtures;
+use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
+use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Room;
 use App\User\Entity\User;

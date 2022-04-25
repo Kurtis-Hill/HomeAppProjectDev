@@ -7,7 +7,6 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Form\CustomFormValidators as NoSpecialCharacters;
 
 /**
  * GroupNames.
@@ -39,7 +38,7 @@ class GroupNames
      * @ORM\Column(name="groupName", type="string", length=50, nullable=false)
      */
     #[
-        NoSpecialCharacters\NoSpecialCharactersConstraint,
+        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::GROUP_NAME_MIN_LENGTH,
             max: self::GROUP_NAME_MAX_LENGTH,

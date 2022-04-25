@@ -1,12 +1,12 @@
 <?php
 
-namespace Sensors\SensorControllers;
+namespace Sensors\Controller\SensorControllers;
 
-use App\API\APIErrorMessages;
-use App\API\HTTPStatusCodes;
-use App\AppConfig\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\AppConfig\DataFixtures\ESP8266\SensorFixtures;
+use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
 use App\Authentication\Controller\SecurityController;
+use App\Common\API\APIErrorMessages;
+use App\Common\API\HTTPStatusCodes;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Latitude;
@@ -314,7 +314,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider incorrectPartsOfRequestDataProvider
+     * @dataProvider mixedGoodBadRequestDataProvider
      */
     public function test_sending_incorrect_parts_of_request(
         array $sensorData,
@@ -343,7 +343,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         self::assertEquals($payload, $responseData['payload']);
     }
 
-    public function incorrectPartsOfRequestDataProvider(): Generator
+    public function mixedGoodBadRequestDataProvider(): Generator
     {
         yield [
             'sensorData' => [

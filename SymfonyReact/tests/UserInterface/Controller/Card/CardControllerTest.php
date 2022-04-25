@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\UserInterface\Controller\Card;
+namespace UserInterface\Controller\Card;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

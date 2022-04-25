@@ -2,7 +2,7 @@
 
 namespace Sensors\SensorDataServices\SensorReadingUpdate\ConstantlyRecord;
 
-use App\AppConfig\DataFixtures\ESP8266\SensorFixtures;
+use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;
 use App\Sensors\Entity\ConstantRecording\ConstHumid;
 use App\Sensors\Entity\ConstantRecording\ConstLatitude;
@@ -130,7 +130,6 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $tempObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
-
         self::assertNull($constRecordings);
     }
 

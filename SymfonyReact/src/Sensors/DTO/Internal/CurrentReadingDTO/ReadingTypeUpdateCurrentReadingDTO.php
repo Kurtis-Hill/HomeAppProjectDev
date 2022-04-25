@@ -18,8 +18,7 @@ class ReadingTypeUpdateCurrentReadingDTO
         string $newCurrentReading,
         string $currentReading,
         AllSensorReadingTypeInterface $sensorObject,
-    )
-    {
+    ) {
         $this->currentReading = $newCurrentReading;
         $this->newCurrentReading = $currentReading;
         $this->sensorReadingObject = $sensorObject;
@@ -35,9 +34,6 @@ class ReadingTypeUpdateCurrentReadingDTO
         return $this->sensorReadingObject;
     }
 
-    /**
-     * @return string
-     */
     public function getCurrentReading(): string
     {
         return $this->currentReading;

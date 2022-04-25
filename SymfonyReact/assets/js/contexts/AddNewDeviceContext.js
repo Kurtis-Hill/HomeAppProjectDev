@@ -38,7 +38,6 @@ export default class AddNewDeviceContextProvider extends Component {
             'deviceGroup' :  this.state.newDeviceModalContent.newDeviceGroup !== '' ? parseInt(this.state.newDeviceModalContent.newDeviceGroup) : parseInt(document.getElementById("deviceGroup").value),
         };
 
-        console.log('formdata', jsonFormData);
        try {
             const newDeviceSubmissionResponse = await axios.post(`${apiURL}user-devices/add-new-device`, jsonFormData, getAPIHeader());
 
