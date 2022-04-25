@@ -4,7 +4,7 @@ services:
   apache:
     ports:
       - '9000'
-      - '127.0.0.1:${HTTPS_APP_PORT}:443'
+ #     - '127.0.0.1:${HTTPS_APP_PORT}:443'
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
