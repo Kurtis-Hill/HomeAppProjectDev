@@ -11,7 +11,7 @@ if [ ${APP_ENV} = 'prod' ]; then
    echo "production environment installing..."
    yarn install --production --frozen-lockfile --check-files
    echo "setting network timeout for slower devices..."
-   yarn config set network-timeout 600000 -g
+   yarn config set network-timeout 1200000 -g
    yarn add @symfony/webpack-encore
    echo "building assets..."
    yarn build

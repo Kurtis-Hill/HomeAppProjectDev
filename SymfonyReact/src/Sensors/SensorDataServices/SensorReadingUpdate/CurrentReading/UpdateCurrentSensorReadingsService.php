@@ -11,6 +11,7 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
+use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
@@ -54,7 +55,7 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
         );
 
         if (empty($sensorReadingObjects)) {
-            return false;
+            throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION);
         }
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingDTO) {
