@@ -6,8 +6,9 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Builders\NewDeviceDTOBuilder;
+use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceHandlerInterface;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
-use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
+use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
@@ -33,9 +34,10 @@ class AddNewDeviceController extends AbstractController
     public function addNewDevice(
         Request $request,
         RoomRepositoryInterface $roomRepository,
-        NewDeviceBuilderInterface $newDeviceBuilder,
+        NewDeviceHandlerInterface $newDeviceBuilder,
         GroupCheckServiceInterface $groupCheckService,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
+        DeleteDeviceHandlerInterface $deleteDeviceHandler,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
 
@@ -103,6 +105,7 @@ class AddNewDeviceController extends AbstractController
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);
         } catch (ExceptionInterface) {
+            $deleteDeviceHandler->deleteDevice($device);
             return $this->sendInternalServerErrorJsonResponse(['Failed to normalize response']);
         }
 

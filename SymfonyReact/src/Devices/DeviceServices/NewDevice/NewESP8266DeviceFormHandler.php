@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 #[Deprecated]
-class NewESP8266DeviceFormBuilder implements NewDeviceBuilderInterface
+class NewESP8266DeviceFormHandler implements NewDeviceHandlerInterface
 {
     use FormProcessorTrait;
 

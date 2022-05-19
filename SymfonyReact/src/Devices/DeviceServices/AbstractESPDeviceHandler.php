@@ -11,7 +11,7 @@ use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AbstractESPDeviceBuilder
+class AbstractESPDeviceHandler
 {
     use ValidatorProcessorTrait;
 

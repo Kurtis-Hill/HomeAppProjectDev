@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
-use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceBuilderInterface;
+use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceHandlerInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +30,7 @@ class DeleteDeviceController extends AbstractController
     ]
     public function deleteDevice(
         Devices $deviceToDelete,
-        DeleteDeviceBuilderInterface $deleteDeviceBuilder,
+        DeleteDeviceHandlerInterface $deleteDeviceBuilder,
     ): JsonResponse {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);

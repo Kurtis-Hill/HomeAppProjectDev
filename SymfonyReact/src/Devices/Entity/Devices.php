@@ -107,29 +107,6 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     private string $secret;
 
-    private array $userGroupMappingEntities = [];
-
-
-    public function getUserGroupMappingEntities(): array
-    {
-        return $this->userGroupMappingEntities;
-    }
-
-    public function setUserGroupMappingEntities(array $userGroupMappingEntities): void
-    {
-        $this->userGroupMappingEntities = $userGroupMappingEntities;
-    }
-
-    public function getGroupNameIds(): array
-    {
-        $groupNames = [];
-        foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
-        }
-
-        return $groupNames;
-    }
-
     public function getDeviceNameID(): int
     {
         return $this->deviceNameID;

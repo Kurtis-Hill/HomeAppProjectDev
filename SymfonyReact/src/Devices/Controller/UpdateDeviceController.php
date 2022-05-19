@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Builders\DeviceUpdate\DeviceUpdateDTOBuilder;
-use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilderInterface;
+use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
@@ -41,7 +41,7 @@ class UpdateDeviceController extends AbstractController
     public function updateDevice(
         Devices $deviceToUpdate,
         Request $request,
-        UpdateDeviceObjectBuilderInterface $updateDeviceObjectBuilder,
+        UpdateDeviceHandlerInterface $updateDeviceObjectBuilder,
         RoomRepositoryInterface $roomRepository,
         GroupNameRepositoryInterface $groupNameRepository
     ): JsonResponse {

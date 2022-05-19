@@ -7,7 +7,7 @@ use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\DTO\Response\DeviceUpdateResponseDTO;
 use App\Devices\Entity\Devices;
 
-interface UpdateDeviceObjectBuilderInterface
+interface UpdateDeviceHandlerInterface
 {
     public function validateDeviceRequestObject(DeviceRequestDTOInterface $deviceUpdateRequestDTO): array;
 

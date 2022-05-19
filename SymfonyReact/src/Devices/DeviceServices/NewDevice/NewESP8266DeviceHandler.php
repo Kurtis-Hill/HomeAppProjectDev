@@ -2,7 +2,7 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Devices\DeviceServices\AbstractESPDeviceBuilder;
+use App\Devices\DeviceServices\AbstractESPDeviceHandler;
 use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
@@ -11,7 +11,7 @@ use App\User\Entity\User;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
-class NewESP8266DeviceBuilder extends AbstractESPDeviceBuilder implements NewDeviceBuilderInterface
+class NewESP8266DeviceHandler extends AbstractESPDeviceHandler implements NewDeviceHandlerInterface
 {
     public function createNewDevice(NewDeviceDTO $deviceDTO): Devices
     {
@@ -45,8 +45,7 @@ class NewESP8266DeviceBuilder extends AbstractESPDeviceBuilder implements NewDev
                 $newDevice->getDeviceName(),
                 $newDevice->getRoomObject()->getRoomID()
             );
-        }
-        catch (DuplicateDeviceException $exception) {
+        } catch (DuplicateDeviceException $exception) {
             $userErrors[] = $exception->getMessage();
         } catch (ORMException $e) {
             $userErrors[] = "device check query failed";
@@ -61,7 +60,6 @@ class NewESP8266DeviceBuilder extends AbstractESPDeviceBuilder implements NewDev
 
         return $userErrors ?? [];
     }
-
 
     private function createDevicePasswordHash(Devices $device): string
     {

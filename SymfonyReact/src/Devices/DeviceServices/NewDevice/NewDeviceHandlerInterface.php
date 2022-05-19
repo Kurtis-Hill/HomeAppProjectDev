@@ -7,7 +7,7 @@ use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 
-interface NewDeviceBuilderInterface
+interface NewDeviceHandlerInterface
 {
     public function validateDeviceRequestObject(DeviceRequestDTOInterface $deviceRequestDTO): array;
 

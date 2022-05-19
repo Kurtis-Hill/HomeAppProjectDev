@@ -3,7 +3,7 @@
 namespace App\Devices\DeviceServices\UpdateDevice;
 
 use App\Common\API\APIErrorMessages;
-use App\Devices\DeviceServices\AbstractESPDeviceBuilder;
+use App\Devices\DeviceServices\AbstractESPDeviceHandler;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\DTO\Response\DeviceUpdateResponseDTO;
@@ -14,7 +14,7 @@ use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UpdateDeviceObjectBuilder extends AbstractESPDeviceBuilder implements UpdateDeviceObjectBuilderInterface
+class UpdateDeviceHandler extends AbstractESPDeviceHandler implements UpdateDeviceHandlerInterface
 {
     private DevicePasswordEncoderInterface $devicePasswordEncoder;
 

@@ -1,7 +1,4 @@
 {
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99.5"
-    },
     "dama/doctrine-test-bundle": {
         "version": "4.0",
         "recipe": {
@@ -282,6 +279,9 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "stella-maris/clock": {
+        "version": "0.1.4"
     },
     "symfony/asset": {
         "version": "v5.2.10"
