@@ -40,6 +40,9 @@ interface IconsRepositoryInterface
     /**
      * @throws ORMException
      */
+    #[ArrayShape(['iconID' => 'int', 'iconName' => 'string', 'description' => 'string'])]
+    public function getAllIconsAsArray(): array;
+
     #[ArrayShape([Icons::class])]
-    public function getAllIcons(): array;
+    public function getAllIconObjects(): array;
 }

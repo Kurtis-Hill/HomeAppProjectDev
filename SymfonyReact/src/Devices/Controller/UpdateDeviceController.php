@@ -64,7 +64,7 @@ class UpdateDeviceController extends AbstractController
 
         $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors), APIErrorMessages::VALIDATION_ERRORS);
         }
 
         if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
@@ -110,7 +110,10 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceResponseDTO($deviceToUpdate);
+        $deviceUpdateSuccessResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceFullDetailsResponseDTO(
+            $deviceToUpdate,
+            $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword() !== null
+        );
         try {
             $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);
         } catch (ExceptionInterface) {

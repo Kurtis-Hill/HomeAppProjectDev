@@ -5,7 +5,7 @@ namespace App\UserInterface\DTO\Response\Colours;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class CardColourDTO
+class CardColourResponseDTO
 {
     private int $cardColourID;
 
@@ -30,9 +30,6 @@ class CardColourDTO
         return $this->colour;
     }
 
-    /**
-     * @return string
-     */
     public function getShade(): string
     {
         return $this->shade;

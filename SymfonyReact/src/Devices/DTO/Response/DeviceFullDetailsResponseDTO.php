@@ -2,46 +2,42 @@
 
 namespace App\Devices\DTO\Response;
 
-use JetBrains\PhpStorm\Immutable;
+use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
+use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
 
-#[Immutable]
-class DeviceResponseDTO
+class DeviceFullDetailsResponseDTO
 {
-    private ?int $deviceNameID;
+    private int $deviceNameID;
 
     private string $deviceName;
 
     private ?string $secret;
 
-    private int $groupNameID;
+    private GroupNameResponseDTO $groupName;
 
-    private int $roomID;
-
-    private string|int $createdBy;
+    private RoomResponseDTO $room;
 
     private ?string $ipAddress;
 
     private ?string $externalIpAddress;
 
-    private ?array $roles;
+    private array $roles;
 
     public function __construct(
-        ?int $deviceNameID,
+        int $deviceNameID,
         string $deviceName,
-        int $groupNameID,
-        int $roomID,
-        string|int $createdBy,
-        ?string $secret = null,
-        ?string $ipAddress = null,
-        ?string $externalIpAddress = null,
-        ?array $roles = null
+        ?string $secret,
+        GroupNameResponseDTO $groupName,
+        RoomResponseDTO $room,
+        ?string $ipAddress,
+        ?string $externalIpAddress,
+        array $roles
     ) {
         $this->deviceNameID = $deviceNameID;
         $this->deviceName = $deviceName;
         $this->secret = $secret;
-        $this->groupNameID = $groupNameID;
-        $this->roomID = $roomID;
-        $this->createdBy = $createdBy;
+        $this->groupName = $groupName;
+        $this->room = $room;
         $this->ipAddress = $ipAddress;
         $this->externalIpAddress = $externalIpAddress;
         $this->roles = $roles;
@@ -57,24 +53,19 @@ class DeviceResponseDTO
         return $this->deviceName;
     }
 
-    public function getGroupNameID(): int
-    {
-        return $this->groupNameID;
-    }
-
-    public function getRoomID(): int
-    {
-        return $this->roomID;
-    }
-
-    public function getCreatedBy(): int|string
-    {
-        return $this->createdBy;
-    }
-
     public function getSecret(): ?string
     {
         return $this->secret;
+    }
+
+    public function getGroupName(): GroupNameResponseDTO
+    {
+        return $this->groupName;
+    }
+
+    public function getRoom(): RoomResponseDTO
+    {
+        return $this->room;
     }
 
     public function getIpAddress(): ?string
@@ -87,8 +78,8 @@ class DeviceResponseDTO
         return $this->externalIpAddress;
     }
 
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
         return $this->roles;
     }
-    }
+}

@@ -2,17 +2,23 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
+use App\UserInterface\Builders\CardViewReadingTypeBuilders\AnalogSensorCardViewBuilder;
 use App\UserInterface\DTO\Response\CardViewDTO\StandardCardViewDTO;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class SoilCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {
-    #[Pure]
+    private AnalogSensorCardViewBuilder $analogSensorBuilder;
+
+    public function __construct(AnalogSensorCardViewBuilder $analogSensorBuilder)
+    {
+        $this->analogSensorBuilder = $analogSensorBuilder;
+    }
+
     #[ArrayShape([StandardCardViewDTO::class])]
     public function formatScalarCardSensorData(array $sensorData): array
     {
-        $analogSensorData = $this->buildAnalogSensorData($sensorData);
+        $analogSensorData = $this->analogSensorBuilder->buildAnalogSensorDataFromScalarArray($sensorData);
 
         return [
             $analogSensorData,

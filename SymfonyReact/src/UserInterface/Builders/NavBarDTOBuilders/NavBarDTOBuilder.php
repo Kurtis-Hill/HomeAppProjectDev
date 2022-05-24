@@ -27,7 +27,7 @@ class NavBarDTOBuilder
 
         try {
             foreach ($userDevices as $device) {
-                $deviceDTOs[] = DeviceUpdateResponseDTOBuilder::buildDeviceResponseDTO($device);
+                $deviceDTOs[] = DeviceUpdateResponseDTOBuilder::buildDeviceIDResponseDTO($device);
             }
         } catch (TypeError) {
             $errors[] = sprintf(APIErrorMessages::FAILED_TO_PREPARE_OBJECT_RESPONSE, 'device');

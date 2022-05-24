@@ -10,6 +10,8 @@ class APIErrorMessages
 
     public const OBJECT_NOT_FOUND = '%s not found';
 
+    public const OBJECT_NOT_FOUND_FOR_ID = '%s not found for ID %s';
+
     public const OBJECT_NOT_RECOGNISED = '%s not recognised';
 
     public const FAILED_TO_SAVE_DATA = 'Failed to save data';

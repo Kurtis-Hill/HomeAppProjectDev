@@ -35,11 +35,20 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
     }
 
     #[ArrayShape([Cardstate::class])]
-    public function getAllStates(): array
+    public function getAllStatesAsArray(): array
     {
         $qb = $this->createQueryBuilder('cs')
             ->orderBy('cs.cardStateID', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    #[ArrayShape([Cardstate::class])]
+    public function getAllStateAsObjects(): array
+    {
+        $qb = $this->createQueryBuilder('cs')
+            ->orderBy('cs.cardStateID', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Intl\Exception\NotImplementedException;
 
 class SensorTypeCardViewGraphReadingDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
-    public function makeDTO(array $cardData): ?UserViewSensorTypeCardDataInterface
+    public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataInterface
     {
         throw new NotImplementedException('SensorTypeCardViewGraphReadingDTOBuilder:makeDTO');
     }

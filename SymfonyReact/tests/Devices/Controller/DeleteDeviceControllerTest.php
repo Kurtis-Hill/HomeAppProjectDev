@@ -62,7 +62,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        //@TODO check new device dto gets returned with corrrect response
+
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
     }
@@ -95,9 +95,15 @@ class DeleteDeviceControllerTest extends WebTestCase
         );
         $deletedDevice = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceNameID' => $device->getDeviceNameID()]);
 
+//        dd($responseData);
         self::assertNull($deletedDevice);
         self::assertEquals('Request Successful', $responseData['title']);
-        self::assertEquals('No Response Message', $responseData['payload']);
+        self::assertIsArray($responseData['payload']);
+        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
+        self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
+        self::assertNull($responseData['payload']['secret']);
     }
 
     public function testDeletingDeviceThatDoesntExist(): void
@@ -156,7 +162,12 @@ class DeleteDeviceControllerTest extends WebTestCase
 
         self::assertNull($deletedDevice);
         self::assertEquals('Request Successful', $responseData['title']);
-        self::assertEquals('No Response Message', $responseData['payload']);
+        self::assertIsArray($responseData['payload']);
+        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
+        self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
+        self::assertNull($responseData['payload']['secret']);
     }
 
     public function deletingDeviceDataProvider(): Generator

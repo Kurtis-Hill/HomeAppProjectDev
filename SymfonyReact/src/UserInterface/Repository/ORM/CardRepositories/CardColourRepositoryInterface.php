@@ -40,6 +40,9 @@ interface CardColourRepositoryInterface
     /**
      * @throws ORMException
      */
+    #[ArrayShape(['colourID' => "int", 'colour' => "string", 'shade' => "string"])]
+    public function getAllColoursAsArray(): array;
+
     #[ArrayShape([CardColour::class])]
-    public function getAllColours(): array;
+    public function getAllColourObjects(): array;
 }

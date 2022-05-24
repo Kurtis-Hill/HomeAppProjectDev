@@ -45,12 +45,21 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
             ->getQuery()->getSingleScalarResult();
     }
 
-    #[ArrayShape([CardColour::class])]
-    public function getAllColours(): array
+    #[ArrayShape(['colourID' => "int", 'colour' => "string", 'shade' => "string"])]
+    public function getAllColoursAsArray(): array
     {
         $qb = $this->createQueryBuilder('c')
             ->orderBy('c.colour', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    #[ArrayShape([CardColour::class])]
+    public function getAllColourObjects(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->orderBy('c.colour', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

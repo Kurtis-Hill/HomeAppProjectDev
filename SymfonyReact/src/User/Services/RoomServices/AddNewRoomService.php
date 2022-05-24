@@ -40,7 +40,7 @@ class AddNewRoomService implements AddNewRoomServiceInterface
     {
         $duplicateCheck = $this->roomRepository->findDuplicateRoom(
             $addNewRoomDTO->getRoomName(),
-            $addNewRoomDTO->getGroupNameId()->getGroupNameID()
+            $addNewRoomDTO->getGroupNameID()->getGroupNameID()
         );
 
         if ($duplicateCheck instanceof Room) {

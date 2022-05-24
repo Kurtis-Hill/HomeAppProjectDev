@@ -27,8 +27,11 @@ interface CardStateRepositoryInterface
     /**
      * @throws ORMException
      */
+    #[ArrayShape(['cardStateID' => 'int', 'state' => 'string'])]
+    public function getAllStatesAsArray(): array;
+
     #[ArrayShape([Cardstate::class])]
-    public function getAllStates(): array;
+    public function getAllStateAsObjects(): array;
 
     public function findOneByState(string $state): ?Cardstate;
 }

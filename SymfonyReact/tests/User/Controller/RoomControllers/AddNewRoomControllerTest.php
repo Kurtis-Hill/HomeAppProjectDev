@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\User\Controller;
+namespace User\Controller\RoomControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
@@ -60,9 +60,9 @@ class AddNewRoomControllerTest extends WebTestCase
     public function test_add_new_room_none_existent_group_data(): void
     {
         while (true) {
-            $randomGroup = random_int(0, 1000);
+            $notRealGroup = random_int(0, 1000);
 
-            $groupName = $this->entityManager->getRepository(GroupNames::class)->findOneBy(['groupNameID' => $randomGroup]);
+            $groupName = $this->entityManager->getRepository(GroupNames::class)->findOneBy(['groupNameID' => $notRealGroup]);
             if (!$groupName instanceof GroupNames) {
                 break;
             }
@@ -70,7 +70,7 @@ class AddNewRoomControllerTest extends WebTestCase
 
         $formRequestData = [
             'roomName' => 'Testroom',
-            'groupId' => $randomGroup,
+            'groupNameID' => $notRealGroup,
         ];
 
         $jsonData = json_encode($formRequestData);
@@ -83,10 +83,9 @@ class AddNewRoomControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
-//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertEquals('Group name not found for id '.$randomGroup, $responseData['errors'][0]);
+        self::assertEquals('Groupname not found for ID '.$notRealGroup, $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
@@ -95,7 +94,7 @@ class AddNewRoomControllerTest extends WebTestCase
     {
         $formRequestData = [
             'roomName' => 'TestroomTestroomTestroom',
-            'groupId' => $this->user->getGroupNameID()->getGroupNameID(),
+            'groupNameID' => $this->user->getGroupNameID()->getGroupNameID(),
         ];
 
         $jsonData = json_encode($formRequestData);
@@ -120,7 +119,7 @@ class AddNewRoomControllerTest extends WebTestCase
     {
         $formRequestData = [
             'roomName' => 'T',
-            'groupId' => $this->user->getGroupNameID()->getGroupNameID(),
+            'groupNameID' => $this->user->getGroupNameID()->getGroupNameID(),
         ];
 
         $jsonData = json_encode($formRequestData);
@@ -162,11 +161,14 @@ class AddNewRoomControllerTest extends WebTestCase
     /**
      * @dataProvider addNewRoomMissingDataProvider
      */
-    public function test_add_new_room_missing_data(?int $groupNameId, ?string $roomName, string $errorMessage): void
-    {
+    public function test_add_new_room_missing_data(
+        mixed $groupNameId,
+        mixed $roomName,
+        mixed $errorMessage
+    ): void {
         $formRequestData = [
             'roomName' => $roomName,
-            'groupId' => $groupNameId,
+            'groupNameID' => $groupNameId,
         ];
 
         $jsonData = json_encode($formRequestData);
@@ -183,21 +185,43 @@ class AddNewRoomControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertEquals('Validation Errors Occurred', $responseData['title']);
-        self::assertEquals($errorMessage, $responseData['errors'][0]);
+        self::assertEquals($errorMessage, $responseData['errors']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function addNewRoomMissingDataProvider(): Generator
     {
         yield [
-            'groupId' => 1,
+            'groupNameID' => 1,
             'roomName' => null,
-            'errorMessage' => 'roomName cannot be null'
+            'errorMessage' => ['roomName cannot be null']
         ];
+
         yield [
-            'groupId' => null,
+            'groupNameID' => null,
             'roomName' => 'Testroom',
-            'errorMessage' => 'groupId cannot be null'
+            'errorMessage' => ['groupNameID cannot be null']
+        ];
+
+        yield [
+            'groupNameID' => [],
+            'roomName' => 'Testroom',
+            'errorMessage' => ['groupNameID must be a integer you have provided array']
+        ];
+
+        yield [
+            'groupNameID' => 1,
+            'roomName' => [],
+            'errorMessage' => ['roomName must be a string you have provided array']
+        ];
+
+        yield [
+            'groupNameID' => [],
+            'roomName' => [],
+            'errorMessage' => [
+                'roomName must be a string you have provided array',
+                'groupNameID must be a integer you have provided array',
+            ]
         ];
     }
 
@@ -211,7 +235,7 @@ class AddNewRoomControllerTest extends WebTestCase
         $roomName = 'Testroom';
         $formRequestData = [
             'roomName' => $roomName,
-            'groupId' => $user->getGroupNameID()->getGroupNameID(),
+            'groupNameID' => $user->getGroupNameID()->getGroupNameID(),
         ];
 
         $jsonData = json_encode($formRequestData);
@@ -232,7 +256,7 @@ class AddNewRoomControllerTest extends WebTestCase
         self::assertNull($newRoom);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
-        self::assertEquals(403, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     public function addNewRoomNotApartOfDataProvider(): Generator
@@ -250,7 +274,7 @@ class AddNewRoomControllerTest extends WebTestCase
     {
         $formRequestData = [
             'roomName' => 'Testroom',
-            'groupId' => $this->user->getGroupNameID()->getGroupNameID(),
+            'groupNameID' => $this->user->getGroupNameID()->getGroupNameID(),
         ];
 
         $jsonData = json_encode($formRequestData);
@@ -268,10 +292,12 @@ class AddNewRoomControllerTest extends WebTestCase
 
         $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
 
+//        dd($responseData);
         self::assertInstanceOf(Room::class, $newRoom);
-        self::assertEquals('Room created successfully', $responseData['payload'][0]);
-        self::assertEquals('Request Accepted Successfully Created', $responseData['title']);
-        self::assertEquals(201, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Room created successfully', $responseData['title']);
+        self::assertEquals('Testroom', $responseData['payload']['roomName']);
+        self::assertEquals($this->user->getGroupNameID()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
     // End Of AddNewRoomTests
 

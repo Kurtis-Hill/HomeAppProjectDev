@@ -3,7 +3,7 @@
 namespace App\UserInterface\Services\Cards\CardPreparation;
 
 use App\Sensors\Exceptions\SensorTypeException;
-use App\UserInterface\DTO\Response\CardViewDTO\CardViewSensorFormInterface;
+use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;

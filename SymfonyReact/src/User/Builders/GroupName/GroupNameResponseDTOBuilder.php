@@ -11,7 +11,7 @@ class GroupNameResponseDTOBuilder
     {
         return new GroupNameResponseDTO(
             $groupName->getGroupNameID(),
-            $groupName->getGroupNameID(),
+            $groupName->getGroupName(),
         );
     }
 }

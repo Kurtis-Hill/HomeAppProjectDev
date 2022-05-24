@@ -9,7 +9,7 @@ use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\DTO\Response\CardViewDTO\CardViewSensorFormInterface;
+use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
@@ -48,11 +48,15 @@ class CardViewFormPreparationService implements CardViewFormPreparationServiceIn
     {
         $sensorTypeObject = $this->findStandardSensorTypeObjectByCardView($cardViewObject);
 
-        $usersCardSelections = $this->usersCardSelectionService->getUsersStandardCardSelections();
+        $usersCardSelections = $this->usersCardSelectionService->getUsersCardSelectionAsDTOs();
 
         $cardViewFormDTOBuilder = $this->cardViewFormDTOFactory->getCardViewFormBuilderService($cardFormType);
 
-        return $cardViewFormDTOBuilder->makeFormDTO($sensorTypeObject, $cardViewObject,  $usersCardSelections);
+        return $cardViewFormDTOBuilder->buildFormDTO(
+            $sensorTypeObject,
+            $cardViewObject,
+            $usersCardSelections
+        );
     }
 
     /**

@@ -89,7 +89,14 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
-        self::assertNotNull($responseData['deviceID']);
+        self::assertNotNull($responseData['deviceNameID']);
+        self::assertNull($responseData['ipAddress']);
+        self::assertNull($responseData['externalIpAddress']);
+        self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
+        self::assertEquals($this->groupName->getGroupNameID(), $responseData['groupNameID']);
+        self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
+        self::assertEquals(UserDataFixtures::ADMIN_USER, $responseData['createdBy']);
+        self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
         self::assertArrayHasKey('secret', $responseData);
         self::assertInstanceOf(Devices::class, $device);
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
@@ -363,7 +370,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertEquals($responseData['title'], 'Request Accepted Successfully Created');
         self::assertArrayHasKey('secret', $responseData['payload']);
-        self::assertArrayHasKey('deviceID', $responseData['payload']);
+        self::assertArrayHasKey('deviceNameID', $responseData['payload']);
         self::assertEquals($this->client->getResponse()->getStatusCode(), HTTPStatusCodes::HTTP_CREATED);
         self::assertInstanceOf(Devices::class, $device);
     }

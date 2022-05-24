@@ -12,7 +12,7 @@ class DeviceUpdateRequestDTO implements DeviceRequestDTOInterface
             message: "deviceName must be of type {{ type }} you provided {{ value }}"
         )
     ]
-    private mixed $deviceName;
+    private mixed $deviceName = null;
 
     #[
         Assert\Type(

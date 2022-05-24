@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
-use App\User\Builders\RoomDTOBuilder\NewRoomInterDTOBuilder;
+use App\User\Builders\RoomDTOBuilder\NewRoomInternalDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\DTO\RequestDTOs\AddNewRoomRequestDTO;
 use App\User\Entity\GroupNames;
@@ -55,14 +55,14 @@ class AddNewRoomController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors), 'Validation Errors Occurred');
         }
 
-        $groupName = $groupNameRepository->findOneById($addNewRoomRequestDTO->getGroupId());
+        $groupName = $groupNameRepository->findOneById($addNewRoomRequestDTO->getGroupNameID());
         if (!$groupName instanceof GroupNames) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groupname')]);
+            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND_FOR_ID, 'Groupname', $addNewRoomRequestDTO->getGroupNameID())]);
         }
 
-        $addNewRoomDTO = NewRoomInterDTOBuilder::buildInternalNewRoomDTO(
+        $addNewRoomDTO = NewRoomInternalDTOBuilder::buildInternalNewRoomDTO(
             $addNewRoomRequestDTO->getRoomName(),
-            $addNewRoomRequestDTO->getGroupId(),
+            $groupName,
         );
 
         try {

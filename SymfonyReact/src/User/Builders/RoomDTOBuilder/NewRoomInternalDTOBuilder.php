@@ -6,7 +6,7 @@ use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 
-class NewRoomInterDTOBuilder
+class NewRoomInternalDTOBuilder
 {
     public static function buildInternalNewRoomDTO(
         string $roomName,

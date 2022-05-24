@@ -7,19 +7,19 @@ use JetBrains\PhpStorm\Immutable;
 #[Immutable]
 class GroupNameResponseDTO
 {
-    private int $groupNameId;
+    private int $groupNameID;
 
     private string $groupName;
 
     public function __construct(int $groupNameId, string $groupName)
     {
-        $this->groupNameId = $groupNameId;
+        $this->groupNameID = $groupNameId;
         $this->groupName = $groupName;
     }
 
-    public function getGroupNameId(): int
+    public function getGroupNameID(): int
     {
-        return $this->groupNameId;
+        return $this->groupNameID;
     }
 
     public function getGroupName(): string

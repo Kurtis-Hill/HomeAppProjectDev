@@ -13,7 +13,7 @@ interface RoomRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function findDuplicateRoom(string $roomName, int $groupNameId): ?Room;
+    public function findDuplicateRoom(string $roomName, int $groupNameID): ?Room;
 
     /**
      * @throws ORMException

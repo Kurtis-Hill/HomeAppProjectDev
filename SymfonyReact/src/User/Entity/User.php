@@ -107,10 +107,10 @@ class User implements UserInterface
     public function getGroupNameObjects(): array
     {
         foreach ($this->userGroupMappingEntities as $groupName) {
-            $groupName[] = $groupName->getGroupNameID();
+            $groupNameArray[] = $groupName->getGroupNameID();
         }
 
-        return $groupName ?? [];
+        return $groupNameArray ?? [];
     }
     /**
      * @return array

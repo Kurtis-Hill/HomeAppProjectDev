@@ -21,7 +21,7 @@ function AddNewRoom(props) {
             if (userGroupsResponse.data && Array.isArray(userGroupsResponse.data.payload)) {
                 const payload = userGroupsResponse.data.payload; 
                 setGroups(payload);
-                setSelectedGroup(payload[0].groupNameId);
+                setSelectedGroup(payload[0].groupNameID);
                 setErrors([]);
             }
         } catch (error) {
@@ -44,7 +44,7 @@ function AddNewRoom(props) {
         try {
             const newRoomResponse = await axios.post(`${apiURL}user-rooms/add-user-room`, {
                 'roomName': userRoom.value,
-                'groupId': selectedGroup
+                'groupNameID': selectedGroup
             }, getAPIHeader());
             
             setErrors([]);        
