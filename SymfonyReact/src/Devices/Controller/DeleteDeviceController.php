@@ -6,7 +6,8 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
-use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceHandlerInterface;
+use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +31,7 @@ class DeleteDeviceController extends AbstractController
     ]
     public function deleteDevice(
         Devices $deviceToDelete,
-        DeleteDeviceHandlerInterface $deleteDeviceBuilder,
+        DeleteDeviceServiceInterface $deleteDeviceBuilder,
     ): JsonResponse {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);
@@ -39,12 +40,11 @@ class DeleteDeviceController extends AbstractController
         }
 
         $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToDelete);
-
         if ($deviceDeleteSuccess !== true) {
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device')]);
         }
 
-        $deviceDTO = DeviceDTOBuilder::buildDeviceDTO($deviceToDelete);
+        $deviceDTO = DeviceUpdateResponseDTOBuilder::buildUpdateDeviceDTO($deviceToDelete);
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTO);
         } catch (ExceptionInterface $e) {

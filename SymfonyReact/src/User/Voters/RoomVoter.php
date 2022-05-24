@@ -39,6 +39,10 @@ class RoomVoter extends Voter
             return false;
         }
 
+        if (in_array($user->getRoles(), ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'])) {
+            return true;
+        }
+
         if (!in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
@@ -48,10 +52,6 @@ class RoomVoter extends Voter
 
     private function canViewRooms(UserInterface $user, Room $room): bool
     {
-        if (in_array($user->getRoles(), ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'])) {
-            return true;
-        }
-
         return $this->canAddNewRoom($user, $room);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Devices\DeviceServices\AbstractESPDeviceHandler;
+use App\Devices\DeviceServices\AbstractESPDeviceService;
 use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
@@ -11,9 +11,10 @@ use App\User\Entity\User;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
-class NewESP8266DeviceHandler extends AbstractESPDeviceHandler implements NewDeviceHandlerInterface
+class NewESP8266DeviceService extends AbstractESPDeviceService implements NewDeviceServiceInterface
 {
-    public function createNewDevice(NewDeviceDTO $deviceDTO): Devices
+    #[ArrayShape(['validationErrors'])]
+    public function processNewDevice(NewDeviceDTO $deviceDTO): array
     {
         $deviceUser = $deviceDTO->getCreatedByUserObject();
         if (!$deviceUser instanceof User) {
@@ -22,20 +23,19 @@ class NewESP8266DeviceHandler extends AbstractESPDeviceHandler implements NewDev
             );
         }
 
-        $newDevice = new Devices();
+        $newDevice = $deviceDTO->getNewDevice();
         $newDevice->setDeviceName($deviceDTO->getDeviceName());
         $newDevice->setCreatedBy($deviceUser);
         $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($deviceDTO->getRoomObject());
 
-        return $newDevice;
+        return $this->validateNewDevice($newDevice);
     }
 
     #[ArrayShape(["errors"])]
-    public function validateNewDevice(Devices $newDevice): array
+    private function validateNewDevice(Devices $newDevice): array
     {
         $validatorErrors = $this->validator->validate($newDevice);
-
         if ($this->checkIfErrorsArePresent($validatorErrors)) {
             $userErrors = $this->getValidationErrorAsArray($validatorErrors);
         }

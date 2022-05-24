@@ -18,14 +18,14 @@ services:
 
 
   ######################## Services ########################################################################
-  App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface:
-    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceHandler'
+  App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
 
-  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface:
-    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandler'
+  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceServiceInterface:
+    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceService'
 
-  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceHandlerInterface:
-    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceHandler'
+  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface:
+    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceService'
 
   App\Devices\Repository\ORM\DeviceRepositoryInterface:
     alias: 'App\Devices\Repository\ORM\DeviceRepository'

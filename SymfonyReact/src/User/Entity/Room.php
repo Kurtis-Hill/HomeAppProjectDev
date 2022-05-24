@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Room
 {
     public const ALIAS = 'room';
+
     /**
      * @var int
      *

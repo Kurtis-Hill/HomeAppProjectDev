@@ -11,7 +11,7 @@ use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AbstractESPDeviceHandler
+class AbstractESPDeviceService
 {
     use ValidatorProcessorTrait;
 
@@ -25,14 +25,6 @@ class AbstractESPDeviceHandler
     ) {
         $this->validator = $validator;
         $this->deviceRepository = $deviceRepository;
-    }
-
-    #[ArrayShape(["errors"])]
-    public function validateDeviceRequestObject(DeviceRequestDTOInterface $deviceRequestDTO): array
-    {
-        $errors = $this->validator->validate($deviceRequestDTO);
-
-        return $this->getValidationErrorAsArray($errors);
     }
 
     /**

@@ -6,7 +6,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 
-class DeleteDeviceHandler implements DeleteDeviceHandlerInterface
+class DeleteDeviceService implements DeleteDeviceServiceInterface
 {
     private DeviceRepositoryInterface $deviceRepository;
 

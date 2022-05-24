@@ -5,13 +5,13 @@ namespace App\Devices\DTO\Response;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class DeviceDTO
+class DeviceResponseDTO
 {
     private int $deviceNameID;
 
     private string $deviceName;
 
-    private ?string $password;
+    private ?string $secret;
 
     private int $groupNameID;
 
@@ -31,14 +31,14 @@ class DeviceDTO
         int $groupNameID,
         int $roomID,
         string|int $createdBy,
-        ?string $password = null,
+        ?string $secret = null,
         ?string $ipAddress = null,
         ?string $externalIpAddress = null,
         ?array $roles = null
     ) {
         $this->deviceNameID = $deviceNameID;
         $this->deviceName = $deviceName;
-        $this->password = $password;
+        $this->secret = $secret;
         $this->groupNameID = $groupNameID;
         $this->roomID = $roomID;
         $this->createdBy = $createdBy;
@@ -57,11 +57,6 @@ class DeviceDTO
         return $this->deviceName;
     }
 
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
     public function getGroupNameID(): int
     {
         return $this->groupNameID;
@@ -75,6 +70,11 @@ class DeviceDTO
     public function getCreatedBy(): int|string
     {
         return $this->createdBy;
+    }
+
+    public function getSecret(): ?string
+    {
+        return $this->secret;
     }
 
     public function getIpAddress(): ?string

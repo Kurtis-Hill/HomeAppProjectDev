@@ -83,15 +83,11 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             );
             try {
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
-            } catch (Exception $exception) {
-                $publishError = true;
-                error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            } catch (Exception) {
+                return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
         }
 
-        if (isset($publishError) && $publishError === true) {
-            return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
-        }
         if (
             isset($sensorDataCurrentReadingUpdateDTO)
             && empty($currentReadingSensorDataRequestHandler->getErrors())

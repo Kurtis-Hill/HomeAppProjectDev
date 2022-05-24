@@ -25,6 +25,7 @@ class NavBarService implements NavBarServiceInterface
         $this->deviceRepository = $deviceRepository;
     }
 
+    //@TODO user dtos
     #[ArrayShape(
         [
             'rooms' => [
@@ -63,6 +64,7 @@ class NavBarService implements NavBarServiceInterface
             $errors[] = 'Device query failed';
         }
 
+//        return
         return  [
             'rooms' => $userRooms,
             'devices' => $userDevices,
