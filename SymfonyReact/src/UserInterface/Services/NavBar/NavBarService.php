@@ -6,10 +6,10 @@ use App\Common\API\APIErrorMessages;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\UserInterface\Exceptions\WrongUserTypeException;
+use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
+use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class NavBarService implements NavBarServiceInterface
 {
@@ -25,31 +25,10 @@ class NavBarService implements NavBarServiceInterface
         $this->deviceRepository = $deviceRepository;
     }
 
-    //@TODO user dtos
-    #[ArrayShape(
-        [
-            'rooms' => [
-                'roomID' => 'string',
-                'room' => 'string',
-            ],
-            'devices' => [
-                'deviceNameID' => 'string',
-                'deviceName' => 'string',
-                'groupNameID' => 'string',
-                'roomID' => 'string',
-            ],
-            'groupNames' => [
-                'groupNames' => ['string'],
-            ],
-            'errors' => ['string'],
-        ]
-    )]
-    public function getNavBarData(UserInterface $user): array
+    #[ArrayShape([NavBarResponseDTO::class])]
+    public function getNavBarData(User $user): NavBarResponseDTO
     {
-        if (!$user instanceof User) {
-            throw new WrongUserTypeException(WrongUserTypeException::WRONG_USER_TYPE_MESSAGE);
-        }
-        $usersGroupNameIds = $user->getGroupNameAndIds();
+        $userGroups = $user->getGroupNameObjects();
 
         try {
             $userRooms = $this->getRoomData($user);
@@ -64,13 +43,12 @@ class NavBarService implements NavBarServiceInterface
             $errors[] = 'Device query failed';
         }
 
-//        return
-        return  [
-            'rooms' => $userRooms,
-            'devices' => $userDevices,
-            'groupNames' => $usersGroupNameIds,
-            'errors' => $errors ?? [],
-        ];
+        return NavBarDTOBuilder::buildNavBarResponseDTO(
+            $userRooms,
+            $userDevices,
+            $userGroups,
+            $errors ?? []
+        );
     }
 
     /**

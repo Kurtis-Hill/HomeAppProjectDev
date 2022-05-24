@@ -32,11 +32,14 @@ class DeviceDTOBuilder
         Room $roomObject,
         string $deviceName,
     ): NewDeviceDTO {
+        $device = new Devices();
+
         return new NewDeviceDTO(
             $user,
             $groupNameObject,
             $roomObject,
             $deviceName,
+            $device,
         );
     }
 }

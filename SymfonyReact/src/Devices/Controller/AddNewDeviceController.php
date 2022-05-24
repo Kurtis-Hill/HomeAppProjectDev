@@ -104,13 +104,13 @@ class AddNewDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
         }
 
-        $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildUpdateDeviceDTO($device, true);
+        $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceResponseDTO($device, true);
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);
         } catch (ExceptionInterface) {
             $deleteDeviceHandler->deleteDevice($device);
 
-            return $this->sendInternalServerErrorJsonResponse(['Failed to normalize response']);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         return $this->sendCreatedResourceJsonResponse($response);

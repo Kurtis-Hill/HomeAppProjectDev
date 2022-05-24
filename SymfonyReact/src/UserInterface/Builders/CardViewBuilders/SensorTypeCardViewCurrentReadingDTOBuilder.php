@@ -2,8 +2,8 @@
 
 namespace App\UserInterface\Builders\CardViewBuilders;
 
-use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\Cards\CurrentReadingSensorTypeCardDataDTO;
-use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\UserViewSensorTypeCardDataInterface;
+use App\UserInterface\DTO\Response\CurrentCardReadingDTO\CurrentReadingSensorTypeCardDTO;
+use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardDataInterface;
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
@@ -18,7 +18,7 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewD
             return null;
         }
 
-        return new CurrentReadingSensorTypeCardDataDTO(
+        return new CurrentReadingSensorTypeCardDTO(
             $cardData['sensors_sensorName'],
             $cardData['sensortype_sensorType'],
             $cardData['room_room'],

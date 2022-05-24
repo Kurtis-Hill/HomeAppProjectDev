@@ -104,6 +104,14 @@ class User implements UserInterface
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
+    public function getGroupNameObjects(): array
+    {
+        foreach ($this->userGroupMappingEntities as $groupName) {
+            $groupName[] = $groupName->getGroupNameID();
+        }
+
+        return $groupName ?? [];
+    }
     /**
      * @return array
      */

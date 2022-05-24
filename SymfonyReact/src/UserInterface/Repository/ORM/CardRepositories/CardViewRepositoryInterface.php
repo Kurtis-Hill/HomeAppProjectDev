@@ -3,8 +3,8 @@
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\User\Entity\User;
-use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;

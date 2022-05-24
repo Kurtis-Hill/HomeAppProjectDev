@@ -44,7 +44,7 @@ class DeleteDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device')]);
         }
 
-        $deviceDTO = DeviceUpdateResponseDTOBuilder::buildUpdateDeviceDTO($deviceToDelete);
+        $deviceDTO = DeviceUpdateResponseDTOBuilder::buildDeviceResponseDTO($deviceToDelete);
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTO);
         } catch (ExceptionInterface $e) {

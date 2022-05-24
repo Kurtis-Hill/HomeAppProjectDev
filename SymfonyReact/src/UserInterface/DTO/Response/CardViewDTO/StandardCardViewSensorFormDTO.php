@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\DTO\CardViewDTO;
+namespace App\UserInterface\DTO\Response\CardViewDTO;
 
 use JetBrains\PhpStorm\ArrayShape;
 

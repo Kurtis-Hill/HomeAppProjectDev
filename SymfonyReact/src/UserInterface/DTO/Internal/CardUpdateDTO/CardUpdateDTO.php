@@ -1,8 +1,8 @@
 <?php
 
-namespace App\UserInterface\DTO\CardUpdateDTO;
+namespace App\UserInterface\DTO\Internal\CardUpdateDTO;
 
-class StandardCardUpdateDTO
+class CardUpdateDTO
 {
     private ?int $cardColourID;
 

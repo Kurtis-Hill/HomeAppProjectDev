@@ -26,12 +26,13 @@ class NewDeviceDTO
         GroupNames $groupNameId,
         Room $roomId,
         ?string $deviceName,
+        Devices $devices,
     ) {
         $this->createdBy = $createdBy;
         $this->groupNameId = $groupNameId;
         $this->roomId = $roomId;
         $this->deviceName = $deviceName;
-        $this->devices = new Devices();
+        $this->devices = $devices;
     }
 
     public function getDeviceName(): ?string

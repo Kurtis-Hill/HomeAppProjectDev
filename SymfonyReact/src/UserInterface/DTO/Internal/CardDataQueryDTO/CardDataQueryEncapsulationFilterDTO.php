@@ -1,8 +1,7 @@
 <?php
 
-namespace App\UserInterface\DTO\CardDataQueryDTO;
+namespace App\UserInterface\DTO\Internal\CardDataQueryDTO;
 
-use App\Sensors\Entity\SensorTypes\Dht;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 

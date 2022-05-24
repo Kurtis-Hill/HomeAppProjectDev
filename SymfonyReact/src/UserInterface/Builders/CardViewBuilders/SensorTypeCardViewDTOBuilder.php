@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewBuilders;
 
-use App\UserInterface\DTO\UserViewReadingSensorTypeCardData\UserViewSensorTypeCardDataInterface;
+use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardDataInterface;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 
 interface SensorTypeCardViewDTOBuilder

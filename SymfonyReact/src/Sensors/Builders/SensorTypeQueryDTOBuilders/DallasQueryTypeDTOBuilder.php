@@ -5,8 +5,8 @@ namespace App\Sensors\Builders\SensorTypeQueryDTOBuilders;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Dallas;
-use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 

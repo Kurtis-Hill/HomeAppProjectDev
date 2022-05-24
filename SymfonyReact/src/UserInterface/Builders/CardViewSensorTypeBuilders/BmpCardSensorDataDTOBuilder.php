@@ -2,9 +2,8 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
+use App\UserInterface\DTO\Response\CardViewDTO\StandardCardViewDTO;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class BmpCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {

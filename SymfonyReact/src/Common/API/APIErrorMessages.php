@@ -22,6 +22,8 @@ class APIErrorMessages
 
     public const FAILED_TO_PREPARE_DATA = 'Failed to prepare data';
 
+    public const FAILED_TO_PREPARE_OBJECT_RESPONSE = 'Failed to prepare %s data';
+
     public const FORMAT_NOT_SUPPORTED = 'Format not supported';
 
     public const CONTACT_SYSTEM_ADMIN = '%s Contact your system admin';
@@ -35,5 +37,7 @@ class APIErrorMessages
     public const PART_OF_CONTENT_PROCESSED = 'Part of the content could not be processed';
 
     public const READING_TYPE_NOT_VALID_FOR_SENSOR = '%s reading type not valid for sensor: %s';
+
+    public const FAILED_TO_NORMALIZE_RESPONSE = 'Failed to normalize response';
 
 }

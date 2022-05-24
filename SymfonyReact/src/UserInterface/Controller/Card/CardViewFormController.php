@@ -7,7 +7,8 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
+use App\UserInterface\Builders\CardUpdateBuilders\CardUpdateBuilder;
+use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
@@ -99,7 +100,7 @@ class CardViewFormController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $standardCardUpdateDTO = new StandardCardUpdateDTO(
+        $standardCardUpdateDTO = CardUpdateBuilder::buildCardUpdateDTO(
             $cardViewRequestDTO->getCardColour(),
             $cardViewRequestDTO->getCardIcon(),
             $cardViewRequestDTO->getCardViewState(),

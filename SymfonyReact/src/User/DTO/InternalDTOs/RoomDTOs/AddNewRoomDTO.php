@@ -15,11 +15,11 @@ class AddNewRoomDTO
 
     private Room $room;
 
-    public function __construct(string $roomName, GroupNames $groupNameId)
+    public function __construct(string $roomName, GroupNames $groupNameId, Room $room)
     {
         $this->roomName = $roomName;
         $this->groupNameId = $groupNameId;
-        $this->room = new Room();
+        $this->room = $room;
     }
 
     public function getRoomName(): string

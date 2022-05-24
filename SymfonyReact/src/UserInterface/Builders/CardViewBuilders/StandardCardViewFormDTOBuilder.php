@@ -3,8 +3,8 @@
 namespace App\UserInterface\Builders\CardViewBuilders;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\UserInterface\DTO\CardViewDTO\CardViewSensorFormInterface;
-use App\UserInterface\DTO\CardViewDTO\StandardCardViewSensorFormDTO;
+use App\UserInterface\DTO\Response\CardViewDTO\CardViewSensorFormInterface;
+use App\UserInterface\DTO\Response\CardViewDTO\StandardCardViewSensorFormDTO;
 use App\UserInterface\Entity\Card\CardView;
 use JetBrains\PhpStorm\ArrayShape;
 

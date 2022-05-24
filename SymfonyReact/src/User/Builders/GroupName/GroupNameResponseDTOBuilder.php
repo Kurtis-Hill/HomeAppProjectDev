@@ -2,14 +2,14 @@
 
 namespace App\User\Builders\GroupName;
 
-use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameDTO;
+use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
 use App\User\Entity\GroupNames;
 
 class GroupNameResponseDTOBuilder
 {
-    public static function buildGroupNameResponseDTO(GroupNames $groupName): GroupNameDTO
+    public static function buildGroupNameResponseDTO(GroupNames $groupName): GroupNameResponseDTO
     {
-        return new GroupNameDTO(
+        return new GroupNameResponseDTO(
             $groupName->getGroupNameID(),
             $groupName->getGroupNameID(),
         );

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\DTO\UserViewReadingSensorTypeCardData\Forms;
+namespace App\UserInterface\DTO\Response\CardForms;
 
 class StandardSensorTypeBoundaryViewFormDTO
 {

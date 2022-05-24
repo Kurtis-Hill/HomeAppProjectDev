@@ -3,19 +3,24 @@
 namespace App\UserInterface\DTO\Response\NavBar;
 
 use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameDTO;
+use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
+use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
 class NavBarResponseDTO
 {
-    // @TODO create user room dto
+    #[ArrayShape([RoomResponseDTO::class || 'No Rooms Available'])]
     private array $userRooms;
 
-    private DeviceResponseDTO $devices;
+    #[ArrayShape([DeviceResponseDTO::class || 'No Devices Available'])]
+    private array $devices;
 
-    private GroupNameDTO $groupNames;
+    #[ArrayShape([GroupNameResponseDTO::class || 'No GroupNames Available'])]
+    private array $groupNames;
 
+    #[ArrayShape(['errors'])]
     private array $errors;
 
     public function __construct(

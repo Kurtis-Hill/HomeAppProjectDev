@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\DTO\CardDataQueryDTO;
+namespace App\UserInterface\DTO\Internal\CardDataQueryDTO;
 
 use JetBrains\PhpStorm\Immutable;
 

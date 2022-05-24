@@ -4,15 +4,15 @@ namespace App\UserInterface\Services\Cards\CardDataFilterService;
 
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
+use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
-use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
-use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 

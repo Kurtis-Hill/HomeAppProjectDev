@@ -5,7 +5,7 @@ namespace App\User\DTO\ResponseDTOs\GroupDTOs;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class GroupNameDTO
+class GroupNameResponseDTO
 {
     private int $groupNameId;
 

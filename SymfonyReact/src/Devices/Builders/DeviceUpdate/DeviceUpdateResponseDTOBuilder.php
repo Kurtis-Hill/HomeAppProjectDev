@@ -7,7 +7,7 @@ use App\Devices\Entity\Devices;
 
 class DeviceUpdateResponseDTOBuilder
 {
-    public static function buildUpdateDeviceDTO(Devices $device, bool $showPassword = false): DeviceResponseDTO
+    public static function buildDeviceResponseDTO(Devices $device, bool $showPassword = false): DeviceResponseDTO
     {
         return new DeviceResponseDTO(
             $device->getDeviceNameID(),

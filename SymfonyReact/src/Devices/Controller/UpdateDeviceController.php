@@ -110,7 +110,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceUpdateResponseDTOBuilder::buildUpdateDeviceDTO($deviceToUpdate);
+        $deviceUpdateSuccessResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceResponseDTO($deviceToUpdate);
         try {
             $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);
         } catch (ExceptionInterface) {

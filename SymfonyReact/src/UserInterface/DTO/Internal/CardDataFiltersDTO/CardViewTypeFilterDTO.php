@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\DTO\CardDataFiltersDTO;
+namespace App\UserInterface\DTO\Internal\CardDataFiltersDTO;
 
 use App\Devices\Entity\Devices;
 use App\User\Entity\Room;
