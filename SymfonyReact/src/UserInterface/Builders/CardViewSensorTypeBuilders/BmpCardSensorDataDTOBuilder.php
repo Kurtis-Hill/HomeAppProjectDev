@@ -2,18 +2,37 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\UserInterface\DTO\CardViewDTO\StandardCardViewDTO;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\HumiditySensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\LatitudeSensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\TemperatureSensorCardViewDTOBuilder;
+use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class BmpCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {
-    #[ArrayShape([StandardCardViewDTO::class])]
+    private TemperatureSensorCardViewDTOBuilder $tempSensorBuilder;
+
+    private HumiditySensorCardViewDTOBuilder $humidSensorBuilder;
+
+    private LatitudeSensorCardViewDTOBuilder $latSensorBuilder;
+
+    public function __construct(
+        TemperatureSensorCardViewDTOBuilder $tempSensorBuilder,
+        HumiditySensorCardViewDTOBuilder $humiditySensorBuilder,
+        LatitudeSensorCardViewDTOBuilder $latitudeSensorBuilder,
+    ) {
+        $this->tempSensorBuilder = $tempSensorBuilder;
+        $this->humidSensorBuilder = $humiditySensorBuilder;
+        $this->latSensorBuilder = $latitudeSensorBuilder;
+    }
+
+    #[ArrayShape([StandardCardViewReadingResponseDTO::class, StandardCardViewReadingResponseDTO::class, StandardCardViewReadingResponseDTO::class])]
     public function formatScalarCardSensorData(array $sensorData): array
     {
-        $temperatureSensorData = $this->buildTemperatureSensorData($sensorData);
-        $humidSensorData = $this->buildHumiditySensorData($sensorData);
-        $latitudeSensorData = $this->buildLatitudeSensorData($sensorData);
+        $temperatureSensorData = $this->tempSensorBuilder->buildTemperatureSensorDataFromScalarArray($sensorData);
+        $humidSensorData = $this->humidSensorBuilder->buildHumiditySensorDataFromScalarArray($sensorData);
+        $latitudeSensorData = $this->latSensorBuilder->buildLatitudeSensorDataFromScalarArray($sensorData);
 
         return [
             $temperatureSensorData,

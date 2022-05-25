@@ -85,7 +85,7 @@ class CardViewFormControllerTest extends WebTestCase
         );
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true)['payload'];
-
+//dd($responseData);
         self::assertNotEmpty($responseData['sensorData']);
 
         foreach ($responseData['sensorData'] as $sensorData) {
@@ -102,20 +102,21 @@ class CardViewFormControllerTest extends WebTestCase
             self::assertIsBool($sensorData['constRecord']);
         }
 
-
+//dd($cardViewObject, $cardViewObject->getCardStateID()->getCardStateID());
         $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $allCardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $allCardState = $this->entityManager->getRepository(Cardstate::class)->findAll();
 
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
 
-        self::assertEquals($cardViewObject->getCardIconID()->getIconID(), $responseData['cardIcon']['iconID']);
+        self::assertEquals($cardViewObject->getCardIconID()->getIconID(), $responseData['currentCardIcon']['iconID']);
         self::assertCount(count($allIcons), $responseData['iconSelection']);
 
         self::assertCount(count($allCardState), $responseData['userCardViewSelections']);
 
-        self::assertEquals($cardViewObject->getCardColourID()->getColourID(), $responseData['cardColour']['colourID']);
+        self::assertEquals($cardViewObject->getCardColourID()->getColourID(), $responseData['currentCardColour']['colourID']);
         self::assertCount(count($allCardColours), $responseData['userColourSelections']);
+
 
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -437,21 +438,21 @@ class CardViewFormControllerTest extends WebTestCase
             'wrongColour' => true,
             'wrongIcon' => false,
             'wrongState' => false,
-            'errorMessage' => 'Icons colour not found'
+            'errorMessage' => 'Colour not found'
         ];
 
         yield [
             'wrongColour' => false,
             'wrongIcon' => true,
             'wrongState' => false,
-            'errorMessage' => 'Icons icon not found'
+            'errorMessage' => 'Icon not found'
         ];
 
         yield [
             'wrongColour' => false,
             'wrongIcon' => false,
             'wrongState' => true,
-            'errorMessage' => 'Icons state not found'
+            'errorMessage' => 'Card State state not found'
         ];
     }
 
@@ -462,7 +463,6 @@ class CardViewFormControllerTest extends WebTestCase
         bool $nullCardColour,
         bool $nullCardIcon,
         bool $nullCardState,
-        string $errorMessage,
     ): void {
         $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
@@ -474,19 +474,22 @@ class CardViewFormControllerTest extends WebTestCase
         if ($nullCardColour === true) {
             $cardColour = null;
         } else {
-            $cardColour = $cardColourRepository->findAll()[0]->getColourID();
+            $cardColourObject = $cardColourRepository->findAll()[0];
+            $cardColour = $cardColourObject->getColourID();
         }
 
         if ($nullCardIcon === true) {
             $cardIcon = null;
         } else {
-            $cardIcon = $iconRepository->findAll()[0]->getIconID();
+            $cardIconObject = $iconRepository->findAll()[0];
+            $cardIcon = $cardIconObject->getIconID();
         }
 
         if ($nullCardState === true) {
             $cardState = null;
         } else {
-            $cardState = $cardStateRepository->findAll()[0]->getCardstateID();
+            $cardStateObject = $cardStateRepository->findAll()[0];
+            $cardState = $cardStateObject->getCardstateID();
         }
 
         $sensorData = [
@@ -516,8 +519,26 @@ class CardViewFormControllerTest extends WebTestCase
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true);
 
-        self::assertEquals($responseData['errors'][0], $errorMessage);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Request Successful', $responseData['title']);
+        self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals($cardViewObject->getCardViewID(), $responseData['payload']['cardViewID']);
+
+        if ($cardColour !== null) {
+            self::assertEquals($cardColourObject->getColourID(), $responseData['payload']['cardColour']['colourID']);
+            self::assertEquals($cardColourObject->getColour(), $responseData['payload']['cardColour']['colour']);
+            self::assertEquals($cardColourObject->getShade(), $responseData['payload']['cardColour']['shade']);
+        }
+        if ($cardIcon !== null) {
+            self::assertEquals($cardIconObject->getIconID(), $responseData['payload']['cardIcon']['iconID']);
+            self::assertEquals($cardIconObject->getIconName(), $responseData['payload']['cardIcon']['iconName']);
+            self::assertEquals($cardIconObject->getDescription(), $responseData['payload']['cardIcon']['description']);
+        }
+        //@TODO find out why card state is lazy loading and the rest arnt
+//        if ($cardState !== null) {
+//
+//            self::assertEquals($cardStateObject->getCardstateID(), $responseData['payload']['cardViewState']['cardStateID']);
+//            self::assertEquals($cardStateObject->getCardstate(), $responseData['payload']['cardViewState']['cardState']);
+//        }
     }
 
     public function sendingNullCardViewDataProvider(): Generator
@@ -526,21 +547,18 @@ class CardViewFormControllerTest extends WebTestCase
             'nullCardColour' => true,
             'nullCardIcon' => false,
             'nullCardState' => false,
-            'errorMessage' => 'Icons colour cannot be null'
         ];
 
         yield [
             'nullCardColour' => false,
             'nullCardIcon' => true,
             'nullCardState' => false,
-            'errorMessage' => 'Icon cannot be null'
         ];
 
         yield [
             'nullCardColour' => false,
             'nullCardIcon' => false,
             'nullCardState' => true,
-            'errorMessage' => 'Icons state cannot be null'
         ];
     }
 

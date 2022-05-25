@@ -7,6 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\Sensors\Builders\SensorResponseBuilders\SensorResponseBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
@@ -131,8 +133,14 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse($errors);
         }
 
-        $sensorID = $sensor->getSensorNameID();
+        $sensorResponseDTO = SensorResponseBuilder::buildSensorResponseDTO($sensor);
 
-        return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
+        try {
+            $normalizedResponse = $this->normalizeResponse($sensorResponseDTO);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendCreatedResourceJsonResponse($normalizedResponse);
     }
 }

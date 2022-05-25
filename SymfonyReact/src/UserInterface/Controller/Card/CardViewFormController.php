@@ -7,7 +7,8 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
+use App\UserInterface\Builders\CardUpdateDTOBuilders\CardUpdateDTOBuilder;
+use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
@@ -99,7 +100,7 @@ class CardViewFormController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $standardCardUpdateDTO = new StandardCardUpdateDTO(
+        $standardCardUpdateDTO = CardUpdateDTOBuilder::buildCardIDUpdateDTO(
             $cardViewRequestDTO->getCardColour(),
             $cardViewRequestDTO->getCardIcon(),
             $cardViewRequestDTO->getCardViewState(),
@@ -117,6 +118,13 @@ class CardViewFormController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse();
+        $cardViewResponseDTO = CardUpdateDTOBuilder::buildCardUpdateResponseDTO($cardViewObject);
+        try {
+            $normalizedResponseData = $this->normalizeResponse($cardViewResponseDTO);
+        } catch (ExceptionInterface) {
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Request Successful']);
+        }
+
+        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponseData);
     }
 }

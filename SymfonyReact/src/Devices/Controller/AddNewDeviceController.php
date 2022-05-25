@@ -5,17 +5,18 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Devices\Builders\NewDeviceDTOBuilder;
-use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceHandlerInterface;
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
-use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
-use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,23 +25,25 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
 class AddNewDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
+        ValidatorInterface $validator,
         RoomRepositoryInterface $roomRepository,
-        NewDeviceHandlerInterface $newDeviceBuilder,
-        GroupCheckServiceInterface $groupCheckService,
+        NewDeviceServiceInterface $newDeviceBuilder,
+        GroupNameRepositoryInterface $groupNameRepository,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
-        DeleteDeviceHandlerInterface $deleteDeviceHandler,
+        DeleteDeviceServiceInterface $deleteDeviceHandler,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
-
         try {
             $this->deserializeRequest(
                 $request->getContent(),
@@ -52,19 +55,22 @@ class AddNewDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $requestValidationErrors = $newDeviceBuilder->validateDeviceRequestObject($newDeviceRequestDTO);
-        if (!empty($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($requestValidationErrors);
+        $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-        try {
-            $groupNameObject = $groupCheckService->checkForGroupById($newDeviceRequestDTO->getDeviceGroup());
-        } catch (GroupNameNotFoundException $e) {
-            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+        $groupNameObject = $groupNameRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
+        if (!$groupNameObject instanceof GroupNames) {
+            return $this->sendBadRequestJsonResponse([
+                sprintf(
+                    APIErrorMessages::OBJECT_NOT_FOUND,
+                    'Groupname'
+                ),
+            ]);
         }
 
         $roomObject = $roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
-
         if (!$roomObject instanceof Room) {
             return $this->sendBadRequestJsonResponse([
                 sprintf(
@@ -73,7 +79,7 @@ class AddNewDeviceController extends AbstractController
                 ),
             ]);
         }
-        $newDeviceCheckDTO = new NewDeviceDTO(
+        $newDeviceCheckDTO = DeviceDTOBuilder::buildNewDeviceDTO(
             $this->getUser(),
             $groupNameObject,
             $roomObject,
@@ -85,28 +91,26 @@ class AddNewDeviceController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-        $device = $newDeviceBuilder->createNewDevice($newDeviceCheckDTO);
-        $errors = $newDeviceBuilder->validateNewDevice($device);
 
+        $errors = $newDeviceBuilder->processNewDevice($newDeviceCheckDTO);
         if (!empty($errors)) {
             return $this->sendBadRequestJsonResponse($errors);
         }
 
+        $device = $newDeviceCheckDTO->getNewDevice();
         $devicePasswordEncoder->encodeDevicePassword($device);
         $deviceSaved = $newDeviceBuilder->saveNewDevice($device);
         if ($deviceSaved === false) {
             return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
         }
-        $secret = $device->getDeviceSecret();
-        $deviceID = $device->getDeviceNameID();
 
-        $newDeviceResponseDTO = NewDeviceDTOBuilder::buildNewDeviceSecretDTO($secret, $deviceID);
-
+        $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);
         } catch (ExceptionInterface) {
             $deleteDeviceHandler->deleteDevice($device);
-            return $this->sendInternalServerErrorJsonResponse(['Failed to normalize response']);
+
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         return $this->sendCreatedResourceJsonResponse($response);

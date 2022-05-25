@@ -5,9 +5,10 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateDTOBuilder;
-use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
-use App\Devices\DTO\Internal\UpdateDeviceDTO;
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceServiceInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
@@ -25,11 +26,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'update-user-devices')]
 class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     #[
         Route(
@@ -41,7 +44,8 @@ class UpdateDeviceController extends AbstractController
     public function updateDevice(
         Devices $deviceToUpdate,
         Request $request,
-        UpdateDeviceHandlerInterface $updateDeviceObjectBuilder,
+        ValidatorInterface $validator,
+        UpdateDeviceServiceInterface $updateDeviceObjectBuilder,
         RoomRepositoryInterface $roomRepository,
         GroupNameRepositoryInterface $groupNameRepository
     ): JsonResponse {
@@ -58,10 +62,9 @@ class UpdateDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $requestValidationErrors = $updateDeviceObjectBuilder->validateDeviceRequestObject($deviceUpdateRequestDTO);
-
-        if (!empty($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($requestValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
+        $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors), APIErrorMessages::VALIDATION_ERRORS);
         }
 
         if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
@@ -85,33 +88,32 @@ class UpdateDeviceController extends AbstractController
             }
         }
 
-        $updateDeviceDTO = new UpdateDeviceDTO(
+        $updateDeviceDTO = DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
             $deviceUpdateRequestDTO,
             $deviceToUpdate,
             $room ?? null,
             $groupName ?? null
         );
-
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::UPDATE_DEVICE, $updateDeviceDTO);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceUpdateValidationErrors = $updateDeviceObjectBuilder->updateDeviceAndValidate($updateDeviceDTO);
-
+        $deviceUpdateValidationErrors = $updateDeviceObjectBuilder->updateDevice($updateDeviceDTO);
         if (!empty($deviceUpdateValidationErrors)) {
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
         $savedDevice = $updateDeviceObjectBuilder->saveNewDevice($deviceToUpdate);
-
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceUpdateDTOBuilder::buildSensorSuccessResponseDTO($deviceToUpdate);
-
+        $deviceUpdateSuccessResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceFullDetailsResponseDTO(
+            $deviceToUpdate,
+            $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword() !== null
+        );
         try {
             $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);
         } catch (ExceptionInterface) {

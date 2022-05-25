@@ -3,7 +3,7 @@
 namespace App\UserInterface\Services\Cards\CardViewUpdateService;
 
 use App\Common\Traits\ValidatorProcessorTrait;
-use App\UserInterface\DTO\CardUpdateDTO\StandardCardUpdateDTO;
+use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
@@ -40,37 +40,33 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
     }
 
     #[ArrayShape(["errors"])]
-    public function updateAllCardViewObjectProperties(StandardCardUpdateDTO $cardUpdateDTO, CardView $cardView): array
+    public function updateAllCardViewObjectProperties(CardUpdateDTO $cardUpdateDTO, CardView $cardView): array
     {
-        try {
+        if ($cardUpdateDTO->getCardColourID() !== null) {
             $cardColour = $this->cardColourRepository->findOneById($cardUpdateDTO->getCardColourID());
             if (!$cardColour instanceof CardColour) {
-                $errors[] = 'Icons colour not found';
+                $errors[] = 'Colour not found';
             } else {
                 $cardView->setCardColourID($cardColour);
             }
-        } catch (TypeError) {
-            $cardView->setCardColourID(null);
         }
-        try {
+
+        if ($cardUpdateDTO->getCardIconID() !== null) {
             $cardIcon = $this->iconsRepository->findOneById($cardUpdateDTO->getCardIconID());
             if (!$cardIcon instanceof Icons) {
-                $errors[] = 'Icons icon not found';
+                $errors[] = 'Icon not found';
             } else {
                 $cardView->setCardIconID($cardIcon);
             }
-        } catch (TypeError) {
-            $cardView->setCardIconID(null);
         }
-        try {
+
+        if ($cardUpdateDTO->getCardStateID()) {
             $cardState = $this->cardStateRepository->findOneById($cardUpdateDTO->getCardStateID());
             if (!$cardState instanceof Cardstate) {
-                $errors[] = 'Icons state not found';
+                $errors[] = 'Card State state not found';
             } else {
                 $cardView->setCardStateID($cardState);
             }
-        } catch (TypeError) {
-            $cardView->setCardStateID(null);
         }
 
         return array_merge($this->validateCardViewObject($cardView), $errors ?? []);
@@ -80,11 +76,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
     {
         $constraintViolationList = $this->validator->validate($cardView);
 
-        if ($this->checkIfErrorsArePresent($constraintViolationList)) {
-            return $this->getValidationErrorAsArray($constraintViolationList);
-        }
-
-        return [];
+        return $this->getValidationErrorAsArray($constraintViolationList);
     }
 
 }

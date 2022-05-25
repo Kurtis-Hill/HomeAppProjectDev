@@ -9,6 +9,7 @@ use App\User\Entity\Room;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AddNewRoomService implements AddNewRoomServiceInterface
@@ -27,7 +28,7 @@ class AddNewRoomService implements AddNewRoomServiceInterface
         $this->validator = $validator;
     }
 
-    public function processNewRoomRequest(AddNewRoomDTO $addNewRoomDTO): void
+    public function preProcessNewRoomValues(AddNewRoomDTO $addNewRoomDTO): void
     {
         $this->checkForRoomDuplicates($addNewRoomDTO);
     }
@@ -39,7 +40,7 @@ class AddNewRoomService implements AddNewRoomServiceInterface
     {
         $duplicateCheck = $this->roomRepository->findDuplicateRoom(
             $addNewRoomDTO->getRoomName(),
-            $addNewRoomDTO->getGroupNameId()
+            $addNewRoomDTO->getGroupNameID()->getGroupNameID()
         );
 
         if ($duplicateCheck instanceof Room) {
@@ -47,17 +48,18 @@ class AddNewRoomService implements AddNewRoomServiceInterface
         }
     }
 
-    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): Room
+    #[ArrayShape(['validationErrors'])]
+    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): array
     {
-        $newRoom = new Room();
+        $newRoom = $addNewRoomDTO->getNewRoom();
 
         $newRoom->setGroupNameID($groupName);
         $newRoom->setRoom($addNewRoomDTO->getRoomName());
 
-        return $newRoom;
+        return $this->validateNewRoom($newRoom);
     }
 
-    public function validateNewRoom(Room $newRoom): array
+    private function validateNewRoom(Room $newRoom): array
     {
         $validationErrors = $this->validator->validate($newRoom);
 

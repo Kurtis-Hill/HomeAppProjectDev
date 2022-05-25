@@ -4,6 +4,7 @@ namespace App\User\Repository\ORM;
 
 use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 
 class RoomRepository extends ServiceEntityRepository implements RoomRepositoryInterface
@@ -13,7 +14,7 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         parent::__construct($registry, Room::class);
     }
 
-    public function findDuplicateRoom(string $roomName, int $groupNameId): ?Room
+    public function findDuplicateRoom(string $roomName, int $groupNameID): ?Room
     {
         $qb = $this->createQueryBuilder('room');
         $expr = $qb->expr();
@@ -21,27 +22,27 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         $qb->select('room')
             ->where(
                 $expr->eq('room.room', ':roomName'),
-                $expr->eq('room.groupNameID', ':groupNameId')
+                $expr->eq('room.groupNameID', ':groupNameID')
             );
         $qb->setParameters([
             'roomName' => $roomName,
-            'groupNameId' => $groupNameId
+            'groupNameID' => $groupNameID
         ]);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function getAllUserRoomsByGroupId($groupNameId): array
+    public function getAllUserRoomsByGroupId(array $groupNameIDs, int $hydrationMethod = AbstractQuery::HYDRATE_ARRAY): array
     {
         $qb = $this->createQueryBuilder('r');
 
-        $qb->select('r.roomID, r.room')
+        $qb->select('r')
             ->where(
                 $qb->expr()->in('r.groupNameID', ':groupNameID')
             )
-            ->setParameter('groupNameID', $groupNameId);
+            ->setParameter('groupNameID', $groupNameIDs);
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getResult($hydrationMethod);
     }
 
     public function findOneById(int $id): ?Room

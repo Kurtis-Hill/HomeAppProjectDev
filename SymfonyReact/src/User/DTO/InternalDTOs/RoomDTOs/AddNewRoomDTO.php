@@ -2,6 +2,8 @@
 
 namespace App\User\DTO\InternalDTOs\RoomDTOs;
 
+use App\User\Entity\GroupNames;
+use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -9,12 +11,15 @@ class AddNewRoomDTO
 {
     private string $roomName;
 
-    private int $groupNameId;
+    private GroupNames $groupNameID;
 
-    public function __construct(string $roomName, int $groupNameId)
+    private Room $room;
+
+    public function __construct(string $roomName, GroupNames $groupNameID, Room $room)
     {
         $this->roomName = $roomName;
-        $this->groupNameId = $groupNameId;
+        $this->groupNameID = $groupNameID;
+        $this->room = $room;
     }
 
     public function getRoomName(): string
@@ -22,8 +27,13 @@ class AddNewRoomDTO
         return $this->roomName;
     }
 
-    public function getGroupNameId(): int
+    public function getGroupNameID(): GroupNames
     {
-        return $this->groupNameId;
+        return $this->groupNameID;
+    }
+
+    public function getNewRoom(): Room
+    {
+        return $this->room;
     }
 }

@@ -23,8 +23,12 @@ class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeChecke
 
     private SoilReadingTypeChecker $soilReadingTypeChecker;
 
-    public function __construct(DhtReadingTypeChecker $dhtReadingTypeChecker, BmpReadingTypeChecker $bmpReadingTypeChecker, DallasReadingTypeChecker $dallasReadingTypeChecker, SoilReadingTypeChecker $soilReadingTypeChecker)
-    {
+    public function __construct(
+        DhtReadingTypeChecker $dhtReadingTypeChecker,
+        BmpReadingTypeChecker $bmpReadingTypeChecker,
+        DallasReadingTypeChecker $dallasReadingTypeChecker,
+        SoilReadingTypeChecker $soilReadingTypeChecker
+    ) {
         $this->dhtReadingTypeChecker = $dhtReadingTypeChecker;
         $this->bmpReadingTypeChecker = $bmpReadingTypeChecker;
         $this->dallasReadingTypeChecker = $dallasReadingTypeChecker;

@@ -2,8 +2,8 @@
 
 namespace App\UserInterface\Services\Cards\CardPreparation;
 
-use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use Symfony\Component\Security\Core\User\UserInterface;
 

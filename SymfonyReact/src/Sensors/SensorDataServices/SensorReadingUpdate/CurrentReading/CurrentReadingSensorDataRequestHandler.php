@@ -175,7 +175,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         return true;
     }
 
-    #[ArrayShape(['temperature data accepted for sensor <sensor-name>'])]
+    #[ArrayShape(['temperature|humidity|analog|latitude data accepted for sensor <sensor-name>'])]
     public function getSuccessfulRequests(): array
     {
         return $this->successfulRequests;

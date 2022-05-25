@@ -26,7 +26,7 @@ use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
-use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

@@ -6,11 +6,12 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
-use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
+use App\User\Builders\RoomDTOBuilder\NewRoomInternalDTOBuilder;
+use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\DTO\RequestDTOs\AddNewRoomRequestDTO;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Entity\GroupNames;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
-use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
+use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;
 use App\User\Voters\RoomVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -33,7 +35,7 @@ class AddNewRoomController extends AbstractController
     public function addNewRoom(
         Request $request,
         AddNewRoomServiceInterface $addNewRoomService,
-        GroupCheckServiceInterface $groupCheckService,
+        GroupNameRepositoryInterface $groupNameRepository,
         ValidatorInterface $validator,
     ): Response {
         $addNewRoomRequestDTO = new AddNewRoomRequestDTO();
@@ -53,36 +55,31 @@ class AddNewRoomController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors), 'Validation Errors Occurred');
         }
 
-        $addNewRoomDTO = new AddNewRoomDTO(
-             $addNewRoomRequestDTO->getRoomName(),
-            $addNewRoomRequestDTO->getGroupId(),
+        $groupName = $groupNameRepository->findOneById($addNewRoomRequestDTO->getGroupNameID());
+        if (!$groupName instanceof GroupNames) {
+            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND_FOR_ID, 'Groupname', $addNewRoomRequestDTO->getGroupNameID())]);
+        }
+
+        $addNewRoomDTO = NewRoomInternalDTOBuilder::buildInternalNewRoomDTO(
+            $addNewRoomRequestDTO->getRoomName(),
+            $groupName,
         );
 
         try {
-            $groupName = $groupCheckService->checkForGroupById($addNewRoomRequestDTO->getGroupId());
-        } catch (GroupNameNotFoundException $exception) {
-            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
-        }
-
-        try {
-            $addNewRoomService->processNewRoomRequest($addNewRoomDTO);
+            $addNewRoomService->preProcessNewRoomValues($addNewRoomDTO);
         } catch (DuplicateRoomException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         } catch (ORMException) {
             return $this->sendBadRequestJsonResponse(['Failed to process room request']);
-        } catch (GroupNameNotFoundException $exception) {
-            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
-        $newRoom = $addNewRoomService->createNewRoom($addNewRoomDTO, $groupName);
-
+        $validationErrors = $addNewRoomService->createNewRoom($addNewRoomDTO, $groupName);
+        $newRoom = $addNewRoomDTO->getNewRoom();
         try {
             $this->denyAccessUnlessGranted(RoomVoter::ADD_NEW_ROOM, $newRoom);
-        } catch (AccessDeniedException $exception) {
+        } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-
-        $validationErrors = $addNewRoomService->validateNewRoom($newRoom);
 
         if (!empty($validationErrors)) {
             return $this->sendBadRequestJsonResponse($validationErrors);
@@ -94,6 +91,13 @@ class AddNewRoomController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse();
         }
 
-        return $this->sendCreatedResourceJsonResponse(['Room created successfully']);
+        $newRoomResponseDTO = RoomResponseDTOBuilder::buildRoomResponseDTO($newRoom);
+        try {
+            $normalizedResponse = $this->normalizeResponse($newRoomResponseDTO);
+        } catch (ExceptionInterface) {
+            return $this->sendMultiStatusJsonResponse(['Request successful but failed to normalize response']);
+        }
+
+        return $this->sendCreatedResourceJsonResponse($normalizedResponse, 'Room created successfully');
     }
 }

@@ -46,8 +46,8 @@ class CardView
      *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
      * })
      */
-    #[Assert\NotNull(message: "Icons state cannot be null")]
-    private ?Cardstate $cardStateID;
+    #[Assert\NotNull(message: "CardState state cannot be null")]
+    private Cardstate $cardStateID;
 
     /**
      * @var User
@@ -79,8 +79,8 @@ class CardView
      *   @ORM\JoinColumn(name="cardColourID", referencedColumnName="colourID")
      * })
      */
-    #[Assert\NotNull(message: "Icons colour cannot be null")]
-    private ?CardColour $cardColourID;
+    #[Assert\NotNull(message: "Card Colour colour cannot be null")]
+    private CardColour $cardColourID;
 
     public function getCardViewID(): int
     {

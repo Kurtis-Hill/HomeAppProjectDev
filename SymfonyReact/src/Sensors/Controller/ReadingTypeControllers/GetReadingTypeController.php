@@ -5,6 +5,7 @@ namespace App\Sensors\Controller\ReadingTypeControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Sensors\Builders\ReadingTypeResponseBuilders\ReadingTypeResponseBuilder;
 use App\Sensors\DTO\Response\ReadingTypes\ReadingTypeResponseDTO;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface;
@@ -25,10 +26,7 @@ class GetReadingTypeController extends AbstractController
 
         foreach ($allReadingTypes as $readingTypeObject) {
             if ($readingTypeObject instanceof ReadingTypes) {
-                $readingTypeResponseDTO[] = new ReadingTypeResponseDTO(
-                    $readingTypeObject->getReadingTypeID(),
-                    $readingTypeObject->getReadingType(),
-                );
+                $readingTypeResponseDTO[] = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingTypeObject);
             }
         }
 

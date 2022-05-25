@@ -83,12 +83,14 @@ trait HomeAppAPITrait
         return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
     }
 
-    public function sendCreatedResourceJsonResponse(array $data = []): JsonResponse
-    {
+    public function sendCreatedResourceJsonResponse(
+        array $data = [],
+        string $title = 'Request Accepted Successfully Created'
+    ): JsonResponse {
         if (!empty($data)) {
             return new JsonResponse(
                 [
-                    'title' => 'Request Accepted Successfully Created',
+                    'title' => $title,
                     'payload' => $data
                 ],
                 HTTPStatusCodes::HTTP_CREATED
@@ -97,7 +99,7 @@ trait HomeAppAPITrait
 
         return new JsonResponse(
             [
-                'title' => 'Request Accepted Successfully Created',
+                'title' => $title,
                 'payload' => 'No Response Message'
             ],
             HTTPStatusCodes::HTTP_CREATED

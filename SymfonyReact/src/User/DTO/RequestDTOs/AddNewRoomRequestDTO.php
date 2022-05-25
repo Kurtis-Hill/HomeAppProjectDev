@@ -15,12 +15,12 @@ class AddNewRoomRequestDTO
     private mixed $roomName = null;
 
     #[
-        Assert\Type(type: 'integer', message: 'groupId must be a {{ type }} you have provided {{ value }}'),
+        Assert\Type(type: 'integer', message: 'groupNameID must be a {{ type }} you have provided {{ value }}'),
         Assert\NotNull(
-            message: "groupId cannot be null"
+            message: "groupNameID cannot be null"
         ),
     ]
-    private mixed $groupId = null;
+    private mixed $groupNameID = null;
 
     public function getRoomName(): mixed
     {
@@ -32,13 +32,13 @@ class AddNewRoomRequestDTO
         $this->roomName = $roomName;
     }
 
-    public function getGroupId(): mixed
+    public function getGroupNameID(): mixed
     {
-        return $this->groupId;
+        return $this->groupNameID;
     }
 
-    public function setGroupId(mixed $groupId): void
+    public function setGroupNameID(mixed $groupNameID): void
     {
-        $this->groupId = $groupId;
+        $this->groupNameID = $groupNameID;
     }
 }

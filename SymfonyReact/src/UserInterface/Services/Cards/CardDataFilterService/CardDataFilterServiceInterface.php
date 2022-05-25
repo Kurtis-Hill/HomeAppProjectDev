@@ -2,9 +2,9 @@
 
 namespace App\UserInterface\Services\Cards\CardDataFilterService;
 
-use App\UserInterface\DTO\CardDataFiltersDTO\CardDataPreFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
-use Doctrine\ORM\Exception\ORMException;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use Doctrine\ORM\ORMException;
 
 interface CardDataFilterServiceInterface
 {

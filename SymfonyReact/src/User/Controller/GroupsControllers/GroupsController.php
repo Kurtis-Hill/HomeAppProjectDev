@@ -4,7 +4,7 @@ namespace App\User\Controller\GroupsControllers;
 
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameDTO;
+use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,16 +21,14 @@ class GroupsController extends AbstractController
     public function getUsersGroups(Security $token): Response
     {
         $user = $token->getUser();
-
         if (!$user instanceof User) {
             return $this->sendBadRequestJsonResponse();
         }
 
         $groupNameDTOs = [];
         foreach ($user->getUserGroupMappingEntities() as $groupName) {
-            $groupNameDTOs[] = new GroupNameDTO(
-                $groupName->getGroupNameID()->getGroupNameID(),
-                $groupName->getGroupNameID()->getGroupName()
+            $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
+                $groupName->getGroupNameID()
             );
         }
 

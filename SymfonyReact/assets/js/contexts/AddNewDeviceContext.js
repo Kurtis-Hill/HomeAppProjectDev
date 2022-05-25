@@ -44,13 +44,12 @@ export default class AddNewDeviceContextProvider extends Component {
             if (newDeviceSubmissionResponse.status === 201) {
                 const responseData = newDeviceSubmissionResponse.data.payload;                
                 this.setState({addNewDeviceModalSubmit: false});
-                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responseData.secret, errors:[], newDeviceID: responseData.deviceID}});
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, formSubmit:false, deviceSecret: responseData.secret, errors:[], newDeviceID: responseData.deviceNameID}});
             } else {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: ['unexpected response'], formSubmit:false}});
             }
 
         } catch (error) {
-            console.log('errrir', error, error.response, error.response.data);
             if (error.response.data.errors && Array.isArray(error.response.data.errors) && error.response.data.errors.length > 0) {
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, errors: error.response.data.errors, formSubmit:false}});
             } else {

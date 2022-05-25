@@ -4,8 +4,8 @@ namespace App\UserInterface\Services\Cards\CardPreparation;
 
 use App\User\Entity\User;
 use App\UserInterface\Controller\Card\CardController;
-use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;

@@ -10,6 +10,8 @@ class APIErrorMessages
 
     public const OBJECT_NOT_FOUND = '%s not found';
 
+    public const OBJECT_NOT_FOUND_FOR_ID = '%s not found for ID %s';
+
     public const OBJECT_NOT_RECOGNISED = '%s not recognised';
 
     public const FAILED_TO_SAVE_DATA = 'Failed to save data';
@@ -21,6 +23,8 @@ class APIErrorMessages
     public const QUERY_FAILURE = '%s Query failure';
 
     public const FAILED_TO_PREPARE_DATA = 'Failed to prepare data';
+
+    public const FAILED_TO_PREPARE_OBJECT_RESPONSE = 'Failed to prepare %s data';
 
     public const FORMAT_NOT_SUPPORTED = 'Format not supported';
 
@@ -35,5 +39,7 @@ class APIErrorMessages
     public const PART_OF_CONTENT_PROCESSED = 'Part of the content could not be processed';
 
     public const READING_TYPE_NOT_VALID_FOR_SENSOR = '%s reading type not valid for sensor: %s';
+
+    public const FAILED_TO_NORMALIZE_RESPONSE = 'Failed to normalize response';
 
 }

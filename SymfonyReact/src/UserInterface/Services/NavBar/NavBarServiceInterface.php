@@ -2,13 +2,14 @@
 
 namespace App\UserInterface\Services\NavBar;
 
+use App\User\Entity\User;
+use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
 use App\UserInterface\Exceptions\WrongUserTypeException;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 interface NavBarServiceInterface
 {
     /**
      * @throws WrongUserTypeException
      */
-    public function getNavBarData(UserInterface $user): array;
+    public function getNavBarData(User $user): NavBarResponseDTO;
 }

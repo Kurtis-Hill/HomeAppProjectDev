@@ -146,8 +146,8 @@ class CardContextProvider extends Component {
 
     modalContent = (cardData) => {
         const sensorId = cardData.sensorId;
-        const cardColour = cardData.cardColour.colourID;
-        const cardIcon = cardData.cardIcon;
+        const cardColour = cardData.currentCardIcon.colourID;
+        const cardIcon = cardData.currentCardIcon;
         const cardViewID = cardData.cardViewID;
         const currentViewState = cardData.currentViewState;
         const sensorData = cardData.sensorData;

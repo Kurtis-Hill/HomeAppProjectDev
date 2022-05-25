@@ -26,7 +26,6 @@ class NavBarControllerTest extends WebTestCase
 
     private KernelBrowser $client;
 
-
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -87,11 +86,10 @@ class NavBarControllerTest extends WebTestCase
 
         $countMessage = 'user %s count wrong';
 
-        self::assertCount(count($userRooms), $responseData['rooms'], sprintf($countMessage, 'rooms'));
+        self::assertCount(count($userRooms), $responseData['userRooms'], sprintf($countMessage, 'rooms'));
         self::assertCount(count($userDevices), $responseData['devices'], sprintf($countMessage, 'device'));
         self::assertCount(count($testUser->getGroupNameIds()), $responseData['groupNames'], sprintf($countMessage, 'group name'));
-
-        self::assertSameSize(RoomFixtures::ROOMS, $responseData['rooms']);
+        self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
         self::assertSameSize(UserDataFixtures::USER_ACCOUNTS, $responseData['groupNames']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());

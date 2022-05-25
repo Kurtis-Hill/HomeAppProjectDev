@@ -20,7 +20,7 @@ class CardViewDTOCreationService implements CardViewDTOCreationServiceInterface
         $cardDTOs = [];
 
         foreach ($sensorData as $sensor) {
-            $cardDTO = $cardViewDTOBuilder->makeDTO($sensor);
+            $cardDTO = $cardViewDTOBuilder->buildSensorTypeCardViewDTO($sensor);
             if ($cardDTO !== null) {
                 $cardDTOs[] = $cardDTO;
             }

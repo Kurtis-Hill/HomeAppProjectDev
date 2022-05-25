@@ -45,12 +45,21 @@ class IconsRepository extends ServiceEntityRepository implements IconsRepository
             ->getQuery()->getOneOrNullResult();
     }
 
-    #[ArrayShape([Icons::class])]
-    public function getAllIcons(): array
+    #[ArrayShape(['iconID' => 'int', 'iconName' => 'string', 'description' => 'string'])]
+    public function getAllIconsAsArray(): array
     {
         $qb = $this->createQueryBuilder('i')
             ->orderBy('i.iconName', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    #[ArrayShape([Icons::class])]
+    public function getAllIconObjects(): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->orderBy('i.iconName', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

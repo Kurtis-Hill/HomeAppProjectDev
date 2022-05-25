@@ -2,22 +2,44 @@
 
 namespace App\Devices\Builders\DeviceUpdate;
 
-use App\Devices\DTO\Response\DeviceDTO;
+use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Devices\DTO\Internal\UpdateDeviceDTO;
+use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
+use App\User\Entity\GroupNames;
+use App\User\Entity\Room;
+use App\User\Entity\User;
 
 class DeviceDTOBuilder
 {
-    public static function buildDeviceDTO(Devices $device, bool $showPassword = false): DeviceDTO
-    {
-        return new DeviceDTO(
-            $device->getDeviceNameID(),
-            $device->getDeviceName(),
-            $device->getGroupNameObject()->getGroupNameID(),
-            $device->getRoomObject()->getRoomID(),
-            $device->getCreatedBy()->getUsername(),
-            $showPassword === false ? null : $device->getPassword(),
-            $device->getIpAddress(),
-            $device->getExternalIpAddress(),
+    public static function buildUpdateDeviceInternalDTO(
+        DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
+        Devices $device,
+        ?Room $room,
+        ?GroupNames $groupName,
+    ): UpdateDeviceDTO {
+        return new UpdateDeviceDTO(
+            $deviceUpdateRequestDTO,
+            $device,
+            $room ?? null,
+            $groupName ?? null
+        );
+    }
+
+    public static function buildNewDeviceDTO(
+        User $user,
+        GroupNames $groupNameObject,
+        Room $roomObject,
+        string $deviceName,
+    ): NewDeviceDTO {
+        $device = new Devices();
+
+        return new NewDeviceDTO(
+            $user,
+            $groupNameObject,
+            $roomObject,
+            $deviceName,
+            $device,
         );
     }
 }
