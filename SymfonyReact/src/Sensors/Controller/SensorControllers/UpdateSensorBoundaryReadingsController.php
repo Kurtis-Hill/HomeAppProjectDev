@@ -9,15 +9,17 @@ use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\DTO\Request\UpdateSensorReadingBoundaryRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
-use App\Sensors\Exceptions\ReadingTypeNotGivenException;
+use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
+use App\Sensors\Exceptions\SensorUpdateFactoryException;
+use App\Sensors\Factories\SensorUpdateFactory\SensorReadingUpdateFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,12 +39,12 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
     public function updateSensorReadingBoundary(
         Sensor $sensorObject,
         Request $request,
+        ValidatorInterface $validator,
         UpdateSensorBoundaryReadingsServiceInterface $updateSensorBoundaryReadingsService,
         SensorRepositoryInterface $sensorRepository,
-        ValidatorInterface $validator,
+        SensorReadingUpdateFactory $sensorUpdateFactory,
     ): Response {
         $updateBoundaryReadingRequestDTO = new UpdateSensorReadingBoundaryRequestDTO();
-
         try {
             $this->deserializeRequest(
                 $request->getContent(),
@@ -69,46 +71,54 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         $successfulTypes = [];
         foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
             try {
-                if (!isset($updateData['readingType'])) {
-                    throw new ReadingTypeNotGivenException(ReadingTypeNotGivenException::MESSAGE);
-                }
-                $readingType = $updateData['readingType'];
-
-                $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject($sensorObject->getSensorNameID(), $readingType);
-                if ($sensorReadingTypeObject === null) {
-                    throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND);
-                }
-                $updateSensorBoundaryBuilder = $updateSensorBoundaryReadingsService->getUpdateBoundaryReadingBuilder($updateData['readingType']);
-                $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryBuilder->buildUpdateSensorBoundaryReadingsDTO($updateData, $sensorReadingTypeObject);
-
-                $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs(
-                    $sensorReadingTypeObject,
-                    $updateSensorBoundaryReadingsDTO,
-                    $sensorObject->getSensorTypeObject()->getSensorType()
-                );
-
-                if (!empty($validationErrors)) {
-                    $sensorProcessingErrors =  array_merge($sensorProcessingErrors, $validationErrors);
-                } else {
-                    $successfulTypes[] = $readingType;
-                }
-            } catch (ReadingTypeNotGivenException) {
-                $sensorProcessingErrors[] = sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    $updateData['sensorType'] ?? 'sensor type'
-                );
-            } catch (
-                SensorReadingUpdateFactoryException
-                | SensorReadingTypeRepositoryFactoryException
-                | SensorReadingTypeObjectNotFoundException
-                | ReadingTypeNotExpectedException $e
-            ) {
+                $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);
+            } catch (SensorUpdateFactoryException $e) {
                 $sensorProcessingErrors[] = $e->getMessage();
+                continue;
+            }
+            $updateBoundaryDataDTO = $sensorUpdateBuilder->buildSensorTypeDTO($updateData);
+
+            $updateDataValidationErrors = $validator->validate($updateBoundaryDataDTO);
+            if ($this->checkIfErrorsArePresent($updateDataValidationErrors)) {
+                $sensorProcessingErrors[] = $this->getValidationErrorAsArray($updateDataValidationErrors);
+                continue;
+            }
+
+            try {
+                $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject($sensorObject->getSensorNameID(), $updateBoundaryDataDTO->getReadingType());
+            } catch (SensorReadingTypeRepositoryFactoryException|SensorReadingTypeObjectNotFoundException $exception) {
+                $sensorProcessingErrors[] = $exception->getMessage();
+                continue;
             } catch (NonUniqueResultException) {
                 $sensorProcessingErrors[] = sprintf(
                     APIErrorMessages::CONTACT_SYSTEM_ADMIN,
                     'None unique result found for sensor reading type query',
                 );
+            }
+
+            try {
+                $updateSensorBoundaryBuilder = $updateSensorBoundaryReadingsService->getUpdateBoundaryReadingBuilder($updateBoundaryDataDTO->getReadingType());
+                $updateSensorBoundaryReadingsDTO = $updateSensorBoundaryBuilder->buildUpdateSensorBoundaryReadingsDTO($updateBoundaryDataDTO, $sensorReadingTypeObject);
+            } catch (SensorReadingUpdateFactoryException|ReadingTypeNotExpectedException $exception) {
+                $sensorProcessingErrors[] = $exception->getMessage();
+                continue;
+            }
+
+            try {
+                $validationErrors = $updateSensorBoundaryReadingsService->processBoundaryReadingDTOs(
+                    $sensorReadingTypeObject,
+                    $updateSensorBoundaryReadingsDTO,
+                    $sensorObject->getSensorTypeObject()->getSensorType()
+                );
+            } catch (ReadingTypeNotSupportedException $exception) {
+                $sensorProcessingErrors[] = $exception->getMessage();
+                continue;
+            }
+
+            if (!empty($validationErrors)) {
+                $sensorProcessingErrors =  array_merge($sensorProcessingErrors, $validationErrors);
+            } else {
+                $successfulTypes[] = $updateBoundaryDataDTO->getReadingType();
             }
         }
 

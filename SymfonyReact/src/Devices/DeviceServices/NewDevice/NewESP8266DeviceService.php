@@ -8,7 +8,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\User\Entity\User;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class NewESP8266DeviceService extends AbstractESPDeviceService implements NewDeviceServiceInterface
@@ -28,6 +28,8 @@ class NewESP8266DeviceService extends AbstractESPDeviceService implements NewDev
         $newDevice->setCreatedBy($deviceUser);
         $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($deviceDTO->getRoomObject());
+        $newDevice->setDeviceSecret($this->createDevicePasswordHash($newDevice));
+        $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
 
         return $this->validateNewDevice($newDevice);
     }

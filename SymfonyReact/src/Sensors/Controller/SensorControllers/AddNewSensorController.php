@@ -7,22 +7,24 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\Sensors\Builders\SensorResponseBuilders\SensorResponseBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\Sensors\SensorDataServices\DeleteSensorService\DeleteSensorService;
+use App\Sensors\SensorDataServices\NewReadingType\SensorReadingTypeCreationInterface;
 use App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
-use App\Sensors\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\Sensors\Voters\SensorVoter;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
@@ -55,7 +57,6 @@ class AddNewSensorController extends AbstractController
         }
 
         $requestValidationErrors = $newSensorCreationService->validateNewSensorRequestDTO($newSensorRequestDTO);
-
         if (!empty($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($requestValidationErrors);
         }
@@ -132,8 +133,14 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse($errors);
         }
 
-        $sensorID = $sensor->getSensorNameID();
+        $sensorResponseDTO = SensorResponseBuilder::buildSensorResponseDTO($sensor);
 
-        return $this->sendCreatedResourceJsonResponse(['sensorNameID' => $sensorID]);
+        try {
+            $normalizedResponse = $this->normalizeResponse($sensorResponseDTO);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendCreatedResourceJsonResponse($normalizedResponse);
     }
 }

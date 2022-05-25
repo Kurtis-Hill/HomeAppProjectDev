@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewBuilders;
+namespace App\UserInterface\Builders\CardViewDTOBuilders;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;

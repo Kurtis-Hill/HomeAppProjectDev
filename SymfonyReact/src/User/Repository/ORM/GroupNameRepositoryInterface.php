@@ -4,7 +4,7 @@ namespace App\User\Repository\ORM;
 
 use App\User\Entity\GroupNames;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface GroupNameRepositoryInterface
 {

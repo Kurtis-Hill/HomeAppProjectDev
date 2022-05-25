@@ -45,7 +45,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         if ($cardUpdateDTO->getCardColourID() !== null) {
             $cardColour = $this->cardColourRepository->findOneById($cardUpdateDTO->getCardColourID());
             if (!$cardColour instanceof CardColour) {
-                $errors[] = 'Icons colour not found';
+                $errors[] = 'Colour not found';
             } else {
                 $cardView->setCardColourID($cardColour);
             }
@@ -54,7 +54,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         if ($cardUpdateDTO->getCardIconID() !== null) {
             $cardIcon = $this->iconsRepository->findOneById($cardUpdateDTO->getCardIconID());
             if (!$cardIcon instanceof Icons) {
-                $errors[] = 'Icons icon not found';
+                $errors[] = 'Icon not found';
             } else {
                 $cardView->setCardIconID($cardIcon);
             }
@@ -63,7 +63,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         if ($cardUpdateDTO->getCardStateID()) {
             $cardState = $this->cardStateRepository->findOneById($cardUpdateDTO->getCardStateID());
             if (!$cardState instanceof Cardstate) {
-                $errors[] = 'Icons state not found';
+                $errors[] = 'Card State state not found';
             } else {
                 $cardView->setCardStateID($cardState);
             }
@@ -76,11 +76,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
     {
         $constraintViolationList = $this->validator->validate($cardView);
 
-        if ($this->checkIfErrorsArePresent($constraintViolationList)) {
-            return $this->getValidationErrorAsArray($constraintViolationList);
-        }
-
-        return [];
+        return $this->getValidationErrorAsArray($constraintViolationList);
     }
 
 }

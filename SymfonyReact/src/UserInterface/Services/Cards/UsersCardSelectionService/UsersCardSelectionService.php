@@ -2,11 +2,11 @@
 
 namespace App\UserInterface\Services\Cards\UsersCardSelectionService;
 
-use App\UserInterface\Builders\CardStateBuilders\CardStateBuilder;
+use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
 use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
 use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
-use App\UserInterface\DTO\Response\Colours\CardColourResponseDTO;
+use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
@@ -14,7 +14,7 @@ use App\UserInterface\Entity\Icons;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class UsersCardSelectionService implements UsersCardSelectionServiceInterface
@@ -90,7 +90,7 @@ class UsersCardSelectionService implements UsersCardSelectionServiceInterface
     #[ArrayShape(
         [
             'icons' => [IconResponseDTO::class],
-            'colours' => [CardColourResponseDTO::class],
+            'colours' => [ColourResponseDTO::class],
             'states' => [CardStateResponseDTO::class]
         ]
     )]
@@ -130,7 +130,7 @@ class UsersCardSelectionService implements UsersCardSelectionServiceInterface
         $cardStateObjects = $this->cardStateRepository->getAllStateAsObjects();
 
         foreach ($cardStateObjects as $cardStateObject) {
-            $cardStateDTOs[] = CardStateBuilder::buildCardStateResponseDTO($cardStateObject);
+            $cardStateDTOs[] = CardStateDTOBuilder::buildCardStateResponseDTO($cardStateObject);
         }
 
         return $cardStateDTOs ?? [];

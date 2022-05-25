@@ -7,8 +7,8 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
-use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
+use Doctrine\ORM\Exception\ORMException;
 
 interface AddNewRoomServiceInterface
 {

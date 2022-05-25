@@ -1,13 +1,13 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewBuilders;
+namespace App\UserInterface\Builders\CardViewDTOBuilders;
 
-use App\UserInterface\DTO\Response\CurrentCardReadingDTO\CurrentReadingSensorTypeCardDTO;
-use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardDataInterface;
+use App\UserInterface\DTO\Response\CurrentCardReadingDTO\CurrentReadingSensorTypeCardResponseDTO;
+use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardDataResponseDTOInterface;
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
-    public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataInterface
+    public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
     {
         $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($cardData['sensortype_sensorType']);
         $formattedSensorData = $cardBuilder->formatScalarCardSensorData($cardData);
@@ -18,7 +18,7 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewD
             return null;
         }
 
-        return new CurrentReadingSensorTypeCardDTO(
+        return new CurrentReadingSensorTypeCardResponseDTO(
             $cardData['sensors_sensorName'],
             $cardData['sensortype_sensorType'],
             $cardData['room_room'],

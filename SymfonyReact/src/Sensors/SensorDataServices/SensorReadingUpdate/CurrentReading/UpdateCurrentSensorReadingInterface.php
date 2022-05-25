@@ -6,7 +6,7 @@ use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface UpdateCurrentSensorReadingInterface
 {

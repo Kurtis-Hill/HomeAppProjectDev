@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\Entity\Card;
 
+use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -40,7 +41,7 @@ class CardColour
      * @ORM\Column(name="colour", type="string", length=20, nullable=false)
      */
     #[
-        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
+        NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::COLOUR_MIN_LENGTH,
             max: self::COLOUR_MAX_LENGTH,
@@ -55,7 +56,7 @@ class CardColour
      * @ORM\Column(name="shade", type="string", length=20, nullable=false)
      */
     #[
-        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
+        NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::SHADE_MIN_LENGTH,
             max: self::SHADE_MAX_LENGTH,
@@ -66,49 +67,31 @@ class CardColour
     ]
     private string $shade;
 
-    /**
-     * @return int
-     */
     public function getColourID(): int
     {
         return $this->colourID;
     }
 
-    /**
-     * @param int $colourID
-     */
     public function setColourID(int $colourID): void
     {
         $this->colourID = $colourID;
     }
 
-    /**
-     * @return string
-     */
     public function getColour(): string
     {
         return $this->colour;
     }
 
-    /**
-     * @param string $colour
-     */
     public function setColour(string $colour): void
     {
         $this->colour = $colour;
     }
 
-    /**
-     * @return string
-     */
     public function getShade(): string
     {
         return $this->shade;
     }
 
-    /**
-     * @param string $shade
-     */
     public function setShade(string $shade): void
     {
         $this->shade = $shade;

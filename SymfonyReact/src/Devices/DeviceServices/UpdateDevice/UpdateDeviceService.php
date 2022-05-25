@@ -9,25 +9,13 @@ use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateDeviceService extends AbstractESPDeviceService implements UpdateDeviceServiceInterface
 {
-    private DevicePasswordEncoderInterface $devicePasswordEncoder;
-
-    #[Pure]
-    public function __construct(
-        DeviceRepositoryInterface $deviceRepository,
-        ValidatorInterface $validator,
-        DevicePasswordEncoderInterface $devicePasswordEncoder,
-    ) {
-        $this->devicePasswordEncoder = $devicePasswordEncoder;
-        parent::__construct($deviceRepository, $validator);
-    }
-
     #[ArrayShape(['errors'])]
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array
     {

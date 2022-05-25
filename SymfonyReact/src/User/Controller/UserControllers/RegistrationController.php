@@ -6,7 +6,7 @@ use App\Authentication\Entity\GroupNameMapping;
 use App\Form\RegistrationFormType;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;

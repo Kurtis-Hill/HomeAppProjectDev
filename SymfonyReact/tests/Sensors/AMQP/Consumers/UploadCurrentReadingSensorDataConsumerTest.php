@@ -52,7 +52,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
         self::assertTrue($result);
     }
 
-    public function test_unknown_device_returns_false(): void
+    public function test_unknown_device_returns_true(): void
     {
         $deviceRepository = $this->entityManager->getRepository(Devices::class);
         while (true) {
@@ -75,7 +75,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
         $amqpMessage->method('getBody')->willReturn(serialize($updateCurrentReadingMessageDTO));
 
         $result = $this->sut->execute($amqpMessage);
-        self::assertFalse($result);
+        self::assertTrue($result);
     }
 
     // Soil
@@ -120,7 +120,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
 
         $soilSensor = $this->entityManager->getRepository(Soil::class)->findOneBy(['sensorNameID' => $sensor->getSensorNameID()]);
 
-        self::assertFalse($result);
+        self::assertTrue($result);
         self::assertNotEquals(
             $soilSensor->getAnalogObject()->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -198,7 +198,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
 
         $dhtSensor = $this->entityManager->getRepository(Dht::class)->findOneBy(['sensorNameID' => $sensor->getSensorNameID()]);
 
-        self::assertFalse($result);
+        self::assertTrue($result);
         self::assertNotEquals(
             $dhtSensor->getHumidObject()->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -252,7 +252,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
 
         $dallas = $this->entityManager->getRepository(Dallas::class)->findOneBy(['sensorNameID' => $sensor->getSensorNameID()]);
 
-        self::assertFalse($result);
+        self::assertTrue($result);
         self::assertNotEquals(
             $dallas->getTempObject()->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -336,7 +336,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
 
         $bmp = $this->entityManager->getRepository(Bmp::class)->findOneBy(['sensorNameID' => $sensor->getSensorNameID()]);
 
-        self::assertFalse($result);
+        self::assertTrue($result);
         self::assertNotEquals(
             $bmp->getHumidObject()->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()

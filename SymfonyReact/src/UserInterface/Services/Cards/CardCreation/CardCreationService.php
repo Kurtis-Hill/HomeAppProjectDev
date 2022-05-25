@@ -16,7 +16,7 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterfac
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

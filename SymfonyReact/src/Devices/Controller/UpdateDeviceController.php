@@ -17,7 +17,7 @@ use App\User\Entity\Room;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +59,7 @@ class UpdateDeviceController extends AbstractController
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
             );
         } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
         }
 
         $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
@@ -105,7 +105,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        $savedDevice = $updateDeviceObjectBuilder->saveNewDevice($deviceToUpdate);
+        $savedDevice = $updateDeviceObjectBuilder->saveDevice($deviceToUpdate);
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }

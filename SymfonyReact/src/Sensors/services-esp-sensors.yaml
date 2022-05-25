@@ -47,10 +47,10 @@ services:
 
   ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
-    alias: 'App\Sensors\SensorDataServices\NewSensor\NewSensorCreationValidatorService'
+    alias: 'App\Sensors\SensorDataServices\NewSensor\NewSensorCreationService'
 
-  App\Sensors\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface:
-    alias: 'App\Sensors\SensorDataServices\NewSensor\ReadingTypeCreation\ReadingTypeCreationService'
+  App\Sensors\SensorDataServices\NewReadingType\SensorReadingTypeCreationInterface:
+    alias: 'App\Sensors\SensorDataServices\NewReadingType\ReadingTypeCreationService'
 
   ######################## Factories ###########################################################################
   App\Sensors\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:

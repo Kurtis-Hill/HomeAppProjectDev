@@ -61,9 +61,8 @@ export default class NavbarContextProvider extends Component {
     navbarData = () => {
         axios.get(`${apiURL}navbar/navbar-data`, getAPIHeader())
         .then(response => {
-            console.log(response.data);
             const navBarResponse = response.data.payload;
-            this.setState({devices: navBarResponse.devices, rooms: navBarResponse.rooms, groupNames: navBarResponse.groupNames});
+            this.setState({devices: navBarResponse.devices, rooms: navBarResponse.userRooms, groupNames: navBarResponse.groupNames});
         }).catch(error => {   
             removeUserSession();
             alert('Failed Getting Navbar Data, '+error.response.data.title);

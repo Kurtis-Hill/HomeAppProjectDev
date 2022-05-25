@@ -8,7 +8,8 @@ use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class NavBarService implements NavBarServiceInterface
@@ -56,7 +57,7 @@ class NavBarService implements NavBarServiceInterface
      */
     private function getRoomData(User $user): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($user->getGroupNameIDs());
+        return $this->roomRepository->getAllUserRoomsByGroupId($user->getGroupNameIDs(), AbstractQuery::HYDRATE_OBJECT);
     }
 
     /**
@@ -64,6 +65,6 @@ class NavBarService implements NavBarServiceInterface
      */
     private function getDeviceData(User $user): array
     {
-        return $this->deviceRepository->getAllUsersDevicesByGroupId($user->getGroupNameAndIds());
+        return $this->deviceRepository->getAllUsersDevicesByGroupId($user->getGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
     }
 }

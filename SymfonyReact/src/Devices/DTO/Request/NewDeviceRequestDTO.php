@@ -15,7 +15,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
         ),
         Assert\Type(
             type: 'string',
-            message: 'Device name value is {{ value }} is not a valid {{ type }}'
+            message: 'Device name value is {{ value }} and not a valid {{ type }}'
         ),
     ]
     private mixed $deviceName = null;
@@ -29,7 +29,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
         ),
         Assert\Type(
             type: ['integer'],
-            message: 'Device group value is {{ value }} is not a valid {{ type }}'
+            message: 'Device group value is {{ value }} and not a valid {{ type }}'
         ),
     ]
     private mixed $deviceGroup = null;
@@ -43,7 +43,7 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
         ),
         Assert\Type(
             type: ['integer'],
-            message: 'Device room value is {{ value }} is not a valid {{ type }}'
+            message: 'Device room value is {{ value }} and not a valid {{ type }}'
         ),
     ]
     private mixed $deviceRoom = null;

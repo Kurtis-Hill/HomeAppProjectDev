@@ -42,7 +42,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
     public function updateSensorsCurrentReading(
         Request $request,
         ValidatorInterface $validator,
-        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
+        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
     ): Response {
         if (!$this->getUser() instanceof Devices) {
             return $this->sendBadRequestJsonResponse(['You are not supposed to be here']);
@@ -68,12 +68,12 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             $sensorDataCurrentReadingUpdateDTO = SensorDataCurrentReadingDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
-            $sensorDataPassedValidation = $currentReadingSensorDataRequestHandler->handleSensorUpdateRequest($sensorDataCurrentReadingUpdateDTO);
+            $sensorDataPassedValidation = $currentReadingSensorDataRequest->handleSensorUpdateRequest($sensorDataCurrentReadingUpdateDTO);
             if ($sensorDataPassedValidation === false) {
                 continue;
             }
 
-            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequestHandler->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateDTO);
+            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateDTO);
 
             $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
                 $sensorDataCurrentReadingUpdateDTO->getSensorType(),
@@ -90,28 +90,28 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
         if (
             isset($sensorDataCurrentReadingUpdateDTO)
-            && empty($currentReadingSensorDataRequestHandler->getErrors())
-            && empty($currentReadingSensorDataRequestHandler->getValidationErrors())
-            && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequestHandler->getSuccessfulRequests())
+            && empty($currentReadingSensorDataRequest->getErrors())
+            && empty($currentReadingSensorDataRequest->getValidationErrors())
+            && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())
         ) {
-            return $this->sendSuccessfulJsonResponse($currentReadingSensorDataRequestHandler->getSuccessfulRequests(), 'All sensor readings handled successfully');
+            return $this->sendSuccessfulJsonResponse($currentReadingSensorDataRequest->getSuccessfulRequests(), 'All sensor readings handled successfully');
         }
 
-        if (!empty($currentReadingSensorDataRequestHandler->getSuccessfulRequests())) {
+        if (!empty($currentReadingSensorDataRequest->getSuccessfulRequests())) {
             return $this->sendMultiStatusJsonResponse(
                 array_merge(
-                    $currentReadingSensorDataRequestHandler->getValidationErrors(),
-                    $currentReadingSensorDataRequestHandler->getErrors()
+                    $currentReadingSensorDataRequest->getValidationErrors(),
+                    $currentReadingSensorDataRequest->getErrors()
                 ),
-                $currentReadingSensorDataRequestHandler->getSuccessfulRequests(),
+                $currentReadingSensorDataRequest->getSuccessfulRequests(),
                 APIErrorMessages::PART_OF_CONTENT_PROCESSED,
             );
         }
 
         return $this->sendBadRequestJsonResponse(
             array_merge(
-                $currentReadingSensorDataRequestHandler->getValidationErrors(),
-                $currentReadingSensorDataRequestHandler->getErrors()
+                $currentReadingSensorDataRequest->getValidationErrors(),
+                $currentReadingSensorDataRequest->getErrors()
             ),
             APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT
         );

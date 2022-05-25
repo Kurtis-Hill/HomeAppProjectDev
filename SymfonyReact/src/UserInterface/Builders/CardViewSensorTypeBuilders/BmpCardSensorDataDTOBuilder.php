@@ -3,31 +3,31 @@
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\UserInterface\Builders\CardViewReadingTypeBuilders\HumiditySensorCardViewBuilder;
-use App\UserInterface\Builders\CardViewReadingTypeBuilders\LatitudeSensorCardViewBuilder;
-use App\UserInterface\Builders\CardViewReadingTypeBuilders\TemperatureSensorCardViewBuilder;
-use App\UserInterface\DTO\Response\CardViewDTO\StandardCardViewDTO;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\HumiditySensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\LatitudeSensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\TemperatureSensorCardViewDTOBuilder;
+use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 
 class BmpCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {
-    private TemperatureSensorCardViewBuilder $tempSensorBuilder;
+    private TemperatureSensorCardViewDTOBuilder $tempSensorBuilder;
 
-    private HumiditySensorCardViewBuilder $humidSensorBuilder;
+    private HumiditySensorCardViewDTOBuilder $humidSensorBuilder;
 
-    private LatitudeSensorCardViewBuilder $latSensorBuilder;
+    private LatitudeSensorCardViewDTOBuilder $latSensorBuilder;
 
     public function __construct(
-        TemperatureSensorCardViewBuilder $tempSensorBuilder,
-        HumiditySensorCardViewBuilder $humiditySensorBuilder,
-        LatitudeSensorCardViewBuilder $latitudeSensorBuilder,
+        TemperatureSensorCardViewDTOBuilder $tempSensorBuilder,
+        HumiditySensorCardViewDTOBuilder $humiditySensorBuilder,
+        LatitudeSensorCardViewDTOBuilder $latitudeSensorBuilder,
     ) {
         $this->tempSensorBuilder = $tempSensorBuilder;
         $this->humidSensorBuilder = $humiditySensorBuilder;
         $this->latSensorBuilder = $latitudeSensorBuilder;
     }
 
-    #[ArrayShape([StandardCardViewDTO::class, StandardCardViewDTO::class, StandardCardViewDTO::class])]
+    #[ArrayShape([StandardCardViewReadingResponseDTO::class, StandardCardViewReadingResponseDTO::class, StandardCardViewReadingResponseDTO::class])]
     public function formatScalarCardSensorData(array $sensorData): array
     {
         $temperatureSensorData = $this->tempSensorBuilder->buildTemperatureSensorDataFromScalarArray($sensorData);

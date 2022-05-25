@@ -5,9 +5,9 @@ namespace App\UserInterface\DTO\Response\Colours;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class CardColourResponseDTO
+class ColourResponseDTO
 {
-    private int $cardColourID;
+    private int $colourID;
 
     private string $colour;
 
@@ -15,14 +15,14 @@ class CardColourResponseDTO
 
     public function __construct(int $cardColourID, string $colour, string $shade)
     {
-        $this->cardColourID = $cardColourID;
+        $this->colourID = $cardColourID;
         $this->colour = $colour;
         $this->shade = $shade;
     }
 
-    public function getCardColourID(): int
+    public function getColourID(): int
     {
-        return $this->cardColourID;
+        return $this->colourID;
     }
 
     public function getColour(): string

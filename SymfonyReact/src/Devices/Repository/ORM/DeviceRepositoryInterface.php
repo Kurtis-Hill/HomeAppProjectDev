@@ -3,9 +3,10 @@
 namespace App\Devices\Repository\ORM;
 
 use App\Devices\Entity\Devices;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface DeviceRepositoryInterface
@@ -35,7 +36,7 @@ interface DeviceRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllUsersDevicesByGroupId($groupNameID): array;
+    public function getAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array;
 
     /**
      * @throws ORMException

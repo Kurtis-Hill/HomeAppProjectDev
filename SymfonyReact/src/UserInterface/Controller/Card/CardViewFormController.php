@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\UserInterface\Builders\CardUpdateBuilders\CardUpdateBuilder;
+use App\UserInterface\Builders\CardUpdateDTOBuilders\CardUpdateDTOBuilder;
 use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
@@ -18,7 +18,7 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterfac
 use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface;
 use App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -100,7 +100,7 @@ class CardViewFormController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $standardCardUpdateDTO = CardUpdateBuilder::buildCardUpdateDTO(
+        $standardCardUpdateDTO = CardUpdateDTOBuilder::buildCardIDUpdateDTO(
             $cardViewRequestDTO->getCardColour(),
             $cardViewRequestDTO->getCardIcon(),
             $cardViewRequestDTO->getCardViewState(),
@@ -118,6 +118,13 @@ class CardViewFormController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse();
+        $cardViewResponseDTO = CardUpdateDTOBuilder::buildCardUpdateResponseDTO($cardViewObject);
+        try {
+            $normalizedResponseData = $this->normalizeResponse($cardViewResponseDTO);
+        } catch (ExceptionInterface) {
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Request Successful']);
+        }
+
+        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponseData);
     }
 }

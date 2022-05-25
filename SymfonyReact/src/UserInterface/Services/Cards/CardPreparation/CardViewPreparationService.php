@@ -9,7 +9,7 @@ use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFi
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class CardViewPreparationService implements CardViewPreparationServiceInterface

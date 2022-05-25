@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\SensorDataServices\NewSensor\ReadingTypeCreation;
+namespace App\Sensors\SensorDataServices\NewReadingType;
 
 use App\Sensors\Entity\Sensor;
 

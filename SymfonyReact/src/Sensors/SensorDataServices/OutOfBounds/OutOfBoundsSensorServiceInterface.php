@@ -4,7 +4,7 @@ namespace App\Sensors\SensorDataServices\OutOfBounds;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface OutOfBoundsSensorServiceInterface
 {

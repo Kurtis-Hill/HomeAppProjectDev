@@ -1,13 +1,13 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewBuilders;
+namespace App\UserInterface\Builders\CardViewDTOBuilders;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\UserInterface\Builders\CardStateBuilders\CardStateBuilder;
+use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
 use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
 use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;
-use App\UserInterface\DTO\Response\CardForms\StandardCardViewSensorFormDTO;
+use App\UserInterface\DTO\Response\CardForms\StandardCardViewSensorFormResponseDTO;
 use App\UserInterface\Entity\Card\CardView;
 
 class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements CardViewFormDTOBuilderInterface
@@ -20,11 +20,11 @@ class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder im
         $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($sensorTypeObject->getSensorTypeName());
         $formattedSensorTypeObjects = $cardBuilder->formatSensorTypeObjectsByReadingType($sensorTypeObject);
 
-        return new StandardCardViewSensorFormDTO(
+        return new StandardCardViewSensorFormResponseDTO(
             $sensorTypeObject->getSensorObject()->getSensorNameID(),
             IconDTOBuilder::buildIconResponseDTO($cardViewObject->getCardIconID()),
             ColourDTOBuilder::buildColourResponseDTO($cardViewObject->getCardColourID()),
-            CardStateBuilder::buildCardStateResponseDTO($cardViewObject->getCardStateID()),
+            CardStateDTOBuilder::buildCardStateResponseDTO($cardViewObject->getCardStateID()),
             $cardViewObject->getCardViewID(),
             $usersCardSelections['icons'] ?? [],
             $usersCardSelections['colours'] ?? [],

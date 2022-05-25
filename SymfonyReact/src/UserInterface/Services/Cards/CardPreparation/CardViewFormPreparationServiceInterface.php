@@ -7,7 +7,7 @@ use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface CardViewFormPreparationServiceInterface
 {
