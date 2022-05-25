@@ -7,7 +7,7 @@ use App\Devices\DTO\Request\DeviceRequestDTOInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

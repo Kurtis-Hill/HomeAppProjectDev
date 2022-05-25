@@ -19,7 +19,7 @@ use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface;
 use App\Sensors\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\SensorDataServices\NewSensor\ReadingTypeCreation;
+namespace App\Sensors\SensorDataServices\NewReadingType;
 
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
@@ -9,8 +9,7 @@ use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\ORMFactories\SensorType\SensorTypeRepositroyFactoryInterface;
 use App\Sensors\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
-use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
 {

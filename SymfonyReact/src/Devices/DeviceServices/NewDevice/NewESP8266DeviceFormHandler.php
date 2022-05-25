@@ -10,7 +10,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Forms\AddNewDeviceForm;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;

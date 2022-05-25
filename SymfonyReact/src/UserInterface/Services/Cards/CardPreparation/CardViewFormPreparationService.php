@@ -15,7 +15,7 @@ use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
 use App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionServiceInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 class CardViewFormPreparationService implements CardViewFormPreparationServiceInterface
 {

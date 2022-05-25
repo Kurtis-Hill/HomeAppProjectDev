@@ -17,7 +17,7 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterfac
 use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface;
 use App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

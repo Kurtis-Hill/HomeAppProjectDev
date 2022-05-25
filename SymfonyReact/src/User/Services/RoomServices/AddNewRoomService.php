@@ -8,7 +8,7 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AddNewRoomService implements AddNewRoomServiceInterface

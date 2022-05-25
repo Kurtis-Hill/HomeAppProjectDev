@@ -6,11 +6,9 @@ use App\Common\API\APIErrorMessages;
 use App\Devices\DeviceServices\AbstractESPDeviceHandler;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
-use App\Devices\DTO\Response\DeviceUpdateResponseDTO;
-use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -62,6 +60,7 @@ class UpdateDeviceHandler extends AbstractESPDeviceHandler implements UpdateDevi
         if (isset($errors) && $this->checkIfErrorsArePresent($validationConstraintList)) {
             return array_merge($errors, $this->getValidationErrorAsArray($validationConstraintList));
         }
+
         return $this->getValidationErrorAsArray($validationConstraintList);
     }
 }

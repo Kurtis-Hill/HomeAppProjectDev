@@ -7,7 +7,7 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\Exceptions\WrongUserTypeException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\UserInterface;
 

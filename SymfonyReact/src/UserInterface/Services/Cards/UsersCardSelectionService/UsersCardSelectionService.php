@@ -8,7 +8,7 @@ use App\UserInterface\Entity\Icons;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class UsersCardSelectionService implements UsersCardSelectionServiceInterface

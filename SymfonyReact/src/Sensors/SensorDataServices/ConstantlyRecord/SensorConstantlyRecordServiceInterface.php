@@ -5,7 +5,7 @@ namespace App\Sensors\SensorDataServices\ConstantlyRecord;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface SensorConstantlyRecordServiceInterface
 {

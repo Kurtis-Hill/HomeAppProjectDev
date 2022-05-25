@@ -4,7 +4,7 @@ namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\UserInterface\Entity\Card\Cardstate;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 

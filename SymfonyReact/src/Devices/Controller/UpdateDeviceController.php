@@ -16,7 +16,7 @@ use App\User\Entity\Room;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

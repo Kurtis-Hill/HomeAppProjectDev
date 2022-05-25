@@ -5,7 +5,7 @@ namespace App\User\Repository\ORM;
 use App\User\Entity\User;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface UserRepositoryInterface

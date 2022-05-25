@@ -5,7 +5,7 @@ namespace App\Devices\Repository\ORM;
 use App\Devices\Entity\Devices;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface DeviceRepositoryInterface

@@ -4,7 +4,7 @@ namespace App\Sensors\Repository\ORM\SensorType;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface GenericSensorTypeRepositoryInterface

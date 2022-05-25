@@ -12,12 +12,12 @@ use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\Sensors\SensorDataServices\DeleteSensorService\DeleteSensorService;
+use App\Sensors\SensorDataServices\NewReadingType\SensorReadingTypeCreationInterface;
 use App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
-use App\Sensors\SensorDataServices\NewSensor\ReadingTypeCreation\SensorReadingTypeCreationInterface;
 use App\Sensors\Voters\SensorVoter;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +55,6 @@ class AddNewSensorController extends AbstractController
         }
 
         $requestValidationErrors = $newSensorCreationService->validateNewSensorRequestDTO($newSensorRequestDTO);
-
         if (!empty($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($requestValidationErrors);
         }

@@ -17,7 +17,7 @@ use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

@@ -16,7 +16,7 @@ use App\UserInterface\Services\Cards\CardDataFilterService\CardDataFilterService
 use App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface;
 use App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface;
 use App\UserInterface\Voters\CardViewVoter;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

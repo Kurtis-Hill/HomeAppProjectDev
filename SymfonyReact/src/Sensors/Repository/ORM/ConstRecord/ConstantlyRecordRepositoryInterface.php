@@ -4,7 +4,7 @@ namespace App\Sensors\Repository\ORM\ConstRecord;
 
 use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface ConstantlyRecordRepositoryInterface

@@ -5,7 +5,7 @@ namespace App\Sensors\Repository\ORM\Sensors;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\Sensor;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface SensorRepositoryInterface

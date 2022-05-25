@@ -9,7 +9,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Forms\AddNewSensorForm;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class NewSensorCreationFormService implements NewSensorCreationServiceInterface

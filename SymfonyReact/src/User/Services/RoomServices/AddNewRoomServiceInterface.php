@@ -7,7 +7,7 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface AddNewRoomServiceInterface
 {

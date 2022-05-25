@@ -9,10 +9,10 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class NewSensorCreationValidatorService implements NewSensorCreationServiceInterface
+class NewSensorCreationService implements NewSensorCreationServiceInterface
 {
     use ValidatorProcessorTrait;
 
@@ -66,6 +66,9 @@ class NewSensorCreationValidatorService implements NewSensorCreationServiceInter
         return $errors;
     }
 
+    /**
+     * @throws DuplicateSensorException
+     */
     private function duplicateSensorOnSameDeviceCheck(Sensor $sensor): void
     {
         $currentUserSensorNameCheck = $this->sensorRepository->checkForDuplicateSensorOnDevice($sensor);

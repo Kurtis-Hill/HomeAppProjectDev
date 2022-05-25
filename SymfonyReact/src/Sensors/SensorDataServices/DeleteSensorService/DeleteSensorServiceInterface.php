@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorDataServices\DeleteSensorService;
 
 use App\Sensors\Entity\Sensor;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 
 interface DeleteSensorServiceInterface
 {

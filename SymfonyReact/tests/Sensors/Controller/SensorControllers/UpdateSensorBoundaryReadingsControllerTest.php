@@ -1002,7 +1002,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals('All sensor boundary update requests failed', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals($readingType . ' Sensor type not recognised', $responseData['errors'][0]);
+        self::assertEquals('Sensor update builder not found: '. $readingType, $responseData['errors'][0]);
     }
 
     public function test_sending_request_for_sensor_user_not_apart_of_group(): void

@@ -7,7 +7,7 @@ use App\UserInterface\DTO\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\DTO\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
 interface CardViewRepositoryInterface

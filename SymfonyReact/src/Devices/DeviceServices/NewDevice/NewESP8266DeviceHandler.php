@@ -8,7 +8,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\User\Entity\User;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class NewESP8266DeviceHandler extends AbstractESPDeviceHandler implements NewDeviceHandlerInterface

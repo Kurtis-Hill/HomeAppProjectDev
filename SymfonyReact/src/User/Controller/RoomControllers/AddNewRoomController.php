@@ -13,7 +13,7 @@ use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;
 use App\User\Voters\RoomVoter;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
