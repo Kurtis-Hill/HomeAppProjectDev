@@ -59,7 +59,7 @@ class UpdateDeviceController extends AbstractController
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
             );
         } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
         }
 
         $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);

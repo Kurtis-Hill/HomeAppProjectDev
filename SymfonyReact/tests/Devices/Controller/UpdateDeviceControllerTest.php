@@ -2,6 +2,7 @@
 
 namespace Devices\Controller;
 
+use App\Common\API\HTTPStatusCodes;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
@@ -12,8 +13,6 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
-use JsonException;
-use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,10 +39,36 @@ class UpdateDeviceControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
     }
 
+    public function test_sending_wrong_encoding_request(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
+
+        $requestData = [
+            'deviceName' => '$deviceName',
+            'password' => '$password',
+            'deviceGroup' => '$deviceGroup',
+            'deviceRoom' => '$deviceRoom',
+        ];
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            implode(',', $requestData)
+        );
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['title']);
+    }
+
     /**
      * @dataProvider sendingWrongTypesToUpdateDataProvider
      */
-    public function testSendingWrongTypesToUpdate(
+    public function test_sending_wrong_types_to_update(
         mixed $deviceName,
         mixed $password,
         mixed $deviceGroup,
@@ -121,6 +146,20 @@ class UpdateDeviceControllerTest extends WebTestCase
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
                 'deviceRoom must be of type integer|null you provided "deviceRoom"'
+            ],
+        ];
+
+        yield [
+            'deviceName' => 1,
+            'password' => ['NewPassword'],
+            'deviceGroup' => [1],
+            'deviceRoom' => 'deviceRoom',
+            'errorMessage' => [
+                'deviceName must be of type string|null you provided 1',
+                'password must be of type string|null you provided array',
+                'deviceGroup must be of type integer|null you provided array',
+                'deviceRoom must be of type integer|null you provided "deviceRoom"',
+
             ],
         ];
     }
@@ -237,7 +276,6 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function testAdminCanUpdateDeviceNotApartOf(): void
     {
-        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER_ISOLATED]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
@@ -246,13 +284,13 @@ class UpdateDeviceControllerTest extends WebTestCase
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
         $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
 
-        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupNameID()])[0];
 
         $newDeviceName = 'newDeviceName';
+        $newPassword = 'NewPassword';
         $requestData = [
             'deviceName' => $newDeviceName,
-            'password' => 'NewPassword',
+            'password' => $newPassword,
             'deviceGroup' => $user->getGroupNameID()->getGroupNameID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
         ];
@@ -281,6 +319,8 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($user->getGroupNameID()->getGroupName(), $responseData['payload']['groupName']['groupName']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
+        self::assertEquals($newPassword, $responseData['payload']['secret']);
+
         self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
     }
 
@@ -297,7 +337,6 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['deviceName' => ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']]
         );
 
-        // dd($user->getGroupNameID()->getGroupNameID());
         $requestData = [
             'deviceName' => $deviceName,
             'password' => 'NewPassword',
@@ -372,9 +411,10 @@ class UpdateDeviceControllerTest extends WebTestCase
         }
 
         $newDeviceName = 'newDeviceName';
+        $newPassword = 'NewPassword';
         $requestData = [
             'deviceName' => $newDeviceName,
-            'password' => 'NewPassword',
+            'password' => $newPassword,
             'deviceGroup' => $newGroupNameID,
             'deviceRoom' => $newRoomID,
         ];
@@ -399,14 +439,14 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         self::assertEquals('Device Successfully Updated', $responseData['title']);
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
+        self::assertEquals($newPassword, $responseData['payload']['secret']);
+
+        self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
         self::assertEquals($newGroupNameID, $responseData['payload']['groupName']['groupNameID']);
         self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
         self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @throws RuntimeException|JsonException
-     */
     public function testDeviceWithPasswordUpdatedCanLogIn(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
@@ -458,7 +498,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             self::assertArrayHasKey('refreshToken', $responseData);
             self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         } else {
-            throw new RuntimeException('Device was not updated correctly');
+            self::fail('failed to get success response from device update');
         }
     }
 
@@ -473,7 +513,8 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
         $groupUserIsApartOf = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user)[0];
-//
+
+        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsApartOf->getGroupNameID()])[0];
 
         $requestData = match ($patchSubject) {
@@ -489,7 +530,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             'deviceRoom' => [
                 'deviceRoom' => $device->getRoomObject()->getRoomID(),
             ],
-            default => throw new RuntimeException('Invalid patch subject'),
+            default => self::fail('unknown patch subject'),
         };
 
         $jsonPayload = json_encode($requestData);
@@ -516,15 +557,34 @@ class UpdateDeviceControllerTest extends WebTestCase
         switch ($patchSubject) {
             case 'deviceName':
                 self::assertEquals($requestData['deviceName'], $responseData['payload']['deviceName']);
+                self::assertEquals($device->getDeviceNameID(), $responseData['payload']['deviceNameID']);
+                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
+                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
+                self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
+                self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
+                self::assertNull($responseData['payload']['secret']);
                 break;
             case 'password':
                 self::assertEquals($requestData['password'], $responseData['payload']['secret']);
                 break;
             case 'deviceGroup':
                 self::assertEquals($requestData['deviceGroup'], $responseData['payload']['groupName']['groupNameID']);
+                self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+                self::assertEquals($device->getDeviceNameID(), $responseData['payload']['deviceNameID']);
+                self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
+                self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
+                self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
+                self::assertNull($responseData['payload']['secret']);
                 break;
             case 'deviceRoom':
                 self::assertEquals($requestData['deviceRoom'], $responseData['payload']['room']['roomID']);
+                self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+                self::assertEquals($device->getDeviceNameID(), $responseData['payload']['deviceNameID']);
+                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
+                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
+                self::assertNull($responseData['payload']['secret']);
                 break;
         }
     }
