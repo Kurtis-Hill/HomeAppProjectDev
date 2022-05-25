@@ -3,40 +3,42 @@
 namespace App\UserInterface\DTO\Response\CardForms;
 
 use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
-use App\UserInterface\DTO\Response\CardViewDTO\StandardCardViewDTO;
-use App\UserInterface\DTO\Response\Colours\CardColourResponseDTO;
+use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
+use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Immutable;
 
-class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
+#[Immutable]
+class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterface
 {
     private int $sensorId;
 
     private IconResponseDTO $currentCardIcon;
 
-    private CardColourResponseDTO $currentCardColour;
+    private ColourResponseDTO $currentCardColour;
 
-    private CardStateResponseDTO $currentState;
+    private CardStateResponseDTO $currentViewState;
 
     private string $cardViewID;
 
     #[ArrayShape([IconResponseDTO::class])]
     private array $iconSelection;
 
-    #[ArrayShape([CardColourResponseDTO::class])]
+    #[ArrayShape([ColourResponseDTO::class])]
     private array $colourSelection;
 
     #[ArrayShape([IconResponseDTO::class])]
     private array $cardStates;
 
-    #[ArrayShape([StandardCardViewDTO::class])]
+    #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     private array $sensorData;
 
     public function __construct(
         int $sensorId,
         IconResponseDTO $currentCardIcon,
-        CardColourResponseDTO $currentCardColour,
-        CardStateResponseDTO $currentState,
+        ColourResponseDTO $currentCardColour,
+        CardStateResponseDTO $currentViewState,
         string $cardViewID,
         array $iconSelection,
         array $colourSelection,
@@ -46,7 +48,7 @@ class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
         $this->sensorId = $sensorId;
         $this->currentCardIcon = $currentCardIcon;
         $this->currentCardColour = $currentCardColour;
-        $this->currentState = $currentState;
+        $this->currentViewState = $currentViewState;
         $this->cardViewID = $cardViewID;
         $this->iconSelection = $iconSelection;
         $this->colourSelection = $colourSelection;
@@ -74,14 +76,14 @@ class StandardCardViewSensorFormDTO implements CardViewSensorFormInterface
         return $this->currentCardIcon;
     }
 
-    public function getCurrentCardColour(): CardColourResponseDTO
+    public function getCurrentCardColour(): ColourResponseDTO
     {
         return $this->currentCardColour;
     }
 
-    public function getCurrentState(): CardStateResponseDTO
+    public function getCurrentViewState(): CardStateResponseDTO
     {
-        return $this->currentState;
+        return $this->currentViewState;
     }
 
     public function getIconSelection(): array

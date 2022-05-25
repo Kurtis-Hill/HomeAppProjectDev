@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\DTO\Response\CurrentCardReadingDTO;
 
-interface UserViewSensorTypeCardDataInterface
+interface UserViewSensorTypeCardDataResponseDTOInterface
 {
     public function getSensorData(): array;
 

@@ -2,6 +2,9 @@
 
 namespace App\UserInterface\DTO\Response\CardForms;
 
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
 class StandardSensorTypeBoundaryViewFormDTO
 {
     private string $readingType;
