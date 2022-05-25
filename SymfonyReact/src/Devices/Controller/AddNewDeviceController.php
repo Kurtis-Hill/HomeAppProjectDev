@@ -38,7 +38,7 @@ class AddNewDeviceController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         RoomRepositoryInterface $roomRepository,
-        NewDeviceServiceInterface $newDeviceBuilder,
+        NewDeviceServiceInterface $newDeviceHandler,
         GroupNameRepositoryInterface $groupNameRepository,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
@@ -52,7 +52,7 @@ class AddNewDeviceController extends AbstractController
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $newDeviceRequestDTO]
             );
         } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
         }
 
         $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
@@ -92,16 +92,15 @@ class AddNewDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $errors = $newDeviceBuilder->processNewDevice($newDeviceCheckDTO);
+        $errors = $newDeviceHandler->processNewDevice($newDeviceCheckDTO);
         if (!empty($errors)) {
             return $this->sendBadRequestJsonResponse($errors);
         }
 
         $device = $newDeviceCheckDTO->getNewDevice();
-        $devicePasswordEncoder->encodeDevicePassword($device);
-        $deviceSaved = $newDeviceBuilder->saveNewDevice($device);
+        $deviceSaved = $newDeviceHandler->saveDevice($device);
         if ($deviceSaved === false) {
-            return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
         }
 
         $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);

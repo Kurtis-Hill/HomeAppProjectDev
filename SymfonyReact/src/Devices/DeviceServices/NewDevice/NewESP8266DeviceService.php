@@ -28,6 +28,8 @@ class NewESP8266DeviceService extends AbstractESPDeviceService implements NewDev
         $newDevice->setCreatedBy($deviceUser);
         $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($deviceDTO->getRoomObject());
+        $newDevice->setDeviceSecret($this->createDevicePasswordHash($newDevice));
+        $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
 
         return $this->validateNewDevice($newDevice);
     }

@@ -16,6 +16,8 @@ class APIErrorMessages
 
     public const FAILED_TO_SAVE_DATA = 'Failed to save data';
 
+    public const FAILED_TO_SAVE_OBJECT = 'Failed to save %s';
+
     public const ACCESS_DENIED = 'You have been denied permission to perform this action';
 
     public const SHOULD_NOT_BE_BLANK = '%s name should not be blank';

@@ -16,5 +16,5 @@ interface NewDeviceServiceInterface
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $deviceDTO): array;
 
-    public function saveNewDevice(Devices $device): bool;
+    public function saveDevice(Devices $device): bool;
 }

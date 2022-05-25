@@ -16,18 +16,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateDeviceService extends AbstractESPDeviceService implements UpdateDeviceServiceInterface
 {
-    private DevicePasswordEncoderInterface $devicePasswordEncoder;
-
-    #[Pure]
-    public function __construct(
-        DeviceRepositoryInterface $deviceRepository,
-        ValidatorInterface $validator,
-        DevicePasswordEncoderInterface $devicePasswordEncoder,
-    ) {
-        $this->devicePasswordEncoder = $devicePasswordEncoder;
-        parent::__construct($deviceRepository, $validator);
-    }
-
     #[ArrayShape(['errors'])]
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array
     {

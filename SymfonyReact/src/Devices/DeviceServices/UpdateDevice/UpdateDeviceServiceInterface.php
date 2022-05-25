@@ -11,5 +11,5 @@ interface UpdateDeviceServiceInterface
 {
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array;
 
-    public function saveNewDevice(Devices $device): bool;
+    public function saveDevice(Devices $device): bool;
 }

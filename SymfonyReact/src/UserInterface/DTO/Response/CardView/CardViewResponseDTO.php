@@ -20,12 +20,12 @@ class CardViewResponseDTO
 
     public function __construct(
         int $cardViewID,
-        IconResponseDTO $icon,
+        IconResponseDTO $cardIcon,
         ColourResponseDTO $cardColour,
         CardStateResponseDTO $cardStateDTO
     ) {
         $this->cardViewID = $cardViewID;
-        $this->cardIcon = $icon;
+        $this->cardIcon = $cardIcon;
         $this->cardColour = $cardColour;
         $this->cardViewState = $cardStateDTO;
     }

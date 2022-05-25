@@ -2,6 +2,9 @@
 
 namespace App\UserInterface\DTO\Internal\CardDataFiltersDTO;
 
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
 class CardFilteredReadingTypeDTO
 {
     private string $readingTypeObject;

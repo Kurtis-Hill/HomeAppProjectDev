@@ -4,7 +4,9 @@ namespace App\UserInterface\DTO\Response\CurrentCardReadingDTO;
 
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Immutable;
 
+#[Immutable]
 class CurrentReadingSensorTypeCardResponseDTO implements UserViewSensorTypeCardDataResponseDTOInterface
 {
     private string $sensorName;

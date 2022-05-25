@@ -7,7 +7,9 @@ use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingRes
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Immutable;
 
+#[Immutable]
 class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterface
 {
     private int $sensorId;
