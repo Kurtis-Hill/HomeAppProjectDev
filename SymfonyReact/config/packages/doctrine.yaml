@@ -36,7 +36,7 @@ doctrine:
         alias: ESPSensor
         prefix: App\Sensors\Entity
       Device:
-        type: annotation
+        type: attribute
         dir: '%kernel.project_dir%/src/Devices/Entity'
         alias: Devices
         prefix: App\Devices\Entity

@@ -34,7 +34,7 @@ class NewESP8266DeviceService extends AbstractESPDeviceService implements NewDev
         return $this->validateNewDevice($newDevice);
     }
 
-    #[ArrayShape(["errors"])]
+    #[ArrayShape(["valdationErrors"])]
     private function validateNewDevice(Devices $newDevice): array
     {
         $validatorErrors = $this->validator->validate($newDevice);
