@@ -5,7 +5,7 @@ namespace App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Soil;
 
-class SoilReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker
+class SoilReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker implements SensorTypeReadingTypeInterface
 {
     public function checkReadingTypeIsValid(string $readingType): bool
     {

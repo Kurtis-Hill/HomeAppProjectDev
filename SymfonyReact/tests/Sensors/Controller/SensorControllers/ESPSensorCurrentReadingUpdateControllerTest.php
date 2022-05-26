@@ -570,7 +570,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-//        dd($responseData);
         self::assertEquals($responseCode, $requestResponse->getStatusCode());
         self::assertEquals($title, $responseData['title']);
         self::assertEquals($errors, $responseData['errors']);
@@ -658,7 +657,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//        dd($responseData);
+
         self::assertEquals(Response::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());
         self::assertEquals(APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT, $responseData['title']);
         self::assertEquals($errors, $responseData['errors']);

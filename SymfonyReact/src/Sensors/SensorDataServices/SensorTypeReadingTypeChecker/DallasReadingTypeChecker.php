@@ -4,7 +4,7 @@ namespace App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker;
 
 use App\Sensors\Entity\SensorTypes\Dallas;
 
-class DallasReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker
+class DallasReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker implements SensorTypeReadingTypeInterface
 {
     public function checkReadingTypeIsValid(string $readingType): bool
     {

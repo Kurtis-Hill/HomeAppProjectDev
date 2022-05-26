@@ -10,7 +10,7 @@ use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\BmpReadingTypeChecker;
 use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\DallasReadingTypeChecker;
 use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\DhtReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\AbstractSensorTypeReadingTypeChecker;
+use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeInterface;
 use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SoilReadingTypeChecker;
 
 class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeCheckerFactoryInterface
@@ -39,7 +39,7 @@ class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeChecke
     /**
      * @throws SensorTypeNotFoundException
      */
-    public function fetchSensorReadingTypeChecker(string $sensorType): AbstractSensorTypeReadingTypeChecker
+    public function fetchSensorReadingTypeChecker(string $sensorType): SensorTypeReadingTypeInterface
     {
         return match ($sensorType) {
             Dht::NAME => $this->dhtReadingTypeChecker,

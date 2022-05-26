@@ -62,8 +62,7 @@ class NavBarControllerTest extends WebTestCase
         return $this->userToken;
     }
 
-
-    public function test_navbar_data_response(): void
+    public function test_get_navbar_data_response(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);

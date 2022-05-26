@@ -26,6 +26,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CardCreationService implements CardCreationServiceInterface
 {
     use ValidatorProcessorTrait;
+
     private CardViewRepositoryInterface $cardViewRepository;
 
     private CardColourRepositoryInterface $cardColourRepository;
@@ -74,6 +75,7 @@ class CardCreationService implements CardCreationServiceInterface
             $onCardState,
         );
 
+//        dd($newCard, $sensorObject, $user, $randomIcon, $randomColour, $onCardState);
         $errors = $this->validateNewCard($newCard);
         if (!empty($errors)) {
             return $errors;

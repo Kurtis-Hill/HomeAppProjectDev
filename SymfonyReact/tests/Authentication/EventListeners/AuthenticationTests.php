@@ -202,4 +202,46 @@ class AuthenticationTests extends WebTestCase
             'roles' => ['ROLE_USER'],
         ];
     }
+
+    /**
+     * @dataProvider wrongCredentialsDataProvider
+     */
+    public function test_login_wrong_credentials(string $username, string $password): void
+    {
+        $this->client->request(
+            Request::METHOD_POST,
+            SecurityController::API_DEVICE_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"' . $username . '","password":"' . $password .'"}'
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+
+        self::assertArrayNotHasKey('token', $responseData);
+        self::assertArrayNotHasKey('refreshToken', $responseData);
+
+        self::assertEquals(401, $requestResponse->getStatusCode());
+    }
+
+    public function wrongCredentialsDataProvider(): Generator
+    {
+        yield [
+            'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'password' => 'wrong_password',
+        ];
+
+        yield [
+            'username' => 'Wrong_username',
+            'password' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'],
+        ];
+
+        yield [
+            'username' => 'Wrong_username',
+            'password' => 'Wrong_password',
+        ];
+    }
 }

@@ -31,11 +31,6 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->sut = $container->get(SensorReadingTypeOutOfBoundsService::class);
         $this->entityManager = $container->get('doctrine.orm.default_entity_manager');
     }
-    protected function tearDown(): void
-    {
-        $this->entityManager = null;
-        parent::tearDown();
-    }
 
     /**
      * @dataProvider analogOutOfBoundsSensorDataProvider
@@ -274,5 +269,11 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
             'sensorName' => Bmp::NAME,
             'sensorClass' => Bmp::class
         ];
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager = null;
+        parent::tearDown();
     }
 }

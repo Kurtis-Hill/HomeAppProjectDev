@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
 use App\UserInterface\Entity\Card\CardView;
 
-Interface StandardSensorTypeInterface
+interface StandardSensorTypeInterface
 {
     public function getCardViewObject(): ?CardView;
 

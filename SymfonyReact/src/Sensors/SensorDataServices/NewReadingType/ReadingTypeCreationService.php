@@ -35,6 +35,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
             $sensorTypeObject = $this->createNewSensorReadingTypeData($sensor);
             $validationErrors = $this->validateSensorReadingTypeData($sensorTypeObject);
         } catch (SensorTypeException | SensorReadingTypeRepositoryFactoryException $e) {
+//            dd($e);
             return [$e->getMessage()];
         } catch (ORMException $e) {
            return ['Failed to create sensor reading types'];
@@ -58,9 +59,6 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
     {
         $sensorType = $sensor->getSensorTypeObject()->getSensorType();
 
-        if (!$sensor->getSensorTypeObject() instanceof SensorTypeInterface) {
-            throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED, $sensorType));
-        }
         $sensorReadingCreationService = $this->readingTypeCreationFactory
             ->getSensorReadingTypeBuilder(
                 $sensorType

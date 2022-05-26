@@ -48,7 +48,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
     ): Response {
         try {
-            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_CURRENT_READING);
+            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_CURRENT_READING, 'asd');
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
@@ -93,6 +93,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             }
         }
 
+        // Success return
         if (
             isset($sensorDataCurrentReadingUpdateDTO)
             && empty($currentReadingSensorDataRequest->getErrors())
@@ -101,6 +102,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         ) {
             try {
                 $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequest->getSuccessfulRequests());
+                $normalizedResponse = array_map('current', $normalizedResponse);
             } catch (ExceptionInterface) {
                 return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
@@ -108,16 +110,24 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             return $this->sendSuccessfulJsonResponse($normalizedResponse, 'All sensor readings handled successfully');
         }
 
+        // Complete Failed return
         if (empty($currentReadingSensorDataRequest->getSuccessfulRequests())) {
-            return $this->sendBadRequestJsonResponse(
-                array_merge(
-                    $currentReadingSensorDataRequest->getValidationErrors(),
-                    $currentReadingSensorDataRequest->getErrors()
-                ),
-                APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT
+            $errors = array_merge(
+                $currentReadingSensorDataRequest->getValidationErrors(),
+                $currentReadingSensorDataRequest->getErrors()
             );
+            try {
+                $normalizedResponse = $this->normalizeResponse($errors);
+                if (count($normalizedResponse) > 0) {
+                    $normalizedResponse = array_map('current', $normalizedResponse);
+                }
+            } catch (ExceptionInterface) {
+                return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            }
+            return $this->sendBadRequestJsonResponse($normalizedResponse, APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT);
         }
 
+        // Partial Success return
         try {
             $normalizedErrorResponse = $this->normalizeResponse(
                 array_merge(
@@ -125,9 +135,15 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                     $currentReadingSensorDataRequest->getErrors()
                 ),
             );
+            if (count($normalizedErrorResponse) > 0) {
+                $normalizedErrorResponse = array_map('current', $normalizedErrorResponse);
+            }
             $normalizedSuccessResponse = $this->normalizeResponse(
                 $currentReadingSensorDataRequest->getSuccessfulRequests(),
             );
+            if (count($normalizedSuccessResponse) > 0) {
+                $normalizedSuccessResponse = array_map('current', $normalizedSuccessResponse);
+            }
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
@@ -137,8 +153,6 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             $normalizedSuccessResponse,
             APIErrorMessages::PART_OF_CONTENT_PROCESSED,
         );
-
-
     }
 
     #[Required]

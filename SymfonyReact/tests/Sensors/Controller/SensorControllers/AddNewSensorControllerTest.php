@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\SensorControllers;
+namespace Sensors\Controller\SensorControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -171,15 +171,21 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
 
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
-        self::assertArrayHasKey('sensorNameID', $responseData['payload']);
-        self::assertIsInt($responseData['payload']['sensorNameID']);
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+
+        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorNameID());
+        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
+        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDeviceObject()->getDeviceName());
+        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
+
     }
 
     /**
@@ -363,7 +369,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_can_add_new_sensor_with_bad_sensor_type(): void
+    public function test_adding_new_sensor_with_bad_sensor_type(): void
     {
         while (true) {
             $randomID = random_int(0, 1000000);
@@ -424,7 +430,6 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
         $sensorID = $responseData['payload']['sensorNameID'];
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorNameID' => $sensorID]);
@@ -441,11 +446,19 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf(CardView::class, $cardView);
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+        self::assertInstanceOf(Sensor::class, $sensor);
+        self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
+
+        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorNameID());
+        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
+        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDeviceObject()->getDeviceName());
+        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
+
     }
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @throws JsonException
      */
     public function test_add_new_sensor_when_not_part_of_associate_group(string $sensorType, string $sensorName): void
     {

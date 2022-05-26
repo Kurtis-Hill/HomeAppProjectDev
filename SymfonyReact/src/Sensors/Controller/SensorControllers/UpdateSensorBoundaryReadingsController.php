@@ -77,6 +77,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         $sensorProcessingErrors = [];
+        $validationErrors = [];
         foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
             try {
                 $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);
@@ -120,7 +121,9 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
             }
 
             if (!empty($validationError)) {
-                $validationErrors[] =  $validationError;
+                foreach ($validationError as $error) {
+                    $validationErrors[] =  $error;
+                }
             } else {
                 $this->successfullyProcessedTypes[] = $readingTypeResponseBuilderFactory
                     ->getStandardReadingTypeResponseBuilder($sensorReadingTypeObject)
@@ -128,15 +131,14 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
             }
 
         }
-        $sensorProcessingErrors = array_merge($sensorProcessingErrors, $validationErrors ?? []);
-
-        if (empty($this->successfullyProcessedTypes) && !empty($sensorProcessingErrors)) {
-            return $this->sendBadRequestJsonResponse($sensorProcessingErrors, 'All sensor boundary update requests failed');
+        $processingErrors = array_merge($sensorProcessingErrors, $validationErrors ?? []);
+        if (empty($this->successfullyProcessedTypes) && !empty($processingErrors)) {
+            return $this->sendBadRequestJsonResponse($processingErrors, 'All sensor boundary update requests failed');
         }
 
         try {
             $sensorRepository->flush();
-        } catch (ORMException|OptimisticLockException $e) {
+        } catch (ORMException|OptimisticLockException) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'sensor')]);
         }
 
@@ -148,12 +150,11 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
         if (count($this->getSuccessFullyProcessedResponseDTOs()) !== count($updateBoundaryReadingRequestDTO->getSensorData())) {
             return $this->sendMultiStatusJsonResponse(
-                $sensorProcessingErrors,
+                $processingErrors,
                 $normalizedResponse,
                 'Some sensor boundary update requests failed'
             );
         }
-
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
     }
 

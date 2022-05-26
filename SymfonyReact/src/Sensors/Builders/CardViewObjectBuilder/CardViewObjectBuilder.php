@@ -18,7 +18,6 @@ class CardViewObjectBuilder
         CardColour $cardColour,
         Cardstate $cardState,
     ): CardView {
-
         $newCard = new CardView();
         $newCard->setSensorNameID($sensor);
         $newCard->setUserID($user);
@@ -26,6 +25,6 @@ class CardViewObjectBuilder
         $newCard->setCardColourID($cardColour);
         $newCard->setCardStateID($cardState);
 
-        return new $newCard;
+        return $newCard;
     }
 }
