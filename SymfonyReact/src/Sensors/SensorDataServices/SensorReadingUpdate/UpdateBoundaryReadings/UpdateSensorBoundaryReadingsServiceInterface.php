@@ -4,12 +4,14 @@ namespace App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadi
 
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
 use App\Sensors\DTO\Request\UpdateSensorReadingBoundaryRequestDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
@@ -21,30 +23,36 @@ use JetBrains\PhpStorm\ArrayShape;
 
 interface UpdateSensorBoundaryReadingsServiceInterface
 {
-    /**
-     * @throws SensorTypeBuilderFailureException
-     */
-    public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO;
-
-    #[ArrayShape([Temperature::class | Humidity::class | Analog::class | Latitude::class])]
-    public function findSensorTypeAndReadingTypes(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
+//    /**
+//     * @throws SensorTypeBuilderFailureException
+//     */
+//    public function getReadingTypeObjectJoinQueryDTO(string $sensorName): JoinQueryDTO;
+//
+//    #[ArrayShape([Temperature::class | Humidity::class | Analog::class | Latitude::class])]
+//    public function findSensorTypeAndReadingTypes(JoinQueryDTO $readingTypeJoinQueryDTO, array $readingTypeObjectsJoinDTOs, int $deviceID, string $sensorName): array;
 
     /**
      * @throws SensorReadingUpdateFactoryException
+     * @throws ReadingTypeNotExpectedException
      */
-    public function getUpdateBoundaryReadingBuilder(string $sensorType): ReadingTypeUpdateBuilderInterface;
-
     #[ArrayShape(["errors"])]
-    public function processBoundaryReadingDTOs(
+    public function processBoundaryDataDTO(
+        SensorUpdateBoundaryDataDTOInterface $updateBoundaryDataDTO,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
-        string $sensorTypeName
+        string $sensorType,
     ): array;
 
-    /**
-     * @throws ReadingTypeBuilderFailureException
-     */
-    public function createReadingTypeQueryDTO(UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
+//    #[ArrayShape(["errors"])]
+//    public function processBoundaryReadingDTOs(
+//        AllSensorReadingTypeInterface $sensorReadingTypeObject,
+//        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
+//        string $sensorTypeName
+//    ): array;
+
+//    /**
+//     * @throws ReadingTypeBuilderFailureException
+//     */
+//    public function createReadingTypeQueryDTO(UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO): JoinQueryDTO;
 
     /**
      * @throws NonUniqueResultException

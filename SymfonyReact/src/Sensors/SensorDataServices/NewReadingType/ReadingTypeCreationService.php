@@ -6,21 +6,21 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Factories\ORMFactories\SensorType\SensorTypeRepositroyFactoryInterface;
+use App\Sensors\Factories\ORMFactories\SensorType\SensorTypeRepositoryFactoryInterface;
 use App\Sensors\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use Doctrine\ORM\Exception\ORMException;
 
 class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
 {
-    private SensorTypeRepositroyFactoryInterface $sensorTypeFactory;
+    private SensorTypeRepositoryFactoryInterface $sensorTypeFactory;
 
     private SensorTypeCreationFactory $readingTypeCreationFactory;
 
     private SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidatorService;
 
     public function __construct(
-        SensorTypeRepositroyFactoryInterface $sensorTypeFactory,
+        SensorTypeRepositoryFactoryInterface $sensorTypeFactory,
         SensorTypeCreationFactory $readingTypeCreationFactory,
         SensorReadingTypesValidatorServiceInterface $sensorReadingTypesValidator,
     ) {
@@ -58,6 +58,9 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
     {
         $sensorType = $sensor->getSensorTypeObject()->getSensorType();
 
+        if (!$sensor->getSensorTypeObject() instanceof SensorTypeInterface) {
+            throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED, $sensorType));
+        }
         $sensorReadingCreationService = $this->readingTypeCreationFactory
             ->getSensorReadingTypeBuilder(
                 $sensorType
@@ -76,7 +79,7 @@ class ReadingTypeCreationService implements SensorReadingTypeCreationInterface
      */
     private function persistSensorTypeObjects(SensorTypeInterface $sensorTypeObject): void
     {
-        $sensorTypeObjectAsString = $sensorTypeObject::class;
+        $sensorTypeObjectAsString = $sensorTypeObject->getSensorTypeName();
         $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
         $sensorTypeRepository->persist($sensorTypeObject);
     }

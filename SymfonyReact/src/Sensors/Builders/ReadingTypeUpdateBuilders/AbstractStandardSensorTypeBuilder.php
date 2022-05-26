@@ -25,7 +25,7 @@ abstract class AbstractStandardSensorTypeBuilder
         );
     }
 
-    protected function updateStandardSensorCurrentReading(
+    protected function buildStandardSensorUpdateCurrentReadingDTO(
         AllSensorReadingTypeInterface $standardReadingSensor,
         string $newSensorReading,
     ): ReadingTypeUpdateCurrentReadingDTO {

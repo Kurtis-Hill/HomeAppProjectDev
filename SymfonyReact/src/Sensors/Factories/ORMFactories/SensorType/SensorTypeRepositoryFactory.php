@@ -13,7 +13,7 @@ use App\Sensors\Repository\ORM\SensorType\DhtRepository;
 use App\Sensors\Repository\ORM\SensorType\GenericSensorTypeRepositoryInterface;
 use App\Sensors\Repository\ORM\SensorType\SoilRepository;
 
-class SensorTypeRepositoryFactory implements SensorTypeRepositroyFactoryInterface
+class SensorTypeRepositoryFactory implements SensorTypeRepositoryFactoryInterface
 {
     private DallasRepository $dallasRepository;
 
@@ -38,11 +38,11 @@ class SensorTypeRepositoryFactory implements SensorTypeRepositroyFactoryInterfac
     public function getSensorTypeRepository(string $sensorType): GenericSensorTypeRepositoryInterface
     {
         return match ($sensorType) {
-            Dallas::class => $this->dallasRepository,
-            Bmp::class => $this->bmpRepository,
-            Soil::class => $this->soilRepository,
-            Dht::class => $this->dhtRepository,
-            default => throw new SensorTypeException(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME)
+            Dallas::NAME => $this->dallasRepository,
+            Bmp::NAME => $this->bmpRepository,
+            Soil::NAME => $this->soilRepository,
+            Dht::NAME => $this->dhtRepository,
+            default => throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED, $sensorType)),
         };
     }
 }

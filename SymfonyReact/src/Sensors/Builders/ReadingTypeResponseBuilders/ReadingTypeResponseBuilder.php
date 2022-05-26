@@ -7,7 +7,7 @@ use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 
 class ReadingTypeResponseBuilder
 {
-    public static function buildReadingTypeResponseDTO(ReadingTypes $readingTypes)
+    public static function buildReadingTypeResponseDTO(ReadingTypes $readingTypes): ReadingTypeResponseDTO
     {
         return new ReadingTypeResponseDTO(
             $readingTypes->getReadingTypeID(),

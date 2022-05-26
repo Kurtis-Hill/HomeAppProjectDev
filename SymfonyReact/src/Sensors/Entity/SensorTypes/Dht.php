@@ -90,9 +90,9 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         return $this->sensorNameID;
     }
 
-    public function setSensorObject(Sensor $id): void
+    public function setSensorObject(Sensor $sensor): void
     {
-        $this->sensorNameID = $id;
+        $this->sensorNameID = $sensor;
     }
 
     public function getHumidObject(): Humidity

@@ -24,8 +24,7 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         TemperatureQueryTypeDTOBuilder $temperatureQueryTypeDTOBuilder,
         HumidityQueryTypeDTOBuilder $humidityQueryTypeDTOBuilder,
         LatitudeQueryTypeDTOBuilder $latitudeQueryTypeDTOBuilder
-    )
-    {
+    ) {
         $this->temperatureQueryTypeDTOBuilder = $temperatureQueryTypeDTOBuilder;
         $this->humidityQueryTypeDTOBuilder = $humidityQueryTypeDTOBuilder;
         $this->latitudeQueryTypeDTOBuilder = $latitudeQueryTypeDTOBuilder;

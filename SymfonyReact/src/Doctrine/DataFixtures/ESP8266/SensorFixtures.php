@@ -29,6 +29,43 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
     private const FIXTURE_ORDER = 5;
 
+    public const ALL_SENSOR_TYPE_DATA = [
+        Dht::NAME => [
+            'alias' => 'dht',
+            'object' => Dht::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' => Humidity::class,
+            ],
+        ],
+
+        Dallas::NAME => [
+            'alias' => 'dallas',
+            'object' => Dallas::class,
+            'readingTypes' => [
+                Temperature::READING_TYPE =>  Temperature::class,
+            ],
+        ],
+
+        Soil::NAME => [
+            'alias' => 'soil',
+            'object' => Soil::class,
+            'readingTypes' => [
+                Analog::READING_TYPE =>  Analog::class,
+            ],
+        ],
+
+        Bmp::NAME => [
+            'alias' => Bmp::NAME,
+            'object' => Bmp::class,
+            'readingTypes' => [
+                'temperature' =>  Temperature::class,
+                'humidity' => Humidity::class,
+                'latitude' => Latitude::class,
+            ],
+        ],
+    ];
+
     public const SENSORS = [
         Dht::NAME => 'AdminDHTSensor',
         Dallas::NAME => 'AdminDallasSensor',
@@ -57,7 +94,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         // to check each sensor type with card states can be returned as to be displayed on the frontend
         $sensorCountCardView = 0;
         foreach (self::CARD_VIEW_CHECK as $state => $sensorData) {
-            foreach (SensorType::ALL_SENSOR_TYPE_DATA as $name => $sensorDetails) {
+            foreach (self::ALL_SENSOR_TYPE_DATA as $name => $sensorDetails) {
                 $sensor = new Sensor();
                 $sensor->setDeviceObject($this->getReference(ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']));
                 $sensor->setSensorName($sensorData.$name.$sensorCountCardView);
@@ -119,7 +156,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $this->addReference($name, $newAdminSensorTwo);
             $manager->persist($newAdminSensorTwo);
 
-            foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
+            foreach (self::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
                 $newSensorType = new $sensorDetails['object']();
 //                $newSensorTypeTwo = new $sensorDetails['object'];
                 if ($sensorTypeFirst === $sensorType) {
@@ -160,7 +197,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         $sensorCounter = 0;
 
         foreach (ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES as $device) {
-            foreach (SensorType::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
+            foreach (self::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
                 $sensorNameAdminDevice = sprintf('%s%s%d', $sensorType, 'admin', $sensorCounter);
                 $newAdminSensor = new Sensor();
                 $newAdminSensor->setDeviceObject($this->getReference($device['referenceName']));

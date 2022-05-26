@@ -7,10 +7,13 @@ use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
+use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use TypeError;
 
 class NewSensorCreationService implements NewSensorCreationServiceInterface
 {
@@ -28,33 +31,27 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface
         $this->validator = $validator;
     }
 
-    public function validateNewSensorRequestDTO(AddNewSensorRequestDTO $addNewSensorRequestDTO): array
+    #[ArrayShape(['validationErrors'])]
+    public function processNewSensor(NewSensorDTO $newSensorDTO): array
     {
-        $validationErrors = $this->validator->validate($addNewSensorRequestDTO);
-
-        return $this->getValidationErrorAsArray($validationErrors);
-    }
-
-    public function createNewSensor(NewSensorDTO $newSensorDTO): Sensor
-    {
-        $sensor = new Sensor();
+        $sensor = $newSensorDTO->getSensor();
         $sensor->setSensorName($newSensorDTO->getSensorName());
         $sensor->setSensorTypeID($newSensorDTO->getSensorType());
         $sensor->setDeviceObject($newSensorDTO->getDevice());
-        $sensor->setCreatedBy($newSensorDTO->getUser());
+        try {
+            $sensor->setCreatedBy($newSensorDTO->getUser());
+        } catch (TypeError) {
+            throw new UserNotAllowedException(UserNotAllowedException::MESSAGE);
+        }
 
-        return $sensor;
+        return $this->validateSensor($sensor);
     }
 
-    public function validateSensor(Sensor $sensor): array
+    private function validateSensor(Sensor $sensor): array
     {
-        $errors = [];
         $validationErrors = $this->validator->validate($sensor);
-
-        if ($validationErrors !== null) {
-            foreach ($validationErrors as $error) {
-                $errors[] = $error->getMessage();
-            }
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            $errors = $this->getValidationErrorAsArray($validationErrors);
         }
 
         try {
@@ -63,7 +60,7 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface
             $errors[] = $e->getMessage();
         }
 
-        return $errors;
+        return $errors ?? [];
     }
 
     /**
@@ -83,14 +80,14 @@ class NewSensorCreationService implements NewSensorCreationServiceInterface
         }
     }
 
-    public function saveNewSensor(Sensor $sensor): bool
+    public function saveSensor(Sensor $sensor): bool
     {
         try {
             $this->sensorRepository->persist($sensor);
             $this->sensorRepository->flush();
 
             return true;
-        } catch (ORMException | OptimisticLockException) {
+        } catch (ORMException|OptimisticLockException) {
             return false;
         }
     }

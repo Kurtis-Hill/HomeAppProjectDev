@@ -20,8 +20,7 @@ class DHTQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
     public function __construct(
         TemperatureQueryTypeDTOBuilder $temperatureQueryTypeDTOBuilder,
         HumidityQueryTypeDTOBuilder $humidityQueryTypeDTOBuilder
-    )
-    {
+    ) {
         $this->temperatureQueryTypeDTOBuilder = $temperatureQueryTypeDTOBuilder;
         $this->humidityQueryTypeDTOBuilder = $humidityQueryTypeDTOBuilder;
     }

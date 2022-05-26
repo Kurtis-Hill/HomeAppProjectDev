@@ -18,8 +18,7 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
     public function buildUpdateSensorBoundaryReadingsDTO(
         SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-    ): UpdateStandardReadingTypeBoundaryReadingsDTO
-    {
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
         if (!$sensorReadingTypeObject instanceof Latitude || !$updateDataSensorBoundaryDTO instanceof StandardSensorUpdateBoundaryDataDTO) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
@@ -56,7 +55,7 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             );
         }
 
-        return $this->updateStandardSensorCurrentReading(
+        return $this->buildStandardSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

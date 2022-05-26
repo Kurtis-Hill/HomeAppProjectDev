@@ -8,6 +8,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface SensorTypeRepositoryInterface
 {
@@ -25,6 +26,7 @@ interface SensorTypeRepositoryInterface
     /**
      * @throws ORMException
      */
+    #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
     public function getAllSensorTypeNames(): array;
 
     /**

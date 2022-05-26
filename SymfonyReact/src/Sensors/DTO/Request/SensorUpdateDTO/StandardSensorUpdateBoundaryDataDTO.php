@@ -2,8 +2,10 @@
 
 namespace App\Sensors\DTO\Request\SensorUpdateDTO;
 
+use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[Immutable]
 class StandardSensorUpdateBoundaryDataDTO implements SensorUpdateBoundaryDataDTOInterface
 {
     #[

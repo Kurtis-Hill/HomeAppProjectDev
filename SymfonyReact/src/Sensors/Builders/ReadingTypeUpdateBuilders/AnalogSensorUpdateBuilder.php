@@ -56,7 +56,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
             );
         }
 
-        return $this->updateStandardSensorCurrentReading(
+        return $this->buildStandardSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

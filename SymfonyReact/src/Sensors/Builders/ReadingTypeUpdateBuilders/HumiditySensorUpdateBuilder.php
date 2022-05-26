@@ -18,8 +18,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
     public function buildUpdateSensorBoundaryReadingsDTO(
         SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-    ): UpdateStandardReadingTypeBoundaryReadingsDTO
-    {
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
         if (!$sensorReadingTypeObject instanceof Humidity || !$updateDataSensorBoundaryDTO instanceof StandardSensorUpdateBoundaryDataDTO) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
@@ -30,7 +29,10 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($updateDataSensorBoundaryDTO, $sensorReadingTypeObject);
+        return $this->buildStandardSensorUpdateReadingDTO(
+            $updateDataSensorBoundaryDTO,
+            $sensorReadingTypeObject
+        );
     }
 
     public function buildReadingTypeCurrentReadingUpdateDTO(
@@ -56,7 +58,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             );
         }
 
-        return $this->updateStandardSensorCurrentReading(
+        return $this->buildStandardSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

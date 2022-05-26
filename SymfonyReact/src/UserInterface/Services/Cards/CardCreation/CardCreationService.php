@@ -2,6 +2,8 @@
 
 namespace App\UserInterface\Services\Cards\CardCreation;
 
+use App\Common\Traits\ValidatorProcessorTrait;
+use App\Sensors\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\Sensors\Entity\Sensor;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
@@ -17,11 +19,13 @@ use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CardCreationService implements CardCreationServiceInterface
 {
+    use ValidatorProcessorTrait;
     private CardViewRepositoryInterface $cardViewRepository;
 
     private CardColourRepositoryInterface $cardColourRepository;
@@ -47,74 +51,49 @@ class CardCreationService implements CardCreationServiceInterface
     }
 
 
+    /**
+     * @throws CardStateException
+     */
     public function createUserCardForSensor(Sensor $sensorObject, UserInterface $user): array
     {
         try {
-            $randomIcon = $this->returnRandomIcon();
-            $randomColour = $this->returnRandomColour();
-        } catch (IconException | CardColourException $e) {
+            $randomIcon = $this->generateRandomIconObject();
+            $randomColour = $this->generateRandomColourObject();
+            $onCardState = $this->generateOnStateCardObject();
+        } catch (IconException | CardColourException | CardStateException $e) {
             return [$e->getMessage()];
         } catch (NonUniqueResultException | NoResultException) {
             return ['There is an issue with the database contact an administrator'];
         }
 
-        $onCardState = $this->cardStateRepository->findOneByState(Cardstate::ON);
-
-        if (!$onCardState instanceof Cardstate) {
-            throw new CardStateException(CardStateException::CARD_STATE_NOT_FOUND);
-        }
-
-        $newCard = new CardView();
-        $newCard->setSensorNameID($sensorObject);
-        $newCard->setUserID($user);
-        $newCard->setCardIconID($randomIcon);
-        $newCard->setCardColourID($randomColour);
-        $newCard->setCardStateID($onCardState);
+        $newCard = CardViewObjectBuilder::buildNewCardViewObject(
+            $sensorObject,
+            $user,
+            $randomIcon,
+            $randomColour,
+            $onCardState,
+        );
 
         $errors = $this->validateNewCard($newCard);
-
         if (!empty($errors)) {
             return $errors;
         }
 
         try {
             $this->saveNewCard($newCard);
-        } catch (ORMException) {
+        } catch (ORMException | OptimisticLockException) {
             return ['Failed to save new card for sensor'];
         }
 
         return [];
     }
 
-    private function validateNewCard(CardView $cardView): array
-    {
-        $errors = $this->validator->validate($cardView);
-
-        if (count($errors) > 0) {
-            $validationErrors = [];
-            foreach ($errors as $error) {
-                $validationErrors[] = $error->getMessage();
-            }
-        }
-
-        return $validationErrors ?? [];
-    }
-
     /**
-     * @throws ORMException
-     */
-    private function saveNewCard(CardView $cardView): void
-    {
-        $this->cardViewRepository->persist($cardView);
-        $this->cardViewRepository->flush();
-    }
-
-    /**
-     * @throws NonUniqueResultException
      * @throws IconException
+     * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    private function returnRandomIcon(): Icons
+    private function generateRandomIconObject(): Icons
     {
         $maxIconNumber = $this->iconsRepository->countAllIcons();
         $firstIconId = $this->iconsRepository->getFirstIcon()->getIconID();
@@ -128,11 +107,11 @@ class CardCreationService implements CardCreationServiceInterface
     }
 
     /**
-     * @throws NonUniqueResultException
      * @throws CardColourException
+     * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    private function returnRandomColour(): CardColour
+    private function generateRandomColourObject(): CardColour
     {
         $maxColourNumber = $this->cardColourRepository->countAllColours();
         $firstColourId = $this->cardColourRepository->getFirstColourId()->getColourID();
@@ -143,5 +122,37 @@ class CardCreationService implements CardCreationServiceInterface
         }
 
         return $randomColour;
+    }
+
+    /**
+     * @throws CardStateException
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    private function generateOnStateCardObject(): Cardstate
+    {
+        $onCardState = $this->cardStateRepository->findOneByState(Cardstate::ON);
+
+        if (!$onCardState instanceof Cardstate) {
+            throw new CardStateException(CardStateException::CARD_STATE_NOT_FOUND);
+        }
+
+        return $onCardState;
+    }
+
+    private function validateNewCard(CardView $cardView): array
+    {
+        $errors = $this->validator->validate($cardView);
+
+        return $this->getValidationErrorAsArray($errors);
+    }
+
+    /**
+     * @throws ORMException
+     */
+    private function saveNewCard(CardView $cardView): void
+    {
+        $this->cardViewRepository->persist($cardView);
+        $this->cardViewRepository->flush();
     }
 }

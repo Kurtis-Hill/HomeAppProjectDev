@@ -7,7 +7,7 @@ use App\UserInterface\Entity\Card\CardView;
 
 interface SensorTypeInterface
 {
-    public function setSensorObject(Sensor $id);
+    public function setSensorObject(Sensor $sensor);
 
     public function getSensorTypeID(): int;
 

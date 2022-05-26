@@ -10,12 +10,13 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentRe
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use JetBrains\PhpStorm\ArrayShape;
 
 interface CurrentReadingSensorDataRequestHandlerInterface
 {
-    public function handleSensorUpdateRequest(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool;
+    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool;
 
     #[ArrayShape(
         [
@@ -29,14 +30,14 @@ interface CurrentReadingSensorDataRequestHandlerInterface
 
     public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBuilderInterface;
 
-    #[ArrayShape(['temperature data accepted for sensor <sensor-name>'])]
-    public function getSuccessfulRequests(): array;
-
     public function getReadingTypeRequestAttempt(): int;
 
-    #[ArrayShape(['validationErrors'])]
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
+    public function getSuccessfulRequests(): array;
+
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getValidationErrors(): array;
 
-    #[ArrayShape(['errors'])]
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getErrors(): array;
 }

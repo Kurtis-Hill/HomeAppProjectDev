@@ -5,12 +5,15 @@ namespace App\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\Builders\SensorResponseBuilders\SensorResponseBuilder;
+use App\Sensors\Builders\SensorCreationBuilders\NewSensorDTOBuilder;
+use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
 use App\Sensors\SensorDataServices\DeleteSensorService\DeleteSensorService;
 use App\Sensors\SensorDataServices\NewReadingType\SensorReadingTypeCreationInterface;
@@ -27,15 +30,18 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'new-sensor')]
 class AddNewSensorController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
     #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
+        ValidatorInterface $validator,
         NewSensorCreationServiceInterface $newSensorCreationService,
         SensorReadingTypeCreationInterface $readingTypeCreation,
         DeviceRepositoryInterface $deviceRepository,
@@ -44,7 +50,6 @@ class AddNewSensorController extends AbstractController
         DeleteSensorService $deleteSensorService,
     ): JsonResponse {
         $newSensorRequestDTO = new AddNewSensorRequestDTO();
-
         try {
             $this->deserializeRequest(
                 $request->getContent(),
@@ -56,18 +61,17 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $requestValidationErrors = $newSensorCreationService->validateNewSensorRequestDTO($newSensorRequestDTO);
-        if (!empty($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($requestValidationErrors);
+        $requestValidationErrors = $validator->validate($newSensorRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
         try {
-            $device = $deviceRepository->findOneById($newSensorRequestDTO->getDeviceNameID());
-        } catch (NonUniqueResultException | ORMException) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::CONTACT_SYSTEM_ADMIN, 'device query failed')]);
+            $deviceObject = $deviceRepository->findOneById($newSensorRequestDTO->getDeviceNameID());
+        } catch (ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
         }
-
-        if (!$device instanceof Devices) {
+        if (!$deviceObject instanceof Devices) {
             return $this->sendBadRequestJsonResponse([
                 sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
@@ -75,17 +79,18 @@ class AddNewSensorController extends AbstractController
                 ),
             ]);
         }
+
         try {
-            $sensorType = $sensorTypeRepository->findOneById($newSensorRequestDTO->getSensorTypeID());
+            $sensorTypeObject = $sensorTypeRepository->findOneById($newSensorRequestDTO->getSensorTypeID());
         } catch (ORMException) {
-            return $this->sendBadRequestJsonResponse([
+            return $this->sendInternalServerErrorJsonResponse([
                 sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
+                    APIErrorMessages::QUERY_FAILURE,
                     'Sensor Type',
                 ),
             ]);
         }
-        if (!$sensorType instanceof SensorType) {
+        if (!$sensorTypeObject instanceof SensorType) {
             return $this->sendBadRequestJsonResponse([
                 sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
@@ -94,51 +99,56 @@ class AddNewSensorController extends AbstractController
             ]);
         }
 
-        $newSensorDTO = new NewSensorDTO(
+        $newSensorDTO = NewSensorDTOBuilder::buildNewSensorDTO(
             $newSensorRequestDTO->getSensorName(),
-            $sensorType,
-            $device,
+            $sensorTypeObject,
+            $deviceObject,
             $this->getUser()
         );
+
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-
-        $sensor = $newSensorCreationService->createNewSensor($newSensorDTO);
-        $sensorCreationErrors = $newSensorCreationService->validateSensor($sensor);
+        try {
+            $sensorCreationErrors = $newSensorCreationService->processNewSensor($newSensorDTO);
+        } catch (UserNotAllowedException $exception) {
+            return $this->sendForbiddenAccessJsonResponse([$exception->getMessage()]);
+        }
 
         if (!empty($sensorCreationErrors)) {
             return $this->sendBadRequestJsonResponse($sensorCreationErrors);
         }
 
-        $saveSensor = $newSensorCreationService->saveNewSensor($sensor);
+        $sensor = $newSensorDTO->getSensor();
 
+        $saveSensor = $newSensorCreationService->saveSensor($sensor);
         if ($saveSensor !== true) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
-
         if (!empty($sensorReadingTypeCreationErrors)) {
-            $deleteSensorService->deleteSensor($sensor);
+            try {
+                $deleteSensorService->deleteSensor($sensor);
+            } catch (ORMException) {
+                // @TODO add logg
+            }
 
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }
 
         $errors = $cardCreationService->createUserCardForSensor($sensor, $this->getUser());
-
         if (!empty($errors)) {
             return $this->sendInternalServerErrorJsonResponse($errors);
         }
 
-        $sensorResponseDTO = SensorResponseBuilder::buildSensorResponseDTO($sensor);
-
+        $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {
             $normalizedResponse = $this->normalizeResponse($sensorResponseDTO);
         } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         return $this->sendCreatedResourceJsonResponse($normalizedResponse);

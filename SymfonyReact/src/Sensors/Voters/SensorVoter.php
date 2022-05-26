@@ -17,6 +17,7 @@ class SensorVoter extends Voter
 
     public const UPDATE_SENSOR_READING_BOUNDARY = 'update-sensor-boundary-reading';
 
+    public const UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
 
     /**
      * @param string $attribute
@@ -43,19 +44,25 @@ class SensorVoter extends Voter
         $user = $token->getUser();
 
         return match ($attribute) {
-            self::ADD_NEW_SENSOR => $this->canAddNewDevice($user, $subject),
+            self::ADD_NEW_SENSOR => $this->canAddNewSensor($user, $subject),
             self::UPDATE_SENSOR_READING_BOUNDARY => $this->canUpdateSensorBoundaryReading($user, $subject),
+            self::UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
             default => false
         };
     }
 
-    private function canAddNewDevice(UserInterface $user, NewSensorDTO $newSensorDTO): bool
+    private function canAddNewSensor(UserInterface $user, NewSensorDTO $newSensorDTO): bool
     {
         if (!$user instanceof User) {
             return false;
         }
 
-        if (!in_array($newSensorDTO->getDevice()->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (
+            !in_array(
+                $newSensorDTO->getDevice()->getGroupNameObject()->getGroupNameID(),
+                $user->getGroupNameIds(), true
+            )
+        ) {
             return false;
         }
 
@@ -73,5 +80,12 @@ class SensorVoter extends Voter
         }
 
         return true;
+    }
+
+    private function canUpdateSensorCurrentReading(UserInterface $user): bool
+    {
+        if (!$user instanceof Devices) {
+            return false;
+        }
     }
 }

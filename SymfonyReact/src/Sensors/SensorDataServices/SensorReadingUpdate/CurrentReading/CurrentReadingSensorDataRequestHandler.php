@@ -4,6 +4,7 @@ namespace App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\Traits\ValidatorProcessorTrait;
+use App\Sensors\Builders\CurrentReadingDTOBuilders\CurrentReadingUpdateDTOBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
@@ -11,6 +12,7 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentRe
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
@@ -33,14 +35,18 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     private SensorTypeReadingTypeCheckerFactory $sensorTypeReadingTypeCheckerFactory;
 
+    #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
     private array $allSensorTypes = [];
 
     private int $readingTypeRequestAttempt = 0;
 
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     private array $successfulRequests = [];
 
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     private array $validationErrors = [];
 
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     private array $errors = [];
 
     public function __construct(
@@ -59,12 +65,12 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         }
     }
 
-    public function handleSensorUpdateRequest(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool
+    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool
     {
-        return $this->validateSensorDataRequest($sensorDataCurrentReadingUpdateDTO);
+        return $this->validateSensorData($sensorDataCurrentReadingUpdateDTO);
     }
 
-    private function validateSensorDataRequest(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool
+    private function validateSensorData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool
     {
         $passedValidation = true;
         $objectValidationErrors = $this->validator->validate($sensorDataCurrentReadingUpdateDTO);
@@ -75,7 +81,12 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             $passedValidation = false;
         }
         if (!in_array($sensorDataCurrentReadingUpdateDTO->getSensorType(), $this->allSensorTypes, true)) {
-            $this->errors[] = sprintf(APIErrorMessages::OBJECT_NOT_RECOGNISED, 'Sensor type ' . $sensorDataCurrentReadingUpdateDTO->getSensorType());
+            $this->errors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO(
+                sprintf(
+                    APIErrorMessages::OBJECT_NOT_RECOGNISED,
+                    'Sensor type ' . $sensorDataCurrentReadingUpdateDTO->getSensorType()
+                )
+            );
             $passedValidation = false;
         }
 
@@ -117,8 +128,11 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             if ($sensorTypeReadingValidationPassed === false) {
                 continue;
             }
-            $readingTypeCurrentReadingDTOs[] = $sensorTypeUpdateDTOBuilder->buildRequestCurrentReadingUpdateDTO($currentReading);
-            $this->successfulRequests[] = sprintf(self::SENSOR_UPDATE_SUCCESS_MESSAGE, $readingTypeCurrentReadingDTO->getReadingType(), $sensorDataCurrentReadingUpdateDTO->getSensorName());
+            $readingTypeCurrentReadingDTOs[] = $readingTypeCurrentReadingDTO;
+            $this->successfulRequests[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingSuccessUpdateDTO(
+                $readingTypeCurrentReadingDTO->getReadingType(),
+                $sensorDataCurrentReadingUpdateDTO->getSensorName()
+            );
         }
 
         return $readingTypeCurrentReadingDTOs ?? [];
@@ -129,7 +143,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         try {
             $sensorReadingTypeChecker = $this->sensorTypeReadingTypeCheckerFactory->fetchSensorReadingTypeChecker($sensorType);
         } catch (SensorTypeNotFoundException $e) {
-            $this->errors[] = $e->getMessage();
+            $this->errors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($e->getMessage());
 
             return false;
         }
@@ -137,7 +151,13 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $readingTypeValidForSensorType = $sensorReadingTypeChecker->checkReadingTypeIsValid($readingType);
 
         if ($readingTypeValidForSensorType === false) {
-            $this->errors[] = sprintf(APIErrorMessages::READING_TYPE_NOT_VALID_FOR_SENSOR, $readingType, $sensorType);
+            $this->errors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO(
+                sprintf(
+                    APIErrorMessages::READING_TYPE_NOT_VALID_FOR_SENSOR,
+                    $readingType,
+                    $sensorType
+                )
+            );
 
             return false;
         }
@@ -150,7 +170,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         try {
             return $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($readingType);
         } catch (SensorReadingUpdateFactoryException $e) {
-            $this->errors[] = $e->getMessage();
+            $this->errors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($e->getMessage());
         }
 
         return null;
@@ -167,7 +187,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $objectValidationErrors = $this->validator->validate($currentReadingUpdateRequestDTO, null, $sensorType);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
             foreach ($objectValidationErrors as $error) {
-                $this->validationErrors[] = $this->getValidationErrorsAsStrings($error);
+                $this->validationErrors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($this->getValidationErrorsAsStrings($error));
             }
             return false;
         }
@@ -175,12 +195,13 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         return true;
     }
 
-    #[ArrayShape(['temperature|humidity|analog|latitude data accepted for sensor <sensor-name>'])]
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getSuccessfulRequests(): array
     {
         return $this->successfulRequests;
     }
 
+    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getReadingTypeRequestAttempt(): int
     {
         return $this->readingTypeRequestAttempt;

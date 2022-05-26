@@ -96,11 +96,11 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
     }
 
     /**
-     * @param Sensor $id
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensor $id): void
+    public function setSensorObject(Sensor $sensor): void
     {
-        $this->sensorNameID = $id;
+        $this->sensorNameID = $sensor;
     }
 
     /**

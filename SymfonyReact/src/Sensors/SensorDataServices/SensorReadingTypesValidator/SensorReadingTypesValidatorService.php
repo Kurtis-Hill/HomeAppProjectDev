@@ -16,6 +16,7 @@ use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeReposi
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+//@When New Sensor Reading Type
 class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorServiceInterface
 {
     use ValidatorProcessorTrait;
@@ -24,15 +25,18 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
 
     private ValidatorInterface $validator;
 
-    public function __construct(SensorReadingTypeRepositoryFactoryInterface $readingTypeFactory, ValidatorInterface $validator,)
-    {
+    public function __construct(
+        SensorReadingTypeRepositoryFactoryInterface $readingTypeFactory,
+        ValidatorInterface $validator,
+    ) {
         $this->sensorReadingTypeFactory = $readingTypeFactory;
         $this->validator = $validator;
     }
 
     #[ArrayShape(["errors"])]
-    public function validateSensorReadingTypeObjectsBySensorTypeObject(SensorTypeInterface $sensorTypeObject): array
-    {
+    public function validateSensorReadingTypeObjectsBySensorTypeObject(
+        SensorTypeInterface $sensorTypeObject
+    ): array {
         $sensorType = $sensorTypeObject->getSensorTypeName();
 
         $errors = [];
@@ -106,8 +110,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
     public function validateSensorReadingTypeObject(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
         string $sensorType
-    ): array
-    {
+    ): array {
         $validationErrors = $this->performSensorReadingTypeValidation(
             $sensorReadingTypeObject,
             $sensorType

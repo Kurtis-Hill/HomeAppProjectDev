@@ -29,7 +29,10 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($updateDataSensorBoundaryDTO, $sensorReadingTypeObject);
+        return $this->buildStandardSensorUpdateReadingDTO(
+            $updateDataSensorBoundaryDTO,
+            $sensorReadingTypeObject
+        );
     }
 
     public function buildReadingTypeCurrentReadingUpdateDTO(
@@ -54,7 +57,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
             );
         }
 
-        return $this->updateStandardSensorCurrentReading(
+        return $this->buildStandardSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

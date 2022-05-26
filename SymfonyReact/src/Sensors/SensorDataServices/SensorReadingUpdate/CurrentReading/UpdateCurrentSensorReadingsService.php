@@ -20,6 +20,7 @@ use App\Sensors\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServic
 use App\Sensors\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface;
 use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingInterface
 {
@@ -34,6 +35,22 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
     private SensorConstantlyRecordServiceInterface $constantlyRecordService;
 
     private ReadingTypeQueryFactory $readingTypeQueryBuilderFactory;
+
+    public function __construct(
+        SensorRepositoryInterface $sensorRepository,
+        SensorReadingUpdateFactory $readingUpdateFactory,
+        SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
+        OutOfBoundsSensorServiceInterface $outOfBoundsSensorService,
+        SensorConstantlyRecordServiceInterface $constantlyRecordService,
+        ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
+    ) {
+        $this->sensorRepository = $sensorRepository;
+        $this->readingUpdateFactory = $readingUpdateFactory;
+        $this->readingTypesValidator = $readingTypesValidator;
+        $this->outOfBoundsSensorService = $outOfBoundsSensorService;
+        $this->constantlyRecordService = $constantlyRecordService;
+        $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
+    }
 
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
@@ -103,24 +120,13 @@ class UpdateCurrentSensorReadingsService implements UpdateCurrentSensorReadingIn
                 }
             }
         }
-        $this->sensorRepository->flush();
+        try {
+            $this->sensorRepository->flush();
+        } catch (ORMException|OptimisticLockException $e) {
+            error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            return false;
+        }
 
         return true;
-    }
-
-    public function __construct(
-        SensorRepositoryInterface $sensorRepository,
-        SensorReadingUpdateFactory $readingUpdateFactory,
-        SensorReadingTypesValidatorServiceInterface $readingTypesValidator,
-        OutOfBoundsSensorServiceInterface $outOfBoundsSensorService,
-        SensorConstantlyRecordServiceInterface $constantlyRecordService,
-        ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
-    ) {
-        $this->sensorRepository = $sensorRepository;
-        $this->readingUpdateFactory = $readingUpdateFactory;
-        $this->readingTypesValidator = $readingTypesValidator;
-        $this->outOfBoundsSensorService = $outOfBoundsSensorService;
-        $this->constantlyRecordService = $constantlyRecordService;
-        $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
     }
 }

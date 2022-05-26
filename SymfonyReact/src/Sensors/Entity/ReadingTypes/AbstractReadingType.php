@@ -9,6 +9,8 @@ abstract class AbstractReadingType
 {
     protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
 
+    abstract public function getSensorID(): int;
+
     abstract public function getReadingType(): string;
 
     abstract public function getCurrentReading(): int|float;
