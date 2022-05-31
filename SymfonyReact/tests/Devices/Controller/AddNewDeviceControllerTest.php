@@ -60,9 +60,9 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        return $requestData['token'];
+        return $responseData['token'];
     }
 
     public function test_sending_wrong_encoding_request(): void
@@ -602,6 +602,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $this->entityManager->close();
         $this->entityManager = null;
+
         parent::tearDown();
     }
 }

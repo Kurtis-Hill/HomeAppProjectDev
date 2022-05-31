@@ -89,7 +89,7 @@ class NavBarControllerTest extends WebTestCase
         self::assertCount(count($userDevices), $responseData['devices'], sprintf($countMessage, 'device'));
         self::assertCount(count($testUser->getGroupNameIds()), $responseData['groupNames'], sprintf($countMessage, 'group name'));
         self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
-        self::assertSameSize(UserDataFixtures::USER_ACCOUNTS, $responseData['groupNames']);
+        self::assertSameSize(UserDataFixtures::USER_GROUPS, $responseData['groupNames']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }

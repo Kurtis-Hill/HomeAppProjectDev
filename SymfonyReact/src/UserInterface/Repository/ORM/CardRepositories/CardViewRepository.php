@@ -15,6 +15,7 @@ use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,11 +38,12 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $this->getEntityManager()->flush();
     }
 
-    public function getAllCardSensorDataScalar(
+    public function getAllCardSensorData(
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
-        CardViewTypeFilterDTO $cardViewTypeFilterDTO = null
+        ?CardViewTypeFilterDTO $cardViewTypeFilterDTO = null,
+        int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array {
         $groupNameIDs = $user->getGroupNameIds();
 
@@ -51,7 +53,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensorNameID', CardView::ALIAS));
 
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO->getReadingTypesToQuery(), $qb);
-        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, 'sensors', Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS, )
+        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, Sensor::ALIAS, Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS)
             ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceNameID', Sensor::ALIAS))
             ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('cardStateID', CardView::ALIAS))
             ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
@@ -86,16 +88,19 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             }
         }
 
-        foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {
-            $sensorTypeAlias = $excludeSensorType->getAlias();
-            $sensorTypeID = $excludeSensorType->getSensorTypeID();
+        if ($cardDataPostFilterDTO !== null) {
+            foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {
+                $sensorTypeAlias = $excludeSensorType->getAlias();
+                $sensorTypeID = $excludeSensorType->getSensorTypeID();
 
-            $qb->andWhere($expr->neq(SensorType::ALIAS.'.sensorTypeID', ':' . $sensorTypeAlias));
-            $parameters[$sensorTypeAlias] = $sensorTypeID;
+                $qb->andWhere($expr->neq(SensorType::ALIAS.'.sensorTypeID', ':' . $sensorTypeAlias));
+                $parameters[$sensorTypeAlias] = $sensorTypeID;
+            }
         }
+
         $qb->setParameters($parameters);
 
-        return $qb->getQuery()->getScalarResult();
+        return $qb->getQuery()->getResult($hydrationMode);
     }
 
     public function findOneById(int $cardViewID): ?CardView

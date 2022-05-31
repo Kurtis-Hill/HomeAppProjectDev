@@ -563,7 +563,7 @@ class CardViewFormControllerTest extends WebTestCase
     {
         $this->entityManager->close();
         $this->entityManager = null;
-        
+
         parent::tearDown();
     }
 }

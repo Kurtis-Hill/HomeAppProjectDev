@@ -67,7 +67,7 @@ class GroupControllerTest extends WebTestCase
 
         $count = 0;
         foreach ($responseData['payload'] as $payload) {
-            self::assertEquals(UserDataFixtures::USER_ACCOUNTS[$count], $payload['groupName']);
+            self::assertEquals(UserDataFixtures::ALL_GROUPS[$count], $payload['groupName']);
             self::assertIsNumeric($payload['groupNameID']);
             ++$count;
         }

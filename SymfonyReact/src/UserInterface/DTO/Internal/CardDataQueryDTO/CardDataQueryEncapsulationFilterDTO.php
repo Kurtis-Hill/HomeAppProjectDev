@@ -8,10 +8,13 @@ use JetBrains\PhpStorm\Immutable;
 #[Immutable]
 class CardDataQueryEncapsulationFilterDTO
 {
+    #[ArrayShape([JoinQueryDTO::class])]
     private array $sensorTypesToQuery;
 
+    #[ArrayShape([SensorTypeNotJoinQueryDTO::class])]
     private array $sensorTypesToExclude;
 
+    #[ArrayShape([JoinQueryDTO::class])]
     private array $readingTypesToQuery;
 
     public function __construct(array $sensorTypesToQuery, array $sensorTypesToExclude, array $readingTypesToQuery)

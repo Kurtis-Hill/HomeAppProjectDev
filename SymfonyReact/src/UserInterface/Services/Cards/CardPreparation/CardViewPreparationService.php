@@ -47,7 +47,7 @@ class CardViewPreparationService implements CardViewPreparationServiceInterface
      */
     private function getIndexPageCardDataObjects(User $user, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO): array
     {
-        return $this->cardViewRepository->getAllCardSensorDataScalar(
+        return $this->cardViewRepository->getAllCardSensorData(
             $user,
             Cardstate::INDEX_ONLY,
             $cardDataPostFilterDTO,
@@ -63,7 +63,7 @@ class CardViewPreparationService implements CardViewPreparationServiceInterface
         CardViewTypeFilterDTO $cardViewTypeFilterDTO
     ): array
     {
-        return $this->cardViewRepository->getAllCardSensorDataScalar(
+        return $this->cardViewRepository->getAllCardSensorData(
             $user,
             Cardstate::DEVICE_ONLY,
             $cardDataPostFilterDTO,
@@ -81,7 +81,7 @@ class CardViewPreparationService implements CardViewPreparationServiceInterface
         CardViewTypeFilterDTO $cardViewTypeFilterDTO
     ): array
     {
-        return $this->cardViewRepository->getAllCardSensorDataScalar(
+        return $this->cardViewRepository->getAllCardSensorData(
             $user,
             Cardstate::ROOM_ONLY,
             $cardDataPostFilterDTO,

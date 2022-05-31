@@ -102,6 +102,7 @@ class GetSensorTypesControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
+        $count = 0;
         foreach ($sensorTypes as $sensorType) {
             self::assertEquals($payload[$count]['sensorTypeID'], $sensorType->getSensorTypeID());
             self::assertEquals($payload[$count]['sensorType'], $sensorType->getSensorType());

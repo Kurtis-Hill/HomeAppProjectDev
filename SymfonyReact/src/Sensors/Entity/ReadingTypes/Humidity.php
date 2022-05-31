@@ -3,6 +3,7 @@
 namespace App\Sensors\Entity\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -21,7 +22,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\HumidityRepository")
  */
 //#[Assert\Callback([SensorReadingTypesValidatorServiceInterface::class, 'validate'])]
-class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'humidity';
 
@@ -157,5 +158,10 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     public function getReadingType(): string
     {
         return self::READING_TYPE;
+    }
+
+    public static function getReadingSymbol(): string
+    {
+        return self::READING_SYMBOL;
     }
 }
