@@ -29,11 +29,7 @@ class GetReadingTypeControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        try {
-            $this->userToken = $this->setUserToken();
-        } catch (JsonException $e) {
-            error_log($e);
-        }
+        $this->userToken = $this->setUserToken();
     }
 
     protected function tearDown(): void
@@ -66,8 +62,27 @@ class GetReadingTypeControllerTest extends WebTestCase
 
     public function test_getting_all_reading_types(): void
     {
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_READING_TYPES_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '.$this->setUserToken()]
+        );
 
-//        self::assertCount(count(ReadingTypes::SENSOR_READING_TYPE_DATA), $responseData['payload'])
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        $readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
+        $allReadingTypes = $readingTypeRepository->findAll();
+
+        self::assertEquals(200, $this->client->getResponse()->getStatusCode());
+        self::assertCount(count($allReadingTypes), $responseData['payload']);
+
+        foreach ($responseData['payload'] as $readingType) {
+            self::assertArrayHasKey('id', $readingType);
+            self::assertArrayHasKey('readingType', $readingType);
+        }
     }
 
 }

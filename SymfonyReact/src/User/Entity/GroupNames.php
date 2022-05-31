@@ -2,6 +2,7 @@
 
 namespace App\User\Entity;
 
+use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,7 +39,7 @@ class GroupNames
      * @ORM\Column(name="groupName", type="string", length=50, nullable=false)
      */
     #[
-        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
+        NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::GROUP_NAME_MIN_LENGTH,
             max: self::GROUP_NAME_MAX_LENGTH,

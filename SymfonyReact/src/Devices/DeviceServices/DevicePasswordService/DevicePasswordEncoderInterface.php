@@ -6,5 +6,5 @@ use App\Devices\Entity\Devices;
 
 interface DevicePasswordEncoderInterface
 {
-    public function encodeDevicePassword(Devices $newNewDevice): void;
+    public function encodeDevicePassword(Devices $newDevice): void;
 }

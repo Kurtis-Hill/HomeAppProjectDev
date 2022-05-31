@@ -292,7 +292,10 @@ class AddNewRoomControllerTest extends WebTestCase
 
         $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
 
-//        dd($responseData);
+        self::assertEquals($formRequestData['roomName'], $responseData['payload']['roomName']);
+        self::assertEquals($responseData['payload']['roomID'], $newRoom->getRoomID());
+        self::assertEquals($responseData['payload']['groupNameID'], $newRoom->getGroupNameID()->getGroupNameID());
+
         self::assertInstanceOf(Room::class, $newRoom);
         self::assertEquals('Room created successfully', $responseData['title']);
         self::assertEquals('Testroom', $responseData['payload']['roomName']);

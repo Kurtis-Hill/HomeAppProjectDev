@@ -2,9 +2,13 @@
 
 namespace App\Devices\DTO\Response;
 
+use App\Devices\Entity\Devices;
 use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
 use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Immutable;
 
+#[Immutable]
 class DeviceFullDetailsResponseDTO
 {
     private int $deviceNameID;
@@ -78,6 +82,7 @@ class DeviceFullDetailsResponseDTO
         return $this->externalIpAddress;
     }
 
+    #[ArrayShape([Devices::ROLE])]
     public function getRoles(): array
     {
         return $this->roles;

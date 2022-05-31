@@ -13,6 +13,10 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentRe
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
 use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
@@ -35,7 +39,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     private SensorTypeReadingTypeCheckerFactory $sensorTypeReadingTypeCheckerFactory;
 
-    #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
+    #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME])]
     private array $allSensorTypes = [];
 
     private int $readingTypeRequestAttempt = 0;
@@ -76,7 +80,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $objectValidationErrors = $this->validator->validate($sensorDataCurrentReadingUpdateDTO);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
             foreach ($objectValidationErrors as $error) {
-                $this->validationErrors[] = $this->getValidationErrorsAsStrings($error);
+                $this->validationErrors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($this->getValidationErrorsAsStrings($error));
             }
             $passedValidation = false;
         }
@@ -129,6 +133,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
                 continue;
             }
             $readingTypeCurrentReadingDTOs[] = $readingTypeCurrentReadingDTO;
+
             $this->successfulRequests[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingSuccessUpdateDTO(
                 $readingTypeCurrentReadingDTO->getReadingType(),
                 $sensorDataCurrentReadingUpdateDTO->getSensorName()

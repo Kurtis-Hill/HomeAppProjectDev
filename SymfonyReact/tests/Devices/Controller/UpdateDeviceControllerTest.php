@@ -9,8 +9,10 @@ use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
+use App\User\Repository\ORM\GroupNameRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -229,6 +231,49 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertEquals(['The id provided for room doesnt match any room we have'], $responseData['errors']);
         self::assertEquals('Room not found', $responseData['title']);
+    }
+
+    public function testSendingNoneExistentGroupID(): void
+    {
+        $groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        while (true) {
+            $nonExistentGroupID = random_int(1, 100000);
+
+            $group = $groupRepository->findOneBy(['groupNameID' => $nonExistentGroupID]);
+            if (!$group instanceof Room) {
+                break;
+            }
+        }
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()->getGroupNameID()])[0];
+
+        $requestData = [
+            'deviceName' => 'newDeviceName',
+            'password' => 'NewPassword',
+            'deviceGroup' => $nonExistentGroupID,
+            'deviceRoom' => $device->getRoomObject()->getRoomID(),
+        ];
+
+        $jsonPayload = json_encode($requestData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            $jsonPayload
+        );
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(['The id provided for groupname doesnt match any groupname we have'], $responseData['errors']);
+        self::assertEquals('Group name not found', $responseData['title']);
     }
 
     public function testRegularUserCannotUpdateDeviceNotApartOf(): void

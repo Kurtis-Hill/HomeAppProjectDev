@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateDeviceService extends AbstractESPDeviceService implements UpdateDeviceServiceInterface
 {
-    #[ArrayShape(['errors'])]
+    #[ArrayShape(['validationErrors'])]
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array
     {
         $deviceToUpdate = $deviceUpdateRequestDTO->getDeviceToUpdate();
@@ -40,6 +40,7 @@ class UpdateDeviceService extends AbstractESPDeviceService implements UpdateDevi
         return $this->validateUpdatedDevice($deviceToUpdate);
     }
 
+    #[ArrayShape(['validationErrors'])]
     private function validateUpdatedDevice(Devices $deviceToUpdate): array
     {
         try {

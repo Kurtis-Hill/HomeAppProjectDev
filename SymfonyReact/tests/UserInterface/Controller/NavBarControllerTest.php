@@ -62,8 +62,7 @@ class NavBarControllerTest extends WebTestCase
         return $this->userToken;
     }
 
-
-    public function test_navbar_data_response(): void
+    public function test_get_navbar_data_response(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
@@ -90,7 +89,7 @@ class NavBarControllerTest extends WebTestCase
         self::assertCount(count($userDevices), $responseData['devices'], sprintf($countMessage, 'device'));
         self::assertCount(count($testUser->getGroupNameIds()), $responseData['groupNames'], sprintf($countMessage, 'group name'));
         self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
-        self::assertSameSize(UserDataFixtures::USER_ACCOUNTS, $responseData['groupNames']);
+        self::assertSameSize(UserDataFixtures::USER_GROUPS, $responseData['groupNames']);
 
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }

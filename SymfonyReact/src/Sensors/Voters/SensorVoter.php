@@ -26,7 +26,7 @@ class SensorVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_SENSOR, self::UPDATE_SENSOR_READING_BOUNDARY])) {
+        if (!in_array($attribute, [self::ADD_NEW_SENSOR, self::UPDATE_SENSOR_READING_BOUNDARY, self::UPDATE_SENSOR_CURRENT_READING])) {
             return false;
         }
 
@@ -84,8 +84,10 @@ class SensorVoter extends Voter
 
     private function canUpdateSensorCurrentReading(UserInterface $user): bool
     {
-        if (!$user instanceof Devices) {
+         if (!$user instanceof Devices) {
             return false;
         }
+
+         return true;
     }
 }

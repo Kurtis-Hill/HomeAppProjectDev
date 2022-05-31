@@ -6,6 +6,7 @@ use App\User\Entity\User;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardView;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -27,11 +28,12 @@ interface CardViewRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllCardSensorDataScalar(
+    public function getAllCardSensorData(
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
-        CardViewTypeFilterDTO $cardViewTypeFilterDTO = null
+        CardViewTypeFilterDTO $cardViewTypeFilterDTO = null,
+        int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array;
 
     /**

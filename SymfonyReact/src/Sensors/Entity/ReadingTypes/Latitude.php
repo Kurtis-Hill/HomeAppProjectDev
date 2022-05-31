@@ -3,6 +3,7 @@
 namespace App\Sensors\Entity\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\LatitudeRepository")
  */
-class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterface, StandardReadingSensorInterface
+class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterface, StandardReadingSensorInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'latitude';
 
@@ -161,5 +162,10 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     public function getReadingType(): string
     {
         return self::READING_TYPE;
+    }
+
+    public static function getReadingSymbol(): string
+    {
+        return self::READING_SYMBOL;
     }
 }

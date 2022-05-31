@@ -95,7 +95,6 @@ class DeleteDeviceControllerTest extends WebTestCase
         );
         $deletedDevice = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceNameID' => $device->getDeviceNameID()]);
 
-//        dd($responseData);
         self::assertNull($deletedDevice);
         self::assertEquals('Request Successful', $responseData['title']);
         self::assertIsArray($responseData['payload']);

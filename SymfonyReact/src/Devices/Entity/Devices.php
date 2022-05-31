@@ -3,18 +3,23 @@
 namespace App\Devices\Entity;
 
 use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Devices\Repository\ORM\DeviceRepository;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
- * @ORM\Entity(repositoryClass="App\Devices\Repository\ORM\DeviceRepository")
- */
+#[
+    ORM\Entity(repositoryClass: DeviceRepository::class),
+    ORM\Table(name: "devicenames"),
+    ORM\Index(columns: ["createdBy"], name: "createdBy"),
+    ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
+    ORM\Index(columns: ["roomID"], name: "roomID"),
+]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
     private const DEVICE_MIN_LENGTH = 2;
@@ -25,16 +30,14 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     public const ALIAS = 'device';
 
-    /**
-     * @ORM\Column(name="deviceNameID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+        ORM\Column(name: 'deviceNameID', type: "integer", nullable: false)
+    ]
     private int $deviceNameID;
 
-    /**
-     * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
-     */
+    #[ORM\Column(name: "deviceName", type: "string", length: 20, nullable: false)]
     #[
         NoSpecialCharactersConstraint,
         Assert\NotBlank(
@@ -49,9 +52,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     ]
     private ?string $deviceName;
 
-    /**
-     * @ORM\Column(name="password", type="text", length=100, nullable=false)
-     */
+    #[ORM\Column(name: "password", type: "text", length: 100, nullable: false)]
     #[
         Assert\NotBlank(message: 'Password should not be blank', groups: ['final-check']),
         Assert\Length(
@@ -63,46 +64,34 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     ]
     private string $password;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: User::class),
+        ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
+    ]
     #[Assert\NotBlank(message: 'User object should not be blank')]
     private User $createdBy;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: GroupNames::class),
+        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+    ]
     #[Assert\NotBlank(message: 'Group name should not be blank')]
     private GroupNames $groupNameID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Room::class),
+        ORM\JoinColumn(name: "roomID", referencedColumnName: "roomID"),
+    ]
     #[Assert\NotBlank(message: 'Room should not be blank')]
     private Room $roomID;
 
-    /**
-     * @ORM\Column(name="roles", type="json", nullable=false)
-     */
+    #[ORM\Column(name: "roles", type: "json", nullable: false)]
     private array $roles;
 
-    /**
-     * @ORM\Column(name="ipAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
-     */
+    #[ORM\Column(name: "ipAddress", type: "string", length: 13, nullable: true, options: ["default" => "NULL"])]
     private ?string $ipAddress = null;
 
-    /**
-     * @ORM\Column(name="externalIpAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
-     */
+    #[ORM\Column(name: "externalIpAddress", type: "string", length: 13, nullable: true, options: ["default" => "NULL"])]
     private ?string $externalIpAddress = null;
 
     private string $secret;
@@ -215,7 +204,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->deviceName;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 
@@ -234,9 +223,6 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->externalIpAddress;
     }
 
-    /**
-     * @param string|null $externalIpAddress
-     */
     public function setExternalIpAddress(?string $externalIpAddress): void
     {
         $this->externalIpAddress = $externalIpAddress;

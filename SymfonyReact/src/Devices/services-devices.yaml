@@ -10,12 +10,10 @@ services:
     resource: './*'
     exclude: './{Traits,DependencyInjection,Entity,Tests}'
 
-
 ################### Devices ############################
   App\Devices\Controller\:
     resource: './Controller'
     tags: [ 'controller.service_arguments' ]
-
 
   ######################## Services ########################################################################
   App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:

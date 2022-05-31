@@ -2,6 +2,8 @@
 
 namespace App\Devices\DTO\Response;
 
+use App\Devices\Entity\Devices;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -87,8 +89,9 @@ class DeviceResponseDTO
         return $this->externalIpAddress;
     }
 
+    #[ArrayShape([Devices::ROLE])]
     public function getRoles(): ?array
     {
         return $this->roles;
     }
-    }
+}

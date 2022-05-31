@@ -3,6 +3,7 @@
 namespace App\Sensors\Entity\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
@@ -26,17 +27,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
  * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\TemperatureRepository")
  */
-class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'temperature';
 
     public const READING_SYMBOL = '°C';
-
-//    public const TEMPERATURE_SENSORS = [
-//        Bmp::NAME,
-//        Dallas::NAME,
-//      SensorType::Dht::NAME
-//    ];
 
     /**
      * @ORM\Column(name="tempID", type="integer", nullable=false)
@@ -196,6 +191,11 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     public function getReadingType(): string
     {
         return self::READING_TYPE;
+    }
+
+    public static function getReadingSymbol(): string
+    {
+        return self::READING_SYMBOL;
     }
 
     #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME])]

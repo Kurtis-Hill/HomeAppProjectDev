@@ -85,7 +85,7 @@ class CardViewFormControllerTest extends WebTestCase
         );
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true)['payload'];
-//dd($responseData);
+
         self::assertNotEmpty($responseData['sensorData']);
 
         foreach ($responseData['sensorData'] as $sensorData) {
@@ -102,7 +102,6 @@ class CardViewFormControllerTest extends WebTestCase
             self::assertIsBool($sensorData['constRecord']);
         }
 
-//dd($cardViewObject, $cardViewObject->getCardStateID()->getCardStateID());
         $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         $allCardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
         $allCardState = $this->entityManager->getRepository(Cardstate::class)->findAll();
@@ -176,8 +175,6 @@ class CardViewFormControllerTest extends WebTestCase
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
-
-        $responseContent = $this->client->getResponse()->getContent();
 
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
@@ -566,6 +563,7 @@ class CardViewFormControllerTest extends WebTestCase
     {
         $this->entityManager->close();
         $this->entityManager = null;
+
         parent::tearDown();
     }
 }
