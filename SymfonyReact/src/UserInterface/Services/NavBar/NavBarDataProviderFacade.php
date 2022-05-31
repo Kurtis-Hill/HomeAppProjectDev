@@ -12,7 +12,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
-class NavBarService implements NavBarServiceInterface
+class NavBarDataProviderFacade implements NavBarDataProviderInterface
 {
     private RoomRepositoryInterface $roomRepository;
 

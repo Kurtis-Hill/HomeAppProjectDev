@@ -8,7 +8,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
@@ -42,7 +42,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
-        ?CardViewTypeFilterDTO $cardViewTypeFilterDTO = null,
+        ?CardViewUriFilterDTO $cardViewTypeFilterDTO = null,
         int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array {
         $groupNameIDs = $user->getGroupNameIds();

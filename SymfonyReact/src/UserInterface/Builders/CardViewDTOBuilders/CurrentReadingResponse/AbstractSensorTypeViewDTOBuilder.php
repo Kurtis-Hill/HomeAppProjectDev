@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewDTOBuilders;
+namespace App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse;
 
 use App\UserInterface\Factories\SensorTypeCardDTOBuilderFactory\SensorTypeDTOBuilderFactory;
 

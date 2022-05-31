@@ -60,7 +60,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 $request->getContent(),
                 SensorUpdateRequestDTO::class,
                 'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO]
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
             );
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewDTOBuilders;
+namespace App\UserInterface\Builders\CardViewDTOBuilders\FormResponse;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
+use App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse\AbstractSensorTypeViewDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
 use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
 use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;

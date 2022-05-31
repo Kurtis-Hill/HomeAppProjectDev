@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Services\Cards\UsersCardSelectionService;
+namespace App\UserInterface\Builders\UsersCardSelectionBuilders;
 
 use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
@@ -8,16 +8,12 @@ use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
 use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
-use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
-use App\UserInterface\Entity\Icons;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
-use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
-class UsersCardSelectionService implements UsersCardSelectionServiceInterface
+class UsersCardSelectionBuilder
 {
     private IconsRepositoryInterface $iconsRepository;
 
@@ -35,58 +31,6 @@ class UsersCardSelectionService implements UsersCardSelectionServiceInterface
         $this->cardStateRepository = $cardStateRepository;
     }
 
-    /**
-     * @throws ORMException
-     */
-    #[ArrayShape(
-        [
-            'icons' => [Icons::class],
-            'colours' => [CardColour::class],
-            'states' => [Cardstate::class]
-        ]
-    )]
-    public function getUsersStandardCardSelectionsAsArray(): array
-    {
-        return [
-            'icons' => $this->getIconSelectionAsArray(),
-            'colours' => $this->getColourSelectionAsArray(),
-            'states' => $this->getStateSelectionAsArray(),
-        ];
-    }
-
-    /**
-     * @throws ORMException
-     */
-    #[ArrayShape(
-        [
-            'iconID' => "int",
-            'iconName' => "string",
-            'description' => "string"
-        ]
-    )]
-    private function getIconSelectionAsArray(): array
-    {
-        return $this->iconsRepository->getAllIconsAsArray();
-    }
-
-    /**
-     * @throws ORMException
-     */
-    #[ArrayShape(['colourID' => "int", 'colour' => "string", 'shade' => "string"])]
-    private function getColourSelectionAsArray(): array
-    {
-        return $this->cardColourRepository->getAllColoursAsArray();
-    }
-
-    /**
-     * @throws ORMException
-     */
-    #[ArrayShape(['cardStateID' => "int", 'state' => "string"])]
-    private function getStateSelectionAsArray(): array
-    {
-        return $this->cardStateRepository->getAllStatesAsArray();
-    }
-
     #[ArrayShape(
         [
             'icons' => [IconResponseDTO::class],
@@ -94,7 +38,7 @@ class UsersCardSelectionService implements UsersCardSelectionServiceInterface
             'states' => [CardStateResponseDTO::class]
         ]
     )]
-    public function getUsersCardSelectionAsDTOs(): array
+    public function buildUsersCardSelectionDTOs(): array
     {
         return [
             'icons' => $this->getIconSelectionAsDTOs(),

@@ -9,7 +9,7 @@ use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use Doctrine\ORM\Exception\ORMException;
 
-interface CardViewFormPreparationServiceInterface
+interface CardViewFormPreparationHandlerInterface
 {
     /**
      * @throws ORMException

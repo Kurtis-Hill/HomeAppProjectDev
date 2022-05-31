@@ -20,23 +20,17 @@ services:
   ######################## Consumers ######################################################
 
   ######################## UserInterface Services ######################################################
-  App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardCreation\CardCreationService
+  App\UserInterface\Services\Cards\CardCreation\CardCreationHandlerInterface:
+    alias: App\UserInterface\Services\Cards\CardCreation\CardCreationFacade
 
-  App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationService
+  App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationFacade
 
-  App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationService
+  App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateInterface:
+    alias: App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateFacade
 
-  App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationService
-
-  App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionServiceInterface:
-    alias: App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionService
-
-  App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface:
-    alias: App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateService
+  App\UserInterface\Services\NavBar\NavBarDataProviderInterface:
+    alias : App\UserInterface\Services\NavBar\NavBarDataProviderFacade
   ######################## New Sensor Creation Services ########################################################
 
   ######################## Factories ###########################################################################

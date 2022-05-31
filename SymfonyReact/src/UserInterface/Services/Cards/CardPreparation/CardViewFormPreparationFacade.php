@@ -4,19 +4,18 @@ namespace App\UserInterface\Services\Cards\CardPreparation;
 
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\UserInterface\Builders\UsersCardSelectionBuilders\UsersCardSelectionBuilder;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
-use App\UserInterface\Services\Cards\UsersCardSelectionService\UsersCardSelectionServiceInterface;
 use Doctrine\ORM\Exception\ORMException;
 
-class CardViewFormPreparationService implements CardViewFormPreparationServiceInterface
+class CardViewFormPreparationFacade implements CardViewFormPreparationHandlerInterface
 {
     private SensorRepositoryInterface $sensorRepository;
 
@@ -24,7 +23,7 @@ class CardViewFormPreparationService implements CardViewFormPreparationServiceIn
 
     private SensorTypeQueryFactory $sensorTypeQueryFactory;
 
-    private UsersCardSelectionServiceInterface $usersCardSelectionService;
+    private UsersCardSelectionBuilder $usersCardSelectionService;
 
     private CardViewFormDTOFactory $cardViewFormDTOFactory;
 
@@ -32,11 +31,9 @@ class CardViewFormPreparationService implements CardViewFormPreparationServiceIn
         SensorRepositoryInterface $sensorRepository,
         SensorTypeRepositoryInterface $sensorTypeRepository,
         SensorTypeQueryFactory $sensorTypeQueryFactory,
-        ReadingTypeQueryFactory $readingTypeQueryFactory,
-        UsersCardSelectionServiceInterface $usersCardSelectionService,
+        UsersCardSelectionBuilder $usersCardSelectionService,
         CardViewFormDTOFactory $cardViewFormDTOFactory,
-    )
-    {
+    ) {
         $this->sensorRepository = $sensorRepository;
         $this->sensorTypeRepository = $sensorTypeRepository;
         $this->sensorTypeQueryFactory = $sensorTypeQueryFactory;
@@ -48,7 +45,7 @@ class CardViewFormPreparationService implements CardViewFormPreparationServiceIn
     {
         $sensorTypeObject = $this->findStandardSensorTypeObjectByCardView($cardViewObject);
 
-        $usersCardSelections = $this->usersCardSelectionService->getUsersCardSelectionAsDTOs();
+        $usersCardSelections = $this->usersCardSelectionService->buildUsersCardSelectionDTOs();
 
         $cardViewFormDTOBuilder = $this->cardViewFormDTOFactory->getCardViewFormBuilderService($cardFormType);
 

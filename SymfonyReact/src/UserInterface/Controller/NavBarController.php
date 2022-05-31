@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\User\Entity\User;
 use App\UserInterface\Exceptions\WrongUserTypeException;
-use App\UserInterface\Services\NavBar\NavBarServiceInterface;
+use App\UserInterface\Services\NavBar\NavBarDataProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class NavBarController extends AbstractController
     use HomeAppAPITrait;
 
     #[Route('/navbar-data', name: 'navbar-data', methods: [Request::METHOD_GET])]
-    public function navBarData(NavBarServiceInterface $navBarService): JsonResponse
+    public function navBarData(NavBarDataProviderInterface $navBarService): JsonResponse
     {
         if (!$this->getUser() instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();

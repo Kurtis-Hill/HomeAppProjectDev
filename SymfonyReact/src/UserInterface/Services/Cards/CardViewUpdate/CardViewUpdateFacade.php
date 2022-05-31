@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Services\Cards\CardViewUpdateService;
+namespace App\UserInterface\Services\Cards\CardViewUpdate;
 
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
@@ -13,9 +13,8 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterfa
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use TypeError;
 
-class CardViewUpdateService implements CardViewUpdateServiceInterface
+class CardViewUpdateFacade implements CardViewUpdateInterface
 {
     use ValidatorProcessorTrait;
 
@@ -39,7 +38,7 @@ class CardViewUpdateService implements CardViewUpdateServiceInterface
         $this->cardStateRepository = $cardStateRepository;
     }
 
-    #[ArrayShape(["errors"])]
+    #[ArrayShape(["validationErrors"])]
     public function updateAllCardViewObjectProperties(CardUpdateDTO $cardUpdateDTO, CardView $cardView): array
     {
         if ($cardUpdateDTO->getCardColourID() !== null) {

@@ -15,8 +15,8 @@ use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
-use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationServiceInterface;
-use App\UserInterface\Services\Cards\CardViewUpdateService\CardViewUpdateServiceInterface;
+use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationHandlerInterface;
+use App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateFacade;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,7 +38,7 @@ class CardViewFormController extends AbstractController
     #[Route('get/{id}', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(
         CardView $cardViewObject,
-        CardViewFormPreparationServiceInterface $cardViewFormPreparationService,
+        CardViewFormPreparationHandlerInterface $cardViewFormPreparationService,
     ): JsonResponse {
         try {
             $this->denyAccessUnlessGranted(CardViewVoter::CAN_VIEW_CARD_VIEW_FORM, $cardViewObject);
@@ -74,7 +74,7 @@ class CardViewFormController extends AbstractController
         CardView $cardViewObject,
         Request $request,
         CardViewRepositoryInterface $cardViewRepository,
-        CardViewUpdateServiceInterface $cardViewUpdateService,
+        CardViewUpdateFacade $cardViewUpdateService,
         ValidatorInterface $validator,
     ): JsonResponse {
         $cardViewRequestDTO = new CardViewRequestDTO();

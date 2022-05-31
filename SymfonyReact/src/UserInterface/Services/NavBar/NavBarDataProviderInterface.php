@@ -6,7 +6,7 @@ use App\User\Entity\User;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 
-interface NavBarServiceInterface
+interface NavBarDataProviderInterface
 {
     /**
      * @throws WrongUserTypeException

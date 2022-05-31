@@ -19,7 +19,7 @@ use App\Sensors\SensorDataServices\DeleteSensorService\DeleteSensorService;
 use App\Sensors\SensorDataServices\NewReadingType\SensorReadingTypeCreationInterface;
 use App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface;
 use App\Sensors\Voters\SensorVoter;
-use App\UserInterface\Services\Cards\CardCreation\CardCreationServiceInterface;
+use App\UserInterface\Services\Cards\CardCreation\CardCreationHandlerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,7 +46,7 @@ class AddNewSensorController extends AbstractController
         SensorReadingTypeCreationInterface $readingTypeCreation,
         DeviceRepositoryInterface $deviceRepository,
         SensorTypeRepositoryInterface $sensorTypeRepository,
-        CardCreationServiceInterface $cardCreationService,
+        CardCreationHandlerInterface $cardCreationService,
         DeleteSensorService $deleteSensorService,
     ): JsonResponse {
         $newSensorRequestDTO = new AddNewSensorRequestDTO();

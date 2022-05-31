@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Services\Cards\CardDataFilterService;
+namespace App\UserInterface\Services\Cards\CardDataFilter;
 
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
@@ -16,7 +16,7 @@ use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
-class CardDataFilterService implements CardDataFilterServiceInterface
+class CardDataFilter
 {
     private SensorTypeRepositoryInterface $sensorTypeRepository;
 
@@ -54,7 +54,10 @@ class CardDataFilterService implements CardDataFilterServiceInterface
         $sortedQueryTypes = $this->filterSensorByType($allSensorTypes, $cardFilters->getSensorTypesToFilter());
         $allReadingTypes = $this->readingTypeRepository->findAll();
 
-        $readingTypesToQuery = $this->filterSensorByReadingType($allReadingTypes, $cardFilters->getReadingTypesToFilter());
+        $readingTypesToQuery = $this->filterSensorByReadingType(
+            $allReadingTypes,
+            $cardFilters->getReadingTypesToFilter()
+        );
 
         return new CardDataQueryEncapsulationFilterDTO(
             $sortedQueryTypes['sensorTypesToQuery'] ?? [],
@@ -87,6 +90,7 @@ class CardDataFilterService implements CardDataFilterServiceInterface
         ];
     }
 
+    #[ArrayShape([JoinQueryDTO::class||[]])]
     private function filterSensorByReadingType(array $allReadingTypes, array $readingTypesToFilter = []): array
     {
         foreach ($allReadingTypes as $readingType) {

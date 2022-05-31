@@ -1,12 +1,13 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewDTOBuilders;
+namespace App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse;
 
 use App\UserInterface\DTO\Response\CurrentCardReadingDTO\CurrentReadingSensorTypeCardResponseDTO;
 use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardDataResponseDTOInterface;
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
+    //@TODO use the appropriate dtos here
     public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
     {
         $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($cardData['sensortype_sensorType']);

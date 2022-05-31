@@ -23,7 +23,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class CardCreationService implements CardCreationServiceInterface
+class CardCreationFacade implements CardCreationHandlerInterface
 {
     use ValidatorProcessorTrait;
 
@@ -75,7 +75,6 @@ class CardCreationService implements CardCreationServiceInterface
             $onCardState,
         );
 
-//        dd($newCard, $sensorObject, $user, $randomIcon, $randomColour, $onCardState);
         $errors = $this->validateNewCard($newCard);
         if (!empty($errors)) {
             return $errors;

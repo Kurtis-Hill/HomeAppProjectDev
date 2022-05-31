@@ -1,10 +1,10 @@
 <?php
 
-namespace App\UserInterface\Services\Cards\CardViewDTOCreationService;
+namespace App\UserInterface\Services\Cards\CardViewDTOCreation;
 
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewDTOFactory;
 
-class CardViewDTOCreationService implements CardViewDTOCreationServiceInterface
+class CardViewDTOCreationHandler
 {
     private CardViewDTOFactory $cardViewDTOFactory;
 
@@ -13,7 +13,7 @@ class CardViewDTOCreationService implements CardViewDTOCreationServiceInterface
         $this->cardViewDTOFactory = $cardViewDTOFactory;
     }
 
-    public function buildCurrentReadingSensorCards(array $sensorData): array
+    public function handleCurrentReadingSensorCardsCreation(array $sensorData): array
     {
         $cardViewDTOBuilder = $this->cardViewDTOFactory->getCardViewBuilderService(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
 

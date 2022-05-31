@@ -165,18 +165,18 @@ class CardControllerTest extends WebTestCase
             }
         }
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-
-        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-
-        $cardViewAllCardSensorData = $cardViewRepository->getAllCardSensorData(
-            $user,
-            Cardstate::INDEX_ONLY,
-        );
-
-        dd($cardViewAllCardSensorData);
+//        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+//        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+//
+//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+//
+//        $cardViewAllCardSensorData = $cardViewRepository->getAllCardSensorData(
+//            $user,
+//            Cardstate::INDEX_ONLY,
+//        );
+//
+//        dd($cardViewAllCardSensorData);
     }
 
 

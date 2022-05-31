@@ -5,16 +5,21 @@ namespace App\UserInterface\Controller\Card;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Room;
+use App\User\Entity\User;
+use App\UserInterface\Builders\CardRequestDTOBuilders\CardViewTypeFilterDTOBuilder;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
-use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
+use App\UserInterface\DTO\RequestDTO\CardViewFilterRequestDTO;
 use App\UserInterface\Exceptions\CardTypeNotRecognisedException;
+use App\UserInterface\Exceptions\CardViewRequestException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Exceptions\WrongUserTypeException;
-use App\UserInterface\Services\Cards\CardDataFilterService\CardDataFilterService;
-use App\UserInterface\Services\Cards\CardPreparation\CardViewPreparationServiceInterface;
-use App\UserInterface\Services\Cards\CardViewDTOCreationService\CardViewDTOCreationServiceInterface;
+use App\UserInterface\Services\Cards\CardDataFilter\CardDataFilter;
+use App\UserInterface\Services\Cards\CardPreparation\CurrentReadingCardViewPreparationHandler;
+use App\UserInterface\Services\Cards\CardViewDTOCreation\CardViewDTOCreationHandler;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,44 +29,60 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/')]
 class CardController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
-    private CardDataFilterService $cardDataFilterService;
+    private CardDataFilter $cardDataFilterService;
 
-    private CardViewPreparationServiceInterface $cardPreparationService;
+    private CurrentReadingCardViewPreparationHandler $cardPreparationService;
 
-    private CardViewDTOCreationServiceInterface $cardViewDTOCreationService;
+    private CardViewDTOCreationHandler $cardViewDTOCreationHandler;
+
+    private ValidatorInterface $validator;
 
     public const ROOM_VIEW = 'room';
 
     public const DEVICE_VIEW = 'device';
 
     public function __construct(
-        CardDataFilterService $cardDataFilterService,
-        CardViewPreparationServiceInterface $cardPreparationService,
-        CardViewDTOCreationServiceInterface $cardViewDTOCreationService,
+        CardDataFilter $cardDataFilterService,
+        CurrentReadingCardViewPreparationHandler $currentReadingCardViewPreparationHandler,
+        CardViewDTOCreationHandler $cardViewDTOCreationService,
+        ValidatorInterface $validator,
     ) {
         $this->cardDataFilterService = $cardDataFilterService;
-        $this->cardPreparationService = $cardPreparationService;
-        $this->cardViewDTOCreationService = $cardViewDTOCreationService;
+        $this->cardPreparationService = $currentReadingCardViewPreparationHandler;
+        $this->cardViewDTOCreationHandler = $cardViewDTOCreationService;
+        $this->validator = $validator;
     }
 
     #[Route('device-cards/{id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
     public function deviceCards(Devices $device, Request $request): JsonResponse
     {
         try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $exception) {
+            return $this->sendBadRequestJsonResponse($exception->getValidationErrorsArray());
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        }
+
+        try {
             $this->denyAccessUnlessGranted(CardViewVoter::VIEW_DEVICE_CARD_DATA, $device);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $cardDatePreFilterDTO = $this->prepareFilters($request);
+        $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
-        $cardViewTypeFilter = new CardViewTypeFilterDTO(null, $device);
+        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO(null, $device);
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::DEVICE_VIEW);
         } catch (WrongUserTypeException) {
@@ -71,7 +92,7 @@ class CardController extends AbstractController
         }
 
         try {
-            $cardDTOs = $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);
+            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
         } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
@@ -90,14 +111,22 @@ class CardController extends AbstractController
     public function roomCards(Room $room, Request $request): Response
     {
         try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $exception) {
+            return $this->sendBadRequestJsonResponse($exception->getValidationErrorsArray());
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        }
+
+        try {
             $this->denyAccessUnlessGranted(CardViewVoter::VIEW_ROOM_CARD_DATA, $room);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $cardDatePreFilterDTO = $this->prepareFilters($request);
+        $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
-        $cardViewTypeFilter = new CardViewTypeFilterDTO($room);
+        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO($room);
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter,self::ROOM_VIEW);
         } catch (WrongUserTypeException) {
@@ -107,7 +136,7 @@ class CardController extends AbstractController
         }
 
         try {
-            $cardDTOs = $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);
+            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
         } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
@@ -124,9 +153,17 @@ class CardController extends AbstractController
     #[Route('index', name: 'index-card-data-v2-boom', methods: [Request::METHOD_GET])]
     public function indexCards(Request $request): JsonResponse
     {
-        $cardDatePreFilterDTO = $this->prepareFilters($request);
+        try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $exception) {
+            return $this->sendBadRequestJsonResponse($exception->getValidationErrorsArray());
+        } catch (NotEncodableValueException) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        }
 
-        $cardViewTypeFilter = new CardViewTypeFilterDTO();
+        $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
+
+        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO();
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
         } catch (WrongUserTypeException) {
@@ -136,7 +173,7 @@ class CardController extends AbstractController
         }
 
         try {
-            $cardDTOs = $this->cardViewDTOCreationService->buildCurrentReadingSensorCards($cardData);
+            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
         } catch (SensorTypeBuilderFailureException | CardTypeNotRecognisedException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
@@ -151,14 +188,47 @@ class CardController extends AbstractController
     }
 
     /**
+     * @throws CardViewRequestException
+     * @throws NotEncodableValueException
+     */
+    private function validateRequestDTO(Request $request): CardViewFilterRequestDTO
+    {
+        $cardViewRequestDTO = new CardViewFilterRequestDTO();
+
+        if (!$request->getContent()) {
+            return $cardViewRequestDTO;
+        }
+
+        $this->deserializeRequest(
+            $request->getContent(),
+            CardViewFilterRequestDTO::class,
+            'json',
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $cardViewRequestDTO],
+        );
+
+        $requestValidationErrors = $this->validator->validate($cardViewRequestDTO);
+
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            throw new CardViewRequestException($this->getValidationErrorAsArray($requestValidationErrors));
+        }
+
+        return $cardViewRequestDTO;
+    }
+
+    /**
      * @throws ORMException|WrongUserTypeException
      */
     private function prepareCardDataForUser(
         CardDataPreFilterDTO $cardDataPreFilterDTO,
-        CardViewTypeFilterDTO $cardViewTypeFilterDTO,
+        CardViewUriFilterDTO $cardViewTypeFilterDTO,
         string $view = null,
     ): array {
         $postFilterCardDataToQuery = $this->cardDataFilterService->filterSensorsToQuery($cardDataPreFilterDTO);
+
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            throw new WrongUserTypeException();
+        }
 
         return $this->cardPreparationService->prepareCardsForUser(
             $this->getUser(),
@@ -168,11 +238,11 @@ class CardController extends AbstractController
         );
     }
 
-    private function prepareFilters(Request $request): CardDataPreFilterDTO
+    private function prepareFilters(CardViewFilterRequestDTO $cardViewFilterRequestDTO): CardDataPreFilterDTO
     {
-        return $this->cardDataFilterService->preparePreFilterDTO(
-            $request->get('sensor-types') ?? [],
-            $request->get('reading-types') ?? [],
+        return CardViewTypeFilterDTOBuilder::buildCardDataPreFilterDTO(
+            $cardViewFilterRequestDTO->getSensorTypes(),
+            $cardViewFilterRequestDTO->getReadingTypes(),
         );
     }
 }

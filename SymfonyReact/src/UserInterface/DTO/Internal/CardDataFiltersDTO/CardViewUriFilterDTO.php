@@ -7,7 +7,7 @@ use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class CardViewTypeFilterDTO
+class CardViewUriFilterDTO
 {
     private ?Room $room;
 

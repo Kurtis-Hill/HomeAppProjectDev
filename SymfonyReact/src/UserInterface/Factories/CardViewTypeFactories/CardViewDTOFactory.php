@@ -2,10 +2,9 @@
 
 namespace App\UserInterface\Factories\CardViewTypeFactories;
 
-use App\UserInterface\Builders\CardViewDTOBuilders\StandardCardViewFormDTOBuilder;
-use App\UserInterface\Builders\CardViewDTOBuilders\SensorTypeCardViewCurrentReadingDTOBuilder;
-use App\UserInterface\Builders\CardViewDTOBuilders\SensorTypeCardViewDTOBuilder;
-use App\UserInterface\Builders\CardViewDTOBuilders\SensorTypeCardViewGraphReadingDTOBuilder;
+use App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse\SensorTypeCardViewCurrentReadingDTOBuilder;
+use App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse\SensorTypeCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse\SensorTypeCardViewGraphReadingDTOBuilder;
 use App\UserInterface\Exceptions\CardTypeNotRecognisedException;
 
 class CardViewDTOFactory

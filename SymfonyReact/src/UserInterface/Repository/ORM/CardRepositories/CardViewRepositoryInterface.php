@@ -3,7 +3,7 @@
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\User\Entity\User;
-use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewTypeFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\AbstractQuery;
@@ -32,7 +32,7 @@ interface CardViewRepositoryInterface
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
-        CardViewTypeFilterDTO $cardViewTypeFilterDTO = null,
+        CardViewUriFilterDTO $cardViewTypeFilterDTO = null,
         int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array;
 

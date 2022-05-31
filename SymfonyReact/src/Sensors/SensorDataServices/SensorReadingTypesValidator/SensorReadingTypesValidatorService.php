@@ -106,7 +106,7 @@ class SensorReadingTypesValidatorService implements SensorReadingTypesValidatorS
         return $errors ?? [];
     }
 
-    #[ArrayShape(['string'])]
+    #[ArrayShape(['validationErrors'])]
     public function validateSensorReadingTypeObject(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
         string $sensorType
