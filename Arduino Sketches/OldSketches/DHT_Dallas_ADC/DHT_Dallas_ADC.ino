@@ -11,7 +11,7 @@
 #include <ESP8266WiFiGeneric.h>
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266WiFiScan.h>
-#include <ESP8266WiFiSTA.h>F
+#include <ESP8266WiFiSTA.h>
 #include <ESP8266WiFiType.h>
 #include <WiFiClient.h>
 #include <WiFiClientSecure.h>
