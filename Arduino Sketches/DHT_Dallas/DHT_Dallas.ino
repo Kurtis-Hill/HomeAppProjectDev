@@ -34,9 +34,9 @@
 
 //Web bits
 // Test
-#define HOMEAPP_HOST "https://192.168.1.172"
+//#define HOMEAPP_HOST "https://192.168.1.172"
 // Prod
-//#define HOMEAPP_HOST "https://klh17101990.asuscomm.com"
+#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 #define HOME_APP_CURRENT_READING "api/device/esp/update/current-reading"
@@ -51,7 +51,6 @@ String ipAddress;
 String publicIpAddress;
 String token;
 String refreshToken;
-
 
 // Access ponint network bits
 #define ACCESSPOINT_SSID "HomeApp-D-A-D-AP"
@@ -1200,36 +1199,6 @@ bool saveTokensFromLogin(String payload) {
   return true;
 }
 
-
-String buildDallasReadingSensorUpdateRequest() {
-  Serial.println("Building Dallas request");
-  DynamicJsonDocument sensorUpdateRequest(1024);
-
-  sensorUpdateRequest["sensorType"] = "Dallas";
-
-  for (int i = 0; i < dallasTempData.sensorCount; ++i) {
-    if (dallasTempData.tempReading[i] != -127) {
-      Serial.print("sensor name:");
-      Serial.println(dallasTempData.sensorName[i]);
-      sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
-      sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperatureReading"] = String(dallasTempData.tempReading[i]);
-      Serial.print("temp reading:");
-      Serial.println(String(dallasTempData.tempReading[i])); 
-    } else {
-      Serial.println("sensor failed to take reading correctly not sending this data");
-    }
-  }
-  if (!sensorUpdateRequest["sensorData"]) {
-    return "";
-  }
-  String jsonData;
-  serializeJson(sensorUpdateRequest, jsonData);
-  Serial.print("Dallas json data to send: ");
-  Serial.println(jsonData);
-  
-  return jsonData;
-}
-
 String buildIpAddressUpdateRequest() {
   Serial.println("Building IP update request");
   DynamicJsonDocument ipUpdateRequest(64);
@@ -1274,6 +1243,36 @@ bool sendDallasUpdateRequest() {
   return true;
 }
 
+String buildDallasReadingSensorUpdateRequest() {
+  Serial.println("Building Dallas request");
+  DynamicJsonDocument sensorUpdateRequest(1024);
+
+  sensorUpdateRequest["sensorType"] = "Dallas";
+
+  for (int i = 0; i < dallasTempData.sensorCount; ++i) {
+    if (dallasTempData.tempReading[i] != -127) {
+      Serial.print("sensor name:");
+      Serial.println(dallasTempData.sensorName[i]);
+      sensorUpdateRequest["sensorData"][i]["sensorType"] = "Dallas";
+      sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
+      sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperatureReading"] = String(dallasTempData.tempReading[i]);
+      Serial.print("temp reading:");
+      Serial.println(String(dallasTempData.tempReading[i])); 
+    } else {
+      Serial.println("sensor failed to take reading correctly not sending this data");
+    }
+  }
+  if (!sensorUpdateRequest["sensorData"]) {
+    return "";
+  }
+  String jsonData;
+  serializeJson(sensorUpdateRequest, jsonData);
+  Serial.print("Dallas json data to send: ");
+  Serial.println(jsonData);
+  
+  return jsonData;
+}
+
 bool sendDhtUpdateRequest() {
   String payload = buildDhtReadingSensorUpdateRequest();
   if (payload == "") {
@@ -1292,11 +1291,10 @@ String buildDhtReadingSensorUpdateRequest() {
   Serial.println("Building dht request");
   DynamicJsonDocument sensorUpdateRequest(1024);
 
-  sensorUpdateRequest["sensorType"] = "Dht";
-
   if (!isnan(dhtSensor.tempReading) && !isnan(dhtSensor.humidReading)) {
     Serial.print("sensor name:");
     Serial.println(dhtSensor.sensorName);
+    sensorUpdateRequest["sensorData"][0]["sensorType"] = "Dht";
     sensorUpdateRequest["sensorData"][0]["sensorName"] = dhtSensor.sensorName;
     sensorUpdateRequest["sensorData"][0]["currentReadings"]["temperatureReading"] = String(dhtSensor.tempReading);
     sensorUpdateRequest["sensorData"][0]["currentReadings"]["humidityReading"] = String(dhtSensor.humidReading);
@@ -1311,7 +1309,6 @@ String buildDhtReadingSensorUpdateRequest() {
   Serial.println("dht readings are empty");
   return "";
 }
-
 
 void resetDevice() {
   createAccessPoint(); //@DEV
