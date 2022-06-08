@@ -9,7 +9,7 @@
 #include <ESP8266WiFiGeneric.h>
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266WiFiScan.h>
-#include <ESP8266WiFiSTA.h>F
+#include <ESP8266WiFiSTA.h>
 #include <ESP8266WiFiType.h>
 #include <WiFiClient.h>
 #include <WiFiServer.h>
@@ -58,6 +58,8 @@ String ipAddress;
 String publicIpAddress;
 String token;
 String refreshToken;
+
+int wifiRetryTimer = 0;
 
 bool deviceLoggedIn;
 
@@ -752,6 +754,16 @@ bool connectToNetwork() {
   return false;
 }
 
+void handleWifiReconnectionAttempt() {
+  if (wifiRetryTimer == 0) {
+    wifiRetryTimer = millis() + 35000;  
+  }
+  int currentTime = millis();
+  if (wifiRetryTimer - currentTime < 0) {
+    connectToNetwork();
+  }
+}
+
 // Need to decode this json string (data) and place different parts in different spiffs, wifi and sensor data
 void handleSettingsUpdate(){
   delay(500);
@@ -1422,7 +1434,7 @@ bool sendDallasUpdateRequest() {
   return true;
 }
 
-//@DEV
+//@DEV Dummie reading provider
 //void takeDallasTempReadings() {
 //  for (int i = 0; i < dallasTempData.sensorCount; ++i) {
 //    Serial.print("Getting Temp Reading...");
@@ -1437,86 +1449,6 @@ bool sendDallasUpdateRequest() {
 /////<!---END OF Dallas Sensor Methods ---!>//////
 
 
-
-
-
-
-//bool getExternalIP() {
-//  Serial.print("Begining to get external ip in");
-//  WiFiClient client;
-//
-//  if (!client.connect("api.ipify.org", 80)) {
-//    Serial.println("Failed to connect with 'api.ipify.org' !");
-//  }
-//  else {
-//    int timeout = millis() + 5000;
-//    client.print("GET /?format=json HTTP/1.1\r\nHost: api.ipify.org\r\n\r\n");
-//    while (client.available() == 0) {
-//      if (timeout - millis() < 0) {
-//        Serial.println(">>> Client Timeout !");
-//        client.stop();
-//      }
-//    }
-//
-//    uint8_t* msg;
-//    int size;
-//    while ((size = client.available()) > 0) {
-//      msg = (uint8_t*)malloc(size);
-//      size = client.read(msg, size);
-//      Serial.write(msg, size);
-//    }
-//
-//    DynamicJsonDocument deserializedJson(512);
-//    DeserializationError error = deserializeJson(deserializedJson, msg);
-////
-////    if (error) {
-////      Serial.println("deserialization error");
-////      return false;
-////    }
-//    publicIpAddress = deserializedJson["ip"].as<String>();
-//    Serial.print("public ip set to:");
-//    Serial.println(publicIpAddress);
-//  }
-//
-////  HTTPClient http;p
-////
-////  Serial.print("[HTTPS] begin connecting to... ");
-////  Serial.println("https://api.ipify.org/?format=json");
-////
-////  http.begin(client, "https://api.ipify.org/?format=json");
-////
-////  Serial.println("[HTTPS] GET...");
-////  int httpCode = http.GET();
-////
-////  // httpCode will be negative on error
-////
-////    Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-////    if (httpCode == HTTP_CODE_OK) {
-////      const String& payload = http.getString();
-////      Serial.print("received payload: ");
-////      Serial.println(payload);
-////
-////      DynamicJsonDocument responsePayload(32);
-////      DeserializationError error = deserializeJson(responsePayload, payload);
-////
-////      if (error) {
-////        Serial.println("external ip address deserialization error");
-////        return false;
-////      }
-////
-////      Serial.print("Reponse Payload: ");
-////      Serial.println(responsePayload["ip"].as<String>());
-////      publicIpAddress = responsePayload["ip"].as<String>();
-////      Serial.print("New pulicIpAddress");
-////      Serial.println(publicIpAddress);
-////  } else {
-////      Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-////      return false;
-////  }
-//  return true;
-//}
-
-
 // Web Functions
 void resetDevice() {
   createAccessPoint(); //@DEV
@@ -1524,14 +1456,13 @@ void resetDevice() {
   SPIFFS.remove("/wifi.json");
 
   SPIFFS.remove("/dallas.json");
-  SPIFFS.remove("/dht.json.json");
+  SPIFFS.remove("/dht.json");
   server.send(200, "application/json", "{\"status\":\"device reset\"}");
 }
 
 void restartDevice() {
   ESP.restart;
 }
-
 
 
 // Common Functions
@@ -1579,7 +1510,7 @@ void setup() {
   Serial.println("Searial started");
 
   Serial.print("Starting web servers...");
-  server.on("/",[](){server.send_P(200,"text/html",webpage);});
+  server.on("/",[](){server.send_P(200,"text/html", webpage);});
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
   
   server.on("/reset-device", HTTP_GET, resetDevice);
@@ -1589,7 +1520,10 @@ void setup() {
 
   delay(5000);
   Serial.println("SPIFFS starting...");
-  SPIFFS.begin();
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS failed to start");
+    ESP.restart();
+  }
   Serial.println("...SPIFFS started");
   
   Serial.println("Begining device setup");
@@ -1627,16 +1561,19 @@ void loop() {
      takeDhtReadings();
    }
 
-  if(WiFi.status()== WL_CONNECTED){
+  if(WiFi.status() == WL_CONNECTED) {
     Serial.println("Connected to wifi");
-    if (deviceLoggedIn == false) {
+    if (deviceLoggedIn != false) {
+      sendDallasUpdateRequest();
+      sendDhtUpdateRequest();     
+    } else {
       Serial.println("Device not loged in attempting to refresh token");
       handleRefreshTokens();
-    } else {
-      sendDallasUpdateRequest();
-      sendDhtUpdateRequest();
     }
   } else {
+    if (SPIFFS.exists("/wifi.json")) {
+      handleWifiReconnectionAttempt();
+    }
     // delay or webpage server wont show correctly
     delay(1000);
   }
