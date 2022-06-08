@@ -28,21 +28,20 @@
 #include <DHT.h>;
 
 
-// NodeMCU
-//#define DEVICE_SERIAL 115200
+#define MICRO_ESP_SERIAL 115200
+#define NODE_MCU_SERIAL 9600
 
 // ESP8266-01
-#define DEVICE_SERIAL 9600
+#define DEVICE_SERIAL MICRO_ESP_SERIAL
 
 #define DALLASNNAME "Dallas"
 #define DHTNAME "Dht"
 
 //Web bits
 // Test
-#define HOMEAPP_HOST "https://192.168.1.172"
+//#define HOMEAPP_HOST "https://192.168.1.172"
 // Prod
-//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
-
+#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
@@ -59,6 +58,7 @@ String ipAddress;
 String publicIpAddress;
 String token;
 String refreshToken;
+
 bool deviceLoggedIn;
 
 // Access ponint network bits
@@ -70,11 +70,6 @@ ESP8266WebServer server;
 IPAddress local_ip(192,168,1,254);
 IPAddress gateway(192,168,1,1);
 IPAddress netmask(255,255,255,0);
-
-
-//Sensor sepcific settings
-//#define ACTIVE_START_PIN 2
-//#define LAST_ACTIVE_PIN 4
 
 
 // DHT
@@ -394,26 +389,26 @@ char webpage[] PROGMEM = R"=====(
     cursor: pointer;
   }
 
-.button-reset:hover {
-  background-color: #1cc88a;
-  color: white;
+  .button-reset:hover {
+    background-color: #1cc88a;
+    color: white;
 
-  background-color: #e93313;
-  border: none;
-  color: white;
-  padding: 26px 268px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  -webkit-transition-duration: 0.4s;
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-.button-holder {
-  text-align: center;
-}
+    background-color: #e93313;
+    border: none;
+    color: white;
+    padding: 26px 268px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    cursor: pointer;
+  }
+  .button-holder {
+    text-align: center;
+  }
 
   body {
   background: #00b4ff;
@@ -424,8 +419,8 @@ char webpage[] PROGMEM = R"=====(
   padding: 0;
   overflow-x: hidden;
 
-  height: 100%;
-  font-family: Trebuchet MS;
+    height: 100%;
+    font-family: Trebuchet MS;
   }
 
   .container {
@@ -633,45 +628,49 @@ char webpage[] PROGMEM = R"=====(
       transform: scale(0.3);
   }
 
-.bubble {
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-  
-  -webkit-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-  -moz-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
 
-  height: 200px;
-  position: absolute;
-  width: 200px;
-}
+
+  .bubble {
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
+
+          -webkit-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
+      -moz-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
+
+          height: 200px;
+      position: absolute;
+      width: 200px;
+  }
 
   .bubble:after {
-    background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
-    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,0.5)), color-stop(70%,rgba(255,255,255,0)));
-    background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-    background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-    background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-    background: radial-gradient(ellipse at center,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffffff', endColorstr='#00ffffff',GradientType=1 );
+      background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+      background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,0.5)), color-stop(70%,rgba(255,255,255,0)));
+      background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+      background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+      background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+      background: radial-gradient(ellipse at center,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffffff', endColorstr='#00ffffff',GradientType=1 );
 
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
 
-    -webkit-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-    -moz-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-    box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+      -webkit-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+      -moz-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
 
-    content: "";
-    height: 180px;
-    left: 10px;
-    position: absolute;
-    width: 180px;
+      content: "";
+      height: 180px;
+      left: 10px;
+      position: absolute;
+      width: 180px;
   }
   </style>
 </html>
+
+
 )=====";
 
 bool setupNetworkConnection(){
@@ -697,29 +696,29 @@ void createAccessPoint() {
   WiFi.softAP(ACCESSPOINT_SSID, ACCESSPOINT_PASSWORD);
   Serial.println("AP MODE Activated");
   delay(2000);
-  WiFi.printDiag(Serial); 
+  WiFi.printDiag(Serial);
 }
-  
+
 
 bool connectToNetwork() {
-  Serial.println("Getting wifi SPIFF");  
+  Serial.println("Getting wifi SPIFF");
   String wifiCredentials = getSerializedSpiff("/wifi.json");
   if (!wifiCredentials) {
     Serial.println("Wifi failed");
 
     return false;
   }
-  Serial.println("wifi found successfully");  
+  Serial.println("wifi found successfully");
 
   DynamicJsonDocument wifiDoc = getDeserializedJson(wifiCredentials, 1024);
 
   String ssid = wifiDoc["ssid"].as<String>();
-  String pass = wifiDoc["password"].as<String>();   
-       
+  String pass = wifiDoc["password"].as<String>();
+
   if (
-    ssid == NULL 
-    || ssid == "" 
-    || ssid[0] == '\0' 
+    ssid == NULL
+    || ssid == ""
+    || ssid[0] == '\0'
   ) {
     Serial.println("No network SSID set, not attempting to connect");
     return false;
@@ -734,18 +733,18 @@ bool connectToNetwork() {
     Serial.print(".");
     int currentTime = millis();
     if (timeout - currentTime < 0) {
-      Serial.println("Failed to connect to wifi network");  
+      Serial.println("Failed to connect to wifi network");
       break;
-    } 
+    }
     if (WiFi.status() == WL_CONNECTED){
       Serial.println("Wifi connection made");
-      WiFi.printDiag(Serial); 
+      WiFi.printDiag(Serial);
       Serial.print("Network IP Address: ");
       Serial.println(WiFi.localIP());
       Serial.println("saved ip address");
       ipAddress = ipToString(WiFi.localIP());
       Serial.println(ipAddress);
-      
+
       return true;
     }
   }
@@ -764,7 +763,7 @@ void handleSettingsUpdate(){
 
   bool success = true;
   if (doc != NULL) {
-    if (!saveWifiCredentials(doc["wifi"])) {   
+    if (!saveWifiCredentials(doc["wifi"])) {
       delay(500);
       Serial.println("failed to save spiffs");
       success = false;
@@ -805,8 +804,8 @@ bool saveWifiCredentials(DynamicJsonDocument doc) {
     ssid == NULL 
     || ssid == ""
     || password == NULL 
-    || ssid[0] == '\0' 
-    || password == "" 
+    || ssid[0] == '\0'
+    || password == ""
     ) {
     Serial.println("Security is not trying to be set, no value");
     return true;
@@ -844,9 +843,9 @@ bool saveDeviceUserSettings(DynamicJsonDocument doc) {
 
   if (
     deviceName == NULL 
-    || deviceName == "" 
+    || deviceName == ""
     || secret == NULL
-    || secret == "" 
+    || secret == ""
     ) {
     Serial.println("No device user name sent in payload, not setting any values and using defaults");
     delay(500);
@@ -910,7 +909,7 @@ bool saveDhtSensorData(DynamicJsonDocument dhtData) {
 
     Serial.println("Dht SPIFF close, sucess");
 
-    return true;  
+    return true;
 }
 
 bool saveDallasSensorData(DynamicJsonDocument dallasData) {
@@ -948,7 +947,7 @@ String ipToString(IPAddress ip){
   for (int i=0; i<4; i++) {
     stringIP += i  ? "." + String(ip[i]) : String(ip[i]);
   }
-  
+
   return stringIP;
 }
 
@@ -1084,7 +1083,7 @@ String sendHomeAppHttpsRequest(
       Serial.println("device has failed to login");
       deviceLoggedIn = false;
       Serial.println("faild to send data unauthorized response recieved");
-      const String payload = https.getString();      
+      const String payload = https.getString();
       Serial.print("received payload: ");
       Serial.println(payload);
     }
@@ -1113,11 +1112,11 @@ void deviceLogin() {
 
   String jsonData;
   serializeJson(loginDoc, jsonData);
-  
+
   String payload = sendHomeAppHttpsRequest(url, jsonData, false);
 
   if (payload == "" || payload == NULL) {
-    Serial.println("payload empty device has failed to login, cannot send any data"); 
+    Serial.println("payload empty device has failed to login, cannot send any data");
     deviceLoggedIn = false;
   }
   bool saveSuccess = saveTokensFromLogin(payload);
@@ -1174,7 +1173,7 @@ bool saveTokensFromLogin(String payload) {
   Serial.println(token);
   Serial.println("refreshToken");
   Serial.println(refreshToken);
-  
+
   return true;
 }
 
@@ -1215,7 +1214,7 @@ bool setDhtValues() {
   String dhtSensorSpiff = getSerializedSpiff("/dht.json");
   if (dhtSensorSpiff) {
     Serial.println("Deserialzing dht json");
-    DynamicJsonDocument dhtDoc = getDeserializedJson(dhtSensorSpiff, 1024);   
+    DynamicJsonDocument dhtDoc = getDeserializedJson(dhtSensorSpiff, 1024);
 
     String dhtSensorName = dhtDoc["sensorName"];
 
@@ -1229,7 +1228,7 @@ bool setDhtValues() {
     Serial.print("dht sensor name ");
     Serial.println(dhtSensor.sensorName);
   }
- 
+
   return true;
 }
 
@@ -1294,16 +1293,16 @@ bool setDallasValues() {
   String dhtSensorSpiff = getSerializedSpiff("/dallas.json");
   if (dhtSensorSpiff) {
     Serial.println("Deserialzing dallas json");
-    DynamicJsonDocument dallasDoc = getDeserializedJson(dhtSensorSpiff, 1024);   
+    DynamicJsonDocument dallasDoc = getDeserializedJson(dhtSensorSpiff, 1024);
 
     dallasTempData.sensorCount = dallasDoc["busTempCount"].as<int>();
 
     if (dallasTempData.sensorCount <= 0) {
       Serial.println("No Sensor count not setting any values");
-      
+
       return true;
     }
-   
+
     Serial.print("dallas sensor count ");
     Serial.println(dallasTempData.sensorCount);
 
@@ -1314,14 +1313,14 @@ bool setDallasValues() {
         Serial.println("Name check failed skipping this sensor");
         continue;
       }
-      
+
       strncpy(dallasTempData.sensorName[i], dallasDoc["busTempNameArray"][i], sizeof(dallasTempData.sensorName[i]));
       Serial.print("dallas sensor name ");
       Serial.println(dallasTempData.sensorName[i]);
     }
   }
  delay(500);
- 
+
  return true;
 }
 
@@ -1368,7 +1367,7 @@ uint8_t searchPinForOneWire(int pin){
     Serial.print("Number devices found: ");
     Serial.println(count);
     oneWire = (pin);
-    
+
     return true;
   }
 
@@ -1402,14 +1401,14 @@ String buildDallasReadingSensorUpdateRequest() {
       sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
       sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperature"] = String(dallasTempData.tempReading[i]);
       Serial.print("temp reading:");
-      Serial.println(String(dallasTempData.tempReading[i])); 
+      Serial.println(String(dallasTempData.tempReading[i]));
     }
   }
   String jsonData;
   serializeJson(sensorUpdateRequest, jsonData);
   Serial.print("Dallas json data to send: ");
   Serial.println(jsonData);
-  
+
   return jsonData;
 }
 
@@ -1478,14 +1477,14 @@ bool sendDallasUpdateRequest() {
 //    Serial.print("public ip set to:");
 //    Serial.println(publicIpAddress);
 //  }
-//  
+//
 ////  HTTPClient http;p
 ////
 ////  Serial.print("[HTTPS] begin connecting to... ");
 ////  Serial.println("https://api.ipify.org/?format=json");
-////  
+////
 ////  http.begin(client, "https://api.ipify.org/?format=json");
-////  
+////
 ////  Serial.println("[HTTPS] GET...");
 ////  int httpCode = http.GET();
 ////
@@ -1509,7 +1508,7 @@ bool sendDallasUpdateRequest() {
 ////      Serial.println(responsePayload["ip"].as<String>());
 ////      publicIpAddress = responsePayload["ip"].as<String>();
 ////      Serial.print("New pulicIpAddress");
-////      Serial.println(publicIpAddress);     
+////      Serial.println(publicIpAddress);
 ////  } else {
 ////      Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
 ////      return false;
@@ -1523,10 +1522,10 @@ void resetDevice() {
   createAccessPoint(); //@DEV
   SPIFFS.remove("/device.json");
   SPIFFS.remove("/wifi.json");
-  
+
   SPIFFS.remove("/dallas.json");
   SPIFFS.remove("/dht.json.json");
-  server.send(200, "application/json", "{\"status\":\"device reset\"}"); 
+  server.send(200, "application/json", "{\"status\":\"device reset\"}");
 }
 
 void restartDevice() {
@@ -1535,13 +1534,13 @@ void restartDevice() {
 
 
 
-// Common Functions 
+// Common Functions
 DynamicJsonDocument getDeserializedJson(String serializedJson, int jsonBuffSize) {
   Serial.println("serialized json to deserialize: ");
   Serial.println(serializedJson);
   Serial.print("Buffer size: ");
   Serial.println(jsonBuffSize);
-  
+
   Serial.println("Deseriazing Json");
   char jsonData[jsonBuffSize];
   strcpy(jsonData, serializedJson.c_str());
@@ -1562,7 +1561,7 @@ String getSerializedSpiff(String spiff) {
   Serial.println(spiff);
   File deviceFile = SPIFFS.open(spiff, "r");
   String deviceJson;
-  
+
   while(deviceFile.available()){
     deviceJson += char(deviceFile.read());
   }
@@ -1576,9 +1575,9 @@ String getSerializedSpiff(String spiff) {
 //<---------- END OF SPIFF MEthods ------------------>
 
 void setup() {
-  Serial.begin(DEVICE_SERIAL); 
+  Serial.begin(DEVICE_SERIAL);
   Serial.println("Searial started");
-  
+
   Serial.print("Starting web servers...");
   server.on("/",[](){server.send_P(200,"text/html",webpage);});
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
@@ -1609,7 +1608,7 @@ void setup() {
     Serial.println("Begining Dallas sensor");
     sensors.begin();
   }
-  
+
   delay(3000);
   Serial.println("End of Setup");
 }
@@ -1622,19 +1621,19 @@ void loop() {
   Serial.println("Server ClientHandled...");
 
    if (dallasTempData.sensorActive == true) {
-     takeDallasTempReadings();  
+     takeDallasTempReadings();
    }
    if (dhtSensor.activeSensor == true) {
-     takeDhtReadings();    
+     takeDhtReadings();
    }
-    
+
   if(WiFi.status()== WL_CONNECTED){
     Serial.println("Connected to wifi");
     if (deviceLoggedIn == false) {
       Serial.println("Device not loged in attempting to refresh token");
       handleRefreshTokens();
     } else {
-      sendDallasUpdateRequest();  
+      sendDallasUpdateRequest();
       sendDhtUpdateRequest();
     }
   } else {
