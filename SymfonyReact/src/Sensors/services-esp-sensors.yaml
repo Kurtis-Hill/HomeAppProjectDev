@@ -30,44 +30,37 @@ services:
   App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer:
 
   ######################## Update Sensor Reading Services ######################################################
-  App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
-    alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsService'
+  App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
 
-  App\Sensors\SensorDataServices\OutOfBounds\OutOfBoundsSensorServiceInterface:
-    alias: 'App\Sensors\SensorDataServices\OutOfBounds\SensorReadingTypeOutOfBoundsService'
+  App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface:
+    alias: 'App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade'
 
-  App\Sensors\SensorDataServices\ConstantlyRecord\SensorConstantlyRecordServiceInterface:
-    alias: 'App\Sensors\SensorDataServices\ConstantlyRecord\ConstRecordReadingTypeService'
+  App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface:
+    alias: 'App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler'
 
-  App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
-    alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
+  App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
 
-  App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface:
-    alias: 'App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler'
+  App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler'
+
+  App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandler'
 
   ######################## New Sensor Creation Services ########################################################
-  App\Sensors\SensorDataServices\NewSensor\NewSensorCreationServiceInterface:
-    alias: 'App\Sensors\SensorDataServices\NewSensor\NewSensorCreationService'
+  App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface:
+    alias: 'App\Sensors\SensorServices\NewSensor\NewSensorCreationFacade'
 
-  App\Sensors\SensorDataServices\NewReadingType\SensorReadingTypeCreationInterface:
-    alias: 'App\Sensors\SensorDataServices\NewReadingType\ReadingTypeCreationService'
+  App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationInterface:
+    alias: 'App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationFacade'
 
-  ######################## Factories ###########################################################################
-  App\Sensors\Factories\ORMFactories\ConstRecord\ORMConstRecordFactoryInterface:
-    alias: 'App\Sensors\Factories\ORMFactories\ConstRecord\ORMConstRecordFactory'
+  App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorFacade'
 
-  App\Sensors\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactoryInterface:
-    alias: 'App\Sensors\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactory'
-
-  App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactoryInterface:
-    alias: 'App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactory'
-
-  App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface:
-    alias: 'App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorService'
-
-  App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactoryInterface:
-    alias: 'App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactory'
-
+  ######################## New Sensor Creation Services ########################################################
+  App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface:
+    alias: 'App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandler'
 ######################## Builders ########################################################################
 
 ######################## Repositories ########################################################################

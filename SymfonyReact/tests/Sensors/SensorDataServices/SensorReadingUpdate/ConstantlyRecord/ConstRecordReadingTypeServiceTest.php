@@ -12,14 +12,14 @@ use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\SensorDataServices\ConstantlyRecord\ConstRecordReadingTypeService;
+use App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ConstRecordReadingTypeServiceTest extends KernelTestCase
 {
-    private ConstRecordReadingTypeService $sut;
+    private ConstRecordReadingTypeFacadeHandler $sut;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -28,7 +28,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         self::bootKernel();
 
         $container = static::getContainer();
-        $this->sut = $container->get(ConstRecordReadingTypeService::class);
+        $this->sut = $container->get(ConstRecordReadingTypeFacadeHandler::class);
         $this->entityManager = $container->get('doctrine.orm.default_entity_manager');
     }
 
@@ -49,7 +49,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $analogSensor = $soilSensor->getAnalogObject();
         $analogSensor->setConstRecord(true);
 
-        $this->sut->checkAndProcessConstRecord($analogSensor);
+        $this->sut->processConstRecord($analogSensor);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstAnalog::class);
@@ -71,7 +71,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $analogSensor = $soilSensor->getAnalogObject();
         $analogSensor->setConstRecord(false);
 
-        $this->sut->checkAndProcessConstRecord($analogSensor);
+        $this->sut->processConstRecord($analogSensor);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstAnalog::class);
@@ -101,7 +101,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $tempObject = $soilSensor->getTempObject();
         $tempObject->setConstRecord(true);
 
-        $this->sut->checkAndProcessConstRecord($tempObject);
+        $this->sut->processConstRecord($tempObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstTemp::class);
@@ -123,7 +123,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $tempObject = $soilSensor->getTempObject();
         $tempObject->setConstRecord(false);
 
-        $this->sut->checkAndProcessConstRecord($tempObject);
+        $this->sut->processConstRecord($tempObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstTemp::class);
@@ -162,7 +162,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $humid = $soilSensor->getHumidObject();
         $humid->setConstRecord(true);
 
-        $this->sut->checkAndProcessConstRecord($humid);
+        $this->sut->processConstRecord($humid);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstHumid::class);
@@ -184,7 +184,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $tempObject = $soilSensor->getHumidObject();
         $tempObject->setConstRecord(false);
 
-        $this->sut->checkAndProcessConstRecord($tempObject);
+        $this->sut->processConstRecord($tempObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstHumid::class);
@@ -219,7 +219,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $latitudeObject = $soilSensor->getLatitudeObject();
         $latitudeObject->setConstRecord(true);
 
-        $this->sut->checkAndProcessConstRecord($latitudeObject);
+        $this->sut->processConstRecord($latitudeObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstLatitude::class);
@@ -241,7 +241,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $latitudeObject = $soilSensor->getHumidObject();
         $latitudeObject->setConstRecord(false);
 
-        $this->sut->checkAndProcessConstRecord($latitudeObject);
+        $this->sut->processConstRecord($latitudeObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstLatitude::class);

@@ -8,7 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
-use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceServiceInterface;
+use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
@@ -45,7 +45,7 @@ class UpdateDeviceController extends AbstractController
         Devices $deviceToUpdate,
         Request $request,
         ValidatorInterface $validator,
-        UpdateDeviceServiceInterface $updateDeviceObjectBuilder,
+        UpdateDeviceHandlerInterface $updateDeviceObjectBuilder,
         RoomRepositoryInterface $roomRepository,
         GroupNameRepositoryInterface $groupNameRepository
     ): JsonResponse {

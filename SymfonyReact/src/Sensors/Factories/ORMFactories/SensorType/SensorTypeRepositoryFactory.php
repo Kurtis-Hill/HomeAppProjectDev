@@ -13,7 +13,7 @@ use App\Sensors\Repository\ORM\SensorType\DhtRepository;
 use App\Sensors\Repository\ORM\SensorType\GenericSensorTypeRepositoryInterface;
 use App\Sensors\Repository\ORM\SensorType\SoilRepository;
 
-class SensorTypeRepositoryFactory implements SensorTypeRepositoryFactoryInterface
+class SensorTypeRepositoryFactory
 {
     private DallasRepository $dallasRepository;
 
