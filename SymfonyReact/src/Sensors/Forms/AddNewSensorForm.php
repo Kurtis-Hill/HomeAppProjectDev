@@ -3,7 +3,7 @@
 namespace App\Sensors\Forms;
 
 use App\Common\API\APIErrorMessages;
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use App\Devices\Entity\Devices;
 use App\Form\FormMessages;
 use App\Sensors\Entity\Sensor;

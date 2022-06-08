@@ -10,7 +10,7 @@ class SensorTypeCardViewGraphReadingDTOBuilder implements SensorTypeCardViewDTOB
     /**
      * @throws NotImplementedException
      */
-    public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
+    public function buildTrimmedDownSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
     {
         throw new NotImplementedException('SensorTypeCardViewGraphReadingDTOBuilder:makeDTO');
     }

@@ -160,6 +160,11 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         return self::READING_TYPE;
     }
 
+    public static function getReadingTypes(): string
+    {
+        return self::READING_TYPE;
+    }
+
     #[Assert\Callback(groups: [Soil::NAME])]
     public function validate(ExecutionContextInterface $context): void
     {

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Entity;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;

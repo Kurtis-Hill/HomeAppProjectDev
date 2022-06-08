@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Common\Form\CustomFormValidators;
+namespace App\Common\CustomValidators;
 
 
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -23,7 +23,7 @@ class NoSpecialCharactersConstraintValidator extends ConstraintValidator
             return;
         }
 
-        if (preg_match("/[^A-Za-z0-9.]/", $value)) {
+        if (preg_match("/[^A-Za-z\d.]/", $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

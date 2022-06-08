@@ -10,6 +10,7 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
@@ -17,9 +18,11 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,8 +50,8 @@ class CardViewControllerTest extends WebTestCase
         $this->sensorTypeQueryFactory = static::getContainer()
             ->get(SensorTypeQueryFactory::class);
 
-        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP);
-        $this->room = $this->entityManager->getRepository(Room::class)->findOneByRoomNameAndGroupNameId($this->groupName->getGroupNameID(), RoomFixtures::ADMIN_ROOM_NAME);
+//        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP);
+//        $this->room = $this->entityManager->getRepository(Room::class)->findOneByRoomNameAndGroupNameId($this->groupName->getGroupNameID(), RoomFixtures::ADMIN_ROOM_NAME);
         $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
     }
 
@@ -177,6 +180,168 @@ class CardViewControllerTest extends WebTestCase
 //        );
 //
 //        dd($cardViewAllCardSensorData);
+    }
+
+    /**
+     * @dataProvider noReadingTypeReturnedDataProvider
+     */
+    public function test_no_reading_type_returned_cards_get_returned(array $readingTypes): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::CARD_VIEW_URL, 'index'),
+            ['reading-types' => $readingTypes],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Request Successful', $responseData['title']);
+        self::assertIsArray($responseData['payload']);
+        self::assertGreaterThan(1, count($responseData['payload']));
+
+        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
+        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
+
+        foreach ($responseData['payload'] as $payload) {
+            /** @var CardView $cardView */
+            $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
+
+            self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
+            self::assertEquals($cardViewObject->getSensorNameID()->getSensorName(), $payload['sensorName']);
+            self::assertEquals($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensorNameID()->getDeviceObject()->getRoomObject()->getRoom(), $payload['sensorRoom']);
+            self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
+            self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
+
+            $readingTypeQueryDTOs = $this->sensorTypeQueryFactory
+                ->getSensorTypeQueryDTOBuilder($payload['sensorType'])
+                ->buildSensorReadingTypes();
+
+            $arrayPlace = 0;
+            foreach ($readingTypes as $readingType) {
+                foreach ($readingTypeQueryDTOs as $readingTypeQueryDTO) {
+                    /** @var JoinQueryDTO $readingTypeQueryDTO */
+                  if ($readingTypeQueryDTO->getAlias() === ReadingTypes::SENSOR_READING_TYPE_DATA[$readingType]['alias']) {
+                      unset($readingTypeQueryDTOs[$arrayPlace]);
+                  }
+                }
+                  ++$arrayPlace;
+            }
+
+            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+                $cardViewObject->getSensorNameID()->getDeviceObject()->getDeviceNameID(),
+                $cardViewObject->getSensorNameID()->getSensorName(),
+                null,
+                $readingTypeQueryDTOs,
+            );
+
+            $sensorDataArrayCount = 0;
+            foreach ($readingTypes as $readingType) {
+                self::assertNotEquals($readingType, $payload['sensorData'][$sensorDataArrayCount]['readingType']);
+            }
+            foreach ($cardSensorReadingTypeObjects as $cardSensorReadingTypeObject) {
+                if (
+                    ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface)
+                    && $cardSensorReadingTypeObject::getReadingTypes() === $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                ) {
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                        $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getCurrentReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['currentReading']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getHighReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['highReading']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getLowReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['lowReading']
+                    );
+                    if (isset($payload['sensorData'][$sensorDataArrayCount]['readingSymbol'])) {
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject::getReadingSymbol(),
+                            $payload['sensorData'][$sensorDataArrayCount]['readingSymbol']
+                        );
+                    }
+                }
+
+                ++$sensorDataArrayCount;
+            }
+        }
+    }
+
+    public function noReadingTypeReturnedDataProvider(): Generator
+    {
+        yield [
+            [
+                Temperature::READING_TYPE,
+            ]
+        ];
+        yield [
+            [
+                Humidity::READING_TYPE,
+            ]
+        ];
+        yield [
+            [
+                Latitude::READING_TYPE,
+            ]
+        ];
+        yield [
+            [
+                Analog::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Analog::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Latitude::READING_TYPE,
+                Analog::READING_TYPE
+            ]
+        ];
     }
 
 

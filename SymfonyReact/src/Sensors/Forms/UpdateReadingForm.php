@@ -3,7 +3,7 @@
 
 namespace App\Sensors\Forms;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Temperature;

@@ -198,6 +198,11 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         return self::READING_SYMBOL;
     }
 
+    public static function getReadingTypes(): string
+    {
+        return self::READING_TYPE;
+    }
+
     #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME])]
     public function validate(ExecutionContextInterface $context): void
     {

@@ -2,13 +2,12 @@
 
 namespace App\Devices\Entity;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;

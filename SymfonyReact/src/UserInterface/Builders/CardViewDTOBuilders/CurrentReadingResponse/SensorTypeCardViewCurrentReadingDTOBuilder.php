@@ -7,8 +7,7 @@ use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardD
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
-    //@TODO use the appropriate dtos here
-    public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
+    public function buildTrimmedDownSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
     {
         $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($cardData['sensortype_sensorType']);
         $formattedSensorData = $cardBuilder->formatScalarCardSensorData($cardData);
@@ -19,6 +18,7 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewD
             return null;
         }
 
+//        dd($formattedSensorData);
         return new CurrentReadingSensorTypeCardResponseDTO(
             $cardData['sensors_sensorName'],
             $cardData['sensortype_sensorType'],

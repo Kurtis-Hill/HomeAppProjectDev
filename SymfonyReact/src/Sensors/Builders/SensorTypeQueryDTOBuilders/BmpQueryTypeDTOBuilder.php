@@ -46,9 +46,9 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
     public function buildSensorReadingTypes(): array
     {
         return [
-          $this->temperatureQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
-          $this->humidityQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
-          $this->latitudeQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
+            $this->temperatureQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
+            $this->humidityQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
+            $this->latitudeQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
         ];
     }
 

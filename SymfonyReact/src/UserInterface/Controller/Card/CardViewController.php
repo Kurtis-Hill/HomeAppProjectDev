@@ -144,6 +144,7 @@ class CardViewController extends AbstractController
     {
         $cardViewRequestDTO = $this->validateRequestDTO($request);
 
+//        dd($cardViewRequestDTO);
         $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
         $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO();

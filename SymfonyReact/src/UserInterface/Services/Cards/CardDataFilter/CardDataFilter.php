@@ -7,6 +7,7 @@ use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface;
 use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\UserInterface\Builders\CardDataQueryDTOBuilders\CardDataQueryEncapsulationDTOBuilder;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
@@ -38,28 +39,21 @@ class CardDataFilter
         $this->readingTypeQueryFactory = $readingTypeQueryFactory;
     }
 
-    #[Pure]
-    public function preparePreFilterDTO(array $sensorTypesToFilter, array $readingTypesToFilter): CardDataPreFilterDTO
-    {
-        return new CardDataPreFilterDTO(
-            $sensorTypesToFilter,
-            $readingTypesToFilter,
-        );
-    }
-
     public function filterSensorsToQuery(CardDataPreFilterDTO $cardFilters): CardDataQueryEncapsulationFilterDTO
     {
         $allSensorTypes = $this->sensorTypeRepository->findAll();
+        $sortedQueryTypes = $this->getSensorTypeJoinQueryDTOs(
+            $allSensorTypes,
+            $cardFilters->getSensorTypesToFilter()
+        );
 
-        $sortedQueryTypes = $this->filterSensorByType($allSensorTypes, $cardFilters->getSensorTypesToFilter());
         $allReadingTypes = $this->readingTypeRepository->findAll();
-
-        $readingTypesToQuery = $this->filterSensorByReadingType(
+        $readingTypesToQuery = $this->getReadingTypeJoinQueryDTOs(
             $allReadingTypes,
             $cardFilters->getReadingTypesToFilter()
         );
 
-        return new CardDataQueryEncapsulationFilterDTO(
+        return CardDataQueryEncapsulationDTOBuilder::buildCardDAtaQueryEncapsulationDTO(
             $sortedQueryTypes['sensorTypesToQuery'] ?? [],
             $sortedQueryTypes['sensorTypesNotToQuery'] ?? [],
             $readingTypesToQuery,
@@ -67,7 +61,7 @@ class CardDataFilter
     }
 
     #[ArrayShape(['sensorTypesToQuery' => JoinQueryDTO::class, 'sensorTypesNotToQuery' => SensorTypeNotJoinQueryDTO::class])]
-    private function filterSensorByType(array $sensorTypes, array $sensorTypesToFilter = []): array
+    private function getSensorTypeJoinQueryDTOs(array $sensorTypes, array $sensorTypesToFilter = []): array
     {
         foreach ($sensorTypes as $sensorType) {
             try {
@@ -83,7 +77,6 @@ class CardDataFilter
             }
         }
 
-
         return [
             'sensorTypesToQuery' => $sensorTypesToQuery ?? [],
             'sensorTypesNotToQuery' => $sensorTypesNotToQuery ?? [],
@@ -91,7 +84,7 @@ class CardDataFilter
     }
 
     #[ArrayShape([JoinQueryDTO::class||[]])]
-    private function filterSensorByReadingType(array $allReadingTypes, array $readingTypesToFilter = []): array
+    private function getReadingTypeJoinQueryDTOs(array $allReadingTypes, array $readingTypesToFilter = []): array
     {
         foreach ($allReadingTypes as $readingType) {
             if ($readingType instanceof ReadingTypes) {

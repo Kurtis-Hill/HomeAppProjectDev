@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Entity;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

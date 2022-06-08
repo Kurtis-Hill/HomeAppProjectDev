@@ -23,13 +23,13 @@ services:
 #    calls:
 #      - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
 
-  ####################### Producers ######################################################
+####################### Producers ######################################################
   App\Sensors\AMQP\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
 
   ######################## Consumers ######################################################
   App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer:
 
-  ######################## Update Sensor Reading Services ######################################################
+######################## Update Sensor Reading Services ######################################################
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
 
@@ -48,7 +48,7 @@ services:
   App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandler'
 
-  ######################## New Sensor Creation Services ########################################################
+######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface:
     alias: 'App\Sensors\SensorServices\NewSensor\NewSensorCreationFacade'
 
@@ -58,7 +58,7 @@ services:
   App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorFacade'
 
-  ######################## New Sensor Creation Services ########################################################
+######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface:
     alias: 'App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandler'
 ######################## Builders ########################################################################

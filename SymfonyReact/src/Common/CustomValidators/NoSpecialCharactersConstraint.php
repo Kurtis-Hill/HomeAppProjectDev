@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Form\CustomFormValidators;
+namespace App\Common\CustomValidators;
 
 use Attribute;
 use Symfony\Component\Validator\Constraint;
