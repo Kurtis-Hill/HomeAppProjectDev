@@ -17,6 +17,7 @@ fi
 
 
 if [ ${APP_ENV} = 'dev' ]; then
+  composer install --prefer-dist --no-interaction
 	echo "dev container build"
 	echo "Executing database migrations for test enviroment..."
 	bin/console d:m:m --no-interaction --env=test
