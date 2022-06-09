@@ -33,8 +33,6 @@ COPY ./php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
 
 COPY ./supervisor/ /etc/supervisor/conf.d/
 
-RUN chmod 0444 -R /etc/ssl
-
 COPY ./docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 

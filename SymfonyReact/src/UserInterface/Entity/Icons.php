@@ -5,13 +5,13 @@ namespace App\UserInterface\Entity;
 use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\UserInterface\Repository\ORM\IconsRepository;
 
-/**
- * Icons
- *
- * @ORM\Table(name="icons", uniqueConstraints={@ORM\UniqueConstraint(name="iconName_2", columns={"iconName"})})
- * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\IconsRepository")
- */
+#[
+    ORM\Entity(repositoryClass: IconsRepository::class),
+    ORM\Table(name: "icons"),
+    ORM\UniqueConstraint(name: "iconName_2", columns: ["iconName"]),
+]
 class Icons
 {
     private const ICON_NAME_MAX_LENGTH = 20;
@@ -23,20 +23,17 @@ class Icons
     private const ICON_DESCRIPTION_MIN_LENGTH = 2;
 
     public const ALIAS = 'icons';
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="iconID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[
+        ORM\Column(name: "iconID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $iconID;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="iconName", type="string", length=20, nullable=false)
-     */
+    #[
+        ORM\Column(name: "iconName", type: "string", length: 20, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(
@@ -49,11 +46,9 @@ class Icons
     ]
     private string $iconName;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="string", length=20, nullable=false)
-     */
+    #[
+        ORM\Column(name: "description", type: "string", length: 20, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(
@@ -66,49 +61,31 @@ class Icons
     ]
     private string $description;
 
-    /**
-     * @return int
-     */
     public function getIconID(): int
     {
         return $this->iconID;
     }
 
-    /**
-     * @param int $iconID
-     */
     public function setIconID(int $iconID): void
     {
         $this->iconID = $iconID;
     }
 
-    /**
-     * @return string
-     */
     public function getIconName(): string
     {
         return $this->iconName;
     }
 
-    /**
-     * @param string $iconName
-     */
     public function setIconName(string $iconName): void
     {
         $this->iconName = $iconName;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
     public function setDescription(string $description): void
     {
         $this->description = $description;

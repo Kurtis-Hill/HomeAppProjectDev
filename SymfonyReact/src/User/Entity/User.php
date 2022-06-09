@@ -3,92 +3,73 @@
 namespace App\User\Entity;
 
 use App\Authentication\Entity\GroupNameMapping;
+use App\User\Repository\ORM\UserRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * User
- *
- * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="email", columns={"email"})}, indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
- * @ORM\Entity(repositoryClass="App\User\Repository\ORM\UserRepository")
- */
+#[
+    ORM\Entity(repositoryClass: UserRepository::class),
+    ORM\Table(name: "user"),
+    ORM\UniqueConstraint(name: "email", columns: ["email"]),
+    ORM\Index(columns: ["groupNameID"], name: "GroupName"),
+    ORM\UniqueConstraint(name: "email", columns: ["email"]),
+]
 #[UniqueEntity('email')]
 class User implements UserInterface
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="userID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "userID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $userID;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="firstName", type="string", length=20, nullable=false)
-     */
+    #[
+        ORM\Column(name: "firstName", type: "string", length: 20, nullable: false),
+    ]
     private string $firstName;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="lastName", type="string", length=20, nullable=false)
-     */
+    #[
+        ORM\Column(name: "lastName", type: "string", length: 20, nullable: false),
+    ]
     private string $lastName;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=180, nullable=false)
-     */
+    #[
+        ORM\Column(name: "email", type: "string", length: 180, nullable: false),
+    ]
     private string $email;
 
-    /**
-     * @var array
-     *
-     * @ORM\Column(name="roles", type="json", nullable=false)
-     */
+    #[
+        ORM\Column(name: "roles", type: "json", nullable: false),
+    ]
     private array $roles;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="profilePic", type="string", length=100, nullable=true, options={"default"="/assets/pictures/guest.jpg"})
-     */
+    #[
+        ORM\Column(name: "profilePic", type: "string", length: 100, nullable: true, options: ["default" => "/assets/pictures/guest.jpg"]),
+    ]
     private string $profilePic = '/assets/pictures/guest.jpg';
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="text", length=0, nullable=false)
-     */
+    #[
+        ORM\Column(name: "password", type: "text", length: 0, nullable: false),
+    ]
     private string $password;
 
-    /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
-    private DateTime $createdAt;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: GroupNames::class),
+        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+    ]
     private GroupNames|int $groupNameID;
 
-    /**
-     * @var array<GroupNameMapping>
-     */
-    private array $userGroupMappingEntities = [];
+    #[
+        ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
+    ]
+    private DateTime $createdAt;
 
+    #[ArrayShape([GroupNameMapping::class])]
+    private array $userGroupMappingEntities = [];
 
     #[ArrayShape([GroupNameMapping::class])]
     public function getUserGroupMappingEntities(): array
@@ -96,14 +77,12 @@ class User implements UserInterface
         return $this->userGroupMappingEntities;
     }
 
-    /**
-     * @param array $userGroupMappingEntities
-     */
     public function setUserGroupMappingEntities(array $userGroupMappingEntities): void
     {
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
+    #[ArrayShape([GroupNames::class])]
     public function getGroupNameObjects(): array
     {
         foreach ($this->userGroupMappingEntities as $groupName) {
@@ -112,9 +91,8 @@ class User implements UserInterface
 
         return $groupNameArray ?? [];
     }
-    /**
-     * @return array
-     */
+
+    #[ArrayShape(['int'])]
     public function getGroupNameIds(): array
     {
         $groupNames = [];
@@ -126,9 +104,7 @@ class User implements UserInterface
         return $groupNames;
     }
 
-    /**
-     * @return array
-     */
+    #[ArrayShape(['groupNameID' => 'int'])]
     public function getGroupNameAndIds(): array
     {
         $groupNames = [];
@@ -139,16 +115,12 @@ class User implements UserInterface
         return $groupNames;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUsername(): string
     {
         return $this->email;
     }
 
+    #[ArrayShape(['ROLES'])]
     public function getRoles(): array
     {
         return array_unique($this->roles);
@@ -161,9 +133,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getPassword(): string
     {
         return $this->password;
@@ -176,17 +145,11 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getSalt(): ?string
     {
         return null;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here

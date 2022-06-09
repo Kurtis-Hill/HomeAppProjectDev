@@ -8,36 +8,32 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\User\Repository\ORM\GroupNameRepository;
 
-/**
- * GroupNames.
- *
- * @ORM\Table(name="groupname", uniqueConstraints={@ORM\UniqueConstraint(name="groupName", columns={"groupName"})})
- * @ORM\Entity(repositoryClass="App\User\Repository\ORM\GroupNameRepository")
- */
 #[UniqueEntity('groupName')]
+#[
+    ORM\Entity(repositoryClass: GroupNameRepository::class),
+    ORM\Table(name: "groupname"),
+    ORM\Index(columns: ["createdBy"], name: "createdBy"),
+    ORM\Index(columns: ["roomID"], name: "roomID"),
+
+]
 class GroupNames
 {
-    public const NOT_PART_OF_THIS_GROUP_ERROR_MESSAGE = 'You are not part of this group';
-
     private const GROUP_NAME_MIN_LENGTH = 2;
 
     private const GROUP_NAME_MAX_LENGTH = 50;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="groupNameID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "groupNameID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $groupNameID;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="groupName", type="string", length=50, nullable=false)
-     */
+    #[
+        ORM\Column(name: "groupName", type: "string", length: 50, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(
@@ -50,9 +46,9 @@ class GroupNames
     ]
     private string $groupName;
 
-    /**
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[
+        ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" =>"current_timestamp()"]),
+    ]
     private DateTimeInterface $createdAt;
 
     public function getGroupNameID(): int
@@ -75,9 +71,6 @@ class GroupNames
         $this->groupName = $groupName;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;

@@ -118,7 +118,7 @@ class CardContextProvider extends Component {
                     });
                 }
                 else {
-                   window.location.replace('/HomeApp/logout');
+                   window.location.replace('/HomeApp/WebApp/logout');
                 }
             }
         }

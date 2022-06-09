@@ -3,29 +3,29 @@
 namespace App\User\Entity;
 
 use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\User\Repository\ORM\RoomRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Column;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Room
- *
- * @ORM\Table(name="room", indexes={@ORM\Index(name="GroupName", columns={"groupNameID"})})
- * @ORM\Entity(repositoryClass="App\User\Repository\ORM\RoomRepository")
- */
+#[
+    ORM\Entity(repositoryClass: RoomRepository::class),
+    ORM\Table(name: "room"),
+    ORM\Index(columns: ["groupNameID"], name: "GroupName"),
+]
 class Room
 {
     public const ALIAS = 'room';
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="roomID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "roomID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $roomID;
 
+    #[
+        ORM\Column(name: "room", type: "string", length: 255, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(
@@ -36,25 +36,14 @@ class Room
         ),
         Assert\NotBlank,
     ]
-    /**
-     * @Column(type="string")
-     */
-    #[Column(type: 'string', length: 20, nullable: false)]
     private string $room;
 
-    /**
-     * @var GroupNames
-     *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: GroupNames::class),
+        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+    ]
     private GroupNames $groupNameID;
 
-    /**
-     * @return int
-     */
     public function getRoomID(): int
     {
         return $this->roomID;
@@ -65,9 +54,6 @@ class Room
         $this->roomID = $roomID;
     }
 
-    /**
-     * @return string
-     */
     public function getRoom(): string
     {
         return $this->room;
@@ -78,9 +64,6 @@ class Room
         $this->room = $room;
     }
 
-    /**
-     * @return GroupNames
-     */
     public function getGroupNameID(): GroupNames
     {
         return $this->groupNameID;

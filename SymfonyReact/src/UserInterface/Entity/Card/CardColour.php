@@ -6,13 +6,13 @@ use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository;
 
-/**
- * Cardcolour.
- *
- * @ORM\Table(name="cardcolour", uniqueConstraints={@ORM\UniqueConstraint(name="colour", columns={"colour"}), @ORM\UniqueConstraint(name="shade", columns={"shade"})})
- * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository")
- */
+#[
+    ORM\Entity(repositoryClass: CardColourRepository::class),
+    ORM\Table(name: "cardcolour"),
+    ORM\UniqueConstraint(name: "Colour", columns: ["colour"]),
+]
 #[UniqueEntity('colour')]
 class CardColour
 {
@@ -26,20 +26,16 @@ class CardColour
 
     public const ALIAS = 'cardcolour';
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="colourID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "colourID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $colourID;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="colour", type="string", length=20, nullable=false)
-     */
+    #[
+        ORM\Column(name: "colour", type: "string", length: 20, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(
@@ -52,9 +48,9 @@ class CardColour
     ]
     private string $colour;
 
-    /**
-     * @ORM\Column(name="shade", type="string", length=20, nullable=false)
-     */
+    #[
+        ORM\Column(name: "shade", type: "string", length: 20, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(

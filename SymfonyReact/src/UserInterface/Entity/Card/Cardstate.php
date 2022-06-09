@@ -3,15 +3,15 @@
 namespace App\UserInterface\Entity\Card;
 
 use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Cardstate
- *
- * @ORM\Table(name="cardstate", uniqueConstraints={@ORM\UniqueConstraint(name="state", columns={"state"})})
- * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository")
- */
+#[
+    ORM\Entity(repositoryClass: CardStateRepository::class),
+    ORM\Table(name: "cardstate"),
+    ORM\UniqueConstraint(name: "State", columns: ["state"]),
+]
 class Cardstate
 {
     public const ON = 'ON';
@@ -30,20 +30,16 @@ class Cardstate
 
     private const CARD_STATE_MIN_LENGTH = 2;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="cardStateID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "cardStateID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $cardStateID;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="state", type="string", length=50, nullable=false)
-     */
+    #[
+        ORM\Column(name: "state", type: "string", length: 50, nullable: false),
+    ]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(
@@ -56,33 +52,21 @@ class Cardstate
     ]
     private string $state;
 
-    /**
-     * @return int
-     */
     public function getCardstateID(): int
     {
         return $this->cardStateID;
     }
 
-    /**
-     * @param int $cardStateID
-     */
     public function setCardstateID(int $cardStateID): void
     {
         $this->cardStateID = $cardStateID;
     }
 
-    /**
-     * @return string
-     */
     public function getState(): string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     */
     public function setState(string $state): void
     {
         $this->state = $state;

@@ -5,80 +5,63 @@ namespace App\UserInterface\Entity\Card;
 use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Icons;
+use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Cardview
- *
- * @ORM\Table(name="cardview", indexes={@ORM\Index(name="FK_E36636B5A356FF88", columns={"cardColourID"}), @ORM\Index(name="FK_E36636B53BE475E6", columns={"sensorNameID"}), @ORM\Index(name="FK_E36636B53casrdState", columns={"cardStateID"}), @ORM\Index(name="UserID", columns={"userID"}), @ORM\Index(name="FK_E36636B5840D9A7A", columns={"cardIconID"}), @ORM\Index(name="cardview_show", columns={"cardViewID"})})
- * @ORM\Entity(repositoryClass="App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository")
- */
+#[
+    ORM\Entity(repositoryClass: CardViewRepository::class),
+    ORM\Table(name: "cardview"),
+    ORM\Index(columns: ["cardColourID"], name: "FK_E36636B5A356FF88"),
+    ORM\Index(columns: ["sensorNameID"], name: "FK_E36636B53BE475E6"),
+    ORM\Index(columns: ["cardStateID"], name: "FK_E36636B53casrdState"),
+    ORM\Index(columns: ["userID"], name: "UserID"),
+    ORM\Index(columns: ["cardIconID"], name: "FK_E36636B5840D9A7A"),
+    ORM\Index(columns: ["cardViewID"], name: "cardview_show"),
+]
 class CardView
 {
     public const ALIAS = 'cardview';
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="cardViewID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "cardViewID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $cardViewID;
 
-    /**
-     * @var Sensor
-     *
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+    ]
     #[Assert\NotNull(message: "Sensor cannot be null")]
     private Sensor $sensorNameID;
 
-    /**
-     * @var Cardstate
-     *
-     * @ORM\ManyToOne(targetEntity="App\UserInterface\Entity\Card\Cardstate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardStateID", referencedColumnName="cardStateID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Cardstate::class),
+        ORM\JoinColumn(name: "cardStateID", referencedColumnName: "cardStateID"),
+    ]
     #[Assert\NotNull(message: "CardState state cannot be null")]
     private Cardstate $cardStateID;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="userID", referencedColumnName="userID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: User::class),
+        ORM\JoinColumn(name: "userID", referencedColumnName: "userID"),
+    ]
     #[Assert\NotNull(message: "User cannot be null")]
     private ?User $userID;
 
-    /**
-     * @var Icons
-     *
-     * @ORM\ManyToOne(targetEntity="App\UserInterface\Entity\Icons")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardIconID", referencedColumnName="iconID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Icons::class),
+        ORM\JoinColumn(name: "cardIconID", referencedColumnName: "iconID"),
+    ]
     #[Assert\NotNull(message: "Icon cannot be null")]
     private ?Icons $cardIconID;
 
-    /**
-     * @var CardColour
-     *
-     * @ORM\ManyToOne(targetEntity="App\UserInterface\Entity\Card\CardColour")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cardColourID", referencedColumnName="colourID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: CardColour::class),
+        ORM\JoinColumn(name: "cardColourID", referencedColumnName: "colourID"),
+    ]
     #[Assert\NotNull(message: "Card Colour colour cannot be null")]
     private CardColour $cardColourID;
 

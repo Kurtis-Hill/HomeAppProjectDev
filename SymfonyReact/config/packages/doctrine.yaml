@@ -41,17 +41,17 @@ doctrine:
         alias: Devices
         prefix: App\Devices\Entity
       User:
-        type: annotation
+        type: attribute
         dir: '%kernel.project_dir%/src/User/Entity'
         alias: User
         prefix: App\User\Entity
       UserInterface:
-        type: annotation
+        type: attribute
         dir: '%kernel.project_dir%/src/UserInterface/Entity'
         alias: UserInterface
         prefix: App\UserInterface\Entity
       Authentication:
-        type: annotation
+        type: attribute
         dir: '%kernel.project_dir%/src/Authentication/Entity'
         alias: Authentication
         prefix: App\Authentication\Entity
