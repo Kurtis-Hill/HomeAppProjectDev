@@ -14,11 +14,13 @@ use function dd;
 class SecurityController extends AbstractController
 {
     public const API_USER_LOGIN = '/HomeApp/api/user/login_check';
+
     public const API_DEVICE_LOGIN = '/HomeApp/api/device/login_check';
 
     #[Route('/HomeApp/WebApp/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
+//        dd($authenticationUtils->getLastAuthenticationError());
         return $this->render('index/index.html.twig');
     }
 
