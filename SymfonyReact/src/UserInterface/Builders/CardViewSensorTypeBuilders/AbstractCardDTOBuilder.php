@@ -28,13 +28,13 @@ abstract class AbstractCardDTOBuilder
     public function formatSensorTypeObjectsByReadingType(SensorTypeInterface $cardDTOData): array
     {
         if ($cardDTOData instanceof TemperatureSensorTypeInterface) {
-            $sensorData[] = $this->setStandardSensorData($cardDTOData->getTempObject(), Temperature::READING_TYPE, Temperature::READING_SYMBOL);
+            $sensorData[] = $this->setStandardSensorData($cardDTOData->getTempObject(), Temperature::getReadingTypeName(), Temperature::READING_SYMBOL);
         }
         if ($cardDTOData instanceof HumiditySensorTypeInterface) {
-            $sensorData[] = $this->setStandardSensorData($cardDTOData->getHumidObject(), Humidity::READING_TYPE, Humidity::READING_SYMBOL);
+            $sensorData[] = $this->setStandardSensorData($cardDTOData->getHumidObject(), Humidity::getReadingTypeName(), Humidity::READING_SYMBOL);
         }
         if ($cardDTOData instanceof LatitudeSensorTypeInterface) {
-            $sensorData[] = $this->setStandardSensorData($cardDTOData->getLatitudeObject(), Latitude::READING_TYPE);
+            $sensorData[] = $this->setStandardSensorData($cardDTOData->getLatitudeObject(), Latitude::getReadingTypeName());
         }
         if ($cardDTOData instanceof AnalogSensorTypeInterface) {
             $sensorData[] = $this->setStandardSensorData($cardDTOData->getAnalogObject(), Analog::READING_TYPE);

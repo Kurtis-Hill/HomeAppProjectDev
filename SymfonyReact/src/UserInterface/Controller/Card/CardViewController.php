@@ -83,7 +83,7 @@ class CardViewController extends AbstractController
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Icons filters')]);
         }
 
         try {
@@ -144,7 +144,6 @@ class CardViewController extends AbstractController
     {
         $cardViewRequestDTO = $this->validateRequestDTO($request);
 
-//        dd($cardViewRequestDTO);
         $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
         $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO();
@@ -152,8 +151,8 @@ class CardViewController extends AbstractController
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
+        } catch (ORMException $e) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Icons filters')]);
         }
 
         try {

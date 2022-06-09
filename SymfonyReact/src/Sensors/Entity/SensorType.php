@@ -7,15 +7,15 @@ use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Repository\ORM\Sensors\SensorTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * GetSensorTypesController
- *
- * @ORM\Table(name="sensortype", uniqueConstraints={@ORM\UniqueConstraint(name="sensorType", columns={"sensorType"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\Sensors\SensorTypeRepository")
- */
+#[
+    ORM\Entity(repositoryClass: SensorTypeRepository::class),
+    ORM\Table(name: "sensortype"),
+    ORM\UniqueConstraint(name: "sensorType", columns: ["sensorType"]),
+]
 class SensorType
 {
     public const ALIAS = 'sensortype';
@@ -31,22 +31,18 @@ class SensorType
 
     private const SENSOR_TYPE_DESCRIPTION_MAX_LENGTH = 50;
 
-    /**
-     * @ORM\Column(name="sensorTypeID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "sensorTypeID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $sensorTypeID;
 
-    /**
-     * @ORM\Column(name="sensorType", type="string", length=20, nullable=false)
-     */
+    #[ORM\Column(name: "sensorType", type: "string", length: 20, nullable: false)]
     #[NoSpecialCharactersConstraint]
     private string $sensorType;
 
-    /**
-     * @ORM\Column(name="description", type="string", length=50, nullable=false)
-     */
+    #[ORM\Column(name: "description", type: "string", length: 50, nullable: false)]
     #[
         NoSpecialCharactersConstraint,
         Assert\Length(

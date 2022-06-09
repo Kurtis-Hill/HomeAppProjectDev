@@ -7,15 +7,16 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
-use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\Mapping as ORM;
+use App\Sensors\Repository\ORM\SensorType\DallasRepository;
 
-/**
- * Dallas
- *
- * @ORM\Table(name="dallas", uniqueConstraints={@ORM\UniqueConstraint(name="tempID", columns={"tempID"})}, indexes={@ORM\Index(name="sensorNameID", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\SensorType\DallasRepository")
- */
+#[
+    ORM\Entity(repositoryClass: DallasRepository::class),
+    ORM\Table(name: "dallas"),
+    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
+    ORM\UniqueConstraint(name: "sensorNameID", columns: ["sensorNameID"]),
+    ORM\Index(columns: ["sensorNameID"], name: "sensorNameID"),
+]
 class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
 {
     public const NAME = 'Dallas';
@@ -30,42 +31,30 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         Temperature::READING_TYPE
     ];
 
-    /**
-     * @ORM\Column(name="dallasID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "dallasID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $dallasID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Temperature", fetch="EAGER")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Temperature::class),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+    ]
     private Temperature $tempID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+    ]
     private Sensor $sensorNameID;
-
-    /**
-     * @var CardView
-     */
-    private CardView $cardView;
 
     public function getSensorTypeID(): int
     {
         return $this->dallasID;
     }
 
-    /**
-     * @param int $dallasID
-     */
     public function setSensorTypeID(int $dallasID): void
     {
         $this->dallasID = $dallasID;
@@ -89,16 +78,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public function setTempObject(Temperature $tempID): void
     {
         $this->tempID = $tempID;
-    }
-
-    public function getCardViewObject(): ?CardView
-    {
-        return $this->cardView;
-    }
-
-    public function setCardViewObject(CardView $cardView): void
-    {
-        $this->cardView = $cardView;
     }
 
     public function getMaxTemperature(): float|int

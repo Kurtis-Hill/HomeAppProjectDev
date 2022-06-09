@@ -48,5 +48,5 @@ interface StandardReadingSensorInterface
 
     public function getReadingType(): string;
 
-    public static function getReadingTypeS(): string;
+    public static function getReadingTypeName(): string;
 }

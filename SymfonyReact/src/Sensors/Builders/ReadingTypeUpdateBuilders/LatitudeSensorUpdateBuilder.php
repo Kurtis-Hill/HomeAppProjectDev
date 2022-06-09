@@ -41,7 +41,7 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             throw new ReadingTypeNotExpectedException(
                 sprintf(
                     ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
-                    Latitude::READING_TYPE,
+                    Latitude::getReadingTypeName(),
                     $allSensorReadingType->getReadingType(),
                 )
             );
@@ -50,7 +50,7 @@ class LatitudeSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             throw new ReadingTypeObjectBuilderException(
                 sprintf(
                     ReadingTypeObjectBuilderException::CURRENT_READING_FAILED_TO_BUILD_FOR_TYPE,
-                    Latitude::READING_TYPE,
+                    Latitude::getReadingTypeName(),
                 )
             );
         }

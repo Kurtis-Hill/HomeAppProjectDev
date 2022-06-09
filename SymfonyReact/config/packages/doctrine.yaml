@@ -31,7 +31,7 @@ doctrine:
       product_category_filter: App\Doctrine\ProductCategoryFilter
     mappings:
       ESPSensor:
-        type: annotation
+        type: attribute
         dir: '%kernel.project_dir%/src/Sensors/Entity'
         alias: ESPSensor
         prefix: App\Sensors\Entity

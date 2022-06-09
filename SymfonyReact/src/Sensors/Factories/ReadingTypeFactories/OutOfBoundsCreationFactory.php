@@ -38,10 +38,10 @@ class OutOfBoundsCreationFactory
     public function getConstRecordObjectBuilder(string $readingType): OutOfBoundsObjectCreationBuilderInterface
     {
         return match ($readingType) {
-            Temperature::READING_TYPE => $this->temperatureOutOfBoundsObjectCreationBuilder,
-            Humidity::READING_TYPE => $this->humidityOutOfBoundsObjectCreationBuilder,
-            Latitude::READING_TYPE => $this->latitudeOutOfBoundsObjectCreationBuilder,
-            Analog::READING_TYPE => $this->analogOutOfBoundsObjectCreationBuilder,
+            Temperature::getReadingTypeName() => $this->temperatureOutOfBoundsObjectCreationBuilder,
+            Humidity::getReadingTypeName() => $this->humidityOutOfBoundsObjectCreationBuilder,
+            Latitude::getReadingTypeName() => $this->latitudeOutOfBoundsObjectCreationBuilder,
+            Analog::getReadingTypeName() => $this->analogOutOfBoundsObjectCreationBuilder,
         };
     }
 }

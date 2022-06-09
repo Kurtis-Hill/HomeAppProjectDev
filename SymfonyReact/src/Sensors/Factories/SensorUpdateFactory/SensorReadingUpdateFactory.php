@@ -28,7 +28,7 @@ class SensorReadingUpdateFactory
             Temperature::READING_TYPE => $this->standardSensorUpdateBuilder,
             Humidity::READING_TYPE => $this->standardSensorUpdateBuilder,
             Analog::READING_TYPE => $this->standardSensorUpdateBuilder,
-            Latitude::READING_TYPE => $this->standardSensorUpdateBuilder,
+            Latitude::getReadingTypeName() => $this->standardSensorUpdateBuilder,
             default => throw new SensorUpdateFactoryException(sprintf(SensorUpdateFactoryException::SENSOR_BUILDER_NOT_FOUND_SPECIFIC, $readingType))
         };
     }

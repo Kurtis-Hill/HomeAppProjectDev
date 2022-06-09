@@ -15,6 +15,6 @@ class LatitudeCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdat
 
     public function getReadingType(): string
     {
-        return Latitude::READING_TYPE;
+        return Latitude::getReadingTypeName();
     }
 }

@@ -61,7 +61,7 @@ const addNewDevice = () => {
                                     {
                                     navBarContext.userRooms.length >= 0
                                     ? navBarContext.userRooms.map((room, index) => (
-                                        <option className="form-control" value={room.roomID} key={index}>{room.room}</option>
+                                        <option className="form-control" value={room.roomID} key={index}>{room.roomName}</option>
                                         ))
                                     : <option>No Rooms</option>
                                     }

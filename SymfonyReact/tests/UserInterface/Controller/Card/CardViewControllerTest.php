@@ -245,7 +245,7 @@ class CardViewControllerTest extends WebTestCase
             foreach ($cardSensorReadingTypeObjects as $cardSensorReadingTypeObject) {
                 if (
                     ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface)
-                    && $cardSensorReadingTypeObject::getReadingTypes() === $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                    && $cardSensorReadingTypeObject::getReadingTypeName() === $payload['sensorData'][$sensorDataArrayCount]['readingType']
                 ) {
                     self::assertEquals(
                         $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),

@@ -17,7 +17,7 @@ class LatitudeConstRecordObjectBuilder extends AbstractStandardConstRecordBuilde
                 sprintf(
                     ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
                     $sensorReadingTypeObject->getReadingType(),
-                    Latitude::READING_TYPE
+                    Latitude::getReadingTypeName()
                 )
             );
         }

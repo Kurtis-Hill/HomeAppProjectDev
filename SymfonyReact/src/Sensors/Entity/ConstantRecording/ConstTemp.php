@@ -14,25 +14,23 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository;
 
-/**
- * ConstTemp
- *
- * @ORM\Table(name="consttemp", indexes={@ORM\Index(name="consttemp_ibfk_1", columns={"sensorID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository")
- */
+#[
+    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryTempRepository::class),
+    ORM\Table(name: "consttemp"),
+    ORM\Index(columns: ["sensorID"], name: "consttemp_ibfk_1"),
+]
 class ConstTemp implements ConstantlyRecordInterface
 {
-    /**
-     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "constRecordID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $constRecordID;
 
-    /**
-     * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
-     */
+    #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false), ]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]
@@ -46,18 +44,14 @@ class ConstTemp implements ConstantlyRecordInterface
     ]
     private float $sensorReading;
 
-    /**
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),]
     #[Assert\NotBlank(message: 'Const temp date time should not be blank')]
     private DateTimeInterface $time;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Temperature")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Temperature::class),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+    ]
     #[Assert\NotNull(message: "Const Record Temperature Object cannot be null")]
     private Temperature $sensorReadingTypeID;
 

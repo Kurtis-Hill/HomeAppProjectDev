@@ -29,6 +29,6 @@ class TemperatureCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUp
 
     public function getReadingType(): string
     {
-        return Temperature::READING_TYPE;
+        return Temperature::getReadingTypeName();
     }
 }

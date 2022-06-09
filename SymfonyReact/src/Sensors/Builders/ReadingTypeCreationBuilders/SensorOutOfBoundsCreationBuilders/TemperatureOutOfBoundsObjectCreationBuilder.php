@@ -18,7 +18,7 @@ class TemperatureOutOfBoundsObjectCreationBuilder extends AbstractStandardSensor
                 sprintf(
                     ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
                     $sensorReadingTypeObject->getReadingType(),
-                    Temperature::READING_TYPE
+                    Temperature::getReadingTypeName()
                 )
             );
         }

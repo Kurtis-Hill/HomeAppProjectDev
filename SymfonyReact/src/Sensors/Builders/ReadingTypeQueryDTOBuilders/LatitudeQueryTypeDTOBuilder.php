@@ -13,7 +13,7 @@ class LatitudeQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
     #[Pure]
     public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO
     {
-        $latitudeData = ReadingTypes::SENSOR_READING_TYPE_DATA[Latitude::READING_TYPE];
+        $latitudeData = ReadingTypes::SENSOR_READING_TYPE_DATA[Latitude::getReadingTypeName()];
 
         return new JoinQueryDTO(
             $latitudeData['alias'],

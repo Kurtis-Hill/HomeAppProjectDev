@@ -15,6 +15,7 @@ function Login(props) {
     const createAccountLink = "/HomeApp/WebApp/register";
 
     const handleLogin = async (event) => {
+        console.log('boom')
         setError(null);
         setLoading(true);
 

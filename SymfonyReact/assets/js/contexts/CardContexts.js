@@ -179,7 +179,6 @@ class CardContextProvider extends Component {
 
     toggleModal = () => {
         this.setState({modalContent: emptyModalContent, modalShow: !this.state.modalShow});
-        console.log(this.state.modalShow);
         this.setState({modalStatus: emptyModalStatus});
     }
 

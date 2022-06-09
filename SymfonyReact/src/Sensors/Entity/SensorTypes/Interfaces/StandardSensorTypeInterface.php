@@ -6,7 +6,4 @@ use App\UserInterface\Entity\Card\CardView;
 
 interface StandardSensorTypeInterface
 {
-    public function getCardViewObject(): ?CardView;
-
-    public function setCardViewObject(CardView $cardView): void;
 }

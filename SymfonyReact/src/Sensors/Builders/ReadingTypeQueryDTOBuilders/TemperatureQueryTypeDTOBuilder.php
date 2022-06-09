@@ -13,7 +13,7 @@ class TemperatureQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterf
     #[Pure]
     public function buildReadingTypeJoinQueryDTO(): JoinQueryDTO
     {
-        $tempData = ReadingTypes::SENSOR_READING_TYPE_DATA[Temperature::READING_TYPE];
+        $tempData = ReadingTypes::SENSOR_READING_TYPE_DATA[Temperature::getReadingTypeName()];
 
         return new JoinQueryDTO(
             $tempData['alias'],

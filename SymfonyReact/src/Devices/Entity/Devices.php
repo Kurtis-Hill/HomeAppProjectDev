@@ -8,6 +8,7 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -144,11 +145,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getCreatedById(): ?int
     {
-        if ($this->createdBy instanceof User) {
-            return $this->createdBy->getUserID();
-        }
-
-        return null;
+        return $this->createdBy->getUserID();
     }
 
     public function getCreatedBy(): User
@@ -181,6 +178,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roomID = $room;
     }
 
+    #[ArrayShape(["0" => "ROLE_DEVICE"])]
     public function getRoles(): array
     {
         return array_unique($this->roles);

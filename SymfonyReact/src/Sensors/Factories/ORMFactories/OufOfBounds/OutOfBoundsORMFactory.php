@@ -35,13 +35,16 @@ class OutOfBoundsORMFactory
         $this->outOfBoundsLatitude = $outOfBoundsLatitudeORMRepository;
     }
 
+    /**
+     * @throws ReadingTypeNotSupportedException
+     */
     public function getOutOfBoundsServiceRepository(string $sensorReadingType): OutOfBoundsRepositoryInterface
     {
         return match ($sensorReadingType) {
-            Temperature::READING_TYPE => $this->outOfBoundsTemp,
-            Humidity::READING_TYPE => $this->outOfBoundsHumid,
-            Analog::READING_TYPE => $this->outOfBoundsAnalog,
-            Latitude::READING_TYPE => $this->outOfBoundsLatitude,
+            Temperature::getReadingTypeName() => $this->outOfBoundsTemp,
+            Humidity::getReadingTypeName() => $this->outOfBoundsHumid,
+            Analog::getReadingTypeName() => $this->outOfBoundsAnalog,
+            Latitude::getReadingTypeName() => $this->outOfBoundsLatitude,
             default => throw new ReadingTypeNotSupportedException(
                 ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE
             )

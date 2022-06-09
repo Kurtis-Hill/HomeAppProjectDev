@@ -8,42 +8,34 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstrain
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository;
 
-/**
- * @ORM\Table(name="consthumid", indexes={@ORM\Index(name="sensorID", columns={"humidID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository")
- */
+#[
+    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryHumidRepository::class),
+    ORM\Table(name: "consthumid"),
+    ORM\Index(columns: ["humidID"], name: "humidID"),
+]
 class ConstHumid implements ConstantlyRecordInterface
 {
-    /**
-     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "constRecordID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $constRecordID;
 
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
-     */
+    #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false), ]
     #[HumidityConstraint]
     private float $sensorReading;
 
-    /**
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]), ]
     #[Assert\NotBlank(message: 'Const humidity date time should not be blank')]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @var Humidity
-     *
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Humidity")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Humidity::class),
+        ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
+    ]
     #[Assert\NotNull(message: "Const Record Humidity Object cannot be null")]
     private Humidity $sensorReadingTypeID;
 
@@ -88,6 +80,4 @@ class ConstHumid implements ConstantlyRecordInterface
             $this->sensorReadingTypeID = $sensorReadingTypeID;
         }
     }
-
-
 }

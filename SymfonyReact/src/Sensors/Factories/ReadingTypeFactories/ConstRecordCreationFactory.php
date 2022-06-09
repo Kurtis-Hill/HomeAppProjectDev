@@ -38,10 +38,10 @@ class ConstRecordCreationFactory
     public function getConstRecordObjectBuilder(string $readingType): ConstRecordObjectBuilderInterface
     {
         return match ($readingType) {
-            Temperature::READING_TYPE => $this->temperatureConstRecordObjectBuilder,
-            Latitude::READING_TYPE => $this->latitudeConstRecordObjectBuilder,
-            Humidity::READING_TYPE => $this->humidityConstRecordObjectBuilder,
-            Analog::READING_TYPE => $this->analogConstRecordObjectBuilder,
+            Temperature::getReadingTypeName() => $this->temperatureConstRecordObjectBuilder,
+            Latitude::getReadingTypeName() => $this->latitudeConstRecordObjectBuilder,
+            Humidity::getReadingTypeName() => $this->humidityConstRecordObjectBuilder,
+            Analog::getReadingTypeName() => $this->analogConstRecordObjectBuilder,
         };
     }
 }

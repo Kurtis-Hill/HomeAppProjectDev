@@ -6,20 +6,18 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
-use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
+use App\Sensors\Repository\ORM\ReadingType\LatitudeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Latitude
- *
- * @ORM\Table(name="latitude", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\LatitudeRepository")
- */
+#[
+    ORM\Entity(repositoryClass: LatitudeRepository::class),
+    ORM\Table(name: "latitude"),
+    ORM\UniqueConstraint(name: "sensorNameID", columns: ["sensorNameID"]),
+]
 class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterface, StandardReadingSensorInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'latitude';
@@ -30,54 +28,36 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
 
     public const READING_SYMBOL = '°';
 
-    public const LATITUDE_SENSORS = [
-        Bmp::NAME
-    ];
-
-    /**
-     * @ORM\Column(name="latitudeID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "latitudeID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $latitudeID;
 
-    /**
-     * @ORM\Column(name="latitude", type="integer", nullable=false)
-     */
+    #[ORM\Column(name: "latitude", type: "integer", nullable: false),]
     #[LatitudeConstraint]
     private int|float $latitude;
 
-    /**
-     * @ORM\Column(name="highLatitude", type="integer", nullable=false)
-     */
+    #[ORM\Column(name: "highLatitude", type: "float", nullable: false),]
     #[LatitudeConstraint]
     private int|float $highLatitude = 90;
 
-    /**
-     * @ORM\Column(name="lowLatitude", type="integer", nullable=false)
-     */
+    #[ORM\Column(name: "lowLatitude", type: "float", nullable: false),]
     #[LatitudeConstraint]
     private int|float $lowLatitude = -90;
 
-    /**
-     * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
-     */
+    #[ORM\Column(name: "constRecord", type: "boolean", nullable: false, options: ["default" => "0"]),]
     #[Assert\Type("bool")]
     private bool $constRecord = false;
 
-    /**
-     * @var Sensor
-     *
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+    ]
     private Sensor $sensorNameID;
 
-    /**
-     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),]
     #[Assert\NotBlank(message: 'Latitude date time should not be blank')]
     private DateTimeInterface $updatedAt;
 
@@ -164,7 +144,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
         return self::READING_TYPE;
     }
 
-    public static function getReadingTypes(): string
+    public static function getReadingTypeName(): string
     {
         return self::READING_TYPE;
     }

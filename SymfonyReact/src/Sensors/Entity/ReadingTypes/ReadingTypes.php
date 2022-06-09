@@ -2,16 +2,13 @@
 
 namespace App\Sensors\Entity\ReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
 use Doctrine\ORM\Mapping as ORM;
+use App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepository;
 
-/**
- * @ORM\Table(name="readingtypes")
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepository")
- */
+#[
+    ORM\Entity(repositoryClass: ReadingTypeRepository::class),
+    ORM\Table(name: "readingtypes"),
+]
 class ReadingTypes
 {
     //Add all new sensor reading types here
@@ -34,16 +31,14 @@ class ReadingTypes
         ],
     ];
 
-    /**
-     * @ORM\Column(name="readingTypeID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "readingTypeID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $readingTypeID;
 
-    /**
-     * @ORM\Column(name="readingType", type="string", length=50, nullable=false)
-     */
+    #[ORM\Column(name: "readingType", type: "string", length: 50, nullable: false)]
     private string $readingType;
 
     public function getReadingTypeID(): int

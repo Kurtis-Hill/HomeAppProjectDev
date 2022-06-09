@@ -38,10 +38,10 @@ class ORMConstRecordFactory
     public function getConstRecordServiceRepository(string $sensorReadingTypeObject): ConstantlyRecordRepositoryInterface
     {
         return match ($sensorReadingTypeObject) {
-            Analog::READING_TYPE => $this->constAnalog,
-            Temperature::READING_TYPE => $this->constTemp,
-            Humidity::READING_TYPE => $this->constHumid,
-            Latitude::READING_TYPE => $this->constLatitude,
+            Analog::getReadingTypeName() => $this->constAnalog,
+            Temperature::getReadingTypeName() => $this->constTemp,
+            Humidity::getReadingTypeName() => $this->constHumid,
+            Latitude::getReadingTypeName() => $this->constLatitude,
             default => throw new ReadingTypeNotSupportedException(
                 ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE
             )

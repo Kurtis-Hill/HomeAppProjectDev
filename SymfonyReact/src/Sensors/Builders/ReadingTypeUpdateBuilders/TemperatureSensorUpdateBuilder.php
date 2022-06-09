@@ -43,7 +43,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
             throw new ReadingTypeNotExpectedException(
                 sprintf(
                     ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
-                    Temperature::READING_TYPE,
+                    Temperature::getReadingTypeName(),
                     $allSensorReadingType->getReadingType(),
                 )
             );
@@ -52,7 +52,7 @@ class TemperatureSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder i
             throw new ReadingTypeObjectBuilderException(
                 sprintf(
                     ReadingTypeObjectBuilderException::CURRENT_READING_FAILED_TO_BUILD_FOR_TYPE,
-                    Temperature::READING_TYPE,
+                    Temperature::getReadingTypeName(),
                 )
             );
         }

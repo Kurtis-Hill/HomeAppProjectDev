@@ -38,10 +38,10 @@ class SensorReadingTypeRepositoryFactory
     public function getSensorReadingTypeRepository(string $sensorType): ReadingTypeRepositoryInterface
     {
         return match ($sensorType) {
-            Temperature::READING_TYPE => $this->temperatureRepository,
-            Humidity::READING_TYPE => $this->humidityRepository,
-            Analog::READING_TYPE => $this->analogRepository,
-            Latitude::READING_TYPE => $this->latitudeRepository,
+            Temperature::getReadingTypeName() => $this->temperatureRepository,
+            Humidity::getReadingTypeName() => $this->humidityRepository,
+            Analog::getReadingTypeName() => $this->analogRepository,
+            Latitude::getReadingTypeName() => $this->latitudeRepository,
             default => throw new SensorReadingTypeRepositoryFactoryException(
                 sprintf(
                     SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND,

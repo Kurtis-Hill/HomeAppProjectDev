@@ -42,10 +42,10 @@ class SensorReadingUpdateFactory
     public function getReadingTypeUpdateBuilder(string $readingType): ReadingTypeUpdateBuilderInterface
     {
         return match ($readingType) {
-            Temperature::READING_TYPE => $this->temperatureSensorUpdateBuilder,
-            Humidity::READING_TYPE => $this->humiditySensorUpdateBuilder,
-            Latitude::READING_TYPE => $this->latitudeSensorUpdateBuilder,
-            Analog::READING_TYPE => $this->analogSensorUpdateBuilder,
+            Temperature::getReadingTypeName() => $this->temperatureSensorUpdateBuilder,
+            Humidity::getReadingTypeName() => $this->humiditySensorUpdateBuilder,
+            Latitude::getReadingTypeName() => $this->latitudeSensorUpdateBuilder,
+            Analog::getReadingTypeName() => $this->analogSensorUpdateBuilder,
             default => throw new SensorReadingUpdateFactoryException(
         sprintf(SensorReadingUpdateFactoryException::MESSAGE, $readingType),
             )
