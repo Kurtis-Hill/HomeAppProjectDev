@@ -49,11 +49,6 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         return $qb->getQuery()->getResult() ?? [];
     }
 
-    public function removeObject(AllSensorReadingTypeInterface $readingTypeObject)
-    {
-//        $this->getEntityManager()->detach($readingTypeObject);
-    }
-
     public function getOneBySensorNameID(int $sensorNameID): ?Temperature
     {
         $qb = $this->createQueryBuilder(Temperature::READING_TYPE);

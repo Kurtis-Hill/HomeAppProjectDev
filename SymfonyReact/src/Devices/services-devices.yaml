@@ -16,11 +16,11 @@ services:
     tags: [ 'controller.service_arguments' ]
 
   ######################## Services ########################################################################
-  App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface:
-    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceService'
+  App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface:
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceFacade'
 
-  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceServiceInterface:
-    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceService'
+  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface:
+    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandler'
 
   App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface:
     alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceService'

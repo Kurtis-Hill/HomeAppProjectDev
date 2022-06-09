@@ -18,7 +18,7 @@ use App\Sensors\Exceptions\SensorUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeFactories\ReadingTypeResponseBuilderFactory;
 use App\Sensors\Factories\SensorUpdateFactory\SensorReadingUpdateFactory;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorDataServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsServiceInterface;
+use App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Exception\ORMException;
@@ -48,7 +48,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         Sensor $sensorObject,
         Request $request,
         ValidatorInterface $validator,
-        UpdateSensorBoundaryReadingsServiceInterface $updateSensorBoundaryReadingsService,
+        UpdateSensorBoundaryReadingsHandlerInterface $updateSensorBoundaryReadingsService,
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,

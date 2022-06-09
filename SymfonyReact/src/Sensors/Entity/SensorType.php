@@ -2,19 +2,7 @@
 
 namespace App\Sensors\Entity;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
-use App\Sensors\Entity\ConstantRecording\ConstAnalog;
-use App\Sensors\Entity\ConstantRecording\ConstHumid;
-use App\Sensors\Entity\ConstantRecording\ConstLatitude;
-use App\Sensors\Entity\ConstantRecording\ConstTemp;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeTemp;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;

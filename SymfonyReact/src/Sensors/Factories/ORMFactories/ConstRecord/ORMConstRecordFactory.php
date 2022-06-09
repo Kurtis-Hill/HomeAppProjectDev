@@ -13,7 +13,7 @@ use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryInterface;
 use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryLatitudeRepository;
 use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository;
 
-class ORMConstRecordFactory implements ORMConstRecordFactoryInterface
+class ORMConstRecordFactory
 {
     private ConstantlyRecordRepositoryAnalogRepository $constAnalog;
 

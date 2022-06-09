@@ -13,7 +13,7 @@ class TemperatureSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTO
             return null;
         }
         $dateTime = $this->formatDateTime($cardData['temp_updatedAt']);
-
+//dd($cardData);
         return $this->getStandardCardViewDTO(
             Temperature::READING_TYPE,
             $cardData['temp_currentReading'],
@@ -22,5 +22,6 @@ class TemperatureSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTO
             $dateTime,
             Temperature::READING_SYMBOL,
         );
+//        dd($h);
     }
 }

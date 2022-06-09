@@ -13,7 +13,7 @@ use App\Sensors\Repository\ORM\ReadingType\LatitudeRepository;
 use App\Sensors\Repository\ORM\ReadingType\ReadingTypeRepositoryInterface;
 use App\Sensors\Repository\ORM\ReadingType\TemperatureRepository;
 
-class SensorReadingTypeRepositoryFactory implements SensorReadingTypeRepositoryFactoryInterface
+class SensorReadingTypeRepositoryFactory
 {
     private TemperatureRepository $temperatureRepository;
 

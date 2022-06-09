@@ -539,7 +539,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
-        self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $responseData['secret']);
+        self::assertMatchesRegularExpression('/^[a-f\d]{32}$/', $responseData['secret']);
     }
 
     public function test_new_device_can_login(): void

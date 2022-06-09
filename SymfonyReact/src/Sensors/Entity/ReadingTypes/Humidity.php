@@ -8,7 +8,7 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
+use App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -156,6 +156,11 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
 
     public function getReadingType(): string
+    {
+        return self::READING_TYPE;
+    }
+
+    public static function getReadingTypes(): string
     {
         return self::READING_TYPE;
     }

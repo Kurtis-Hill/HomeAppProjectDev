@@ -7,13 +7,13 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\BmpReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\DallasReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\DhtReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeInterface;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SoilReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\BmpReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\DallasReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\DhtReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeInterface;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\SoilReadingTypeChecker;
 
-class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeCheckerFactoryInterface
+class SensorTypeReadingTypeCheckerFactory
 {
     private DhtReadingTypeChecker $dhtReadingTypeChecker;
 

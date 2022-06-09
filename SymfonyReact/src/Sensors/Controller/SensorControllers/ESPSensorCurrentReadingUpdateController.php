@@ -11,7 +11,7 @@ use App\ErrorLogs;
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
 use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingDTOBuilder;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
-use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
+use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;

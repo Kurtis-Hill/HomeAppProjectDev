@@ -13,7 +13,7 @@ use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsRepositoryInterface;
 use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsAnalogRepository;
 use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsTempORMRepository;
 
-class OutOfBoundsORMFactory implements OutOfBoundsORMFactoryInterface
+class OutOfBoundsORMFactory
 {
     private OutOfBoundsTempORMRepository $outOfBoundsTemp;
 

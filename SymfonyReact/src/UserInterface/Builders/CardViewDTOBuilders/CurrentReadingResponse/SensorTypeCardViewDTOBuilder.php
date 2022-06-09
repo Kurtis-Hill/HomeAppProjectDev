@@ -10,5 +10,5 @@ interface SensorTypeCardViewDTOBuilder
     /**
      * @throws SensorTypeBuilderFailureException
      */
-    public function buildSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface;
+    public function buildTrimmedDownSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface;
 }

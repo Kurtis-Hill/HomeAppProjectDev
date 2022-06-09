@@ -12,14 +12,14 @@ use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\SensorDataServices\OutOfBounds\SensorReadingTypeOutOfBoundsService;
+use App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
 {
-    private SensorReadingTypeOutOfBoundsService $sut;
+    private OutOfBoundsReadingTypeFacade $sut;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -28,7 +28,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         self::bootKernel();
 
         $container = static::getContainer();
-        $this->sut = $container->get(SensorReadingTypeOutOfBoundsService::class);
+        $this->sut = $container->get(OutOfBoundsReadingTypeFacade::class);
         $this->entityManager = $container->get('doctrine.orm.default_entity_manager');
     }
 
@@ -45,7 +45,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $highReading = $analogSensor->getHighReading();
         $analogSensor->setCurrentReading($highReading + 5);
 
-        $this->sut->checkAndProcessOutOfBounds($analogSensor);
+        $this->sut->processOutOfBounds($analogSensor);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeAnalog::class);
@@ -69,7 +69,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $lowReading = $analogSensor->getLowReading();
         $analogSensor->setCurrentReading($lowReading - 5);
 
-        $this->sut->checkAndProcessOutOfBounds($analogSensor);
+        $this->sut->processOutOfBounds($analogSensor);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeAnalog::class);
@@ -101,7 +101,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $highReading = $tempObject->getHighReading();
         $tempObject->setCurrentReading($highReading + 5);
 
-        $this->sut->checkAndProcessOutOfBounds($tempObject);
+        $this->sut->processOutOfBounds($tempObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
@@ -125,7 +125,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $lowReading = $analogSensor->getLowReading();
         $analogSensor->setCurrentReading($lowReading - 5);
 
-        $this->sut->checkAndProcessOutOfBounds($analogSensor);
+        $this->sut->processOutOfBounds($analogSensor);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
@@ -167,7 +167,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $highReading = $humidObject->getHighReading();
         $humidObject->setCurrentReading($highReading + 5);
 
-        $this->sut->checkAndProcessOutOfBounds($humidObject);
+        $this->sut->processOutOfBounds($humidObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
@@ -191,7 +191,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $lowReading = $humidObject->getLowReading();
         $humidObject->setCurrentReading($lowReading - 5);
 
-        $this->sut->checkAndProcessOutOfBounds($humidObject);
+        $this->sut->processOutOfBounds($humidObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
@@ -228,7 +228,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $highReading = $latitudeObject->getHighReading();
         $latitudeObject->setCurrentReading($highReading + 5);
 
-        $this->sut->checkAndProcessOutOfBounds($latitudeObject);
+        $this->sut->processOutOfBounds($latitudeObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
@@ -252,7 +252,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $lowReading = $latitudeObject->getLowReading();
         $latitudeObject->setCurrentReading($lowReading - 5);
 
-        $this->sut->checkAndProcessOutOfBounds($latitudeObject);
+        $this->sut->processOutOfBounds($latitudeObject);
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);

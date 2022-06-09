@@ -10,7 +10,7 @@ use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
-use App\Devices\DeviceServices\NewDevice\NewDeviceServiceInterface;
+use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\GroupNames;
@@ -38,7 +38,7 @@ class AddNewDeviceController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         RoomRepositoryInterface $roomRepository,
-        NewDeviceServiceInterface $newDeviceHandler,
+        NewDeviceHandlerInterface $newDeviceHandler,
         GroupNameRepositoryInterface $groupNameRepository,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
         DeleteDeviceServiceInterface $deleteDeviceHandler,

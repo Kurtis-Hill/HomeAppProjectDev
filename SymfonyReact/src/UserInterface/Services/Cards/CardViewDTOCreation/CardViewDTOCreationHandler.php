@@ -20,7 +20,7 @@ class CardViewDTOCreationHandler
         $cardDTOs = [];
 
         foreach ($sensorData as $sensor) {
-            $cardDTO = $cardViewDTOBuilder->buildSensorTypeCardViewDTO($sensor);
+            $cardDTO = $cardViewDTOBuilder->buildTrimmedDownSensorTypeCardViewDTO($sensor);
             if ($cardDTO !== null) {
                 $cardDTOs[] = $cardDTO;
             }
