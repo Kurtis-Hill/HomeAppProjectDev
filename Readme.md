@@ -34,11 +34,6 @@ from the root project directory.
 
 This should have; created all the necessary containers, loaded up the initial database file with an admin user and also loaded the fixtures up for running tests (if in dev mode).
 
-<h2>Before using the application</h2>
-There is a compatibility issue in the JWT refresh token library we are using with Doctrine 3 since doctrine common 3.0, Doctrine\Common\Persistence\ObjectManager became Doctrine\Persistence\ObjectManager
-so to be able to get JWT tokens to authenticate you will need to adjust this use statement manually in <code>SymfonyReact/vendor/gesdinet/jwt-refresh-token-bundle/Doctrine/RefreshTokenManager.php</code>
-Do this for production builds too.
-
 <h2>Running the front end</h2>
 to sign in to the front end the admin username is : 
 <code>admin</code>
