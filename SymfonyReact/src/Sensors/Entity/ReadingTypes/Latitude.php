@@ -35,7 +35,7 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
     ]
     private int $latitudeID;
 
-    #[ORM\Column(name: "latitude", type: "integer", nullable: false),]
+    #[ORM\Column(name: "latitude", type: "float", nullable: false),]
     #[LatitudeConstraint]
     private int|float $latitude;
 

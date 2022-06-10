@@ -30,7 +30,7 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE analog (analogID INT AUTO_INCREMENT NOT NULL, sensorNameID INT NOT NULL, analogReading SMALLINT DEFAULT NULL, highAnalog SMALLINT DEFAULT 1000, lowAnalog SMALLINT DEFAULT 1000, constRecord TINYINT(1) DEFAULT \'0\', updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, UNIQUE INDEX analog_ibfk_3 (sensorNameID), PRIMARY KEY(analogID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE analog (analogID INT AUTO_INCREMENT NOT NULL, sensorNameID INT NOT NULL, analogReading DOUBLE PRECISION DEFAULT NULL, highAnalog DOUBLE PRECISION DEFAULT 1000, lowAnalog DOUBLE PRECISION DEFAULT 1000, constRecord TINYINT(1) DEFAULT \'0\', updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, UNIQUE INDEX analog_ibfk_3 (sensorNameID), PRIMARY KEY(analogID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
@@ -72,7 +72,7 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE constlatitude (constRecordID INT AUTO_INCREMENT NOT NULL, latitudeID INT NOT NULL, sensorReading INT NOT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX latitudeID (latitudeID), PRIMARY KEY(constRecordID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE constlatitude (constRecordID INT AUTO_INCREMENT NOT NULL, latitudeID INT NOT NULL, sensorReading DOUBLE PRECISION NOT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX latitudeID (latitudeID), PRIMARY KEY(constRecordID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
@@ -126,7 +126,7 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE latitude (latitudeID INT AUTO_INCREMENT NOT NULL, sensorNameID INT NOT NULL, latitude INT NOT NULL, lowLatitude INT NOT NULL, highLatitude INT NOT NULL, constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, UNIQUE INDEX sensorNameID (sensorNameID), PRIMARY KEY(latitudeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE latitude (latitudeID INT AUTO_INCREMENT NOT NULL, sensorNameID INT NOT NULL, latitude DOUBLE PRECISION NOT NULL, lowLatitude DOUBLE PRECISION NOT NULL, highLatitude DOUBLE PRECISION NOT NULL, constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, UNIQUE INDEX sensorNameID (sensorNameID), PRIMARY KEY(latitudeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
@@ -144,7 +144,7 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE outofrangelatitude (outofrangeID INT AUTO_INCREMENT NOT NULL, latitudeID INT NOT NULL, sensorReading INT NOT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX outofrangelatitude_ibfk_1 (latitudeID), PRIMARY KEY(outofrangeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE outofrangelatitude (outofrangeID INT AUTO_INCREMENT NOT NULL, latitudeID INT NOT NULL, sensorReading DOUBLE PRECISION NOT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX outofrangelatitude_ibfk_1 (latitudeID), PRIMARY KEY(outofrangeID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->abortIf(
             !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."

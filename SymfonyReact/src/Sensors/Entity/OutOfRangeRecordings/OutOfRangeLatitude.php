@@ -29,7 +29,7 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
     ]
     private Latitude $sensorReadingTypeID;
 
-    #[ORM\Column(name: "sensorReading", type: "integer", nullable: false)]
+    #[ORM\Column(name: "sensorReading", type: "float", nullable: false)]
     #[LatitudeConstraint]
     private int|float $sensorReading;
 

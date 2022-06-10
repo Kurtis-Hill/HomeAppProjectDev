@@ -30,17 +30,17 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     ]
     private int $analogID;
 
-    #[ORM\Column(name: "analogReading", type: "smallint", precision: 10, scale: 0, nullable: true, options: ["default" => "NULL"])]
+    #[ORM\Column(name: "analogReading", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "NULL"])]
     #[SoilConstraint(groups: [Soil::NAME])]
     private float $analogReading;
 
-    #[ORM\Column(name: "highAnalog", type: "smallint", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
+    #[ORM\Column(name: "highAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[SoilConstraint(groups: [Soil::NAME])]
-    private int $highAnalog = 9999;
+    private float $highAnalog = 9999;
 
-    #[ORM\Column(name: "lowAnalog", type: "smallint", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
+    #[ORM\Column(name: "lowAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[SoilConstraint(groups: [Soil::NAME])]
-    private int $lowAnalog = 1111;
+    private float $lowAnalog = 1111;
 
     #[ORM\Column(name: "constRecord", type: "boolean", nullable: true)]
     #[Assert\Type("bool")]

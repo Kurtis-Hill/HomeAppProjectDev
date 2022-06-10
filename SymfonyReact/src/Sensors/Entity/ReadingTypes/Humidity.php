@@ -35,17 +35,17 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
     ]
     private int $humidID;
 
-    #[ORM\Column(name: "humidReading", type: "integer", precision: 10, scale: 0, nullable: false)]
+    #[ORM\Column(name: "humidReading", type: "float", precision: 10, scale: 0, nullable: false)]
     #[HumidityConstraint]
     private float $currentReading;
 
-    #[ORM\Column(name: "highHumid", type: "integer", precision: 10, scale: 0, nullable: false, options: ["default" => "70"])]
+    #[ORM\Column(name: "highHumid", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "70"])]
     #[HumidityConstraint]
-    private int $highHumid = 80;
+    private float $highHumid = 80;
 
-    #[ORM\Column(name: "lowHumid", type: "integer", precision: 10, scale: 0, nullable: false, options: ["default" => "15"])]
+    #[ORM\Column(name: "lowHumid", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "15"])]
     #[HumidityConstraint]
-    private int $lowHumid = 10;
+    private float $lowHumid = 10;
 
     #[ORM\Column(name: "constRecord", type: "boolean", nullable: false, options: ["default" => "0"])]
     #[Assert\Type("bool")]

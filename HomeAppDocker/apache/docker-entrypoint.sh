@@ -11,24 +11,24 @@ if [ ${APP_ENV} = 'prod' ]; then
   echo "installing composer packages..."
   composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
   echo "Executing database migrations production..."
-  bin/console d:m:m --no-interaction
+  bin/console doctrine:migrations:migrate -n
   echo "...Migrations complete"
 fi
 
 
 if [ ${APP_ENV} = 'dev' ]; then
-  composer install --prefer-dist --no-interaction
 	echo "dev container build"
 	echo "Executing database migrations for test enviroment..."
 	bin/console d:m:m --no-interaction --env=test
 	echo "...Test migrations complete"
-	echo "Executing database migrations for local enviroment..."
 
+	echo "Executing database migrations for local enviroment..."
 	bin/console doctrine:migrations:migrate -n
 	echo "...Local migrations complete"
 
+##@TODO: not working
 	echo "Querying test database"
-	if php bin/console dbal:run-sql "select firstName from user where firstName = 'user' limit 1" --env=test | grep -q 'array(0)'; then
+	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep -q 'array(1)'; then
 		echo "Test database empty loading fixtures..."
    		php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"
