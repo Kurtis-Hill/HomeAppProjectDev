@@ -36,11 +36,11 @@ if [ ${APP_ENV} = 'dev' ]; then
 	echo "Test database checked"
 fi
 
-if [ ! -f /etc/logs/server-errors.log ]; then
-    touch /etc/logs/server-errors.log
+if [ ! -f /etc/logs/server-error.log ]; then
+    touch /etc/logs/server-error.log
 fi
 if [ ! -f /etc/logs/user-input-errors.log ]; then
-    touch /etc/logs/user-input-errors.log
+    touch /etc/logs/user-input-error.log
 fi
 
 echo "Starting supervisor..."

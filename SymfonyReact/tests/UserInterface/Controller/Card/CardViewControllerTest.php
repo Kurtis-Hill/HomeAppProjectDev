@@ -224,11 +224,11 @@ class CardViewControllerTest extends WebTestCase
             foreach ($readingTypes as $readingType) {
                 foreach ($readingTypeQueryDTOs as $readingTypeQueryDTO) {
                     /** @var JoinQueryDTO $readingTypeQueryDTO */
-                  if ($readingTypeQueryDTO->getAlias() === ReadingTypes::SENSOR_READING_TYPE_DATA[$readingType]['alias']) {
-                      unset($readingTypeQueryDTOs[$arrayPlace]);
-                  }
+                    if ($readingTypeQueryDTO->getAlias() === ReadingTypes::SENSOR_READING_TYPE_DATA[$readingType]['alias']) {
+                        unset($readingTypeQueryDTOs[$arrayPlace]);
+                    }
                 }
-                  ++$arrayPlace;
+                ++$arrayPlace;
             }
 
             $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
