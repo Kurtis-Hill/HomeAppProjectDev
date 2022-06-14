@@ -18,10 +18,4 @@ interface CardViewFormPreparationHandlerInterface
      * @throws SensorTypeException
      */
     public function createCardViewFormDTO(CardView $cardViewObject, string $cardFormType): CardViewSensorFormInterface;
-
-    /**
-     * @throws SensorTypeBuilderFailureException
-     * @throws ORMException
-     */
-//    public function getSensorTypeDataByCardViewObject(CardView $cardView): SensorTypeInterface;
 }

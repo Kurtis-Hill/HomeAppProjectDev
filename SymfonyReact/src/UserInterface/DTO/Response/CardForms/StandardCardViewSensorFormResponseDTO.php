@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\DTO\Response\CardForms;
 
+use App\UserInterface\DTO\RequestDTO\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
@@ -20,16 +21,9 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
 
     private CardStateResponseDTO $currentViewState;
 
+    private CardUserSelectionEncapsulationDTO $cardUserSelectionOptions;
+
     private string $cardViewID;
-
-    #[ArrayShape([IconResponseDTO::class])]
-    private array $iconSelection;
-
-    #[ArrayShape([ColourResponseDTO::class])]
-    private array $colourSelection;
-
-    #[ArrayShape([IconResponseDTO::class])]
-    private array $cardStates;
 
     #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     private array $sensorData;
@@ -40,9 +34,7 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         ColourResponseDTO $currentCardColour,
         CardStateResponseDTO $currentViewState,
         string $cardViewID,
-        array $iconSelection,
-        array $colourSelection,
-        array $cardStates,
+        CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
         array $sensorData,
     ) {
         $this->sensorId = $sensorId;
@@ -50,9 +42,7 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         $this->currentCardColour = $currentCardColour;
         $this->currentViewState = $currentViewState;
         $this->cardViewID = $cardViewID;
-        $this->iconSelection = $iconSelection;
-        $this->colourSelection = $colourSelection;
-        $this->cardStates = $cardStates;
+        $this->cardUserSelectionOptions = $cardUserSelectionOptions;
         $this->sensorData = $sensorData;
     }
 
@@ -86,18 +76,8 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         return $this->currentViewState;
     }
 
-    public function getIconSelection(): array
+    public function getCardUserSelectionOptions(): CardUserSelectionEncapsulationDTO
     {
-        return $this->iconSelection;
-    }
-
-    public function getUserColourSelections(): array
-    {
-        return $this->colourSelection;
-    }
-
-    public function getUserCardViewSelections(): array
-    {
-        return $this->cardStates;
+        return $this->cardUserSelectionOptions;
     }
 }

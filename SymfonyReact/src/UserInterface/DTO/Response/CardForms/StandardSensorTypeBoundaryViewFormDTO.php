@@ -19,8 +19,8 @@ class StandardSensorTypeBoundaryViewFormDTO
 
     public function __construct(
         string $readingType,
-        int|float|string $highReading,
-        int|float|string $lowReading,
+        int|float $highReading,
+        int|float $lowReading,
         bool $constRecord,
         ?string $sensorSymbol,
     ) {
@@ -36,12 +36,12 @@ class StandardSensorTypeBoundaryViewFormDTO
         return $this->readingType;
     }
 
-    public function getHighReading(): float|int|string
+    public function getHighReading(): float|int
     {
         return $this->highReading;
     }
 
-    public function getLowReading(): float|int|string
+    public function getLowReading(): float|int
     {
         return $this->lowReading;
     }

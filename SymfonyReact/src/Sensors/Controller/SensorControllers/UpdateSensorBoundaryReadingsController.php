@@ -155,6 +155,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 'Some sensor boundary update requests failed'
             );
         }
+
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
     }
 

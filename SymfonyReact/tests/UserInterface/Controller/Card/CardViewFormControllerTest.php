@@ -109,12 +109,12 @@ class CardViewFormControllerTest extends WebTestCase
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
 
         self::assertEquals($cardViewObject->getCardIconID()->getIconID(), $responseData['currentCardIcon']['iconID']);
-        self::assertCount(count($allIcons), $responseData['iconSelection']);
+        self::assertCount(count($allIcons), $responseData['cardUserSelectionOptions']['icons']);
 
-        self::assertCount(count($allCardState), $responseData['userCardViewSelections']);
+        self::assertCount(count($allCardState), $responseData['cardUserSelectionOptions']['states']);
 
         self::assertEquals($cardViewObject->getCardColourID()->getColourID(), $responseData['currentCardColour']['colourID']);
-        self::assertCount(count($allCardColours), $responseData['userColourSelections']);
+        self::assertCount(count($allCardColours), $responseData['cardUserSelectionOptions']['colours']);
 
 
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());

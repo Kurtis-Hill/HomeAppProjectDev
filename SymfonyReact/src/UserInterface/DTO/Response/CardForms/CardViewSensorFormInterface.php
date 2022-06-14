@@ -18,9 +18,9 @@ interface CardViewSensorFormInterface
 
     public function getCurrentViewState(): CardStateResponseDTO;
 
-    public function getIconSelection(): array;
-
-    public function getUserColourSelections(): array;
-
-    public function getUserCardViewSelections(): array;
+//    public function getIconSelection(): array;
+//
+//    public function getUserColourSelections(): array;
+//
+//    public function getUserCardViewSelections(): array;
 }

@@ -1,7 +1,7 @@
 import React, {Component, createContext} from 'react'
 import axios from 'axios';
 
-import { lowercaseFirstLetter, setUserSession } from '../Utilities/Common';
+import { lowercaseFirstLetter, capitalizeFirstLetter, setUserSession } from '../Utilities/Common';
 import { apiURL, webappURL } from '../Utilities/URLSCommon';
 import { getAPIHeader, getRefreshToken } from '../Utilities/APICommon';
 
@@ -146,15 +146,16 @@ class CardContextProvider extends Component {
 
     modalContent = (cardData) => {
         const sensorId = cardData.sensorId;
-        const cardColour = cardData.currentCardIcon.colourID;
+        const sensorData = cardData.sensorData;
+
+        const cardColour = cardData.currentCardColour.colourID;
         const cardIcon = cardData.currentCardIcon;
         const cardViewID = cardData.cardViewID;
         const currentViewState = cardData.currentViewState;
-        const sensorData = cardData.sensorData;
 
-        const userCardViewSelections = cardData.userCardViewSelections;
-        const userColourSelections = cardData.userColourSelections;
-        const userIconSelections = cardData.iconSelection;
+        const userCardViewSelections = cardData.cardUserSelectionOptions.states;
+        const userColourSelections = cardData.cardUserSelectionOptions.colours;
+        const userIconSelections = cardData.cardUserSelectionOptions.icons;
 
         this.setState({
             userSelectionData: {
@@ -203,13 +204,14 @@ class CardContextProvider extends Component {
                 break;
 
             case "card-view-state":
-                this.setState({modalContent:{...this.state.modalContent, currentState: value}});
+
+                this.setState({modalContent:{...this.state.modalContent, currentViewState: value}});
                 break;
 
             case sensorType+"-high-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.readingType === sensorType) {
-                        currentModalData.highReading = value;
+                        currentModalData.highReading = parseInt(value);
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -219,7 +221,7 @@ class CardContextProvider extends Component {
             case sensorType+"-low-reading":
                 for (const currentModalData of this.state.modalContent.sensorData) {
                     if (currentModalData.readingType === sensorType) {
-                        currentModalData.lowReading = value;
+                        currentModalData.lowReading = parseInt(value);
                         this.setState({modalContent:{...this.state.modalContent}});
                         break;
                     }
@@ -244,7 +246,7 @@ class CardContextProvider extends Component {
 
         const cardFormData = {
             'cardColour' : parseInt(this.state.modalContent.cardColour),
-            'cardViewState' : parseInt(this.state.modalContent.currentViewState.cardStateID),
+            'cardViewState' : parseInt(this.state.modalContent.currentViewState),
             'cardIcon' : parseInt(this.state.modalContent.cardIcon.iconID),
         };
 
@@ -261,44 +263,65 @@ class CardContextProvider extends Component {
                 setTimeout(() =>
                     this.toggleModal(), 1500
                 );
-            } else {            
+            } else {
                 const sensorBoundaryRequestErrors = Array.isArray(sensorReadingUpdateResponse.data.errors)
                 ? sensorReadingUpdateResponse.data.errors
-                : null;
+                : [];
 
                 const sensorBoundaryRequestSuccess = Array.isArray(sensorReadingUpdateResponse.data.payload)
                 ? sensorReadingUpdateResponse.data.payload
-                : null;
+                : [];
 
 
                 const cardRequestErrors = Array.isArray(cardRequestResponse.data.errors)
                 ? cardRequestResponse.data.errors
-                : null;
+                : [];
 
                 const cardRequestSuccess = Array.isArray(cardRequestResponse.data.payload)
                 ? cardRequestResponse.data.payload
-                : null;
+                : [];
 
-                this.setState({modalStatus:{
+                let successfulRequests = [];
+                for (const sensorSuccessObject of sensorBoundaryRequestSuccess) {
+                    if (sensorSuccessObject.readingType === undefined) {
+                        successfulRequests.push('Reading type not defined');
+                    } else {
+                        successfulRequests.push(capitalizeFirstLetter(sensorSuccessObject.readingType));
+                    }
+                }
+
+
+                this.setState({modalStatus: {
                     ...this.state.modalStatus,
                     modalSubmit: false,
                     submitSuccess: false,
                     errors: sensorBoundaryRequestErrors.concat(cardRequestErrors),
-                    success: sensorBoundaryRequestSuccess.concat(cardRequestSuccess),
+                    success: successfulRequests,
                 }})
             }
         } catch(error) {
-            const badRequestErrors = !Array.isArray(error.response.data.errors) || !error.response.data.errors.length > 1
-                ? ['Something went wrong, unexpected response']
-                : error.response.data.errors;
-
-            this.setState({
-                modalStatus:{
-                    ...this.state.modalStatus,
-                    modalSubmit: false,
-                    errors: badRequestErrors
-                }
-            });
+            console.log(error.response, 're data');
+            if (error.response === undefined) {
+                const badRequestErrors = ['Something went wrong, unexpected response'];
+                this.setState({
+                    modalStatus:{
+                        ...this.state.modalStatus,
+                        modalSubmit: false,
+                        errors: badRequestErrors
+                    }
+                });
+            } else {
+                const badRequestErrors = !Array.isArray(error.response.data.errors) || !error.response.data.errors.length > 1
+                    ? ['Something went wrong, unexpected response']
+                    : error.response.data.errors;
+                this.setState({
+                    modalStatus:{
+                        ...this.state.modalStatus,
+                        modalSubmit: false,
+                        errors: badRequestErrors
+                    }
+                });
+            }
             if (error.response.status === 500) {
                 alert('Please logout something went wrong');
             }    

@@ -8,7 +8,6 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\UserInterface\Builders\CardUpdateDTOBuilders\CardUpdateDTOBuilder;
-use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
@@ -54,10 +53,11 @@ class CardViewFormController extends AbstractController
         } catch (
             SensorTypeException
             | CardFormTypeNotRecognisedException
-            | SensorTypeBuilderFailureException $e) {
+            | SensorTypeBuilderFailureException $e
+        ) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse(['Query failure']);
+            return $this->sendInternalServerErrorJsonResponse(['Query failure   ']);
         }
 
         try {
@@ -114,7 +114,7 @@ class CardViewFormController extends AbstractController
         try {
             $cardViewRepository->persist($cardViewObject);
             $cardViewRepository->flush();
-        } catch (ORMException) {
+        } catch (ORMException $e) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 

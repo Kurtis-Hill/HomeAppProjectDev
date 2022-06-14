@@ -5,13 +5,10 @@ namespace App\UserInterface\Builders\UsersCardSelectionBuilders;
 use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
 use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
-use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
-use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
-use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
+use App\UserInterface\DTO\RequestDTO\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
-use JetBrains\PhpStorm\ArrayShape;
 
 class UsersCardSelectionBuilder
 {
@@ -31,20 +28,14 @@ class UsersCardSelectionBuilder
         $this->cardStateRepository = $cardStateRepository;
     }
 
-    #[ArrayShape(
-        [
-            'icons' => [IconResponseDTO::class],
-            'colours' => [ColourResponseDTO::class],
-            'states' => [CardStateResponseDTO::class]
-        ]
-    )]
-    public function buildUsersCardSelectionDTOs(): array
+
+    public function buildUsersCardSelectionDTOs(): CardUserSelectionEncapsulationDTO
     {
-        return [
-            'icons' => $this->getIconSelectionAsDTOs(),
-            'colours' => $this->getColourSelectionAsDTOs(),
-            'states' => $this->getStateSelectionAsDTOs(),
-        ];
+        return new CardUserSelectionEncapsulationDTO(
+            $this->getIconSelectionAsDTOs(),
+            $this->getColourSelectionAsDTOs(),
+            $this->getStateSelectionAsDTOs(),
+        );
     }
 
     private function getIconSelectionAsDTOs(): array
