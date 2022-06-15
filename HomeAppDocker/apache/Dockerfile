@@ -2,11 +2,9 @@ FROM php:8.1-apache
 
 WORKDIR /var/www/html
 
-RUN a2enmod rewrite
-
 RUN mkdir /etc/logs
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -y && apt-get install -y \
 git \
 unzip \
 zip \
@@ -14,7 +12,13 @@ nano \
 iputils-ping \
 supervisor
 
+RUN apt-get install apt-transport-https ca-certificates -y 
+
+RUN update-ca-certificates
+
 RUN pecl install xdebug
+
+RUN a2enmod rewrite
 
 RUN a2enmod ssl
 
