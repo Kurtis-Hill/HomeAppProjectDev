@@ -10,6 +10,7 @@
     <ini name="error_reporting" value="-1"/>
     <server name="APP_ENV" value="test" force="true"/>
     <server name="SHELL_VERBOSITY" value="-1"/>
+<!--    <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />-->
   </php>
   <testsuites>
     <testsuite name="Project Test Suite">
@@ -21,7 +22,6 @@
     <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
   </extensions>
 
-  <!-- Run `composer require symfony/phpunit-bridge` before enabling this extension -->
   <listeners>
       <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
   </listeners>

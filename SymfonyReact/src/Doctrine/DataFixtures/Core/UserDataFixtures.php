@@ -8,7 +8,7 @@ use App\User\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 {
@@ -44,9 +44,9 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     ];
 
-    private UserPasswordEncoderInterface $passwordEncoder;
+    private UserPasswordHasherInterface $passwordEncoder;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UserPasswordHasherInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
     }
@@ -69,7 +69,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUser->setEmail(self::ADMIN_USER);
         $adminUser->setFirstName('admin');
         $adminUser->setLastName('test');
-        $adminUser->setPassword($this->passwordEncoder->encodePassword($adminUser, self::ADMIN_PASSWORD));
+        $adminUser->setPassword($this->passwordEncoder->hashPassword($adminUser, self::ADMIN_PASSWORD));
         $adminUser->setRoles(['ROLE_ADMIN']);
         $adminUser->setCreatedAt();
         $adminUser->setGroupNameID($adminGroupName);
@@ -95,7 +95,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUser->setEmail(self::REGULAR_USER);
         $regularUser->setFirstName('user');
         $regularUser->setLastName('test');
-        $regularUser->setPassword($this->passwordEncoder->encodePassword($regularUser, self::REGULAR_PASSWORD));
+        $regularUser->setPassword($this->passwordEncoder->hashPassword($regularUser, self::REGULAR_PASSWORD));
         $regularUser->setRoles(['ROLE_USER']);
         $regularUser->setCreatedAt();
         $regularUser->setGroupNameID($userGroupName);
@@ -135,7 +135,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserInAdminGroup->setEmail(self::SECOND_ADMIN_USER_ISOLATED);
         $adminUserInAdminGroup->setFirstName('second-admin-user');
         $adminUserInAdminGroup->setLastName('test');
-        $adminUserInAdminGroup->setPassword($this->passwordEncoder->encodePassword($adminUserInAdminGroup, self::ADMIN_PASSWORD));
+        $adminUserInAdminGroup->setPassword($this->passwordEncoder->hashPassword($adminUserInAdminGroup, self::ADMIN_PASSWORD));
         $adminUserInAdminGroup->setRoles(['ROLE_ADMIN']);
         $adminUserInAdminGroup->setCreatedAt();
         $adminUserInAdminGroup->setGroupNameID($adminUserGroupName);
@@ -166,7 +166,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $secondRegularUser->setEmail(self::SECOND_REGULAR_USER_ISOLATED);
         $secondRegularUser->setFirstName('second-regular-user');
         $secondRegularUser->setLastName('test');
-        $secondRegularUser->setPassword($this->passwordEncoder->encodePassword($secondRegularUser, self::REGULAR_PASSWORD));
+        $secondRegularUser->setPassword($this->passwordEncoder->hashPassword($secondRegularUser, self::REGULAR_PASSWORD));
         $secondRegularUser->setRoles(['ROLE_USER']);
         $secondRegularUser->setCreatedAt();
         $secondRegularUser->setGroupNameID($adminUserGroupName);

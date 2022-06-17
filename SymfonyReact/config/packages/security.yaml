@@ -1,5 +1,6 @@
 security:
-    encoders:
+    enable_authenticator_manager: true
+    password_hashers:
         App\User\Entity\User:
             algorithm: auto
         App\Devices\Entity\Devices:
@@ -25,7 +26,6 @@ security:
         device_api:
             pattern: ^/HomeApp/api/device
             stateless: true
-            anonymous: true
             provider: 'api_device_provider'
             json_login:
                 check_path: /HomeApp/api/device/login_check
@@ -38,7 +38,6 @@ security:
         user_api:
             pattern: ^/HomeApp/api/user
             stateless: true
-            anonymous: true
             provider: 'app_user_provider'
             json_login:
                 check_path: /HomeApp/api/user/login_check
@@ -54,18 +53,18 @@ security:
 
 
     access_control:
-        - { path: ^/HomeApp/api/user/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/device/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/user/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/device/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/WebApp/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/WebApp/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/api/user/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/device/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/user/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/device/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/WebApp/login, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/WebApp/register, roles: PUBLIC_ACCESS }
 #        DEV
-        - { path: ^/HomeApp/ssl, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/HomeApp/api/user/csrfToken, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/HomeApp/ssl, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/user/csrfToken, roles: PUBLIC_ACCESS }
 #        - { path: ^/HomeApp/api/sensors/update/current-reading, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }
+        - { path: ^/HomeApp/api/user, roles: ROLE_USER }
         - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
         - { path: ^/HomeApp/WebApp, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/HomeApp/api/user, roles: ROLE_USER }

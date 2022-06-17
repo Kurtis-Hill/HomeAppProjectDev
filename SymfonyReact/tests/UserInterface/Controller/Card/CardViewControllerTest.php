@@ -3,8 +3,6 @@
 namespace UserInterface\Controller\Card;
 
 use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupNameMapping;
-use App\Doctrine\DataFixtures\Core\RoomFixtures;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
@@ -14,12 +12,7 @@ use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
-use App\User\Entity\GroupNames;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;

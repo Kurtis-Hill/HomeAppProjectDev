@@ -583,6 +583,9 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $loginResponseData = json_decode($this->client->getResponse()->getContent(), true, 512);
 
+        if (empty($loginResponseData['token'])) {
+            dd($responseData, $loginResponseData);
+        }
         self::assertArrayHasKey('token', $loginResponseData);
         self::assertArrayHasKey('refreshToken', $loginResponseData);
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
