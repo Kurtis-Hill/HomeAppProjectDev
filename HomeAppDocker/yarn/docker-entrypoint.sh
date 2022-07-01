@@ -12,6 +12,7 @@ yarn add encore
 if [ ${APP_ENV} = 'prod' ]; then
    echo "production environment installing..."
    yarn install --production --check-files
+   yarn add @symfony/webpack-encore
    echo "building assets..."
    yarn build
    echo "...finished building assets"
