@@ -36,7 +36,7 @@
         "react-router-dom": "^5.1.2",
         "reactdom": "^2.0.0",
         "sass": "^1.53.0",
-        "sass-loader": "7.0.1",
+        "sass-loader": "^13.0.2",
         "startbootstrap-sb-admin-2": "^4.0.7",
         "webkit": "^0.0.0"
     },
