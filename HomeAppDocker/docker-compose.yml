@@ -57,6 +57,7 @@ services:
     container_name: '${APP_NAME}-yarn'
     environment:
       APP_ENV: ${APP_ENV}
+      # PYTHON: 
     volumes:
       - ../SymfonyReact:/home/node/app/src:cached
     networks:
