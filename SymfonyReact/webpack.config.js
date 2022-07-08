@@ -15,16 +15,17 @@ Encore
 
     //NEW REACT APP BITS
     .enableReactPreset()
-    .addEntry('react-app', './assets/js/ReactApp.js')
+    // .addEntry('react-app', './assets/js/ReactApp.js')
+    .addEntry('react-app', './assets/main/index.tsx')
 
 
     //base.twig
-    .addEntry('bootstrap4', 'bootstrap/dist/css/bootstrap.css')
-    .addEntry('font-awesome', '@fortawesome/fontawesome-free/css/all.css')
+    // .addEntry('bootstrap4', 'bootstrap/dist/css/bootstrap.css')
+    // .addEntry('font-awesome', '@fortawesome/fontawesome-free/css/all.css')
     // .addEntry('font-awesome-brands', '@fortawesome/fontawesome-free/css/brands.css')
     // .addEntry('font-awesome-solid', '@fortawesome/fontawesome-free/css/solid.css')
-    .addEntry('Appcss', './assets/css/App.css')
-    .addEntry('sb-admin2', 'startbootstrap-sb-admin-2/css/sb-admin-2.css')
+    // .addEntry('Appcss', './assets/css/App.css')
+    // .addEntry('sb-admin2', 'startbootstrap-sb-admin-2/css/sb-admin-2.css')
 
     // .addEntry('font-awesome-all-js', '@fortawesome/fontawesome-free/js/all.js')
     // .addEntry('font-awesome-js', '@fortawesome/fontawesome-free/js/fontawesome.js')
@@ -66,7 +67,7 @@ Encore
     .enableSassLoader()
 
     // uncomment if you use TypeScript
-    //.enableTypeScriptLoader()
+    .enableTypeScriptLoader()
 
     // uncomment to get integrity="..." attributes on your script & link tags
     // requires WebpackEncoreBundle 1.4 or higher

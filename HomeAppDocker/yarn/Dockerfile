@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:18
 
 COPY docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint

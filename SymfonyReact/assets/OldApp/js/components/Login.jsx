@@ -10,7 +10,7 @@ function Login(props) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const loginPhoto = require('../../images/sitepictures/index-photo.jpg');
+    const loginPhoto = require('../../../images/sitepictures/index-photo.jpg');
 
     const createAccountLink = "/HomeApp/WebApp/register";
 
