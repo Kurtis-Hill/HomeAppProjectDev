@@ -20,7 +20,6 @@ class SecurityController extends AbstractController
     #[Route('/HomeApp/WebApp/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
-//        dd($authenticationUtils->getLastAuthenticationError());
         return $this->render('index/index.html.twig');
     }
 

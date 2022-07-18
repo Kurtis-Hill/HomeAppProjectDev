@@ -227,6 +227,6 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->deviceNameID;
+        return $this->deviceName;
     }
 }

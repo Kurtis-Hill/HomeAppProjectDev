@@ -1,10 +1,9 @@
 <?php
 
-namespace EventListeners\Tests;
+namespace Authentication\EventListeners;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AuthenticationTests extends WebTestCase
 {
-    private const REFRESH_TOKEN_URL = '/HomeApp/api/user/token/refresh';
+    private const API_USER_REFRESH_TOKEN_URL = '/HomeApp/api/user/token/refresh';
+
+    private const API_DEVICE_REFRESH_TOKEN_URL = '/HomeApp/api/device/token/refresh';
+
+    public const API_USER_LOGIN = '/HomeApp/api/user/login_check';
+
+    public const API_DEVICE_LOGIN = '/HomeApp/api/device/login_check';
 
     private KernelBrowser $client;
 
@@ -47,7 +52,7 @@ class AuthenticationTests extends WebTestCase
 
         $this->client->request(
             Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
+            self::API_USER_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -78,7 +83,7 @@ class AuthenticationTests extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $username]);
         $this->client->request(
             Request::METHOD_POST,
-            SecurityController::API_DEVICE_LOGIN,
+            self::API_DEVICE_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -107,7 +112,7 @@ class AuthenticationTests extends WebTestCase
     {
         $this->client->request(
             Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
+            self::API_USER_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -121,7 +126,7 @@ class AuthenticationTests extends WebTestCase
 
         $this->client->request(
             Request::METHOD_POST,
-            self::REFRESH_TOKEN_URL,
+            self::API_USER_REFRESH_TOKEN_URL,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -146,7 +151,7 @@ class AuthenticationTests extends WebTestCase
     {
         $this->client->request(
             Request::METHOD_POST,
-            SecurityController::API_DEVICE_LOGIN,
+            self::API_DEVICE_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -160,7 +165,7 @@ class AuthenticationTests extends WebTestCase
 
         $this->client->request(
             Request::METHOD_POST,
-            self::REFRESH_TOKEN_URL,
+            self::API_DEVICE_REFRESH_TOKEN_URL,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -210,7 +215,7 @@ class AuthenticationTests extends WebTestCase
     {
         $this->client->request(
             Request::METHOD_POST,
-            SecurityController::API_DEVICE_LOGIN,
+            self::API_DEVICE_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
