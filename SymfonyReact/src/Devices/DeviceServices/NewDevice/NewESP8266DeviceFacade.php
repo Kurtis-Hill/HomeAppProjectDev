@@ -28,10 +28,16 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         $newDevice->setCreatedBy($deviceUser);
         $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($deviceDTO->getRoomObject());
-        $newDevice->setDeviceSecret($this->createDevicePasswordHash($newDevice));
-        $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
+        $newDevice->setDeviceSecret($deviceDTO->getDevicePassword());
+        $newDevice->setPassword($deviceDTO->getDevicePassword());
+        
+        $validationResult = $this->validateNewDevice($newDevice);
+        
+        if (empty($validationResult)) {
+            $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
+        }
 
-        return $this->validateNewDevice($newDevice);
+        return $validationResult;
     }
 
     #[ArrayShape(["validationErrors"])]
@@ -54,9 +60,8 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         }
 
         if (empty($userErrors)) {
-            $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
-
-            $newDevice->setDeviceSecret($devicePasswordHash);
+            // $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
+            $newDevice->setDeviceSecret($newDevice->getPassword());
             $newDevice->setRoles([Devices::ROLE]);
         }
 

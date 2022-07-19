@@ -84,6 +84,7 @@ class AddNewDeviceController extends AbstractController
             $groupNameObject,
             $roomObject,
             $newDeviceRequestDTO->getDeviceName(),
+            $newDeviceRequestDTO->getDevicePassword(),
         );
 
         try {

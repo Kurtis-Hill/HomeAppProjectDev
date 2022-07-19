@@ -22,6 +22,20 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
 
     #[
         Assert\NotNull(
+            message: "Device password cannot be null"
+        ),
+        Assert\NotBlank(
+            message: 'Device password is a required field'
+        ),
+        Assert\Type(
+            type: 'string',
+            message: 'Device password value is {{ value }} and not a valid {{ type }}'
+        ),
+    ]
+    private mixed $devicePassword = null;
+
+    #[
+        Assert\NotNull(
             message: "Device group cannot be null"
         ),
         Assert\NotBlank(
@@ -53,6 +67,11 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
         return $this->deviceName;
     }
 
+    public function getDevicePassword(): mixed
+    {
+        return $this->devicePassword;
+    }
+
     public function getDeviceGroup(): mixed
     {
         return $this->deviceGroup;
@@ -66,6 +85,11 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
     public function setDeviceName(mixed $deviceName): void
     {
         $this->deviceName = $deviceName;
+    }
+
+    public function setDevicePassword(mixed $devicePassword): void
+    {
+        $this->devicePassword = $devicePassword;
     }
 
     public function setDeviceGroup(mixed $deviceGroup): void

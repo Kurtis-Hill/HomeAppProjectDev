@@ -44,6 +44,9 @@ const addNewDevice = () => {
                                 <label className="large font-weight-bold">Device Name</label>
                                 <input type="text" name="device-name" className="form-control" value={newDeviceModalContent.newDeviceName} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
 
+                                <label className="large font-weight-bold">Device Password</label>
+                                <input type="password" name="device-password" className="form-control" value={newDeviceModalContent.password} onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}}></input>
+
                                 <label className="modal-space large font-weight-bold">Group name you would like to add the sensor too</label>
                                 <select value={newDeviceModalContent.newDeviceGroup} name="device-group" id="deviceGroup" className="form-control" onChange={(e) => {addNewDeviceContext.updateNewDeviceModalForm(e)}} >
                                     {

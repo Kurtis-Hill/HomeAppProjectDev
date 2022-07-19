@@ -8,6 +8,7 @@ export const AddNewDeviceContext = createContext();
 
 const emptyNewDeviceModalContent = {
     newDeviceName:'',
+    newDevicePassword: '',
     newDeviceRoom:'',
     newDeviceGroup:'',
     newDeviceID:'',
@@ -34,6 +35,7 @@ export default class AddNewDeviceContextProvider extends Component {
         
         const jsonFormData = {
             'deviceName' : this.state.newDeviceModalContent.newDeviceName,
+            'devicePassword' : this.state.newDeviceModalContent.newDevicePassword,
             'deviceRoom' :  this.state.newDeviceModalContent.newDeviceRoom !== '' ? parseInt(this.state.newDeviceModalContent.newDeviceRoom) : parseInt(document.getElementById("deviceRoom").value),
             'deviceGroup' :  this.state.newDeviceModalContent.newDeviceGroup !== '' ? parseInt(this.state.newDeviceModalContent.newDeviceGroup) : parseInt(document.getElementById("deviceGroup").value),
         };
@@ -71,6 +73,9 @@ export default class AddNewDeviceContextProvider extends Component {
 
             case "device-name":
                 this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDeviceName: formInput}});
+                break;
+            case "device-password":
+                this.setState({newDeviceModalContent:{...this.state.newDeviceModalContent, newDevicePassword: formInput}});
                 break;
         }
     }
