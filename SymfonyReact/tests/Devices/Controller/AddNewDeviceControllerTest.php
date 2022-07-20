@@ -25,6 +25,8 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
+    private const NEW_DEVICE_PASSWORD = 'Test1234';
+
     private ?string $userToken = null;
 
     private ?EntityManagerInterface $entityManager;
@@ -69,6 +71,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -93,6 +96,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -121,8 +125,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
         self::assertEquals(UserDataFixtures::ADMIN_USER, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
-        self::assertArrayHasKey('secret', $responseData);
-        self::assertNotNull($responseData['secret']);
+        self::assertEquals(self::NEW_DEVICE_PASSWORD, $responseData['secret']);
 
         self::assertInstanceOf(Devices::class, $device);
 
@@ -133,6 +136,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -163,6 +167,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     public function test_sending_malformed_request_missing_name(): void
     {
         $formData = [
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -187,6 +192,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -213,6 +219,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
         ];
 
@@ -234,6 +241,34 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertStringContainsString('Device room cannot be null', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
+
+    public function test_sending_malformed_request_missing_password(): void
+    {
+        $formData = [
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            $jsonData,
+        );
+
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertNull($device);
+        self::assertStringContainsString('Device password cannot be null', $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
 
     /**
      * @dataProvider addingDeviceSendingMalformedRequestDataProvider
@@ -262,6 +297,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         yield [
             'formData' => [
                 'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+                'devicePassword' => self::NEW_DEVICE_PASSWORD,
                 'deviceGroup' => 'string',
                 'deviceRoom' => 1,
             ],
@@ -273,6 +309,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         yield [
             'formData' => [
                 'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+                'devicePassword' => self::NEW_DEVICE_PASSWORD,
                 'deviceGroup' => 2,
                 'deviceRoom' => 'string',
             ],
@@ -284,13 +321,15 @@ class AddNewDeviceControllerTest extends WebTestCase
         yield [
             'formData' => [
                 'deviceName' => ['dfg'],
+                'devicePassword' => ['dfg'],
                 'deviceGroup' => ['dfg'],
                 'deviceRoom' => ['dfg'],
             ],
             'errorMessage' => [
                 'Device name value is array and not a valid string',
+                'Device password value is array and not a valid string',
                 'Device group value is array and not a valid integer',
-                'Device room value is array and not a valid integer'
+                'Device room value is array and not a valid integer',
             ],
         ];
     }
@@ -299,6 +338,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => 'thisNameIsWaaaaaaaayTooooLoooong',
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -326,6 +366,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => 'device&&**name',
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -362,6 +403,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -409,6 +451,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
             'deviceRoom' => $roomNotApartOf,
         ];
@@ -469,6 +512,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID()->getGroupNameID(),
             'deviceRoom' => $roomNotApartOf,
         ];
@@ -497,6 +541,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -518,34 +563,35 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_UNAUTHORISED, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_device_password_is_correct_format(): void
-    {
-        $formData = [
-            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
-            'deviceRoom' => $this->room->getRoomID(),
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
-
-        self::assertMatchesRegularExpression('/^[a-f\d]{32}$/', $responseData['secret']);
-    }
+//    public function test_device_password_is_correct_format(): void
+//    {
+//        $formData = [
+//            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+//            'deviceGroup' => $this->groupName->getGroupNameID(),
+//            'deviceRoom' => $this->room->getRoomID(),
+//        ];
+//
+//        $jsonData = json_encode($formData);
+//
+//        $this->client->request(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_DEVICE_PATH,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//            $jsonData,
+//        );
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
+//
+//        self::assertMatchesRegularExpression('/^[a-f\d]{32}$/', $responseData['secret']);
+//    }
 
     public function test_new_device_can_login(): void
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
@@ -584,7 +630,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $loginResponseData = json_decode($this->client->getResponse()->getContent(), true, 512);
 
         if (empty($loginResponseData['token'])) {
-            dd($responseData, $loginResponseData, $loginJsonData);
+            self::fail('failed to get token from login after adding new device method: test_new_device_can_login');
         }
         self::assertArrayHasKey('token', $loginResponseData);
         self::assertArrayHasKey('refreshToken', $loginResponseData);
