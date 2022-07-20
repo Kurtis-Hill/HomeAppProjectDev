@@ -15,8 +15,8 @@ Encore
 
     //NEW REACT APP BITS
     .enableReactPreset()
-    // .addEntry('react-app', './assets/js/ReactApp.js')
-    .addEntry('react-app', './assets/main/index.tsx')
+    // .addEntry('react-app', './assets/js/react-app.js')
+    .addEntry('react-app', './assets/react-app/main/index.tsx')
 
 
     //base.twig
@@ -25,15 +25,8 @@ Encore
     // .addEntry('font-awesome-brands', '@fortawesome/fontawesome-free/css/brands.css')
     // .addEntry('font-awesome-solid', '@fortawesome/fontawesome-free/css/solid.css')
     // .addEntry('Appcss', './assets/css/App.css')
-    // .addEntry('sb-admin2', 'startbootstrap-sb-admin-2/css/sb-admin-2.css')
+    .addEntry('sb-admin2', 'startbootstrap-sb-admin-2/css/sb-admin-2.css')
 
-    // .addEntry('font-awesome-all-js', '@fortawesome/fontawesome-free/js/all.js')
-    // .addEntry('font-awesome-js', '@fortawesome/fontawesome-free/js/fontawesome.js')
-    // .addEntry('font-awesome-brands-js', '@fortawesome/fontawesome-free/js/brands.js')
-    // .addEntry('font-awesome-regular-js', '@fortawesome/fontawesome-free/js/regular.js')
-    // .addEntry('font-awesome-solid-js', '@fortawesome/fontawesome-free/js/solid.js')
-    // .addEntry('font-awesome-shims-js', '@fortawesome/fontawesome-free/js/v4-shims.js')
-    // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
 
     // will require an extra script tag for runtime.js

@@ -9,6 +9,6 @@
     "node_modules"
   ],
   "files": [
-    "main/index.tsx"
+    "react-app/main/index.tsx"
     ]
 }
