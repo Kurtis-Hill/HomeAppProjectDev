@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export default function SubmitButton(props) {
     const name = props.name ?? 'submit';
-    const action = props.action ?? 'submit'
+    const action = props.action ?? 'submit';
     const size = props.size ?? '';
     const onClickFunction = props.onClickFunction ?? function ();
 

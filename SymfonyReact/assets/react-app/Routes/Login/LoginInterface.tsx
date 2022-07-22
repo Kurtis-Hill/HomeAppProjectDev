@@ -1,0 +1,3 @@
+interface LoginInterface {
+    handleLoginRequest: () => void;
+}

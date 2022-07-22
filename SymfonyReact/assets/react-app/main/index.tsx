@@ -6,8 +6,7 @@ import {
     Route,
 } from "react-router-dom";
 
-import Login from '../routes/Login';
-
+import Login from "../Routes/Login/Login";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -19,4 +18,3 @@ root.render(
         </Routes>
     </BrowserRouter>
 );
-// ReactDOM.render(<App/>, document.getElementById("root"));

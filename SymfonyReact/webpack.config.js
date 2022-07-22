@@ -6,26 +6,21 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 Encore
-    // directory where compiled assets will be stored
     .setOutputPath('public/build/')
-    // public path used by the web server to access the output path
     .setPublicPath('/build')
     // only needed for CDN's or sub-directory deploy
     //.setManifestKeyPrefix('build/')
 
-    //NEW REACT APP BITS
     .enableReactPreset()
-    // .addEntry('react-app', './assets/js/react-app.js')
     .addEntry('react-app', './assets/react-app/main/index.tsx')
 
-
-    //base.twig
-    // .addEntry('bootstrap4', 'bootstrap/dist/css/bootstrap.css')
-    // .addEntry('font-awesome', '@fortawesome/fontawesome-free/css/all.css')
-    // .addEntry('font-awesome-brands', '@fortawesome/fontawesome-free/css/brands.css')
-    // .addEntry('font-awesome-solid', '@fortawesome/fontawesome-free/css/solid.css')
-    // .addEntry('Appcss', './assets/css/App.css')
+    //index.twig
+    .addEntry('bootstrap', 'bootstrap/dist/css/bootstrap.css')
+    .addEntry('font-awesome', '@fortawesome/fontawesome-free/css/all.css')
+    .addEntry('font-awesome-brands', '@fortawesome/fontawesome-free/css/brands.css')
+    .addEntry('Appcss', './assets/css/App.css')
     .addEntry('sb-admin2', 'startbootstrap-sb-admin-2/css/sb-admin-2.css')
+    // .addEntry('font-awesome-solid', '@fortawesome/fontawesome-free/css/solid.css')
 
     .splitEntryChunks()
 
@@ -33,8 +28,7 @@ Encore
     // but, you probably want this, unless you're building a single-page app
     .enableSingleRuntimeChunk()
 
-    // .enableReactPreset()
-    /*.enableReactPreset()
+    /*
      * FEATURE CONFIG
      *
      * Enable & configure other features below. For a full

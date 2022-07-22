@@ -89,8 +89,8 @@ const Navbar = () => {
                 {/*            <a className="collapse-item" href="forgot-password.html">Forgot Password</a>*/}
                 {/*            <div className="collapse-divider" />*/}
                 {/*            <h6 className="collapse-header">Other Pages:</h6>*/}
-                {/*            <a className="collapse-item" href="404.html">404 Page</a>*/}
-                {/*            <a className="collapse-item" href="blank.html">Blank Page</a>*/}
+                {/*            <a className="collapse-item" href="404.html">404 ColouredPage</a>*/}
+                {/*            <a className="collapse-item" href="blank.html">Blank ColouredPage</a>*/}
                 {/*        </div>*/}
                 {/*    </div>*/}
                 {/*</li>*/}

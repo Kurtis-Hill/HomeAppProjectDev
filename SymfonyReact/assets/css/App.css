@@ -5,6 +5,12 @@
     color: #3bb1e7 !important;
 }
 
+.center-spinner {
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
 /* .nav-item {
     -webkit-transition: 0.5s;
     -moz-transition: 0.5s;
@@ -17,10 +23,6 @@
     -moz-transition: 0.5s;
     -o-transition: 0.5s;
     transition: 0.5s;
-}
-
-.center-item {
-    margin-left: 40%;
 }
 
 .modal-show {
@@ -132,7 +134,7 @@
 }
 
 
-/* #login-form-field-container {
+/* #login-Form-field-container {
     padding: 15% 5% 5% 15%;
 } */
 
@@ -145,9 +147,9 @@
     padding: 10% 10% 5% 7%;
 }
 
-.login-spinner {
-    margin: 0 0 0 47%;
-}
+/*.login-spinner {*/
+/*    margin: 0 0 0 47%;*/
+/*}*/
 
 .hover {
     cursor: pointer;
@@ -179,8 +181,8 @@
     border-radius: 20px;
 }
 
+
 @media only screen and (max-width: 700px) {
-    
     .modal-body {
         height: 400px;
         overflow-y: auto;
