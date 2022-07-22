@@ -1,23 +1,23 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 if [ "${1#-}" != "$1" ]; then
-        set -- node "$@"
+  set -- node "$@"
 fi
 
+echo "setting network timeout for slower devices..."
+yarn config set network-timeout 1200000 -g
 
 # git config --global url."https://".insteadOf git://
 
 ## If having trouble building for production drop the yarn.lock file and remove node_modules
 if [ ${APP_ENV} = 'prod' ]; then
   echo "production environment installing..."
-  yarn install --production --frozen-lockfile --check-files
-  echo "setting network timeout for slower devices..."
-  yarn config set network-timeout 1200000 -g
+  yarn install --production --check-files
   yarn add @symfony/webpack-encore
   echo "building assets..."
   yarn build
   echo "...finished building assets"
-  echo "yarn finished opertations"
+  echo "yarn finished operations"
 fi
 
 if [ ${APP_ENV} = 'dev' ]; then
