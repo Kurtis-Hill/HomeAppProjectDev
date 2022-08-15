@@ -3,6 +3,10 @@
 namespace App\Sensors\Repository\ORM\Sensors;
 
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
@@ -30,12 +34,23 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
     }
 
     #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
-    public function getAllSensorTypeNames(): array
+    public function findAllSensorTypeNames(): array
     {
         $qb = $this->createQueryBuilder('st');
         $qb->select('st.sensorType');
 
         return array_map('current', $qb->getQuery()->getResult());
+    }
+
+    #[ArrayShape([Bmp::class, Dallas::class, Dht::class, Soil::class])]
+    public function findAllSensorTypesCached(): array
+    {
+        $qb = $this->createQueryBuilder('st');
+        $qb->setCacheable(true);
+        $qb->select();
+        $qb->orderBy('st.sensorType', 'ASC');
+
+        return $qb->getQuery()->execute();
     }
 
     public function persist(SensorType $sensorType): void

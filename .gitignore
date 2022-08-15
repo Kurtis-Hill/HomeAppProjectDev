@@ -31,7 +31,8 @@ SymfonyReact/.php-version
 SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
 
-SymfonyReact/config/jwt/*
+SymfonyReact/config/jwt/private.pem
+SymfonyReact/config/jwt/public.pem
 SSL/ca-key.pem
 SSL/client-cert.pem
 SSL/client-key.pem

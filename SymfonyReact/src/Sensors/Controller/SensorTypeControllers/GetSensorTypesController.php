@@ -19,7 +19,7 @@ class GetSensorTypesController extends AbstractController
     #[Route('/all', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository): Response
     {
-        $sensorTypes = $sensorTypeRepository->findAll();
+        $sensorTypes = $sensorTypeRepository->findAllSensorTypesCached();
 
         try {
             $normalisedResponse = $this->normalizeResponse($sensorTypes);
