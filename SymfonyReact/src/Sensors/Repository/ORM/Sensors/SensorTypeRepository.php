@@ -43,14 +43,17 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
     }
 
     #[ArrayShape([Bmp::class, Dallas::class, Dht::class, Soil::class])]
-    public function findAllSensorTypesCached(): array
+    public function findAllSensorTypes(bool $cache = true): array
     {
         $qb = $this->createQueryBuilder('st');
-        $qb->setCacheable(true);
+        if ($cache === true) {
+            $qb->setCacheable(true);
+        }
         $qb->select();
         $qb->orderBy('st.sensorType', 'ASC');
 
         return $qb->getQuery()->execute();
+
     }
 
     public function persist(SensorType $sensorType): void

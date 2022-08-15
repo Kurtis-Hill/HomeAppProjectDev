@@ -30,7 +30,7 @@ interface SensorTypeRepositoryInterface
     public function persist(SensorType $sensorType): void;
 
 
-    public function findAllSensorTypesCached(): array;
+    public function findAllSensorTypes(): array;
 
     /**
      * @throws ORMException
