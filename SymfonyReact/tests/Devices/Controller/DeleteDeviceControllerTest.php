@@ -35,12 +35,12 @@ class DeleteDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function testRegularUserCannotDeleteAdminDevice(): void
     {
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);

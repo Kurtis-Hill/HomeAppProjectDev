@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Repository\ORM\Sensors;
 
-use App\Common\Traits\QueryJoinBuilderTrait;
+use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
@@ -22,6 +22,14 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Deprecated;
 
+/**
+ * @extends ServiceEntityRepository<SensorRepository>
+ *
+ * @method Sensor|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Sensor|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Sensor[]    findAll()
+ * @method Sensor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class SensorRepository extends ServiceEntityRepository implements SensorRepositoryInterface
 {
     use QueryJoinBuilderTrait;
@@ -38,7 +46,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function findOneById(int $id): ?Sensor
     {
-        return $this->findOneBy(['sensorNameID' => $id]);
+        return $this->find($id);
     }
 
     public function flush(): void

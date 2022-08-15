@@ -7,6 +7,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<RoomRepository>
+ *
+ * @method Room|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Room|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Room[]    findAll()
+ * @method Room[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class RoomRepository extends ServiceEntityRepository implements RoomRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -47,7 +55,7 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
 
     public function findOneById(int $id): ?Room
     {
-        return $this->findOneBy(['roomID' => $id]);
+        return $this->find($id);
     }
 
     public function persist(Room $room): void

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\SensorServices\SensorReadingTypesValidator;
 
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;

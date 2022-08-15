@@ -9,6 +9,14 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<SensorTypeRepository>
+ *
+ * @method SensorRepository|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SensorRepository|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SensorRepository[]    findAll()
+ * @method SensorRepository[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class SensorTypeRepository extends ServiceEntityRepository implements SensorTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -18,7 +26,7 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
 
     public function findOneById(int $id): ?SensorType
     {
-        return $this->findOneBy(['sensorTypeID' => $id]);
+        return $this->find($id);
     }
 
     #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]

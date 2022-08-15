@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
-use App\Common\Traits\QueryJoinBuilderTrait;
+use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
@@ -19,6 +19,14 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<CardView>
+ *
+ * @method CardView|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardView|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardView[]    findAll()
+ * @method CardView[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class CardViewRepository extends ServiceEntityRepository implements CardViewRepositoryInterface
 {
     use QueryJoinBuilderTrait;
@@ -41,7 +49,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
     public function getAllCardSensorData(
         User $user,
         string $cardViewTwo,
-        CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
+        ?CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO = null,
         ?CardViewUriFilterDTO $cardViewTypeFilterDTO = null,
         int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array {
@@ -105,6 +113,6 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
     public function findOneById(int $cardViewID): ?CardView
     {
-        return $this->findOneBy(['cardViewID' => $cardViewID]);
+        return $this->find($cardViewID);
     }
 }

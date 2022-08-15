@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Traits;
+namespace App\Common\Query\Traits;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;

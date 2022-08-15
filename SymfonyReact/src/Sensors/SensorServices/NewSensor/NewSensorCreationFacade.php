@@ -2,15 +2,14 @@
 
 namespace App\Sensors\SensorServices\NewSensor;
 
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
-use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use TypeError;

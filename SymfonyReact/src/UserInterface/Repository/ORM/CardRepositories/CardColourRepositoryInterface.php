@@ -10,6 +10,12 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @method CardColour|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardColour|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardColour[]    findAll()
+ * @method CardColour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface CardColourRepositoryInterface
 {
     public function findOneById(int $id);

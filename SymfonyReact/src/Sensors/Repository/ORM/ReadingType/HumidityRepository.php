@@ -10,6 +10,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Humidity>
+ *
+ * @method Humidity|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Humidity|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Humidity[]    findAll()
+ * @method Humidity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class HumidityRepository extends ServiceEntityRepository implements ReadingTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -27,9 +35,9 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
         $this->getEntityManager()->flush();
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?Humidity
     {
-        return $this->findOneBy(['humidID' => $id]);
+        return $this->find($id);
     }
 
 

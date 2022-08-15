@@ -5,7 +5,7 @@ namespace App\UserInterface\Controller\Card;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -14,7 +14,6 @@ use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewFilterRequestDTO;
 use App\UserInterface\Exceptions\CardTypeNotRecognisedException;
-use App\UserInterface\Exceptions\CardViewRequestException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\Cards\CardDataFilter\CardDataFilter;
@@ -29,8 +28,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/')]

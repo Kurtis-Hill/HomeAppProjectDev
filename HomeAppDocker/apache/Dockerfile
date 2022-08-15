@@ -31,7 +31,7 @@ COPY ./auth.json /root/.composer/auth.json
 
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
-COPY ./sites-enabled/site.conf /etc/apache2/sites-enabled/site.conf
+COPY ./sites-enabled/site.conf /etc/apache2/sites-available/000-default.conf
 
 COPY ./php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
 

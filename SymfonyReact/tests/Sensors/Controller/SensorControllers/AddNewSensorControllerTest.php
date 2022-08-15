@@ -52,7 +52,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
-            $this->userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
+            $this->userToken = $this->setUserToken($this->client);
         } catch (JsonException $e) {
             error_log($e);
         }

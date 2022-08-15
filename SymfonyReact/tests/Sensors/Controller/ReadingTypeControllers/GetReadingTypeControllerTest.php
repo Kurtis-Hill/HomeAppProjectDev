@@ -32,7 +32,7 @@ class GetReadingTypeControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     protected function tearDown(): void

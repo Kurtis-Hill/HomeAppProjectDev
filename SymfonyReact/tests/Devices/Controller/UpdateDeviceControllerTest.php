@@ -41,7 +41,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function test_sending_wrong_encoding_request(): void

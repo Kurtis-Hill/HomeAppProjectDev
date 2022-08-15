@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Common\Traits;
+namespace App\Common\Validation\Traits;
 
-use Generator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 

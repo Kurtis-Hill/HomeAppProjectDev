@@ -10,6 +10,14 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<SensorTypeRepository>
+ *
+ * @method SensorRepository|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SensorRepository|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SensorRepository[]    findAll()
+ * @method SensorRepository[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface SensorTypeRepositoryInterface
 {
     /**
@@ -39,9 +47,4 @@ interface SensorTypeRepositoryInterface
      * @throws  ORMException
      */
     public function remove(SensorType $sensorType): void;
-
-    /**
-     * @throws  ORMException
-     */
-    public function findAll();
 }

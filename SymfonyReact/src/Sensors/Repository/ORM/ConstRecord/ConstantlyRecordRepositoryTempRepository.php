@@ -7,6 +7,14 @@ use App\Sensors\Entity\ConstantRecording\ConstTemp;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<ConstTemp>
+ *
+ * @method ConstTemp|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ConstTemp|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ConstTemp[]    findAll()
+ * @method ConstTemp[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class ConstantlyRecordRepositoryTempRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)

@@ -37,7 +37,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
 
     public function findOneById(int $id): ?Devices
     {
-        return $this->findOneBy(['deviceNameID' => $id]);
+        return $this->find($id);
     }
 
     public function findDuplicateDeviceNewDeviceCheck(string $deviceName, int $roomId): ?Devices

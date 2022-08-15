@@ -8,10 +8,11 @@ services:
         APP_ENV: ${APP_ENV}
     container_name: '${APP_NAME}-php-apache-server'
     ports:
-      - '${HTTPS_APP_PORT}:443'
+      - '${HTTPS_APP_PORT}:${HTTPS_APP_PORT}'
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
+      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       MARIADB_USER: ${MARIADB_USER}

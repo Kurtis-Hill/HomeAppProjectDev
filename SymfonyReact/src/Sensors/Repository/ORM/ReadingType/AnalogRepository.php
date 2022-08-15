@@ -11,6 +11,14 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<AnalogRepository>
+ *
+ * @method Analog|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Analog|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Analog[]    findAll()
+ * @method Analog[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -28,9 +36,9 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         $this->getEntityManager()->flush();
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?Analog
     {
-        return $this->findOneBy(['analogID' => $id]);
+        return $this->find($id);
     }
 
     public function removeObject(AllSensorReadingTypeInterface $readingTypeObject)

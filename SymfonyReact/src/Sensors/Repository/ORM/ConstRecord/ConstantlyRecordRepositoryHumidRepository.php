@@ -7,6 +7,14 @@ use App\Sensors\Entity\ConstantRecording\ConstHumid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<ConstHumid>
+ *
+ * @method ConstHumid|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ConstHumid|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ConstHumid[]    findAll()
+ * @method ConstHumid[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class ConstantlyRecordRepositoryHumidRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)

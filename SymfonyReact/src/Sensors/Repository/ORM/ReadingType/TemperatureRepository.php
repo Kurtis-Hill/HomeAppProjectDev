@@ -9,6 +9,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Temperature>
+ *
+ * @method Temperature|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Temperature|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Temperature[]    findAll()
+ * @method Temperature[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class TemperatureRepository extends ServiceEntityRepository implements ReadingTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -26,9 +34,9 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         $this->getEntityManager()->flush();
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?Temperature
     {
-        return $this->findOneBy(['tempID' => $id]);
+        return $this->find($id);
     }
 
     public function findAllBySensorName(string $name): array

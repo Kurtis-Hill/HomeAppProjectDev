@@ -16,12 +16,9 @@ trait TestLoginTrait
      */
     private function setUserToken(
         KernelBrowser $client,
-        ?string $username = null,
-        ?string $password = null,
+        ?string $username = UserDataFixtures::ADMIN_USER,
+        ?string $password = UserDataFixtures::ADMIN_PASSWORD,
     ): ?string {
-        $username = $username ?? UserDataFixtures::ADMIN_USER;
-        $password = $password ?? UserDataFixtures::ADMIN_PASSWORD;
-
         $client->request(
             Request::METHOD_POST,
             SecurityController::API_USER_LOGIN,

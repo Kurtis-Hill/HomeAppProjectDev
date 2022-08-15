@@ -10,6 +10,12 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @method Icons|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Icons|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Icons[]    findAll()
+ * @method Icons[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface IconsRepositoryInterface
 {
     public function findOneById(int $id);

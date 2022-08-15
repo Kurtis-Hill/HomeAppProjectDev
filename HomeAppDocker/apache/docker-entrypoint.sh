@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Setting server name to ${APP_NAME}"
-echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/site.conf
+echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
 
 if [ "${1#-}" != "$1" ]; then
 	set -- apache2-foreground "$@"

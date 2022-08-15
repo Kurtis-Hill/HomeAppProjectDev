@@ -7,6 +7,14 @@ use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<OutOfRangeLatitude>
+ *
+ * @method OutOfRangeLatitude|null find($id, $lockMode = null, $lockVersion = null)
+ * @method OutOfRangeLatitude|null findOneBy(array $criteria, array $orderBy = null)
+ * @method OutOfRangeLatitude[]    findAll()
+ * @method OutOfRangeLatitude[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class OutOfBoundsLatitudeRepository extends ServiceEntityRepository implements OutOfBoundsRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
