@@ -15,6 +15,7 @@ use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,7 +41,6 @@ class AddNewDeviceController extends AbstractController
         RoomRepositoryInterface $roomRepository,
         NewDeviceHandlerInterface $newDeviceHandler,
         GroupNameRepositoryInterface $groupNameRepository,
-        DevicePasswordEncoderInterface $devicePasswordEncoder,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
@@ -62,7 +62,7 @@ class AddNewDeviceController extends AbstractController
 
         $groupNameObject = $groupNameRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
         if (!$groupNameObject instanceof GroupNames) {
-            return $this->sendBadRequestJsonResponse([
+            return $this->sendNotFoundResponse([
                 sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
                     'Groupname'
@@ -72,15 +72,21 @@ class AddNewDeviceController extends AbstractController
 
         $roomObject = $roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
         if (!$roomObject instanceof Room) {
-            return $this->sendBadRequestJsonResponse([
+            return $this->sendNotFoundResponse([
                 sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
                     'Room'
                 ),
             ]);
         }
+
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse();
+        }
+
         $newDeviceCheckDTO = DeviceDTOBuilder::buildNewDeviceDTO(
-            $this->getUser(),
+            $user,
             $groupNameObject,
             $roomObject,
             $newDeviceRequestDTO->getDeviceName(),

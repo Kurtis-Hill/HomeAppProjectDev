@@ -1,6 +1,6 @@
 <?php
 
-namespace Devices\Controller;
+namespace App\Tests\Devices\Controller;
 
 use App\Common\API\HTTPStatusCodes;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
@@ -9,6 +9,7 @@ use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -22,6 +23,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UpdateDeviceControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/update-device/%d';
 
     private ?string $userToken = null;
@@ -38,7 +41,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
+        $this->userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
     }
 
     public function test_sending_wrong_encoding_request(): void
@@ -278,7 +281,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function testRegularUserCannotUpdateDeviceNotApartOf(): void
     {
-        $userToken = $this->setUserToken(UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
@@ -651,23 +654,6 @@ class UpdateDeviceControllerTest extends WebTestCase
         yield [
             'deviceRoom',
         ];
-    }
-
-    private function setUserToken(string $name, string $password): string
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.$name.'","password":"'.$password.'"}'
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        return $requestData['token'];
     }
 
     protected function tearDown(): void

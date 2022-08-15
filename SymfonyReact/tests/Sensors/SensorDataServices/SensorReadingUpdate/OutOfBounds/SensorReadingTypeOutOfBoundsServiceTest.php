@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\SensorDataServices\SensorReadingUpdate\OutOfBounds;
+namespace App\Tests\Sensors\SensorDataServices\SensorReadingUpdate\OutOfBounds;
 
 use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;

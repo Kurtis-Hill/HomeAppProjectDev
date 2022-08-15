@@ -69,7 +69,8 @@
             "App\\Tests\\": "tests/"
         },
         "exclude-from-classmap": [
-            "/src/Migrations/"
+            "/src/Migrations/",
+            "/tests/Traits/"
         ]
     },
     "replace": {

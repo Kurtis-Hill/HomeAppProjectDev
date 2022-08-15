@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\SensorDataServices\SensorReadingUpdate\ConstantlyRecord;
+namespace App\Tests\Sensors\SensorDataServices\SensorReadingUpdate\ConstantlyRecord;
 
 use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;

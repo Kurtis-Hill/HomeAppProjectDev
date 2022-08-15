@@ -15,7 +15,7 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
 
     public function findOneById(int $id): ?GroupNames
     {
-        return $this->findOneBy(['groupNameID' => $id]);
+        return $this->find($id);
     }
 
     public function findOneByName(string $name): ?GroupNames

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\Controller\SensorControllers;
+namespace App\Tests\Sensors\Controller\SensorControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
@@ -22,6 +22,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const UPDATE_SENSOR_BOUNDARY_READING_URL = '/HomeApp/api/user/sensor/%d/boundary-update';
 
     private KernelBrowser $client;
@@ -49,7 +52,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->setUserToken();
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     protected function tearDown(): void
@@ -57,34 +60,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $this->entityManager->close();
         $this->entityManager = null;
         parent::tearDown();
-    }
-
-    private function setUserToken(bool $forceToken = false, ?string $username = null, ?string $password = null): ?string
-    {
-        if ($this->userToken === null || $forceToken === true) {
-            $username = $username ?? UserDataFixtures::ADMIN_USER;
-            $password = $password ?? UserDataFixtures::ADMIN_PASSWORD;
-
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'. $username .'","password":"'. $password .'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            if ($forceToken === false) {
-                $this->userToken = $responseData['token'];
-            }
-
-            return $responseData['token'];
-        }
-
-        return null;
     }
 
     /**
@@ -1150,7 +1125,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $jsonData = json_encode($sensorData);
 
-        $token = $this->setUserToken(true, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
+        $token = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObjectLoggedInUser->getSensorNameID()),

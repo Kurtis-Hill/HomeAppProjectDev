@@ -14,7 +14,7 @@ interface NewDeviceHandlerInterface
      * @throws DeviceCreationFailureException
      */
     #[ArrayShape(['validationErrors'])]
-    public function processNewDevice(NewDeviceDTO $deviceDTO): array;
+    public function processNewDevice(NewDeviceDTO $newDeviceDTO): array;
 
     public function saveDevice(Devices $device): bool;
 }

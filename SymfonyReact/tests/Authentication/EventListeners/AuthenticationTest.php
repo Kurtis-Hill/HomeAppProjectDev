@@ -1,6 +1,6 @@
 <?php
 
-namespace Authentication\EventListeners;
+namespace App\Tests\Authentication\EventListeners;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class AuthenticationTests extends WebTestCase
+class AuthenticationTest extends WebTestCase
 {
     private const API_USER_REFRESH_TOKEN_URL = '/HomeApp/api/user/token/refresh';
 

@@ -14,25 +14,25 @@ use JetBrains\PhpStorm\ArrayShape;
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
     #[ArrayShape(['validationErrors'])]
-    public function processNewDevice(NewDeviceDTO $deviceDTO): array
+    public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {
-        $deviceUser = $deviceDTO->getCreatedByUserObject();
+        $deviceUser = $newDeviceDTO->getCreatedByUserObject();
         if (!$deviceUser instanceof User) {
             throw new DeviceCreationFailureException(
                 DeviceCreationFailureException::DEVICE_FAILED_TO_CREATE
             );
         }
 
-        $newDevice = $deviceDTO->getNewDevice();
-        $newDevice->setDeviceName($deviceDTO->getDeviceName());
+        $newDevice = $newDeviceDTO->getNewDevice();
+        $newDevice->setDeviceName($newDeviceDTO->getDeviceName());
         $newDevice->setCreatedBy($deviceUser);
-        $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
-        $newDevice->setRoomObject($deviceDTO->getRoomObject());
-        $newDevice->setDeviceSecret($deviceDTO->getDevicePassword());
-        $newDevice->setPassword($deviceDTO->getDevicePassword());
-        
+        $newDevice->setGroupNameObject($newDeviceDTO->getGroupNameObject());
+        $newDevice->setRoomObject($newDeviceDTO->getRoomObject());
+        $newDevice->setDeviceSecret($newDeviceDTO->getDevicePassword());
+        $newDevice->setPassword($newDeviceDTO->getDevicePassword());
+
         $validationResult = $this->validateNewDevice($newDevice);
-        
+
         if (empty($validationResult)) {
             $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
         }

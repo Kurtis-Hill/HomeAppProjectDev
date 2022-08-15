@@ -18,7 +18,7 @@ This will be needed to create the test databases and users
 After running the command add you own variables values but you can exclude the variables with TEST in them. Be sure to mark the variable APP_ENV with <b>prod</b>.
 
 <h2>SSL Setup</h2>
-first we need to create; client server and ca-certificates these can be signed or self signed. There are multiple guides online for generating these certs but the naming convention should follow:
+first we need to create; jwt public & private pem certificates, client & server pem files and ca-certificates these can be signed or self-signed. There are multiple guides online for generating these certs but the naming convention should follow:
 <ul>
     <li>ca-cert.pem</li>
     <li>client-cert.pem</li>

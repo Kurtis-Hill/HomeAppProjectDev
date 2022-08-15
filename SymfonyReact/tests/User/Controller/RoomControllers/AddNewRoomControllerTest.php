@@ -1,10 +1,11 @@
 <?php
 
-namespace User\Controller\RoomControllers;
+namespace App\Tests\User\Controller\RoomControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -17,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AddNewRoomControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const ADD_NEW_ROOM_URL = '/HomeApp/api/user/user-rooms/add-user-room';
 
     private ?EntityManagerInterface $entityManager;
@@ -36,24 +39,7 @@ class AddNewRoomControllerTest extends WebTestCase
             ->getManager();
 
         $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-        $this->setUserToken();
-    }
-
-    private function setUserToken(): void
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        $this->userToken = $responseData['token'];
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     // AddNewRoomTests

@@ -1,6 +1,6 @@
 <?php
 
-namespace UserInterface\Controller;
+namespace App\Tests\UserInterface\Controller;
 
 use App\Doctrine\DataFixtures\Core\RoomFixtures;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
@@ -8,6 +8,7 @@ use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class NavBarControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const NAVBAR_DATA_URL =  '/HomeApp/api/user/navbar/navbar-data';
 
     private ?string $userToken = null;
@@ -35,31 +38,10 @@ class NavBarControllerTest extends WebTestCase
             ->getManager();
 
         try {
-            $this->userToken = $this->setUserToken();
+            $this->userToken = $this->setUserToken($this->client);
         } catch (JsonException $e) {
             error_log($e);
         }
-    }
-
-    private function setUserToken(bool $forceToken = false): string
-    {
-        if ($this->userToken === null || $forceToken === true) {
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            return $responseData['token'];
-        }
-
-        return $this->userToken;
     }
 
     public function test_get_navbar_data_response(): void
