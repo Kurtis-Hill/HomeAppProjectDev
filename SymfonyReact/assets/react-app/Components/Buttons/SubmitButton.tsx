@@ -4,7 +4,7 @@ export default function SubmitButton(props) {
     const name = props.name ?? 'submit';
     const action = props.action ?? 'submit';
     const size = props.size ?? '';
-    const onClickFunction = props.onClickFunction ?? function ();
+    const onClickFunction = props.onClickFunction ?? function (){};
 
     return (
         <React.Fragment>
@@ -17,4 +17,5 @@ export default function SubmitButton(props) {
             </button>
         </React.Fragment>
     );
+
 }

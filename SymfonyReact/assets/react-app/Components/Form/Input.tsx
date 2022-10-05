@@ -6,7 +6,7 @@ export default function Input(props) {
     const type = props.type ?? 'text'
     const placeHolder = props.placeHolder ?? ''
     const autoComplete = props.autoComplete ?? ''
-    const onChangeFunction = props.onChangeFunction ?? function ()
+    const onChangeFunction = props.onChangeFunction ?? ''
 
     return (
         <React.Fragment>

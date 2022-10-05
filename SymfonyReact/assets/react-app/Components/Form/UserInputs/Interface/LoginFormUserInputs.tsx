@@ -1,4 +1,4 @@
-export default interface LoginFormUserInputs {
+export interface LoginFormUserInputs {
     username: string|null;
     password: string|null;
 }

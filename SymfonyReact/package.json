@@ -1,7 +1,7 @@
 {
-  "name": "SymfonyReact",
+  "name": "HomeAppProject",
   "version": "1.0.0",
-  "description": "HomeAppProject",
+  "description": "Monitor sensors from a centralized hub",
   "main": "index.js",
   "author": "Kurtis Hill",
   "license": "MIT",

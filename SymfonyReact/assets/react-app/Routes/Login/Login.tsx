@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as React from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { webappURL, registerAccountUrl } from "../../Common/CommonURLs";
 import { setUserSession } from "../../session/user-session";
@@ -10,16 +10,20 @@ import Input from "../../Components/Form/Input";
 import ColouredPage from "../../Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Components/Spinners/DotCircleSpinner";
 
-import LoginFormUserInputs from "../../Components/Form/UserInputs/Interface/LoginFormUserInputs";
+import { LoginFormUserInputs } from "../../Components/Form/UserInputs/Interface/LoginFormUserInputs";
 
-import handleLogin from "../../Request/LoginRequest";
+import { handleLogin } from "../../Request/LoginRequest";
 
-export default function Login(props) {
+import { LoginInterface } from "./LoginInterface"
+
+export default function Login(props): LoginInterface {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputs>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
 
     const loginPageImage = require('../../../images/login/index-photo.jpg')
+
+    let navigate = useNavigate();
 
     const handleInput = (event) => {
         const name: string = event.target.name;
@@ -32,13 +36,27 @@ export default function Login(props) {
         setError([]);
         setLoading(true);
 
+        if (userInputs.username === undefined || userInputs.username === "") {
+            setError(['Please fill in username']);
+            setLoading(false);
+            return;
+        }
+        if (userInputs.password === "" || userInputs.password === undefined) {
+            setError(['Please fill in password']);
+            setLoading(false);
+            return;
+        }
+
         try {
             const loginResponse = await handleLogin(userInputs);
 
             setUserSession(loginResponse);
-            window.location.replace(`${webappURL}index`)
+            // window.location.replace(`${webappURL}index`)
+            navigate(`${webappURL}index`)
+            
         } catch (error) {
             const errorResponse = error.response;
+            console.log(error, errorResponse)
             setLoading(false);
             if (errorResponse.status === 401) {
                 setError([errorResponse.data.message]);

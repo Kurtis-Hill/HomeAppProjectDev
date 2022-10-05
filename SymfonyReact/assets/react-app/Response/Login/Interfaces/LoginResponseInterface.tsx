@@ -1,9 +1,7 @@
-import UserInterface from './UserDataInterface';
+import { UserDataInterface } from './UserDataInterface';
 
 export interface LoginResponseInterface {
-    userInputs: {
-        token: string;
-        refreshToken: string;
-        userData: UserInterface;
-    }
+    token: string;
+    refreshToken: string;
+    userData: UserDataInterface;
 }

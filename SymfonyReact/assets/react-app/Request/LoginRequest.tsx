@@ -2,9 +2,14 @@ import axios from 'axios';
 
 import { apiURL } from "../Common/CommonURLs";
 
-import {LoginResponseInterface} from "../Response/Login/Interfaces/LoginResponseInterface";
+import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginResponseInterface";
+import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
 
-export default async function handleLogin(userInputs: object): Promise<LoginResponseInterface> {
+import { LoginFormUserInputs } from "../Components/Form/UserInputs/Interface/LoginFormUserInputs"
+
+import { getRefreshToken } from "../session/user-session"
+
+export async function handleLogin(userInputs: LoginFormUserInputs): Promise<LoginResponseInterface> {
     const loginCheckResponse = await axios.post(
         `${apiURL}login_check`,
         userInputs
@@ -12,3 +17,12 @@ export default async function handleLogin(userInputs: object): Promise<LoginResp
 
     return loginCheckResponse.data
 }
+
+export async function handleTokenRefresh(): Promise<TokenRefreshResponseInterface> {
+    const refreshTokenResponse = await axios.post(
+        `${apiURL}token/refresh`,
+        { refreshToken : getRefreshToken() }
+    )
+
+    return refreshTokenResponse.data;
+} 
