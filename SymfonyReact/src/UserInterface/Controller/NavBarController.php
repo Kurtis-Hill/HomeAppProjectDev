@@ -20,14 +20,14 @@ class NavBarController extends AbstractController
     use HomeAppAPITrait;
 
     #[Route('/navbar-data', name: 'navbar-data', methods: [Request::METHOD_GET])]
-    public function navBarData(NavBarDataProviderInterface $navBarService): JsonResponse
+    public function navBarData(NavBarDataProviderInterface $navBarDataProvider): JsonResponse
     {
         if (!$this->getUser() instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
         }
 
         try {
-            $navbarDTO = $navBarService->getNavBarData($this->getUser());
+            $navbarDTO = $navBarDataProvider->getNavBarData($this->getUser());
         } catch (WrongUserTypeException $e) {
             return $this->sendForbiddenAccessJsonResponse([$e->getMessage()]);
         }

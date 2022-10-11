@@ -2,8 +2,10 @@ import { useState } from 'react';
 import * as React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
+import axios, {AxiosError} from 'axios';
+
 import { webappURL, registerAccountUrl } from "../../Common/CommonURLs";
-import { setUserSession } from "../../session/user-session";
+import { setUserSession } from "../../session/UserSession";
 
 import SubmitButton from "../../Components/Buttons/SubmitButton";
 import Input from "../../Components/Form/Input";
@@ -51,18 +53,25 @@ export default function Login(props): LoginInterface {
             const loginResponse = await handleLogin(userInputs);
 
             setUserSession(loginResponse);
-            // window.location.replace(`${webappURL}index`)
             navigate(`${webappURL}index`)
             
-        } catch (error) {
-            const errorResponse = error.response;
-            console.log(error, errorResponse)
-            setLoading(false);
-            if (errorResponse.status === 401) {
-                setError([errorResponse.data.message]);
-            } else {
-                setError(['Something went wrong']);
+        } catch (err) {
+            const error = err as Error|AxiosError;
+            
+            if(!axios.isAxiosError(error)){
+                alert(`Something went wrong, please try refresh the browser ${error.message}`);
+            } 
+            if (axios.isAxiosError(error)) {
+                const errorResponse = error.response;
+
+                setLoading(false);
+                if (errorResponse.status === 401) {
+                    setError([errorResponse.data.message]);
+                } else {
+                    setError(['Something went wrong']);
+                }
             }
+
         }
     }
 

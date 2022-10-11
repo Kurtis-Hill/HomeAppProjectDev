@@ -7,7 +7,7 @@ import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/Toke
 
 import { LoginFormUserInputs } from "../Components/Form/UserInputs/Interface/LoginFormUserInputs"
 
-import { getRefreshToken } from "../session/user-session"
+import { getRefreshToken } from "../session/UserSession"
 
 export async function handleLogin(userInputs: LoginFormUserInputs): Promise<LoginResponseInterface> {
     const loginCheckResponse = await axios.post(

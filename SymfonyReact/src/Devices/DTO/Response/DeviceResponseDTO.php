@@ -25,7 +25,7 @@ class DeviceResponseDTO
 
     private ?string $externalIpAddress;
 
-    private ?array $roles;
+    private array $roles;
 
     public function __construct(
         ?int $deviceNameID,
@@ -36,7 +36,7 @@ class DeviceResponseDTO
         ?string $secret = null,
         ?string $ipAddress = null,
         ?string $externalIpAddress = null,
-        ?array $roles = null
+        ?array $roles = []
     ) {
         $this->deviceNameID = $deviceNameID;
         $this->deviceName = $deviceName;
@@ -69,7 +69,7 @@ class DeviceResponseDTO
         return $this->roomID;
     }
 
-    public function getCreatedBy(): int|string
+    public function getCreatedBy(): string|int
     {
         return $this->createdBy;
     }
