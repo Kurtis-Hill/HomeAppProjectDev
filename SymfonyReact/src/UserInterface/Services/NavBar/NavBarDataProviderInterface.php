@@ -8,8 +8,5 @@ use App\UserInterface\Exceptions\WrongUserTypeException;
 
 interface NavBarDataProviderInterface
 {
-    /**
-     * @throws WrongUserTypeException
-     */
     public function getNavBarData(User $user): NavBarResponseDTO;
 }

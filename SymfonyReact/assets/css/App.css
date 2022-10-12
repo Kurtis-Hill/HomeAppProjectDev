@@ -45,6 +45,14 @@
     padding-top: 3.5%;  
 }
 
+.title {
+    margin: auto;
+}
+
+.announcement-fade {
+    opacity: 100%;
+}
+
 .form-space {
     padding-top: 1%;
     max-width: 50%;

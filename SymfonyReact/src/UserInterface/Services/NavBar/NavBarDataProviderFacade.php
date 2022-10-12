@@ -35,20 +35,21 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
             $userRooms = $this->getRoomData($user);
         } catch (ORMException) {
             $userRooms[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms');
-            $errors[] = 'Rooms query failed';
+            $errors[] = 'Failed to get Rooms';
         }
         try {
             $userDevices = $this->getDeviceData($user);
         } catch (ORMException) {
             $userDevices[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices');
-            $errors[] = 'Device query failed';
+            $errors[] = 'Failed to get Device data';
         }
 
         return NavBarDTOBuilder::buildNavBarResponseDTO(
             $userRooms,
             $userDevices,
             $userGroups,
-            $errors ?? []
+            $errors ?? ['Device query failed']
+//            $errors ?? []
         );
     }
 

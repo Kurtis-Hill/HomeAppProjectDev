@@ -1,4 +1,4 @@
-import {LoginResponseInterface} from "../Response/Login/Interfaces/LoginResponseInterface";
+import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginResponseInterface";
 
 export const setUserSession = (loginResponse: LoginResponseInterface): void => {
     localStorage.removeItem('token');
@@ -16,7 +16,7 @@ export const getRefreshToken = (): string|null => {
     return localStorage.getItem('refreshToken');
 }
 
-export const getRoles = (): string|null => {
+export const getRoles = (): Array<string>|null => {
     return JSON.parse(localStorage.getItem('roles')) || null;
 }
 
