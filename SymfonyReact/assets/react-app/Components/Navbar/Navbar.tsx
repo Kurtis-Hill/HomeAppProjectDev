@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as React from 'react';
-import {
-    Link,
-    Outlet,
-  } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios, {AxiosError} from 'axios';
 
 import { webappURL } from "../../Common/CommonURLs";
@@ -11,6 +8,9 @@ import { webappURL } from "../../Common/CommonURLs";
 import { getRoles, checkAdmin } from "../../session/UserSession";
 
 import { handleNavBarRequest } from "../../Request/NavBar/NavBarRequest";
+import NavBarResponseInterface from "../../Response/NavBar/NavBarResponseInterface";
+
+import { AnnouncementFlashModal } from "../Modals/AnnouncementFlashModal";
 
 export default function NavBar() {
     const [roomNavToggle, setRoomNavToggle] = useState(false);
@@ -19,31 +19,29 @@ export default function NavBar() {
     const [userDevices, setUserDevices] = useState([]);
     const [userGroups, setUserGroups] = useState([]);
 
+    const admin: boolean = checkAdmin();
 
     useEffect(() => {
         navbarRequestData();
       }, []);
 
-    const admin: boolean = checkAdmin();
 
-    const toggleNavTabElement = (navDropDownElement: string) => {      
+    const toggleNavTabElement = (navDropDownElement: string): void => {      
         if (navDropDownElement === 'room') {
             setRoomNavToggle(!roomNavToggle);
         }
     }
 
-    const toggleOffNavTabElement = (navDropDownElement) => {       
+    const toggleOffNavTabElement = (navDropDownElement): void => {       
         if (navDropDownElement === 'room') {
             setRoomNavToggle(false);
         }
     }
 
-    // const navbarResponse = handleNavBarRequest();
-    
     
     const navbarRequestData = async () => {
         try {
-            const navbarResponse = await handleNavBarRequest();
+            const navbarResponse: NavBarResponseInterface = await handleNavBarRequest();
             setUserRooms(navbarResponse.userRooms);
             setUserDevices(navbarResponse.devices);
             setUserGroups(navbarResponse.groupNames);
@@ -59,13 +57,17 @@ export default function NavBar() {
                 console.log('its axios');
                 console.log('after', errors);
             }
-
           }
     }
 
     const roomNavToggleClass: string = roomNavToggle === true ? 'show' : '';
 
     return (
+            <React.Fragment>
+            <AnnouncementFlashModal
+              modalShow={true} 
+              title="Error"
+            />
         <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "} id="accordionSidebar">
             <Link to={`${webappURL}index`} className="sidebar-brand d-flex align-items-center justify-content-center">
                 <div className="sidebar-brand-icon rotate-n-15">
@@ -170,5 +172,6 @@ export default function NavBar() {
                         <button className="rounded-circle border-0" id="sidebarToggle" onClick={() => {}}/>
                     </div>
                 </ul>
+                </React.Fragment>
     );
 }

@@ -15,6 +15,7 @@ import DotCircleSpinner from "../../Components/Spinners/DotCircleSpinner";
 import { LoginFormUserInputs } from "../../Components/Form/UserInputs/Interface/LoginFormUserInputs";
 
 import { handleLogin } from "../../Request/LoginRequest";
+import { LoginResponseInterface } from "../../Response/Login/Interfaces/LoginResponseInterface";
 
 import { LoginInterface } from "./LoginInterface"
 
@@ -50,7 +51,7 @@ export default function Login(props): LoginInterface {
         }
 
         try {
-            const loginResponse = await handleLogin(userInputs);
+            const loginResponse: LoginResponseInterface = await handleLogin(userInputs);
 
             setUserSession(loginResponse);
             navigate(`${webappURL}index`)
@@ -66,7 +67,7 @@ export default function Login(props): LoginInterface {
 
                 setLoading(false);
                 if (errorResponse.status === 401) {
-                    setError([errorResponse.data.message]);
+                    setError([errorResponse.statusText]);
                 } else {
                     setError(['Something went wrong']);
                 }
