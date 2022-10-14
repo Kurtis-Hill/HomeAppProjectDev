@@ -15,33 +15,36 @@ use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempReposit
 
 class ORMConstRecordFactory
 {
-    private ConstantlyRecordRepositoryAnalogRepository $constAnalog;
+    private ConstantlyRecordRepositoryAnalogRepository $constAnalogRepository;
 
-    private ConstantlyRecordRepositoryTempRepository $constTemp;
+    private ConstantlyRecordRepositoryTempRepository $constTempRepository;
 
-    private ConstantlyRecordRepositoryHumidRepository $constHumid;
+    private ConstantlyRecordRepositoryHumidRepository $constHumidRepository;
 
-    private ConstantlyRecordRepositoryLatitudeRepository $constLatitude;
+    private ConstantlyRecordRepositoryLatitudeRepository $constLatitudeRepository;
 
     public function __construct(
-        ConstantlyRecordRepositoryAnalogRepository $constAnalog,
-        ConstantlyRecordRepositoryTempRepository   $constTemp,
-        ConstantlyRecordRepositoryHumidRepository  $constHumid,
-        ConstantlyRecordRepositoryLatitudeRepository $constLatitude,
+        ConstantlyRecordRepositoryAnalogRepository $constAnalogRepository,
+        ConstantlyRecordRepositoryTempRepository   $constTempRepository,
+        ConstantlyRecordRepositoryHumidRepository  $constHumidRepository,
+        ConstantlyRecordRepositoryLatitudeRepository $constLatitudeRepository,
     ) {
-        $this->constAnalog = $constAnalog;
-        $this->constTemp = $constTemp;
-        $this->constHumid = $constHumid;
-        $this->constLatitude = $constLatitude;
+        $this->constAnalogRepository = $constAnalogRepository;
+        $this->constTempRepository = $constTempRepository;
+        $this->constHumidRepository = $constHumidRepository;
+        $this->constLatitudeRepository = $constLatitudeRepository;
     }
 
+    /**
+     * @throws ReadingTypeNotSupportedException
+     */
     public function getConstRecordServiceRepository(string $sensorReadingTypeObject): ConstantlyRecordRepositoryInterface
     {
         return match ($sensorReadingTypeObject) {
-            Analog::getReadingTypeName() => $this->constAnalog,
-            Temperature::getReadingTypeName() => $this->constTemp,
-            Humidity::getReadingTypeName() => $this->constHumid,
-            Latitude::getReadingTypeName() => $this->constLatitude,
+            Analog::getReadingTypeName() => $this->constAnalogRepository,
+            Temperature::getReadingTypeName() => $this->constTempRepository,
+            Humidity::getReadingTypeName() => $this->constHumidRepository,
+            Latitude::getReadingTypeName() => $this->constLatitudeRepository,
             default => throw new ReadingTypeNotSupportedException(
                 ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE
             )
