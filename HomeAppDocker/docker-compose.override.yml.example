@@ -20,8 +20,8 @@ services:
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
-      - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
-      - ./apache/logs:/etc/logs 
+      - ./webservers/apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - ./webservers/apache/logs:/etc/logs 
     depends_on:
       maria-db:
         condition: service_healthy
@@ -29,10 +29,6 @@ services:
         condition: service_healthy
 
   lighttpd:
-    build:
-      context: ./apache
-      dockerfile: ./Dockerfile
-    container_name: '${APP_NAME}-lighttpd-queue-proccessor'
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
