@@ -3,7 +3,6 @@
 namespace App\Tests\Devices\Controller;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
@@ -26,11 +25,6 @@ class DeleteDeviceControllerTest extends WebTestCase
     private ?EntityManagerInterface $entityManager;
 
     private KernelBrowser $client;
-
-    public function __construct(?string $name = null, array $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-    }
 
     protected function setUp(): void
     {

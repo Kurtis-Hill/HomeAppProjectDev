@@ -94,5 +94,7 @@ class GetSensorTypesControllerTest extends WebTestCase
                 }
             }
         }
+
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 }
