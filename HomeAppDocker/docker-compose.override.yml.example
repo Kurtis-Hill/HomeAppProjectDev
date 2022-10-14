@@ -1,0 +1,80 @@
+version: '3.9'
+
+services:
+  apache:
+    ports:
+      - '9000'
+      # - '127.0.0.1:${HTTPS_APP_PORT}:443'
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_NAME: ${APP_NAME}
+      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_TEST_USER: ${MARIADB_TEST_USER}
+      MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
+      MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
+    volumes:
+      - ../SymfonyReact:/var/www/html
+      - ../SSL:/etc/ssl
+      - ./webservers/apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - ./webservers/apache/logs:/etc/logs 
+    depends_on:
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  lighttpd:
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_NAME: ${APP_NAME}
+      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_TEST_USER: ${MARIADB_TEST_USER}
+      MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
+      MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
+    volumes:
+      - ../SymfonyReact:/var/www/html
+      - ../SSL:/etc/ssl/custom:ro
+      # - <config-directory>:/etc/lighttpd
+    tty: true
+    depends_on:
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - HomeAppProjectNetwork
+
+
+  maria-db:
+    ports:
+      - '127.0.0.1:${DB_PORT}:3306'
+    environment:
+      APP_ENV: ${APP_ENV}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_USER: ${MARIADB_USER}
+      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
+      MYSQL_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_TEST_USER: ${MARIADB_TEST_USER}
+      MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
+      MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
+
+  yarn:
+    environment:
+      APP_ENV: ${APP_ENV}
+      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
+    volumes:
+      - ../SymfonyReact:/home/node/app/src
+    ports:
+      - '8080:8080'
+    depends_on:
+      - apache

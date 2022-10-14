@@ -22,7 +22,7 @@ class DhtNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
         $this->humidityReadingTypeObjectBuilder = $humidityReadingTypeObjectBuilder;
     }
 
-    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface
+    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $dht = new Dht();
         $dht->setSensorObject($sensor);

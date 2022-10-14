@@ -2,8 +2,8 @@ version: '3.9'
 services:
   apache:
     build:
-      context: ./apache
-      dockerfile: ./Dockerfile
+      context: ./webservers
+      dockerfile: ./apache/Dockerfile
       args:
         APP_ENV: ${APP_ENV}
     container_name: '${APP_NAME}-php-apache-server'
@@ -18,9 +18,38 @@ services:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
+      REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
+    depends_on:
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - HomeAppProjectNetwork
+
+  lighttpd:
+    build:
+      context: ./webservers
+      dockerfile: ./lighttpd/Dockerfile
+    container_name: '${APP_NAME}-lighttpd-queue-proccessor'
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_NAME: ${APP_NAME}
+      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+    volumes:
+      - ../SymfonyReact:/var/www/html
+      - ../SSL:/etc/ssl/custom:ro
+      # - <config-directory>:/etc/lighttpd
+    tty: true
     depends_on:
       maria-db:
         condition: service_healthy
@@ -58,7 +87,6 @@ services:
     container_name: '${APP_NAME}-yarn'
     environment:
       APP_ENV: ${APP_ENV}
-      # PYTHON: 
     volumes:
       - ../SymfonyReact:/home/node/app/src:cached
     networks:
@@ -78,7 +106,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
-        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        # - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -87,6 +115,29 @@ services:
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
+
+  redis:
+    build:
+      context: ./redis
+      dockerfile: ./Dockerfile
+    container_name: '${APP_NAME}-redis'
+    environment:
+      REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+      REDIS_PASS: ${REDIS_PASS}
+    depends_on:
+      - apache
+    networks:
+      - HomeAppProjectNetwork
+
+  # redis-commander:
+  #   container_name: redis-commander
+  #   hostname: redis-commander
+  #   image: rediscommander/redis-commander:latest
+  #   restart: always
+  #   environment:
+  #   - REDIS_HOSTS=local:redis:6379
+  #   ports:
+  #   - "8081:8081"
 
 networks:
   HomeAppProjectNetwork:

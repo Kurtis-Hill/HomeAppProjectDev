@@ -63,7 +63,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
                 $sensorType
             );
 
-        return $sensorReadingCreationService->buildNewReadingTypeObjects($sensor);
+        return $sensorReadingCreationService->buildNewSensorTypeObjects($sensor);
     }
 
     private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array

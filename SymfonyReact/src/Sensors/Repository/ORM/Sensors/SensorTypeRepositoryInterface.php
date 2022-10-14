@@ -11,8 +11,6 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<SensorTypeRepository>
- *
  * @method SensorRepository|null find($id, $lockMode = null, $lockVersion = null)
  * @method SensorRepository|null findOneBy(array $criteria, array $orderBy = null)
  * @method SensorRepository[]    findAll()
@@ -31,11 +29,14 @@ interface SensorTypeRepositoryInterface
      */
     public function persist(SensorType $sensorType): void;
 
+
+    public function findAllSensorTypes(): array;
+
     /**
      * @throws ORMException
      */
     #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
-    public function getAllSensorTypeNames(): array;
+    public function findAllSensorTypeNames(): array;
 
     /**
      * @throws OptimisticLockException

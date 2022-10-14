@@ -1,4 +1,4 @@
-FROM mariadb:10.6.2
+FROM mariadb:10.8
 
 RUN chmod 0444 -R /etc/mysql/mariadb.conf.d/
 

@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 echo "Setting server name to ${APP_NAME}"
 echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
 
@@ -15,7 +16,6 @@ if [ ${APP_ENV} = 'prod' ]; then
   echo "...Migrations complete"
 fi
 
-
 if [ ${APP_ENV} = 'dev' ]; then
 	echo "dev container build"
 	echo "Executing database migrations for test enviroment..."
@@ -28,19 +28,12 @@ if [ ${APP_ENV} = 'dev' ]; then
 
 ##@TODO: not working
 	echo "Querying test database"
-	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep -q 'array(1)'; then
+	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep -q 'array(0)'; then
 		echo "Test database empty loading fixtures..."
    		php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"
 	fi
 	echo "Test database checked"
-fi
-
-if [ ! -f /etc/logs/server-error.log ]; then
-    touch /etc/logs/server-error.log
-fi
-if [ ! -f /etc/logs/user-input-errors.log ]; then
-    touch /etc/logs/user-input-error.log
 fi
 
 echo "Starting supervisor..."

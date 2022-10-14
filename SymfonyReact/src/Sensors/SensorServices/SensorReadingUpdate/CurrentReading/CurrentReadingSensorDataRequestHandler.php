@@ -63,7 +63,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
         $this->sensorTypeReadingTypeCheckerFactory = $sensorTypeReadingTypeCheckerFactory;
         try {
-            $this->allSensorTypes = $sensorTypeRepository->getAllSensorTypeNames();
+            $this->allSensorTypes = $sensorTypeRepository->findAllSensorTypeNames();
         } catch (ORMException) {
             $this->errors[] = sprintf(APIErrorMessages::QUERY_FAILURE, 'Sensor type');
         }

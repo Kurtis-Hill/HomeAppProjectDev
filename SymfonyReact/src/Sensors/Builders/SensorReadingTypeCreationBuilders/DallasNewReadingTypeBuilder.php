@@ -16,7 +16,7 @@ class DallasNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterfac
         $this->temperatureReadingTypeObjectBuilder = $temperatureReadingTypeObjectBuilder;
     }
 
-    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface
+    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $dallas = new Dallas();
         $dallas->setSensorObject($sensor);
