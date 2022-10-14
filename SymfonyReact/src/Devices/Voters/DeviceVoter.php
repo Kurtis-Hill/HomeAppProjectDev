@@ -59,7 +59,10 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-        $checkedRoom = $this->checkUserIsApartOfProposedRoom($user, $updateDeviceDTO->getProposedUpdatedRoom());
+        $checkedRoom = $this->checkUserIsApartOfProposedRoom(
+            $user,
+            $updateDeviceDTO->getProposedUpdatedRoom()
+        );
 
         if ($checkedRoom === false) {
             return false;

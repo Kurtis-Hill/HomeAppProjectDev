@@ -27,6 +27,11 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+    }
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -40,9 +45,8 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     public function testRegularUserCannotDeleteAdminDevice(): void
     {
-        $userToken = $this->setUserToken($this->client);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
-
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
         $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
@@ -68,6 +72,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
+        self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminUserCanDeleteDeviceNotApartOf(): void
@@ -106,6 +111,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
         self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
         self::assertNull($responseData['payload']['secret']);
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function testDeletingDeviceThatDoesntExist(): void
@@ -170,6 +176,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
         self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
         self::assertNull($responseData['payload']['secret']);
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function deletingDeviceDataProvider(): Generator

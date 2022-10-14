@@ -7,6 +7,7 @@ use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
@@ -84,15 +85,14 @@ class GetSensorTypesControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
-        $count = 0;
-        foreach ($sensorTypes as $sensorType) {
-            self::assertEquals($payload[$count]['sensorTypeID'], $sensorType->getSensorTypeID());
-            self::assertEquals($payload[$count]['sensorType'], $sensorType->getSensorType());
-            self::assertEquals($payload[$count]['description'], $sensorType->getDescription());
-            ++$count;
+        /** @var SensorType $sensorTypeFromDB */
+        foreach ($payload as $sensorType) {
+            foreach ($sensorTypes as $sensorTypeFromDB) {
+                if ($sensorType['sensorTypeID'] === $sensorTypeFromDB->getSensorTypeID()) {
+                    self::assertEquals($sensorType['sensorType'], $sensorTypeFromDB->getSensorType());
+                    self::assertEquals($sensorType['description'], $sensorTypeFromDB->getDescription());
+                }
+            }
         }
-
-        self::assertCount(count($sensorTypes), $payload);
-        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 }
