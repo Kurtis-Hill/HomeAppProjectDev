@@ -63,10 +63,10 @@ security:
         # Token access
         - { path: ^/HomeApp/api/device/(login_check|token/refresh), roles: PUBLIC_ACCESS }
         - { path: ^/HomeApp/api/user/(login_check|token/refresh), roles: PUBLIC_ACCESS }
-        # WebApp un auth access areas
+        # WebApp no auth access areas
         - { path: ^/HomeApp/WebApp/login, roles: PUBLIC_ACCESS }
         - { path: ^/HomeApp/WebApp/register, roles: PUBLIC_ACCESS }
-        # specific api endpoints pending on user
+        # api endpoints pending on user
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }
         - { path: ^/HomeApp/api/user, roles: ROLE_USER }
 

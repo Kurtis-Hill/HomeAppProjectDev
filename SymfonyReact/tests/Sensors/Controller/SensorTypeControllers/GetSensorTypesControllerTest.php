@@ -94,7 +94,7 @@ class GetSensorTypesControllerTest extends WebTestCase
                 }
             }
         }
-
+        self::assertCount(count($sensorTypes), $payload);
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 }

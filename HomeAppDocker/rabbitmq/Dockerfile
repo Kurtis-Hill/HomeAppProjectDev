@@ -1,3 +1,3 @@
-FROM rabbitmq:3-management-alpine
-##TODO copy the .json here instead of mounting
-# ADD HomeAppRabbitMQ.json /tmp/rabbit.definitions.json
+FROM rabbitmq:3.11.1-management-alpine
+
+COPY ./HomeAppRabbitMQ.json /etc/rabbitmq/definitions.json

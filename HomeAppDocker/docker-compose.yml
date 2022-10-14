@@ -18,6 +18,7 @@ services:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
+      REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
@@ -28,6 +29,34 @@ services:
         condition: service_healthy
     networks:
       - HomeAppProjectNetwork
+
+    lighttpd:
+      build:
+        context: ./apache
+        dockerfile: ./Dockerfile
+      image: sebp/lighttpd
+      environment:
+        APP_ENV: ${APP_ENV}
+        APP_NAME: ${APP_NAME}
+        HTTPS_APP_PORT: ${HTTPS_APP_PORT}
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+        MARIADB_USER: ${MARIADB_USER}
+        MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+        MARIADB_DATABASE: ${MARIADB_DATABASE}
+        REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+      volumes:
+        - ../SymfonyReact::/var/www/localhost/htdocs
+        - ../SSL:/etc/ssl/custom:ro
+        - <config-directory>:/etc/lighttpd
+      tty: true
+      depends_on:
+        maria-db:
+          condition: service_healthy
+        rabbitmq:
+          condition: service_healthy
+      networks:
+        - HomeAppProjectNetwork
 
   maria-db:
     build:
@@ -77,7 +106,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
-        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        # - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -88,12 +117,27 @@ services:
       - HomeAppProjectNetwork
 
   redis:
+    build:
+      context: ./redis
+      dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-redis'
-    image: redis:6.2.7-alpine
+    environment:
+      REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+      REDIS_PASS: ${REDIS_PASS}
     depends_on:
       - apache
     networks:
       - HomeAppProjectNetwork
+
+  # redis-commander:
+  #   container_name: redis-commander
+  #   hostname: redis-commander
+  #   image: rediscommander/redis-commander:latest
+  #   restart: always
+  #   environment:
+  #   - REDIS_HOSTS=local:redis:6379
+  #   ports:
+  #   - "8081:8081"
 
 networks:
   HomeAppProjectNetwork:
