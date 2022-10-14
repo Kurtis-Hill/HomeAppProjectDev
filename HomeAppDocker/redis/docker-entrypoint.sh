@@ -19,7 +19,7 @@ if [ "$um" = '0022' ]; then
         umask 0077
 fi
 
-echp "setting vm memory commit"
-sysctl vm.overcommit_memory=1
+# echo "setting vm memory commit"
+# sysctl vm.overcommit_memory=1
 
 exec "$@"

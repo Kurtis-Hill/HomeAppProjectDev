@@ -50,6 +50,6 @@ HomeAppDocker/mariadb/db_data/*
 HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/rabbitmq/log/*
 
-HomeAppDocker/apache/auth.json
-HomeAppDocker/apache/logs/*
+HomeAppDocker/webservers/auth/auth.json
+HomeAppDocker/webservers/apache/logs/*
 HomeAppDocker/docker-compose.override.yml

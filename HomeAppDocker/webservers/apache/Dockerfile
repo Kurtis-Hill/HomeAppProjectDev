@@ -25,19 +25,17 @@ RUN a2enmod ssl
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 sockets http apcu
 
-COPY ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY ./apache/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-COPY ./auth.json /root/.composer/auth.json
+COPY ./auth/auth.json /root/.composer/auth.json
 
 COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
-COPY ./sites-enabled/site.conf /etc/apache2/sites-available/000-default.conf
+COPY ./apache/sites-enabled/site.conf /etc/apache2/sites-available/000-default.conf
 
-COPY ./php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
+COPY ./apache/php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
 
-COPY ./supervisor/ /etc/supervisor/conf.d/
-
-COPY ./docker-entrypoint.sh /usr/bin/docker-entrypoint
+COPY ./apache/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]
