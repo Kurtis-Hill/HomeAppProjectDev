@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 echo "Setting server name to ${APP_NAME}"
 echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
 

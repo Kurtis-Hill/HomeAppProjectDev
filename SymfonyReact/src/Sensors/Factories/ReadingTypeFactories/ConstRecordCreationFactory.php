@@ -27,8 +27,7 @@ class ConstRecordCreationFactory
         HumidityConstRecordObjectBuilder $humidityConstRecordObjectBuilder,
         LatitudeConstRecordObjectBuilder $latitudeConstRecordObjectBuilder,
         TemperatureConstRecordObjectBuilder $temperatureConstRecordObjectBuilder
-    )
-    {
+    ) {
         $this->analogConstRecordObjectBuilder = $analogConstRecordObjectBuilder;
         $this->humidityConstRecordObjectBuilder = $humidityConstRecordObjectBuilder;
         $this->latitudeConstRecordObjectBuilder = $latitudeConstRecordObjectBuilder;

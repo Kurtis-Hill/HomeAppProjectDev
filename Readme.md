@@ -26,6 +26,10 @@ first we need to create; jwt public & private pem certificates, client & server 
 </ul>
 you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github  
 
+<h3>Elasticsearch</h3>
+First the elastic search container needs to generate some certificates for secure communication. To do this run the following command: <code>docker-compose -f HomeAppDocker/elasticsearch/certs/create-certs.yml run --rm create_certs</code>
+elastic username is: elastic and the password is in set in the .env file
+
 <h2>Running the application</h2>
 Remember to set the APP_ENV variable in the HomeAppDocker/.env file to <b>prod|dev</b> depending on your intentions.
 Once your variables are set run
