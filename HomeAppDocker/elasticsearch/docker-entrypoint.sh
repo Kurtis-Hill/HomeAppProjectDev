@@ -1,4 +1,4 @@
-#!/bin/sh
+0#!/bin/sh
 
 # if [ x${ELASTIC_PASSWORD} == x ]; then
 #         echo "Set the ELASTIC_PASSWORD environment variable in the .env file";

@@ -29,8 +29,6 @@ services:
         condition: service_healthy
       es01:
         condition: service_healthy
-      # wait_until_ready:
-      #   condition: service_healthy
     networks:
       - HomeAppProjectNetwork
 
@@ -61,8 +59,6 @@ services:
         condition: service_healthy
       es01:
         condition: service_healthy
-      # wait_until_ready:
-      #   condition: service_healthy
     networks:
       - HomeAppProjectNetwork
 
@@ -159,7 +155,7 @@ services:
     volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
     healthcheck:
       test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
 
