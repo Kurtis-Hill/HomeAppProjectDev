@@ -12,7 +12,7 @@ abstract class AbstractStandardConstRecordBuilder
         AllSensorReadingTypeInterface $standardReadingSensor
     ): void {
         $constantlyRecordObject->setSensorReading($standardReadingSensor->getCurrentReading());
-        $constantlyRecordObject->setSensorReadingTypeObject($standardReadingSensor);
+        $constantlyRecordObject->setSensorReadingObject($standardReadingSensor);
         $constantlyRecordObject->setCreatedAt();
     }
 }

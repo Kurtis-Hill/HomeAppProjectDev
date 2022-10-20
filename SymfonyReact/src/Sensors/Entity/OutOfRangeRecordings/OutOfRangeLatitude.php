@@ -27,7 +27,7 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
         ORM\ManyToOne(targetEntity: Latitude::class),
         ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
     ]
-    private Latitude $sensorReadingTypeID;
+    private Latitude $sensorReadingID;
 
     #[ORM\Column(name: "sensorReading", type: "float", nullable: false)]
     #[LatitudeConstraint]
@@ -46,15 +46,15 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
         $this->outOfRangeID = $outOfRangeID;
     }
 
-    public function getSensorReadingTypeID(): Latitude
+    public function getSensorReadingID(): Latitude
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Latitude) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 

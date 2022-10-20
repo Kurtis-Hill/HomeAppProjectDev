@@ -38,7 +38,7 @@ class ConstLatitude implements ConstantlyRecordInterface
         ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
     ]
     #[Assert\NotNull(message: "Const Record Latitude Object cannot be null")]
-    private Latitude $sensorReadingTypeID;
+    private Latitude $sensorReadingID;
 
     public function getConstRecordID(): int
     {
@@ -70,15 +70,15 @@ class ConstLatitude implements ConstantlyRecordInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeObject(): Latitude
+    public function getSensorReadingObject(): Latitude
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Latitude) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

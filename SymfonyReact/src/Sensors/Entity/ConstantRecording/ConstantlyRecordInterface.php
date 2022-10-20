@@ -34,9 +34,9 @@ interface ConstantlyRecordInterface
 
     public function setCreatedAt(): void;
 
-    public function getSensorReadingTypeObject();
+    public function getSensorReadingObject();
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void;
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void;
 
 //    /**
 //     * @param AllSensorReadingTypeInterface $sensorReadingTypeID

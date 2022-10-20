@@ -53,7 +53,7 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
         ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
     ]
     #[Assert\NotNull(message: "Out of range Temperature Object cannot be null")]
-    private Temperature $sensorReadingTypeID;
+    private Temperature $sensorReadingID;
 
     public function getOutOfRangeID(): int
     {
@@ -85,15 +85,15 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeID(): Temperature
+    public function getSensorReadingID(): Temperature
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

@@ -37,7 +37,7 @@ class ConstHumid implements ConstantlyRecordInterface
         ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
     ]
     #[Assert\NotNull(message: "Const Record Humidity Object cannot be null")]
-    private Humidity $sensorReadingTypeID;
+    private Humidity $sensorReadingID;
 
     public function getConstRecordID(): int
     {
@@ -69,15 +69,15 @@ class ConstHumid implements ConstantlyRecordInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeObject(): Humidity
+    public function getSensorReadingObject(): Humidity
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }
