@@ -35,6 +35,10 @@ if [ ${APP_ENV} = 'dev' ]; then
 	echo "Test database checked"
 fi
 
+bin/console app:elastic-create-const-record-indices
+
+bin/console app:elastic-create-out-of-bounds-indices
+
 echo "Starting supervisor..."
 supervisord -n&
 echo "Supervisor Started..."

@@ -1,27 +1,22 @@
 parameters:
 
 services:
-  # default configuration for services in *this* file
   _defaults:
-    autowire: true      # Automatically injects dependencies in your services.
-    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
-  # makes classes in src/ available to be used as services
-  # this creates a service per class whose id is the fully-qualified class name
+    autowire: true
+    autoconfigure: true
 
   ################### Core ############################
   App\Sensors\:
     resource: './*'
-    exclude: './{Traits,DependencyInjection,Entity,Tests}'
+    exclude: './{Entity}'
 
   App\Sensors\Controller\:
     resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
-##### not working had to put in main services for now ####### @TODO
-#  App\Sensors\Controller\ESPSensorUpdateController:
-#    calls:
-#      - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
+  App\Sensors\Controller\SensorControllers\ESPSensorCurrentReadingUpdateController:
+      calls:
+          - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
 
 ####################### Producers ######################################################
   App\Sensors\AMQP\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
@@ -73,3 +68,19 @@ services:
   App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface:
     alias: 'App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepository'
 ######################## End Of Sensors ######################################################################################
+
+######################## ES Client ##########################################################################################
+  App\Sensors\Clients\ElasticSearch\ElasticSearchClient:
+    arguments:
+      $host: '%env(string:ELASTIC_SEARCH_HOST)%'
+      $port: '%env(int:ELASTIC_SEARCH_PORT)%'
+      $transport: '%env(string:ELASTIC_TRANSPORT)%'
+      $sslVerification: '%env(bool:ELASTIC_SEARCH_SSL_VERIFICATION)%'
+      $user: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%'
+      $password: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%'
+      $failOverHost: '%env(string:ELASTIC_SEARCH_HOST_FAILOVER)%'
+      $failOverPort: '%env(int:ELASTIC_SEARCH_PORT_FAILOVER)%'
+      $failOverTransport: '%env(string:ELASTIC_TRANSPORT_FAILOVER)%'
+      $failOverSslVerification: '%env(bool:ELASTIC_SEARCH_SSL_VERIFICATION_FAILOVER)%'
+      $failOverUser: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME_FAILOVER)%'
+      $failOverPassword: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD_FAILOVER)%'

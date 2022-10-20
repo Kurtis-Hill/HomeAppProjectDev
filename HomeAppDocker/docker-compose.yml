@@ -19,6 +19,7 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
@@ -47,10 +48,10 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl/custom:ro
-      # - <config-directory>:/etc/lighttpd
     tty: true
     depends_on:
       maria-db:
@@ -110,7 +111,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
-        # - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -134,7 +135,7 @@ services:
 
   es01:
     container_name: ${APP_NAME}-es01
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=es01
       - discovery.seed_hosts=es01,es02
@@ -158,10 +159,13 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
 
   es02:
     container_name: ${APP_NAME}-es02
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=es02
       - discovery.seed_hosts=es01,es02
@@ -180,6 +184,9 @@ services:
       - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
       - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
     volumes: ['data02:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
 
 volumes: {"data01", "data02", "certs"}
 

@@ -9,7 +9,7 @@ services:
   ################### Core ############################
   App\User\:
     resource: './*'
-    exclude: './{Traits, DependencyInjection, Entity, Tests}'
+    exclude: './{Entity}'
 
   App\User\Controller\:
     resource: './Controller'
