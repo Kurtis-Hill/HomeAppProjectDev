@@ -2,6 +2,8 @@
 
 namespace App\Sensors\Command\Elasticsearch\IndicesCreation;
 
+use App\Sensors\Repository\OutOfBounds\Elastic\AbstractOutOfBoundsRepository;
+use Elastica\Client;
 use Elastica\Exception\InvalidException;
 use Elastica\Exception\ResponseException;
 use Elastica\Mapping;
@@ -9,11 +11,18 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ElasticCreateOutOfBoundsIndices extends AbstractIndieCreationCommand
+class ElasticCreateOutOfBoundsIndices extends Command
 {
     protected static $defaultName = 'app:elastic-create-out-of-bounds-indices';
 
-    private const MAPPING_PROPERTY_INDEX = 'outofbounds_';
+    protected Client $elasticSearchClient;
+
+
+    public function __construct(Client $client, string $name = null)
+    {
+        $this->elasticSearchClient = $client;
+        parent::__construct($name);
+    }
 
     protected function configure(): void
     {
@@ -31,10 +40,14 @@ class ElasticCreateOutOfBoundsIndices extends AbstractIndieCreationCommand
 
         $output->writeln('Creating indices...');
 
-        foreach (self::INDICES_TO_CREATE as $indexName => $mappingProperties) {
-            $indexNameConcat = sprintf('%s%s', self::MAPPING_PROPERTY_INDEX, $indexName);
-            $output->writeln('Creating index: ' . $indexNameConcat);
-            $index = $this->elasticSearchClient->getIndex($indexNameConcat);
+        foreach (AbstractOutOfBoundsRepository::OUTBOUNDS_INDICES as $indexName => $mappingProperties) {
+            $output->writeln('Creating index: ' . $indexName);
+            $index = $this->elasticSearchClient->getIndex($indexName);
+
+            if ($this->elasticSearchClient->getIndex($indexName)->exists()) {
+                $output->writeln("<info>Index already exists: $indexName</info>");
+                continue;
+            }
 
             try {
                 $index->create([], ['recreate' => false]);
@@ -52,7 +65,7 @@ class ElasticCreateOutOfBoundsIndices extends AbstractIndieCreationCommand
             ]);
 
             $mapping->send($index);
-            $output->writeln('<info>Index created: ' . $indexNameConcat . '</info>');
+            $output->writeln('<info>Index created: ' . $indexName . '</info>');
         }
 
         $output->writeln('<info>Indices created successfully!</info>');

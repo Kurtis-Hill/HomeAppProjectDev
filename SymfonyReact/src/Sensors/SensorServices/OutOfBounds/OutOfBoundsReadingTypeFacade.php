@@ -3,20 +3,27 @@
 namespace App\Sensors\SensorServices\OutOfBounds;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Factories\ORMFactories\OufOfBounds\OutOfBoundsORMFactory;
-use App\Sensors\Factories\ReadingTypeFactories\OutOfBoundsCreationFactory;
+use App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory;
+use App\Sensors\Factories\OufOfBounds\OutOfBoundsFactoryInterface;
+use App\Sensors\Factories\OufOfBounds\OutOfBoundsORMFactory;
+use App\Sensors\Factories\ReadingTypeFactories\OutOfBoundsEntityCreationFactory;
 
 class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
 {
-    private OutOfBoundsCreationFactory $outOfBoundsCreationFactory;
+    private OutOfBoundsEntityCreationFactory $outOfBoundsCreationFactory;
 
-    private OutOfBoundsORMFactory $outOfBoundsORMFactory;
+    private OutOfBoundsFactoryInterface $outOfBoundsFactory;
 
     public function __construct(
-        OutOfBoundsCreationFactory $outOfBoundsCreationFactory,
+        OutOfBoundsEntityCreationFactory $outOfBoundsCreationFactory,
         OutOfBoundsORMFactory $outOfBoundsORMFactory,
+        OutOfBoundsElasticFactory $outOfBoundsElasticFactory,
+        bool $elasticOverride = false,
     ) {
-        $this->outOfBoundsORMFactory = $outOfBoundsORMFactory;
+        $this->outOfBoundsFactory = $elasticOverride === true
+            ? $outOfBoundsElasticFactory
+            : $outOfBoundsORMFactory;
+
         $this->outOfBoundsCreationFactory = $outOfBoundsCreationFactory;
     }
 
@@ -28,9 +35,8 @@ class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
 
             $outOfBoundsObject = $outOfBoundsObjectBuilder->buildOutOfBoundsObject($readingTypeObject);
 
-            $outOfBoundsRepository = $this->outOfBoundsORMFactory->getOutOfBoundsServiceRepository($readingType);
+            $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($readingType);
             $outOfBoundsRepository->persist($outOfBoundsObject);
         }
     }
-
 }

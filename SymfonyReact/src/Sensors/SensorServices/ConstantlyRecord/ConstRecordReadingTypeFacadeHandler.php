@@ -3,18 +3,18 @@
 namespace App\Sensors\SensorServices\ConstantlyRecord;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Factories\ORMFactories\ConstRecord\ORMConstRecordFactory;
+use App\Sensors\Factories\ConstRecord\ConstRecordORMFactory;
 use App\Sensors\Factories\ReadingTypeFactories\ConstRecordCreationFactory;
 
 class ConstRecordReadingTypeFacadeHandler implements SensorConstantlyRecordHandlerInterface
 {
     private ConstRecordCreationFactory $constRecordCreationFactory;
 
-    private ORMConstRecordFactory $ormConstRecordFactory;
+    private ConstRecordORMFactory $ormConstRecordFactory;
 
     public function __construct(
         ConstRecordCreationFactory $constRecordCreationFactory,
-        ORMConstRecordFactory $ormConstRecordFactory,
+        ConstRecordORMFactory $ormConstRecordFactory,
     ) {
         $this->constRecordCreationFactory = $constRecordCreationFactory;
         $this->ormConstRecordFactory = $ormConstRecordFactory;

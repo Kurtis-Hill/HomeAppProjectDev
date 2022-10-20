@@ -5,6 +5,7 @@ imports:
     - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
     - { resource: ../src/Authentication/services-authentication.yaml }
+    - { resource: 'elasticsearch.yaml' }
 
 parameters:
 services:

@@ -6,7 +6,7 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsAnalogRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsAnalogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

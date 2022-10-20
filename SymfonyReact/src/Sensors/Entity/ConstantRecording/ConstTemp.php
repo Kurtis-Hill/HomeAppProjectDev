@@ -10,11 +10,11 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryTempRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository;
 
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordRepositoryTempRepository::class),

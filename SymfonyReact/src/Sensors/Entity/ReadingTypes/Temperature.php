@@ -12,7 +12,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
-use App\Sensors\Repository\ORM\ReadingType\TemperatureRepository;
+use App\Sensors\Repository\ReadingType\ORM\TemperatureRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

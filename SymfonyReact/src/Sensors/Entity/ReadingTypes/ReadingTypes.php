@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Entity\ReadingTypes;
 
+use App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepository;
 
 #[
     ORM\Entity(repositoryClass: ReadingTypeRepository::class),

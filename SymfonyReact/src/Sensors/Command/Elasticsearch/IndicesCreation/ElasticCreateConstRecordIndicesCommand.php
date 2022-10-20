@@ -2,6 +2,8 @@
 
 namespace App\Sensors\Command\Elasticsearch\IndicesCreation;
 
+use App\Sensors\Repository\ConstRecord\Elastic\AbstractConstRecordRepository;
+use Elastica\Client;
 use Elastica\Exception\InvalidException;
 use Elastica\Exception\ResponseException;
 use Elastica\Mapping;
@@ -9,11 +11,18 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ElasticCreateConstRecordIndicesCommand extends AbstractIndieCreationCommand
+class ElasticCreateConstRecordIndicesCommand extends Command
 {
     protected static $defaultName = 'app:elastic-create-const-record-indices';
 
-    private const MAPPING_PROPERTY_INDEX = 'constrecord_';
+    protected Client $elasticSearchClient;
+
+    public function __construct(Client $client, string $name = null, array $indexMappings = [])
+    {
+        dd($indexMappings);
+        $this->elasticSearchClient = $client;
+        parent::__construct($name);
+    }
 
     protected function configure(): void
     {
@@ -31,10 +40,14 @@ class ElasticCreateConstRecordIndicesCommand extends AbstractIndieCreationComman
 
         $output->writeln('Creating indices...');
 
-        foreach (self::INDICES_TO_CREATE as $indexName => $mappingProperties) {
-            $indexConcat = sprintf('%s%s', self::MAPPING_PROPERTY_INDEX, $indexName);
-            $output->writeln("Creating index: $indexConcat");
+        foreach (AbstractConstRecordRepository::CONST_RECORD_INDICES as $indexName => $mappingProperties) {
+            $output->writeln("Creating index: $indexName");
             $index = $this->elasticSearchClient->getIndex($indexName);
+
+            if ($this->elasticSearchClient->getIndex($indexName)->exists()) {
+                $output->writeln("<info>Index already exists: $indexName</info>");
+                continue;
+            }
 
             try {
                 $index->create([], ['recreate' => false]);
@@ -52,7 +65,7 @@ class ElasticCreateConstRecordIndicesCommand extends AbstractIndieCreationComman
             ]);
 
             $mapping->send($index);
-            $output->writeln("<info>Index created: $indexConcat</info>");
+            $output->writeln("<info>Index created: $indexName</info>");
         }
 
         $output->writeln('<info>Indices created successfully!</info>');

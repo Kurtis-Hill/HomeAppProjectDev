@@ -17,7 +17,7 @@ use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Exceptions\SensorUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeFactories\ReadingTypeResponseBuilderFactory;
 use App\Sensors\Factories\SensorUpdateFactory\SensorReadingUpdateFactory;
-use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\Exception\ORMException;

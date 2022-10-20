@@ -10,14 +10,14 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsTempORMRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsTempRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: OutOfBoundsTempORMRepository::class),
+    ORM\Entity(repositoryClass: OutOfBoundsTempRepository::class),
     ORM\Table(name: "outofrangetemp"),
     ORM\Index(columns: ["tempID"], name: "outofrangetemp_ibfk_1"),
 ]

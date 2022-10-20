@@ -5,7 +5,7 @@ namespace App\Sensors\Entity\OutOfRangeRecordings;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsLatitudeRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsLatitudeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

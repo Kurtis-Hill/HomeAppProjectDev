@@ -5,7 +5,7 @@ namespace App\Sensors\Entity\OutOfRangeRecordings;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsHumidityRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsHumidityRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;

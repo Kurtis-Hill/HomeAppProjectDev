@@ -2,13 +2,13 @@
 
 namespace App\Sensors\Entity\ConstantRecording;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryHumidRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository;
 
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordRepositoryHumidRepository::class),

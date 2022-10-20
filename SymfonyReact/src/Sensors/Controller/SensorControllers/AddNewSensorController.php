@@ -13,7 +13,7 @@ use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Exceptions\UserNotAllowedException;
-use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface;
 use App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationInterface;
 use App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface;

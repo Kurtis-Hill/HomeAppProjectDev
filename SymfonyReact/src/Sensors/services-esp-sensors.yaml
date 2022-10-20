@@ -31,6 +31,10 @@ services:
   App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface:
     alias: 'App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade'
 
+  App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade:
+    arguments:
+      $elasticOverride: '%env(bool:HEAVY_WRITES_ELASTIC_ONLY)%'
+
   App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface:
     alias: 'App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler'
 
@@ -59,28 +63,52 @@ services:
 ######################## Builders ########################################################################
 
 ######################## Repositories ########################################################################
-  App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface:
-    alias: 'App\Sensors\Repository\ORM\Sensors\SensorRepository'
+  App\Sensors\Repository\Sensors\SensorRepositoryInterface:
+    alias: 'App\Sensors\Repository\Sensors\ORM\SensorRepository'
 
-  App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface:
-    alias: 'App\Sensors\Repository\ORM\Sensors\SensorTypeRepository'
+  App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface:
+    alias: 'App\Sensors\Repository\Sensors\ORM\SensorTypeRepository'
 
-  App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface:
-    alias: 'App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepository'
+  App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface:
+    alias: 'App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository'
 ######################## End Of Sensors ######################################################################################
 
-######################## ES Client ##########################################################################################
-  App\Sensors\Clients\ElasticSearch\ElasticSearchClient:
+######################## Commands ######################################################################################
+  App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:
     arguments:
-      $host: '%env(string:ELASTIC_SEARCH_HOST)%'
-      $port: '%env(int:ELASTIC_SEARCH_PORT)%'
-      $transport: '%env(string:ELASTIC_TRANSPORT)%'
-      $sslVerification: '%env(bool:ELASTIC_SEARCH_SSL_VERIFICATION)%'
-      $user: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%'
-      $password: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%'
-      $failOverHost: '%env(string:ELASTIC_SEARCH_HOST_FAILOVER)%'
-      $failOverPort: '%env(int:ELASTIC_SEARCH_PORT_FAILOVER)%'
-      $failOverTransport: '%env(string:ELASTIC_TRANSPORT_FAILOVER)%'
-      $failOverSslVerification: '%env(bool:ELASTIC_SEARCH_SSL_VERIFICATION_FAILOVER)%'
-      $failOverUser: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME_FAILOVER)%'
-      $failOverPassword: '%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD_FAILOVER)%'
+       $indexMappings: {
+         indices: {
+           index: '@elastica.outofbounds_analog_index',
+           mapping: {
+             sensorFieldName: 'analogID',
+             sensorReading: 'float'
+           },
+#           index: '@elastica.outofbounds_temperture_index',
+#            mapping: {
+#              sensorFieldName: 'tempID',
+#              sensorReading: 'float'
+#           },
+#           index: '@elastica.outofbounds_humidity_index',
+#           mapping: {
+#             sensorFieldName: 'humidityID',
+#             sensorReading: 'float'
+#           },
+#           index: '@elastica.outofbounds_latitude_index',
+#           mapping: {
+#             sensorFieldName: 'latitudeID',
+#             sensorReading: 'double'
+#           },
+         }
+       }
+
+#      $constTempRecordIndex: '@elastica.constrecord_temperature_index'
+#      $constHumidityRecordIndex: '@elastica.constrecord_humidity_index'
+#      $constLatitudeRecordIndex: '@elastica.constrecord_latitude_index'
+#      $constAnalogRecordIndex: '@elastica.constrecord_analog_index'
+    tags:
+      - { name: 'console.command' }
+
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsAnalogRepository:
+    arguments:
+      $index: '@elastica.outofbounds_analog_index'

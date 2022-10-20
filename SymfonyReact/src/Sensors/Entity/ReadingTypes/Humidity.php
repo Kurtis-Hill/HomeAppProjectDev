@@ -7,11 +7,11 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
+use App\Sensors\Repository\ReadingType\ORM\HumidityRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Sensors\Repository\ORM\ReadingType\HumidityRepository;
 
 #[
     ORM\Entity(repositoryClass: HumidityRepository::class),
