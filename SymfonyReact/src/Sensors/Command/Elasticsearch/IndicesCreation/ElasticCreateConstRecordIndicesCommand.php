@@ -27,7 +27,6 @@ class ElasticCreateConstRecordIndicesCommand extends AbstractIndieCreationComman
         $output->writeln([
             'ElasticSearch Constant Record Indices',
             '======================================',
-            '',
         ]);
 
         $output->writeln('Creating indices...');

@@ -27,7 +27,6 @@ class ElasticCreateOutOfBoundsIndices extends AbstractIndieCreationCommand
         $output->writeln([
             'ElasticSearch Out of Bounds Indices',
             '======================================',
-            '',
         ]);
 
         $output->writeln('Creating indices...');
