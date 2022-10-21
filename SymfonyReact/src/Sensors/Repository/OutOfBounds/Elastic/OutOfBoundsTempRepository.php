@@ -9,10 +9,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
-class OutOfBoundsTempRepository implements OutOfBoundsRepositoryInterface
+class OutOfBoundsTempRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
-    public const ES_INDEX = 'outofbounds_temp';
-
     public function persist(OutOfBoundsEntityInterface $outOfBoundsEntity): void
     {
         // TODO: Implement persist() method.

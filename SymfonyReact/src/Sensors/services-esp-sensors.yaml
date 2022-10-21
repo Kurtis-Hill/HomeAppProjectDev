@@ -28,12 +28,21 @@ services:
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
 
+  elastic.factory:
+    alias: App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory:
+  orm.factory:
+    alias: App\Sensors\Factories\OufOfBounds\OutOfBoundsORMFactory:
+
   App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface:
     alias: 'App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade'
+#    arguments:
+#      $outOfBoundsFactory: ["@=container.hasParameter('HEAVY_WRITES_ELASTIC_ONLY') ? @elastic.factory : @orm.factory"]
 
+# arguments: ["@=container.hasParameter('some_param') ? parameter('some_param') : 'default_value'"]
   App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade:
     arguments:
       $elasticOverride: '%env(bool:HEAVY_WRITES_ELASTIC_ONLY)%'
+      $outOfBoundsFactory: ["@=container.hasParameter('HEAVY_WRITES_ELASTIC_ONLY') ? @elastic.factory : @orm.factory"]
 
   App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface:
     alias: 'App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler'
@@ -72,39 +81,74 @@ services:
   App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface:
     alias: 'App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository'
 ######################## End Of Sensors ######################################################################################
-
 ######################## Commands ######################################################################################
   App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:
     arguments:
-       $indexMappings: {
-         indices: {
-           index: '@elastica.outofbounds_analog_index',
-           mapping: {
-             sensorFieldName: 'analogID',
-             sensorReading: 'float'
-           },
-#           index: '@elastica.outofbounds_temperture_index',
-#            mapping: {
-#              sensorFieldName: 'tempID',
-#              sensorReading: 'float'
-#           },
-#           index: '@elastica.outofbounds_humidity_index',
-#           mapping: {
-#             sensorFieldName: 'humidityID',
-#             sensorReading: 'float'
-#           },
-#           index: '@elastica.outofbounds_latitude_index',
-#           mapping: {
-#             sensorFieldName: 'latitudeID',
-#             sensorReading: 'double'
-#           },
-         }
-       }
+      $indexMappings: [
+        {
+          index: '@elastica.constrecord_analog_index',
+          mapping: {
+            sensorFieldName: 'analogID',
+            sensorReading: 'float'
+          }
+        },
+        {
+          index: '@elastica.constrecord_temperature_index',
+          mapping: {
+            sensorFieldName: 'tempID',
+            sensorReading: 'float'
+          }
+        },
+        {
+          index: '@elastica.constrecord_humidity_index',
+          mapping: {
+            sensorFieldName: 'humidityID',
+            sensorReading: 'float'
+          },
+        },
+        {
+          index: '@elastica.constrecord_latitude_index',
+          mapping: {
+            sensorFieldName: 'latitudeID',
+            sensorReading: 'double'
+          },
+        }
+      ]
+    tags:
+      - { name: 'console.command' }
 
-#      $constTempRecordIndex: '@elastica.constrecord_temperature_index'
-#      $constHumidityRecordIndex: '@elastica.constrecord_humidity_index'
-#      $constLatitudeRecordIndex: '@elastica.constrecord_latitude_index'
-#      $constAnalogRecordIndex: '@elastica.constrecord_analog_index'
+  App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateOutOfBoundsIndices:
+    arguments:
+      $indexMappings: [
+        {
+          index: '@elastica.outofbounds_analog_index',
+          mapping: {
+            sensorFieldName: 'analogID',
+            sensorReading: 'float'
+          }
+        },
+        {
+          index: '@elastica.outofbounds_temperature_index',
+          mapping: {
+            sensorFieldName: 'tempID',
+            sensorReading: 'float'
+          }
+        },
+        {
+          index: '@elastica.outofbounds_humidity_index',
+          mapping: {
+            sensorFieldName: 'humidityID',
+            sensorReading: 'float'
+          },
+        },
+        {
+          index: '@elastica.outofbounds_latitude_index',
+          mapping: {
+            sensorFieldName: 'latitudeID',
+            sensorReading: 'double'
+          },
+        }
+      ]
     tags:
       - { name: 'console.command' }
 
@@ -112,3 +156,15 @@ services:
   App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsAnalogRepository:
     arguments:
       $index: '@elastica.outofbounds_analog_index'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsLatitudeRepository:
+    arguments:
+      $index: '@elastica.outofbounds_latitude_index'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsTempRepository:
+    arguments:
+      $index: '@elastica.outofbounds_temperature_index'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsHumidityRepository:
+    arguments:
+      $index: '@elastica.outofbounds_humidity_index'

@@ -2,11 +2,11 @@
 
 namespace App\Sensors\Command\Elasticsearch\IndicesCreation;
 
-use App\Sensors\Repository\OutOfBounds\Elastic\AbstractOutOfBoundsRepository;
-use Elastica\Client;
 use Elastica\Exception\InvalidException;
 use Elastica\Exception\ResponseException;
+use Elastica\Index;
 use Elastica\Mapping;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,12 +15,18 @@ class ElasticCreateOutOfBoundsIndices extends Command
 {
     protected static $defaultName = 'app:elastic-create-out-of-bounds-indices';
 
-    protected Client $elasticSearchClient;
+    #[ArrayShape([
+        'index' => Index::class,
+        'mapping' => [
+            'sensorFieldName' => 'humidityID',
+            'sensorReading' => 'float',
+        ],
+    ])]
+    private array $indexMappings;
 
-
-    public function __construct(Client $client, string $name = null)
+    public function __construct(string $name = null, array $indexMappings = [])
     {
-        $this->elasticSearchClient = $client;
+        $this->indexMappings = $indexMappings;
         parent::__construct($name);
     }
 
@@ -40,32 +46,36 @@ class ElasticCreateOutOfBoundsIndices extends Command
 
         $output->writeln('Creating indices...');
 
-        foreach (AbstractOutOfBoundsRepository::OUTBOUNDS_INDICES as $indexName => $mappingProperties) {
-            $output->writeln('Creating index: ' . $indexName);
-            $index = $this->elasticSearchClient->getIndex($indexName);
+        foreach ($this->indexMappings as $mappingProperties) {
+            /** @var Index $index */
+            $index = $mappingProperties['index'];
+            $output->writeln("Creating index: " . $index->getName());
 
-            if ($this->elasticSearchClient->getIndex($indexName)->exists()) {
-                $output->writeln("<info>Index already exists: $indexName</info>");
+            if ($index->exists()) {
+                $output->writeln('<info>Index already exists: ' . $index->getName() . '</info>');
                 continue;
             }
 
+
             try {
-                $index->create([], ['recreate' => false]);
+                $index->create([], ['recreate' => true]);
             } catch (InvalidException|ResponseException $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
                 continue;
             }
 
+            $mappings = $mappingProperties['mapping'];
             $mapping = new Mapping();
             $mapping->setProperties([
-                'constRecordID' => ['type' => 'integer'],
-                $mappingProperties['sensorFieldName'] => ['type' => 'integer'],
-                'sensorReading' => ['type' => $mappingProperties['sensorReading']],
+                'outOfRangeID' => ['type' => 'integer'],
+//                $mappings['sensorFieldName'] => ['type' => 'integer'],
+                'sensorReadingID' => ['type' => 'integer'],
+                'sensorReading' => ['type' => $mappings['sensorReading']],
                 'createdAt' => ['type' => 'date'],
             ]);
 
             $mapping->send($index);
-            $output->writeln('<info>Index created: ' . $indexName . '</info>');
+            $output->writeln('<info>Index created: ' . $index->getName() . '</info>');
         }
 
         $output->writeln('<info>Indices created successfully!</info>');

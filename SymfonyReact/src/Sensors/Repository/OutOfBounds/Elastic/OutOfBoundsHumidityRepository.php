@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 
-class OutOfBoundsHumidityRepository implements OutOfBoundsRepositoryInterface
+class OutOfBoundsHumidityRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
     public const ES_INDEX = 'outofbounds_humidity';
 

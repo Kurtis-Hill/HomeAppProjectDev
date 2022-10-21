@@ -12,7 +12,7 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
-class OutOfBoundsLatitudeRepository implements OutOfBoundsRepositoryInterface
+class OutOfBoundsLatitudeRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
     public const ES_INDEX = 'outofbounds_latitude';
 

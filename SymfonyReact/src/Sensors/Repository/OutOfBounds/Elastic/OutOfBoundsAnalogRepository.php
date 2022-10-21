@@ -9,8 +9,6 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class OutOfBoundsAnalogRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
-    public const ES_INDEX = 'outofbounds_analog';
-
     public function persist(OutOfBoundsEntityInterface $outOfBoundsEntity): void
     {
         // TODO: Implement persist() method.

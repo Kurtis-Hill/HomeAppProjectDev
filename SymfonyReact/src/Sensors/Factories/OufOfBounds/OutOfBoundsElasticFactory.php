@@ -28,6 +28,7 @@ class OutOfBoundsElasticFactory implements OutOfBoundsFactoryInterface
         OutOfBoundsHumidityRepository $outOfBoundsHumidElasticRepository,
         OutOfBoundsAnalogRepository $outOfBoundsAnalogElasticRepository,
         OutOfBoundsLatitudeRepository $outOfBoundsLatitudeElasticRepository,
+
     ) {
         $this->outOfBoundsTemp = $outBoundsTempElasticRepository;
         $this->outOfBoundsHumid = $outOfBoundsHumidElasticRepository;
