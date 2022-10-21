@@ -3,7 +3,7 @@
 namespace App\Sensors\Repository\ConstRecord\ORM;
 
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Repository\ConstRecord\ConstantlyRecordRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,14 +16,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method ConstAnalog[]    findAll()
  * @method ConstAnalog[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ConstantlyRecordRepositoryAnalogRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
+class ConstantlyRecordAnalogRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ConstAnalog::class);
     }
 
-    public function persist(ConstantlyRecordInterface $sensorReadingData): void
+    public function persist(ConstantlyRecordEntityInterface $sensorReadingData): void
     {
         $this->getEntityManager()->persist($sensorReadingData);
     }

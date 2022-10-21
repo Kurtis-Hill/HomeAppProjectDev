@@ -1,4 +1,5 @@
 parameters:
+  elastic.overwrite: '%env(bool:HEAVY_WRITES_ELASTIC_ONLY)%'
 
 services:
   _defaults:
@@ -28,24 +29,34 @@ services:
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
 
-  elastic.factory:
-    alias: App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory:
-  orm.factory:
-    alias: App\Sensors\Factories\OufOfBounds\OutOfBoundsORMFactory:
+  out.of.bounds.factory.elastic:
+    alias: 'App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory'
+    public: true
+  out.of.bounds.factory.orm:
+    alias: 'App\Sensors\Factories\OufOfBounds\OutOfBoundsORMFactory'
+    public: true
 
   App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface:
     alias: 'App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade'
-#    arguments:
-#      $outOfBoundsFactory: ["@=container.hasParameter('HEAVY_WRITES_ELASTIC_ONLY') ? @elastic.factory : @orm.factory"]
 
-# arguments: ["@=container.hasParameter('some_param') ? parameter('some_param') : 'default_value'"]
   App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade:
     arguments:
-      $elasticOverride: '%env(bool:HEAVY_WRITES_ELASTIC_ONLY)%'
-      $outOfBoundsFactory: ["@=container.hasParameter('HEAVY_WRITES_ELASTIC_ONLY') ? @elastic.factory : @orm.factory"]
+      $outOfBoundsFactory: "@=service(parameter('elastic.overwrite') === true ? 'out.of.bounds.factory.elastic' : 'out.of.bounds.factory.orm')"
+
+  const.record.factory.elastic:
+    alias: 'App\Sensors\Factories\ConstRecord\ConstRecordElasticFactory'
+    public: true
+  const.record.factory.orm:
+    alias: 'App\Sensors\Factories\ConstRecord\ConstRecordORMFactory'
+    public: true
+
+  App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler:
+    arguments:
+      $constRecordRepositoryFactory: "@=service(parameter('elastic.overwrite') === true ? 'const.record.factory.elastic' : 'const.record.factory.orm')"
 
   App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface:
     alias: 'App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler'
+
 
   App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
@@ -80,6 +91,38 @@ services:
 
   App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface:
     alias: 'App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsAnalogRepository:
+    arguments:
+      $index: '@elastica.outofbounds_analog_index'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsLatitudeRepository:
+    arguments:
+      $index: '@elastica.outofbounds_latitude_index'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsTempRepository:
+    arguments:
+      $index: '@elastica.outofbounds_temperature_index'
+
+  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsHumidityRepository:
+    arguments:
+      $index: '@elastica.outofbounds_humidity_index'
+
+  App\Sensors\Repository\ConstRecord\Elastic\ConstRecordHumidityRepository:
+    arguments:
+      $index: '@elastica.constrecord_humidity_index'
+
+  App\Sensors\Repository\ConstRecord\Elastic\ConstRecordLatitudeRepository:
+    arguments:
+      $index: '@elastica.constrecord_latitude_index'
+
+  App\Sensors\Repository\ConstRecord\Elastic\ConstRecordTemperatureRepository:
+    arguments:
+      $index: '@elastica.constrecord_temperature_index'
+
+  App\Sensors\Repository\ConstRecord\Elastic\ConstRecordAnalogRepository:
+    arguments:
+      $index: '@elastica.constrecord_analog_index'
 ######################## End Of Sensors ######################################################################################
 ######################## Commands ######################################################################################
   App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:
@@ -151,20 +194,3 @@ services:
       ]
     tags:
       - { name: 'console.command' }
-
-
-  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsAnalogRepository:
-    arguments:
-      $index: '@elastica.outofbounds_analog_index'
-
-  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsLatitudeRepository:
-    arguments:
-      $index: '@elastica.outofbounds_latitude_index'
-
-  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsTempRepository:
-    arguments:
-      $index: '@elastica.outofbounds_temperature_index'
-
-  App\Sensors\Repository\OutOfBounds\Elastic\OutOfBoundsHumidityRepository:
-    arguments:
-      $index: '@elastica.outofbounds_humidity_index'

@@ -3,7 +3,7 @@
 namespace App\Sensors\Repository\ConstRecord;
 
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ConstantRecording\ConstHumid;
 use App\Sensors\Entity\ConstantRecording\ConstLatitude;
 use App\Sensors\Entity\ConstantRecording\ConstTemp;
@@ -23,7 +23,7 @@ interface ConstantlyRecordRepositoryInterface
      * @throws ORMInvalidArgumentException
      * @throws ORMException
      */
-    public function persist(ConstantlyRecordInterface $sensorReadingData): void;
+    public function persist(ConstantlyRecordEntityInterface $sensorReadingData): void;
 
     /**
      * @throws OptimisticLockException

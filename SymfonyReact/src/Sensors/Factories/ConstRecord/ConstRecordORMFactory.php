@@ -8,26 +8,26 @@ use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Repository\ConstRecord\ConstantlyRecordRepositoryInterface;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryAnalogRepository;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryHumidRepository;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryLatitudeRepository;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryTempRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordAnalogRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordHumidRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordLatitudeRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordTempRepository;
 
-class ConstRecordORMFactory
+class ConstRecordORMFactory implements ConstRecordFactoryInterface
 {
-    private ConstantlyRecordRepositoryAnalogRepository $constAnalogRepository;
+    private ConstantlyRecordAnalogRepository $constAnalogRepository;
 
-    private ConstantlyRecordRepositoryTempRepository $constTempRepository;
+    private ConstantlyRecordTempRepository $constTempRepository;
 
-    private ConstantlyRecordRepositoryHumidRepository $constHumidRepository;
+    private ConstantlyRecordHumidRepository $constHumidRepository;
 
-    private ConstantlyRecordRepositoryLatitudeRepository $constLatitudeRepository;
+    private ConstantlyRecordLatitudeRepository $constLatitudeRepository;
 
     public function __construct(
-        ConstantlyRecordRepositoryAnalogRepository $constAnalogRepository,
-        ConstantlyRecordRepositoryTempRepository   $constTempRepository,
-        ConstantlyRecordRepositoryHumidRepository  $constHumidRepository,
-        ConstantlyRecordRepositoryLatitudeRepository $constLatitudeRepository,
+        ConstantlyRecordAnalogRepository $constAnalogRepository,
+        ConstantlyRecordTempRepository   $constTempRepository,
+        ConstantlyRecordHumidRepository  $constHumidRepository,
+        ConstantlyRecordLatitudeRepository $constLatitudeRepository,
     ) {
         $this->constAnalogRepository = $constAnalogRepository;
         $this->constTempRepository = $constTempRepository;

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Repository\ConstRecord\ORM;
 
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ConstantRecording\ConstTemp;
 use App\Sensors\Repository\ConstRecord\ConstantlyRecordRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,14 +16,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method ConstTemp[]    findAll()
  * @method ConstTemp[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ConstantlyRecordRepositoryTempRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
+class ConstantlyRecordTempRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ConstTemp::class);
     }
 
-    public function persist(ConstantlyRecordInterface $sensorReadingData): void
+    public function persist(ConstantlyRecordEntityInterface $sensorReadingData): void
     {
         $this->getEntityManager()->persist($sensorReadingData);
     }

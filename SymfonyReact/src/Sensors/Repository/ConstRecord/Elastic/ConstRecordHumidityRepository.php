@@ -2,20 +2,13 @@
 
 namespace App\Sensors\Repository\ConstRecord\Elastic;
 
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ConstantRecording\ConstHumid;
 use App\Sensors\Repository\ConstRecord\ConstantlyRecordRepositoryInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
 class ConstRecordHumidityRepository extends AbstractConstRecordRepository implements ConstantlyRecordRepositoryInterface
 {
-    public const ES_INDEX = 'constrecord_humidity';
-
-    public function persist(ConstantlyRecordInterface $sensorReadingData): void
-    {
-        // TODO: Implement persist() method.
-    }
-
     public function flush(): void
     {
         // TODO: Implement flush() method.

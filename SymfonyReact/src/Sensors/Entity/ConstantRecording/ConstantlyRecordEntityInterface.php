@@ -8,7 +8,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 
-interface ConstantlyRecordInterface
+interface ConstantlyRecordEntityInterface
 {
     /**
      * @return int

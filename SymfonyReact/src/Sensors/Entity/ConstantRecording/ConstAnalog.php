@@ -6,19 +6,19 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryAnalogRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordAnalogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryAnalogRepository::class),
+    ORM\Entity(repositoryClass: ConstantlyRecordAnalogRepository::class),
     ORM\Table(name: "constanalog"),
     ORM\Index(columns: ["analogID"], name: "analogID"),
 ]
 
-class ConstAnalog implements ConstantlyRecordInterface
+class ConstAnalog implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),

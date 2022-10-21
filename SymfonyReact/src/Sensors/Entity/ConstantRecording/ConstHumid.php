@@ -5,17 +5,17 @@ namespace App\Sensors\Entity\ConstantRecording;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryHumidRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordHumidRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryHumidRepository::class),
+    ORM\Entity(repositoryClass: ConstantlyRecordHumidRepository::class),
     ORM\Table(name: "consthumid"),
     ORM\Index(columns: ["humidID"], name: "humidID"),
 ]
-class ConstHumid implements ConstantlyRecordInterface
+class ConstHumid implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),

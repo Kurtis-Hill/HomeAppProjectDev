@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Repository\ConstRecord\ORM;
 
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ConstantRecording\ConstLatitude;
 use App\Sensors\Repository\ConstRecord\ConstantlyRecordRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,14 +16,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method ConstLatitude[]    findAll()
  * @method ConstLatitude[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ConstantlyRecordRepositoryLatitudeRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
+class ConstantlyRecordLatitudeRepository extends ServiceEntityRepository implements ConstantlyRecordRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ConstLatitude::class);
     }
 
-    public function persist(ConstantlyRecordInterface $sensorReadingData): void
+    public function persist(ConstantlyRecordEntityInterface $sensorReadingData): void
     {
         $this->getEntityManager()->persist($sensorReadingData);
     }

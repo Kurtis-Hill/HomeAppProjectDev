@@ -15,16 +15,9 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class OutOfBoundsHumidityRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
-    public const ES_INDEX = 'outofbounds_humidity';
-
     public function flush(): void
     {
         // TODO: Implement flush() method.
-    }
-
-    public function persist(OutOfBoundsEntityInterface $outOfBoundsEntity): void
-    {
-        // TODO: Implement persist() method.
     }
 
     public function find(): ?OutOfRangeHumid

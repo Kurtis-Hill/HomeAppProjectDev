@@ -3,6 +3,7 @@
 namespace App\Sensors\SensorServices\ConstantlyRecord;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Factories\ConstRecord\ConstRecordFactoryInterface;
 use App\Sensors\Factories\ConstRecord\ConstRecordORMFactory;
 use App\Sensors\Factories\ReadingTypeFactories\ConstRecordCreationFactory;
 
@@ -10,14 +11,14 @@ class ConstRecordReadingTypeFacadeHandler implements SensorConstantlyRecordHandl
 {
     private ConstRecordCreationFactory $constRecordCreationFactory;
 
-    private ConstRecordORMFactory $ormConstRecordFactory;
+    private ConstRecordFactoryInterface $constRecordRepositoryFactory;
 
     public function __construct(
         ConstRecordCreationFactory $constRecordCreationFactory,
-        ConstRecordORMFactory $ormConstRecordFactory,
+        ConstRecordFactoryInterface $constRecordRepositoryFactory,
     ) {
         $this->constRecordCreationFactory = $constRecordCreationFactory;
-        $this->ormConstRecordFactory = $ormConstRecordFactory;
+        $this->constRecordRepositoryFactory = $constRecordRepositoryFactory;
     }
 
     public function processConstRecord(AllSensorReadingTypeInterface $readingTypeObject): void
@@ -28,7 +29,7 @@ class ConstRecordReadingTypeFacadeHandler implements SensorConstantlyRecordHandl
             $constRecordObjectBuilder = $this->constRecordCreationFactory->getConstRecordObjectBuilder($readingType);
             $constRecordObject = $constRecordObjectBuilder->buildConstRecordObject($readingTypeObject);
 
-            $constRecordRepository = $this->ormConstRecordFactory->getConstRecordServiceRepository($readingType);
+            $constRecordRepository = $this->constRecordRepositoryFactory->getConstRecordServiceRepository($readingType);
             $constRecordRepository->persist($constRecordObject);
         }
     }

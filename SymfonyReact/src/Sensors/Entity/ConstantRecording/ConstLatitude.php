@@ -5,18 +5,18 @@ namespace App\Sensors\Entity\ConstantRecording;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
-use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordRepositoryLatitudeRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordLatitudeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryLatitudeRepository::class),
+    ORM\Entity(repositoryClass: ConstantlyRecordLatitudeRepository::class),
     ORM\Table(name: "constlatitude"),
     ORM\Index(columns: ["latitudeID"], name: "latitudeID"),
 ]
-class ConstLatitude implements ConstantlyRecordInterface
+class ConstLatitude implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),

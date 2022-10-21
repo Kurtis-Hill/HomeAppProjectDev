@@ -16,15 +16,9 @@ class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
 
     public function __construct(
         OutOfBoundsEntityCreationFactory $outOfBoundsCreationFactory,
-        OutOfBoundsORMFactory $outOfBoundsORMFactory,
-        OutOfBoundsElasticFactory $outOfBoundsElasticFactory,
         OutOfBoundsFactoryInterface $outOfBoundsFactory,
-        bool $elasticOverride = false,
     ) {
-        $this->outOfBoundsFactory = $elasticOverride === true
-            ? $outOfBoundsElasticFactory
-            : $outOfBoundsORMFactory;
-
+        $this->outOfBoundsFactory = $outOfBoundsFactory;
         $this->outOfBoundsCreationFactory = $outOfBoundsCreationFactory;
     }
 
@@ -39,10 +33,5 @@ class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
             $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($readingType);
             $outOfBoundsRepository->persist($outOfBoundsObject);
         }
-    }
-
-    public function setOutOFBoundsFactory(OutOfBoundsFactoryInterface $outOfBoundsFactory): void
-    {
-        $this->outOfBoundsFactory = $outOfBoundsFactory;
     }
 }
