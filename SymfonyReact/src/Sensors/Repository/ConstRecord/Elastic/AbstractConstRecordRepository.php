@@ -31,7 +31,6 @@ class AbstractConstRecordRepository
         $outOfBoundsUpdateDTO = ConstRecordPersistenceDTOBuilder::buildConstRecordElasticPersistenceDTO($outOfBoundsEntity);
 
         $serializedUpdateDTO = $this->serializeOutOfBoundsEntity($outOfBoundsUpdateDTO);
-//        dd($serializedUpdateDTO);
         $this->index->addDocument(
             new Document(null, $serializedUpdateDTO)
         );

@@ -51,13 +51,13 @@ class ElasticCreateConstRecordIndicesCommand extends Command
             $index = $mappingProperties['index'];
             $output->writeln("Creating index: " . $index->getName());
 
-//            if ($index->exists()) {
-//                $output->writeln('<info>Index already exists: ' . $index->getName() . '</info>');
-//                continue;
-//            }
+            if ($index->exists()) {
+                $output->writeln('<info>Index already exists: ' . $index->getName() . '</info>');
+                continue;
+            }
 
             try {
-                $index->create([], ['recreate' => true]);
+                $index->create([], ['recreate' => false]);
             } catch (InvalidException|ResponseException $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
                 continue;
@@ -66,9 +66,7 @@ class ElasticCreateConstRecordIndicesCommand extends Command
             $mappings = $mappingProperties['mapping'];
             $mapping = new Mapping();
             $mapping->setProperties([
-//                'outOfRangeID' => ['type' => 'integer'],
                 'sensorReadingID' => ['type' => 'integer'],
-//                $mappings['sensorFieldName'] => ['type' => 'integer'],
                 'sensorReading' => ['type' => $mappings['sensorReading']],
                 'createdAt' => ['type' => 'date'],
             ]);
