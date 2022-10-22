@@ -35,9 +35,13 @@ if [ ${APP_ENV} = 'dev' ]; then
 	echo "Test database checked"
 fi
 
-bin/console app:elastic-create-const-record-indices
-
-bin/console app:elastic-create-out-of-bounds-indices
+if [ ${ELASTIC_ENABLED} = 'true' ]; then
+	echo "Elastic indicie creation"
+	bin/console app:elastic-create-const-record-indices
+	bin/console app:elastic-create-out-of-bounds-indices
+	bin/console app:elastic-create-log-index
+	echo "...Elastic indicie creation"
+fi
 
 echo "Starting supervisor..."
 supervisord -n&

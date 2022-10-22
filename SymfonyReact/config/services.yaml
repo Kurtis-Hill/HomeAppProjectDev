@@ -5,7 +5,8 @@ imports:
     - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
     - { resource: ../src/Authentication/services-authentication.yaml }
-    - { resource: 'elasticsearch.yaml' }
+    - { resource: ../src/Common/services-common.yaml }
+    - { resource: elasticsearch.yaml }
 
 parameters:
 services:
@@ -14,6 +15,6 @@ services:
         autoconfigure: true
 
     ################### Core ############################
-    App\Common\:
-        resource: '../src/Common/*'
-        exclude: '../src/Common/{API/Traits, Query/Traits, Validation/Traits, DependencyInjection, Entity, Doctrine/Migrations, Tests, Kernel.php}'
+    App\Tests\:
+        resource: '../src/*'
+        exclude: '../src/{Tests, Kernel.php}'

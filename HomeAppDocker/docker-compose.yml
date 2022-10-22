@@ -49,6 +49,7 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_ENABLED: ${ELASTIC_ENABLED}
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl/custom:ro

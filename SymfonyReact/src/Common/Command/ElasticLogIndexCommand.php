@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Sensors\Command\Elasticsearch\IndicesCreation;
+namespace App\Common\Command;
 
-use Elastica\Exception\InvalidException;
-use Elastica\Exception\ResponseException;
 use Elastica\Index;
 use Elastica\Mapping;
 use JetBrains\PhpStorm\ArrayShape;
@@ -14,12 +12,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'app:elastic-create-out-of-bounds-indices',
+    name: 'app:elastic-create-log-index',
     description: 'Creates the indices for the constant record types in ElasticSearch.',
-    aliases: ['app:elastic-create-out-of-bounds-indices'],
+    aliases: ['app:elastic-create-log-index'],
     hidden: false
 )]
-class ElasticCreateOutOfBoundsIndices extends Command
+class ElasticLogIndexCommand extends Command
 {
     #[ArrayShape([
         'index' => Index::class,
@@ -38,16 +36,16 @@ class ElasticCreateOutOfBoundsIndices extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Creates the indices for the out of bounds sensor types in ElasticSearch');
+        $this->setDescription('Creates the index for ElasticSearch application logs');
         $this->addArgument('force', InputArgument::OPTIONAL, 'Force recreation of indices');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln([
-            'ElasticSearch Out of Bounds Indices',
+            'ElasticSearch Application Log Index',
             '======================================',
-            'Creating indices...'
+            'Creating index...'
         ]);
 
         $force = $input->getArgument('force') === '-f' || $input->getArgument('force') === '-y';
@@ -58,29 +56,18 @@ class ElasticCreateOutOfBoundsIndices extends Command
 
             if ($force === false && $index->exists()) {
                 $output->writeln('<info>Index already exists: ' . $index->getName() . '</info>');
-                continue;
-            }
-
-            try {
+            } else {
                 $index->create([], ['recreate' => true]);
-            } catch (InvalidException|ResponseException $e) {
-                $output->writeln('<error>' . $e->getMessage() . '</error>');
-                continue;
+
+                $mapping = new Mapping();
+                $mappings = $mappingProperties['mapping'];
+                $mapping->setProperties($mappings);
+                $mapping->send($index);
+
+                $output->writeln('<info>Index created: ' . $index->getName() . '</info>');
             }
-
-            $mappings = $mappingProperties['mapping'];
-            $mapping = new Mapping();
-            $mapping->setProperties([
-                'sensorReadingID' => ['type' => 'integer'],
-                'sensorReading' => ['type' => $mappings['sensorReading']],
-                'createdAt' => ['type' => 'date'],
-            ]);
-
-            $mapping->send($index);
-            $output->writeln('<info>Index created: ' . $index->getName() . '</info>');
         }
-
-        $output->writeln('<info>Indices created successfully!</info>');
+        $output->writeln('<info>Index Created</info>');
 
         return Command::SUCCESS;
     }

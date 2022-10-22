@@ -49,3 +49,8 @@ services:
         class: Elastica\Index
         arguments:
             $name: '%env(ELASTIC_INDEX_OUTOFBOUNDS_HUMIDITY)%'
+
+    elastica.log_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_LOG)%'

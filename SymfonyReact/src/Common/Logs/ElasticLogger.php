@@ -5,7 +5,7 @@ namespace App\Common\Logs;
 use Psr\Log\LoggerInterface;
 use Stringable;
 
-class ElasticErrorLogger implements LoggerInterface
+class ElasticLogger implements LoggerInterface
 {
     public function emergency(Stringable|string $message, array $context = [])
     {
