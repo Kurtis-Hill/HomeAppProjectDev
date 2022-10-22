@@ -18,13 +18,13 @@ This will be needed to create the test databases and users
 After running the command add you own variables values but you can exclude the variables with TEST in them. Be sure to mark the variable APP_ENV with <b>prod</b>.
 
 <h2>SSL Setup</h2>
-first we need to create; jwt public & private pem certificates, client & server pem files and ca-certificates these can be signed or self-signed. There are multiple guides online for generating these certs but the naming convention should follow:
+first we need to create; jwt public & private pem certificates, client & server pem files and ca-certificates these can be signed or self-signed. There are multiple guides online for generating these certs just ensure that the same ca signs both the cline and server certs. Once created places the client, server & ca certificate files in the SSL directory with the following but the naming convention should follow:
 <ul>
     <li>ca-cert.pem</li>
     <li>client-cert.pem</li>
     <li>server-cert.pem</li>    
 </ul>
-you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github. Remember to prod the generated client/server certs in the SSL directory and the jwt certs in the HomeAppProjectDev/SymfonyReact/config/private.pem
+you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github. Now drop the generated <i>public.pem</i> and <i>private.pem</i> jwt certs in the HomeAppProjectDev/SymfonyReact/config/private.pem. Remember if you set a passphrase for these files to update the <code>pass_phrase</code> in the <i>SymfonyReact/config/packages/lexik_jwt_authentication.yaml</i> file (default: HomeApp).
 
 <h3>Elasticsearch</h3>
 Elasticsearch is optional for the application at this points - by setting the environment variables to false first one being <b>ELASTIC_ENABLED</b> this can be found in the </i>.env</i> file in the HomeAppDocker folder and the other <b>HEAVY_WRITES_ELASTIC_ONLY</b> this can be found in <i>SymfonyReact/.env</i> and commenting out the Elasticsearch containers in the <i>HomeAppDocker/docker-compose.yml</i> file this will use the Mysql tables.
@@ -34,7 +34,7 @@ First the Elasticsearch container needs to generate some certificates for secure
 elastic username is: <code>elastic</code> and the password is set in the .env file
 
 <h2>Running the application</h2>
-First copy the auth.json.example file into the same directory <code>cp HomeAppDocker/apache/auth.json.example HomeAppDocker/apache/auth.json</code>.
+First copy the auth.json.example file into the same directory <code>cp HomeAppDocker/webservers/auth.json.example HomeAppDocker/webservers/auth.json</code>.
 Then generate a git hub access token and replace GIT_TOKEN_HERE with your token remember to keep the " marks
 
 Remember to set the APP_ENV variable in the HomeAppDocker/.env file to <b>prod|dev</b> depending on your intentions.
