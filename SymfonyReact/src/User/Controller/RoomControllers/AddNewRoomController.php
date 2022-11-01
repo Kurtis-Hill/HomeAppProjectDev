@@ -15,6 +15,7 @@ use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;
 use App\User\Voters\RoomVoter;
 use Doctrine\ORM\Exception\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,13 @@ class AddNewRoomController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[Route('add-user-room', name:'add-new-room', methods: [Request::METHOD_POST])]
     public function addNewRoom(
@@ -70,6 +78,8 @@ class AddNewRoomController extends AbstractController
         } catch (DuplicateRoomException $exception) {
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         } catch (ORMException) {
+            $this->logger->error('Error occurred while adding new room', ['user' => $this->getUser()?->getUserIdentifier()]);
+
             return $this->sendBadRequestJsonResponse(['Failed to process room request']);
         }
 
@@ -88,6 +98,8 @@ class AddNewRoomController extends AbstractController
         try {
             $addNewRoomService->saveNewRoom($newRoom);
         } catch (ORMException) {
+            $this->logger->error('Error occurred while adding new room', ['user' => $this->getUser()?->getUserIdentifier()]);
+
             return $this->sendInternalServerErrorJsonResponse();
         }
 
@@ -97,6 +109,7 @@ class AddNewRoomController extends AbstractController
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse(['Request successful but failed to normalize response']);
         }
+        $this->logger->info('New room added successfully', ['user' => $this->getUser()?->getUserIdentifier()]);
 
         return $this->sendCreatedResourceJsonResponse($normalizedResponse, 'Room created successfully');
     }

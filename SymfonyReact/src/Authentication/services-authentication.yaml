@@ -14,7 +14,6 @@ services:
     resource: './Controller'
     tags: [ 'controller.service_arguments' ]
 
-
   App\Authentication\EventListeners\AuthenticationSuccessListener:
       arguments: [ '@request_stack' ]
       tags:

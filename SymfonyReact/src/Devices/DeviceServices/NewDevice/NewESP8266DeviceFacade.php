@@ -18,6 +18,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
     {
         $deviceUser = $newDeviceDTO->getCreatedByUserObject();
         if (!$deviceUser instanceof User) {
+            $this->logger->error('Device not created by user', ['device' => $deviceUser->getUserIdentifier()]);
             throw new DeviceCreationFailureException(
                 DeviceCreationFailureException::DEVICE_FAILED_TO_CREATE
             );
@@ -32,7 +33,6 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         $newDevice->setPassword($newDeviceDTO->getDevicePassword());
 
         $validationResult = $this->validateNewDevice($newDevice);
-
         if (empty($validationResult)) {
             $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
         }
@@ -56,6 +56,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         } catch (DuplicateDeviceException $exception) {
             $userErrors[] = $exception->getMessage();
         } catch (ORMException $e) {
+            $this->logger->error($e->getMessage());
             $userErrors[] = "device check query failed";
         }
 

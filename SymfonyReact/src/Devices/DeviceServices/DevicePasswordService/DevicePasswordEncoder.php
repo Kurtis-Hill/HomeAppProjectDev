@@ -23,9 +23,4 @@ class DevicePasswordEncoder implements DevicePasswordEncoderInterface
             )
         );
     }
-
-    public function decodeDevicePassword(Devices $device, string $password): bool
-    {
-        return $this->passwordEncoder->isPasswordValid($device, $password);
-    }
 }

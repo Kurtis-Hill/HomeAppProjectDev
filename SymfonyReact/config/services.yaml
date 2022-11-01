@@ -5,7 +5,6 @@ imports:
     - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
     - { resource: ../src/Authentication/services-authentication.yaml }
-    - { resource: ../src/Common/services-common.yaml }
     - { resource: elasticsearch.yaml }
 
 parameters:
@@ -14,7 +13,41 @@ services:
         autowire: true
         autoconfigure: true
 
-    ################### Core ############################
-    App\Tests\:
-        resource: '../src/*'
-        exclude: '../src/{Tests, Kernel.php}'
+  ################### Core ############################
+    App\Common\:
+      resource: '../src/Common/*'
+      exclude:
+        - '../src/Common/{Common/API/Traits, Common/Query/Traits, Common/Validation/Traits}'
+        - '../src/{DependencyInjection, Kernel.php}'
+
+
+    App\Common\Logs\ElasticLogger:
+      arguments: [
+        '@logger',
+        $emergencyIndex: '@elastica.log_index',
+        $alertIndex: '@elastica.log_index',
+        $criticalIndex: '@elastica.log_index',
+        $errorIndex: '@elastica.log_index',
+        $warningIndex: '@elastica.log_index',
+        $noticeIndex: '@elastica.log_index',
+        $infoIndex: '@elastica.log_index',
+        $debugIndex: '@elastica.log_index',
+        $logIndex: '@elastica.log_index',
+      ]
+      tags:
+        - { name: monolog.logger, channel: elastic }
+
+    App\Common\Command\ElasticLogIndexCommand:
+      arguments:
+        $indexMappings: [
+          {
+            index: '@elastica.log_index',
+            mapping: {
+              message: 'text',
+              level: "bucket",
+              context: 'array',
+            }
+          }
+        ]
+      tags:
+        - { name: 'console.command' }

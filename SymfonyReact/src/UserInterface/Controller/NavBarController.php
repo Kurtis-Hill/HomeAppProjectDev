@@ -8,6 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\User\Entity\User;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\NavBar\NavBarDataProviderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,13 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class NavBarController extends AbstractController
 {
     use HomeAppAPITrait;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[Route('/navbar-data', name: 'navbar-data', methods: [Request::METHOD_GET])]
     public function navBarData(NavBarDataProviderInterface $navBarService): JsonResponse
@@ -39,6 +47,8 @@ class NavBarController extends AbstractController
         }
 
         if (!empty($navbarDTO->getErrors())) {
+            $this->logger->error('nav bar errors', ['errors' => $navbarDTO->getErrors(), 'user' => $this->getUser()->getUserIdentifier()]);
+
             return $this->sendMultiStatusJsonResponse([], $normalizedResponse ?? []);
         }
 
