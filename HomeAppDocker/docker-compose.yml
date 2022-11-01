@@ -129,7 +129,7 @@ services:
     container_name: '${APP_NAME}-redis'
     environment:
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
-      REDIS_PASS: ${REDIS_PASS}
+      # REDIS_PASS: ${REDIS_PASS}
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
