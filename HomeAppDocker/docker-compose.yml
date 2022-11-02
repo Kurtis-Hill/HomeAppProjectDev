@@ -20,6 +20,7 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
@@ -129,7 +130,11 @@ services:
     container_name: '${APP_NAME}-redis'
     environment:
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
-      # REDIS_PASS: ${REDIS_PASS}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
