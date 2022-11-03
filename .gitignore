@@ -51,7 +51,6 @@ HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/rabbitmq/log/*
 
 HomeAppDocker/webservers/auth/auth.json
-HomeAppDocker/webservers/apache/logs/*
 HomeAppDocker/docker-compose.override.yml
 
 HomeAppDocker/elasticsearch/certs/.env

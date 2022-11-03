@@ -134,7 +134,7 @@ services:
     command:
       - /bin/sh
       - -c
-      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" && sysctl vm.overcommit_memory=1
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
