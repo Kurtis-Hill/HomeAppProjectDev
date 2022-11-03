@@ -31,6 +31,7 @@ class ElasticLogIndexCommand extends Command
     public function __construct(string $name = null, array $indexMappings = [])
     {
         $this->indexMappings = $indexMappings;
+
         parent::__construct($name);
     }
 

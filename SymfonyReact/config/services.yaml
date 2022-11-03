@@ -9,6 +9,7 @@ imports:
 
 parameters:
 services:
+    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
     _defaults:
         autowire: true
         autoconfigure: true
@@ -22,20 +23,24 @@ services:
 
 
     App\Common\Logs\ElasticLogger:
-      arguments: [
-        '@logger',
-        $emergencyIndex: '@elastica.log_index',
-        $alertIndex: '@elastica.log_index',
-        $criticalIndex: '@elastica.log_index',
-        $errorIndex: '@elastica.log_index',
-        $warningIndex: '@elastica.log_index',
-        $noticeIndex: '@elastica.log_index',
-        $infoIndex: '@elastica.log_index',
-        $debugIndex: '@elastica.log_index',
-        $logIndex: '@elastica.log_index',
-      ]
+      arguments:
+        $logger: '@logger'
+        $emergencyIndex: '@elastica.log_index'
+        $alertIndex: '@elastica.log_index'
+        $criticalIndex: '@elastica.log_index'
+        $errorIndex: '@elastica.log_index'
+        $warningIndex: '@elastica.log_index'
+        $noticeIndex: '@elastica.log_index'
+        $infoIndex: '@elastica.log_index'
+        $debugIndex: '@elastica.log_index'
+        $logIndex: '@elastica.log_index'
+
       tags:
         - { name: monolog.logger, channel: elastic }
+
+    monolog.elastic:
+      alias: 'App\Common\Logs\ElasticLogger'
+      public: true
 
     App\Common\Command\ElasticLogIndexCommand:
       arguments:
@@ -51,3 +56,13 @@ services:
         ]
       tags:
         - { name: 'console.command' }
+
+#    Psr\Log\LoggerInterface:
+#      alias: 'App\Common\Logs\ElasticLogger'
+#    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
+#      arguments:
+#        $index: 'log'
+#        $client: 'Elastica\Client'
+#        $level: !php/const Monolog\Logger::DEBUG
+#        $bubble: true
+#        $elasticsearchVersion: '8.4.3'
