@@ -16,6 +16,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -33,17 +34,21 @@ class AuthenticationSuccessListener
 
     private ValidatorInterface $validator;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         RequestStack $requestStack,
         DeviceRepositoryInterface $deviceRepository,
         ValidatorInterface $validator,
+        LoggerInterface $elasticLogger,
     ) {
         $this->requestStack = $requestStack;
         $this->deviceRepository = $deviceRepository;
         $this->validator = $validator;
+        $this->logger = $elasticLogger;
     }
 
-    
+
     public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $authenticationSuccessEvent): void
     {
         $user = $authenticationSuccessEvent->getUser();
@@ -88,8 +93,11 @@ class AuthenticationSuccessListener
                     try {
                         $this->deviceRepository->persist($user);
                         $this->deviceRepository->flush();
-                    } catch (ORMInvalidArgumentException|ORMException|OptimisticLockException) {
-                        error_log('failed to save login IP address data for: '.$user->getUsername());
+                    } catch (ORMInvalidArgumentException|ORMException|OptimisticLockException $e) {
+                        $this->logger->error(
+                            'failed to save login IP address data for: '.$user->getUsername(),
+                            $e->getTrace()
+                        );
                     }
                 }
 
@@ -98,9 +106,11 @@ class AuthenticationSuccessListener
                     $responseMessage = $this->normalizeResponse($deviceAuthenticationResponse);
                 } catch (ExceptionInterface) {
                     $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'Device authentication ');
+                    $this->logger->error($responseMessage['error']);
                 }
             } catch (NotEncodableValueException) {
                 $responseMessage['error'] = APIErrorMessages::FORMAT_NOT_SUPPORTED;
+                $this->logger->error($responseMessage['error']);
             }
 
             $authenticationSuccessEvent->setData($responseMessage);

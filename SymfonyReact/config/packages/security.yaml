@@ -73,5 +73,6 @@ security:
         - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
         - { path: ^/HomeApp/WebApp, roles: IS_AUTHENTICATED_FULLY }
 #        DEV
+        - { path: ^/HomeApp/api/JIT, roles: PUBLIC_ACCESS }
         - { path: ^/HomeApp/ssl, roles: PUBLIC_ACCESS }
         - { path: ^/HomeApp/api/user/csrfToken, roles: PUBLIC_ACCESS }

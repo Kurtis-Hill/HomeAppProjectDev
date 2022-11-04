@@ -18,7 +18,6 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewD
             return null;
         }
 
-//        dd($formattedSensorData);
         return new CurrentReadingSensorTypeCardResponseDTO(
             $cardData['sensors_sensorName'],
             $cardData['sensortype_sensorType'],

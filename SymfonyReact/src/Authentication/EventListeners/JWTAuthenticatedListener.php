@@ -3,25 +3,23 @@
 namespace App\Authentication\EventListeners;
 
 use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Repository\ORM\GroupNameMappingTableRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
+use Psr\Log\LoggerInterface;
 
 class JWTAuthenticatedListener
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
+    private GroupNameMappingTableRepository $groupNameMappingTableRepository;
 
-    /**
-     * JWTAuthenticatedListener constructor.
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
+    private LoggerInterface $logger;
+
+    public function __construct(GroupNameMappingTableRepository $groupNameMappingTableRepository, LoggerInterface $elasticLogger)
     {
-        $this->em = $entityManager;
+        $this->logger = $elasticLogger;
+        $this->groupNameMappingTableRepository = $groupNameMappingTableRepository;
     }
 
     /**
@@ -35,11 +33,11 @@ class JWTAuthenticatedListener
 
         if (is_callable($userCredentials, true) && $user instanceof User) {
             try {
-                $groupNameMappingEntities = $this->em->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($user);
+                $groupNameMappingEntities = $this->groupNameMappingTableRepository->getAllGroupMappingEntitiesForUser($user);
                 $user->setUserGroupMappingEntities($groupNameMappingEntities);
             } catch (ORMException $exception) {
                 $authenticatedEvent->setPayload(['group name exception occurred']);
-                error_log($exception->getMessage());
+                $this->logger->error($exception->getMessage());
             }
         }
     }

@@ -53,7 +53,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstAnalog::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $analogSensor->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -75,7 +75,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstAnalog::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $analogSensor->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReading' => $analogSensor->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
 
@@ -105,7 +105,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstTemp::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $tempObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $tempObject->getSensorID()]);
         $constRecordings = array_pop($constRecordings);
 
         self::assertNotEmpty($constRecordings);
@@ -127,7 +127,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstTemp::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $tempObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReading' => $tempObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNull($constRecordings);
@@ -166,7 +166,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstHumid::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $humid->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $humid->getSensorID()]);
         $constRecordings = array_pop($constRecordings);
 
         self::assertNotEmpty($constRecordings);
@@ -188,7 +188,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstHumid::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $tempObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReading' => $tempObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
 
@@ -223,7 +223,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstLatitude::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $latitudeObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $latitudeObject->getSensorID()]);
         $constRecordings = array_pop($constRecordings);
 
         self::assertNotEmpty($constRecordings);
@@ -245,7 +245,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstLatitude::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $latitudeObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReading' => $latitudeObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
 

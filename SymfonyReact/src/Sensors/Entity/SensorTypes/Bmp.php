@@ -11,7 +11,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
-use App\Sensors\Repository\ORM\SensorType\BmpRepository;
+use App\Sensors\Repository\SensorType\ORM\BmpRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

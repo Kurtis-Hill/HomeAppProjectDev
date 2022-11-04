@@ -13,6 +13,7 @@ use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReading
 use App\Sensors\Voters\SensorVoter;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,13 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
     use ValidatorProcessorTrait;
 
     private ProducerInterface $currentReadingAMQPProducer;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[Route(
         path: 'esp/update/current-reading',
@@ -87,6 +95,8 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             try {
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception) {
+                $this->logger->emergency('failed to publish UPDATE SENSOR CURRENT READING message to queue', ['user' => $this->getUser()?->getUserIdentifier()]);
+
                 return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
         }

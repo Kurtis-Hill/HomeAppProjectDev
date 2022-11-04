@@ -6,7 +6,7 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsAnalogRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsAnalogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -39,7 +39,7 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
         ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
     ]
     #[Assert\NotNull(message: "Out of range Analog Object cannot be null")]
-    private Analog $sensorReadingTypeID;
+    private Analog $sensorReadingID;
 
     public function getOutOfRangeID(): int
     {
@@ -71,15 +71,15 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeID(): Analog
+    public function getSensorReadingID(): Analog
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Analog) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

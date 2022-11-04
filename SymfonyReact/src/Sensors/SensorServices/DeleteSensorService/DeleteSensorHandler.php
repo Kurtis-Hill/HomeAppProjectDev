@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorServices\DeleteSensorService;
 
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 
 class DeleteSensorHandler implements DeleteSensorHandlerInterface
 {

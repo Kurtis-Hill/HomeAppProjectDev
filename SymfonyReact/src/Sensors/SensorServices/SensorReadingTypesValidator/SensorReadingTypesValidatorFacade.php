@@ -12,7 +12,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

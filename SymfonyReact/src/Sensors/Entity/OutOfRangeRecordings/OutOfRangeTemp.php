@@ -10,14 +10,14 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsTempORMRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsTempRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: OutOfBoundsTempORMRepository::class),
+    ORM\Entity(repositoryClass: OutOfBoundsTempRepository::class),
     ORM\Table(name: "outofrangetemp"),
     ORM\Index(columns: ["tempID"], name: "outofrangetemp_ibfk_1"),
 ]
@@ -53,7 +53,7 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
         ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
     ]
     #[Assert\NotNull(message: "Out of range Temperature Object cannot be null")]
-    private Temperature $sensorReadingTypeID;
+    private Temperature $sensorReadingID;
 
     public function getOutOfRangeID(): int
     {
@@ -85,15 +85,15 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeID(): Temperature
+    public function getSensorReadingID(): Temperature
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

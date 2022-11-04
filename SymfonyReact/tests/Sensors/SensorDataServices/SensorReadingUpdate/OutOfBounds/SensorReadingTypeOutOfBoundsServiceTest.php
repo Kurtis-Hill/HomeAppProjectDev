@@ -49,7 +49,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeAnalog::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $analogSensor->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -73,7 +73,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeAnalog::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $analogSensor->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -105,7 +105,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $tempObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $tempObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -129,7 +129,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $analogSensor->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -171,7 +171,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $humidObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $humidObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -195,7 +195,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $humidObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $humidObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -232,7 +232,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $latitudeObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $latitudeObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -256,7 +256,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
-        $constRecordings = $constRecord->findBy(['sensorReadingTypeID' => $latitudeObject->getSensorID()]);
+        $constRecordings = $constRecord->findBy(['sensorReadingID' => $latitudeObject->getSensorID()]);
 
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);

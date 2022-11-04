@@ -7,7 +7,7 @@ use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Exceptions\UserNotAllowedException;
-use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use JetBrains\PhpStorm\ArrayShape;

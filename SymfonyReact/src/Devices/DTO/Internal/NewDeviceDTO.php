@@ -21,6 +21,8 @@ class NewDeviceDTO
 
     private Devices $devices;
 
+    private string $devicePassword;
+
     public function __construct(
         UserInterface $createdBy,
         GroupNames $groupNameId,

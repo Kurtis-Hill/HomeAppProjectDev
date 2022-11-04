@@ -18,8 +18,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
     public function buildUpdateSensorBoundaryReadingsDTO(
         SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO,
         AllSensorReadingTypeInterface $sensorReadingTypeObject
-    ): UpdateStandardReadingTypeBoundaryReadingsDTO
-    {
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
         if (!$sensorReadingTypeObject instanceof Analog || !$updateDataSensorBoundaryDTO instanceof StandardSensorUpdateBoundaryDataDTO) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
@@ -36,8 +35,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
     public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         AbstractCurrentReadingUpdateRequestDTO $sensorData,
-    ): ReadingTypeUpdateCurrentReadingDTO
-    {
+    ): ReadingTypeUpdateCurrentReadingDTO {
         if (!$allSensorReadingType instanceof Analog) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(

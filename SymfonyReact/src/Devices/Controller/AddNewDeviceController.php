@@ -17,6 +17,7 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +33,13 @@ class AddNewDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
@@ -112,11 +120,14 @@ class AddNewDeviceController extends AbstractController
         $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);
-        } catch (ExceptionInterface) {
+        } catch (ExceptionInterface $e) {
             $deleteDeviceHandler->deleteDevice($device);
+            $this->logger->error($e, $e->getTrace());
 
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
+
+        $this->logger->info('new device created with id: ' . $device->getDeviceNameID(), ['user' => $user->getUserIdentifier()]);
 
         return $this->sendCreatedResourceJsonResponse($response);
     }

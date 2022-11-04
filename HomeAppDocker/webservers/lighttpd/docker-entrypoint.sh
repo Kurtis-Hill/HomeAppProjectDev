@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 echo "Setting server name to ${APP_NAME}"
 echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
 
@@ -34,6 +33,14 @@ if [ ${APP_ENV} = 'dev' ]; then
     echo "...Fixtures loaded"
 	fi
 	echo "Test database checked"
+fi
+
+if [ ${ELASTIC_ENABLED} = 'true' ]; then
+	echo "Elastic indicie creation"
+	bin/console app:elastic-create-const-record-indices
+	bin/console app:elastic-create-out-of-bounds-indices
+	bin/console app:elastic-create-log-index
+	echo "...Elastic indicie creation"
 fi
 
 echo "Starting supervisor..."

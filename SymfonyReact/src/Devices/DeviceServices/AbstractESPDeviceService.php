@@ -8,6 +8,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AbstractESPDeviceService
@@ -20,14 +21,18 @@ class AbstractESPDeviceService
 
     protected DevicePasswordEncoderInterface $devicePasswordEncoder;
 
+    protected LoggerInterface $logger;
+
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
         ValidatorInterface $validator,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
+        LoggerInterface $elasticLogger
     ) {
         $this->validator = $validator;
         $this->deviceRepository = $deviceRepository;
         $this->devicePasswordEncoder = $devicePasswordEncoder;
+        $this->logger = $elasticLogger;
     }
 
     /**

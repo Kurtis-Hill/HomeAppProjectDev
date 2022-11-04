@@ -9,8 +9,7 @@ git \
 unzip \
 zip \
 nano \
-iputils-ping \
-supervisor
+iputils-ping 
 
 RUN apt-get install apt-transport-https ca-certificates -y 
 

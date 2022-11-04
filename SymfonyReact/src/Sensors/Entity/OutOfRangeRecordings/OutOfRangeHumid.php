@@ -5,7 +5,7 @@ namespace App\Sensors\Entity\OutOfRangeRecordings;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsHumidityRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsHumidityRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,7 +38,7 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
         ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
     ]
     #[Assert\NotNull(message: "Out of range Humidity Object cannot be null")]
-    private Humidity $sensorReadingTypeID;
+    private Humidity $sensorReadingID;
 
     public function getOutOfRangeID(): int
     {
@@ -70,15 +70,15 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
         $this->createdAt = new DateTime('now');
     }
 
-    public function getSensorReadingTypeID(): Humidity
+    public function getSensorReadingID(): Humidity
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

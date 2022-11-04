@@ -3,14 +3,14 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders;
 
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordInterface;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 class AnalogConstRecordObjectBuilder extends AbstractStandardConstRecordBuilder implements ConstRecordObjectBuilderInterface
 {
-    public function buildConstRecordObject(AllSensorReadingTypeInterface $sensorReadingTypeObject): ConstantlyRecordInterface
+    public function buildConstRecordObject(AllSensorReadingTypeInterface $sensorReadingTypeObject): ConstantlyRecordEntityInterface
     {
         if (!$sensorReadingTypeObject instanceof Analog) {
             throw new ReadingTypeNotExpectedException(

@@ -5,11 +5,9 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBu
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 
 class AbstractReadingTypeBuilder
 {

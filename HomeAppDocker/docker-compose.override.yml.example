@@ -6,14 +6,6 @@ services:
       - '9000'
       # - '127.0.0.1:${HTTPS_APP_PORT}:443'
     environment:
-      APP_ENV: ${APP_ENV}
-      APP_NAME: ${APP_NAME}
-      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_TEST_USER: ${MARIADB_TEST_USER}
       MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
       MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
@@ -30,14 +22,6 @@ services:
 
   lighttpd:
     environment:
-      APP_ENV: ${APP_ENV}
-      APP_NAME: ${APP_NAME}
-      HTTPS_APP_PORT: ${HTTPS_APP_PORT}
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_TEST_USER: ${MARIADB_TEST_USER}
       MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
       MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
@@ -51,9 +35,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    networks:
-      - HomeAppProjectNetwork
-
 
   maria-db:
     ports:
@@ -78,3 +59,9 @@ services:
       - '8080:8080'
     depends_on:
       - apache
+
+  es01:
+    container_name: ${APP_NAME}-es01
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+    ports:
+      - ${ELASTICSEARCH_EXTERNAL_PORT}:9200
