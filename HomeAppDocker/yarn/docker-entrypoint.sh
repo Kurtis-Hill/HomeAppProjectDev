@@ -13,7 +13,7 @@ yarn config set network-timeout 1200000 -g
 if [ ${APP_ENV} = 'prod' ]; then
   echo "production environment installing..."
   yarn install --production --check-files
-  yarn add @symfony/webpack-encore
+  # yarn add @symfony/webpack-encore
   echo "building assets..."
   yarn build
   echo "...finished building assets"
@@ -23,7 +23,8 @@ fi
 if [ ${APP_ENV} = 'dev' ]; then
   echo "development environment setting up webpack dev server..."
   yarn install --dev --check-files
-  yarn watch
+  yarn encore dev --watch
+  yarn
 #    hot reload working but getting mixed content block https needs to be set for webpack
 #    yarn encore dev-server --hot --host=apache --port ${HTTPS_APP_PORT}
 #    yarn encore dev-server --hot  --disable-host-check --port ${HTTPS_APP_PORT}

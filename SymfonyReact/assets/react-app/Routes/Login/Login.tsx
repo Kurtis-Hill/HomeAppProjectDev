@@ -19,7 +19,7 @@ import { LoginResponseInterface } from "../../Response/Login/Interfaces/LoginRes
 
 import { LoginInterface } from "./LoginInterface"
 
-export default function Login(props): LoginInterface {
+export default function Login(): LoginInterface {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputs>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
@@ -28,10 +28,10 @@ export default function Login(props): LoginInterface {
 
     let navigate = useNavigate();
 
-    const handleInput = (event) => {
+    const handleInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
-        setUserInputs(values => ({...values, [name]: value}))
+        setUserInputs((values: object) => ({...values, [name]: value}))
     }
 
     const handleLoginRequest = async (event) => {

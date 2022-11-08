@@ -18,7 +18,7 @@ export function AnnouncementFlashModal(props) {
     //     }
     //   }, 100)
       // style={modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}}
-    }
+    // }
     // announcement-fade
     return (
         <div style={modalShow !== false ? {paddingRight: '17px', display: 'block', opacity:`${modalOpacity}%` } : {display: 'none'}} className="modal-show modal fade show show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
