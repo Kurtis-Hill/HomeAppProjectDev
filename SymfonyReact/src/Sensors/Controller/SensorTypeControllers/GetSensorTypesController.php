@@ -4,7 +4,7 @@ namespace App\Sensors\Controller\SensorTypeControllers;
 
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,7 @@ class GetSensorTypesController extends AbstractController
     #[Route('/all', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository): Response
     {
-        $sensorTypes = $sensorTypeRepository->findAll();
+        $sensorTypes = $sensorTypeRepository->findAllSensorTypes();
 
         try {
             $normalisedResponse = $this->normalizeResponse($sensorTypes);

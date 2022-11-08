@@ -48,7 +48,9 @@ class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDevi
         } catch (DuplicateDeviceException $e) {
             $errors[] = $e->getMessage();
         } catch (ORMException) {
-            $errors[] = sprintf(APIErrorMessages::QUERY_FAILURE, 'Device');
+            $error =  sprintf(APIErrorMessages::QUERY_FAILURE, 'Device');
+            $this->logger->error($error, ['device' => $deviceToUpdate->getUserIdentifier()]);
+            $errors[] = $error;
         }
 
         $validationConstraintList = $this->validator->validate($deviceToUpdate);

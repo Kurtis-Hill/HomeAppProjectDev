@@ -31,6 +31,7 @@ class DeviceDTOBuilder
         GroupNames $groupNameObject,
         Room $roomObject,
         string $deviceName,
+        string $devicePassword,
     ): NewDeviceDTO {
         $device = new Devices();
 
@@ -39,6 +40,7 @@ class DeviceDTOBuilder
             $groupNameObject,
             $roomObject,
             $deviceName,
+            $devicePassword,
             $device,
         );
     }

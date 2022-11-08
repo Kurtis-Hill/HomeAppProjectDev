@@ -1,9 +1,10 @@
 <?php
 
-namespace User\Controller\GroupsController;
+namespace App\Tests\User\Controller\GroupsController;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GetGroupControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const GET_USER_GROUPS_URL = '/HomeApp/api/user/user-groups/all';
 
     private ?EntityManagerInterface $entityManager;
@@ -32,24 +35,7 @@ class GetGroupControllerTest extends WebTestCase
             ->getManager();
 
         $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-        $this->setUserToken();
-    }
-
-    private function setUserToken(): void
-    {
-        $this->client->request(
-            'POST',
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $responseData = json_decode($requestResponse->getContent(), true);
-
-        $this->userToken = $responseData['token'];
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function test_user_groups_are_correct(): void

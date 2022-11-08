@@ -5,7 +5,7 @@ namespace App\Sensors\Entity\OutOfRangeRecordings;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
-use App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsLatitudeRepository;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsLatitudeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,7 +27,7 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
         ORM\ManyToOne(targetEntity: Latitude::class),
         ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
     ]
-    private Latitude $sensorReadingTypeID;
+    private Latitude $sensorReadingID;
 
     #[ORM\Column(name: "sensorReading", type: "float", nullable: false)]
     #[LatitudeConstraint]
@@ -46,15 +46,15 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
         $this->outOfRangeID = $outOfRangeID;
     }
 
-    public function getSensorReadingTypeID(): Latitude
+    public function getSensorReadingID(): Latitude
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Latitude) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 

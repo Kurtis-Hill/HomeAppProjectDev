@@ -8,6 +8,12 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @method Cardstate|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Cardstate|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Cardstate[]    findAll()
+ * @method Cardstate[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface CardStateRepositoryInterface
 {
     public function findOneById(int $id);

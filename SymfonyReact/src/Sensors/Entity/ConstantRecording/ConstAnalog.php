@@ -6,19 +6,19 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
-use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryAnalogRepository;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordAnalogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryAnalogRepository::class),
+    ORM\Entity(repositoryClass: ConstantlyRecordAnalogRepository::class),
     ORM\Table(name: "constanalog"),
     ORM\Index(columns: ["analogID"], name: "analogID"),
 ]
 
-class ConstAnalog implements ConstantlyRecordInterface
+class ConstAnalog implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),
@@ -44,7 +44,7 @@ class ConstAnalog implements ConstantlyRecordInterface
         ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
     ]
     #[Assert\NotNull(message: "Const Record Analog Object cannot be null")]
-    private Analog $sensorReadingTypeID;
+    private Analog $sensorReadingID;
 
     public function getConstRecordID(): int
     {
@@ -76,15 +76,15 @@ class ConstAnalog implements ConstantlyRecordInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeObject(): Analog
+    public function getSensorReadingObject(): Analog
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Analog) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

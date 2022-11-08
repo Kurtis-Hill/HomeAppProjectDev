@@ -5,7 +5,6 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
-use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -13,14 +12,15 @@ use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
-use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\Sensors\Factories\SensorReadingType\SensorReadingUpdateFactory;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
 use App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Psr\Log\LoggerInterface;
 
 class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingInterface
 {
@@ -36,6 +36,8 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
 
     private ReadingTypeQueryFactory $readingTypeQueryBuilderFactory;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $readingUpdateFactory,
@@ -43,6 +45,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService,
         SensorConstantlyRecordHandlerInterface $constantlyRecordService,
         ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
+        LoggerInterface $elasticLogger,
     ) {
         $this->sensorRepository = $sensorRepository;
         $this->readingUpdateFactory = $readingUpdateFactory;
@@ -50,6 +53,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         $this->outOfBoundsSensorService = $outOfBoundsSensorService;
         $this->constantlyRecordService = $constantlyRecordService;
         $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
+        $this->logger = $elasticLogger;
     }
 
     public function handleUpdateSensorCurrentReading(
@@ -115,7 +119,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                     | SensorReadingUpdateFactoryException
                     | ReadingTypeObjectBuilderException $e
                 ) {
-                    error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+                    $this->logger->error($e->getMessage(), ['device' => $device->getDeviceNameID()]);
                     continue;
                 }
             }
@@ -123,7 +127,8 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         try {
             $this->sensorRepository->flush();
         } catch (ORMException|OptimisticLockException $e) {
-            error_log($e, 0, ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            $this->logger->error($e->getMessage(), ['device' => $device->getDeviceNameID()]);
+
             return false;
         }
 

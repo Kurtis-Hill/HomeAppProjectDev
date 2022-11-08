@@ -2,20 +2,20 @@
 
 namespace App\Sensors\Entity\ConstantRecording;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordHumidRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryHumidRepository;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryHumidRepository::class),
+    ORM\Entity(repositoryClass: ConstantlyRecordHumidRepository::class),
     ORM\Table(name: "consthumid"),
     ORM\Index(columns: ["humidID"], name: "humidID"),
 ]
-class ConstHumid implements ConstantlyRecordInterface
+class ConstHumid implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),
@@ -37,7 +37,7 @@ class ConstHumid implements ConstantlyRecordInterface
         ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
     ]
     #[Assert\NotNull(message: "Const Record Humidity Object cannot be null")]
-    private Humidity $sensorReadingTypeID;
+    private Humidity $sensorReadingID;
 
     public function getConstRecordID(): int
     {
@@ -69,15 +69,15 @@ class ConstHumid implements ConstantlyRecordInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeObject(): Humidity
+    public function getSensorReadingObject(): Humidity
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

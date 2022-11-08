@@ -14,24 +14,30 @@ use JetBrains\PhpStorm\ArrayShape;
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
     #[ArrayShape(['validationErrors'])]
-    public function processNewDevice(NewDeviceDTO $deviceDTO): array
+    public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {
-        $deviceUser = $deviceDTO->getCreatedByUserObject();
+        $deviceUser = $newDeviceDTO->getCreatedByUserObject();
         if (!$deviceUser instanceof User) {
+            $this->logger->error('Device not created by user', ['device' => $deviceUser->getUserIdentifier()]);
             throw new DeviceCreationFailureException(
                 DeviceCreationFailureException::DEVICE_FAILED_TO_CREATE
             );
         }
 
-        $newDevice = $deviceDTO->getNewDevice();
-        $newDevice->setDeviceName($deviceDTO->getDeviceName());
+        $newDevice = $newDeviceDTO->getNewDevice();
+        $newDevice->setDeviceName($newDeviceDTO->getDeviceName());
         $newDevice->setCreatedBy($deviceUser);
-        $newDevice->setGroupNameObject($deviceDTO->getGroupNameObject());
-        $newDevice->setRoomObject($deviceDTO->getRoomObject());
-        $newDevice->setDeviceSecret($this->createDevicePasswordHash($newDevice));
-        $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
+        $newDevice->setGroupNameObject($newDeviceDTO->getGroupNameObject());
+        $newDevice->setRoomObject($newDeviceDTO->getRoomObject());
+        $newDevice->setDeviceSecret($newDeviceDTO->getDevicePassword());
+        $newDevice->setPassword($newDeviceDTO->getDevicePassword());
 
-        return $this->validateNewDevice($newDevice);
+        $validationResult = $this->validateNewDevice($newDevice);
+        if (empty($validationResult)) {
+            $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
+        }
+
+        return $validationResult;
     }
 
     #[ArrayShape(["validationErrors"])]
@@ -50,13 +56,13 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         } catch (DuplicateDeviceException $exception) {
             $userErrors[] = $exception->getMessage();
         } catch (ORMException $e) {
+            $this->logger->error($e->getMessage());
             $userErrors[] = "device check query failed";
         }
 
         if (empty($userErrors)) {
-            $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
-
-            $newDevice->setDeviceSecret($devicePasswordHash);
+            // $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
+            $newDevice->setDeviceSecret($newDevice->getPassword());
             $newDevice->setRoles([Devices::ROLE]);
         }
 

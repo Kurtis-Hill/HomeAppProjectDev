@@ -1,10 +1,8 @@
 <?php
 
-namespace UserInterface\Controller\Card;
+namespace App\Tests\UserInterface\Controller\Card;
 
 use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupNameMapping;
-use App\Doctrine\DataFixtures\Core\RoomFixtures;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
@@ -14,12 +12,8 @@ use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
-use App\User\Entity\GroupNames;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\Tests\Traits\TestLoginTrait;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -29,6 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CardViewControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     public const CARD_VIEW_URL = '/HomeApp/api/user/card-data/%s';
 
     private ?string $userToken = null;
@@ -50,26 +46,7 @@ class CardViewControllerTest extends WebTestCase
         $this->sensorTypeQueryFactory = static::getContainer()
             ->get(SensorTypeQueryFactory::class);
 
-//        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP);
-//        $this->room = $this->entityManager->getRepository(Room::class)->findOneByRoomNameAndGroupNameId($this->groupName->getGroupNameID(), RoomFixtures::ADMIN_ROOM_NAME);
-        $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
-    }
-
-    private function setUserToken(string $name, string $password): string
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"' . $name . '","password":"' . $password . '"}'
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        return $responseData['token'];
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function test_getting_all_card_data(): void

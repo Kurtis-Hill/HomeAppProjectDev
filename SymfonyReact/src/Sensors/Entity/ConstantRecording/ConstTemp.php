@@ -10,18 +10,18 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordTempRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryTempRepository;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordRepositoryTempRepository::class),
+    ORM\Entity(repositoryClass: ConstantlyRecordTempRepository::class),
     ORM\Table(name: "consttemp"),
     ORM\Index(columns: ["sensorID"], name: "consttemp_ibfk_1"),
 ]
-class ConstTemp implements ConstantlyRecordInterface
+class ConstTemp implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),
@@ -53,7 +53,7 @@ class ConstTemp implements ConstantlyRecordInterface
         ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
     ]
     #[Assert\NotNull(message: "Const Record Temperature Object cannot be null")]
-    private Temperature $sensorReadingTypeID;
+    private Temperature $sensorReadingID;
 
     public function getConstRecordID(): int
     {
@@ -85,15 +85,15 @@ class ConstTemp implements ConstantlyRecordInterface
         $this->time = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeObject(): Temperature
+    public function getSensorReadingObject(): Temperature
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Temperature) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

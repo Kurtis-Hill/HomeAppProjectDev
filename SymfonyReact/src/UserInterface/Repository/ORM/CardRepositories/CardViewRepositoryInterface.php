@@ -11,6 +11,12 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
+/**
+ * @method CardView|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardView|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardView[]    findAll()
+ * @method CardView[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface CardViewRepositoryInterface
 {
     /**

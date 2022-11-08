@@ -5,18 +5,19 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
-use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,13 @@ class AddNewDeviceController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
+
     #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
@@ -40,7 +48,6 @@ class AddNewDeviceController extends AbstractController
         RoomRepositoryInterface $roomRepository,
         NewDeviceHandlerInterface $newDeviceHandler,
         GroupNameRepositoryInterface $groupNameRepository,
-        DevicePasswordEncoderInterface $devicePasswordEncoder,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
@@ -62,7 +69,7 @@ class AddNewDeviceController extends AbstractController
 
         $groupNameObject = $groupNameRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
         if (!$groupNameObject instanceof GroupNames) {
-            return $this->sendBadRequestJsonResponse([
+            return $this->sendNotFoundResponse([
                 sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
                     'Groupname'
@@ -72,18 +79,25 @@ class AddNewDeviceController extends AbstractController
 
         $roomObject = $roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
         if (!$roomObject instanceof Room) {
-            return $this->sendBadRequestJsonResponse([
+            return $this->sendNotFoundResponse([
                 sprintf(
                     APIErrorMessages::OBJECT_NOT_FOUND,
                     'Room'
                 ),
             ]);
         }
+
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse();
+        }
+
         $newDeviceCheckDTO = DeviceDTOBuilder::buildNewDeviceDTO(
-            $this->getUser(),
+            $user,
             $groupNameObject,
             $roomObject,
             $newDeviceRequestDTO->getDeviceName(),
+            $newDeviceRequestDTO->getDevicePassword(),
         );
 
         try {
@@ -106,11 +120,14 @@ class AddNewDeviceController extends AbstractController
         $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);
-        } catch (ExceptionInterface) {
+        } catch (ExceptionInterface $e) {
             $deleteDeviceHandler->deleteDevice($device);
+            $this->logger->error($e, $e->getTrace());
 
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
+
+        $this->logger->info('new device created with id: ' . $device->getDeviceNameID(), ['user' => $user->getUserIdentifier()]);
 
         return $this->sendCreatedResourceJsonResponse($response);
     }

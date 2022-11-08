@@ -1,9 +1,10 @@
 <?php
 
-namespace UserInterface\Controller;
+namespace App\Tests\UserInterface\Controller;
 
 use App\Authentication\Controller\SecurityController;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class IndexControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const INDEX_ROUTE_URL = '/HomeApp/WebApp/%s';
 
     private ?string $userToken = null;
@@ -28,24 +31,7 @@ class IndexControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
-    }
-
-    private function setUserToken(string $name, string $password): string
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"' . $name . '","password":"' . $password . '"}'
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        return $requestData['token'];
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     /**

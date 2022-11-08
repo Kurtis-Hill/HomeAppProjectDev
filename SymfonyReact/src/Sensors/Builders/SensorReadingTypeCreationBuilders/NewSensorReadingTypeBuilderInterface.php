@@ -13,5 +13,5 @@ interface NewSensorReadingTypeBuilderInterface
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
-    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface;
+    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface;
 }

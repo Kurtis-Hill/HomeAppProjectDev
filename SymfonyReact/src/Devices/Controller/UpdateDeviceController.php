@@ -5,7 +5,7 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
@@ -16,8 +16,9 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\NonUniqueResultException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,13 @@ class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[
         Route(
@@ -120,6 +128,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
+        $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceNameID()), ['user' => $this->getUser()?->getUserIdentifier()]);
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -10,9 +10,9 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingTypeRepositoryFactory;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
-use App\Sensors\Repository\ORM\Sensors\SensorRepositoryInterface;
+use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Sensors\Factories\SensorReadingType\SensorReadingUpdateFactory;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

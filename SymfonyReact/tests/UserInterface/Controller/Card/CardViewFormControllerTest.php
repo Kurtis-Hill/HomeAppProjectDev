@@ -1,12 +1,13 @@
 <?php
 
-namespace UserInterface\Controller\Card;
+namespace App\Tests\UserInterface\Controller\Card;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
@@ -21,6 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CardViewFormControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/get/%d';
 
     private const UPDATE_CARD_FORM_URL =  '/HomeApp/api/user/card-form-data/update/%d';
@@ -39,31 +42,7 @@ class CardViewFormControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken();
-    }
-
-    private function setUserToken(bool $forceToken = false, string $username = null, string $password = null): string
-    {
-        $username = $username ?? UserDataFixtures::ADMIN_USER;
-        $password = $password ?? UserDataFixtures::ADMIN_PASSWORD;
-
-        if ($this->userToken === null || $forceToken === true) {
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.$username.'","password":"'.$password.'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            return $responseData['token'];
-        }
-
-        return $this->userToken;
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     /**
@@ -184,7 +163,7 @@ class CardViewFormControllerTest extends WebTestCase
      */
     public function testUserCannotEditOtherUsersCards(string $username, string $password, $usersCardToAlter): void
     {
-        $userToken = $this->setUserToken(true, $username, $password);
+        $userToken = $this->setUserToken($this->client, $username, $password);
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
@@ -309,7 +288,7 @@ class CardViewFormControllerTest extends WebTestCase
      */
     public function testInvalidUserCannotUpdateCardView(string $username, string $password, $usersCardToAlter): void
     {
-        $userToken = $this->setUserToken(true, $username, $password);
+        $userToken = $this->setUserToken($this->client, $username, $password);
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];

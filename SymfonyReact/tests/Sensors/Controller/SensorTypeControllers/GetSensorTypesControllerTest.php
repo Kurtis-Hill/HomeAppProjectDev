@@ -1,12 +1,14 @@
 <?php
 
-namespace Sensors\Controller\SensorTypeControllers;
+namespace App\Tests\Sensors\Controller\SensorTypeControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -16,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GetSensorTypesControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const GET_SENSOR_TYPES_URL = '/HomeApp/api/user/sensor-types/all';
 
     private ?EntityManagerInterface $entityManager;
@@ -33,7 +37,7 @@ class GetSensorTypesControllerTest extends WebTestCase
             ->getManager();
 
         try {
-            $this->userToken = $this->setUserToken();
+            $this->userToken = $this->setUserToken($this->client);
         } catch (JsonException $e) {
             error_log($e);
         }
@@ -44,27 +48,6 @@ class GetSensorTypesControllerTest extends WebTestCase
         $this->entityManager->close();
         $this->entityManager = null;
         parent::tearDown();
-    }
-
-    private function setUserToken(bool $forceToken = false): string
-    {
-        if ($this->userToken === null || $forceToken === true) {
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"' . UserDataFixtures::ADMIN_USER . '","password":"' . UserDataFixtures::ADMIN_PASSWORD . '"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            return $responseData['token'];
-        }
-
-        return $this->userToken;
     }
 
     public function test_all_sensortypes_that_are_documented_in_sensortypes_class_exists(): void
@@ -102,14 +85,15 @@ class GetSensorTypesControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
-        $count = 0;
-        foreach ($sensorTypes as $sensorType) {
-            self::assertEquals($payload[$count]['sensorTypeID'], $sensorType->getSensorTypeID());
-            self::assertEquals($payload[$count]['sensorType'], $sensorType->getSensorType());
-            self::assertEquals($payload[$count]['description'], $sensorType->getDescription());
-            ++$count;
+        /** @var SensorType $sensorTypeFromDB */
+        foreach ($payload as $sensorType) {
+            foreach ($sensorTypes as $sensorTypeFromDB) {
+                if ($sensorType['sensorTypeID'] === $sensorTypeFromDB->getSensorTypeID()) {
+                    self::assertEquals($sensorType['sensorType'], $sensorTypeFromDB->getSensorType());
+                    self::assertEquals($sensorType['description'], $sensorTypeFromDB->getDescription());
+                }
+            }
         }
-
         self::assertCount(count($sensorTypes), $payload);
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }

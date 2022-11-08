@@ -5,7 +5,7 @@ namespace App\UserInterface\Controller\Card;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\UserInterface\Builders\CardUpdateDTOBuilders\CardUpdateDTOBuilder;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;

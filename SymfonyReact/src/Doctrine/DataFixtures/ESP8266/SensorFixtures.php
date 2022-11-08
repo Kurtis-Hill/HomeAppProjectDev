@@ -6,6 +6,7 @@ use App\Doctrine\DataFixtures\Card\CardFixtures;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
@@ -17,6 +18,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
@@ -158,37 +160,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
             foreach (self::ALL_SENSOR_TYPE_DATA as $sensorType => $sensorDetails) {
                 $newSensorType = new $sensorDetails['object']();
-//                $newSensorTypeTwo = new $sensorDetails['object'];
                 if ($sensorTypeFirst === $sensorType) {
                     foreach ($sensorDetails['readingTypes'] as $object) {
-                        $newObject = new $object();
-                        if ($newObject instanceof StandardReadingSensorInterface) {
-                            $newObject->setSensorObject($newAdminSensorTwo);
-                            $newObject->setUpdatedAt();
-
-                            if ($newSensorType instanceof StandardSensorTypeInterface) {
-                                $newSensorType->setSensorObject($newAdminSensorTwo);
-                                if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
-                                    $newObject->setCurrentReading(10);
-                                    $newSensorType->setTempObject($newObject);
-                                }
-                                if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
-                                    $newObject->setCurrentReading(10);
-                                    $newSensorType->setHumidObject($newObject);
-                                }
-                                if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
-                                    $newObject->setCurrentReading(10);
-                                    $newSensorType->setLatitudeObject($newObject);
-                                }
-                                if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
-                                    $newObject->setCurrentReading(1001);
-                                    $newSensorType->setAnalogObject($newObject);
-                                }
-                            }
-
-                            $manager->persist($newSensorType);
-                            $manager->persist($newObject);
-                        }
+                        $this->setSensorObjects($object, $newAdminSensorTwo, $newSensorType, $manager);
                     }
                 }
             }
@@ -207,7 +181,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newAdminSensor);
 
-//                Icons for the admin user
+//                Card for the admin user
                 $newCard = new CardView();
                 $newCard->setSensorNameID($newAdminSensor);
                 $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -217,7 +191,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newCard);
 
-//                Icons for the regular user
+//                Card for the regular user
                 $otherUserCard = new CardView();
                 $otherUserCard->setSensorNameID($newAdminSensor);
                 $otherUserCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER));
@@ -237,7 +211,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newRegularUserSensor);
 
-//                Icons for the admin user
+//                CardView for the admin user
                 $newCard = new CardView();
                 $newCard->setSensorNameID($newRegularUserSensor);
                 $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER));
@@ -247,7 +221,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
                 $manager->persist($newCard);
 
-//                Icons for the regular user
+//                CardView for the regular user
                 $otherUserCard = new CardView();
                 $otherUserCard->setSensorNameID($newRegularUserSensor);
                 $otherUserCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER));
@@ -260,68 +234,46 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newSensorType = new $sensorDetails['object']();
                 $newSensorTypeTwo = new $sensorDetails['object']();
 
-                foreach ($sensorDetails['readingTypes'] as $object) {
-                    $newObject = new $object();
-                    if ($newObject instanceof StandardReadingSensorInterface) {
-                        $newObject->setSensorObject($newAdminSensor);
-                        $newObject->setUpdatedAt();
-
-                        if ($newSensorType instanceof StandardSensorTypeInterface) {
-                            $newSensorType->setSensorObject($newAdminSensor);
-                            if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
-                                $newObject->setCurrentReading(10);
-                                $newSensorType->setTempObject($newObject);
-                            }
-                            if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
-                                $newObject->setCurrentReading(10);
-                                $newSensorType->setHumidObject($newObject);
-                            }
-                            if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
-                                $newObject->setCurrentReading(10);
-                                $newSensorType->setLatitudeObject($newObject);
-                            }
-                            if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
-                                $newObject->setCurrentReading(1001);
-                                $newSensorType->setAnalogObject($newObject);
-                            }
-                        }
-
-                        $manager->persist($newSensorType);
-                        $manager->persist($newObject);
-                    }
-                    $newObjectTwo = new $object();
-                    if ($newObjectTwo instanceof StandardReadingSensorInterface) {
-                        $newObjectTwo->setSensorObject($newRegularUserSensor);
-                        $newObjectTwo->setUpdatedAt();
-
-                        if ($newSensorTypeTwo instanceof StandardSensorTypeInterface) {
-                            $newSensorTypeTwo->setSensorObject($newRegularUserSensor);
-                            if ($newSensorTypeTwo instanceof TemperatureSensorTypeInterface && $newObjectTwo instanceof Temperature) {
-                                $newObjectTwo->setCurrentReading(10);
-                                $newSensorTypeTwo->setTempObject($newObjectTwo);
-                            }
-                            if ($newSensorTypeTwo instanceof HumiditySensorTypeInterface && $newObjectTwo instanceof Humidity) {
-                                $newObjectTwo->setCurrentReading(10);
-                                $newSensorTypeTwo->setHumidObject($newObjectTwo);
-                            }
-                            if ($newSensorTypeTwo instanceof LatitudeSensorTypeInterface && $newObjectTwo instanceof Latitude) {
-                                $newObjectTwo->setCurrentReading(10);
-                                $newSensorTypeTwo->setLatitudeObject($newObjectTwo);
-                            }
-                            if ($newSensorTypeTwo instanceof AnalogSensorTypeInterface && $newObjectTwo instanceof Analog) {
-                                $newObjectTwo->setCurrentReading(1001);
-                                $newSensorTypeTwo->setAnalogObject($newObjectTwo);
-                            }
-                        }
-
-                        $manager->persist($newSensorTypeTwo);
-                        $manager->persist($newObjectTwo);
-                    }
+                foreach ($sensorDetails['readingTypes'] as $readingTypeObjects) {
+                    $this->setSensorObjects($readingTypeObjects, $newAdminSensor, $newSensorType, $manager);
+                    $this->setSensorObjects($readingTypeObjects, $newRegularUserSensor, $newSensorTypeTwo, $manager);
                 }
             }
             ++$sensorCounter;
         }
 
         $manager->flush();
+    }
+
+    private function setSensorObjects(string $readingTypeObjects, Sensor $newAdminSensor, SensorTypeInterface $newSensorType, ObjectManager $manager): void
+    {
+        $newObject = new $readingTypeObjects();
+        if ($newObject instanceof StandardReadingSensorInterface) {
+            $newObject->setSensorObject($newAdminSensor);
+            $newObject->setUpdatedAt();
+
+            if ($newSensorType instanceof StandardSensorTypeInterface) {
+                $newSensorType->setSensorObject($newAdminSensor);
+                if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
+                    $newObject->setCurrentReading(10);
+                    $newSensorType->setTempObject($newObject);
+                }
+                if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
+                    $newObject->setCurrentReading(10);
+                    $newSensorType->setHumidObject($newObject);
+                }
+                if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
+                    $newObject->setCurrentReading(10);
+                    $newSensorType->setLatitudeObject($newObject);
+                }
+                if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
+                    $newObject->setCurrentReading(1001);
+                    $newSensorType->setAnalogObject($newObject);
+                }
+            }
+
+            $manager->persist($newSensorType);
+            $manager->persist($newObject);
+        }
     }
 }

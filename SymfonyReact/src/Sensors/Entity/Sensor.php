@@ -4,10 +4,10 @@ namespace App\Sensors\Entity;
 
 use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use App\Devices\Entity\Devices;
+use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Sensors\Repository\ORM\Sensors\SensorRepository;
 
 #[
     ORM\Entity(repositoryClass: SensorRepository::class),

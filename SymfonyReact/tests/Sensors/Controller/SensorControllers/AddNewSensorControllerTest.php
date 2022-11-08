@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\Controller\SensorControllers;
+namespace App\Tests\Sensors\Controller\SensorControllers;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -19,6 +19,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
+use App\Tests\Traits\TestLoginTrait;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -29,6 +30,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AddNewSensorControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensors/add-new-sensor';
 
     private ?EntityManagerInterface $entityManager;
@@ -49,7 +52,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name']]);
-            $this->userToken = $this->setUserToken();
+            $this->userToken = $this->setUserToken($this->client);
         } catch (JsonException $e) {
             error_log($e);
         }
@@ -60,27 +63,6 @@ class AddNewSensorControllerTest extends WebTestCase
         $this->entityManager->close();
         $this->entityManager = null;
         parent::tearDown();
-    }
-
-    private function setUserToken(bool $forceToken = false): string
-    {
-        if ($this->userToken === null || $forceToken === true) {
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.UserDataFixtures::ADMIN_USER.'","password":"'.UserDataFixtures::ADMIN_PASSWORD.'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            return $responseData['token'];
-        }
-
-        return $this->userToken;
     }
 
     public function newSensorSimpleDataProvider(): Generator

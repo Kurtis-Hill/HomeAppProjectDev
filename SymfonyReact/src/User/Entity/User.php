@@ -8,6 +8,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[
@@ -18,7 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
 ]
 #[UniqueEntity('email')]
-class User implements UserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[
         ORM\Column(name: "userID", type: "integer", nullable: false),
@@ -150,7 +151,7 @@ class User implements UserInterface
         return null;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;

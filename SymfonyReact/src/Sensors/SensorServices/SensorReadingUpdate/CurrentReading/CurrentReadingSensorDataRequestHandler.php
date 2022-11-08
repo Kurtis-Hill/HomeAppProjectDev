@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Common\API\APIErrorMessages;
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\CurrentReadingDTOBuilders\CurrentReadingUpdateDTOBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
@@ -20,9 +20,9 @@ use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
-use App\Sensors\Factories\ORMFactories\SensorReadingType\SensorReadingUpdateFactory;
+use App\Sensors\Factories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeReadingTypeCheckerFactory;
-use App\Sensors\Repository\ORM\Sensors\SensorTypeRepositoryInterface;
+use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -63,7 +63,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
         $this->sensorTypeReadingTypeCheckerFactory = $sensorTypeReadingTypeCheckerFactory;
         try {
-            $this->allSensorTypes = $sensorTypeRepository->getAllSensorTypeNames();
+            $this->allSensorTypes = $sensorTypeRepository->findAllSensorTypeNames();
         } catch (ORMException) {
             $this->errors[] = sprintf(APIErrorMessages::QUERY_FAILURE, 'Sensor type');
         }

@@ -6,9 +6,9 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Sensors\Builders\ReadingTypeResponseBuilders\ReadingTypeResponseBuilder;
-use App\Sensors\DTO\Response\ReadingTypes\ReadingTypeResponseDTO;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
-use App\Sensors\Repository\ORM\SensorReadingType\ReadingTypeRepositoryInterface;
+use App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,6 +18,13 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class GetReadingTypeController extends AbstractController
 {
     use HomeAppAPITrait;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[Route('all', name: 'all-reading-types')]
     public function getReadingTypes(ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
@@ -36,7 +43,9 @@ class GetReadingTypeController extends AbstractController
 
         try {
             $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO);
-        } catch (ExceptionInterface) {
+        } catch (ExceptionInterface $e) {
+            $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
+
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
 

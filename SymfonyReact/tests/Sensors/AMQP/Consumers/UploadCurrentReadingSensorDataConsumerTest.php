@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensors\AMQP\Consumers;
+namespace App\Tests\Sensors\AMQP\Consumers;
 
 use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
 use App\Devices\Entity\Devices;

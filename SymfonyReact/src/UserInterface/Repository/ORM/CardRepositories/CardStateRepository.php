@@ -7,6 +7,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<Cardstate>
+ *
+ * @method Cardstate|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Cardstate|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Cardstate[]    findAll()
+ * @method Cardstate[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class CardStateRepository extends ServiceEntityRepository implements CardStateRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,9 +22,9 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
         parent::__construct($registry, Cardstate::class);
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?Cardstate
     {
-        return $this->findOneBy(['cardStateID' => $id]);
+        return $this->find($id);
     }
 
     public function findOneByState(string $state): ?CardState

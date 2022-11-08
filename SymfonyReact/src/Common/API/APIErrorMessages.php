@@ -24,6 +24,8 @@ class APIErrorMessages
 
     public const QUERY_FAILURE = '%s Query failure';
 
+    public const FAILURE = '%s failure';
+
     public const FAILED_TO_PREPARE_DATA = 'Failed to prepare data';
 
     public const FAILED_TO_PREPARE_OBJECT_RESPONSE = 'Failed to prepare %s data';

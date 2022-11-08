@@ -6,7 +6,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Factories\ORMFactories\SensorType\SensorTypeRepositoryFactory;
+use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -63,7 +63,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
                 $sensorType
             );
 
-        return $sensorReadingCreationService->buildNewReadingTypeObjects($sensor);
+        return $sensorReadingCreationService->buildNewSensorTypeObjects($sensor);
     }
 
     private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array

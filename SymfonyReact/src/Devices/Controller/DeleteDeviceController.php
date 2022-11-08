@@ -10,6 +10,7 @@ use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,13 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class DeleteDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
+
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
 
     #[
         Route(
@@ -39,9 +47,11 @@ class DeleteDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
+        $deviceDeletedID = $deviceToDelete->getDeviceNameID();
         $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToDelete);
         if ($deviceDeleteSuccess !== true) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device')]);
+            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device'));
+            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Delete device')]);
         }
 
         $deviceDTO = DeviceUpdateResponseDTOBuilder::buildDeletedDeviceResponseDTO($deviceToDelete);
@@ -51,6 +61,7 @@ class DeleteDeviceController extends AbstractController
             $normalizedResponse = null;
         }
 
+        $this->logger->info('device deleted successfully id: ' . $deviceDeletedID, ['user' => $this->getUser()?->getUserIdentifier()]);
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 }

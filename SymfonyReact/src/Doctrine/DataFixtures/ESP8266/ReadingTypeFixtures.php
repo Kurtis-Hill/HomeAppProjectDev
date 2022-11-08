@@ -17,5 +17,4 @@ class ReadingTypeFixtures extends Fixture
         }
         $manager->flush();
     }
-
 }

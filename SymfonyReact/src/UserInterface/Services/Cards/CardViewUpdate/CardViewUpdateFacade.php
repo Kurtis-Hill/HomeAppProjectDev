@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardViewUpdate;
 
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;

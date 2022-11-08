@@ -1,0 +1,10 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\Doctrine\:
+    resource: '../src/Doctrine/*'
+    exclude: '../src/Doctrine/{Migrations}'

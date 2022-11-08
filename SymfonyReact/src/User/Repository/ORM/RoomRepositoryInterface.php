@@ -9,6 +9,12 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 
+/**
+ * @method Room|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Room|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Room[]    findAll()
+ * @method Room[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface RoomRepositoryInterface
 {
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace Devices\Controller;
+namespace App\Tests\Devices\Controller;
 
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Devices\Entity\Devices;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DeleteDeviceControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/delete-device/%d';
 
     private ?string $userToken = null;
@@ -32,14 +34,13 @@ class DeleteDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken(UserDataFixtures::ADMIN_USER, UserDataFixtures::ADMIN_PASSWORD);
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function testRegularUserCannotDeleteAdminDevice(): void
     {
-        $userToken = $this->setUserToken(UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
-
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
         $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
@@ -65,6 +66,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
+        self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminUserCanDeleteDeviceNotApartOf(): void
@@ -103,6 +105,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
         self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
         self::assertNull($responseData['payload']['secret']);
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function testDeletingDeviceThatDoesntExist(): void
@@ -167,6 +170,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
         self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
         self::assertNull($responseData['payload']['secret']);
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function deletingDeviceDataProvider(): Generator
@@ -178,23 +182,6 @@ class DeleteDeviceControllerTest extends WebTestCase
         yield [
             'username' => UserDataFixtures::REGULAR_USER
         ];
-    }
-
-    private function setUserToken(string $name, string $password): string
-    {
-        $this->client->request(
-            Request::METHOD_POST,
-            SecurityController::API_USER_LOGIN,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.$name.'","password":"'.$password.'"}'
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $requestData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        return $requestData['token'];
     }
 
     protected function tearDown(): void

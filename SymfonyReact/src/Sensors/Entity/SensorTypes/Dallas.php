@@ -7,8 +7,8 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Repository\SensorType\ORM\DallasRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Sensors\Repository\ORM\SensorType\DallasRepository;
 
 #[
     ORM\Entity(repositoryClass: DallasRepository::class),

@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardCreation;
 
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\Sensors\Entity\Sensor;
 use App\UserInterface\Entity\Card\CardColour;
@@ -16,9 +16,9 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterf
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

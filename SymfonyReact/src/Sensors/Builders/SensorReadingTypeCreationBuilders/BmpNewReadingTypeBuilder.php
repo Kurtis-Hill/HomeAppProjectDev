@@ -27,7 +27,7 @@ class BmpNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
         $this->latitudeReadingTypeObjectBuilder = $latitudeReadingTypeObjectBuilder;
     }
 
-    public function buildNewReadingTypeObjects(Sensor $sensor): SensorTypeInterface
+    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $bmp = new Bmp();
         $bmp->setSensorObject($sensor);

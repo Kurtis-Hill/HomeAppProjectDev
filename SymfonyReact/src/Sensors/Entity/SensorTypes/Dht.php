@@ -9,8 +9,8 @@ use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Repository\SensorType\ORM\DhtRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Sensors\Repository\ORM\SensorType\DhtRepository;
 
 #[
     ORM\Entity(repositoryClass: DhtRepository::class),
