@@ -2,13 +2,6 @@ FROM php:8.1-apache
 
 WORKDIR /var/www/html
 
-RUN mkdir /etc/logs
-
-RUN apt-get update -y && apt-get install -y \
-git \
-unzip \
-zip \
-nano 
 
 RUN apt-get install apt-transport-https ca-certificates -y 
 

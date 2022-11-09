@@ -21,7 +21,7 @@ COPY ./auth/auth.json /root/.composer/auth.json
 
 COPY ./supervisor/ /etc/supervisor/conf.d/
 
-COPY ./lighttpd/docker-entrypoint.sh /usr/bin/docker-entrypoint
+COPY ./php-cli/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint"]

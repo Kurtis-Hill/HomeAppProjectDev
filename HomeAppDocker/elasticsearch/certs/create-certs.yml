@@ -3,6 +3,7 @@ version: '2.2'
 services:
   create_certs:
     container_name: create_certs
+    # @TODO new elastic versions use different directories could sort 
     # image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
     env_file:

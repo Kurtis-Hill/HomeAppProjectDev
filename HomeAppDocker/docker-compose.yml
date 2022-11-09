@@ -34,11 +34,11 @@ services:
     networks:
       - HomeAppProjectNetwork
 
-  lighttpd:
+  php-cli:
     build:
       context: ./webservers
-      dockerfile: ./lighttpd/Dockerfile
-    container_name: '${APP_NAME}-lighttpd-queue-proccessor'
+      dockerfile: ./php-cli/Dockerfile
+    container_name: '${APP_NAME}-php-cli-queue-proccessor'
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
@@ -54,7 +54,6 @@ services:
     volumes:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl/custom:ro
-    tty: true
     depends_on:
       maria-db:
         condition: service_healthy
@@ -161,7 +160,7 @@ services:
       - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
     volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
     healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200/_cluster/health?wait_for_status=green&timeout=50s >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 15s
       timeout: 10s
       retries: 5

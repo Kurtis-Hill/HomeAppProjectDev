@@ -13,6 +13,8 @@ SymfonyReact/node_modules/
 SymfonyReact/public/build/
 SymfonyReact/npm-debug.log
 SymfonyReact/yarn-error.log
+SymfonyReact/supervisord.log
+SymfonyReact/supervisord.pid
 
 ### IDE tools
 .idea

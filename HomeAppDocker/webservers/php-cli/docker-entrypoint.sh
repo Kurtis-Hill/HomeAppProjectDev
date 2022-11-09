@@ -1,12 +1,5 @@
 #!/bin/sh
 
-# echo "Setting server name to ${APP_NAME}"
-# echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
-
-# if [ "${1#-}" != "$1" ]; then
-# 	set -- apache2-foreground "$@"
-# fi
-
 if [ ${APP_ENV} = 'prod' ]; then
   echo "production container build"
   echo "installing composer packages..."
@@ -47,7 +40,7 @@ if [ ${ELASTIC_ENABLED} = 'true' ]; then
 fi
 
 echo "Starting supervisor..."
-supervisord -n&
+supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
 echo "Supervisor Started..."
 
 # exec /usr/local/bin/docker-php-entrypoint "$@"
