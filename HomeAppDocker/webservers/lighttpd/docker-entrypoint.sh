@@ -1,13 +1,14 @@
 #!/bin/sh
 
-echo "Setting server name to ${APP_NAME}"
-echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
+# echo "Setting server name to ${APP_NAME}"
+# echo "ServerName ${APP_NAME}" >> /etc/apache2/sites-enabled/000-default.conf
 
-if [ "${1#-}" != "$1" ]; then
-	set -- apache2-foreground "$@"
-fi
+# if [ "${1#-}" != "$1" ]; then
+# 	set -- apache2-foreground "$@"
+# fi
 
 if [ ${APP_ENV} = 'prod' ]; then
+  echo "production container build"
   echo "installing composer packages..."
   composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
   echo "Executing database migrations production..."
@@ -17,6 +18,8 @@ fi
 
 if [ ${APP_ENV} = 'dev' ]; then
 	echo "dev container build"
+	echo "installing composer packages..."
+  	composer install --prefer-dist --no-interaction
 	echo "Executing database migrations for test enviroment..."
 	bin/console d:m:m --no-interaction --env=test
 	echo "...Test migrations complete"
@@ -27,7 +30,7 @@ if [ ${APP_ENV} = 'dev' ]; then
 
 ##@TODO: not working
 	echo "Querying test database"
-	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep -q 'array(0)'; then
+	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep -q 'array(1)'; then
 		echo "Test database empty loading fixtures..."
    		php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"
@@ -39,7 +42,7 @@ if [ ${ELASTIC_ENABLED} = 'true' ]; then
 	echo "Elastic indicie creation"
 	bin/console app:elastic-create-const-record-indices
 	bin/console app:elastic-create-out-of-bounds-indices
-	bin/console app:elastic-create-log-index
+	bin/console app:elastic-create-out-of-bounds-indices
 	echo "...Elastic indicie creation"
 fi
 
@@ -47,4 +50,5 @@ echo "Starting supervisor..."
 supervisord -n&
 echo "Supervisor Started..."
 
-exec /usr/local/bin/docker-php-entrypoint "$@"
+# exec /usr/local/bin/docker-php-entrypoint "$@"
+exec "$@"

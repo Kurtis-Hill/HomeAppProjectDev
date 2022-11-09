@@ -1,4 +1,4 @@
-FROM sebp/lighttpd
+FROM php:8.1.12-cli-bullseye
 
 WORKDIR /var/www/html
 
@@ -8,9 +8,13 @@ unzip \
 zip \
 supervisor
 
-RUN apt-get install apt-transport-https -y 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# if no network connection and compose is installed locally, use this instead:
+# COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
 RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 sockets http apcu
 
 COPY ./auth/auth.json /root/.composer/auth.json
@@ -20,4 +24,6 @@ COPY ./supervisor/ /etc/supervisor/conf.d/
 COPY ./lighttpd/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 
-ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]
+ENTRYPOINT ["docker-entrypoint"]
+
+CMD ["php"]

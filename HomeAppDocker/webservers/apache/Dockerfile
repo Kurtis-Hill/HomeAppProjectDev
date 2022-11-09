@@ -8,8 +8,7 @@ RUN apt-get update -y && apt-get install -y \
 git \
 unzip \
 zip \
-nano \
-iputils-ping 
+nano 
 
 RUN apt-get install apt-transport-https ca-certificates -y 
 
@@ -28,7 +27,10 @@ COPY ./apache/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 COPY ./auth/auth.json /root/.composer/auth.json
 
-COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# if no network connection and compose is installed locally, use this instead:
+# COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
 COPY ./apache/sites-enabled/site.conf /etc/apache2/sites-available/000-default.conf
 

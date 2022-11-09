@@ -6,5 +6,5 @@ services:
     autoconfigure: true
 
   App\Doctrine\:
-    resource: '../src/Doctrine/*'
-    exclude: '../src/Doctrine/{Migrations}'
+    resource: './*'
+    exclude: './{Migrations}'

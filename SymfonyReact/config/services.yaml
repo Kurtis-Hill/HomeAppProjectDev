@@ -5,6 +5,7 @@ imports:
     - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
     - { resource: ../src/Authentication/services-authentication.yaml }
+    - { resource: ../src/Doctrine/services-doctrine.yaml }
     - { resource: elasticsearch.yaml }
 
 parameters:
@@ -49,7 +50,7 @@ services:
             index: '@elastica.log_index',
             mapping: {
               message: 'text',
-              level: "bucket",
+              level: 'bucket',
               context: 'array',
             }
           }
