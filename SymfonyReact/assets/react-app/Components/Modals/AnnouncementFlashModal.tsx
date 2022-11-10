@@ -1,27 +1,32 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export function AnnouncementFlashModal(props) {
+export function AnnouncementFlashModal(props: { title: string; errors: string[]; }) {
   const title: string = props.title
   const errors: Array<string> = props.errors
-  console.log('err', errors);
-  let modalShow: boolean = props.modalShow;
 
   const [modalOpacity, setModalOpacity] = useState<number>(100);
+  const [modalShow, setModalShow] = useState<boolean>(true);
 
-    // if (modalShow === true) {
-    //   const alterModalOpacity = setInterval(() => {
-    //     setModalOpacity(modalOpacity - 1)
-    //     console.log(modalOpacity);
-    //     if (modalOpacity === 0) {
-    //       clearInterval(alterModalOpacity);
-    //     }
-    //   }, 100)
-      // style={modalShow !== false ? {paddingRight: '17px', display: 'block'} : {display: 'none'}}
-    // }
-    // announcement-fade
+  useEffect(() => {
+    console.log('use effect is running')
+    const interval = setInterval(() => {
+      console.log('modal op', modalOpacity);
+      if (modalOpacity !== 0) {
+        setModalOpacity(modalOpacity - 1);
+        console.log('happened');
+      } else {
+        setModalShow(false);
+        clearInterval(interval)
+      }
+    }, 80);
+    return () => clearInterval(interval);
+  }, [modalOpacity]);
+
+
+  if (modalShow === true) {
     return (
-        <div style={modalShow !== false ? {paddingRight: '17px', display: 'block', opacity:`${modalOpacity}%` } : {display: 'none'}} className="modal-show modal fade show show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div style={{ paddingRight: '17px', display: 'block', opacity:`${modalOpacity}%` }} className="modal-show modal fade show show"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog" role="document">
           <div className="modal-content">
               <div className="modal-header">
@@ -40,15 +45,11 @@ export function AnnouncementFlashModal(props) {
                       </React.Fragment>
                     </div>
                   : 
-                    null
-              }  
+                  null
+                }  
           </div>
         </div>
       </div>
-
     );
   }
-
-  export function announcementTimeout(props) {
-    const hi = this.modalShow;
-  }
+}

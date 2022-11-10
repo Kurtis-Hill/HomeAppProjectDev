@@ -11,6 +11,7 @@ import { handleNavBarRequest } from "../../Request/NavBar/NavBarRequest";
 import NavBarResponseInterface from "../../Response/NavBar/NavBarResponseInterface";
 
 import { AnnouncementFlashModal } from "../Modals/AnnouncementFlashModal";
+import { BuildAnnouncementFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
 
 export default function NavBar() {
     const [roomNavToggle, setRoomNavToggle] = useState<boolean>(false);
@@ -18,10 +19,7 @@ export default function NavBar() {
     const [userRooms, setUserRooms] = useState([]);
     const [userDevices, setUserDevices] = useState([]);
     const [userGroups, setUserGroups] = useState([]);
-
-    const [navbarRequestErrors, setNavbarRequestErrors] = useState([]);
-    const [navbarRequestErrorModalShow, setNavbarRequestErrorModalShow] = useState<boolean>(false);
-    const [navbarRequestErrorTitle, setNavbarRequestErrorTitle] = useState<string>('');
+    const [navbarAnnouncementErrorModals, setNavbarAnnouncementErrorModals] = useState([]);
 
     const admin: boolean = checkAdmin();
 
@@ -42,16 +40,13 @@ export default function NavBar() {
         }
     }
 
-    const showErrorAnnouncementFlash = (errors: Array<string>, title: string): void => {
-        console.log('were hit', errors);
-        setNavbarRequestErrors(errors);
-        setNavbarRequestErrorTitle(title);
-        setNavbarRequestErrorModalShow(true);
-
-    //     setTimeout(() => {
-    //         setNavbarRequestErrorModalShow(false)
-    //     }, 5000
-    //   );
+    const showErrorAnnouncementFlash = (errors: Array<string>, title: string): void => {        
+        setNavbarAnnouncementErrorModals([
+            <BuildAnnouncementFlashModal
+                title={title}
+                errors={errors}
+            />
+        ])
     }
     
     const navbarRequestData = async () => {
@@ -61,7 +56,6 @@ export default function NavBar() {
             setUserDevices(navbarResponse.devices);
             setUserGroups(navbarResponse.groupNames);
 
-            console.log('errors', navbarResponse, navbarResponse.errors);
             if (navbarResponse.errors.length > 0) {
                 showErrorAnnouncementFlash(navbarResponse.errors, 'Partial response');
             }
@@ -69,14 +63,6 @@ export default function NavBar() {
             const errors = err as Error|AxiosError;
 
             if(axios.isAxiosError(errors)) {
-                console.log('its axios');
-
-                console.log('after',
-                    errors,
-                    errors.response.status,
-                    errors.request.response,
-                );
-
                 const jsonResponse: {title: string, errors: string|Array<string>} = JSON.parse(errors.request.response);
                 
                 let errorsOverride: boolean = false;
@@ -91,18 +77,15 @@ export default function NavBar() {
 
                 showErrorAnnouncementFlash(
                     errorsOverride === true 
-                        ? [] 
+                        ? ['Unauthorized'] 
                         : errorsForModal,
                     jsonResponse.title
                 ); 
             } else {
-                console.log('its Not axios')
-                if (navbarRequestErrors.length === 0) {
-                    showErrorAnnouncementFlash(
-                        [`Something went wrong, please try refresh the browser or log out and back in again`],
-                        'Unrecognized Error'
-                    );
-                }
+                showErrorAnnouncementFlash(
+                    [`Something went wrong, please try refresh the browser or log out and back in again`],
+                    'Unrecognized Error'
+                );
             }
           }
     }
@@ -111,11 +94,15 @@ export default function NavBar() {
 
     return (
         <React.Fragment>
-            <AnnouncementFlashModal
-            modalShow={navbarRequestErrorModalShow} 
-            title={navbarRequestErrorTitle}
-            errors={navbarRequestErrors}
-            />
+            {
+                navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal, index) => {
+                    return (
+                        <div key={index}> 
+                            {navbarAnnouncementErrorModal}
+                        </div>
+                        );
+                })
+            }
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "}>
                 <Link to={`${webappURL}index`} className="sidebar-brand d-flex align-items-center justify-content-center">
                     <div className="sidebar-brand-icon rotate-n-15">

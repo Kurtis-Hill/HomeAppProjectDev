@@ -43,7 +43,7 @@ SSL/server-key.pem
 SSL/server.pfx
 SSL/ca-cert.pem
 
-##< Docker ###
+##< Docker >###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
 
@@ -56,4 +56,5 @@ HomeAppDocker/docker-compose.override.yml
 .run/Docker Image.run.xml
 .run/DockerComposeHomeApp.run.xml
 
+##< ElasticSearch >###
 HomeAppDocker/elasticsearch/certs/.env
