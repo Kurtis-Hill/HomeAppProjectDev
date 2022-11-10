@@ -34,7 +34,7 @@ export default function NavBar() {
         }
     }
 
-    const toggleOffNavTabElement = (navDropDownElement): void => {       
+    const toggleOffNavTabElement = (navDropDownElement: string): void => {       
         if (navDropDownElement === 'room') {
             setRoomNavToggle(false);
         }
@@ -45,6 +45,7 @@ export default function NavBar() {
             <BuildAnnouncementFlashModal
                 title={title}
                 errors={errors}
+                errorNumber={navbarAnnouncementErrorModals.length}
             />
         ])
     }
@@ -64,12 +65,11 @@ export default function NavBar() {
 
             if(axios.isAxiosError(errors)) {
                 const jsonResponse: {title: string, errors: string|Array<string>} = JSON.parse(errors.request.response);
-                
                 let errorsOverride: boolean = false;
+                
                 if (errors.response.status === 403) {
                     errorsOverride = true
                 }
-                console.log('json', jsonResponse)
 
                 const errorsForModal = Array.isArray(jsonResponse.errors) 
                     ? jsonResponse.errors 
@@ -95,12 +95,12 @@ export default function NavBar() {
     return (
         <React.Fragment>
             {
-                navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal, index) => {
+                navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal: typeof AnnouncementFlashModal, index: number) => {
                     return (
                         <div key={index}> 
                             {navbarAnnouncementErrorModal}
                         </div>
-                        );
+                    );
                 })
             }
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "}>
