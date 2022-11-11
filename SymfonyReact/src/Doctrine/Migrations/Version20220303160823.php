@@ -222,7 +222,11 @@ final class Version20220303160823 extends AbstractMigration
                 (1, 'danger', 'red'),
                 (2, 'success', 'green'),
                 (3, 'warning', 'Yellow'),
-                (4, 'primary', 'blue');
+                (4, 'primary', 'blue'),
+                (5, 'info', 'light blue'),
+                (6, 'secondary', 'light grey'),
+                (7, 'light', 'white'),
+                (8, 'dark', 'dark grey');
         ");
 
         $this->addSql("

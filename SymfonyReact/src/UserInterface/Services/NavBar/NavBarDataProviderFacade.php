@@ -48,8 +48,7 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
             $userRooms,
             $userDevices,
             $userGroups,
-            $errors ?? ['Device query failed']
-//            $errors ?? []
+            $errors ?? []
         );
     }
 

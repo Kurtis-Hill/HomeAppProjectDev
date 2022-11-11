@@ -1,26 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
-import axios, {AxiosError} from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { webappURL, registerAccountUrl } from "../../Common/CommonURLs";
-import { setUserSession } from "../../session/UserSession";
+import { getToken } from "../../Common/APICommon";
 
 import SubmitButton from "../../Components/Buttons/SubmitButton";
 import Input from "../../Components/Form/Input";
 import ColouredPage from "../../Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Components/Spinners/DotCircleSpinner";
 
-import { LoginFormUserInputs } from "../../Components/Form/UserInputs/Interface/LoginFormUserInputs";
+import { LoginFormUserInputsInterface } from "../../Components/Form/UserInputs/Interface/LoginFormUserInputsInterface";
 
-import { handleLogin } from "../../Request/LoginRequest";
-import { LoginResponseInterface } from "../../Response/Login/Interfaces/LoginResponseInterface";
+import { handleLogin, handleTokenRefresh } from "../../Request/LoginRequest";
+import { handlePingRequest, PingInterface } from "../../Request/Ping";
 
 import { LoginInterface } from "./LoginInterface"
 
 export default function Login(): LoginInterface {
-    const [userInputs, setUserInputs] = useState<LoginFormUserInputs>({});
+    const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
 
@@ -28,38 +28,75 @@ export default function Login(): LoginInterface {
 
     let navigate = useNavigate();
 
+    useEffect(() => {
+        checkCurrentToken();
+    })
+
     const handleInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
         setUserInputs((values: object) => ({...values, [name]: value}))
     }
 
-    const handleLoginRequest = async (event) => {
-        event.preventDefault();
-        setError([]);
-        setLoading(true);
-
+    const validateUserInput = (): boolean => {
         if (userInputs.username === undefined || userInputs.username === "") {
             setError(['Please fill in username']);
             setLoading(false);
-            return;
+            return false;
         }
         if (userInputs.password === "" || userInputs.password === undefined) {
             setError(['Please fill in password']);
             setLoading(false);
-            return;
+            return false;
         }
+        
+        return true;
+    }
 
+    const checkCurrentToken = async () => {
+        const token = getToken();
+        if (token !== null) {
+            const pingRequest: PingInterface = await handlePingRequest();
+
+            if (pingRequest.status === 200) {
+                navigate(`${webappURL}index`);
+            }
+            if (pingRequest.status === 403) {
+                const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
+                if (refreshTokenResponse.status === 200) {
+                    navigate(`${webappURL}index`);
+                }
+            }
+        }
+    }
+                
+
+    /**
+     * @throws Error
+     */
+    const handleLoginRequest = async (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        setError([]);
+        setLoading(true);
+
+        const validationPassed = validateUserInput();
+
+        if (validationPassed === false) {
+            throw new Error(`User input validation failed`);
+        }
         try {
-            const loginResponse: LoginResponseInterface = await handleLogin(userInputs);
+            const loginResponse: AxiosResponse = await handleLogin(userInputs);
 
-            setUserSession(loginResponse);
-            navigate(`${webappURL}index`)
-            
+            if (loginResponse.status === 200) {
+                navigate(`${webappURL}index`)
+            } else {
+                setError(['Login failed. Please try again.']);
+                setLoading(false);
+            }
         } catch (err) {
             const error = err as Error|AxiosError;
-            
-            if(!axios.isAxiosError(error)){
+
+            if(!axios.isAxiosError(error)) {
                 alert(`Something went wrong, please try refresh the browser ${error.message}`);
             } 
             if (axios.isAxiosError(error)) {

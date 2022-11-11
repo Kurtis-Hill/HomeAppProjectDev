@@ -29,7 +29,6 @@ trait TestLoginTrait
         );
 
         $requestResponse = $client->getResponse();
-
         try {
             $responseData = json_decode(
                 $requestResponse->getContent(),

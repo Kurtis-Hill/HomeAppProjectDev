@@ -139,7 +139,23 @@ class CardFixtures extends Fixture implements OrderedFixtureInterface
        [
             'colour' => 'primary',
             'shade' => 'blue',
-       ]
+       ],
+        [
+            'colour' => 'info',
+            'shade' => 'light blue',
+        ],
+        [
+            'colour' => 'secondary',
+            'shade' => 'light grey',
+        ],
+        [
+            'colour' => 'light',
+            'shade' => 'white',
+        ],
+        [
+            'colour' => 'dark',
+            'shade' => 'dark grey',
+        ],
     ];
 
     public const CARD_STATES = [

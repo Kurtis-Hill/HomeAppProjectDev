@@ -52,7 +52,7 @@ services:
       ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       ELASTIC_ENABLED: ${ELASTIC_ENABLED}
     volumes:
-      - ../SymfonyReact:/var/www/html
+      - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
     depends_on:
       maria-db:

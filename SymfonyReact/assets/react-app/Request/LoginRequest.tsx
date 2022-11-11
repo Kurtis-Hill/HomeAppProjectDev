@@ -1,28 +1,41 @@
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
 import { apiURL } from "../Common/CommonURLs";
+import { setUserSession, refreshUserTokens } from "../session/UserSession";
 
 import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginResponseInterface";
 import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
 
-import { LoginFormUserInputs } from "../Components/Form/UserInputs/Interface/LoginFormUserInputs"
+import { LoginFormUserInputsInterface } from "../Components/Form/UserInputs/Interface/LoginFormUserInputsInterface"
 
 import { getRefreshToken } from "../session/UserSession"
 
-export async function handleLogin(userInputs: LoginFormUserInputs): Promise<LoginResponseInterface> {
-    const loginCheckResponse = await axios.post(
+export async function handleLogin(userInputs: LoginFormUserInputsInterface): Promise<AxiosResponse> {
+    const loginCheckResponse: AxiosResponse = await axios.post(
         `${apiURL}login_check`,
         userInputs
     );
 
-    return loginCheckResponse.data
+    const loginResponseData: LoginResponseInterface = loginCheckResponse.data;
+
+    if (loginCheckResponse.status === 200) {
+        setUserSession(loginResponseData);
+    }
+
+    return loginCheckResponse;
 }
 
-export async function handleTokenRefresh(): Promise<TokenRefreshResponseInterface> {
-    const refreshTokenResponse = await axios.post(
+export async function handleTokenRefresh(): Promise<AxiosResponse> {
+    const refreshTokenResponse: AxiosResponse = await axios.post(
         `${apiURL}token/refresh`,
         { refreshToken : getRefreshToken() }
     )
 
-    return refreshTokenResponse.data;
+    const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
+
+    if (refreshTokenResponse.status === 200) {
+        refreshUserTokens(refreshTokenResponseData);
+    }
+
+    return refreshTokenResponse;
 } 

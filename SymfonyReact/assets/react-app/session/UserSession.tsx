@@ -1,5 +1,7 @@
 import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginResponseInterface";
 
+import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
+
 export const setUserSession = (loginResponse: LoginResponseInterface): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
@@ -10,6 +12,14 @@ export const setUserSession = (loginResponse: LoginResponseInterface): void => {
     localStorage.setItem('refreshToken' , loginResponse.refreshToken);
     localStorage.setItem('userID' , loginResponse.userData.userID.toString());
     localStorage.setItem('roles' , JSON.stringify(loginResponse.userData.roles));
+}
+
+export const refreshUserTokens = (refreshTokenResponseData: TokenRefreshResponseInterface): void => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+
+    localStorage.setItem('token' , refreshTokenResponseData.token);
+    localStorage.setItem('refreshToken' , refreshTokenResponseData.refreshToken);
 }
 
 export const getRefreshToken = (): string|null => {

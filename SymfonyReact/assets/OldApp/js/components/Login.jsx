@@ -4,7 +4,7 @@ import axios from 'axios';
 import { setUserSession } from '../Utilities/Common';
 import { webappURL, apiURL, } from '../Utilities/URLSCommon'
 
-function Login(props) {
+function Login() {
     const username = useFormInput('');
     const password = useFormInput('');
     const [error, setError] = useState(null);
@@ -14,11 +14,9 @@ function Login(props) {
 
     const createAccountLink = "/HomeApp/WebApp/register";
 
-    const handleLogin = async (event) => {
-        console.log('boom')
+    const handleLogin = async () => {
         setError(null);
         setLoading(true);
-
         try {
             const loginCheckResponse = await axios.post(apiURL+'login_check', {username: username.value, password: password.value})
         
@@ -29,13 +27,12 @@ function Login(props) {
                 setError('Login check response error')
             }
             setLoading(false);
-            console.log("ERROR")
         } catch (error) {
             const errorResponse = error.response;
             setLoading(false);
             console.log(error, error.status)
             if (errorResponse.status === 401) {
-                setError(errorResponse.data.message);
+                setError(`${errorResponse.data.message} unrecognized username and/or password`);
             } else {
                 setError('Something went wrong');
             }

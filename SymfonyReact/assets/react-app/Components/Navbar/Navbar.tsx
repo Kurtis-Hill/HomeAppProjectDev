@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import axios, {AxiosError} from 'axios';
+import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { webappURL } from "../../Common/CommonURLs";
 
@@ -10,13 +10,16 @@ import { getRoles, checkAdmin } from "../../session/UserSession";
 import { handleNavBarRequest } from "../../Request/NavBar/NavBarRequest";
 import NavBarResponseInterface from "../../Response/NavBar/NavBarResponseInterface";
 
-import { AnnouncementFlashModal } from "../Modals/AnnouncementFlashModal";
-import { BuildAnnouncementFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
+import { ErrorResponseInterface } from "../../Response/ErrorResponseInterface";
+
+import { AnnouncementErrorFlashModal } from "../Modals/AnnouncementErrorFlashModal";
+import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
 
 export default function NavBar() {
     const [roomNavToggle, setRoomNavToggle] = useState<boolean>(false);
 
-    const [userRooms, setUserRooms] = useState([]);
+    const [userRooms, setUserRooms] = useState<{ groupNameID: number; roomID: number; roomName: string }>([]);
+
     const [userDevices, setUserDevices] = useState([]);
     const [userGroups, setUserGroups] = useState([]);
     const [navbarAnnouncementErrorModals, setNavbarAnnouncementErrorModals] = useState([]);
@@ -42,29 +45,39 @@ export default function NavBar() {
 
     const showErrorAnnouncementFlash = (errors: Array<string>, title: string): void => {        
         setNavbarAnnouncementErrorModals([
-            <BuildAnnouncementFlashModal
+            <BuildAnnouncementErrorFlashModal
                 title={title}
                 errors={errors}
                 errorNumber={navbarAnnouncementErrorModals.length}
+                timer= {80}
             />
         ])
     }
     
-    const navbarRequestData = async () => {
+    const navbarRequestData = async (): Promise<AxiosResponse> => {
         try {
-            const navbarResponse: NavBarResponseInterface = await handleNavBarRequest();
-            setUserRooms(navbarResponse.userRooms);
-            setUserDevices(navbarResponse.devices);
-            setUserGroups(navbarResponse.groupNames);
+            const navbarResponse: AxiosResponse = await handleNavBarRequest();
+            const navbarResponseData: NavBarResponseInterface = navbarResponse.data.payload;
 
-            if (navbarResponse.errors.length > 0) {
-                showErrorAnnouncementFlash(navbarResponse.errors, 'Partial response');
+            setUserRooms(navbarResponseData.userRooms);
+            setUserDevices(navbarResponseData.devices);
+            setUserGroups(navbarResponseData.groupNames);
+
+            console.log(
+                navbarResponseData.userRooms,
+                navbarResponseData.devices,
+                navbarResponseData.groupNames
+            );
+            if (navbarResponseData.errors.length > 0) {
+                showErrorAnnouncementFlash(navbarResponseData.errors, 'Partial response');
             }
+
+            return navbarResponse;
         } catch (err) {
             const errors = err as Error|AxiosError;
 
             if(axios.isAxiosError(errors)) {
-                const jsonResponse: {title: string, errors: string|Array<string>} = JSON.parse(errors.request.response);
+                const jsonResponse: ErrorResponseInterface = JSON.parse(errors.request.response);
                 let errorsOverride: boolean = false;
                 
                 if (errors.response.status === 403) {
@@ -95,7 +108,7 @@ export default function NavBar() {
     return (
         <React.Fragment>
             {
-                navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal: typeof AnnouncementFlashModal, index: number) => {
+                navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal: typeof AnnouncementErrorFlashModal, index: number) => {
                     return (
                         <div key={index}> 
                             {navbarAnnouncementErrorModal}
@@ -115,8 +128,8 @@ export default function NavBar() {
                 <li className="nav-item">
                     {admin === true 
                         ? 
-                        <Link to={`${webappURL}admin`}> 
-                            <div className="nav-link" href={webappURL+"index"}>
+                        <Link to={`${webappURL}admin`}>
+                            <div className="nav-link">
                                 <i className="fas fa-fw fa-tachometer-alt" />
                             <span>Admin Dashboard</span></div>
                         </Link>
@@ -127,7 +140,7 @@ export default function NavBar() {
                 <hr className="sidebar-divider" />
 
                 <div className="sidebar-heading">
-                    View options
+                    View options for:
                 </div>
 
                 <li className="nav-item" onClick={() => {toggleNavTabElement('room')}}>
@@ -138,10 +151,14 @@ export default function NavBar() {
                     <div className={'collapse '+roomNavToggleClass} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div className="bg-white py-2 collapse-inner rounded">
                             <h6 className="collapse-header">View Room:</h6>
-                                {/* {context.userRooms.map((navRoom) => (
-                                    <Link to={`${webappURL}room?room-id=${navRoom.roomID}`} key={navRoom.roomID} className="collapse-item">{navRoom.roomName}</Link>
-                                ))}
-                                <Link to={`${webappURL}add-room`} className="collapse-item">+Add New Room</Link> */}
+                            {
+                                Array.isArray(userRooms) && userRooms.length > 0
+                                    ? userRooms.map((navRoom: { groupNameID: number; roomID: number; roomName: string }, index: number) => (
+                                    <Link to={`${webappURL}room?room-id=${navRoom.roomID}`} key={index} className="collapse-item">{navRoom.roomName}</Link>
+                                ))
+                                    : null
+                            }
+                            <Link to={`${webappURL}add-room`} className="collapse-item">+Add New Room</Link>
                         </div>
                     </div>
                 </li>
