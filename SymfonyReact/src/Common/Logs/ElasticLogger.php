@@ -10,7 +10,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Stringable;
 
-class ElasticLogger implements LoggerInterface, LoggerAwareInterface
+class ElasticLogger implements LoggerInterface
 {
     private LoggerInterface $logger;
 

@@ -23,37 +23,41 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        device_api:
-            pattern: ^/HomeApp/api/device
+        login_device:
+            pattern: ^/HomeApp/api/device/login_check
             stateless: true
-            entry_point: jwt
             provider: 'api_device_provider'
             json_login:
                 check_path: /HomeApp/api/device/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        device_api:
+            pattern: ^/HomeApp/api/device
+            stateless: true
+            provider: 'api_device_provider'
             jwt: ~
+            entry_point: jwt
             refresh_jwt:
                 check_path: /HomeApp/api/device/token/refresh
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
 
-        user_api:
-            pattern: ^/HomeApp/api/user
+        login_user:
+            pattern: ^/HomeApp/api/user/login_check
             stateless: true
-            entry_point: jwt
             provider: 'app_user_provider'
             json_login:
                 check_path: /HomeApp/api/user/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        user_api:
+            pattern: ^/HomeApp/api/user
+            stateless: true
+            provider: 'app_user_provider'
+            entry_point: jwt
             jwt: ~
             refresh_jwt:
                 check_path: /HomeApp/api/user/token/refresh
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
