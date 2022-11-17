@@ -153,22 +153,18 @@
 /*}*/
 
 
-/*!* #login-Form-field-container {*/
-/*    padding: 15% 5% 5% 15%;*/
-/*} *!*/
+#login-Form-field-container {
+    padding: 15% 5% 5% 15%;
+}
 
-/*.login-form-field {*/
-/*    margin: 7% 0 2% 0;*/
-/*}*/
+.login-form-field {
+    margin: 7% 0 2% 0;
+}
 
-/*.login-form {*/
-/*    width: 95%;*/
-/*    padding: 10% 10% 5% 7%;*/
-/*}*/
-
-/*!*.login-spinner {*!*/
-/*!*    margin: 0 0 0 47%;*!*/
-/*!*}*!*/
+.login-form {
+    width: 100%;
+    padding: 10% 10% 5% 7%;
+}
 
 .hover {
     cursor: pointer;

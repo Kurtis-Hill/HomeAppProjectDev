@@ -10,6 +10,8 @@ import { getRoles, checkAdmin } from "../../session/UserSession";
 import { handleNavBarRequest } from "../../Request/NavBar/NavBarRequest";
 import NavBarResponseInterface from "../../Response/NavBar/NavBarResponseInterface";
 
+import NavbarItem from "./NavbarItem";
+
 import { ErrorResponseInterface } from "../../Response/ErrorResponseInterface";
 
 import { AnnouncementErrorFlashModal } from "../Modals/AnnouncementErrorFlashModal";
@@ -103,16 +105,14 @@ export default function NavBar() {
           }
     }
 
-    const roomNavToggleClass: string = roomNavToggle === true ? 'show' : '';
-
     return (
         <React.Fragment>
             {
                 navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal: typeof AnnouncementErrorFlashModal, index: number) => {
                     return (
-                        <div key={index}> 
+                        <React.Fragment key={index}>
                             {navbarAnnouncementErrorModal}
-                        </div>
+                        </React.Fragment>
                     );
                 })
             }
@@ -143,7 +143,15 @@ export default function NavBar() {
                     View options for:
                 </div>
 
-                <li className="nav-item" onClick={() => {toggleNavTabElement('room')}}>
+                {
+                    Array.isArray(userRooms) && userRooms.length > 0
+                        ? <NavbarItem
+                            dropdownItems={userRooms}
+                            heading={'Room'}
+                            />
+                        : null
+                }
+                {/* <li className="nav-item" onClick={() => {toggleNavTabElement('room')}}>
                     <div className="nav-link collapsed hover" data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
                         <i className="fas fa-fw fa-person-booth"/>
                         <span>Room</span>
@@ -161,7 +169,7 @@ export default function NavBar() {
                             <Link to={`${webappURL}add-room`} className="collapse-item">+Add New Room</Link>
                         </div>
                     </div>
-                </li>
+                </li> */}
 
 
                         <li className="nav-item" onClick={() => {}}>
