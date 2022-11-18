@@ -4,12 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { webappURL } from "../../Common/CommonURLs";
 
+import { NavbarListItem } from "./NavbarItemInterfaces";
+
 export default function NavbarItem(props) {
     const heading: string = props.heading;
-    const objectsToList: any = props.dropDownItems;
+    const icon: string = props.icon;
+    const listLinks: Array<NavbarListItem> = props.listLinks;
+    const createNewLink: string|null = props.createNewLink;
+    const createNewText: string|null = props.createNewText;
 
-    console.log('lol', objectsToList)
-    const [dropdownItems, setDropdownItems] = useState<Array<any>>([]);
+    const [dropdownItems, setDropdownItems] = useState<Array<NavbarListItem>>(props.listLinks);
     
     const [navbarItemToggleDropdown, setNavbarItemToggleDropdown] = useState<boolean>(false)
     
@@ -27,20 +31,20 @@ export default function NavbarItem(props) {
     return (
         <li className="nav-item" onClick={() => {toggleNavTabElement()}}>
             <div className="nav-link collapsed hover" data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
-                <i className="fas fa-fw fa-person-booth"/>
+                <i className={`fas fa-fw fa-${icon}`}/>
                 <span>{ heading }</span>
             </div>
             <div className={`collapse ${navItemDropdownToggleClass}`} aria-labelledby="headingTwo">
                 <div className="bg-white py-2 collapse-inner rounded">
                     <h6 className="collapse-header">View Room:</h6>
                     {
-                        Array.isArray(objectsToList) && objectsToList.length > 0
-                            ? objectsToList.map((navRoom: { groupNameID: number; roomID: number; roomName: string }, index: number) => (
-                            <Link to={`${webappURL}room?room-id=${navRoom.roomID}`} key={index} className="collapse-item">{navRoom.roomName}</Link>
+                        Array.isArray(dropdownItems) && dropdownItems.length > 0
+                            ? dropdownItems.map((navListItem, index: number) => (
+                            <Link to={navListItem.link} key={index} className="collapse-item">{navListItem.displayName}</Link>
                         ))
                             : null
                     }
-                    <Link to={`${webappURL}add-room`} className="collapse-item">+Add New Room</Link>
+                    <Link to={createNewLink} className="collapse-item">{ createNewText }</Link>
                 </div>
             </div>
         </li>

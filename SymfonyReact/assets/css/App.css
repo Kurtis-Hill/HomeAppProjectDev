@@ -25,8 +25,9 @@
  }
 
  .error-modal-list {
-     background-color: red;
-     color: white;
+     /* background-color: red; */
+     /* color: white; */
+     text-align: center;
      border-radius: 5px;
      margin-bottom: 1%;
  }

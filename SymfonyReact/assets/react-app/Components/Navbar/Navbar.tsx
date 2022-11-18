@@ -9,44 +9,44 @@ import { getRoles, checkAdmin } from "../../session/UserSession";
 
 import { handleNavBarRequest } from "../../Request/NavBar/NavBarRequest";
 import NavBarResponseInterface from "../../Response/NavBar/NavBarResponseInterface";
+import RoomInterface from "../../Response/User/Interfaces/RoomInterface"
+import { NavbarListItem, NavbarList } from "./NavbarItemInterfaces";
 
 import NavbarItem from "./NavbarItem";
+
 
 import { ErrorResponseInterface } from "../../Response/ErrorResponseInterface";
 
 import { AnnouncementErrorFlashModal } from "../Modals/AnnouncementErrorFlashModal";
 import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
+// import { AnnouncementErrorFlashModal } from "../Modals/AnnouncementErrorFlashModal";
 
 export default function NavBar() {
-    const [roomNavToggle, setRoomNavToggle] = useState<boolean>(false);
+    const [navbarAnnouncementErrorModals, setNavbarAnnouncementErrorModals] = useState<Array<typeof AnnouncementErrorFlashModal>>([]);
+    // const [navbarItems, setNavbarItems] = useState<Array<typeof NavbarItem>([]);
+    const [navbarItems, setNavbarItems] = useState<Array<typeof NavbarItem>>([]);
 
-    const [userRooms, setUserRooms] = useState<{ groupNameID: number; roomID: number; roomName: string }>([]);
-
+    const [userRooms, setUserRooms] = useState<Array<RoomInterface>>([]);
+    
+    // const [navBarUserRooms, setNavBarUserRooms] = useState([]);
     const [userDevices, setUserDevices] = useState([]);
     const [userGroups, setUserGroups] = useState([]);
-    const [navbarAnnouncementErrorModals, setNavbarAnnouncementErrorModals] = useState([]);
 
     const admin: boolean = checkAdmin();
 
     useEffect(() => {
-        navbarRequestData();
-      }, []);
 
-
-    const toggleNavTabElement = (navDropDownElement: string): void => {      
-        if (navDropDownElement === 'room') {
-            setRoomNavToggle(!roomNavToggle);
+        if (navbarItems.length === 0) {
+            requestNavbarData();
         }
-    }
 
-    const toggleOffNavTabElement = (navDropDownElement: string): void => {       
-        if (navDropDownElement === 'room') {
-            setRoomNavToggle(false);
-        }
-    }
+        // console.log('usereffect navbar', navbarItems);
+      }, [navbarItems]);
+
 
     const showErrorAnnouncementFlash = (errors: Array<string>, title: string): void => {        
         setNavbarAnnouncementErrorModals([
+            ...navbarAnnouncementErrorModals,
             <BuildAnnouncementErrorFlashModal
                 title={title}
                 errors={errors}
@@ -55,54 +55,85 @@ export default function NavBar() {
             />
         ])
     }
-    
-    const navbarRequestData = async (): Promise<AxiosResponse> => {
-        try {
+
+    const buildNavbarItem = (navbarData: NavbarList) => {
+        // console.log('current nav before update', navbarItems)
+        setNavbarItems([
+            ...navbarItems,
+            <NavbarItem
+                heading={navbarData.heading}
+                icon={navbarData.icon}
+                createNewLink={navbarData.createNewLink}
+                listLinks={navbarData.listLinks}
+            />
+        ])
+    }
+
+    const handleNavBarResponse = (navbarResponseData: NavBarResponseInterface) => {
+        const userRooms: Array<RoomInterface> = navbarResponseData.userRooms;
+        if (userRooms.length > 0) {
+            let navbarUserRoomsListItem: Array<NavbarListItem> = [];
+            for (let i = 0; i < userRooms.length; i++) {
+                console.log(userRooms[i])
+                navbarUserRoomsListItem.push({
+                    link: `${webappURL}room?room-id=${userRooms[i].roomID}`,
+                    displayName: userRooms[i].roomName
+                });
+            }
+
+            buildNavbarItem({
+                heading: "Rooms",
+                listLinks: navbarUserRoomsListItem,
+                icon: "person-booth",
+                createNewLink: `${webappURL}add-room`,
+                createNewText: "+Add New Room"
+            });
+        }
+    }
+
+    const requestNavbarData = async (): Promise<AxiosResponse> => {
+        console.log('nav req fired');
+        // try {
             const navbarResponse: AxiosResponse = await handleNavBarRequest();
             const navbarResponseData: NavBarResponseInterface = navbarResponse.data.payload;
+            console.log('navbar response', navbarResponseData)
 
-            setUserRooms(navbarResponseData.userRooms);
-            setUserDevices(navbarResponseData.devices);
-            setUserGroups(navbarResponseData.groupNames);
+            handleNavBarResponse(navbarResponseData);
 
-            console.log(
-                navbarResponseData.userRooms,
-                navbarResponseData.devices,
-                navbarResponseData.groupNames
-            );
             if (navbarResponseData.errors.length > 0) {
                 showErrorAnnouncementFlash(navbarResponseData.errors, 'Partial response');
             }
 
             return navbarResponse;
-        } catch (err) {
-            const errors = err as Error|AxiosError;
-
-            if(axios.isAxiosError(errors)) {
-                const jsonResponse: ErrorResponseInterface = JSON.parse(errors.request.response);
-                let errorsOverride: boolean = false;
-                
-                if (errors.response.status === 403) {
-                    errorsOverride = true
-                }
-
-                const errorsForModal = Array.isArray(jsonResponse.errors) 
-                    ? jsonResponse.errors 
-                    : [jsonResponse.errors];
-
-                showErrorAnnouncementFlash(
-                    errorsOverride === true 
-                        ? ['Unauthorized'] 
-                        : errorsForModal,
-                    jsonResponse.title
-                ); 
-            } else {
-                showErrorAnnouncementFlash(
-                    [`Something went wrong, please try refresh the browser or log out and back in again`],
-                    'Unrecognized Error'
-                );
-            }
-          }
+        // } catch (err) {
+        //     console.log('error');
+        //     const errors = err as Error|AxiosError;
+        //
+        //     if(axios.isAxiosError(errors)) {
+        //         const jsonResponse: ErrorResponseInterface = JSON.parse(errors.request.response);
+        //         let errorsOverride: boolean = false;
+        //
+        //         if (errors.response.status === 403) {
+        //             errorsOverride = true
+        //         }
+        //
+        //         const errorsForModal = Array.isArray(jsonResponse.errors)
+        //             ? jsonResponse.errors
+        //             : [jsonResponse.errors];
+        //
+        //         showErrorAnnouncementFlash(
+        //             errorsOverride === true
+        //                 ? ['Unauthorized']
+        //                 : errorsForModal,
+        //             jsonResponse.title
+        //         );
+        //     } else {
+        //         showErrorAnnouncementFlash(
+        //             [`Something went wrong, please try refresh the browser or log out and back in again`],
+        //             'Unrecognized Error'
+        //         );
+        //     }
+        // }
     }
 
     return (
@@ -125,18 +156,18 @@ export default function NavBar() {
                 </Link>
                 <hr className="sidebar-divider my-0" />
 
-                <li className="nav-item">
-                    {admin === true 
-                        ? 
-                        <Link to={`${webappURL}admin`}>
-                            <div className="nav-link">
-                                <i className="fas fa-fw fa-tachometer-alt" />
-                            <span>Admin Dashboard</span></div>
-                        </Link>
-                        : 
+                    {admin === true
+                        ?
+                        <li className="nav-item">
+                            <Link to={`${webappURL}admin`}>
+                                <div className="nav-link">
+                                    <i className="fas fa-fw fa-tachometer-alt" />
+                                <span>Admin Dashboard</span></div>
+                            </Link>
+                        </li>
+                        :
                         null
                     }
-                </li>
                 <hr className="sidebar-divider" />
 
                 <div className="sidebar-heading">
@@ -144,20 +175,29 @@ export default function NavBar() {
                 </div>
 
                 {
-                    Array.isArray(userRooms) && userRooms.length > 0
+                    navbarItems.map((navbarItem: typeof NavbarItem, index: number) => {
+                        return (
+                            <React.Fragment key={index}>
+                                {navbarItem}
+                            </React.Fragment>
+                        );
+                    })
+                }
+                {/* {                
+                    Array.isArray(userRooms) && userRooms.length > 0 && userRooms
                         ? <NavbarItem
                             dropdownItems={userRooms}
                             heading={'Room'}
                             />
                         : null
-                }
+                } */}
                 {/* <li className="nav-item" onClick={() => {toggleNavTabElement('room')}}>
                     <div className="nav-link collapsed hover" data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
                         <i className="fas fa-fw fa-person-booth"/>
                         <span>Room</span>
                     </div>
                     <div className={'collapse '+roomNavToggleClass} aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                        <div className="bg-white py-2 collapse-inner rounded">
+                        <div className="bg-white py-2 collapse-inner rounded">ho
                             <h6 className="collapse-header">View Room:</h6>
                             {
                                 Array.isArray(userRooms) && userRooms.length > 0
@@ -172,21 +212,21 @@ export default function NavBar() {
                 </li> */}
 
 
-                        <li className="nav-item" onClick={() => {}}>
-                            <a className="nav-link collapsed" href="SymfonyReact/assets/OldApp/js/components/Navbar#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-                                <i className="fas fa-fw fa-microchip" />
-                                <span>Devices</span>
-                            </a>
-                            <div id="collapseTwo" className='collapse' aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div className="bg-white py-2 collapse-inner rounded">
-                                <h6 className="collapse-header">Devices:</h6>
-                                {/* {context.userDevices.map((device) => (
-                                    <Link key={device.deviceNameID} className="collapse-item" to={`${webappURL}device?device-id=${device.deviceNameID}&device-group=${device.groupNameID}&device-room=${device.roomID}&view=device`}>{device.deviceName}</Link>
-                                ))} */}
-                                <div className="hover collapse-item" onClick={() => {}}>+Add New Device</div>
-                            </div>
-                            </div>
-                        </li>
+                        {/*<li className="nav-item" onClick={() => {}}>*/}
+                        {/*    <a className="nav-link collapsed" href="SymfonyReact/assets/OldApp/js/components/Navbar#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">*/}
+                        {/*        <i className="fas fa-fw fa-microchip" />*/}
+                        {/*        <span>Devices</span>*/}
+                        {/*    </a>*/}
+                        {/*    <div id="collapseTwo" className='collapse' aria-labelledby="headingTwo" data-parent="#accordionSidebar">*/}
+                        {/*    <div className="bg-white py-2 collapse-inner rounded">*/}
+                        {/*        <h6 className="collapse-header">Devices:</h6>*/}
+                        {/*        /!* {context.userDevices.map((device) => (*/}
+                        {/*            <Link key={device.deviceNameID} className="collapse-item" to={`${webappURL}device?device-id=${device.deviceNameID}&device-group=${device.groupNameID}&device-room=${device.roomID}&view=device`}>{device.deviceName}</Link>*/}
+                        {/*        ))} *!/*/}
+                        {/*        <div className="hover collapse-item" onClick={() => {}}>+Add New Device</div>*/}
+                        {/*    </div>*/}
+                        {/*    </div>*/}
+                        {/*</li>*/}
 
                         <hr className="sidebar-divider" />
 
