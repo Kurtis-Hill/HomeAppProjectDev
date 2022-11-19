@@ -2,18 +2,15 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
-import { webappURL } from "../../Common/CommonURLs";
+import { NavbarListItemInterface, NavbarListInterface } from "./Interfaces/NavbarItemInterfaces";
 
-import { NavbarListItem } from "./NavbarItemInterfaces";
-
-export default function NavbarItem(props) {
+export default function NavbarListItem(props: NavbarListInterface) {
     const heading: string = props.heading;
     const icon: string = props.icon;
-    const listLinks: Array<NavbarListItem> = props.listLinks;
     const createNewLink: string|null = props.createNewLink;
     const createNewText: string|null = props.createNewText;
-
-    const [dropdownItems, setDropdownItems] = useState<Array<NavbarListItem>>(props.listLinks);
+    const dropdownItems: Array<NavbarListItemInterface> = props.listLinks;
+    // const [dropdownItems, setDropdownItems] = useState<Array<NavbarListItemInterface>>(props.listLinks);
     
     const [navbarItemToggleDropdown, setNavbarItemToggleDropdown] = useState<boolean>(false)
     
@@ -44,7 +41,7 @@ export default function NavbarItem(props) {
                         ))
                             : null
                     }
-                    <Link to={createNewLink} className="collapse-item">{ createNewText }</Link>
+                    <Link to={createNewLink} className="collapse-item">{createNewText}</Link>
                 </div>
             </div>
         </li>

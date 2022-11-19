@@ -1,14 +1,14 @@
 import axios, {AxiosResponse} from 'axios';
 
 import { apiURL } from "../Common/CommonURLs";
-import { setUserSession, refreshUserTokens } from "../session/UserSession";
+import { setUserSession, refreshUserTokens } from "../Session/UserSession";
 
 import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginResponseInterface";
 import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
 
 import { LoginFormUserInputsInterface } from "../Components/Form/UserInputs/Interface/LoginFormUserInputsInterface"
 
-import { getRefreshToken } from "../session/UserSession"
+import { getRefreshToken } from "../Session/UserSession"
 
 export async function handleLogin(userInputs: LoginFormUserInputsInterface): Promise<AxiosResponse> {
     const loginCheckResponse: AxiosResponse = await axios.post(

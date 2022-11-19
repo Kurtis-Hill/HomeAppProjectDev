@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError, AxiosResponse } from 'axios';
@@ -23,6 +23,7 @@ export default function Login(): LoginInterface {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
+    const [pingResult, setPingResult] = useState<boolean>(true);
 
     const loginPageImage = require('../../../images/login/index-photo.jpg')
 
@@ -68,6 +69,7 @@ export default function Login(): LoginInterface {
                 }
             }
         }
+        setPingResult(false);
     }
                 
 
@@ -109,7 +111,6 @@ export default function Login(): LoginInterface {
                     setError(['Something went wrong']);
                 }
             }
-
         }
     }
 
@@ -158,9 +159,11 @@ export default function Login(): LoginInterface {
         );
     }
 
-    return (
-        <React.Fragment>
-            <ColouredPage content={loginPageContent()} />
-        </React.Fragment>
-    );
+    if (pingResult === false) {
+        return (
+            <React.Fragment>
+                <ColouredPage content={loginPageContent()} />
+            </React.Fragment>
+        );
+    }
 }

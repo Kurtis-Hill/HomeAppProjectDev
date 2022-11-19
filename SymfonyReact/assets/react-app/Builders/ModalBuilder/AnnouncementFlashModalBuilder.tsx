@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { AnnouncementErrorFlashModal } from '../../Components/Modals/AnnouncementErrorFlashModal';
+import { AnnouncementFlashModal } from '../../Components/Modals/AnnouncementFlashModal';
 
 export function BuildAnnouncementErrorFlashModal(
     props: {
@@ -16,7 +16,7 @@ export function BuildAnnouncementErrorFlashModal(
   const timer: number = props.timer ?? 80;
 
   return (
-        <AnnouncementErrorFlashModal
+        <AnnouncementFlashModal
             title={title}
             errors={errors}
             errorNumber={errorNumber}

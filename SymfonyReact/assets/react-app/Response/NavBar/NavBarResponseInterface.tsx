@@ -1,10 +1,10 @@
-import DeviceInterface from '../User/Interfaces/DevicesInterface';
-import RoomInterface from '../User/Interfaces/RoomInterface';
-import GroupNameInterface from '../User/Interfaces/GroupNameInterface';
+import DeviceNavbarResponseInterface from '../User/Navbar/Interfaces/DeviceNavbarResponseInterface';
+import RoomNavbarResponseInterfaceInterface from '../User/Navbar/Interfaces/RoomNavbarResponseInterface';
+import GroupNameNavbarResponseInterface from '../User/Navbar/Interfaces/GroupNameNavbarResponseInterface';
 
 export default interface NavBarResponseInterface {
-    userRooms: Array<RoomInterface>;
-    devices: Array<DeviceInterface>;
-    groupNames: Array<GroupNameInterface>;
+    userRooms: Array<RoomNavbarResponseInterfaceInterface>;
+    devices: Array<DeviceNavbarResponseInterface>;
+    groupNames: Array<GroupNameNavbarResponseInterface>;
     errors: Array<string>
 }

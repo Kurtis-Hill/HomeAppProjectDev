@@ -1,15 +1,12 @@
-import * as React from 'react';
-
-
-export interface NavbarList {
+export interface NavbarListInterface {
     heading: string;
     icon: string;
-    listLinks: Array<NavbarListItem>;
+    listLinks: Array<NavbarListItemInterface>;
     createNewLink: string|null;
     createNewText: string|null;
 }
 
-export interface NavbarListItem {
+export interface NavbarListItemInterface {
     link: string;
     displayName: string;
 }

@@ -1,4 +1,4 @@
-export default interface DeviceInterface {
+export default interface DeviceNavbarResponseInterface {
     deviceNameID: number|null;
     deviceName: string;
     deviceSecret: string|null;

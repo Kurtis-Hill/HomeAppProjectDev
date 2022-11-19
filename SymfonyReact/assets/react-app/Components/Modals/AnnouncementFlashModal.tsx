@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-export function AnnouncementErrorFlashModal(props: { title: string; errors: string[]; errorNumber: number; timer: number; }) {
+export function AnnouncementFlashModal(props: { title: string; errors: string[]; errorNumber: number; timer: number; }) {
   const title: string = props.title
   const errors: Array<string> = props.errors
   const errorNumber: number = props.errorNumber
@@ -23,7 +23,7 @@ export function AnnouncementErrorFlashModal(props: { title: string; errors: stri
     return () => clearInterval(interval);
   }, [modalOpacity]);
 
-  const toggleModalOff = () => {
+  const toggleModalOff = (): void => {
     setModalShow(false);
   }
 

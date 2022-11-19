@@ -6,6 +6,11 @@ import {
     Route,
 } from "react-router-dom";
 
+// import '@fortawesome/fontawesome-free/js/fontawesome'
+// import '@fortawesome/fontawesome-free/js/solid'
+// import '@fortawesome/fontawesome-free/js/regular'
+// import '@fortawesome/fontawesome-free/js/brands'
+
 import Login from "../Routes/Login/Login";
 import { LandingPage } from "../Routes/LandingPage/LandingPage";
 
