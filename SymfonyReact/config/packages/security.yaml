@@ -73,6 +73,7 @@ security:
         # api endpoints pending on user
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }
         - { path: ^/HomeApp/api/user, roles: ROLE_USER }
+        - { path: ^/HomeApp/api/ping, roles: ROLE_USER }
 
         - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
         - { path: ^/HomeApp/WebApp, roles: IS_AUTHENTICATED_FULLY }

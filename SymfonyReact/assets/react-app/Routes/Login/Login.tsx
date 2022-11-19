@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { webappURL, registerAccountUrl } from "../../Common/CommonURLs";
+import {webappURL, registerAccountUrl, indexUrl} from "../../Common/CommonURLs";
 import { getToken } from "../../Common/APICommon";
 
 import SubmitButton from "../../Components/Buttons/SubmitButton";
@@ -19,7 +19,7 @@ import { handlePingRequest, PingInterface } from "../../Request/Ping";
 
 import { LoginInterface } from "./LoginInterface"
 
-export default function Login(): LoginInterface {
+export default function Login(): void {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
@@ -60,12 +60,14 @@ export default function Login(): LoginInterface {
             const pingRequest: PingInterface = await handlePingRequest();
 
             if (pingRequest.status === 200) {
-                navigate(`${webappURL}index`);
+                navigate(`${indexUrl}`);
             }
-            if (pingRequest.status === 403) {
+            if (pingRequest.status === 401) {
+                console.log('login checkCurrentToken 401')
                 const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
+                console.log('login checkCurrentToken response', refreshTokenResponse)
                 if (refreshTokenResponse.status === 200) {
-                    navigate(`${webappURL}index`);
+                    navigate(`${indexUrl}`);
                 }
             }
         }

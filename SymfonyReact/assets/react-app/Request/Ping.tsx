@@ -1,16 +1,15 @@
 import axios from 'axios';
 
 import { baseApiURL } from "../Common/CommonURLs";
-
-import { getAPIHeader } from "../Common/APICommon";
+import { removeUserSession } from "../Session/UserSession";
 
 export async function handlePingRequest(): Promise<PingInterface> {
-    const pingRequest = await axios.get(
+    const pingResponse: PingInterface = await axios.get(
         `${baseApiURL}ping`,
-        getAPIHeader()
-    );        
+    );
+    // removeUserSession();
 
-    return pingRequest;
+    return pingResponse;
 }
 
 export interface PingInterface {

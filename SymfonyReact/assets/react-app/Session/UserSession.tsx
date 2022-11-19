@@ -14,6 +14,13 @@ export const setUserSession = (loginResponse: LoginResponseInterface): void => {
     localStorage.setItem('roles' , JSON.stringify(loginResponse.userData.roles));
 }
 
+export const removeUserSession = (): void => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userID');
+    localStorage.removeItem('roles');
+}
+
 export const refreshUserTokens = (refreshTokenResponseData: TokenRefreshResponseInterface): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
@@ -33,12 +40,15 @@ export const getRoles = (): Array<string>|null => {
 export const checkAdmin = (): boolean => {
     const roles = getRoles();
 
-    for(let i = 0; i < roles.length; ++i) {
-        if (roles[i].match('ROLE_ADMIN')) {
-            return true;
-        }
-        if (i === roles.length) {
-            return false;
+    if (roles !== null) {
+        // console.log('roles is null', roles)
+        for(let i = 0; i < roles.length; ++i) {
+            if (roles[i].match('ROLE_ADMIN')) {
+                return true;
+            }
+            if (i === roles.length) {
+                return false;
+            }
         }
     }
 }

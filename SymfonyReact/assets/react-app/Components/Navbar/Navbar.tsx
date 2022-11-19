@@ -24,13 +24,13 @@ import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/An
 export default function NavBar(props: {
     refreshNavbar: boolean,
     setRefreshNavDataFlag: (newValue: boolean) => void,
-    showErrorAnnouncementFlash: (errors: Array<string>, title: string) => void
+    showErrorAnnouncementFlash: (errors: Array<string>, title: string) => void,
 }) {
     const refreshNavbarIndicator = props.refreshNavbar;
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const errorAnnouncementFlash = props.showErrorAnnouncementFlash;
 
-    const [navbarAnnouncementErrorModals, setNavbarAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    // const [navbarAnnouncementErrorModals, setNavbarAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
     const [navbarResponseData, setNavbarResponseData] = useState<NavBarResponseInterface>([]);
 
     const admin: boolean = checkAdmin();
@@ -50,6 +50,8 @@ export default function NavBar(props: {
             const navbarResponse: AxiosResponse = await handleNavBarRequest();
             const navbarResponseData: NavBarResponseInterface = navbarResponse.data.payload;
 
+            console.log('nav request code', navbarResponse.status);
+            console.log('nav request', navbarResponseData);
             setNavbarResponseData(navbarResponseData);
             if (navbarResponseData.errors.length > 0) {
                 errorAnnouncementFlash(navbarResponseData.errors, 'Partial response');
@@ -58,24 +60,25 @@ export default function NavBar(props: {
             return navbarResponse;
         } catch (err) {
             const errors = err as Error|AxiosError;
-        
+        console.log('nav request error', errors);
             if(axios.isAxiosError(errors)) {
                 const jsonResponse: ErrorResponseInterface = JSON.parse(errors.request.response);
                 let errorsOverride: boolean = false;
-        
-                if (errors.response.status === 403) {
+
+                if (errors.response.status === 401) {
                     errorsOverride = true
                 }
-        
+
                 const errorsForModal = Array.isArray(jsonResponse.errors)
                     ? jsonResponse.errors
                     : [jsonResponse.errors];
 
+                console.log('nav request error', errorsForModal, jsonResponse.title, errorsOverride, errors.response);
                 errorAnnouncementFlash(
                     errorsOverride === true
                         ? ['Unauthorized']
                         : errorsForModal,
-                    jsonResponse.title
+                    jsonResponse.title ?? 'Error'
                 );
             } else {
                 errorAnnouncementFlash(
@@ -88,15 +91,15 @@ export default function NavBar(props: {
 
     return (
         <React.Fragment>
-            {
-                navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal: typeof AnnouncementFlashModal, index: number) => {
-                    return (
-                        <React.Fragment key={index}>
-                            {navbarAnnouncementErrorModal}
-                        </React.Fragment>
-                    );
-                })
-            }
+            {/*{*/}
+            {/*    navbarAnnouncementErrorModals.map((navbarAnnouncementErrorModal: typeof AnnouncementFlashModal, index: number) => {*/}
+            {/*        return (*/}
+            {/*            <React.Fragment key={index}>*/}
+            {/*                {navbarAnnouncementErrorModal}*/}
+            {/*            </React.Fragment>*/}
+            {/*        );*/}
+            {/*    })*/}
+            {/*}*/}
 
             <ul className={"navbar-nav bg-gradient-primary sidebar sidebar-dark accordion "}>
                 <HomeAppButton />
@@ -111,7 +114,6 @@ export default function NavBar(props: {
                 <SiderbarDividerWithHeading heading="View options for:" />
 
                 <NavbarViewOptionListElements navbarResponseData={navbarResponseData} />
-
 
                 {/*<li className="nav-item">*/}
                 {/*    <a className="nav-link" href="charts.html">*/}
