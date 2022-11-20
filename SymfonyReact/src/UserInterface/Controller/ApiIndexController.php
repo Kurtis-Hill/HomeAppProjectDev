@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route('/HomeApp/api', name: 'home')]
+#[Route('/HomeApp/api/user', name: 'home')]
 class ApiIndexController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -18,12 +18,6 @@ class ApiIndexController extends AbstractController
     #[Route('/ping', name: 'ping', methods: [Request::METHOD_GET])]
     public function pingAction(): JsonResponse
     {
-        try {
-            $this->denyAccessUnlessGranted(['ROLE_USER']);
-        } catch (AccessDeniedException) {
-            return $this->sendForbiddenAccessJsonResponse();
-        }
-
         return new JsonResponse('pong', Response::HTTP_OK);
     }
 }

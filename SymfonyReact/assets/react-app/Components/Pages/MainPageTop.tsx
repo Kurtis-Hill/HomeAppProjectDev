@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import {
-    Link,
     Outlet,
   } from "react-router-dom";
 
@@ -9,6 +8,8 @@ import Navbar from "../Navbar/Navbar";
 
 import { AnnouncementFlashModal } from "../Modals/AnnouncementFlashModal";
 import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
+import { ErrorResponseInterceptor } from "../../Request/Axios/ErrorResponseInterceptor";
+import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
 
 export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
@@ -19,14 +20,14 @@ export function MainPageTop() {
 
     const [errorAnnouncementErrorModals, setErrorAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
-    const showErrorAnnouncementFlash = (errors: Array<string>, title: string): void => {
+    const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer? : number|null): void => {
         setErrorAnnouncementErrorModals([
             ...errorAnnouncementErrorModals,
             <BuildAnnouncementErrorFlashModal
                 title={title}
                 errors={errors}
                 errorNumber={errorAnnouncementErrorModals.length}
-                timer= {80}
+                timer= {timer ? timer : 80}
             />
         ])
     }
@@ -42,6 +43,8 @@ export function MainPageTop() {
                     );
                 })
             }
+            <ErrorResponseInterceptor showErrorAnnouncementFlash={showErrorAnnouncementFlash} />
+            <RequestInterceptor />
             <div id="page-top">
                 <div id="wrapper">
                     <Navbar

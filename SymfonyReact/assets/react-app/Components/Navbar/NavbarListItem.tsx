@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { Link } from "react-router-dom";
 
 import { NavbarListItemInterface, NavbarListInterface } from "./Interfaces/NavbarItemInterfaces";
 
@@ -10,8 +10,7 @@ export default function NavbarListItem(props: NavbarListInterface) {
     const createNewLink: string|null = props.createNewLink;
     const createNewText: string|null = props.createNewText;
     const dropdownItems: Array<NavbarListItemInterface> = props.listLinks;
-    // const [dropdownItems, setDropdownItems] = useState<Array<NavbarListItemInterface>>(props.listLinks);
-    
+
     const [navbarItemToggleDropdown, setNavbarItemToggleDropdown] = useState<boolean>(false)
     
     const toggleNavTabElement = (): void => {            
@@ -19,11 +18,6 @@ export default function NavbarListItem(props: NavbarListInterface) {
     }
     
     const navItemDropdownToggleClass: string = navbarItemToggleDropdown === true ? 'show' : '';
-    
-    // useEffect(() => {
-    //     console.log(props.dropDownItems, ',e', heading, objectsToList);
-    //     setDropdownItems(props.dropDownItems);
-    //   }, [props.dropDownItems]);
 
     return (
         <li className="nav-item" onClick={() => {toggleNavTabElement()}}>

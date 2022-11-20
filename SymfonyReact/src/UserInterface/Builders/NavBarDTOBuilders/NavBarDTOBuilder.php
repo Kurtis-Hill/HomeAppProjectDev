@@ -15,7 +15,6 @@ class NavBarDTOBuilder
         array $userRooms,
         array $userDevices,
         array $groupNames,
-        array $errors,
     ): NavBarResponseDTO {
         try {
             foreach ($userRooms as $room) {
@@ -45,7 +44,7 @@ class NavBarDTOBuilder
             $roomDTOs ?? ['No Rooms Available'],
             $deviceDTOs ?? ['No Devices Available'],
             $groupNameDTOs ?? ['No Groupnames Available'],
-            $errors
+            $errors ?? []
         );
     }
 }

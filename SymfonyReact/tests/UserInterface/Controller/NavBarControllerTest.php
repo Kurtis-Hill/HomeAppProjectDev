@@ -37,11 +37,7 @@ class NavBarControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        try {
-            $this->userToken = $this->setUserToken($this->client);
-        } catch (JsonException $e) {
-            error_log($e);
-        }
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function test_get_navbar_data_response(): void

@@ -7,6 +7,7 @@ use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
 use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[Immutable]
 class NavBarResponseDTO
@@ -20,6 +21,7 @@ class NavBarResponseDTO
     #[ArrayShape([GroupNameResponseDTO::class || 'No GroupNames Available'])]
     private array $groupNames;
 
+    #[Ignore]
     #[ArrayShape(['errors'])]
     private array $errors;
 
@@ -27,7 +29,7 @@ class NavBarResponseDTO
         array $userRooms,
         array $devices,
         array $groupNames,
-        array $errors,
+        array $errors = [],
     ) {
         $this->userRooms = $userRooms;
         $this->devices = $devices;

@@ -3,6 +3,7 @@ import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginRespon
 import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
 
 export const setUserSession = (loginResponse: LoginResponseInterface): void => {
+    console.log('setting user session', loginResponse)
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userID');
@@ -15,6 +16,7 @@ export const setUserSession = (loginResponse: LoginResponseInterface): void => {
 }
 
 export const removeUserSession = (): void => {
+    console.log('removing user session')
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userID');
@@ -22,11 +24,16 @@ export const removeUserSession = (): void => {
 }
 
 export const refreshUserTokens = (refreshTokenResponseData: TokenRefreshResponseInterface): void => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    console.log('refreshing user tokens', refreshTokenResponseData.token, refreshTokenResponseData.refreshToken)
+    if (refreshTokenResponseData.token !== undefined && refreshTokenResponseData.refreshToken !== undefined) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
 
-    localStorage.setItem('token' , refreshTokenResponseData.token);
-    localStorage.setItem('refreshToken' , refreshTokenResponseData.refreshToken);
+        localStorage.setItem('token' , refreshTokenResponseData.token);
+        localStorage.setItem('refreshToken' , refreshTokenResponseData.refreshToken);
+    } else {
+        console.log("refresh token response data is undefined")
+    }
 }
 
 export const getRefreshToken = (): string|null => {
@@ -41,7 +48,6 @@ export const checkAdmin = (): boolean => {
     const roles = getRoles();
 
     if (roles !== null) {
-        // console.log('roles is null', roles)
         for(let i = 0; i < roles.length; ++i) {
             if (roles[i].match('ROLE_ADMIN')) {
                 return true;

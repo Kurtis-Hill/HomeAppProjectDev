@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-import { baseApiURL } from "../Common/CommonURLs";
-import { removeUserSession } from "../Session/UserSession";
+import { apiURL } from "../Common/CommonURLs";
+import { getToken } from "../Common/APICommon";
 
 export async function handlePingRequest(): Promise<PingInterface> {
+    const token = getToken();
     const pingResponse: PingInterface = await axios.get(
-        `${baseApiURL}ping`,
+        `${apiURL}ping`,
+        { headers: {"Authorization" : `Bearer ${token}`} }
     );
-    // removeUserSession();
 
     return pingResponse;
 }

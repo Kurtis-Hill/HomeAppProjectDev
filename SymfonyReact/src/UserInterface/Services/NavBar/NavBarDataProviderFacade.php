@@ -18,6 +18,8 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
 
     private DeviceRepositoryInterface $deviceRepository;
 
+    private array $errors = [];
+
     public function __construct(
         RoomRepositoryInterface $roomRepository,
         DeviceRepositoryInterface $deviceRepository,
@@ -35,21 +37,25 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
             $userRooms = $this->getRoomData($user);
         } catch (ORMException) {
             $userRooms[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms');
-            $errors[] = 'Failed to get Rooms';
+            $this->errors[] = 'Failed to get Rooms';
         }
         try {
             $userDevices = $this->getDeviceData($user);
         } catch (ORMException) {
             $userDevices[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices');
-            $errors[] = 'Failed to get Device data';
+            $this->errors[] = 'Failed to get Device data';
         }
 
         return NavBarDTOBuilder::buildNavBarResponseDTO(
             $userRooms,
             $userDevices,
             $userGroups,
-            $errors ?? []
         );
+    }
+
+    public function getNavbarRequestErrors(): array
+    {
+        return $this->errors = ['asdsa'];
     }
 
     /**

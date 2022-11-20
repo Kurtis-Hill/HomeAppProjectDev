@@ -1,7 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { apiURL } from "../Common/CommonURLs";
-import {setUserSession, refreshUserTokens, removeUserSession} from "../Session/UserSession";
+import { setUserSession, refreshUserTokens } from "../Session/UserSession";
 
 import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginResponseInterface";
 import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
@@ -38,8 +38,8 @@ export async function handleTokenRefresh(): Promise<AxiosResponse> {
         console.log('refresh token response', refreshTokenResponse)
         const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
 
-        console.log('refresh token response data', refreshTokenResponseData)
         if (refreshTokenResponse.status === 200) {
+            console.log('refresh token response data', refreshTokenResponseData.token, refreshTokenResponseData.refreshToken)
             refreshUserTokens(refreshTokenResponseData);
         }
 
@@ -47,8 +47,5 @@ export async function handleTokenRefresh(): Promise<AxiosResponse> {
     } catch (err) {
         const error = err as Error | AxiosError;
         console.log('error of refresh', error)
-        // removeUserSession();
-        // navigate(`${loginUrl}`);
     }
-
 }

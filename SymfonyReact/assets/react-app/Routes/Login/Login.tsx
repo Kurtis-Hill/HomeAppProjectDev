@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import {webappURL, registerAccountUrl, indexUrl} from "../../Common/CommonURLs";
+import { registerAccountUrl, indexUrl } from "../../Common/CommonURLs";
 import { getToken } from "../../Common/APICommon";
 
 import SubmitButton from "../../Components/Buttons/SubmitButton";
@@ -17,8 +17,6 @@ import { LoginFormUserInputsInterface } from "../../Components/Form/UserInputs/I
 import { handleLogin, handleTokenRefresh } from "../../Request/LoginRequest";
 import { handlePingRequest, PingInterface } from "../../Request/Ping";
 
-import { LoginInterface } from "./LoginInterface"
-
 export default function Login(): void {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
@@ -27,7 +25,7 @@ export default function Login(): void {
 
     const loginPageImage = require('../../../images/login/index-photo.jpg')
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         checkCurrentToken();
@@ -57,13 +55,16 @@ export default function Login(): void {
     const checkCurrentToken = async () => {
         const token = getToken();
         if (token !== null) {
-            const pingRequest: PingInterface = await handlePingRequest();
-
-            if (pingRequest.status === 200) {
+            try {
+                const pingRequest: PingInterface = await handlePingRequest();
+                if (pingRequest.status !== 200) {
+                    setPingResult(false);
+                    console.log('login checkCurrentToken', pingRequest.status)
+                }
                 navigate(`${indexUrl}`);
-            }
-            if (pingRequest.status === 401) {
-                console.log('login checkCurrentToken 401')
+            } catch (err) {
+                const error = err as Error | AxiosError;
+                console.log('login error', error)
                 const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
                 console.log('login checkCurrentToken response', refreshTokenResponse)
                 if (refreshTokenResponse.status === 200) {
@@ -84,7 +85,6 @@ export default function Login(): void {
         setLoading(true);
 
         const validationPassed = validateUserInput();
-
         if (validationPassed === false) {
             throw new Error(`User input validation failed`);
         }
@@ -92,14 +92,13 @@ export default function Login(): void {
             const loginResponse: AxiosResponse = await handleLogin(userInputs);
 
             if (loginResponse.status === 200) {
-                navigate(`${webappURL}index`)
+                navigate(`${indexUrl}`)
             } else {
                 setError(['Login failed. Please try again.']);
                 setLoading(false);
             }
         } catch (err) {
             const error = err as Error|AxiosError;
-
             if(!axios.isAxiosError(error)) {
                 alert(`Something went wrong, please try refresh the browser ${error.message}`);
             } 
