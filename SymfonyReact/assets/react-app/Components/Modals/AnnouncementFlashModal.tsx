@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useState, useEffect, Context} from 'react';
 import {useOutletContext} from "react-router-dom";
+import BaseModal from "./BaseModal";
 
 export function AnnouncementFlashModal(props: { title: string; errors: string[]; errorNumber: number; timer: number; }) {
   const title: string = props.title
@@ -11,15 +12,17 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
   const [modalOpacity, setModalOpacity] = useState<number>(100);
   const [modalShow, setModalShow] = useState<boolean>(true);
 
-  const [toggleModalOff]: Context<Array<() => void>> = useOutletContext();
+  // const [toggleModalOff]: Context<Array<() => void>> = useOutletContext();
 
   useEffect(() => {
     const interval = setInterval(() => {
+      console.log('modalOpacity', modalOpacity, modalShow)
       if (modalOpacity !== 0) {
         setModalOpacity(modalOpacity - 1);
       } else {
-        setModalShow(false);
-        clearInterval(interval)
+        setModalOpacity(100);
+        // setModalShow(false);
+        // clearInterval(interval)
       }
     }, timer);
 
@@ -30,6 +33,19 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
   //   setModalShow(false);
   // }
 
+  const displayErrors = (): Array<string> => {
+    return errors?.length > 0
+        ?
+          <div className="modal-body error-modal">
+            {
+              errors.map((error, index) => (
+                  <li className="error-modal-list" key={index}>{error}</li>
+              ))
+            }
+          </div>
+        :
+        null
+  }
   if (modalShow === true) {
     return (
       // <div key={errorNumber} style={{ paddingRight: '17px', display: 'block', opacity:`${modalOpacity}%` }} className="modal-show modal"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -42,19 +58,27 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
       //           </button>
       //         </div>
         <React.Fragment>
-              {
-                errors?.length > 0
-                  ?
-                    <div className="modal-body error-modal">
-                      {
-                        errors.map((error, index) => (
-                            <li className="error-modal-list" key={index}>{error}</li>
-                        ))
-                      }
-                    </div>
-                  :
-                  null
-                }
+          <BaseModal
+                keyValue={errorNumber}
+                title={title}
+                content={displayErrors()}
+                styles={`paddingRight: '17px', display: 'block', opacity:${modalOpacity}%`}
+                modalOpacity={modalOpacity}
+          />
+          {/*{displayErrors()}*/}
+              {/*{*/}
+              {/*  errors?.length > 0*/}
+              {/*    ?*/}
+              {/*      <div className="modal-body error-modal">*/}
+              {/*        {*/}
+              {/*          errors.map((error, index) => (*/}
+              {/*              <li className="error-modal-list" key={index}>{error}</li>*/}
+              {/*          ))*/}
+              {/*        }*/}
+              {/*      </div>*/}
+              {/*    :*/}
+              {/*    null*/}
+              {/*  }*/}
         </React.Fragment>
       //     </div>
       //   </div>

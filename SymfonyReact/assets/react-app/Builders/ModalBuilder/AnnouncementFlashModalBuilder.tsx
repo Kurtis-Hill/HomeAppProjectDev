@@ -18,7 +18,6 @@ export function BuildAnnouncementErrorFlashModal(
 
   return (
       <React.Fragment>
-      <BaseModal />
         <AnnouncementFlashModal
             title={title}
             errors={errors}
