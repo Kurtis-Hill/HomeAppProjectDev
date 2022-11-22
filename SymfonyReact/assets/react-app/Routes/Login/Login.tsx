@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { registerAccountUrl, indexUrl } from "../../Common/CommonURLs";
-import { getToken } from "../../Common/APICommon";
+import { registerAccountUrl, indexUrl, loginUrl } from "../../Common/CommonURLs";
+import { getRefreshToken, getToken } from "../../Common/APICommon";
 
 import SubmitButton from "../../Components/Buttons/SubmitButton";
 import Input from "../../Components/Form/Input";
@@ -23,9 +23,9 @@ export default function Login(): void {
     const [loading, setLoading] = useState(false);
     const [pingResult, setPingResult] = useState<boolean>(true);
 
-    const loginPageImage = require('../../../images/login/index-photo.jpg')
+    const loginPageImage: string = require('../../../images/login/index-photo.jpg')
 
-    const navigate = useNavigate();
+    const navigate: NavigateFunction = useNavigate();
 
     useEffect(() => {
         checkCurrentToken();
@@ -58,18 +58,27 @@ export default function Login(): void {
             try {
                 const pingRequest: PingInterface = await handlePingRequest();
                 if (pingRequest.status !== 200) {
-                    setPingResult(false);
-                    console.log('login checkCurrentToken', pingRequest.status)
                 }
                 navigate(`${indexUrl}`);
             } catch (err) {
                 const error = err as Error | AxiosError;
-                console.log('login error', error)
                 const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
-                console.log('login checkCurrentToken response', refreshTokenResponse)
+                if (refreshTokenResponse !== undefined && "status" in refreshTokenResponse) {
+                    if (refreshTokenResponse.status === 200) {
+                        navigate(`${indexUrl}`);
+                    }
+                }
+            }
+        }
+        const refreshToken = getRefreshToken();
+        if (refreshToken !== null) {
+            try {
+                const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
                 if (refreshTokenResponse.status === 200) {
                     navigate(`${indexUrl}`);
                 }
+            } catch (err) {
+                const error = err as Error | AxiosError;
             }
         }
         setPingResult(false);

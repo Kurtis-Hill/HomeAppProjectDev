@@ -27,7 +27,7 @@ export default function NavbarListItem(props: NavbarListInterface) {
             </div>
             <div className={`collapse ${navItemDropdownToggleClass}`} aria-labelledby="headingTwo">
                 <div className="bg-white py-2 collapse-inner rounded">
-                    <h6 className="collapse-header">View Room:</h6>
+                    <h6 className="collapse-header">View {heading}:</h6>
                     {
                         Array.isArray(dropdownItems) && dropdownItems.length > 0
                             ? dropdownItems.map((navListItem, index: number) => (

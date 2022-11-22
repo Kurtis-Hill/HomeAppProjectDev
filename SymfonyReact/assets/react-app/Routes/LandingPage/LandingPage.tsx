@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useState, useEffect, Context} from 'react';
 import { Link, useOutletContext  } from "react-router-dom";
+import { CardReadingHandler } from '../../Components/Cards/Readings/CardReadingHandler';
 
 export function LandingPage() {
 
@@ -26,6 +27,16 @@ export function LandingPage() {
     // setRefreshNavDataFlag(true);
     // console.log(refreshNavbar, 'refresh nav bool')
     return (
-        <h1>Hi</h1>
+        <React.Fragment>
+            <div id="content-wrapper" className="d-flex flex-column">
+                <div id="content"> 
+                    <div className="container-fluid">
+                        <CardReadingHandler
+                            route={'index'} 
+                        />
+                    </div>
+                </div>
+            </div>
+        </React.Fragment>
     );
 }

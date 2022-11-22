@@ -26,26 +26,21 @@ export async function handleLogin(userInputs: LoginFormUserInputsInterface): Pro
 }
 
 export async function handleTokenRefresh(): Promise<AxiosResponse> {
-    console.log('handle token refresh....')
     const refreshToken: string = getRefreshToken();
-    console.log('refresh token', refreshToken)
     try {
         const refreshTokenResponse: AxiosResponse = await axios.post(
             `${apiURL}token/refresh`,
             { refreshToken : refreshToken }
         )
 
-        console.log('refresh token response', refreshTokenResponse)
         const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
 
         if (refreshTokenResponse.status === 200) {
-            console.log('refresh token response data', refreshTokenResponseData.token, refreshTokenResponseData.refreshToken)
             refreshUserTokens(refreshTokenResponseData);
         }
 
         return refreshTokenResponse;
     } catch (err) {
         const error = err as Error | AxiosError;
-        console.log('error of refresh', error)
     }
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function SidebarDividerWithHeading(props) {
+export function SidebarDividerWithHeading(props: { heading?: string; }) {
     const heading: string = props.heading ?? '';
 
     return (

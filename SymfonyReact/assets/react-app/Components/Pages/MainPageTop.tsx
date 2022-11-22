@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import {
     Outlet,
-  } from "react-router-dom";
+} from "react-router-dom";
 
 import Navbar from "../Navbar/Navbar";
 
@@ -20,14 +20,14 @@ export function MainPageTop() {
 
     const [errorAnnouncementErrorModals, setErrorAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
-    const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer? : number|null): void => {
+    const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
         setErrorAnnouncementErrorModals([
             ...errorAnnouncementErrorModals,
             <BuildAnnouncementErrorFlashModal
                 title={title}
                 errors={errors}
                 errorNumber={errorAnnouncementErrorModals.length}
-                timer= {timer ? timer : 80}
+                timer={timer ? timer : 40}
             />
         ])
     }

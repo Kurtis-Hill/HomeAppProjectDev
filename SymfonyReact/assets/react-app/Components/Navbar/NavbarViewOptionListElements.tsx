@@ -21,7 +21,6 @@ export default function NavbarViewOptionListElements(props: { navbarResponseData
     }, [props.navbarResponseData]);
 
     const createNavListItems = (navbarResponseData: NavBarResponseInterface): void => {
-        // console.log('nav response data', navbarResponseData);
         let builtNavItems: Array<typeof NavbarListItem> = [];
 
         const userRooms: Array<RoomNavbarResponseInterfaceInterface>|undefined = navbarResponseData.userRooms;

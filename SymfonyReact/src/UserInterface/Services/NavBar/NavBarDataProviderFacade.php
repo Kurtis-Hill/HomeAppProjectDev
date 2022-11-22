@@ -55,7 +55,7 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
 
     public function getNavbarRequestErrors(): array
     {
-        return $this->errors = ['asdsa'];
+        return $this->errors;
     }
 
     /**

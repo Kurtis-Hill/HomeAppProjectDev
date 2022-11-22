@@ -233,7 +233,7 @@ trait HomeAppAPITrait
         return new JsonResponse(
             [
                 'title' => 'You Are Not Authorised To Be Here',
-                'errors' => 'No Response Message'
+                'errors' => ['No Response Message']
             ],
             HTTPStatusCodes::HTTP_FORBIDDEN
         );

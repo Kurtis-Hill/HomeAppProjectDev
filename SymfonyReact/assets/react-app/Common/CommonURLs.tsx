@@ -9,3 +9,5 @@ export const registerAccountUrl = `${webappURL}register`;
 export const indexUrl = `${webappURL}index`;
 
 export const loginUrl = `${webappURL}login`;
+
+export const baseCardDataURL = `${apiURL}card-data/`;

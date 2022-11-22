@@ -7,7 +7,6 @@ export function RequestInterceptor(): void {
     axios.interceptors.request.use(
         request => {
             if (!request.url.includes('/login_check') && !request.url.includes('/token/refresh')) {
-                console.log('adding auth token to request')
                 const token = getToken();
                 if (token) {
                     request.headers['Authorization'] = `BEARER ${token}`;

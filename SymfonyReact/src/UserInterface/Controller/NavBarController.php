@@ -30,6 +30,7 @@ class NavBarController extends AbstractController
     #[Route('/navbar-data', name: 'navbar-data', methods: [Request::METHOD_GET])]
     public function navBarData(NavBarDataProviderInterface $navBarDataProvider): JsonResponse
     {
+    
         if (!$this->getUser() instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
         }

@@ -3,7 +3,6 @@ import { LoginResponseInterface } from "../Response/Login/Interfaces/LoginRespon
 import { TokenRefreshResponseInterface } from "../Response/Token/Interfaces/TokenRefreshResponseInterface";
 
 export const setUserSession = (loginResponse: LoginResponseInterface): void => {
-    console.log('setting user session', loginResponse)
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userID');
@@ -16,7 +15,6 @@ export const setUserSession = (loginResponse: LoginResponseInterface): void => {
 }
 
 export const removeUserSession = (): void => {
-    console.log('removing user session')
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userID');
@@ -24,7 +22,6 @@ export const removeUserSession = (): void => {
 }
 
 export const refreshUserTokens = (refreshTokenResponseData: TokenRefreshResponseInterface): void => {
-    console.log('refreshing user tokens', refreshTokenResponseData.token, refreshTokenResponseData.refreshToken)
     if (refreshTokenResponseData.token !== undefined && refreshTokenResponseData.refreshToken !== undefined) {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
@@ -45,7 +42,7 @@ export const getRoles = (): Array<string>|null => {
 }
 
 export const checkAdmin = (): boolean => {
-    const roles = getRoles();
+    const roles: Array<string>|null = getRoles();
 
     if (roles !== null) {
         for(let i = 0; i < roles.length; ++i) {

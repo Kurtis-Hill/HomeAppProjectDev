@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-export default function Input(props) {
-    const name = props.name ?? ''
-    const value = props.value ?? ''
-    const type = props.type ?? 'text'
-    const placeHolder = props.placeHolder ?? ''
-    const autoComplete = props.autoComplete ?? ''
-    const onChangeFunction = props.onChangeFunction ?? ''
+export default function Input(props: { name: string; value?: object; type?: string; placeHolder?: string; autoComplete?: string; onChangeFunction?: any }) {
+    const name: string = props.name ?? ''
+    const value: object = props.value
+    const type: string = props.type ?? 'text'
+    const placeHolder: string = props.placeHolder ?? ''
+    const autoComplete: string = props.autoComplete ?? ''
+    const onChangeFunction: (event: { target: { name: string; value: string; }; }) => void = props.onChangeFunction ?? function (){}
 
     return (
         <React.Fragment>

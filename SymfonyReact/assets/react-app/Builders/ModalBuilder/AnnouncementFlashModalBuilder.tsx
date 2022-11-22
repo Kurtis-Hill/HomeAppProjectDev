@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { AnnouncementFlashModal } from '../../Components/Modals/AnnouncementFlashModal';
-import BaseModal from "../../Components/Modals/BaseModal";
 
 export function BuildAnnouncementErrorFlashModal(
     props: {

@@ -1,34 +1,25 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
-import {Outlet} from "react-router-dom";
+import { useState, useEffect } from 'react';
 
-export default function BaseModal(props) {
-    // const styles = props.styles ?? '';
-    const keyValue = props.keyValue ?? '';
-    const title = props.title ?? '';
-    const content = props.content ?? '';
-    const modalOpacity = props.modalOpactiy ?? '';
-
-    const [styles, setStyles] = useState(props.styles ?? '');
-
-    const [modalShow, setModalShow] = useState<boolean>(true);
+export default function BaseModal(props: {
+    keyValue: number; title: string; content: string|null; modalOpacity: number; modalShow: boolean; setShowModal: (show: boolean) => void; label?: string; 
+}) {
+    const keyValue: number = props.keyValue ?? 0;
+    const title: string = props.title ?? '';
+    const content: string|null = props.content ?? null;
+    const modalOpacity: number = props.modalOpacity ?? 100;
+    const modalShow: boolean = props.modalShow ?? true;
+    const setShowModal = props.setShowModal;
+    const label: string|null = props.label ?? 'Modal';
+    
     const toggleModalOff = (): void => {
-        setModalShow(false);
+        setShowModal(false);
     }
-
-    // const [modalOpacity, setModalOpacity] = useState<number>(props.modalOpacity ?? 100);
-
-    useEffect(() => {
-        console.log('styles', styles)
-        // setModalOpacity(props.modalOpacity ?? 0);
-        // setStyles(props.styles ?? '');
-    }, [modalOpacity]);
-
 
     if (modalShow === true) {
         return (
             <React.Fragment>
-                <div key={keyValue} style={{paddingRight: '17px', display: 'block', opacity:`${modalOpacity}%`}} className="modal-show modal"  tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div key={keyValue} style={{ paddingRight: '17px', display: 'block', opacity:`${modalOpacity}%` }} className="modal-show modal" tabIndex={-1} role="dialog" aria-labelledby={label} aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">

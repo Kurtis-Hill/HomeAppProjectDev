@@ -2,7 +2,6 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\HumiditySensorCardViewDTOBuilder;
 use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\LatitudeSensorCardViewDTOBuilder;
 use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\TemperatureSensorCardViewDTOBuilder;
