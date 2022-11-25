@@ -11,6 +11,7 @@ export default function CardCurrentReadingBuilder(cardData: CardDataResponseInte
             sensorName={cardData.sensorName}
             room={cardData.sensorRoom}
             cardIcon={cardData.cardIcon}
+            cardColour={cardData.cardColour}
             sensorData={cardData.sensorData}
         />
     )

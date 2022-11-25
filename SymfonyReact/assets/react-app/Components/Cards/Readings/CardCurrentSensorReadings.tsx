@@ -9,11 +9,13 @@ export function CardCurrentSensorReadings(props: {
     room: string; 
     sensorData: CardCurrentReadingResponse[];
     cardIcon: string; 
+    cardColour?: string|undefined
 }) {
     const sensorType: string = props.sensorType;
     const sensorName: string = props.sensorName;
     const sensorRoom: string = props.room;
     const cardIcon: string = props.cardIcon ?? 'dog';
+    const cardColour: string|undefined = props.cardColour;
 
     const sensorData: CardCurrentReadingResponse[] = props.sensorData;
 
@@ -36,6 +38,7 @@ export function CardCurrentSensorReadings(props: {
                     </div>
                 </React.Fragment>                
             }
+            colour={cardColour}
         />
     );
 }
