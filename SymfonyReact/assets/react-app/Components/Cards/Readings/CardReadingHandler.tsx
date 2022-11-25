@@ -28,7 +28,7 @@ export function CardReadingHandler(props: { route: string; filterParams?: string
 
     const handleCardRefresh = async () => {
         try {
-            const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings(route);
+            const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings();
             const preparedCards = prepareCardDataForDisplay(cardData);
             setCardsForDisplay(preparedCards);
         } catch(err) {
@@ -36,11 +36,11 @@ export function CardReadingHandler(props: { route: string; filterParams?: string
         }
     }
 
-    const handleGettingSensorReadings = async (route: string): Promise<Array<CardDataResponseInterface|undefined>> => {
+    const handleGettingSensorReadings = async (): Promise<Array<CardDataResponseInterface|undefined>> => {
         try {
-            const cardDataResponse: AxiosResponse = await handleSendingCardDataRequest({route});
+            const cardDataResponse: AxiosResponse = await handleSendingCardDataRequest({route, filterParams});
             const cardData: Array<CardDataResponseInterface> = cardDataResponse.data.payload;
-console.log(cardData);
+
             return cardData;
         } catch(error) {
             const err = error as AxiosError|Error;
