@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useState, useEffect, Context} from 'react';
 import { Link, useOutletContext  } from "react-router-dom";
 import { CardReadingHandler } from '../../Components/Cards/Readings/CardReadingHandler';
+import { CardRowContainer } from '../../Components/Cards/CardRowContainer';
 
 export function LandingPage() {
 
@@ -31,9 +32,7 @@ export function LandingPage() {
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content"> 
                     <div className="container-fluid">
-                        <CardReadingHandler
-                            route={'index'} 
-                        />
+                        <CardRowContainer route={'index'} />
                     </div>
                 </div>
             </div>

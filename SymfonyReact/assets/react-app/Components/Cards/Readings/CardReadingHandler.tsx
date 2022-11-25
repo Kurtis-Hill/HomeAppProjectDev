@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-import axios from 'axios';
-import { baseCardDataURL } from '../../../Common/CommonURLs';
 import { AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 
 import { handleSendingCardDataRequest } from '../../../Request/CardRequest';
 
 import { CardDataResponseInterface } from '../../../Response/User/CardData/Interfaces/CardDataResponseInterface';
 
 import CardReadingFactory from '../../../Factories/CardReadingFactory';
-import { BaseCard } from '../BaseCard';
-import { CardRowContainer } from '../CardRowContainer';
-import { CardSensorReadings } from './CardSensorReadings';
 
-export function CardReadingHandler(props) {
+export function CardReadingHandler(props: { route: string; filterParams?: string[] }) {
     const route:string = props.route ?? 'index';
-    const [cardDataUserResponse, setCardDataUserResponse] = useState<Array<CardDataResponseInterface>>([]);
+    const filterParams:string[] = props.filterParams ?? [];
+    
     const [refreshTimer, setRefreshTimer] = useState<number>(3000);
     const [cardsForDisplay, setCardsForDisplay] = useState<Array<CardDataResponseInterface>>([]);
 
@@ -28,74 +25,61 @@ export function CardReadingHandler(props) {
         return () => clearInterval(interval);
     }, []);
     
+
     const handleCardRefresh = async () => {
-        const cardData: CardDataResponseInterface = await handleGettingSensorReadings(route);
-        const cardsForDisplay = prepareCardDataForDisplay(cardData);
+        try {
+            const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings(route);
+            const preparedCards = prepareCardDataForDisplay(cardData);
+            setCardsForDisplay(preparedCards);
+        } catch(err) {
+            const error = err as AxiosError|Error;
+        }
+    }
 
-
-        setCardDataUserResponse(cardsForDisplay);
-      }
-
-
-    const handleGettingSensorReadings = async (route: string): Promise<CardDataResponseInterface> => {
-        const cardDataResponse: AxiosResponse = await handleSendingCardDataRequest({route});
-        const cardData: CardDataResponseInterface = cardDataResponse.data.payload;
-
-        return cardData;
+    const handleGettingSensorReadings = async (route: string): Promise<Array<CardDataResponseInterface|undefined>> => {
+        try {
+            const cardDataResponse: AxiosResponse = await handleSendingCardDataRequest({route});
+            const cardData: Array<CardDataResponseInterface> = cardDataResponse.data.payload;
+console.log(cardData);
+            return cardData;
+        } catch(error) {
+            const err = error as AxiosError|Error;
+            return [];           
+        }
     }
 
 
-    const prepareCardDataForDisplay = (cardData: CardDataResponseInterface) => {
-        // call a builder to check the returned card types and build the card data from there
-        // cardData.sensorData.map((value, index, array) => {
-            
-            // })
+    const prepareCardDataForDisplay = (cardData: Array<CardDataResponseInterface|undefined>) => {
+        let cardsForDisplay: Array<string> = [];
+        for (let i = 0; i < cardData.length; i++) {
+            try {
+                cardsForDisplay.push(            
+                    <CardReadingFactory
+                        { ...cardData[i] }
+                    />
+                );
+            } catch(err) {
+                console.log('could not build card', err);
+            }            
+        }
+
+        return cardsForDisplay;
     }
 
 
     return (
         <React.Fragment>
-            <CardRowContainer content={
-                <BaseCard content={
-                    <CardSensorReadings 
-                        content={<h1>hi</h1>}
-                    />
-                } />
-            } />
+            {
+                cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
+                    if (card !== undefined) {
+                        return (
+                            <React.Fragment key={index}>
+                                {card}
+                            </React.Fragment>
+                        )
+                    }
+                })
+            }
         </React.Fragment>
     );
 }
-
-
-
-//             <div className="row">
-//  <div className="col-xl-3 col-md-6 mb-4" onClick={() => {}} key={1}>
-//  <div className={"shadow h-100 py-2 card border-left-primary ADD-COLOUR-HERE"}>
-//    <div className="card-body hover">
-//      <div style={{ position: "absolute", top: '2%', right: '5%'}}>SensorType</div>
-//      <div className="row no-gutters align-items-center">
-//        <div className="col mr-2">
-//          <div className="d-flex font-weight-bold text text-uppercase mb-1">Sensor Name:</div>
-//          <div className="d-flex text text-uppercase mb-1">Room: </div>
-//          {/* {
-// //           cardData.sensorData.length >= 1 
-// //             ? cardData.sensorData.map((sensorData, index) => (
-// //               <React.Fragment key={index}>
-// //                   {context.modalLoading !== false && context.modalLoading === cardData.cardViewID ? <div style={{zIndex:"1"}} className="absolute-center fa-4x fas fa-spinner fa-spin"/> : null}
-// //                   <div className={'card-font mb-0 font-weight-bold '+senorReadingStyle(sensorData.highReading, sensorData.lowReading, sensorData.currentReading)}>
-// //                     {capitalizeFirstLetter(sensorData.readingType)}: {sensorData.currentReading}{sensorData.readingSymbol}
-// //                   </div>
-// //                   <div className="card-font mb-0 text-gray-400">updated@{sensorData.updatedAt}</div>
-// //                 </React.Fragment>
-// //               ))
-// //             : <p>No Sensor Data</p>
-// //         } */}
-//        </div>
-//        <div className="col-auto">
-//          <i className={"fas fa-2x text-gray-300 fa-microchip"}></i>
-//        </div>
-//      </div>
-//    </div>
-//  </div>
-//  </div> 
-//  </div>  

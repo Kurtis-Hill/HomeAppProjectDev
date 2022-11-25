@@ -24,7 +24,7 @@ class CurrentReadingSensorTypeCardResponseDTO implements UserViewSensorTypeCardD
     #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     private array $sensorData;
 
-    private string $cardType = 'current=reading';
+    private string $cardType = 'current-reading';
 
     public function __construct(
         string $sensorName,

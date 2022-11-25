@@ -147,7 +147,7 @@ services:
       - cluster.initial_master_nodes=es01,es02
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
       - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=trial 
+      - xpack.license.self_generated.type=basic 
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
@@ -177,7 +177,7 @@ services:
       - cluster.initial_master_nodes=es01,es02
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
       - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=trial
+      - xpack.license.self_generated.type=basic
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key

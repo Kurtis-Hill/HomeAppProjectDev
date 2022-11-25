@@ -1,10 +1,12 @@
 export interface CardDataResponseInterface {
-    cardColour: string;
-    cardIcon: string;
-    cardViewID: number;
-    sensorName: string;
-    sensorRoom: string;
-    sensorType: string;
+    // cardData: Array<CardDataResponseObject>;
+    cardType: string;
+    cardColour: string,
+    cardIcon: string,
+    cardViewID: number,
+    sensorName: string,
+    sensorRoom: string,
+    sensorType: string,
     sensorData: Array<CardCurrentReadingResponse>
 }
 
@@ -14,5 +16,5 @@ export interface CardCurrentReadingResponse {
     lowReading: number;
     readingSymbol?: string|null;
     readingType: string;
-    updateAt: Date;
+    updatedAt: Date;
 }
