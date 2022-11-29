@@ -11,6 +11,13 @@
     text-align: center;
 }
 
+.center-spinner-card-row {
+    margin: auto;
+    display: block;
+    text-align: center;
+    padding: 25%
+}
+
 .margin-spinner {
     margin: 15%;
     display: block;

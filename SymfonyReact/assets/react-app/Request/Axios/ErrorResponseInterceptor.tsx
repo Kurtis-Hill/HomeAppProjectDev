@@ -39,14 +39,18 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
             // }
             errorAnnouncementFlash(errorsForModal, 'Error');
         } else {
+            console.log('here we go', error.response.data);
             if (error.response.status === 401 || error.response.status === 403) {
                 const refreshToken: string|null = getRefreshToken();
+                console.log('refresh token', refreshToken);
                 if (refreshToken !== null) {
                     try {
                         const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
                     } catch (err) {
                         const error = err as Error | AxiosError;
                     }
+                } else {
+                    window.location.replace(`${loginUrl}`)
                 }
             }
         }

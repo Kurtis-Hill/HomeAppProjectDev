@@ -9,13 +9,17 @@ import { handleSendingCardDataRequest } from '../../../Request/CardRequest';
 import { CardDataResponseInterface } from '../../../Response/User/CardData/Interfaces/CardDataResponseInterface';
 
 import CardReadingFactory from '../../../Factories/CardReadingFactory';
+import DotCircleSpinner from '../../Spinners/DotCircleSpinner';
+
+import { CardCurrentSensorDataInterface, CurrentReadingDataDisplayInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
 
 export function CardReadingHandler(props: { route: string; filterParams?: string[] }) {
     const route:string = props.route ?? 'index';
     const filterParams:string[] = props.filterParams ?? [];
-    
+
+    const [loadingCards, setLoadingCards] = useState<boolean>(true);
     const [refreshTimer, setRefreshTimer] = useState<number>(3000);
-    const [cardsForDisplay, setCardsForDisplay] = useState<Array<CardDataResponseInterface>>([]);
+    const [cardsForDisplay, setCardsForDisplay] = useState<Array<CurrentReadingDataDisplayInterface>>([]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -27,12 +31,12 @@ export function CardReadingHandler(props: { route: string; filterParams?: string
     
 
     const handleCardRefresh = async () => {
-        try {
-            const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings();
-            const preparedCards = prepareCardDataForDisplay(cardData);
-            setCardsForDisplay(preparedCards);
-        } catch(err) {
-            const error = err as AxiosError|Error;
+        const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings();
+        if (cardData.length > 0) {
+            prepareCardDataForDisplay(cardData);
+            setLoadingCards(false);
+        } else {
+            setLoadingCards(true);
         }
     }
 
@@ -48,12 +52,12 @@ export function CardReadingHandler(props: { route: string; filterParams?: string
         }
     }
 
-
-    const prepareCardDataForDisplay = (cardData: Array<CardDataResponseInterface|undefined>) => {
-        let cardsForDisplay: Array<string> = [];
+    
+    const prepareCardDataForDisplay = (cardData: Array<CardDataResponseInterface|undefined>): void => {
+        let cardsForDisplayArray: Array<React> = [];
         for (let i = 0; i < cardData.length; i++) {
             try {
-                cardsForDisplay.push(            
+                cardsForDisplayArray.push(            
                     <CardReadingFactory
                         { ...cardData[i] }
                     />
@@ -63,14 +67,41 @@ export function CardReadingHandler(props: { route: string; filterParams?: string
             }            
         }
 
-        return cardsForDisplay;
-    }
+        setCardsForDisplay((previousCards: React[]) => {
+            if (previousCards.length <= 0) {
+                return cardsForDisplayArray;
+            }
 
+            for (let i = 0; i < cardsForDisplayArray.length; i++) {
+                const cardForDisplay: CurrentReadingDataDisplayInterface = cardsForDisplayArray[i].props;
+                const previousCard: CurrentReadingDataDisplayInterface = previousCards[i].props;
+                for (let j = 0; j < cardForDisplay.sensorData.length; j++) {
+                    const sensorReadingData: CardCurrentSensorDataInterface = cardForDisplay.sensorData[j];
+                    const previousSensorReadingData: CardCurrentSensorDataInterface = previousCard.sensorData[j];
+
+                    if (sensorReadingData.currentReading < previousSensorReadingData.currentReading) {
+                        sensorReadingData.lastState = 'up';
+                    }
+                    if (sensorReadingData.currentReading > previousSensorReadingData.currentReading) {
+                        sensorReadingData.lastState = 'down';
+                    }
+                    if (sensorReadingData.currentReading === previousSensorReadingData.currentReading) {
+                        sensorReadingData.lastState = 'same';
+                    }
+                }
+
+            }
+
+            return cardsForDisplayArray;
+        });
+    }
 
     return (
         <React.Fragment>
-            {
-                cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
+            {            
+                loadingCards === true 
+                ? <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
+                : cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
                     if (card !== undefined) {
                         return (
                             <React.Fragment key={index}>
