@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import SmallWhiteBoxDisplay from '../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
+import CardFilterButton from '../Cards/Buttons/CardFilterButton';
 
-export default function CardFilterBar(props) {
-    const [showFilters, setShowFilters] = useState(false)
+export default function CardFilterBar() {
+    const [showFilters, setShowFilters] = useState<boolean>(false);
 
     const itemDropdownToggleClass: string = showFilters === true ? 'show' : '';
 
@@ -12,30 +13,39 @@ export default function CardFilterBar(props) {
         setShowFilters(!showFilters);
     }
 
+    const buildCardFilterForm = (): React => {
+        return (
+            <React.Fragment>
+                <div style={{ padding: '2%' }} className="">
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                    filter meee
+                </div>
+        </React.Fragment>
+        );
+    }
+
+
     return (
-        <div>
-            <button
-            style={{
-                position: 'absolute',
-                zIndex: '1',
-                right: '0px'
-            }}
-            onClick={() => {toggleShowFilters()}}
-            >
-                <i className="fas fa-1x text-gray-300 fa-filter"></i>
-            </button>
+        <div className="card-filter-bar-container">
+            <CardFilterButton toggleShowFilters={toggleShowFilters} />
 
             <SmallWhiteBoxDisplay
-                dropdownToggleClass={itemDropdownToggleClass}
-                heading={'Filters'}
-                content={
-                    <React.Fragment>
-                        <div className="form-group">
-                            filter meee
-                        </div>
-                    </React.Fragment>
-                }
-                />
+                classes={`${itemDropdownToggleClass} card-filter-box`}
+                heading={'Card Display Filters'}
+                content={ buildCardFilterForm() }
+            />
            </div>
     );
 }

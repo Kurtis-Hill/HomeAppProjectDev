@@ -1,9 +1,9 @@
-/*.text-red {*/
-/*    color: #e74a3b !important;*/
-/*}*/
-/*.text-blue {*/
-/*    color: #3bb1e7 !important;*/
-/*}*/
+.text-red {
+    color: #e74a3b !important;
+}
+.text-blue {
+    color: #3bb1e7 !important;
+}
 
 .center-spinner {
     margin: auto;
@@ -43,6 +43,29 @@
      /* text-align: center; */
      border-radius: 5px;
      margin-bottom: 1%;
+ }
+
+ .card-filter-box {
+    position: fixed;
+    z-index: 1;
+    height: auto;
+    width: auto;
+    margin-left: 1.5%;
+    border: solid;
+    border-radius: 10px;
+ }
+
+ .card-filter-button {
+    position: absolute;
+    z-index: 1;
+    right: 0px;
+    left: -15px;
+    border: none;
+    background-color: transparent;
+ }
+
+ .card-filter-bar-container {
+    position: absolute;
  }
 
 /*.nav-link {*/

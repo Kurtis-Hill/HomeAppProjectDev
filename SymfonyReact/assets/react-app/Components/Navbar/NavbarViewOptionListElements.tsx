@@ -13,16 +13,10 @@ import NavbarListItem from './NavbarListItem'
 
 import { BuildNavbarItem } from "./Builders/NavbarItemBuilder";
 
-export default function NavbarViewOptionListElements(props: { navbarResponseData: NavBarResponseInterface }) {
-    const [navbarViewOptionItems, setNavbarViewOptionItems] = useState<Array<typeof NavbarListItem>>([]);
-
-    useEffect(() => {
-        createNavListItems(props.navbarResponseData);
-    }, [props.navbarResponseData]);
-
-    const createNavListItems = (navbarResponseData: NavBarResponseInterface): void => {
-        let builtNavItems: Array<typeof NavbarListItem> = [];
-
+export default function NavbarViewOptionListElements(props: { navbarResponseData: NavBarResponseInterface }) {    
+    const createNavListItems = (navbarResponseData: NavBarResponseInterface): React => {
+        const builtNavItems: Array<typeof NavbarListItem> = [];
+        
         const userRooms: Array<RoomNavbarResponseInterfaceInterface>|undefined = navbarResponseData.userRooms;
         if (userRooms !== undefined && userRooms.length > 0) {
             let navbarUserRoomsListItem: Array<NavbarListItemInterface> = [];
@@ -34,33 +28,33 @@ export default function NavbarViewOptionListElements(props: { navbarResponseData
             }
             builtNavItems.push(
                 BuildNavbarItem({
-                    heading: "Rooms",
+                    heading: "View Rooms",
                     listLinks: navbarUserRoomsListItem,
                     icon: "person-booth",
                     createNewLink: `${webappURL}add-room`,
                     createNewText: "+Add New Room"
                 })
-            );
-        }
-
-        const userDevices: Array<DeviceNavbarResponseInterface>|undefined = navbarResponseData.devices;
-        if (userDevices !== undefined && userDevices.length > 0) {
-            let deviceListItem: Array<NavbarListItemInterface> = [];
-            for (let i = 0; i < userDevices.length; i++) {
-                deviceListItem.push({
-                    link: `${webappURL}device?device-id=${userDevices[i].deviceNameID}&device-group=${userDevices[i].groupNameID}&device-room=${userDevices[i].roomID}&view=device${userDevices[i].deviceName}`,
-                    displayName: userDevices[i].deviceName
-                })
+                );
             }
-
-            builtNavItems.push(
-                BuildNavbarItem({
-                    heading: "Devices",
-                    listLinks: deviceListItem,
-                    icon: "microchip",
-                    createNewLink: `${webappURL}add-device`,
-                    createNewText: "+Add New Device"
-                })
+            
+            const userDevices: Array<DeviceNavbarResponseInterface>|undefined = navbarResponseData.devices;
+            if (userDevices !== undefined && userDevices.length > 0) {
+                let deviceListItem: Array<NavbarListItemInterface> = [];
+                for (let i = 0; i < userDevices.length; i++) {
+                    deviceListItem.push({
+                        link: `${webappURL}device?device-id=${userDevices[i].deviceNameID}&device-group=${userDevices[i].groupNameID}&device-room=${userDevices[i].roomID}&view=device${userDevices[i].deviceName}`,
+                        displayName: userDevices[i].deviceName
+                    })
+                }
+                
+                builtNavItems.push(
+                    BuildNavbarItem({
+                        heading: "View Devices",
+                        listLinks: deviceListItem,
+                        icon: "microchip",
+                        createNewLink: `${webappURL}add-device`,
+                        createNewText: "+Add New Device"
+                    })
             );
         }
 
@@ -69,36 +63,34 @@ export default function NavbarViewOptionListElements(props: { navbarResponseData
             let groupListItem: Array<NavbarListItemInterface> = [];
             for (let i = 0; i < userGroupNames.length; i++) {
                 groupListItem.push({
-                     link: `${webappURL}group?group-id=${userGroupNames[i].groupNameID}`,
+                    link: `${webappURL}group?group-id=${userGroupNames[i].groupNameID}`,
                     displayName: userGroupNames[i].groupName
                 })
             }
-
+            
             builtNavItems.push(
                 BuildNavbarItem({
-                    heading: "Groups",
+                    heading: "View Groups",
                     listLinks: groupListItem,
                     icon: "users",
                     createNewLink: `${webappURL}add-group`,
                     createNewText: "+Add New Group"
                 })
-            );
-        }
-
-        setNavbarViewOptionItems(builtNavItems);
-    }
-
-    return (
-        <React.Fragment>
-            {
-                navbarViewOptionItems.map((navbarItem: typeof NavbarListItem, index: number) => {
-                    return (
-                        <React.Fragment key={index}>
-                            {navbarItem}
-                        </React.Fragment>
-                    );
-                })
+                );
             }
-        </React.Fragment>
-    );
+            
+            return builtNavItems.map((item, index) => {
+                return (
+                    <React.Fragment key={index}>
+                        {item}
+                    </React.Fragment>
+                );
+            });
+        }
+        
+        return (
+            <React.Fragment>
+                { createNavListItems(props.navbarResponseData) }
+            </React.Fragment>
+        );
 }

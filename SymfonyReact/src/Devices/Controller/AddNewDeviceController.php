@@ -53,7 +53,7 @@ class AddNewDeviceController extends AbstractController
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
         try {
             $this->deserializeRequest(
-                $request->getContent(),
+                c   ,
                 NewDeviceRequestDTO::class,
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $newDeviceRequestDTO]

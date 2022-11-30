@@ -15,7 +15,6 @@ import AdminButton from "../Buttons/AdminButton";
 import { SidebarDividerWithHeading } from "../Dividers/SidebarDividerWithHeading";
 import DotCircleSpinner from "../Spinners/DotCircleSpinner";
 
-
 export default function NavBar(props: {
     refreshNavbar: boolean,
     setRefreshNavDataFlag: (newValue: boolean) => void,

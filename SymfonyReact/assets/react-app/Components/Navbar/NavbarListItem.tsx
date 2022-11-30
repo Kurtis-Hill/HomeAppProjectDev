@@ -20,7 +20,6 @@ export default function NavbarListItem(props: NavbarListInterface) {
     
     const navItemDropdownToggleClass: string = navbarItemToggleDropdown === true ? 'show' : '';
 
-
     return (
         <li className="nav-item" onClick={() => {toggleNavTabElement()}}>
             <div className="nav-link collapsed hover" data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
@@ -28,7 +27,7 @@ export default function NavbarListItem(props: NavbarListInterface) {
                 <span>{ heading }</span>
             </div>
             <SmallWhiteBoxDisplay
-                dropdownToggleClass={navItemDropdownToggleClass}
+                classes={navItemDropdownToggleClass}
                 heading={heading}
                 content={
                     <React.Fragment>
