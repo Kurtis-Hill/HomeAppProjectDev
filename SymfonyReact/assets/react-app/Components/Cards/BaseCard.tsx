@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { JsxElement } from 'typescript';
 
-export function BaseCard(props: { content: JsxElement; colour?: string; cardClasses?: string }) {
+export function BaseCard(props: { content: JsxElement; colour?: string; cardClasses?: string }): React {
     const content: JsxElement = props.content;
     const colour: string = props.colour ?? 'primary';
     const cardClasses = props.cardClasses ?? 'col-xl-3 col-md-6 mb-4'

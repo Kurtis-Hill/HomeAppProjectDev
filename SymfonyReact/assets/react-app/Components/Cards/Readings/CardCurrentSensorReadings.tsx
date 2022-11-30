@@ -11,7 +11,7 @@ export function CardCurrentSensorReadings(props: {
     sensorData: CardCurrentSensorDataInterface[]|CardCurrentSensorDataInterface[];
     cardIcon: string; 
     cardColour?: string|undefined
-}) {
+}): React {
     const sensorType: string = props.sensorType;
     const sensorName: string = props.sensorName;
     const sensorRoom: string = props.room;
