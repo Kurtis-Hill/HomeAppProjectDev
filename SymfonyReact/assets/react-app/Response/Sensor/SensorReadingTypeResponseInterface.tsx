@@ -1,4 +1,4 @@
-export default interface SensorReadingTypeResponseInterface {
+export interface SensorReadingTypeResponseInterface {
     readingTypeID: number;
     readingTypeName: string
 }

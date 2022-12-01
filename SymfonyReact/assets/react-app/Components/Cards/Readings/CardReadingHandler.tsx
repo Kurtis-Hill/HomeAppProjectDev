@@ -48,7 +48,7 @@ export function CardReadingHandler(props: { route: string; filterParams?: string
     const filterParams:string[] = props.filterParams ?? [];
 
     const [loadingCards, setLoadingCards] = useState<boolean>(true);
-    const [refreshTimer, setRefreshTimer] = useState<number>(3000);
+    const [refreshTimer, setRefreshTimer] = useState<number>(4000);
     const [cardsForDisplay, setCardsForDisplay] = useReducer(cardReducer, initialCardState);
 
     useEffect(() => {

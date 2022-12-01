@@ -12,15 +12,23 @@ export function CardRowContainer(props: { route?: string; filterParams?: string[
         if (horizontal === true) {
             return (
                 <div className={classes}>
-                    <CardReadingHandler route={route} filterParams={filterParams} />
+                    { buildCardReadingHandler() }
                 </div>                
             );
         } else {
             return (
-                <CardReadingHandler route={route} filterParams={filterParams} />
+                <>
+                    { buildCardReadingHandler() }
+                </>
             );
         }
     };
+
+    const buildCardReadingHandler = (): React => {
+        return (
+            <CardReadingHandler route={route} filterParams={filterParams} />
+        );
+    }
 
     return (
         <>

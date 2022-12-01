@@ -1,7 +1,6 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { apiURL } from "../Common/CommonURLs";
-
 import { SensorTypeResponseInterface } from '../Response/Sensor/SensorTypeResponseInterface';
 
 export async function handleSensorTypesRequest(): Promise<SensorTypeResponseInterface[]|null {
@@ -9,10 +8,16 @@ export async function handleSensorTypesRequest(): Promise<SensorTypeResponseInte
         const sensorDataResponse: AxiosResponse = await axios.get(
             `${apiURL}sensor-types`
         );
+        console.log('sensorDataResponse', sensorDataResponse);
+
+        if (sensorDataResponse.status === 200) {    
+            const sensorTypes: SensorTypeResponseInterface[] = sensorDataResponse.data.payload;
+            
+            return sensorTypes;
+        } else {
+            throw Error('Error in handleSensorTypesRequest');
+        }
     
-        const sensorTypes: SensorTypeResponseInterface[] = sensorDataResponse.data.payload;
-    
-        return sensorTypes;
     } catch(err) {
         const error = err as Error | AxiosError;
     }
