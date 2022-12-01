@@ -37,7 +37,7 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
             //     errorsForModal = errorResponse.errors;
             //     console.log('CHECK THIS!2', errorsForModal);
             // }
-            errorAnnouncementFlash(errorsForModal, 'Error');
+            errorAnnouncementFlash(errorsForModal, 'Error' ?? errorResponse.title );
         } else {
             console.log('here we go', error.response.data);
             if (error.response.status === 401 || error.response.status === 403) {

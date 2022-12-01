@@ -2,8 +2,10 @@
 
 namespace App\Sensors\Controller\SensorTypeControllers;
 
+use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,12 +19,20 @@ class GetSensorTypesController extends AbstractController
     use HomeAppAPITrait;
 
     #[Route('/all', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
-    public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository): Response
+    public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository, SensorTypeResponseDTOBuilder $responseDTOBuilder): Response
     {
         $sensorTypes = $sensorTypeRepository->findAllSensorTypes();
 
+        foreach ($sensorTypes as $sensorType) {
+            $sensorTypeResponseDTO[] = $responseDTOBuilder->buildSensorTypeResponseDTO($sensorType);
+        }
+
+        if (empty($sensorTypeResponseDTO)) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Sensor types')]);
+        }
+
         try {
-            $normalisedResponse = $this->normalizeResponse($sensorTypes);
+            $normalisedResponse = $this->normalizeResponse($sensorTypeResponseDTO);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['error preparing data']);
         }

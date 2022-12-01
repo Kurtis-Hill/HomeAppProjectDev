@@ -11,6 +11,7 @@ use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GetReadingTypeControllerTest extends WebTestCase
 {
@@ -42,6 +43,24 @@ class GetReadingTypeControllerTest extends WebTestCase
         parent::tearDown();
     }
 
+    public function test_getting_all_reading_types_invalid_token(): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_READING_TYPES_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $this->userToken . '1']
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+
+    }
+
     public function test_getting_all_reading_types(): void
     {
         $this->client->request(
@@ -62,8 +81,8 @@ class GetReadingTypeControllerTest extends WebTestCase
         self::assertCount(count($allReadingTypes), $responseData['payload']);
 
         foreach ($responseData['payload'] as $readingType) {
-            self::assertArrayHasKey('id', $readingType);
-            self::assertArrayHasKey('readingType', $readingType);
+            self::assertArrayHasKey('readingTypeID', $readingType);
+            self::assertArrayHasKey('readingTypeName', $readingType);
         }
     }
 

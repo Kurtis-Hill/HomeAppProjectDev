@@ -50,6 +50,25 @@ class GetSensorTypesControllerTest extends WebTestCase
         parent::tearDown();
     }
 
+    public function test_wrong_token_returns_error(): void
+    {
+        $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
+
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_SENSOR_TYPES_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken . '1', 'CONTENT_TYPE' => 'application/json']
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
+    }
+
     public function test_all_sensortypes_that_are_documented_in_sensortypes_class_exists(): void
     {
         $this->client->request(
@@ -89,8 +108,8 @@ class GetSensorTypesControllerTest extends WebTestCase
         foreach ($payload as $sensorType) {
             foreach ($sensorTypes as $sensorTypeFromDB) {
                 if ($sensorType['sensorTypeID'] === $sensorTypeFromDB->getSensorTypeID()) {
-                    self::assertEquals($sensorType['sensorType'], $sensorTypeFromDB->getSensorType());
-                    self::assertEquals($sensorType['description'], $sensorTypeFromDB->getDescription());
+                    self::assertEquals($sensorType['sensorTypeName'], $sensorTypeFromDB->getSensorType());
+                    self::assertEquals($sensorType['sensorTypeDescription'], $sensorTypeFromDB->getDescription());
                 }
             }
         }

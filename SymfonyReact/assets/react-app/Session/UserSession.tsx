@@ -29,7 +29,7 @@ export const refreshUserTokens = (refreshTokenResponseData: TokenRefreshResponse
         localStorage.setItem('token' , refreshTokenResponseData.token);
         localStorage.setItem('refreshToken' , refreshTokenResponseData.refreshToken);
     } else {
-        console.log("refresh token response data is undefined")
+        throw Error('Token or Refresh Token is undefined');
     }
 }
 

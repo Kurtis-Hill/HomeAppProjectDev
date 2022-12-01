@@ -86,8 +86,8 @@ services:
   App\Sensors\Repository\Sensors\SensorRepositoryInterface:
     alias: 'App\Sensors\Repository\Sensors\ORM\SensorRepository'
 
-  App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface:
-    alias: 'App\Sensors\Repository\Sensors\ORM\SensorTypeRepository'
+  App\Sensors\Repository\Sensors\ORM\SensorTypeRepositoryInterface:
+    alias: 'App\Sensors\Repository\Sensors\SensorTypeRepository'
 
   App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface:
     alias: 'App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository'

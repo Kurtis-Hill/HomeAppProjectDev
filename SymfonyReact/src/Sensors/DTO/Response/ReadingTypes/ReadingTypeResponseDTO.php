@@ -7,23 +7,23 @@ use JetBrains\PhpStorm\Immutable;
 #[Immutable]
 class ReadingTypeResponseDTO
 {
-    private int $id;
+    private int $readingTypeID;
 
-    private string $readingType;
+    private string $readingTypeName;
 
     public function __construct(int $id, string $readingType)
     {
-        $this->id = $id;
-        $this->readingType = $readingType;
+        $this->readingTypeID = $id;
+        $this->readingTypeName = $readingType;
     }
 
-    public function getId(): int
+    public function getReadingTypeID(): int
     {
-        return $this->id;
+        return $this->readingTypeID;
     }
 
-    public function getReadingType(): string
+    public function getReadingTypeName(): string
     {
-        return $this->readingType;
+        return $this->readingTypeName;
     }
 }

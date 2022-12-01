@@ -30,6 +30,7 @@ interface SensorTypeRepositoryInterface
     public function persist(SensorType $sensorType): void;
 
 
+    #[ArrayShape([SensorType::class])]
     public function findAllSensorTypes(): array;
 
     /**

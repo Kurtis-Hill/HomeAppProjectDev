@@ -1,5 +1,7 @@
 import React, { Component, createContext } from 'react';
 
+import { handleSensorTypesRequest } from '../../Request/GetSensorTypeRequest';
+
 export const SensorDataContext = createContext();
 
 export default class SensorDataContextProvider extends Component {
@@ -22,7 +24,13 @@ export default class SensorDataContextProvider extends Component {
             this.state.sensorReadingTypes.length === 0
             || this.state.sensorTypes.length === 0
         ) {             
-                //get sensorData request
+                const sensorTypes = handleSensorTypesRequest();
+                if (sensorTypes !== null) {
+                    this.setState({
+                        sensorTypes: sensorTypes,
+                    });
+                }
+                
         }
     }
 
