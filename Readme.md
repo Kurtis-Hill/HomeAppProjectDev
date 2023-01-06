@@ -30,7 +30,8 @@ you will notice that there is a cacert.pem in the SSL directory - leave it be th
 Elasticsearch is optional for the application at this point - by setting the environment variables to false first one being <b>ELASTIC_ENABLED</b> this can be found in the </i>.env</i> file in the HomeAppDocker folder and the other <b>HEAVY_WRITES_ELASTIC_ONLY</b> this can be found in <i>SymfonyReact/.env</i> and commenting out the Elasticsearch containers in the <i>HomeAppDocker/docker-compose.yml</i> file this will use the Mysql tables.
 Although using Elasticsearch has slightly more overhead if you are planning on storing out of range temperatures and/or constantly recorded readings then I advice you enable Elasticsearch as its more efficient.
 
-First the Elasticsearch container needs to generate some certificates for secure communication. To do this run the following command: <code>docker-compose -f HomeAppDocker/elasticsearch/certs/create-certs.yml run --rm create_certs</code>
+First we need to copy the .env.example for the certificate container <code>cp HomeAppDocker/elasticsearch/certs/.env.example HomeAppDocker/elasticsearch/certs/.env</code> and then enter the same name youve chosen for the project as the compoer project name, you can leave the other value to its default or change it if you wish its the directory where the certificates will be mounted in the container.
+Now the Elasticsearch container needs to generate some certificates for secure communication. To do this run the following command: <code>docker-compose -f HomeAppDocker/elasticsearch/certs/create-certs.yml run --rm create_certs</code>
 elastic username is: <code>elastic</code> and the password is set in the .env file
 
 <h2>Running the application</h2>

@@ -11,6 +11,8 @@ import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/An
 import { ErrorResponseInterceptor } from "../../Request/Axios/ErrorResponseInterceptor";
 import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
 
+import { SensorDataContextProvider } from "../SensorDataProvider/SensorDataProvider";
+
 export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
 
@@ -47,14 +49,18 @@ export function MainPageTop() {
             <RequestInterceptor />
             <div id="page-top">
                 <div id="wrapper">
-                    <Navbar
-                        refreshNavbar={refreshNavbar}
-                        setRefreshNavDataFlag={setRefreshNavDataFlag}
-                        showErrorAnnouncementFlash={showErrorAnnouncementFlash}
-                    />
-                    <Outlet
-                        context={[setRefreshNavDataFlag, showErrorAnnouncementFlash]}
-                    />
+                    <SensorDataContextProvider 
+                    children={undefined}
+                    >
+                        <Navbar
+                            refreshNavbar={refreshNavbar}
+                            setRefreshNavDataFlag={setRefreshNavDataFlag}
+                            showErrorAnnouncementFlash={showErrorAnnouncementFlash}
+                            />
+                        <Outlet
+                            context={[setRefreshNavDataFlag, showErrorAnnouncementFlash]}
+                            />
+                    </SensorDataContextProvider>
                 </div>
             </div>
         </React.Fragment>

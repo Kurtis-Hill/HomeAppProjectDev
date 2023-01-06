@@ -52,6 +52,8 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
                 } else {
                     window.location.replace(`${loginUrl}`)
                 }
+            } else {
+                errorAnnouncementFlash(['Unrecognized issue please log out and back in again'], 'Error');
             }
         }
 

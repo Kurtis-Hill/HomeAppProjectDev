@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import SmallWhiteBoxDisplay from '../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
 import CardFilterButton from '../Cards/Buttons/CardFilterButton';
-import { SensorDataContext } from '../../Contexts/SensorData/SensorDataContext';
+// import { SensorDataContext } from '../../Contexts/SensorData/SensorDataContext';
 
 export default function CardFilterBar() {
     const [showFilters, setShowFilters] = useState<boolean>(false);

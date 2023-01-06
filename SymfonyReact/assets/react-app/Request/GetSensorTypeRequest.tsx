@@ -3,10 +3,10 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { apiURL } from "../Common/CommonURLs";
 import { SensorTypeResponseInterface } from '../Response/Sensor/SensorTypeResponseInterface';
 
-export async function handleSensorTypesRequest(): Promise<SensorTypeResponseInterface[]|null {
+export async function handleSensorTypesRequest(): Promise<SensorTypeResponseInterface[]|null> {
     try {
         const sensorDataResponse: AxiosResponse = await axios.get(
-            `${apiURL}sensor-types`
+            `${apiURL}sensor-types/all`
         );
         console.log('sensorDataResponse', sensorDataResponse);
 
