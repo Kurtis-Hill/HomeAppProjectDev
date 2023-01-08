@@ -9,8 +9,6 @@ import { SensorReadingTypeResponseInterface } from '../../Response/Sensor/Sensor
 
 import SensorDataContext from '../../Contexts/SensorData/SensorDataContext';
 
-// export const SensorDataContext = createContext();
-
 export function SensorDataContextProvider({ children }) {
 
     const [sensorReadingTypeData, setSensorReadingTypeData] = useState<SensorReadingTypeResponseInterface[]|[]>([]);
@@ -20,27 +18,6 @@ export function SensorDataContextProvider({ children }) {
     useEffect(() => {
         handleSensorDataRequest();
     }, []);
-
-    // const useSensorDataContext = () => {
-    //     const context = React.useContext(SensorDataContext);
-    //     if (context === undefined) {
-    //         throw new Error('useSensorDataContext must be used within a SensorDataContextProvider');
-    //     }
-    
-    //     return context;
-    // }
-
-    
-    // function SensorDataConsumer({children}) {
-    //     <SensorDataContext.Consumer>
-    //         {context => {
-    //             if (context === undefined) {
-    //                 throw new Error('useSensorDataContext must be used within a SensorDataContextProvider');
-    //             }
-    //             return children(context)
-    //         }}
-    //     </SensorDataContext.Consumer>
-    // }
 
     const handleSensorDataRequest = async () => {
         console.log('handleSensorDataRequest');
@@ -53,36 +30,25 @@ export function SensorDataContextProvider({ children }) {
         if (sensorTypes.length === 0) {
             const sensorTypesResponse = await handleSensorTypesRequest();
             if (sensorTypesResponse !== null) {
-                setSensorTypes()
+                setSensorTypes(sensorTypesResponse)
             }
         }
     }
 
     return (
-        // <>
-            <SensorDataContext.Provider value={ 
-                {
-                    sensorTypes,
-                    sensorReadingTypeData
-                }
+        <SensorDataContext.Provider value={ 
+            {
+                sensorTypes,
+                sensorReadingTypeData
             }
-            >
-                {children}
-            </SensorDataContext.Provider>
-        // </>
+        }
+        >
+            {children}
+        </SensorDataContext.Provider>
     );
 }
 
-    // const withUser = (Child) => (props) => (
-    //     <SensorDataContext.Consumer>
-    //       {(context) => <Child {...props} {...context} />}
-    //       {/* Another option is:  {context => <Child {...props} context={context}/>}*/}
-    //     </SensorDataContext.Consumer>
-    //   );
-
-
-
-// export { SensorDataContextProvider };
-// export { SensorDataContextProvider,
-//     //  withUser
-//      };
+export interface SensorDataContextDataInterface {
+    sensorTypes: SensorTypeResponseInterface[]|[];
+    sensorReadingTypeData: SensorReadingTypeResponseInterface[]|[];
+}

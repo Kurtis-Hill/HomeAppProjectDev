@@ -49,17 +49,20 @@ export function MainPageTop() {
             <RequestInterceptor />
             <div id="page-top">
                 <div id="wrapper">
-                    <SensorDataContextProvider 
-                    children={undefined}
-                    >
+                    <SensorDataContextProvider children={undefined}>
                         <Navbar
                             refreshNavbar={refreshNavbar}
                             setRefreshNavDataFlag={setRefreshNavDataFlag}
                             showErrorAnnouncementFlash={showErrorAnnouncementFlash}
-                            />
+                        />
                         <Outlet
-                            context={[setRefreshNavDataFlag, showErrorAnnouncementFlash]}
-                            />
+                            context={
+                                [
+                                    setRefreshNavDataFlag,
+                                    showErrorAnnouncementFlash
+                                ]
+                            }
+                        />
                     </SensorDataContextProvider>
                 </div>
             </div>

@@ -208,6 +208,11 @@
     cursor: pointer;
 }
 
+.one-line-text {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 /*.secret-box {*/
 /*    padding: 5%;*/
 /*    text-align: center;*/

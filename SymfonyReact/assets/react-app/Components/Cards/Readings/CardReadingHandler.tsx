@@ -12,6 +12,7 @@ import CardReadingFactory from '../../../Factories/CardReadingFactory';
 import DotCircleSpinner from '../../Spinners/DotCircleSpinner';
 
 import { CardCurrentSensorDataInterface, CurrentReadingDataDisplayInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
+import { CardFilterBarInterface } from '../../Filterbars/CardFilterBarInterface';
 
 const cardReducer = (previousCards: React[], cardsForDisplayArray: React[]) => {
     if (previousCards.length <= 0) {
@@ -43,9 +44,9 @@ const cardReducer = (previousCards: React[], cardsForDisplayArray: React[]) => {
 
 const initialCardState = [];
 
-export function CardReadingHandler(props: { route: string; filterParams?: string[] }) {
+export function CardReadingHandler(props: { route: string; filterParams?: CardFilterBarInterface }) {
     const route:string = props.route ?? 'index';
-    const filterParams:string[] = props.filterParams ?? [];
+    const filterParams:CardFilterBarInterface|[] = props.filterParams ?? [];
 
     const [loadingCards, setLoadingCards] = useState<boolean>(true);
     const [refreshTimer, setRefreshTimer] = useState<number>(4000);
