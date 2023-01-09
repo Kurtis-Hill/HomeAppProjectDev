@@ -53,6 +53,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         ?CardViewUriFilterDTO $cardViewTypeFilterDTO = null,
         int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array {
+//        dd('2');
         $groupNameIDs = $user->getGroupNameIds();
 
         $qb = $this->createQueryBuilder(CardView::ALIAS);
@@ -108,7 +109,12 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
         $qb->setParameters($parameters);
 
+        try {
+
         return $qb->getQuery()->getResult($hydrationMode);
+        } catch (\Exception) {
+            dd('its here');
+        }
     }
 
     public function findOneById(int $cardViewID): ?CardView

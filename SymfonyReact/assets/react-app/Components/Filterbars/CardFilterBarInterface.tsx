@@ -1,4 +1,4 @@
 export interface CardFilterBarInterface {
-    sensorTypes: string[]|[];
-    readingTypes: string[]|[];
+    sensorTypes?: string[];
+    readingTypes?: string[];
 }

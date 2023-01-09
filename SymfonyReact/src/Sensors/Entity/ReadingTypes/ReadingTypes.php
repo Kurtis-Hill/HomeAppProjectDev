@@ -31,6 +31,13 @@ class ReadingTypes
         ],
     ];
 
+    public const ALL_READING_TYPES = [
+        Temperature::READING_TYPE,
+        Humidity::READING_TYPE,
+        Analog::READING_TYPE,
+        Latitude::READING_TYPE,
+    ];
+
     #[
         ORM\Column(name: "readingTypeID", type: "integer", nullable: false),
         ORM\Id,

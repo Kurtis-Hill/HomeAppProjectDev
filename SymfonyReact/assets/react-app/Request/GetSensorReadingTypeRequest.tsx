@@ -8,7 +8,6 @@ export async function handleSensorReadingTypesRequest(): Promise<SensorReadingTy
         const sensorDataResponse: AxiosResponse = await axios.get(
             `${apiURL}reading-types/all`
         );
-        console.log('sensorDataResponse', sensorDataResponse);
 
         if (sensorDataResponse.status === 200) {
             const sensorReadingTypes: SensorReadingTypeResponseInterface[] = sensorDataResponse.data.payload;

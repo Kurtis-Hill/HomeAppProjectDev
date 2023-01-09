@@ -12,18 +12,32 @@ import { SensorTypeResponseInterface } from '../../Response/Sensor/SensorTypeRes
 
 import { capitalizeFirstLetter } from '../../Common/StringFormatter';
 
-export default function CardFilterBar(props: {filterParams: CardFilterBarInterface|[]; addFilterParams: (filterParams: {type: string, value: string}) => void, removeFilterParams: (filterParams: {type: string, value: string}) => void}) {
+export default function CardFilterBar(props: {
+    filterParams: CardFilterBarInterface|[]; 
+    addFilterParams: (filterParams: {type: string, value: string}) => void,
+    removeFilterParams: (filterParams: {type: string, value: string}) => void,
+    setCardRefreshTimer: (timer: number) => void,
+    cardRefreshTimer: number,
+}) {
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
     const addFilterParams = props.addFilterParams;
 
     const removeFilterParams = props.removeFilterParams;
 
+    const cardRefreshTimer = props.cardRefreshTimer;
+
+    const setCardRefreshTimer = props.setCardRefreshTimer;
+
     const itemDropdownToggleClass: string = showFilters === true ? 'show' : '';
 
-    const readingTypesString = 'readingTypes';
+    const readingTypesString = 'readingType';
 
-    const sensorTypesString = 'sensorTypes';
+    const sensorTypesString = 'sensorType';
+
+    const cardRefreshMaxLimit: number = 60;
+
+    const cardRefreshMinLimit: number = 1;
 
     const toggleShowFilters = (): void => {
         setShowFilters(!showFilters);
@@ -31,29 +45,43 @@ export default function CardFilterBar(props: {filterParams: CardFilterBarInterfa
 
     const buildCardFilterForm = (): React => {
         const handleClick = (e: Event) => {
-            console.log('e been clicked', e);
-            const inputCheckElement = e.target as HTMLInputElement;
-            console.log('checked check', inputCheckElement.checked, inputCheckElement.value);
+            // console.log('e been clicked', e);
+            const inputCheckElement = e.currentTarget as HTMLInputElement;
+            console.log('clicked', e.target, inputCheckElement)
+            let filterParamType: string;
+            // console.log('checked check', inputCheckElement.checked, inputCheckElement.value);
             switch (inputCheckElement.name) {
                 case readingTypesString:
-                    if (inputCheckElement.checked === true) {
-                        removeFilterParams({type: 'readingType', value: inputCheckElement.value});
-                    }
-                    if (inputCheckElement.checked === false) {
-                        addFilterParams({type: 'readingType', value: inputCheckElement.value});
-                    }
-                    // let hey = ['hi' => '2'];
+                    filterParamType = readingTypesString;
                     break;
                 case sensorTypesString:
-                    console.log('2');
+                    filterParamType = sensorTypesString;
                     break;
                 default:
                     throw Error('filter option not recognized')
             }
 
-            console.log('event name and id', inputCheckElement.name, inputCheckElement.value);
+            if (inputCheckElement.checked === true) {
+                removeFilterParams({type: filterParamType, value: inputCheckElement.value});
+            }
+            if (inputCheckElement.checked === false) {
+                addFilterParams({type: filterParamType, value: inputCheckElement.value});
+            }
         }
+
+        const handleSliderChange = (e: Event) => {
+            const sliderElement = e.currentTarget as HTMLInputElement;  
+            const newRefreshValue: number = parseInt(sliderElement.value);
+
+            console.log('bla', newRefreshValue, cardRefreshMinLimit, cardRefreshMaxLimit)
+            if (newRefreshValue >= cardRefreshMinLimit && newRefreshValue <= cardRefreshMaxLimit) {
+                console.log('nope')
+                const refreshValueInMillieSeconds = newRefreshValue * 1000;          
+                setCardRefreshTimer(refreshValueInMillieSeconds);
+            }
+        } 
         
+        const cardRefreshTimerInSeconds = cardRefreshTimer / 1000;
         return (
             <SensorDataContext.Consumer>
                 {(sensorData: SensorDataContextDataInterface) => (
@@ -79,12 +107,18 @@ export default function CardFilterBar(props: {filterParams: CardFilterBarInterfa
                                         sensorData.sensorTypes.map((sensorType: SensorTypeResponseInterface, index:Number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
-                                                    <input onChange={handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeID} />
+                                                    <input onChange={handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeName} />
                                                     <label style={{padding: '2%'}} htmlFor={sensorType.sensorTypeName}>{capitalizeFirstLetter(sensorType.sensorTypeName)}</label>
                                                 </div>
                                             </React.Fragment>
                                         ))
                                     }
+                                </div>
+                            </div>
+                            <div className="card-filter-slider">
+                                <label className="form-label" htmlFor="card-refresh-slider">{ cardRefreshTimerInSeconds } Time in seconds for refresh</label>
+                                <div className="range">
+                                    <input onChange={ handleSliderChange } min={cardRefreshMinLimit} max={cardRefreshMaxLimit} value={ cardRefreshTimerInSeconds } type="range" className="form-range" id="card-refresh-slider" />
                                 </div>
                             </div>
                         </div>
@@ -93,7 +127,6 @@ export default function CardFilterBar(props: {filterParams: CardFilterBarInterfa
             </SensorDataContext.Consumer>
         );
     }
-
 
     return (
         <div className="card-filter-bar-container">

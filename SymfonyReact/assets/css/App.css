@@ -213,6 +213,15 @@
     overflow: hidden;
 }
 
+.no-data-message {
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 2%;
+}
+
+.card-filter-slider {
+    text-align: center;
+}
 /*.secret-box {*/
 /*    padding: 5%;*/
 /*    text-align: center;*/

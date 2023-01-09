@@ -14,6 +14,7 @@ use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewFilterRequestDTO;
 use App\UserInterface\Exceptions\CardTypeNotRecognisedException;
+use App\UserInterface\Exceptions\CardViewRequestException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\Cards\CardDataFilter\CardDataFilter;
@@ -69,8 +70,11 @@ class CardViewController extends AbstractController
     #[Route('device-cards/{id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
     public function deviceCards(Devices $device, Request $request): JsonResponse
     {
-        $cardViewRequestDTO = $this->validateRequestDTO($request);
-
+        try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
+        }
         try {
             $this->denyAccessUnlessGranted(CardViewVoter::VIEW_DEVICE_CARD_DATA, $device);
         } catch (AccessDeniedException) {
@@ -110,8 +114,11 @@ class CardViewController extends AbstractController
     #[Route('room-cards/{id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
     public function roomCards(Room $room, Request $request): Response
     {
-        $cardViewRequestDTO = $this->validateRequestDTO($request);
-
+        try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
+        }
         try {
             $this->denyAccessUnlessGranted(CardViewVoter::VIEW_ROOM_CARD_DATA, $room);
         } catch (AccessDeniedException) {
@@ -151,8 +158,11 @@ class CardViewController extends AbstractController
     #[Route('index', name: 'index-card-data-v2-boom', methods: [Request::METHOD_GET])]
     public function indexCards(Request $request): JsonResponse
     {
-        // return $this->sendBadRequestJsonResponse(['ow no']);
-        $cardViewRequestDTO = $this->validateRequestDTO($request);
+        try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
+        }
 
         $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
@@ -184,6 +194,9 @@ class CardViewController extends AbstractController
         return $this->sendSuccessfulJsonResponse($responseData);
     }
 
+    /**
+     * @throws CardViewRequestException
+     */
     private function validateRequestDTO(Request $request): CardViewFilterRequestDTO
     {
         $cardViewRequestDTO = new CardViewFilterRequestDTO();
@@ -203,8 +216,9 @@ class CardViewController extends AbstractController
 
         $requestValidationErrors = $this->validator->validate($cardViewRequestDTO);
 
+//        dd($requestValidationErrors, $this->checkIfErrorsArePresent($requestValidationErrors));
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return new CardViewFilterRequestDTO();
+            throw new CardViewRequestException($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
         return $cardViewRequestDTO;

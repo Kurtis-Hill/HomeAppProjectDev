@@ -11,6 +11,7 @@ use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorType;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Tests\Traits\TestLoginTrait;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
@@ -20,6 +21,7 @@ use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CardViewControllerTest extends WebTestCase
 {
@@ -321,7 +323,45 @@ class CardViewControllerTest extends WebTestCase
         ];
     }
 
+    public function test_sending_all_reading_types_returns_error(): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::CARD_VIEW_URL, 'index'),
+            ['reading-types' => ReadingTypes::ALL_READING_TYPES],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
 
+        $requestResponse = $this->client->getResponse();
+
+        $content = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $errors = $content['errors'];
+
+        self::assertEquals('All reading types selected, please unselect some', $errors[0]);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());
+    }
+
+    public function test_sending_all_sensor_types_returns_error(): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::CARD_VIEW_URL, 'index'),
+            ['sensor-types' => SensorType::ALL_SENSOR_TYPES],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        $requestResponse = $this->client->getResponse();
+
+        $content = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $errors = $content['errors'];
+
+        self::assertEquals('All sensor types selected, please unselect some', $errors[0]);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());
+
+    }
+    
 
     protected function tearDown(): void
     {
