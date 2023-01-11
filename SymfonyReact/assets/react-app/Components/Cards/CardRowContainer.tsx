@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { CardReadingHandler } from './Readings/CardReadingHandler';
 import { CardFilterBarInterface } from '../Filterbars/CardFilterBarInterface';
 import CardFilterBar from '../Filterbars/CardFilterBar';
+import { sensorType, readingType } from '../../Common/SensorLanguage';
+
 
 export function CardRowContainer(props: { 
     route?: string;
@@ -24,28 +26,29 @@ export function CardRowContainer(props: {
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
 
-        if (filterParamType === 'readingType') {
+        if (filterParamType === readingType) {
             setSensorFilterParams({...sensorFilterParams, readingTypes: [...sensorFilterParams.readingTypes, filterParam.value]});
         }
-        if (filterParamType === 'sensorType') {
+        if (filterParamType === sensorType) {
             setSensorFilterParams({...sensorFilterParams, sensorTypes: [...sensorFilterParams.sensorTypes, filterParam.value]});
         }
     };
 
     const removeSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
-        if (filterParam.type === 'readingType') {
-            console.log('here at least', filterParam.value)
-            if (Array.isArray(sensorFilterParams.readingTypes) && sensorFilterParams.readingTypes.includes(filterParam.value, sensorFilterParams)) {
-                sensorFilterParams.readingTypes.splice(sensorFilterParams.readingTypes.indexOf(filterParam.value), 1);
-                setSensorFilterParams({...sensorFilterParams, readingTypes: sensorFilterParams});
+        if (filterParam.type === readingType) {
+            const readingTypes: string[] = sensorFilterParams.readingTypes;
+            if (Array.isArray(readingTypes) && readingTypes.includes(filterParam.value, sensorFilterParams)) {
+                setSensorFilterParams({...sensorFilterParams, readingTypes: readingTypes.filter(readingType => readingType !== filterParam.value)});
             }
         }
-        if (filterParam.type === 'sensorType') {
-            if (Array.isArray(sensorFilterParams.sensorTypes) && sensorFilterParams.sensorTypes.includes(filterParam.value, sensorFilterParams)) {
-                sensorFilterParams.sensorTypes.splice(sensorFilterParams.sensorTypes.indexOf(filterParam.value), 1);
-                setSensorFilterParams({...sensorFilterParams, sensorTypes: sensorFilterParams});
+        if (filterParam.type === sensorType) {
+            const sensorTypes: string[] = sensorFilterParams.sensorTypes;
+            if (Array.isArray(sensorTypes) && sensorTypes.includes(filterParam.value, sensorFilterParams)) {
+                setSensorFilterParams({...sensorFilterParams, sensorTypes: sensorTypes.filter((sensorType: string) => sensorType !== filterParam.value)});
             }
         }
+
+        console.log('filter param after removal', sensorFilterParams);
     };
 
     const buildCardContainer = (): React => {

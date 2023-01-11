@@ -25,7 +25,6 @@ function buildCardRequestFilters(filterParams: CardFilterBarInterface): URLSearc
         for (let i = 0; i < filterParams.sensorTypes.length; i++) {
             typeGetParamsObject.append('sensor-types[]', filterParams.sensorTypes[i]);
         }
-        
     }
 
     if (filterParams.readingTypes && filterParams.readingTypes.length > 0) {
@@ -35,5 +34,4 @@ function buildCardRequestFilters(filterParams: CardFilterBarInterface): URLSearc
     }
 
     return typeGetParamsObject;
-    // return new URLSearchParams();
 }

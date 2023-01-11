@@ -5,10 +5,10 @@ namespace App\Authentication\Entity;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Authentication\Repository\ORM\GroupNameMappingTableRepository;
+use App\Authentication\Repository\ORM\GroupNameMappingRepository;
 
 #[
-    ORM\Entity(repositoryClass: GroupNameMappingTableRepository::class),
+    ORM\Entity(repositoryClass: GroupNameMappingRepository::class),
     ORM\Table(name: "groupnnamemapping"),
     ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
     ORM\Index(columns: ["userID", "groupNameID"], name: "userID"),
@@ -30,7 +30,7 @@ class GroupNameMapping
     private GroupNames $groupNameID;
 
     #[
-        ORM\ManyToOne(targetEntity: User::class),
+        ORM\ManyToOne(targetEntity: User::class, inversedBy: "userGroupMappingEntities"),
         ORM\JoinColumn(name: "userID", referencedColumnName: "userID"),
     ]
     private User $userID;
@@ -40,41 +40,26 @@ class GroupNameMapping
         return $this->groupNameMappingID;
     }
 
-    /**
-     * @param int $groupNameMappingID
-     */
     public function setGroupNameMappingID(int $groupNameMappingID): void
     {
         $this->groupNameMappingID = $groupNameMappingID;
     }
 
-    /**
-     * @return GroupNames
-     */
     public function getGroupNameID(): GroupNames
     {
         return $this->groupNameID;
     }
 
-    /**
-     * @param GroupNames $groupNameID
-     */
     public function setGroupNameID(GroupNames $groupNameID): void
     {
         $this->groupNameID = $groupNameID;
     }
 
-    /**
-     * @return User
-     */
     public function getUserID(): User
     {
         return $this->userID;
     }
 
-    /**
-     * @param User $userID
-     */
     public function setUserID(User $userID): void
     {
         $this->userID = $userID;

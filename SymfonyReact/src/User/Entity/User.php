@@ -5,7 +5,10 @@ namespace App\User\Entity;
 use App\Authentication\Entity\GroupNameMapping;
 use App\User\Repository\ORM\UserRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -69,11 +72,19 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     ]
     private DateTime $createdAt;
 
-    #[ArrayShape([GroupNameMapping::class])]
-    private array $userGroupMappingEntities = [];
+    #[
+        ArrayShape([GroupNameMapping::class]),
+        ORM\OneToMany(mappedBy: "userID", targetEntity: GroupNameMapping::class),
+    ]
+    private Selectable|array $userGroupMappingEntities;
+
+    public function __construct()
+    {
+        $this->userGroupMappingEntities = new ArrayCollection();
+    }
 
     #[ArrayShape([GroupNameMapping::class])]
-    public function getUserGroupMappingEntities(): array
+    public function getUserGroupMappingEntities(): ArrayCollection|Selectable
     {
         return $this->userGroupMappingEntities;
     }
@@ -96,24 +107,24 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape(['int'])]
     public function getGroupNameIds(): array
     {
-        $groupNames = [];
-
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
         }
 
-        return $groupNames;
+        return $groupNames ?? [];
     }
 
     #[ArrayShape(['groupNameID' => 'int'])]
     public function getGroupNameAndIds(): array
     {
-        $groupNames = [];
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = ['groupNameID' => $entity->getGroupNameID()->getGroupNameID(), 'groupName' => $entity->getGroupNameID()->getGroupName()];
+            $groupNames[] = [
+                'groupNameID' => $entity->getGroupNameID()->getGroupNameID(),
+                'groupName' => $entity->getGroupNameID()->getGroupName()
+            ];
         }
 
-        return $groupNames;
+        return $groupNames ?? [];
     }
 
     public function getUsername(): string

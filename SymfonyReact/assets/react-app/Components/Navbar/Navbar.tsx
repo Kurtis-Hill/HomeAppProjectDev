@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { checkAdmin } from "../../Session/UserSession";
@@ -14,6 +14,8 @@ import AdminButton from "../Buttons/AdminButton";
 
 import { SidebarDividerWithHeading } from "../Dividers/SidebarDividerWithHeading";
 import DotCircleSpinner from "../Spinners/DotCircleSpinner";
+import { AddNewDevice } from '../Devices/AddNewDevice';
+import BaseModal from '../Modals/BaseModal';
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
@@ -27,6 +29,12 @@ export default function NavBar(props: {
     const [navbarResponseData, setNavbarResponseData] = useState<NavBarResponseInterface>([]);
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
+
+    const [showAddNewDeviceModal, setAddNewDeviceModal] = useState<boolean>(false);
+
+    const setAddNewDeviceModalFlag = (show: boolean): void => {
+        setAddNewDeviceModal(show);
+    }
 
     const admin: boolean = checkAdmin();
 
@@ -72,6 +80,16 @@ export default function NavBar(props: {
         setNavbarToggleSizeSmall(!navbarToggleSizeSmall);
     }
 
+    const buildAddNewDeviceModal = (): React => {
+        // const addNewDeviceClickableElement: HTMLElement = <span onClick={ setAddNewDeviceModalFlag(true) }></span>
+        // const addNewDeviceElement: React = 
+        return (
+            <AddNewDevice
+                showAddNewDeviceModal={showAddNewDeviceModal}
+                setAddNewDeviceModal={setAddNewDeviceModal}
+            />
+        );
+    }
     return (
         <React.Fragment>
             <ul className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${navbarToggleSizeSmall === true ? 'toggled' : ''}` }>
@@ -91,7 +109,19 @@ export default function NavBar(props: {
                         ? <DotCircleSpinner classes="margin-spinner" />
                         : null
                 }
-                <NavbarViewOptionListElements navbarResponseData={navbarResponseData} />
+                <NavbarViewOptionListElements navbarResponseData={navbarResponseData} showAddNewDeviceModalFlag={setAddNewDeviceModalFlag} />
+
+                <BaseModal
+                    title={'Add New Device'}
+                    content={buildAddNewDeviceModal}
+                    modalShow={showAddNewDeviceModal}
+                    setShowModal={setAddNewDeviceModalFlag}
+                />
+                {/* { buildAddNewDeviceModal } */}
+                {/* <AddNewDevice
+                    showAddNewDeviceModal={showAddNewDeviceModal}
+                    setAddNewDeviceModal={setAddNewDeviceModalFlag}
+                /> */}
 
                 {/*<li className="nav-item">*/}
                 {/*    <a className="nav-link" href="charts.html">*/}

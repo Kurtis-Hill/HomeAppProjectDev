@@ -116,7 +116,7 @@ export default function CardFilterBar(props: {
                                 </div>
                             </div>
                             <div className="card-filter-slider">
-                                <label className="form-label" htmlFor="card-refresh-slider">{ cardRefreshTimerInSeconds } Time in seconds for refresh</label>
+                                <label className="form-label" htmlFor="card-refresh-slider">{ cardRefreshTimerInSeconds } seconds for data refresh</label>
                                 <div className="range">
                                     <input onChange={ handleSliderChange } min={cardRefreshMinLimit} max={cardRefreshMaxLimit} value={ cardRefreshTimerInSeconds } type="range" className="form-range" id="card-refresh-slider" />
                                 </div>

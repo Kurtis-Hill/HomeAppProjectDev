@@ -1,8 +1,14 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 
 export default function BaseModal(props: {
-    keyValue: number; title: string; content: string|null; modalOpacity: number; modalShow: boolean; setShowModal: (show: boolean) => void; label?: string; 
+    title: string; 
+    content: string|React|null; 
+    modalShow: boolean; 
+    setShowModal: (show: boolean) => void; 
+    modalOpacity?: number|undefined; 
+    keyValue?: number|undefined;
+    label?: string|undefined; 
 }) {
     const keyValue: number = props.keyValue ?? 0;
     const title: string = props.title ?? '';

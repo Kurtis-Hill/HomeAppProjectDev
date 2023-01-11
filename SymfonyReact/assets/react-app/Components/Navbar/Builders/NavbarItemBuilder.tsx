@@ -11,6 +11,7 @@ export function BuildNavbarItem(props: NavbarListInterface) {
             createNewLink={props.createNewLink}
             listLinks={props.listLinks}
             createNewText={props.createNewText}
+            showAddNewElement={props.showAddNewElement}
         />
     )
 }

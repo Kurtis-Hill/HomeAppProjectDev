@@ -71,7 +71,7 @@ class CardViewController extends AbstractController
     public function deviceCards(Devices $device, Request $request): JsonResponse
     {
         try {
-            $cardViewRequestDTO = $this->validateRequestDTO($request);
+                $cardViewRequestDTO = $this->validateRequestDTO($request);
         } catch (CardViewRequestException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
         }
@@ -210,10 +210,7 @@ class CardViewController extends AbstractController
         if ($readingTypes !== null) {
             $cardViewRequestDTO->setReadingTypes($readingTypes);
         }
-        if ($request->get('sensor-types')) {
-            $cardViewRequestDTO->setSensorTypes($request->get('sensor-types'));
-        }
-
+//dd($cardViewRequestDTO);
         $requestValidationErrors = $this->validator->validate($cardViewRequestDTO);
 
 //        dd($requestValidationErrors, $this->checkIfErrorsArePresent($requestValidationErrors));

@@ -17,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method GroupNameMapping[]    findAll()
  * @method GroupNameMapping[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GroupNameMappingTableRepository extends ServiceEntityRepository
+class GroupNameMappingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

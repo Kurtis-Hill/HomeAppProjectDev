@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 
 import { NavbarListItemInterface, NavbarListInterface } from "./Interfaces/NavbarItemInterfaces";
@@ -10,7 +10,16 @@ export default function NavbarListItem(props: NavbarListInterface) {
     const icon: string = props.icon;
     const createNewLink: string|null = props.createNewLink;
     const createNewText: string|null = props.createNewText;
-    const dropdownItems: Array<NavbarListItemInterface> = props.listLinks;
+    const dropdownItems: Array<NavbarListItemInterface>|null = props.listLinks;
+    const showAddNewElement: React = props.showAddNewElement ?? null; 
+
+    console.log('shw add', showAddNewElement)
+    // useEffect(() => {
+
+    // }, [showAddNewElement])
+    // const showAddNewFlag:(show: boolean) => void|undefined = props.showAddNewFlag;
+    // const showAddNewFlagText: string|null = props.showAddNewFlagText ?? null;
+    // const addNewModal: React|null = props.newItemModal;
 
     const [navbarItemToggleDropdown, setNavbarItemToggleDropdown] = useState<boolean>(false)
     
@@ -38,11 +47,17 @@ export default function NavbarListItem(props: NavbarListInterface) {
                             ))
                             : null                    
                         }
-                        <Link to={createNewLink} className="collapse-item">{createNewText}</Link>
+                        {
+                            createNewLink 
+                                ? <Link to={createNewLink} className="collapse-item">{createNewText}</Link>
+                                : null
+                        }
+                        { showAddNewElement }
+                        {/* { addNewModal } */}
                     </React.Fragment>
                 }
-
-            />
+                
+                />
         </li>
     );
 }

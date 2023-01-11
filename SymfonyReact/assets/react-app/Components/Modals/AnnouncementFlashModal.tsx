@@ -16,7 +16,6 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
       if (modalOpacity !== 0 && modalShow === true) {
         setModalOpacity(modalOpacity - 1);
       } else {
-        // setModalOpacity(100);
         setModalShow(false);
         clearInterval(interval)
       }

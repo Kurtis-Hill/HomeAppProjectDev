@@ -12,8 +12,17 @@ import { NavbarListItemInterface } from "./Interfaces/NavbarItemInterfaces";
 import NavbarListItem from './NavbarListItem'
 
 import { BuildNavbarItem } from "./Builders/NavbarItemBuilder";
+import { AddNewDevice } from '../Devices/AddNewDevice';
 
-export default function NavbarViewOptionListElements(props: { navbarResponseData: NavBarResponseInterface }) {    
+export default function NavbarViewOptionListElements(props: {
+    navbarResponseData: NavBarResponseInterface,
+    showAddNewDeviceModalFlag: (show: boolean) => void }
+) {  
+    const showAddNewDeviceModalFlag = props.showAddNewDeviceModalFlag;
+
+    // useEffect(() => {
+
+    // }, [showAddNewDeviceModalFlag])
     const createNavListItems = (navbarResponseData: NavBarResponseInterface): React => {
         const builtNavItems: Array<typeof NavbarListItem> = [];
         
@@ -32,10 +41,11 @@ export default function NavbarViewOptionListElements(props: { navbarResponseData
                     listLinks: navbarUserRoomsListItem,
                     icon: "person-booth",
                     createNewLink: `${webappURL}add-room`,
-                    createNewText: "+Add New Room"
+                    createNewText: "+Add New Room",
+                    // showAddNewElement: addNewDeviceClickableElement,
                 })
-                );
-            }
+            );
+        }
             
             const userDevices: Array<DeviceNavbarResponseInterface>|undefined = navbarResponseData.devices;
             if (userDevices !== undefined && userDevices.length > 0) {
@@ -46,14 +56,17 @@ export default function NavbarViewOptionListElements(props: { navbarResponseData
                         displayName: userDevices[i].deviceName
                     })
                 }
-                
+                const AddNewDeviceClickableElement: React = () => {<><span className="collapse-item" onClick={ () => showAddNewDeviceModalFlag(false) }>+ Add New Device</span></>};
+
                 builtNavItems.push(
                     BuildNavbarItem({
                         heading: "View Devices",
                         listLinks: deviceListItem,
                         icon: "microchip",
-                        createNewLink: `${webappURL}add-device`,
-                        createNewText: "+Add New Device"
+                        // showAddNewElement: addNewDeviceClickableElement,
+                        // createNewLink: `${webappURL}add-device`,
+                        // createNewText: "+Add New Device",
+                        showAddNewElement: <AddNewDeviceClickableElement />
                     })
             );
         }
@@ -74,7 +87,7 @@ export default function NavbarViewOptionListElements(props: { navbarResponseData
                     listLinks: groupListItem,
                     icon: "users",
                     createNewLink: `${webappURL}add-group`,
-                    createNewText: "+Add New Group"
+                    createNewText: "+Add New Group",
                 })
                 );
             }
