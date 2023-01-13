@@ -5,7 +5,7 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { checkAdmin } from "../../Session/UserSession";
 
 import { handleNavBarRequest } from "../../Request/NavBar/NavBarRequest";
-import NavBarResponseInterface from "../../Response/NavBar/NavBarResponseInterface";
+import { NavBarResponseInterface, IndividualNavBarResponse } from "../../Response/NavBar/NavBarResponseInterface";
 
 import NavbarViewOptionListElements  from "./NavbarViewOptionListElements";
 
@@ -29,14 +29,13 @@ export default function NavBar(props: {
     const [navbarResponseData, setNavbarResponseData] = useState<NavBarResponseInterface>([]);
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
-
     const [showAddNewDeviceModal, setAddNewDeviceModal] = useState<boolean>(false);
+
+    const admin: boolean = checkAdmin();
 
     const setAddNewDeviceModalFlag = (show: boolean): void => {
         setAddNewDeviceModal(show);
     }
-
-    const admin: boolean = checkAdmin();
 
     useEffect(() => {
         if (refreshNavbarIndicator === true) {
@@ -49,7 +48,7 @@ export default function NavBar(props: {
     const requestNavbarData = async (): Promise<AxiosResponse> => {
         try {
             const navbarResponse: AxiosResponse = await handleNavBarRequest();
-            const navbarResponseData: NavBarResponseInterface = navbarResponse.data.payload;
+            const navbarResponseData: NavBarResponseInterface = navbarResponse.data;
 
             setNavbarResponseData(navbarResponseData);
             setLoadingNavbarListItems(false);
@@ -57,17 +56,18 @@ export default function NavBar(props: {
             return navbarResponse;
         } catch (err) {
             const errors = err as Error | AxiosError;
-            if (!axios.isAxiosError(errors)) {
+            if (!axios.isAxiosError(errors) || !errors.response) {
                 errorAnnouncementFlash(
                     [`Something went wrong, please try refresh the browser or log out and back in again`],
                     'Unrecognized Error'
                 );
             }
 
-            const errorStatusCode: number = err.response.status;
+            const axiosError: AxiosError = errors as AxiosError;
+            const errorStatusCode: number = axiosError.response.status;
             if (errorStatusCode === 401 || err.status === 403) {
                 const navbarResponse: AxiosResponse = await handleNavBarRequest();
-                const navbarResponseData: NavBarResponseInterface = navbarResponse.data.payload;
+                const navbarResponseData: NavBarResponseInterface = navbarResponse.data;
     
                 setNavbarResponseData(navbarResponseData);
                 setLoadingNavbarListItems(false);
@@ -80,16 +80,6 @@ export default function NavBar(props: {
         setNavbarToggleSizeSmall(!navbarToggleSizeSmall);
     }
 
-    const buildAddNewDeviceModal = (): React => {
-        // const addNewDeviceClickableElement: HTMLElement = <span onClick={ setAddNewDeviceModalFlag(true) }></span>
-        // const addNewDeviceElement: React = 
-        return (
-            <AddNewDevice
-                showAddNewDeviceModal={showAddNewDeviceModal}
-                setAddNewDeviceModal={setAddNewDeviceModal}
-            />
-        );
-    }
     return (
         <React.Fragment>
             <ul className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${navbarToggleSizeSmall === true ? 'toggled' : ''}` }>
@@ -97,9 +87,10 @@ export default function NavBar(props: {
                 <hr className="sidebar-divider my-0" />
                 {
                     admin === true
-                        ? <li className="nav-item">
-                            <AdminButton />
-                        </li>
+                        ? 
+                            <li className="nav-item">
+                                <AdminButton />
+                            </li>
                         : null
                 }
                 <SidebarDividerWithHeading heading="View options for:" />
@@ -113,22 +104,15 @@ export default function NavBar(props: {
 
                 <BaseModal
                     title={'Add New Device'}
-                    content={buildAddNewDeviceModal}
+                    content={
+                        <AddNewDevice
+                            showAddNewDeviceModal={showAddNewDeviceModal}                    
+                            setAddNewDeviceModal={setAddNewDeviceModal}
+                        />
+                    }
                     modalShow={showAddNewDeviceModal}
                     setShowModal={setAddNewDeviceModalFlag}
                 />
-                {/* { buildAddNewDeviceModal } */}
-                {/* <AddNewDevice
-                    showAddNewDeviceModal={showAddNewDeviceModal}
-                    setAddNewDeviceModal={setAddNewDeviceModalFlag}
-                /> */}
-
-                {/*<li className="nav-item">*/}
-                {/*    <a className="nav-link" href="charts.html">*/}
-                {/*        <i className="fas fa-fw fa-chart-area" />*/}
-                {/*        <span>Charts</span></a>*/}
-                {/*</li>*/}
-
                 <hr className="sidebar-divider d-none d-md-block" />
 
                 <div className="text-center d-none d-md-inline">

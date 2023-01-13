@@ -30,21 +30,22 @@ class NavBarController extends AbstractController
     #[Route('/navbar-data', name: 'navbar-data', methods: [Request::METHOD_GET])]
     public function navBarData(NavBarDataProviderInterface $navBarDataProvider): JsonResponse
     {
-        if (!$this->getUser() instanceof User) {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
         }
 
-        $navbarDTO = $navBarDataProvider->getNavBarData($this->getUser());
+        $navbarDTO = $navBarDataProvider->getNavBarData($user);
         try {
             $normalizedResponse = $this->normalizeResponse($navbarDTO);
         } catch (ExceptionInterface) {
             $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
-        if (!empty($navbarDTO->getErrors()) || !empty($navBarDataProvider->getNavbarRequestErrors())) {
-            $this->logger->error('nav bar errors', ['errors' => $navbarDTO->getErrors(), 'user' => $this->getUser()->getUserIdentifier()]);
+        if (!empty($navBarDataProvider->getNavbarRequestErrors())) {
+            $this->logger->error('nav bar errors', ['errors' => $navBarDataProvider->getNavbarRequestErrors(), 'user' => $this->getUser()?->getUserIdentifier()]);
 
-            return $this->sendMultiStatusJsonResponse(array_merge($navBarDataProvider->getNavbarRequestErrors(), $navbarDTO->getErrors()), $normalizedResponse ?? []);
+            return $this->sendMultiStatusJsonResponse($navBarDataProvider->getNavbarRequestErrors(), $normalizedResponse ?? []);
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse ?? []);

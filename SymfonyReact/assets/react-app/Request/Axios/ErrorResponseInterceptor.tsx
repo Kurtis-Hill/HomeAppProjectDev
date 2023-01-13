@@ -27,16 +27,9 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
         }
 
         if (typeof error.response.data === 'object' &&  "errors" in error.response.data) {
-            const errorResponse: ErrorResponseInterface = error.response.data;
-
+            const errorResponse: ErrorResponseInterface = error.response.data as ErrorResponseInterface;
             const errorsForModal: Array<string> = errorResponse.errors;
-            // if (typeof errorResponse.errors ===  "string") {
-            //     errorsForModal = [errorResponse.errors];
-            //     console.log('CHECK THIS!1', errorsForModal);
-            // } else {
-            //     errorsForModal = errorResponse.errors;
-            //     console.log('CHECK THIS!2', errorsForModal);
-            // }
+
             errorAnnouncementFlash(errorsForModal, 'Error' ?? errorResponse.title );
         } else {
             console.log('here we go', error.response.data);
@@ -52,7 +45,8 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
                 } else {
                     window.location.replace(`${loginUrl}`)
                 }
-            } else {
+            } 
+            if (error.response.status === 500) {
                 errorAnnouncementFlash(['Unrecognized issue please log out and back in again'], 'Error');
             }
         }

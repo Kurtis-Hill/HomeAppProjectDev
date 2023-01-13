@@ -1,35 +1,33 @@
 <?php
 
-namespace App\UserInterface\Services\NavBar;
+namespace App\UserInterface\Services\UserData;
 
 use App\Common\API\APIErrorMessages;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
+use App\UserInterface\Builders\UserData\UserDataDTOBuilder;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
+use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
-class NavBarDataProviderFacade implements NavBarDataProviderInterface
+class UserDataProvider
 {
     private RoomRepositoryInterface $roomRepository;
-
-    private DeviceRepositoryInterface $deviceRepository;
 
     private array $errors = [];
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
-        DeviceRepositoryInterface $deviceRepository,
     ) {
         $this->roomRepository = $roomRepository;
-        $this->deviceRepository = $deviceRepository;
     }
 
-    #[ArrayShape([NavBarResponseDTO::class])]
-    public function getNavBarData(User $user): NavBarResponseDTO
+    #[ArrayShape([UserDataResponseDTO::class])]
+    public function getGeneralUserData(User $user): UserDataResponseDTO
     {
         $userGroups = $user->getGroupNameObjects();
 
@@ -39,21 +37,14 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
             $userRooms[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms');
             $this->errors[] = 'Failed to get Rooms';
         }
-        try {
-            $userDevices = $this->getDeviceData($user);
-        } catch (ORMException) {
-            $userDevices[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices');
-            $this->errors[] = 'Failed to get Device data';
-        }
 
-        return NavBarDTOBuilder::buildNavBarResponseDTO(
+        return UserDataDTOBuilder::buildUserDataDTOBuilder(
             $userRooms,
-            $userDevices,
             $userGroups,
         );
     }
 
-    public function getNavbarRequestErrors(): array
+    public function getProcessErrors(): array
     {
         return $this->errors;
     }
@@ -64,13 +55,5 @@ class NavBarDataProviderFacade implements NavBarDataProviderInterface
     private function getRoomData(User $user): array
     {
         return $this->roomRepository->getAllUserRoomsByGroupId($user->getGroupNameIDs(), AbstractQuery::HYDRATE_OBJECT);
-    }
-
-    /**
-     * @throws ORMException
-     */
-    private function getDeviceData(User $user): array
-    {
-        return $this->deviceRepository->getAllUsersDevicesByGroupId($user->getGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
     }
 }

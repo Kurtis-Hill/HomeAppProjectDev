@@ -34,7 +34,9 @@ export default function BaseModal(props: {
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
-                            { content }
+                            <div className="modal-body">
+                                { content }
+                            </div>
                         </div>
                     </div>
                 </div>

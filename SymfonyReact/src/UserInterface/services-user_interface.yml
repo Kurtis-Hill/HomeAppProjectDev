@@ -30,7 +30,7 @@ services:
     alias: App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateFacade
 
   App\UserInterface\Services\NavBar\NavBarDataProviderInterface:
-    alias : App\UserInterface\Services\NavBar\NavBarDataProviderFacade
+    alias : App\UserInterface\Services\NavBar\NavBarDataProvider
   ######################## New Sensor Creation Services ########################################################
 
   ######################## Factories ###########################################################################

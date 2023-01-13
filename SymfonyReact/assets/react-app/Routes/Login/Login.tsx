@@ -8,7 +8,7 @@ import { registerAccountUrl, indexUrl, loginUrl } from "../../Common/CommonURLs"
 import { getRefreshToken, getToken } from "../../Common/APICommon";
 
 import SubmitButton from "../../Components/Buttons/SubmitButton";
-import Input from "../../Components/Form/Input";
+import Input from "../../Components/Form/Inputs/Input";
 import ColouredPage from "../../Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Components/Spinners/DotCircleSpinner";
 
@@ -34,7 +34,7 @@ export default function Login(): void {
     const handleInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
-        setUserInputs((values: object) => ({...values, [name]: value}))
+        setUserInputs((values: LoginFormUserInputsInterface) => ({...values, [name]: value}))
     }
 
     const validateUserInput = (): boolean => {
@@ -141,11 +141,13 @@ export default function Login(): void {
                                         <Input
                                             name="username"
                                             onChangeFunction={handleInput}
+                                            extraClasses={"login-form-field"}
                                         />
                                         <Input
                                             name="password"
                                             type="password"
                                             onChangeFunction={handleInput}
+                                            extraClasses={"login-form-field"}
                                         />
                                         <div>
                                             {loading === true

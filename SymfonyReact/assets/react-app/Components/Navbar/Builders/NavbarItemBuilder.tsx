@@ -1,17 +1,24 @@
 import * as React from 'react';
+import { ListLinkItem } from '../../../Response/NavBar/NavBarResponseInterface';
 
 import NavbarListItem from '../NavbarListItem'
-import { NavbarListInterface } from '../Interfaces/NavbarItemInterfaces'
 
-export function BuildNavbarItem(props: NavbarListInterface) {
+
+export function BuildNavbarItem(props: {
+    heading: string,
+    icon: string;
+    listLinks: ListLinkItem[];
+    createNewText: string;
+    errors?: string[];
+    flagAddNewModal?: (show: boolean) => void|null;
+}) {
     return (
         <NavbarListItem
-            heading={props.heading}
+            header={props.heading}
             icon={props.icon}
-            createNewLink={props.createNewLink}
             listLinks={props.listLinks}
-            createNewText={props.createNewText}
-            showAddNewElement={props.showAddNewElement}
-        />
+            flagAddNewModal={props.flagAddNewModal}
+            errors={props.errors}
+            createNewText={props.createNewText}/>
     )
 }

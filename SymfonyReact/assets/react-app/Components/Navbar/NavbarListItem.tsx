@@ -4,16 +4,24 @@ import { Link } from "react-router-dom";
 
 import { NavbarListItemInterface, NavbarListInterface } from "./Interfaces/NavbarItemInterfaces";
 import SmallWhiteBoxDisplay from '../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
+import { ListLinkItem } from '../../Response/NavBar/NavBarResponseInterface';
 
-export default function NavbarListItem(props: NavbarListInterface) {
-    const heading: string = props.heading;
+export default function NavbarListItem(props: {
+    header: string,
+    icon: string;
+    listLinks: ListLinkItem[];
+    createNewText: string|null;
+    flagAddNewModal?: (show: boolean) => void;
+    errors?: string[];
+}) {
+    const heading: string = props.header;
     const icon: string = props.icon;
-    const createNewLink: string|null = props.createNewLink;
+    // const createNewLink: string|null = props.createNewLink;
     const createNewText: string|null = props.createNewText;
-    const dropdownItems: Array<NavbarListItemInterface>|null = props.listLinks;
-    const showAddNewElement: React = props.showAddNewElement ?? null; 
+    const dropdownItems: Array<ListLinkItem>|[] = props.listLinks;
+    const flagAddNewModal: (show: boolean) => void|null = props.flagAddNewModal ?? null; 
 
-    console.log('shw add', showAddNewElement)
+    // console.log('shw add', addNewText)
     // useEffect(() => {
 
     // }, [showAddNewElement])
@@ -42,18 +50,17 @@ export default function NavbarListItem(props: NavbarListInterface) {
                     <React.Fragment>
                         {                        
                             Array.isArray(dropdownItems) && dropdownItems.length > 0
-                                ? dropdownItems.map((navListItem, index: number) => (
+                                ? dropdownItems.map((navListItem: ListLinkItem, index: number) => (
                                 <Link to={navListItem.link} key={index} className="collapse-item">{navListItem.displayName}</Link>
                             ))
                             : null                    
                         }
+
                         {
-                            createNewLink 
-                                ? <Link to={createNewLink} className="collapse-item">{createNewText}</Link>
+                            flagAddNewModal !== null
+                                ? <span className="collapse-item hover" onClick={ () => flagAddNewModal(true) }>{ createNewText }</span>
                                 : null
                         }
-                        { showAddNewElement }
-                        {/* { addNewModal } */}
                     </React.Fragment>
                 }
                 
