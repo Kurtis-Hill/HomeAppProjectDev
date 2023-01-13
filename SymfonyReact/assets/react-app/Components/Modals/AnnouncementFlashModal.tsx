@@ -43,13 +43,14 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
       <React.Fragment>
         <BaseModal
               keyValue={errorNumber}
-              title={title}
-              content={displayErrors()}
+              title={title}              
               modalOpacity={modalOpacity}
               modalShow={modalShow}
               setShowModal={setModalShow}
               label={"Error announcement"}
-        />
+        >
+          { displayErrors() }
+        </BaseModal>
       </React.Fragment>
   );
 }

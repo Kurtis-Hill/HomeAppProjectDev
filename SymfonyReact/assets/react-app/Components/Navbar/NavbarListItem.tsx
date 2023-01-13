@@ -46,25 +46,23 @@ export default function NavbarListItem(props: {
             <SmallWhiteBoxDisplay
                 classes={navItemDropdownToggleClass}
                 heading={heading}
-                content={
-                    <React.Fragment>
-                        {                        
-                            Array.isArray(dropdownItems) && dropdownItems.length > 0
-                                ? dropdownItems.map((navListItem: ListLinkItem, index: number) => (
-                                <Link to={navListItem.link} key={index} className="collapse-item">{navListItem.displayName}</Link>
-                            ))
-                            : null                    
-                        }
+            >
+                <React.Fragment>
+                    {                        
+                        Array.isArray(dropdownItems) && dropdownItems.length > 0
+                            ? dropdownItems.map((navListItem: ListLinkItem, index: number) => (
+                            <Link to={navListItem.link} key={index} className="collapse-item">{navListItem.displayName}</Link>
+                        ))
+                        : null                    
+                    }
 
-                        {
-                            flagAddNewModal !== null
-                                ? <span className="collapse-item hover" onClick={ () => flagAddNewModal(true) }>{ createNewText }</span>
-                                : null
-                        }
-                    </React.Fragment>
-                }
-                
-                />
+                    {
+                        flagAddNewModal !== null
+                            ? <span className="collapse-item hover" onClick={ () => flagAddNewModal(true) }>{ createNewText }</span>
+                            : null
+                    }
+                </React.Fragment>
+            </SmallWhiteBoxDisplay>
         </li>
     );
 }

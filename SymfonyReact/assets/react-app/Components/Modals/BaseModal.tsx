@@ -3,16 +3,15 @@ import * as React from 'react';
 
 export default function BaseModal(props: {
     title: string; 
-    content: string|React|null; 
     modalShow: boolean; 
     setShowModal: (show: boolean) => void; 
     modalOpacity?: number|undefined; 
     keyValue?: number|undefined;
     label?: string|undefined; 
+    children?: React.ReactNode;
 }) {
     const keyValue: number = props.keyValue ?? 0;
     const title: string = props.title ?? '';
-    const content: string|null = props.content ?? null;
     const modalOpacity: number = props.modalOpacity ?? 100;
     const modalShow: boolean = props.modalShow ?? true;
     const setShowModal = props.setShowModal;
@@ -35,7 +34,7 @@ export default function BaseModal(props: {
                                 </button>
                             </div>
                             <div className="modal-body">
-                                { content }
+                                { props.children }
                             </div>
                         </div>
                     </div>

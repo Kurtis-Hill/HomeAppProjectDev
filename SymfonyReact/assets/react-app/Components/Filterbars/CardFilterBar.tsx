@@ -134,8 +134,9 @@ export default function CardFilterBar(props: {
                 <SmallWhiteBoxDisplay
                     classes={`${itemDropdownToggleClass} card-filter-box`}
                     heading={'Card Display Filters'}
-                    content={ buildCardFilterForm() }
-                />
+                >
+                { buildCardFilterForm() }
+                </SmallWhiteBoxDisplay>
         </div>
     );
 }

@@ -102,7 +102,7 @@ export default function NavBar(props: {
                 }
                 <NavbarViewOptionListElements navbarResponseData={navbarResponseData} showAddNewDeviceModalFlag={setAddNewDeviceModalFlag} />
 
-                <BaseModal
+                {/* <BaseModal
                     title={'Add New Device'}
                     content={
                         <AddNewDevice
@@ -112,7 +112,19 @@ export default function NavBar(props: {
                     }
                     modalShow={showAddNewDeviceModal}
                     setShowModal={setAddNewDeviceModalFlag}
-                />
+                /> */}
+                    <BaseModal 
+                        title={'Add New Device'}
+                        modalShow={showAddNewDeviceModal}
+                        setShowModal={setAddNewDeviceModalFlag}
+
+                    >
+                        <AddNewDevice
+                            showAddNewDeviceModal={showAddNewDeviceModal}                    
+                            setAddNewDeviceModal={setAddNewDeviceModal}
+                        
+                        />
+                    </BaseModal>
                 <hr className="sidebar-divider d-none d-md-block" />
 
                 <div className="text-center d-none d-md-inline">

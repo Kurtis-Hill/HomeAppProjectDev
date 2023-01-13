@@ -27,32 +27,24 @@ export default function NavbarViewOptionListElements(props: {
         if (navbarResponseData.payload) {
             for (let i = 0; i < navbarResponseData.payload.length; i++) {
                 const individualNavBarItem: IndividualNavBarResponse = navbarResponseData.payload[i];
+                let showAddNewModalFlag: (show: boolean) => void|null = null;
+                let addNewText: string = '+Add New';
                 console.log('hi', individualNavBarItem);
                 if (individualNavBarItem.itemName === 'devices') {
-                    builtNavItems.push(
-                        BuildNavbarItem({
-                            heading: individualNavBarItem.header,
-                            icon: individualNavBarItem.icon,
-                            listLinks: individualNavBarItem.listItemLinks,
-                            createNewText: `+Add New ${capitalizeFirstLetter(individualNavBarItem.itemName)}`,
-                            errors: individualNavBarItem.errors,
-                            flagAddNewModal: showAddNewDeviceModalFlag
-                        })
-                    );
-                } else {
-                    builtNavItems.push(
-                        BuildNavbarItem({
-                            heading: individualNavBarItem.header,
-                            icon: individualNavBarItem.icon,
-                            listLinks: individualNavBarItem.listItemLinks,
-                            createNewText: "Add new something",
-                            errors: individualNavBarItem.errors,
-                            flagAddNewModal: null
-                        })
-                    );
-
-                }
-            } 
+                    showAddNewModalFlag = showAddNewDeviceModalFlag;
+                    addNewText = '+Add New Device';
+                } 
+                builtNavItems.push(
+                    BuildNavbarItem({
+                        heading: individualNavBarItem.header,
+                        icon: individualNavBarItem.icon,
+                        listLinks: individualNavBarItem.listItemLinks,
+                        createNewText: addNewText,
+                        errors: individualNavBarItem.errors,
+                        flagAddNewModal: showAddNewModalFlag
+                    })
+                );
+            }
         }
 
         // const userRooms: Array<RoomNavbarResponseInterfaceInterface>|undefined = navbarResponseData.userRooms;
@@ -117,7 +109,7 @@ export default function NavbarViewOptionListElements(props: {
         //         );
         //     }
             
-            return builtNavItems.map((item: NavbarListItem, index: number) => {
+            return builtNavItems.map((item: typeof NavbarListItem, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {item}
