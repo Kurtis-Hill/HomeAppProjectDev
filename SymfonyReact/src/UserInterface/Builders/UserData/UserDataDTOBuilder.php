@@ -17,16 +17,16 @@ class UserDataDTOBuilder
                 $userRoom
             );
         }
+
         foreach ($userGroups as $userGroup) {
             $userGroupDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
                 $userGroup
             );
         }
 
-
         return new UserDataResponseDTO(
             $userRoomDTOs ?? [],
-            $userGroups ?? [],
+                $userGroupDTOs ?? [],
         );
     }
 }

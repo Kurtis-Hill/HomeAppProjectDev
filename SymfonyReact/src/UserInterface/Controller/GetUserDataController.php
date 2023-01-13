@@ -4,6 +4,7 @@ namespace App\UserInterface\Controller;
 
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\User\Entity\User;
 use App\UserInterface\Services\UserData\UserDataProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ class GetUserDataController extends AbstractController
     public function getGeneralUserData(UserDataProvider $userDataProvider): Response
     {
         $user = $this->getUser();
-        if ($user === null) {
+        if (!$user instanceof User) {
             return $this->sendInternalServerErrorJsonResponse(['User is not logged in'], );
         }
 

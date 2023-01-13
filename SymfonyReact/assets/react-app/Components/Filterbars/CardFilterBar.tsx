@@ -45,11 +45,8 @@ export default function CardFilterBar(props: {
 
     const buildCardFilterForm = (): React => {
         const handleClick = (e: Event) => {
-            // console.log('e been clicked', e);
             const inputCheckElement = e.currentTarget as HTMLInputElement;
-            console.log('clicked', e.target, inputCheckElement)
             let filterParamType: string;
-            // console.log('checked check', inputCheckElement.checked, inputCheckElement.value);
             switch (inputCheckElement.name) {
                 case readingTypesString:
                     filterParamType = readingTypesString;
@@ -73,9 +70,7 @@ export default function CardFilterBar(props: {
             const sliderElement = e.currentTarget as HTMLInputElement;  
             const newRefreshValue: number = parseInt(sliderElement.value);
 
-            console.log('bla', newRefreshValue, cardRefreshMinLimit, cardRefreshMaxLimit)
             if (newRefreshValue >= cardRefreshMinLimit && newRefreshValue <= cardRefreshMaxLimit) {
-                console.log('nope')
                 const refreshValueInMillieSeconds = newRefreshValue * 1000;          
                 setCardRefreshTimer(refreshValueInMillieSeconds);
             }
@@ -135,7 +130,7 @@ export default function CardFilterBar(props: {
                     classes={`${itemDropdownToggleClass} card-filter-box`}
                     heading={'Card Display Filters'}
                 >
-                { buildCardFilterForm() }
+                    { buildCardFilterForm() }
                 </SmallWhiteBoxDisplay>
         </div>
     );

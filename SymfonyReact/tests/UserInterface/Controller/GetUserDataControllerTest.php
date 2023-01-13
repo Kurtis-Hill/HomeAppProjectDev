@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class GetUserDataControllerTest extends WebTestCase
 {
     const GET_USER_DATA_URL = '/HomeApp/api/user/user-data/get';
+
     private ?string $userToken = null;
 
     private ?EntityManagerInterface $entityManager;

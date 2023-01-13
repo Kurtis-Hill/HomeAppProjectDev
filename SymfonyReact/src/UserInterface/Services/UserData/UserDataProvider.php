@@ -3,12 +3,9 @@
 namespace App\UserInterface\Services\UserData;
 
 use App\Common\API\APIErrorMessages;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\UserInterface\Builders\UserData\UserDataDTOBuilder;
-use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
 use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Exception\ORMException;

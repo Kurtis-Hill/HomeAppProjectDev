@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-import { handleSensorTypesRequest } from '../../Request/GetSensorTypeRequest';
-import { handleSensorReadingTypesRequest } from '../../Request/GetSensorReadingTypeRequest';
+import { sensorTypesRequest as sensorTypesRequest } from '../../Request/GetSensorTypeRequest';
+import { sensorReadingTypesRequest } from '../../Request/GetSensorReadingTypeRequest';
 
 import { SensorTypeResponseInterface } from '../../Response/Sensor/SensorTypeResponseInterface';
 import { SensorReadingTypeResponseInterface } from '../../Response/Sensor/SensorReadingTypeResponseInterface';
@@ -10,7 +10,6 @@ import { SensorReadingTypeResponseInterface } from '../../Response/Sensor/Sensor
 import SensorDataContext from '../../Contexts/SensorData/SensorDataContext';
 
 export function SensorDataContextProvider({ children }) {
-
     const [sensorReadingTypeData, setSensorReadingTypeData] = useState<SensorReadingTypeResponseInterface[]|[]>([]);
     
     const [sensorTypes, setSensorTypes] = useState<SensorTypeResponseInterface[]|[]>([]);
@@ -22,13 +21,13 @@ export function SensorDataContextProvider({ children }) {
     const handleSensorDataRequest = async () => {
         console.log('handleSensorDataRequest');
         if (sensorReadingTypeData.length === 0) {             
-            const sensorReadingTypes = await handleSensorReadingTypesRequest();
+            const sensorReadingTypes = await sensorReadingTypesRequest();
             if (sensorReadingTypes !== null) {
                 setSensorReadingTypeData(sensorReadingTypes);
             } 
         }
         if (sensorTypes.length === 0) {
-            const sensorTypesResponse = await handleSensorTypesRequest();
+            const sensorTypesResponse = await sensorTypesRequest();
             if (sensorTypesResponse !== null) {
                 setSensorTypes(sensorTypesResponse)
             }
@@ -43,7 +42,7 @@ export function SensorDataContextProvider({ children }) {
             }
         }
         >
-            {children}
+            { children }
         </SensorDataContext.Provider>
     );
 }

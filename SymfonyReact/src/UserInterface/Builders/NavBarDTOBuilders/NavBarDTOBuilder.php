@@ -2,22 +2,10 @@
 
 namespace App\UserInterface\Builders\NavBarDTOBuilders;
 
-use App\Common\API\APIErrorMessages;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
-use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use TypeError;
 
 class NavBarDTOBuilder
 {
-    private UrlGeneratorInterface $urlGenerator;
-    public function __construct(UrlGeneratorInterface $urlGenerator)
-    {
-        $this->urlGenerator = $urlGenerator;
-    }
-
     public function buildNavBarResponseDTO(
         string $header,
         string $icon,

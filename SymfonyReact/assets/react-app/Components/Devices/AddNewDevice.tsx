@@ -5,7 +5,11 @@ import BaseModal from '../Modals/BaseModal';
 import AddNewDeviceUserInputsInterface from './AddNewDeviceUserInputsInterface';
 
 import InputWLabel from '../Form/Inputs/InputWLabel';
-import SensorDataContext from '../../Contexts/SensorData/SensorDataContext';
+// import SensorDataContext from '../../Contexts/SensorData/SensorDataContext';
+import { UserDataContext } from '../../Contexts/UserData/UserDataContext';
+// import { SensorDataContextDataInterface } from '../SensorDataProvider/SensorDataProvider';
+import {UserDataContextInterface} from "../UserDataProvider/UserDataProvider";
+
 
 export function AddNewDevice(props: {
     showAddNewDeviceModal: boolean; 
@@ -96,12 +100,27 @@ export function AddNewDevice(props: {
                     type="password"
                 />
 
-                {/* <SensorDataContext.Consumer>
-                    {({ sensorData }) => (
+                <UserDataContext.Consumer>
+                    {(userData: UserDataContextInterface) => (
                         <>
                             <div className="form-group">
                                 <label htmlFor="deviceGroup">Device Group</label>
-                </SensorDataContext.Consumer> */}
+                                <select
+                                    className="form-control"
+                                    name="deviceGroup"
+                                    id="deviceGroup"
+                                    value={addNewDeviceUserInputs.deviceGroup}
+                                    onChange={handleAddNewDeviceInput}
+                                >
+                                    <option value="0">Select a group</option>
+                                    {userData.userGroups.map((group, index) => (
+                                        <option key={index} value={group.id}>{group.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </>
+                    )} 
+                </UserDataContext.Consumer>
             </form>
         </>
     )
