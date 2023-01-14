@@ -6,6 +6,7 @@ import {
     Route,
 } from "react-router-dom";
 
+import UserDataContextProvider from "../Contexts/UserData/UserDataContext";
 // import '@fortawesome/fontawesome-free/js/fontawesome'
 // import '@fortawesome/fontawesome-free/js/solid'
 // import '@fortawesome/fontawesome-free/js/regular'
@@ -22,9 +23,9 @@ root.render(
     <BrowserRouter>
         <Routes>
             <Route path="/HomeApp/WebApp/login" element={<Login />}></Route>
-            <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
-                <Route path="index" element={<LandingPage />} />
-            </Route>
+                <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
+                    <Route path="index" element={<LandingPage />} />
+                </Route>
         </Routes>
     </BrowserRouter>
 );

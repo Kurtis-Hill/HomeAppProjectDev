@@ -11,26 +11,26 @@ use JetBrains\PhpStorm\Immutable;
 class UserDataResponseDTO
 {
     #[ArrayShape([RoomResponseDTO::class])]
-    private array $userRoomDTOs;
+    private array $userRooms;
 
     #[ArrayShape([GroupNames::class])]
-    private array $groupNameDTOs;
+    private array $userGroups;
 
     public function __construct(
-        array $userRoomDTOs,
-        array $groupNameDTOs,
+        array $userRooms,
+        array $userGroups,
     ){
-        $this->userRoomDTOs = $userRoomDTOs;
-        $this->groupNameDTOs = $groupNameDTOs;
+        $this->userRooms = $userRooms;
+        $this->userGroups = $userGroups;
     }
 
-    public function getUserRoomDTOs(): array
+    public function getUserRooms(): array
     {
-        return $this->userRoomDTOs;
+        return $this->userRooms;
     }
 
-    public function getGroupNameDTOs(): array
+    public function getUserGroups(): array
     {
-        return $this->groupNameDTOs;
+        return $this->userGroups;
     }
 }

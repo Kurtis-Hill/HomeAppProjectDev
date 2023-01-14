@@ -13,6 +13,8 @@ import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
 
 import { SensorDataContextProvider } from "../SensorDataProvider/SensorDataProvider";
 
+import { UserDataContextProvider } from '../../Components/UserDataProvider/UserDataContextProvider'; 
+
 export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
 
@@ -49,21 +51,24 @@ export function MainPageTop() {
             <RequestInterceptor />
             <div id="page-top">
                 <div id="wrapper">
-                    <SensorDataContextProvider children={undefined}>
-                        <Navbar
-                            refreshNavbar={refreshNavbar}
-                            setRefreshNavDataFlag={setRefreshNavDataFlag}
-                            showErrorAnnouncementFlash={showErrorAnnouncementFlash}
-                        />
-                        <Outlet
-                            context={
-                                [
-                                    setRefreshNavDataFlag,
-                                    showErrorAnnouncementFlash
-                                ]
-                            }
-                        />
-                    </SensorDataContextProvider>
+                    <UserDataContextProvider children={undefined}>
+                        <SensorDataContextProvider children={undefined}>
+                            
+                            <Navbar
+                                refreshNavbar={refreshNavbar}
+                                setRefreshNavDataFlag={setRefreshNavDataFlag}
+                                showErrorAnnouncementFlash={showErrorAnnouncementFlash}
+                            />
+                            <Outlet
+                                context={
+                                    [
+                                        setRefreshNavDataFlag,
+                                        showErrorAnnouncementFlash
+                                    ]
+                                }
+                            />
+                        </SensorDataContextProvider>
+                    </UserDataContextProvider>
                 </div>
             </div>
         </React.Fragment>

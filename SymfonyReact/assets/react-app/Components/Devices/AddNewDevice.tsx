@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import BaseModal from '../Modals/BaseModal';
 
 import AddNewDeviceUserInputsInterface from './AddNewDeviceUserInputsInterface';
 
 import InputWLabel from '../Form/Inputs/InputWLabel';
-// import SensorDataContext from '../../Contexts/SensorData/SensorDataContext';
-import { UserDataContext } from '../../Contexts/UserData/UserDataContext';
-// import { SensorDataContextDataInterface } from '../SensorDataProvider/SensorDataProvider';
-import {UserDataContextInterface} from "../UserDataProvider/UserDataProvider";
+import UserDataContext from '../../Contexts/UserData/UserDataContext';
+import {UserDataContextInterface} from "../UserDataProvider/UserDataContextProvider";
+import GroupNameNavbarResponseInterface from '../../Response/User/Navbar/Interfaces/GroupNameNavbarResponseInterface';
+import CloseButton from '../Buttons/CloseButton';
 
 
 export function AddNewDevice(props: {
@@ -27,20 +26,6 @@ export function AddNewDevice(props: {
         deviceGroup: 0,
         deviceRoom: 0
     });
-    // const [showModal, setShowModal] = useState<boolean>(false);
-
-    // const toggleShowModal = (show: boolean): void => {
-    //     console.log('toggle', show);
-    //     setShowModal(show);
-    // }
-    
-    // const closeModal = () => {
-    //     console.log('close!');
-    //     setShowModal(false);
-    // }
-
-    // useEffect(() => {
-    // }, [showModal])
 
     const handleAddNewDeviceInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
@@ -113,14 +98,21 @@ export function AddNewDevice(props: {
                                     onChange={handleAddNewDeviceInput}
                                 >
                                     <option value="0">Select a group</option>
-                                    {userData.userGroups.map((group, index) => (
-                                        <option key={index} value={group.id}>{group.name}</option>
-                                    ))}
+                                    {
+                                        userData.userGroups !== undefined && userData.userGroups.length > 0 
+                                            ? 
+                                                userData.userGroups.map((group: GroupNameNavbarResponseInterface, index: number) => (
+                                                <option key={index} value={group.groupNameID}>{group.groupName}</option>
+                                                )) 
+                                            : 
+                                                null
+                                    }
                                 </select>
                             </div>
                         </>
                     )} 
                 </UserDataContext.Consumer>
+                <CloseButton close={setAddNewDeviceModal} />
             </form>
         </>
     )
