@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Outlet,
 } from "react-router-dom";
@@ -29,13 +29,17 @@ export function MainPageTop() {
             ...errorAnnouncementErrorModals,
             <BuildAnnouncementErrorFlashModal
                 title={title}
-                errors={errors}
-                errorNumber={errorAnnouncementErrorModals.length}
+                dataToList={errors}
+                dataNumber={errorAnnouncementErrorModals.length}
                 timer={timer ? timer : 40}
             />
         ])
     }
 
+    console.log('too many times');
+    // useEffect(() => {
+
+    // }, [errorAnnouncementErrorModals])
     return (
         <React.Fragment>
             {

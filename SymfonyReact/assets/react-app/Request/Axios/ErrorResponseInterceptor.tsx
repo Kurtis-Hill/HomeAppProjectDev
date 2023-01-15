@@ -25,8 +25,10 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
         if (error.response.config.url ===  `${apiURL}token/refresh` && window.location.pathname !==`${loginUrl}`) {        
             window.location.replace(`${loginUrl}`)
         }
-
+        
+        console.log('haha error', error.response.data);
         if (typeof error.response.data === 'object' &&  "errors" in error.response.data) {
+            console.log('haha error22222', error.response.data);
             const errorResponse: ErrorResponseInterface = error.response.data as ErrorResponseInterface;
             const errorsForModal: Array<string> = errorResponse.errors;
 

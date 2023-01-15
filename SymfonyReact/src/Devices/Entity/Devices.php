@@ -58,8 +58,8 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(
             min: 5,
             max: 100,
-            minMessage: "Device name must be at least {{ limit }} characters long",
-            maxMessage: "Device name cannot be longer than {{ limit }} characters"
+            minMessage: "Device password must be at least {{ limit }} characters long",
+            maxMessage: "Device password cannot be longer than {{ limit }} characters"
         )
     ]
     private string $password;

@@ -24,7 +24,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices/add-new-device';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices/add';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
@@ -320,6 +320,8 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'Device room value is array and not a valid integer',
             ],
         ];
+
+        //@TODO add tests for password too short, name too short, name too long, password too long
     }
 
     public function test_adding_device_name_too_long(): void

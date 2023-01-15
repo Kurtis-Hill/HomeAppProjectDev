@@ -222,33 +222,40 @@
 .card-filter-slider {
     text-align: center;
 }
-/*.secret-box {*/
-/*    padding: 5%;*/
-/*    text-align: center;*/
-/*    border-radius: .55rem;    */
-/*    background-color: lightgray;*/
-/*    color: black;*/
-/*}*/
 
-/*.secret-container {*/
-/*    margin: auto;*/
-/*}*/
+.modal-cancel-button {
+    margin-left: 2%
+}
+.secret-box {
+    padding: 5%;
+    text-align: center;
+    border-radius: .55rem;    
+    background-color: lightgray;
+    color: black;
+ }
 
-/*.center {*/
-/*  display: block;*/
-/*  margin-left: auto;*/
-/*  margin-right: auto;*/
-/*  width: 40%;*/
-/*}*/
+.secret-container {
+   margin: auto;
+}
 
-/*.modal-submit-center {*/
-/*    display: block;*/
-/*    padding: 5%;*/
-/*    text-align: center;*/
-/*    border-radius: 20px;*/
-/*}*/
+.center {
+ display: block;
+ margin-left: auto;
+ margin-right: auto;
+ width: 40%;
+}
 
+.modal-submit-center {
+   display: block;
+   padding: 5%;
+   text-align: center;
+   border-radius: 20px;
+}
 
+.standard-modal-height {
+    overflow-y: auto;
+    height: 600px;
+}
 /*@media only screen and (max-width: 700px) {*/
 /*    !*.modal-body {*!*/
 /*    !*    height: 400px;*!*/

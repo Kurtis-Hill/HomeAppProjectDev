@@ -41,7 +41,7 @@ class AddNewDeviceController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
+    #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
         ValidatorInterface $validator,
@@ -129,6 +129,6 @@ class AddNewDeviceController extends AbstractController
 
         $this->logger->info('new device created with id: ' . $device->getDeviceNameID(), ['user' => $user->getUserIdentifier()]);
 
-        return $this->sendCreatedResourceJsonResponse($response);
+        return $this->sendSuccessfulJsonResponse($response);
     }
 }

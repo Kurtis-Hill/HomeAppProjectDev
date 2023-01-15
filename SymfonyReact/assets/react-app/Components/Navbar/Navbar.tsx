@@ -102,21 +102,11 @@ export default function NavBar(props: {
                 }
                 <NavbarViewOptionListElements navbarResponseData={navbarResponseData} showAddNewDeviceModalFlag={setAddNewDeviceModalFlag} />
 
-                {/* <BaseModal
-                    title={'Add New Device'}
-                    content={
-                        <AddNewDevice
-                            showAddNewDeviceModal={showAddNewDeviceModal}                    
-                            setAddNewDeviceModal={setAddNewDeviceModal}
-                        />
-                    }
-                    modalShow={showAddNewDeviceModal}
-                    setShowModal={setAddNewDeviceModalFlag}
-                /> */}
                     <BaseModal 
                         title={'Add New Device'}
                         modalShow={showAddNewDeviceModal}
                         setShowModal={setAddNewDeviceModalFlag}
+                        heightClasses="standard-modal-height"
 
                     >
                         <AddNewDevice

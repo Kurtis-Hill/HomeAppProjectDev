@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { apiURL } from "../Common/CommonURLs";
-import { SensorReadingTypeResponseInterface } from '../Response/Sensor/SensorReadingTypeResponseInterface';
+import { apiURL } from "../../Common/CommonURLs";
+import { SensorReadingTypeResponseInterface } from '../../Response/Sensor/SensorReadingTypeResponseInterface';
 
 export async function sensorReadingTypesRequest(): Promise<SensorReadingTypeResponseInterface[] | null> {
     try {

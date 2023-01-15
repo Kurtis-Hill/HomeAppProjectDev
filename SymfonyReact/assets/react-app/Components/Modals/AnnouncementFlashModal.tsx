@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import BaseModal from "./BaseModal";
 
-export function AnnouncementFlashModal(props: { title: string; errors: string[]; errorNumber: number; timer: number; }) {
+export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
   const title: string = props.title
-  const errors: Array<string> = props.errors
-  const errorNumber: number = props.errorNumber
+  const dataToList: Array<string> = props.errors
+  const dataNumber: number = props.errorNumber
   const timer: number = props.timer;
 
   const [modalOpacity, setModalOpacity] = useState<number>(100);
@@ -26,11 +26,11 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
 
 
   const displayErrors = (): string|null => {
-    return errors?.length > 0
+    return dataToList?.length > 0
         ?
           <div className="modal-body error-modal">
             {
-              errors.map((error, index) => (
+              dataToList.map((error, index) => (
                   <li className="error-modal-list" key={index}>{error}</li>
               ))
             }
@@ -42,15 +42,25 @@ export function AnnouncementFlashModal(props: { title: string; errors: string[];
   return (
       <React.Fragment>
         <BaseModal
-              keyValue={errorNumber}
+              keyValue={dataNumber}
               title={title}              
               modalOpacity={modalOpacity}
               modalShow={modalShow}
               setShowModal={setModalShow}
               label={"Error announcement"}
+              indexPosition={1060}
         >
           { displayErrors() }
         </BaseModal>
       </React.Fragment>
   );
 }
+
+export interface AnnouncementFlashModalInterface {
+  title: string; 
+  errors: string[]; 
+  errorNumber: number; 
+  timer: number; 
+}
+
+

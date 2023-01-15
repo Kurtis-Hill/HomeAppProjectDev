@@ -1,7 +1,7 @@
 import GroupNameNavbarResponseInterface from "./Interfaces/GroupNameNavbarResponseInterface";
-import RoomNavbarResponseInterfaceInterface from "./Interfaces/RoomNavbarResponseInterface";
+import RoomNavbarResponseInterface from "./Interfaces/RoomNavbarResponseInterface";
 
 export interface UserDataResponseInterface {
-    userRooms: RoomNavbarResponseInterfaceInterface[];
+    userRooms: RoomNavbarResponseInterface[];
     userGroups: GroupNameNavbarResponseInterface[];
 }

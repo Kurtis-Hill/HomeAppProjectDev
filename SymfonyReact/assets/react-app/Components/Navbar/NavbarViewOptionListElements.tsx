@@ -2,18 +2,11 @@ import * as React from 'react';
 
 import { webappURL } from "../../Common/CommonURLs";
 
-import RoomNavbarResponseInterfaceInterface from "../../Response/User/Navbar/Interfaces/RoomNavbarResponseInterface";
-import DeviceNavbarResponseInterface from "../../Response/User/Navbar/Interfaces/DeviceNavbarResponseInterface";
-import GroupNameNavbarResponseInterface from "../../Response/User/Navbar/Interfaces/GroupNameNavbarResponseInterface";
-
 import { IndividualNavBarResponse, NavBarResponseInterface } from "../../Response/NavBar/NavBarResponseInterface";
-import { NavbarListItemInterface } from "./Interfaces/NavbarItemInterfaces";
 import NavbarListItem from './NavbarListItem'
 
 import { BuildNavbarItem } from "./Builders/NavbarItemBuilder";
-import { AddNewDevice } from '../Devices/AddNewDevice';
 
-import { capitalizeFirstLetter } from "../../Common/StringFormatter";
 
 export default function NavbarViewOptionListElements(props: {
     navbarResponseData: NavBarResponseInterface,

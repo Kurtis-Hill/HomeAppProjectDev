@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-import { sensorTypesRequest as sensorTypesRequest } from '../../Request/GetSensorTypeRequest';
-import { sensorReadingTypesRequest } from '../../Request/GetSensorReadingTypeRequest';
+import { sensorTypesRequest as sensorTypesRequest } from '../../Request/Sensor/GetSensorTypeRequest';
+import { sensorReadingTypesRequest } from '../../Request/Sensor/GetSensorReadingTypeRequest';
 
 import { SensorTypeResponseInterface } from '../../Response/Sensor/SensorTypeResponseInterface';
 import { SensorReadingTypeResponseInterface } from '../../Response/Sensor/SensorReadingTypeResponseInterface';

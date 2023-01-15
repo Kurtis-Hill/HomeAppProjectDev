@@ -156,7 +156,9 @@ export default function Login(): void {
                                             <hr />
                                         </div>
                                         <SubmitButton
+                                            text="Login" 
                                             onClickFunction={handleLoginRequest}
+                                            classes="btn-block"
                                         />
                                     </form>
                                     <div className="text-center">

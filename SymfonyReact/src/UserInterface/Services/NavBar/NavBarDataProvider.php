@@ -73,8 +73,9 @@ class NavBarDataProvider implements NavBarDataProviderInterface
             $userGroupNavbarListLinkResponseDTO[] = NavBarListLinkDTOBuilder::buildNavBarListLinkDTO(
                 $group->getGroupName(),
                 sprintf(
-                    '%s?%s',
+                    '%s%s?%s',
                     CommonURL::HOMEAPP_WEBAPP_URL_BASE,
+                    'group',
                     http_build_query(
                         ['group' => $group->getGroupNameID()]
                     )
@@ -97,8 +98,9 @@ class NavBarDataProvider implements NavBarDataProviderInterface
             $userGroupNavbarListLinkResponseDTO[] = NavBarListLinkDTOBuilder::buildNavBarListLinkDTO(
                 $device->getDeviceName(),
                 sprintf(
-                    '%s?%s',
+                    '%s%s?%s',
                     CommonURL::HOMEAPP_WEBAPP_URL_BASE,
+                    'device',
                     http_build_query(
                         ['device-id' => $device->getDeviceNameID()]
                     )
@@ -121,8 +123,9 @@ class NavBarDataProvider implements NavBarDataProviderInterface
             $userGroupNavbarListLinkResponseDTO[] = NavBarListLinkDTOBuilder::buildNavBarListLinkDTO(
                 $room->getRoom(),
                 sprintf(
-                    '%s?%s',
+                    '%s%s?%s',
                     CommonURL::HOMEAPP_WEBAPP_URL_BASE,
+                    'room',
                     http_build_query(
                         ['room-id' => $room->getRoomID()]
                     )
