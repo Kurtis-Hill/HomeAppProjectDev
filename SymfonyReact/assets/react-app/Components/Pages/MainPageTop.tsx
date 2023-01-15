@@ -8,21 +8,21 @@ import Navbar from "../Navbar/Navbar";
 
 import { AnnouncementFlashModal } from "../Modals/AnnouncementFlashModal";
 import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
-import { ErrorResponseInterceptor } from "../../Request/Axios/ErrorResponseInterceptor";
 import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
 
 import { SensorDataContextProvider } from "../SensorDataProvider/SensorDataProvider";
 
-import { UserDataContextProvider } from '../../Components/UserDataProvider/UserDataContextProvider'; 
+import { UserDataContextProvider } from '../UserDataProvider/UserDataContextProvider';
+import { ErrorResponseComponent } from "../Request/Interceptors/ErrorResponseComponent";
 
 export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
+    
+    const [errorAnnouncementErrorModals, setErrorAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
     const setRefreshNavDataFlag = (newValue: boolean) => {
         setRefreshNavbar(newValue);
     }
-
-    const [errorAnnouncementErrorModals, setErrorAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
     const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
         setErrorAnnouncementErrorModals([
@@ -36,28 +36,14 @@ export function MainPageTop() {
         ])
     }
 
-    console.log('too many times');
-    // useEffect(() => {
-
-    // }, [errorAnnouncementErrorModals])
     return (
         <React.Fragment>
-            {
-                errorAnnouncementErrorModals.map((errorAnnouncementErrorModal: typeof AnnouncementFlashModal, index: number) => {
-                    return (
-                        <React.Fragment key={index}>
-                            {errorAnnouncementErrorModal}
-                        </React.Fragment>
-                    );
-                })
-            }
-            <ErrorResponseInterceptor showErrorAnnouncementFlash={showErrorAnnouncementFlash} />
             <RequestInterceptor />
+            <ErrorResponseComponent />
             <div id="page-top">
                 <div id="wrapper">
                     <UserDataContextProvider children={undefined}>
                         <SensorDataContextProvider children={undefined}>
-                            
                             <Navbar
                                 refreshNavbar={refreshNavbar}
                                 setRefreshNavDataFlag={setRefreshNavDataFlag}

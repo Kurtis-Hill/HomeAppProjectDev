@@ -22,6 +22,7 @@ export default function NavBar(props: {
     setRefreshNavDataFlag: (newValue: boolean) => void,
     showErrorAnnouncementFlash: (errors: Array<string>, title: string, timer?: number|null) => void,
 }) {
+    console.log('cause ferfresh')
     const refreshNavbarIndicator = props.refreshNavbar;
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const errorAnnouncementFlash = props.showErrorAnnouncementFlash;

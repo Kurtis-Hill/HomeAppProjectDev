@@ -9,9 +9,7 @@ export async function addNewDeviceRequest(addNewDeviceInputs: AddNewDeviceInputI
             addNewDeviceInputs
         );
 
-        console.log('here is response', addNewDeviceResponse.status, addNewDeviceResponse)
         if (addNewDeviceResponse.status === 200) {
-            console.log('here is response11', addNewDeviceResponse.status, addNewDeviceResponse)
             return addNewDeviceResponse;
         } else {
             throw Error('Error in addNewDeviceRequest');

@@ -22,19 +22,17 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
 
         return response;
     }, async function (error: AxiosError) {
+        // console.log('haha error', error.response.data);
         if (error.response.config.url ===  `${apiURL}token/refresh` && window.location.pathname !==`${loginUrl}`) {        
             window.location.replace(`${loginUrl}`)
         }
         
-        console.log('haha error', error.response.data);
         if (typeof error.response.data === 'object' &&  "errors" in error.response.data) {
-            console.log('haha error22222', error.response.data);
             const errorResponse: ErrorResponseInterface = error.response.data as ErrorResponseInterface;
             const errorsForModal: Array<string> = errorResponse.errors;
 
             errorAnnouncementFlash(errorsForModal, 'Error' ?? errorResponse.title );
         } else {
-            console.log('here we go', error.response.data);
             if (error.response.status === 401 || error.response.status === 403) {
                 const refreshToken: string|null = getRefreshToken();
                 console.log('refresh token', refreshToken);

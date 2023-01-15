@@ -22,6 +22,7 @@ export function AddNewDevice(props: {
     showAddNewDeviceModal: boolean; 
     setAddNewDeviceModal: ((show: boolean) => void);
 }) {
+    // console.log('add new device re render too!')
     const showAddNewDeviceModal = props.showAddNewDeviceModal;
     const setAddNewDeviceModal = props.setAddNewDeviceModal;
     
@@ -52,7 +53,7 @@ export function AddNewDevice(props: {
     const handleNewDeviceFormSubmission = async (e: Event) => {
         e.preventDefault();
         setErrors([]);
-        const validationFailed: boolean = validateUserInputs();
+        const validationFailed: boolean = validateAddNewDeviceUserInputs();
         // console.log('we are here at least', validationFailed)
         if (validationFailed === false) {
             setDeviceRequestLoading(true);
@@ -82,7 +83,7 @@ export function AddNewDevice(props: {
     }
 
 
-    const validateUserInputs = (): boolean => {
+    const validateAddNewDeviceUserInputs = (): boolean => {
         console.log('here is inputs', addNewDeviceUserInputs)
         let failedValidation = false;
         if (addNewDeviceUserInputs.deviceName === '' || addNewDeviceUserInputs.deviceName === null) {
@@ -121,6 +122,8 @@ export function AddNewDevice(props: {
     const buildNewDeviceUrl = (newDeviceID: number): string => {
         return `${webappURL}device?device-id=${newDeviceID}`;
     }
+
+    // const 
 
     return (
         <>
@@ -166,7 +169,7 @@ export function AddNewDevice(props: {
                     {(userData: {'userData': UserDataContextInterface}) => (
                         <>
                             <div className="form-group">
-                                <label htmlFor="deviceGroup">Device Group</label>
+                                <label className="large font-weight-bold" htmlFor="deviceGroup">Device Group</label>
                                 <select
                                     className="form-control"
                                     name="deviceGroup"
@@ -187,7 +190,7 @@ export function AddNewDevice(props: {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="deviceRoom">Device Room</label>
+                                <label className="large font-weight-bold" htmlFor="deviceRoom">Device Room</label>
                                 <select
                                     className="form-control"
                                     name="deviceRoom"
@@ -208,30 +211,32 @@ export function AddNewDevice(props: {
                                 </select>
                             </div>
                             { 
-                                deviceRequestLoading === false 
+                                deviceRequestLoading === false && newDeviceAddedData === null
                                     ?
                                         <SubmitButton
                                             type="submit"
                                             text="Add Device"
                                             name="Add-Device"
                                             action="GET"
+                                            classes="add-new-device-submit-button"
                                         />
                                     :
                                         null
-
                             }
                         </>
                     )} 
                 </UserDataContext.Consumer>
                 { 
-                    deviceRequestLoading === false 
+                    deviceRequestLoading === false &&  newDeviceAddedData === null
                         ?
                             <CloseButton 
                                 close={setAddNewDeviceModal} 
                                 classes={"modal-cancel-button"} 
                             />
-                        :
-                        <DotCircleSpinner />
+                        : 
+                            newDeviceAddedData === null && deviceRequestLoading === true
+                                ? <DotCircleSpinner classes="center-spinner" />
+                                : null
                 }
                 {
                     newDeviceAddedData !== null && newDeviceAddedData.secret !== null 

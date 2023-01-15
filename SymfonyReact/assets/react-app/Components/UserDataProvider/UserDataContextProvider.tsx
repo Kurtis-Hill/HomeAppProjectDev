@@ -10,7 +10,7 @@ import UserDataContext from "../../Contexts/UserData/UserDataContext";
 
 export function UserDataContextProvider({ children }) {
     // const [userGroups, setUserGroups] = useState<RoomNavbarResponseInterfaceInterface[]|[]>([]);
-
+    console.log('user data stuff updating too')
     const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
     // const [userRooms, setUserRooms] = useState<GroupNameNavbarResponseInterface[]|[]>([]);
 
