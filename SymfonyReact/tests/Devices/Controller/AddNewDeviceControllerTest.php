@@ -117,7 +117,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertInstanceOf(Devices::class, $device);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_duplicate_device_name_same_room(): void
@@ -320,8 +320,6 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'Device room value is array and not a valid integer',
             ],
         ];
-
-        //@TODO add tests for password too short, name too short, name too long, password too long
     }
 
     public function test_adding_device_name_too_long(): void
@@ -377,6 +375,62 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertNull($device);
         self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_adding_password_name_too_short(): void
+    {
+        $formData = [
+            'deviceName' => 'devicename',
+            'devicePassword' => '1',
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
+        );
+
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertNull($device);
+        self::assertStringContainsString('Device password must be at least 5 characters long', $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_adding_password_name_too_long(): void
+    {
+        $formData = [
+            'deviceName' => 'devicename',
+            'devicePassword' => 'devicePasswordIsWayTooLong1111111111111devicePasswordIsWayTooLong1111111111111devicePasswordIsWayTooLong1111111111111',
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
+        );
+
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertNull($device);
+        self::assertStringContainsString('Device password cannot be longer than 100 characters', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -459,7 +513,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Request Accepted Successfully Created', $responseData['title']);
+        self::assertEquals('Request Successful', $responseData['title']);
         self::assertArrayHasKey('secret', $responseData['payload']);
         self::assertArrayHasKey('deviceNameID', $responseData['payload']);
 
@@ -472,7 +526,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertArrayHasKey('secret', $responseData['payload']);
         self::assertNotNull($responseData['payload']['secret']);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Devices::class, $device);
     }
 
@@ -708,7 +762,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
         self::assertEquals(UserDataFixtures::ADMIN_USER, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $createResponseCode);
+        self::assertEquals(HTTPStatusCodes::HTTP_OK, $createResponseCode);
 
         self::assertArrayHasKey('secret', $responseData);
         self::assertNotNull($responseData['secret']);

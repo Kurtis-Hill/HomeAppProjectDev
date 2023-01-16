@@ -45,8 +45,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         try {
             $userDevices = $this->getDeviceData($user);
         } catch (ORMException) {
-            $userDeviceError = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices')];
-            $this->errors[] = 'Failed to get Device data';
+            $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices')];
         }
         $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices ?? []);
 
@@ -56,11 +55,9 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         try {
             $userRooms = $this->getRoomData($user);
         } catch (ORMException) {
-            $userRoomError = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms')];
-            $this->errors[] = 'Failed to get Rooms';
+            $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms')];
         }
         $navbarResponseDTOs[] = $this->getRoomNavBarResponseObjects($userRooms ?? []);
-
 
 
         return $navbarResponseDTOs ?? [];

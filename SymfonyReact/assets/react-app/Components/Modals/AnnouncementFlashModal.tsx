@@ -7,6 +7,9 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
   const dataToList: Array<string> = props.errors
   const dataNumber: number = props.errorNumber
   const timer: number = props.timer;
+  const announcementModals = props.announcementModals;
+  const setAnnouncementModals = props.setAnnouncementModals;
+
 
   const [modalOpacity, setModalOpacity] = useState<number>(100);
   const [modalShow, setModalShow] = useState<boolean>(true);
@@ -16,6 +19,8 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
       if (modalOpacity !== 0 && modalShow === true) {
         setModalOpacity(modalOpacity - 1);
       } else {
+        console.log('count', props.announcementModals)
+        // setAnnouncementModals(announcementModals.splice(1));
         setModalShow(false);
         clearInterval(interval)
       }
@@ -57,10 +62,12 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
 }
 
 export interface AnnouncementFlashModalInterface {
+  announcementModals: Array<typeof AnnouncementFlashModal>;
   title: string; 
   errors: string[]; 
   errorNumber: number; 
   timer: number; 
+  setAnnouncementModals: (announcementModals: Array<typeof AnnouncementFlashModal>) => void;
 }
 
 

@@ -22,7 +22,7 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
 
         return response;
     }, async function (error: AxiosError) {
-        // console.log('haha error', error.response.data);
+        console.log('haha error', error.response.data);
         if (error.response.config.url ===  `${apiURL}token/refresh` && window.location.pathname !==`${loginUrl}`) {        
             window.location.replace(`${loginUrl}`)
         }

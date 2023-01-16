@@ -18,19 +18,22 @@ import { ErrorResponseComponent } from "../Request/Interceptors/ErrorResponseCom
 export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
     
-    const [errorAnnouncementErrorModals, setErrorAnnouncementErrorModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
     const setRefreshNavDataFlag = (newValue: boolean) => {
         setRefreshNavbar(newValue);
     }
 
     const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
-        setErrorAnnouncementErrorModals([
-            ...errorAnnouncementErrorModals,
+        console.log('showErrorAnnouncementFlash')
+        setAnnouncementModals([
+            ...announcementModals,
             <BuildAnnouncementErrorFlashModal
+                announcementModals={announcementModals}
+                setAnnouncementModals={setAnnouncementModals}
                 title={title}
                 dataToList={errors}
-                dataNumber={errorAnnouncementErrorModals.length}
+                dataNumber={announcementModals.length}
                 timer={timer ? timer : 40}
             />
         ])
@@ -39,7 +42,7 @@ export function MainPageTop() {
     return (
         <React.Fragment>
             <RequestInterceptor />
-            <ErrorResponseComponent />
+            <ErrorResponseComponent showErrorAnnouncementFlash={showErrorAnnouncementFlash} announcementModals={announcementModals} />
             <div id="page-top">
                 <div id="wrapper">
                     <UserDataContextProvider children={undefined}>

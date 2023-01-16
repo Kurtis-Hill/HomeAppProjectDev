@@ -61,15 +61,54 @@ class NavBarControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
 
-        $countMessage = 'user %s count wrong';
+        foreach ($responseData as $response) {
+            $userLinks = $response['listItemLinks'];
 
-        self::assertCount(count($userRooms), $responseData['userRooms'], sprintf($countMessage, 'rooms'));
-        self::assertCount(count($userDevices), $responseData['devices'], sprintf($countMessage, 'device'));
-        self::assertCount(count($testUser->getGroupNameIds()), $responseData['groupNames'], sprintf($countMessage, 'group name'));
-        self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
-        self::assertSameSize(UserDataFixtures::USER_GROUPS, $responseData['groupNames']);
+            self::assertEmpty($response['errors'], 'errors is not empty');
+            self::assertNotEmpty($userLinks, 'userLinks is empty');
+            foreach ($userLinks as $links) {
+                self::assertIsString($links['displayName'], 'Device name is not string');
+                self::assertIsString($links['link'], 'device link is not string');
+            }
+            if ($response['header'] === 'View Devices') {
+                $userDevicePassed = true;
+                self::assertEquals('microchip', $response['icon'], 'device icon is wrong');
+                self::assertEquals('devices', $response['itemName']);
+            }
 
-        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+            if ($response['header'] === 'View Rooms') {
+                $userRoomsPassed = true;
+                self::assertEquals('person-booth', $response['icon'], 'room icon is wrong');
+                self::assertEquals('rooms', $response['itemName']);
+            }
+
+            if ($response['header'] === 'View Groups') {
+                $userGroupsPassed = true;
+                self::assertEquals('users', $response['icon'], 'group icon is wrong');
+                self::assertEquals('groups', $response['itemName']);
+            }
+        }
+
+        if (!isset($userDevicePassed)) {
+            self::fail('User devices not found');
+        }
+        if (!isset($userRoomsPassed)) {
+            self::fail('User rooms not found');
+        }
+        if (!isset($userGroupsPassed)) {
+            self::fail('User groups not found');
+        }
+
+        $countMessage = '%s count is wrong';
+
+        self::assertCount(count($userRooms), $responseData[2]['listItemLinks'], sprintf($countMessage, 'rooms'));
+        self::assertCount(count($userDevices), $responseData[0]['listItemLinks'], sprintf($countMessage, 'device'));
+        self::assertCount(count($testUser->getGroupNameIds()), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
+        self::assertSameSize(RoomFixtures::ROOMS, $responseData[2]['listItemLinks'], sprintf($countMessage, 'room'));
+        self::assertSameSize(UserDataFixtures::USER_GROUPS, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
+
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
     }
 
     public function test_navbar_data_response_wrong_token(): void

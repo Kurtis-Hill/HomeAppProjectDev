@@ -17,7 +17,7 @@ export default function NavbarViewOptionListElements(props: {
 
     const navbarItems = useMemo(
         () => createNavListItems(props.navbarResponseData), 
-        [props.navbarResponseData]
+        [navbarResponseData]
     );
 
     function createNavListItems(navbarResponseData: NavBarResponseInterface): React {
