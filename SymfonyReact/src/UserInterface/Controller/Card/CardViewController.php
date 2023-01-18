@@ -71,7 +71,7 @@ class CardViewController extends AbstractController
     public function deviceCards(Devices $device, Request $request): JsonResponse
     {
         try {
-                $cardViewRequestDTO = $this->validateRequestDTO($request);
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
         } catch (CardViewRequestException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
         }
@@ -155,7 +155,7 @@ class CardViewController extends AbstractController
         return $this->sendSuccessfulJsonResponse($responseData);
     }
 
-    #[Route('index', name: 'index-card-data-v2-boom', methods: [Request::METHOD_GET])]
+    #[Route('index', name: 'index-card-data', methods: [Request::METHOD_GET])]
     public function indexCards(Request $request): JsonResponse
     {
 //        return $this->sendBadRequestJsonResponse(['oops']);

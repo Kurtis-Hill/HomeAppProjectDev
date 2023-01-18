@@ -6,6 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Devices\Entity\Devices;
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
 use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingDTOBuilder;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
@@ -58,7 +59,12 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-        $deviceID = $this->getUser()?->getDeviceNameID();
+
+        $device = $this->getUser();
+        if (!$device instanceof Devices) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
+        }
+        $deviceID = $device->getDeviceNameID();
 
         $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {

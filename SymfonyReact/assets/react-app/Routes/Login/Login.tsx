@@ -4,18 +4,18 @@ import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { registerAccountUrl, indexUrl, loginUrl } from "../../Common/CommonURLs";
-import { getRefreshToken, getToken } from "../../Common/APICommon";
+import { registerAccountUrl, indexUrl, loginUrl } from "../../Common/URLs/CommonURLs";
+import { getRefreshToken, getToken } from "../../Authentication/Tokens/GetAPITokens";
 
-import SubmitButton from "../../Components/Buttons/SubmitButton";
-import Input from "../../Components/Form/Inputs/Input";
-import ColouredPage from "../../Components/Pages/ColouredPage";
-import DotCircleSpinner from "../../Components/Spinners/DotCircleSpinner";
+import Input from "../../Common/Components/Inputs/Input";
+import ColouredPage from "../../Common/Components/Pages/ColouredPage";
+import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner";
 
-import { LoginFormUserInputsInterface } from "../../Components/Form/UserInputs/Interface/LoginFormUserInputsInterface";
+import { LoginFormUserInputsInterface } from "../../Authentication/Form/LoginFormUserInputsInterface";
 
-import { handleLogin, handleTokenRefresh } from "../../Request/LoginRequest";
-import { handlePingRequest, PingInterface } from "../../Request/Ping";
+import { handleLogin, handleTokenRefresh } from "../../Authentication/Request/LoginRequest";
+import { handlePingRequest, PingInterface } from "../../Common/Request/Ping";
+import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
 
 export default function Login(): void {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});

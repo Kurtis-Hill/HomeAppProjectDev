@@ -71,33 +71,25 @@ class NavBarControllerTest extends WebTestCase
                 self::assertIsString($links['link'], 'device link is not string');
             }
             if ($response['header'] === 'View Devices') {
-                $userDevicePassed = true;
                 self::assertEquals('microchip', $response['icon'], 'device icon is wrong');
                 self::assertEquals('devices', $response['itemName']);
+                continue;
             }
 
 
             if ($response['header'] === 'View Rooms') {
-                $userRoomsPassed = true;
                 self::assertEquals('person-booth', $response['icon'], 'room icon is wrong');
                 self::assertEquals('rooms', $response['itemName']);
+                continue;
             }
 
             if ($response['header'] === 'View Groups') {
-                $userGroupsPassed = true;
                 self::assertEquals('users', $response['icon'], 'group icon is wrong');
                 self::assertEquals('groups', $response['itemName']);
+                continue;
             }
-        }
 
-        if (!isset($userDevicePassed)) {
-            self::fail('User devices not found');
-        }
-        if (!isset($userRoomsPassed)) {
-            self::fail('User rooms not found');
-        }
-        if (!isset($userGroupsPassed)) {
-            self::fail('User groups not found');
+            self::fail('header is not valid');
         }
 
         $countMessage = '%s count is wrong';

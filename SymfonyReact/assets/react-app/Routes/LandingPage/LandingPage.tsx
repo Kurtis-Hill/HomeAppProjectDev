@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Context } from 'react';
 import {  useOutletContext  } from "react-router-dom";
-import { CardRowContainer } from '../../Components/Cards/CardRowContainer';
+import { CardRowContainer } from '../../UserInterface/Cards/Components/CardRowContainer';
 
 export function LandingPage() {
     const [setRefreshNavDataFlag, showErrorAnnouncementFlash]: Context<Array<(newValue: boolean) => void>> = useOutletContext();

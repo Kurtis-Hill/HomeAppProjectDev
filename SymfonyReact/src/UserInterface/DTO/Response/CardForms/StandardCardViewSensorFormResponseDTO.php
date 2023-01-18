@@ -13,7 +13,7 @@ use JetBrains\PhpStorm\Immutable;
 #[Immutable]
 class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterface
 {
-    private int $sensorId;
+    private int $sensorID;
 
     private IconResponseDTO $currentCardIcon;
 
@@ -37,7 +37,7 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
         array $sensorData,
     ) {
-        $this->sensorId = $sensorId;
+        $this->sensorID = $sensorId;
         $this->currentCardIcon = $currentCardIcon;
         $this->currentCardColour = $currentCardColour;
         $this->currentViewState = $currentViewState;
@@ -46,9 +46,9 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         $this->sensorData = $sensorData;
     }
 
-    public function getSensorId(): int
+    public function getSensorID(): int
     {
-        return $this->sensorId;
+        return $this->sensorID;
     }
 
     public function getSensorData(): array

@@ -6,7 +6,7 @@ import {
     Route,
 } from "react-router-dom";
 
-import UserDataContextProvider from "../Contexts/UserData/UserDataContext";
+import UserDataContextProvider from "../User/Contexts/UserDataContext";
 // import '@fortawesome/fontawesome-free/js/fontawesome'
 // import '@fortawesome/fontawesome-free/js/solid'
 // import '@fortawesome/fontawesome-free/js/regular'
@@ -16,7 +16,7 @@ import Login from "../Routes/Login/Login";
 
 import { LandingPage } from "../Routes/LandingPage/LandingPage";
 
-import { MainPageTop } from "../Components/Pages/MainPageTop";
+import { MainPageTop } from "../Common/Components/Pages/MainPageTop";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

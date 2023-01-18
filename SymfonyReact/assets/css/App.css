@@ -35,7 +35,7 @@
     height: 20vh;
      overflow: auto;
      list-style: auto;
- }
+}
 
  .error-modal-list {
      /* background-color: red; */
@@ -43,7 +43,7 @@
      /* text-align: center; */
      border-radius: 5px;
      margin-bottom: 1%;
- }
+}
 
  .card-filter-box {
     position: fixed;
@@ -53,7 +53,7 @@
     margin-left: 1.5%;
     border: solid;
     border-radius: 10px;
- }
+}
 
  .card-filter-button {
     position: absolute;
@@ -62,11 +62,21 @@
     left: -15px;
     border: none;
     background-color: transparent;
- }
+}
 
  .card-filter-bar-container {
     position: absolute;
- }
+}
+
+ .card-sensor-type-display-name {
+    position: absolute;
+    top: 2%;
+    right: 5%
+}
+
+ .card-room-text-display {
+    padding-bottom: 2%;
+}
 
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
