@@ -15,18 +15,21 @@ import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSp
 import { CardFormResponseInterface } from '../Response/FormResponse/CardFormResponseInterface';
 
 import { CardUpdateModalBuilder } from '../../Builders/CardUpdateModalBuilder'
+import { CardDisplayModal } from '../Modal/CardDisplayModal';
 
-const cardReducer = (previousCards: React[]|undefined, cardsForDisplayArray: React[]): React[] => {
+import { CardCurrentSensorReadings } from '../DisplayCards/CardCurrentSensorReadings';
+
+const cardReducer = (previousCards: CardDataResponseInterface[]|undefined, cardsForDisplayArray: CardDataResponseInterface[]|undefined): React[] => {
     if (previousCards.length <= 0 || previousCards === undefined) {
         return cardsForDisplayArray;
     }
 
     for (let i = 0; i < cardsForDisplayArray.length; i++) {
-        const cardForDisplay: CurrentReadingDataDisplayInterface|undefined = cardsForDisplayArray[i].props;
+        const cardForDisplay: CardDataResponseInterface|undefined = cardsForDisplayArray[i];
         if (previousCards[i] === undefined) {
             continue;
         }
-        const previousCard: CurrentReadingDataDisplayInterface|undefined = previousCards[i].props;
+        const previousCard: CardDataResponseInterface|undefined = previousCards[i];
         if (cardForDisplay === undefined || previousCard === undefined) {
             continue;
         }
@@ -59,10 +62,17 @@ const cardReducer = (previousCards: React[]|undefined, cardsForDisplayArray: Rea
 
 const initialCardDisplay = [];
 
-export function CardReadingHandler(props: { route: string; filterParams?: CardFilterBarInterface; cardRefreshTimer?: number; }) {
+export function CardReadingHandler(props: { 
+    route: string; 
+    loadingCardModalView: boolean;
+    setLoadingCardModalView: (loadingCardModalView: boolean) => void;
+    setSelectedCardForQuickUpdate: (cardViewID: number) => void;
+    filterParams?: CardFilterBarInterface; 
+    cardRefreshTimer?: number; 
+ }) {
     const [loadingCards, setLoadingCards] = useState<boolean>(true);
 
-    const [cardsForDisplay, setCardsForDisplay] = useReducer(cardReducer, []);
+    const [cardsForDisplay, setCardsForDisplay] = useReducer<CardDataResponseInterface[]>(cardReducer, []);
 
     const route:string = props.route ?? 'index';
     
@@ -70,10 +80,6 @@ export function CardReadingHandler(props: { route: string; filterParams?: CardFi
 
     const cardRefreshTimer = props.cardRefreshTimer
 
-    const [cardFormData, setCardFormData] = useState<CardFormResponseInterface>();
-
-
-    // console.log('filter params in handler', props.filterParams, filterParams)
     useEffect(() => {
         const interval = setInterval(() => {
             handleCardRefresh();
@@ -86,7 +92,9 @@ export function CardReadingHandler(props: { route: string; filterParams?: CardFi
     const handleCardRefresh = async () => {
         const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings();
         if (Array.isArray(cardData) && cardData.length > 0) {
-            prepareCardDataForDisplay(cardData);
+            // prepareCardDataForDisplay(cardData);
+            console.log('card data request recieved')
+            setCardsForDisplay(cardData);
             setLoadingCards(false);
         } else {
             setLoadingCards(false);
@@ -105,50 +113,29 @@ export function CardReadingHandler(props: { route: string; filterParams?: CardFi
             return [];           
         }
     }
-    
-    const prepareCardDataForDisplay = (cardData: Array<CardDataResponseInterface|undefined>): void => {
-        let cardsForDisplayArray: Array<React> = [];
-        for (let i = 0; i < cardData.length; i++) {
-            // cardData[]
-            try {
-                cardsForDisplayArray.push(            
-                    <CardReadingFactory
-                      { ...cardData[i] }
-                      { ...setCardFormData }
-                    />
-                );
-            } catch(err) {
-                console.log('could not build card', err);
-            }            
-        }
 
-        setCardsForDisplay(cardsForDisplayArray);
-    }
-
-    return (
+    return (   
         <React.Fragment>
-            {            
-                loadingCards === true 
+                {            
+                    loadingCards === true 
                     ? <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
                     : cardsForDisplay.length > 0 
                         ? cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
                             if (card !== undefined) {
-                                return (
-                                    <React.Fragment key={index}>
-                                        { card }
-                                    </React.Fragment>
-                                )
-                            }
-                        })
+                                        return (
+                                            <React.Fragment key={index}>
+                                                <CardReadingFactory
+                                                    cardData={card} 
+                                                    setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
+                                                    loadingCardModalView={props.loadingCardModalView}
+                                                    setLoadingCardModalView={props.setLoadingCardModalView}
+                                                />
+                                            </React.Fragment>
+                                        )
+                                    }
+                                })
                         : <div className="no-data-message">No data to display</div>
-            }
-            {
-                <CardUpdateModalBuilder 
-                    cardFormData={cardFormData}
-                >
-
-                </CardUpdateModalBuilder>
-            }
+                }
         </React.Fragment>
     );
 }

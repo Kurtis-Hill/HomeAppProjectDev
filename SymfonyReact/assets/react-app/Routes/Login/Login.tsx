@@ -152,14 +152,15 @@ export default function Login(): void {
                                         <div>
                                             {loading === true
                                                 ? <DotCircleSpinner spinnerSize={2} classes="center-spinner" />
-                                                : null}
+                                                : <SubmitButton
+                                                      text="Login" 
+                                                      onClickFunction={handleLoginRequest}
+                                                      classes="btn-block"
+                                                /> 
+                                            }
                                             <hr />
                                         </div>
-                                        <SubmitButton
-                                            text="Login" 
-                                            onClickFunction={handleLoginRequest}
-                                            classes="btn-block"
-                                        />
+                                        
                                     </form>
                                     <div className="text-center">
                                         <Link to={registerAccountUrl} className="small login-form-field">Create an Account!</Link>

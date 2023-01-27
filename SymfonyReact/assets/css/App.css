@@ -78,6 +78,12 @@
     padding-bottom: 2%;
 }
 
+.spinner-absolute-center {
+    top: 40%;
+    left: 40%;
+    position: absolute;
+}
+
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
 /*    -moz-transition: 0.5s;*/

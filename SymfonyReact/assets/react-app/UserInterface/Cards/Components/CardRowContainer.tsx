@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import { CardReadingHandler } from './Readings/CardReadingHandler';
 import { CardFilterBarInterface } from './Filterbars/CardFilterBarInterface'; 
 import { sensorType, readingType } from '../../../Common/SensorLanguage'
 import CardFilterBar from './Filterbars/CardFilterBar';
+import { CardDisplayModal } from './Modal/CardDisplayModal';
 
 
 export function CardRowContainer(props: { 
@@ -18,15 +19,14 @@ export function CardRowContainer(props: {
     const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
 
     const { filterParams, route, horizontal, classes } = props;
-    // const route: string = props.route ?? 'index';
 
-    // const horizontal: boolean = props.horizontal ?? false;
+    const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
 
-    // const classes: string = props.classes;
-
+    const [loadingCardModalView, setLoadingCardModalView] = useState<boolean>(false);
+        
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
-
+        
         if (filterParamType === readingType) {
             setSensorFilterParams({...sensorFilterParams, readingTypes: [...sensorFilterParams.readingTypes, filterParam.value]});
         }
@@ -48,8 +48,6 @@ export function CardRowContainer(props: {
                 setSensorFilterParams({...sensorFilterParams, sensorTypes: sensorTypes.filter((sensorType: string) => sensorType !== filterParam.value)});
             }
         }
-
-        console.log('filter param after removal', sensorFilterParams);
     };
 
     const buildCardContainer = (): React => {
@@ -73,7 +71,10 @@ export function CardRowContainer(props: {
             <CardReadingHandler 
                 route={route} 
                 filterParams={sensorFilterParams} 
-                cardRefreshTimer={cardRefreshTimer} 
+                cardRefreshTimer={cardRefreshTimer}
+                setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
+                loadingCardModalView={loadingCardModalView}
+                setLoadingCardModalView={setLoadingCardModalView}
             />
         );
     }
@@ -87,7 +88,13 @@ export function CardRowContainer(props: {
                 setCardRefreshTimer={setCardRefreshTimer}
                 cardRefreshTimer={cardRefreshTimer}
             />
+
             { buildCardContainer() }
+
+            <CardDisplayModal
+                cardViewID={selectedCardForQuickUpdate}
+            >
+            </CardDisplayModal>
         </>
     );
 }

@@ -94,21 +94,7 @@ class CardViewController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Card filters')]);
         }
 
-        try {
-            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
-        } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
-            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()->getUserIdentifier()]);
-
-            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
-        }
-
-        try {
-            $responseData = $this->normalizeResponse($cardDTOs);
-        } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
-        }
-
-        return $this->sendSuccessfulJsonResponse($responseData);
+        return $this->commonCardDTOResponse($cardData);
     }
 
     #[Route('room-cards/{id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
@@ -138,21 +124,7 @@ class CardViewController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
         }
 
-        try {
-            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
-        } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
-            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()->getUserIdentifier()]);
-
-            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
-        }
-
-        try {
-            $responseData = $this->normalizeResponse($cardDTOs);
-        } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
-        }
-
-        return $this->sendSuccessfulJsonResponse($responseData);
+        return $this->commonCardDTOResponse($cardData);
     }
 
     #[Route('index', name: 'index-card-data', methods: [Request::METHOD_GET])]
@@ -178,21 +150,7 @@ class CardViewController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Icons filters')]);
         }
 
-        try {
-            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
-        } catch (SensorTypeBuilderFailureException | CardTypeNotRecognisedException $exception) {
-            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()->getUserIdentifier()]);
-
-            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
-        }
-
-        try {
-            $responseData = $this->normalizeResponse($cardDTOs);
-        } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
-        }
-
-        return $this->sendSuccessfulJsonResponse($responseData);
+        return $this->commonCardDTOResponse($cardData);
     }
 
     /**
@@ -211,10 +169,9 @@ class CardViewController extends AbstractController
         if ($readingTypes !== null) {
             $cardViewRequestDTO->setReadingTypes($readingTypes);
         }
-//dd($cardViewRequestDTO);
+
         $requestValidationErrors = $this->validator->validate($cardViewRequestDTO);
 
-//        dd($requestValidationErrors, $this->checkIfErrorsArePresent($requestValidationErrors));
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
             throw new CardViewRequestException($this->getValidationErrorAsArray($requestValidationErrors));
         }
@@ -238,7 +195,7 @@ class CardViewController extends AbstractController
         }
 
         return $this->cardPreparationService->prepareCardsForUser(
-            $this->getUser(),
+            $user,
             $postFilterCardDataToQuery,
             $cardViewTypeFilterDTO,
             $view
@@ -251,5 +208,28 @@ class CardViewController extends AbstractController
             $cardViewFilterRequestDTO->getSensorTypes(),
             $cardViewFilterRequestDTO->getReadingTypes(),
         );
+    }
+
+    /**
+     * @param array $cardData
+     * @return JsonResponse
+     */
+    private function commonCardDTOResponse(array $cardData): JsonResponse
+    {
+        try {
+            $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
+        } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
+            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()->getUserIdentifier()]);
+
+            return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
+        }
+
+        try {
+            $responseData = $this->normalizeResponse($cardDTOs);
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendSuccessfulJsonResponse($responseData);
     }
 }
