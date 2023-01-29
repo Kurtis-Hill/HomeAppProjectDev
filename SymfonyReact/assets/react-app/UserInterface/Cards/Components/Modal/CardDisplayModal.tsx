@@ -5,14 +5,31 @@ import BaseModal from '../../../../Common/Components/Modals/BaseModal';
 import { CardDisplayForm } from "../Form/CardDisplayForm";
 import { CardFormResponseInterface } from '../Response/FormResponse/CardFormResponseInterface';
 
-export function CardDisplayModal(props: {children?: React.ReactNode; cardViewID: number|null;}) {
-    // const [showModal, setShowModal] = useState<boolean>(false);
-    // const [loading, setLoading] = useState<boolean>(false);
+enum CardDisplayModalTabs {
+    cardViewUpdate = 'cardViewUpdate',
+    boundaryUpdate = 'boundaryUpdate',
+}
+
+export function CardDisplayModal(props: {
+    cardViewID: number|null;     
+    loadingCardModalView: boolean;
+    setLoadingCardModalView: (loadingCardModalView: boolean) => void;
+}) {
+    const { cardViewID, loadingCardModalView, setLoadingCardModalView } = props;
+    const [loading, setLoading] = useState<boolean>(false);
     // const [cardFormData, setCardFormData] = useState<CardFormResponseInterface>();
     // const [cardViewID, setCardViewID] = useState<number|null>(null);
-    const cardViewID = props.cardViewID;
+    const [tabSelection, setTabSelection] = useState<CardDisplayModalTabs>('cardViewUpdate');
+    
 
-console.log('cardVieID', cardViewID)
+
+    // have different componenets for base modal children,
+    // boundary update form,
+    // card view update form,
+    // 
+
+
+    console.log('cardVieID', cardViewID)
     return (
         <>
             <BaseModal
@@ -20,8 +37,7 @@ console.log('cardVieID', cardViewID)
                 modalShow={false}
                 setShowModal={() => {}}
             >
-            
-                { props.children }
+                
             </BaseModal>
         </>
     )

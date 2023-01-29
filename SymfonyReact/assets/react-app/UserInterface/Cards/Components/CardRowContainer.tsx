@@ -14,11 +14,11 @@ export function CardRowContainer(props: {
     horizontal?: boolean; 
     classes?: string; 
 }) {
-    const [sensorFilterParams, setSensorFilterParams] = useState<CardFilterBarInterface>(props.filterParams ?? {readingTypes: [], sensorTypes: []});
-
-    const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
-
     const { filterParams, route, horizontal, classes } = props;
+    
+    const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
+    
+    const [sensorFilterParams, setSensorFilterParams] = useState<CardFilterBarInterface>(filterParams ?? {readingTypes: [], sensorTypes: []});
 
     const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
 
@@ -89,12 +89,32 @@ export function CardRowContainer(props: {
                 cardRefreshTimer={cardRefreshTimer}
             />
 
-            { buildCardContainer() }
-
+            {
+                horizontal === true
+                    ? <div className={classes ?? 'col-xl-12 col-md-12 mb-12'}>
+                        <CardReadingHandler 
+                            route={route} 
+                            filterParams={sensorFilterParams} 
+                            cardRefreshTimer={cardRefreshTimer}
+                            setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
+                            loadingCardModalView={loadingCardModalView}
+                            setLoadingCardModalView={setLoadingCardModalView}
+                        />
+                    </div>  
+                    :   <CardReadingHandler 
+                            route={route} 
+                            filterParams={sensorFilterParams} 
+                            cardRefreshTimer={cardRefreshTimer}
+                            setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
+                            loadingCardModalView={loadingCardModalView}
+                            setLoadingCardModalView={setLoadingCardModalView}
+                        />
+            }
             <CardDisplayModal
                 cardViewID={selectedCardForQuickUpdate}
-            >
-            </CardDisplayModal>
+                loadingCardModalView={loadingCardModalView}
+                setLoadingCardModalView={setLoadingCardModalView}
+            />
         </>
     );
 }
