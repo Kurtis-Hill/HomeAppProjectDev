@@ -1,4 +1,4 @@
-FROM php:8.1.12-cli-bullseye
+FROM php:8.2-cli-bullseye
 
 WORKDIR /var/www/html
 

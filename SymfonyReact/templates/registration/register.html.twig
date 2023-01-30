@@ -3,12 +3,117 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+{#  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/brands.js" integrity="sha384-sCI3dTBIJuqT6AwL++zH7qL8ZdKaHpxU43dDt9SyOzimtQ9eyRhkG3B7KMl6AO19" crossorigin="anonymous"></script>#}
 
-        <button class="btn">Register</button>
+  {#  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">#}
+{#  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">#}
+{#  <link href="css/sb-admin-2.min.css" rel="stylesheet">#}
+<body class="bg-gradient-primary">
+  <div class="container">
+{#    {{ form_row(registrationForm.lastName) }}#}
+{#    {{ form_row(registrationForm.email) }}#}
+{#    {{ form_row(registrationForm.groupNameID) }}#}
+{#    {{ form_row(registrationForm.profilePicture) }}#}
+{#    {{ form_row(registrationForm.plainPassword) }}#}
+
+    <div class="card o-hidden border-0 shadow-lg my-5">
+      <div class="card-body p-0">
+        {% for message in app.flashes('success') %}
+          <div class="alert alert-success" style="margin-bottom: 0">
+            {{ message }}
+          </div>
+        {% endfor %}
+          {{ form_start(registrationForm) }}
+        {% for message in app.flashes('error') %}
+          <div class="alert alert-danger" style="margin-bottom: 0">
+            {{ message }}
+          </div>
+        {% endfor %}
+        {% if not registrationForm.vars.valid %}
+          <div class="alert alert-danger" style="margin-bottom: 0">
+              {{ form_errors(registrationForm) }}
+          </div>
+        {% endif %}
+        <div class="row">
+          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+          <div class="col-lg-7">
+            <div class="p-5">
+              <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+              </div>
+              <div class="user">
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form_row(registrationForm.firstName) }}
+{#                    <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">#}
+                  </div>
+                  <div class="col-sm-6">
+                    {{ form_row(registrationForm.lastName) }}
+{#                    <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">#}
+                  </div>
+                </div>
+                <div class="form-group">
+                    {{ form_row(registrationForm.email) }}
+{#                  <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">#}
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form_row(registrationForm.plainPassword.first, { 'attr': {'class': 'form-control form-control-user', 'placeholder': 'Enter your password', 'value':''}  }) }}
+{#                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">#}
+                  </div>
+                  <div class="col-sm-6">
+                    {{ form_row(registrationForm.plainPassword.second, { 'attr': {'class': 'form-control form-control-user', 'placeholder': 'Repeat your password', 'value':''}  }) }}
+{#                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">#}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form_row(registrationForm.groupName) }}
+                  </div>
+                  <div class="col-sm-6">
+                    {{ form_row(registrationForm.profilePicture) }}
+                  </div>
+                </div>
+                    {{ form_row(registrationForm.submit) }}
+{#                <hr>#}
+{#                <a href="index.html" class="btn btn-google btn-user btn-block">#}
+{#                  <i class="fab fa-google fa-fw"></i> Register with Google#}
+{#                </a>#}
+{#                <a href="index.html" class="btn btn-facebook btn-user btn-block">#}
+{#                  <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook#}
+{#                </a>#}
+              </div>
+              <hr>
+{#              <div class="text-center">#}
+{#                <a class="small" href="forgot-password.html">Forgot Password?</a>#}
+{#              </div>#}
+              <div class="text-center">
+                <a class="small" href="{{ path('homespa-view', {route: 'login'})}}">Already have an account? Login!</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+{#  <script src="vendor/jquery/jquery.min.js"></script>#}
+{#  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>#}
+
+{#  <!-- Core plugin JavaScript-->#}
+{#  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>#}
+
+{#  <!-- Custom scripts for all pages-->#}
+{#  <script src="js/sb-admin-2.min.js"></script>#}
     {{ form_end(registrationForm) }}
+
+</body>
+
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+      {{ encore_entry_link_tags('sb-admin2') }}
 {% endblock %}

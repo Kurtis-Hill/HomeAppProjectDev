@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
+import CardReadingFactory from '../Factories/CardReadingFactory';
 
 export function BaseCard(props: { 
     loading: boolean;
@@ -25,6 +26,7 @@ export function BaseCard(props: {
         setLocalLoading(true)
         props.setVariableToUpdate(id);
     }
+
 
     return (
         <>

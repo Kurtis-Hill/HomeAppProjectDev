@@ -30,4 +30,20 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
     {
         return $this->findOneBy(['groupName' => $name]);
     }
+
+    public function persist(GroupNames $groupNames): void
+    {
+        $this->getEntityManager()->persist($groupNames);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
+    public function remove(GroupNames $groupNames): void
+    {
+        $this->getEntityManager()->remove($groupNames);
+        $this->getEntityManager()->flush();
+    }
 }

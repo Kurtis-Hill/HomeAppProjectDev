@@ -5,14 +5,15 @@ namespace App\User\Entity;
 use App\Authentication\Entity\GroupNameMapping;
 use App\User\Repository\ORM\UserRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\PersistentCollection;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: UserRepository::class),
@@ -33,16 +34,39 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[
         ORM\Column(name: "firstName", type: "string", length: 20, nullable: false),
+        Assert\Length(
+            min: 2,
+            max: 20,
+            minMessage: 'First name must be at least {{ limit }} characters long',
+            maxMessage: 'First name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
     ]
     private string $firstName;
 
     #[
         ORM\Column(name: "lastName", type: "string", length: 20, nullable: false),
+        Assert\Length(
+            min: 2,
+            max: 20,
+            minMessage: 'Last name must be at least {{ limit }} characters long',
+            maxMessage: 'Last name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
     ]
     private string $lastName;
 
     #[
         ORM\Column(name: "email", type: "string", length: 180, nullable: false),
+        Assert\Length(
+            min: 5,
+            max: 180,
+            minMessage: 'First name must be at least {{ limit }} characters long',
+            maxMessage: 'First name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
+        Assert\Email,
+
     ]
     private string $email;
 
@@ -58,6 +82,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[
         ORM\Column(name: "password", type: "text", length: 0, nullable: false),
+        Assert\NotCompromisedPassword,
     ]
     private string $password;
 
@@ -70,7 +95,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
     ]
-    private DateTime $createdAt;
+    private DateTimeInterface $createdAt;
 
     #[
         ArrayShape([GroupNameMapping::class]),
@@ -138,7 +163,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return array_unique($this->roles);
     }
 
-    public function setRoles(?array $roles): self
+    public function setRoles(array $roles = []): self
     {
         $this->roles = $roles ?? ['ROLE_USER'];
 
@@ -236,12 +261,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->groupNameID = $groupNameID;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?DateTime $createdAt = null): self
+    public function setCreatedAt(?DateTimeInterface $createdAt = null): self
     {
         $this->createdAt = $createdAt ?? new DateTime('now');
 

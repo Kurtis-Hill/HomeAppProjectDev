@@ -193,7 +193,7 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('CREATE TABLE user (userID INT AUTO_INCREMENT NOT NULL, firstName VARCHAR(20) NOT NULL, lastName VARCHAR(20) NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, groupNameID INT DEFAULT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, INDEX GroupName (groupNameID), UNIQUE INDEX email (email), PRIMARY KEY(userID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE user (userID INT AUTO_INCREMENT NOT NULL, firstName VARCHAR(20) NOT NULL, lastName VARCHAR(20) NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, groupNameID INT DEFAULT NULL, createdAt DATETIME DEFAULT current_timestamp() NOT NULL, constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, INDEX GroupName (groupNameID), UNIQUE INDEX email (email), PRIMARY KEY(userID)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
 
         $this->addSql("
             INSERT INTO `readingtypes` 

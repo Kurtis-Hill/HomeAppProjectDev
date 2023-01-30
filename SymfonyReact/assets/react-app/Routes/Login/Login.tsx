@@ -163,7 +163,8 @@ export default function Login(): void {
                                         
                                     </form>
                                     <div className="text-center">
-                                        <Link to={registerAccountUrl} className="small login-form-field">Create an Account!</Link>
+                                        {/* <Link to={registerAccountUrl} className="small login-form-field">Create an Account!</Link> */}
+                                        <a href={registerAccountUrl} className="small login-form-field">Create an Account!</a>
                                     </div>
                                 </div>
                             </div>

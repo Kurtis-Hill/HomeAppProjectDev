@@ -24,6 +24,11 @@ class GroupNames
 
     private const GROUP_NAME_MAX_LENGTH = 50;
 
+    public function __toString(): string
+    {
+        return $this->getGroupName();
+    }
+
     #[
         ORM\Column(name: "groupNameID", type: "integer", nullable: false),
         ORM\Id,

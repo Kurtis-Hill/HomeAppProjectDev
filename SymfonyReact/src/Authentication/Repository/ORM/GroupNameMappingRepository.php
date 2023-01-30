@@ -51,4 +51,20 @@ class GroupNameMappingRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function persist(GroupNameMapping $groupNameMapping): void
+    {
+        $this->getEntityManager()->persist($groupNameMapping);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
+    public function remove(GroupNameMapping $groupNameMapping): void
+    {
+        $this->getEntityManager()->remove($groupNameMapping);
+        $this->getEntityManager()->flush();
+    }
 }

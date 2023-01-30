@@ -26,8 +26,6 @@ export function CardDisplayModal(props: {
     // have different componenets for base modal children,
     // boundary update form,
     // card view update form,
-    // 
-
 
     console.log('cardVieID', cardViewID)
     return (
