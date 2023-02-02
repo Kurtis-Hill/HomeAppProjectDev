@@ -18,6 +18,7 @@ use App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationHand
 use App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateFacade;
 use App\UserInterface\Voters\CardViewVoter;
 use Doctrine\ORM\Exception\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +35,14 @@ class CardViewFormController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('get/{id}', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    #[Route('{id}/get', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(
         CardView $cardViewObject,
         CardViewFormPreparationHandlerInterface $cardViewFormPreparationService,
@@ -69,7 +77,7 @@ class CardViewFormController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponseData);
     }
 
-    #[Route('update/{id}', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
+    #[Route('{id}/update', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateCardView(
         CardView $cardViewObject,
         Request $request,
@@ -114,7 +122,7 @@ class CardViewFormController extends AbstractController
         try {
             $cardViewRepository->persist($cardViewObject);
             $cardViewRepository->flush();
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
