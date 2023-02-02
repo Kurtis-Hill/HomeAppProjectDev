@@ -113,10 +113,10 @@ export default function Login(): void {
             } 
             if (axios.isAxiosError(error)) {
                 const errorResponse = error.response;
-
                 setLoading(false);
+                
                 if (errorResponse.status === 401) {
-                    setError([errorResponse.statusText]);
+                    setError([errorResponse.data.message]);
                 } else {
                     setError(['Something went wrong']);
                 }

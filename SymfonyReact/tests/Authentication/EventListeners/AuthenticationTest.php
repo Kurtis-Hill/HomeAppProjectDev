@@ -11,6 +11,7 @@ use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticationTest extends WebTestCase
 {
@@ -248,5 +249,67 @@ class AuthenticationTest extends WebTestCase
             'username' => 'Wrong_username',
             'password' => 'Wrong_password',
         ];
+    }
+
+    public function test_user_login_throttling(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->client->request(
+                Request::METHOD_POST,
+                self::API_USER_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"' . UserDataFixtures::ADMIN_USER . '","password":"' . UserDataFixtures::ADMIN_PASSWORD .'1"}'
+            );
+
+            self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        }
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::API_USER_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"' . UserDataFixtures::ADMIN_USER . '","password":"' . UserDataFixtures::ADMIN_PASSWORD .'"}'
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Too many failed login attempts, please try again in 1 minute.', $responseData['message']);
+    }
+
+    public function test_device_login_throttling(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->client->request(
+                Request::METHOD_POST,
+                self::API_DEVICE_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"' . ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'] . '","password":"' . ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'] .'1"}'
+            );
+
+            self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        }
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::API_DEVICE_LOGIN,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"username":"' . ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'] . '","password":"' . ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'] .'"}'
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals('Too many failed login attempts, please try again in 1 minute.', $responseData['message']);
     }
 }
