@@ -6,6 +6,8 @@ use App\Authentication\Entity\GroupNameMapping;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -57,6 +59,10 @@ class GroupNameMappingRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($groupNameMapping);
     }
 
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function flush(): void
     {
         $this->getEntityManager()->flush();

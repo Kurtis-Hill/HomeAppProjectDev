@@ -18,7 +18,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/delete-device/%d';
+    private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/delete-device';
 
     private ?string $userToken = null;
 

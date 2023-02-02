@@ -67,7 +67,7 @@ class AuthenticationSuccessListener
             try {
                 $responseMessage = $this->normalizeResponse($userAuthenticationDTO);
             } catch (ExceptionInterface) {
-                $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'User authentication ');
+                $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'UserExceptions authentication ');
             }
 
             $authenticationSuccessEvent->setData($responseMessage);

@@ -58,7 +58,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        // Admin User
+        // Admin UserExceptions
         $adminGroupName = new GroupNames();
 
         $adminGroupName->setGroupName(self::ADMIN_GROUP);
@@ -84,7 +84,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($adminUser);
 
 
-        //Normal User
+        //Normal UserExceptions
         $userGroupName = new GroupNames();
 
         $userGroupName->setGroupName(self::USER_GROUP);

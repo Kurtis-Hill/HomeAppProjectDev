@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'update-user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'update-user-devices')]
 class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -44,7 +44,7 @@ class UpdateDeviceController extends AbstractController
 
     #[
         Route(
-            path: '/update-device/{deviceNameID}',
+            path: '{deviceNameID}/update-device',
             name: 'update-esp-device',
             methods: [Request::METHOD_PUT, Request::METHOD_PATCH]
         )
@@ -129,6 +129,7 @@ class UpdateDeviceController extends AbstractController
         }
 
         $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceNameID()), ['user' => $this->getUser()?->getUserIdentifier()]);
+
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

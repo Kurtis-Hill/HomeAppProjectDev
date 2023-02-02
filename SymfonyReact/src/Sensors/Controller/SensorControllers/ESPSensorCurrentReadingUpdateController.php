@@ -30,6 +30,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 class ESPSensorCurrentReadingUpdateController extends AbstractController
 {
     use HomeAppAPITrait;
+
     use ValidatorProcessorTrait;
 
     private ProducerInterface $currentReadingAMQPProducer;

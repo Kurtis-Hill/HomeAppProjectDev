@@ -20,7 +20,7 @@ class GetUserDataController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            return $this->sendInternalServerErrorJsonResponse(['User is not logged in'], );
+            return $this->sendInternalServerErrorJsonResponse(['UserExceptions is not logged in'], );
         }
 
         $userData = $userDataProvider->getGeneralUserData($user);

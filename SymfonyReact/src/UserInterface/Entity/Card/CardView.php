@@ -48,7 +48,7 @@ class CardView
         ORM\ManyToOne(targetEntity: User::class),
         ORM\JoinColumn(name: "userID", referencedColumnName: "userID"),
     ]
-    #[Assert\NotNull(message: "User cannot be null")]
+    #[Assert\NotNull(message: "UserExceptions cannot be null")]
     private ?User $userID;
 
     #[

@@ -68,7 +68,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         ORM\ManyToOne(targetEntity: User::class),
         ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
     ]
-    #[Assert\NotBlank(message: 'User object should not be blank')]
+    #[Assert\NotBlank(message: 'UserExceptions object should not be blank')]
     private User $createdBy;
 
     #[

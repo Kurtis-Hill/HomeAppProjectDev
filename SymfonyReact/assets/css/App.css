@@ -83,6 +83,13 @@
     left: 40%;
     position: absolute;
 }
+.error-container-register {
+    margin-bottom: 0;
+    text-align: center;
+}
+.error-container-register ul {
+    list-style: none;
+}
 
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/

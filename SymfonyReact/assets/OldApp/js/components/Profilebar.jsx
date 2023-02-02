@@ -224,7 +224,7 @@ function ShowUserDropdown () {
           </div>
         </li>
         <div className="topbar-divider d-none d-sm-block" />
-        {/* Nav Item - User Information */}
+        {/* Nav Item - UserExceptions Information */}
          <li className="nav-item dropdown no-arrow">                                                                                  {/*  NEEDS TO GO TRUE */}
           <a className="nav-link dropdown-toggle" href="SymfonyReact/assets/OldApp/js/components/Profilebar#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span className="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>

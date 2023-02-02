@@ -10,10 +10,12 @@ imports:
 
 parameters:
 services:
-    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+          string $projectDir: '%kernel.project_dir%'
+    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
 
   ################### Core ############################
     App\Common\:

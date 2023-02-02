@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'delete-user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'delete-user-devices')]
 class DeleteDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -32,7 +32,7 @@ class DeleteDeviceController extends AbstractController
 
     #[
         Route(
-            path: '/delete-device/{deviceNameID}',
+            path: '{deviceNameID}/delete-device',
             name: 'delete-esp-device',
             methods: [Request::METHOD_POST]
         )
@@ -62,6 +62,7 @@ class DeleteDeviceController extends AbstractController
         }
 
         $this->logger->info('device deleted successfully id: ' . $deviceDeletedID, ['user' => $this->getUser()?->getUserIdentifier()]);
+
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 }

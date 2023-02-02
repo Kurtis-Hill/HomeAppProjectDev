@@ -78,7 +78,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[
         ORM\Column(name: "profilePic", type: "string", length: 100, nullable: true, options: ["default" => "/assets/pictures/guest.jpg"]),
     ]
-    private string $profilePic = '/assets/pictures/guest.jpg';
+    private string $profilePic = 'guest.jpg';
 
     #[
         ORM\Column(name: "password", type: "text", length: 0, nullable: false),

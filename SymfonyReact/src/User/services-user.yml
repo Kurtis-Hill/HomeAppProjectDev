@@ -2,6 +2,8 @@ parameters:
 
 services:
   _defaults:
+    bind:
+      string $projectDir: '%kernel.project_dir%'
     autowire: true
     autoconfigure: true
 
@@ -18,7 +20,7 @@ services:
 
   ######################## Consumers ######################################################
 
-  ######################## User Services ######################################################
+  ######################## UserExceptions Services ######################################################
   App\User\Services\RoomServices\AddNewRoomServiceInterface:
     alias: 'App\User\Services\RoomServices\AddNewRoomService'
 
@@ -36,3 +38,8 @@ services:
 
   App\User\Repository\ORM\UserRepositoryInterface:
     alias: 'App\User\Repository\ORM\UserRepository'
+
+  ######################## Services ########################################################################
+  App\User\Services\User\UserCreationHandler:
+    arguments:
+        $profilePictureDir: '%env(USER_PROFILE_DIRECTORY)%'

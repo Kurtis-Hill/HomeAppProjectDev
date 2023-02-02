@@ -147,7 +147,7 @@ class CardViewControllerTest extends WebTestCase
             }
         }
 
-//        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+//        $user = $this->entityManager->getRepository(UserExceptions::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
 //        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 //
 //        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);

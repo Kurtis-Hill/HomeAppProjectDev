@@ -33,7 +33,7 @@ class RoomFixtures extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($adminAddedRoom);
         $this->addReference(self::ADMIN_ROOM, $adminAddedRoom);
-        //Create a Regular User Room
+        //Create a Regular UserExceptions Room
         $regularAddedRoom = new Room();
         $regularAddedRoom->setRoom(self::REGULAR_ROOM_NAME);
         $regularAddedRoom->setGroupNameID($this->getReference(UserDataFixtures::REGULAR_GROUP));

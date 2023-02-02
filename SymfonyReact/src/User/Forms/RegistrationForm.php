@@ -3,6 +3,7 @@
 namespace App\User\Forms;
 
 use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NotNumericConstraint;
 use App\User\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
+
 class RegistrationForm  extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -134,6 +137,11 @@ class RegistrationForm  extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
+                    new Type([
+                        'type' => 'string',
+                        'message' => 'The value {{ value }} is not a valid {{ type }}.',
+                    ]),
+                    new NotNumericConstraint(),
                 ],
                 'error_bubbling' => true,
                 'attr' => [

@@ -4,6 +4,8 @@ namespace App\User\Repository\ORM;
 
 use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -64,6 +66,10 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
         $this->getEntityManager()->persist($user);
     }
 
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function flush(): void
     {
         $this->getEntityManager()->flush();

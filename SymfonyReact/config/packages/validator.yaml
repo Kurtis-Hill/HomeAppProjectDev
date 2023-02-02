@@ -2,7 +2,7 @@ framework:
     validation:
         email_validation_mode: html5
 
-#App\User\Entity\User:
+#App\UserExceptions\Entity\UserExceptions:
 #    properties:
 #        email:
 #            - Email:

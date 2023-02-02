@@ -27,6 +27,7 @@ security:
             pattern: ^/HomeApp/api/device/login_check
             stateless: true
             provider: 'api_device_provider'
+#            login_throttling: ~
             json_login:
                 check_path: /HomeApp/api/device/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
@@ -54,6 +55,7 @@ security:
             pattern: ^/HomeApp/api/user
             stateless: true
             provider: 'app_user_provider'
+#            login_throttling: ~
             entry_point: jwt
             jwt: ~
             refresh_jwt:

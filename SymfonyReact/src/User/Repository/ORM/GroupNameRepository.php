@@ -4,6 +4,8 @@ namespace App\User\Repository\ORM;
 
 use App\User\Entity\GroupNames;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,6 +38,11 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
         $this->getEntityManager()->persist($groupNames);
     }
 
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throw UniqueConstraintViolationException
+     */
     public function flush(): void
     {
         $this->getEntityManager()->flush();

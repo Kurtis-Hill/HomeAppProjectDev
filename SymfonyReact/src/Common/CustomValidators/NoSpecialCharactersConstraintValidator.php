@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Common\CustomValidators;
-
 
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;

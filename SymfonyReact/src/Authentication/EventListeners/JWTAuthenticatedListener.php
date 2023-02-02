@@ -32,7 +32,7 @@ class JWTAuthenticatedListener
 //
 //        $userCredentials = [$user, 'getUserID'];
 //
-//        if (is_callable($userCredentials, true) && $user instanceof User) {
+//        if (is_callable($userCredentials, true) && $user instanceof UserExceptions) {
 //            try {
 //                $groupNameMappingEntities = $this->groupNameMappingTableRepository->getAllGroupMappingEntitiesForUser($user);
 //                $user->setUserGroupMappingEntities($groupNameMappingEntities);

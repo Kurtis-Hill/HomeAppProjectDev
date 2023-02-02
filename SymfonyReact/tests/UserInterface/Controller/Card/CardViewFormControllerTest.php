@@ -48,7 +48,7 @@ class CardViewFormControllerTest extends WebTestCase
     /**
      * @dataProvider getCardViewFormDataProvider
      */
-    public function testGetCardViewFormData(string $sensornntrType): void
+    public function testGetCardViewFormData(string $sensorType): void
     {
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
