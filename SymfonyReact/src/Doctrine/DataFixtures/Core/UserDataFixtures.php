@@ -32,6 +32,10 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public const SECOND_REGULAR_USER_ISOLATED = 'regular-user-admin-group@gmail.com';
 
+    public const UNIQUE_USER_EMAIL_NOT_TO_BE_USED = 'unique-user@gmail.com';
+
+    public const UNIQUE_GROUP_NAME_NOT_TO_BE_USED = 'uniquegroupname';
+
     public const USER_GROUPS = [
         self::ADMIN_GROUP,
         self::REGULAR_GROUP,

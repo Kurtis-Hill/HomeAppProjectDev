@@ -10,6 +10,7 @@ use App\User\Builders\GroupNameMapping\GroupNameMappingBuilder;
 use App\User\Builders\User\NewUserBuilder;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\UserRepository;
@@ -34,36 +35,32 @@ class UserCreationHandler
 
     private UserRepository $userRepository;
 
-    private GroupNameMappingBuilder $groupNameMappingBuilder;
-
-    private GroupNameMappingRepository $groupNameMappingRepository;
-
     private ValidatorInterface $validator;
 
     private LoggerInterface $logger;
 
     private string $profilePictureDir;
 
+    private string $projectDir;
+
     public function __construct(
         GroupNameBuilder $groupNameBuilder,
         GroupNameRepository $groupNameRepository,
         NewUserBuilder $newUserBuilder,
         UserRepository $userRepository,
-        GroupNameMappingBuilder $groupNameMappingBuilder,
-        GroupNameMappingRepository $groupNameMappingRepository,
         ValidatorInterface $validator,
         LoggerInterface $logger,
         string $profilePictureDir,
+        string $projectDir,
     ) {
         $this->groupNameBuilder = $groupNameBuilder;
         $this->groupNameRepository = $groupNameRepository;
         $this->newUserBuilder = $newUserBuilder;
         $this->userRepository = $userRepository;
-        $this->groupNameMappingBuilder = $groupNameMappingBuilder;
-        $this->groupNameMappingRepository = $groupNameMappingRepository;
         $this->logger = $logger;
         $this->validator = $validator;
         $this->profilePictureDir = $profilePictureDir;
+        $this->projectDir = $projectDir;
     }
 
     /**
@@ -71,6 +68,7 @@ class UserCreationHandler
      * @throws OptimisticLockException
      * @throws UniqueConstraintViolationException
      * @throws UserCreationValidationErrorsException
+     * @throws GroupNameValidationException
      */
     public function handleNewUserCreation(
         string $firstName,
@@ -99,6 +97,7 @@ class UserCreationHandler
 
         $validationErrors = $this->validator->validate($user);
 
+        $this->newUserBuilder->hashUserPassword($user, $password);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             throw new UserCreationValidationErrorsException($this->getValidationErrorAsArray($validationErrors));
         }
@@ -107,16 +106,6 @@ class UserCreationHandler
 
         if ($saveSuccess !== true) {
             throw new UserCreationValidationErrorsException(['Failed to save user']);
-        }
-        try {
-            $this->handleGroupNameMappingCreationForNewUser($user);
-        } catch (ORMException|OptimisticLockException $e) {
-            $this->logger->error(
-                sprintf(
-                    LogMessages::ERROR_CREATING_NEW_USER,
-                    (new DateTimeImmutable('now'))->format('d-M-Y H:i:s'),
-                )
-            );
         }
 
         $this->logger->info(
@@ -130,21 +119,32 @@ class UserCreationHandler
         return $user;
     }
 
+    /**
+     * @throws GroupNameValidationException
+     */
     private function createUsersGroupName(string $groupName): GroupNames
     {
         $groupNames = $this->groupNameBuilder->buildNewGroupName($groupName);
+
+        $validationErrors = $this->validator->validate($groupNames);
+
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            throw new GroupNameValidationException($this->getValidationErrorAsArray($validationErrors));
+        }
+
         $this->groupNameRepository->persist($groupNames);
         $this->groupNameRepository->flush();
 
         return $groupNames;
     }
 
+    //@TODO - move this to a service
     private function handleProfilePicFileUpload(UploadedFile $profilePic): ?string
     {
         try {
             $newName = uniqid('profilePic_', true) . $profilePic->getClientOriginalName();
             $profilePic->move(
-                $this->profilePictureDir,
+                $this->projectDir . $this->profilePictureDir,
                 $newName
             );
         } catch (FileException) {
@@ -154,6 +154,8 @@ class UserCreationHandler
                     (new DateTimeImmutable('now'))->format('d-M-Y H:i:s'),
                 )
             );
+
+            return null;
         }
 
         return $newName ?? null;
@@ -181,19 +183,5 @@ class UserCreationHandler
         }
 
         return false;
-    }
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function handleGroupNameMappingCreationForNewUser(User $user): void
-    {
-        $groupNameMapping = $this->groupNameMappingBuilder->buildGroupNameMapping(
-            $user->getGroupNameID(),
-            $user
-        );
-        $this->groupNameMappingRepository->persist($groupNameMapping);
-        $this->groupNameMappingRepository->flush();
     }
 }

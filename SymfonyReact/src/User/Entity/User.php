@@ -25,6 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
+    public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';
+
     #[
         ORM\Column(name: "userID", type: "integer", nullable: false),
         ORM\Id,
@@ -78,17 +80,24 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[
         ORM\Column(name: "profilePic", type: "string", length: 100, nullable: true, options: ["default" => "/assets/pictures/guest.jpg"]),
     ]
-    private string $profilePic = 'guest.jpg';
+    private string $profilePic = self::DEFAULT_PROFILE_PICTURE;
 
     #[
         ORM\Column(name: "password", type: "text", length: 0, nullable: false),
         Assert\NotCompromisedPassword,
+        Assert\Length(
+            min: 8,
+            max: 255,
+            minMessage: 'Password must be at least {{ limit }} characters long',
+            maxMessage: 'Password cannot be longer than {{ limit }} characters',
+        ),
     ]
     private string $password;
 
     #[
         ORM\ManyToOne(targetEntity: GroupNames::class),
         ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+        Assert\NotBlank,
     ]
     private GroupNames|int $groupNameID;
 
@@ -122,26 +131,32 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape([GroupNames::class])]
     public function getGroupNameObjects(): array
     {
+        $groupNameArray[] = $this->getGroupNameID();
         foreach ($this->userGroupMappingEntities as $groupName) {
             $groupNameArray[] = $groupName->getGroupNameID();
         }
 
-        return $groupNameArray ?? [];
+        return $groupNameArray;
     }
 
     #[ArrayShape(['int'])]
     public function getGroupNameIds(): array
     {
+        $groupNames[] = $this->getGroupNameID()->getGroupNameID();
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
         }
 
-        return $groupNames ?? [];
+        return $groupNames;
     }
 
     #[ArrayShape(['groupNameID' => 'int'])]
     public function getGroupNameAndIds(): array
     {
+        $groupNames[] = [
+            'groupNameID' => $this->getGroupNameID()->getGroupNameID(),
+            'groupName' => $this->getGroupNameID()->getGroupName()
+        ];
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = [
                 'groupNameID' => $entity->getGroupNameID()->getGroupNameID(),
@@ -149,7 +164,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             ];
         }
 
-        return $groupNames ?? [];
+        return $groupNames;
     }
 
     public function getUsername(): string

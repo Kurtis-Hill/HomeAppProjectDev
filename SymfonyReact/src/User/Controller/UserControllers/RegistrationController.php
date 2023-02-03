@@ -4,6 +4,7 @@ namespace App\User\Controller\UserControllers;
 
 use App\Common\API\CommonURL;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Forms\RegistrationForm;
 use App\User\Services\User\UserCreationHandler;
@@ -54,9 +55,8 @@ class RegistrationController extends AbstractController
             } catch (BadRequestException $e) {
                 $form->addError(new FormError($e->getMessage()));
             } catch (UniqueConstraintViolationException $e) {
-                dd($e);
                 $form->addError(new FormError('Email already exists!'));
-            } catch (UserCreationValidationErrorsException $e) {
+            } catch (UserCreationValidationErrorsException|GroupNameValidationException $e) {
                 foreach ($e->getErrors() as $error) {
                     $form->addError(new FormError($error));
                 }

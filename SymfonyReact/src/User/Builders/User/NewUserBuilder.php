@@ -37,6 +37,18 @@ class NewUserBuilder
         }
 
         $user->setPassword(
+//            $this->passwordHasher->hashPassword(
+//                $user,
+                $password
+//            )
+        );
+//dd($user->getPassword(), $password);
+        return $user;
+    }
+
+    public function hashUserPassword(User $user, string $password): User
+    {
+        $user->setPassword(
             $this->passwordHasher->hashPassword(
                 $user,
                 $password
