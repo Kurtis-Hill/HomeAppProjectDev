@@ -7,14 +7,19 @@ SymfonyReact/.env.*.local
 SymfonyReact/public/bundles/
 SymfonyReact/var/
 SymfonyReact/vendor/
+SymfonyReact/.php-version
+SymfonyReact/bin/*
+SymfonyReact/tests/test-files/*
+SymfonyReact/config/jwt/private.pem
+SymfonyReact/config/jwt/public.pem
+SymfonyReact/supervisord.log
+SymfonyReact/supervisord.pid
 
 ###> symfony/webpack-encore-bundle ###
 SymfonyReact/node_modules/
 SymfonyReact/public/build/
 SymfonyReact/npm-debug.log
 SymfonyReact/yarn-error.log
-SymfonyReact/supervisord.log
-SymfonyReact/supervisord.pid
 
 ### IDE tools
 .idea
@@ -26,15 +31,13 @@ SymfonyReact/.idea
 .php_cs.cache
 .php-version
 .php-cs-fixer.cache
+
 ###> symfony/phpunit-bridge ###
 SymfonyReact/.phpunit
-SymfonyReact/phpunit.xml
-SymfonyReact/.php-version
-SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
-SymfonyReact/tests/test-files/*
-SymfonyReact/config/jwt/private.pem
-SymfonyReact/config/jwt/public.pem
+SymfonyReact/phpunit.xml
+
+##< SSL >###
 SSL/ca-key.pem
 SSL/client-cert.pem
 SSL/client-key.pem
@@ -46,15 +49,14 @@ SSL/ca-cert.pem
 ##< Docker >###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
-
-HomeAppDocker/rabbitmq/data/*
-HomeAppDocker/rabbitmq/log/*
-
 HomeAppDocker/webservers/auth/auth.json
 HomeAppDocker/docker-compose.override.yml
-
 .run/Docker Image.run.xml
 .run/DockerComposeHomeApp.run.xml
+
+##< RabbitMQ >###
+HomeAppDocker/rabbitmq/data/*
+HomeAppDocker/rabbitmq/log/*
 
 ##< ElasticSearch >###
 HomeAppDocker/elasticsearch/certs/.env

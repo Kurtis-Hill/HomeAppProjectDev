@@ -2,7 +2,6 @@ FROM php:8.2-apache
 
 WORKDIR /var/www/html
 
-
 RUN apt-get install apt-transport-https ca-certificates -y 
 
 RUN update-ca-certificates
