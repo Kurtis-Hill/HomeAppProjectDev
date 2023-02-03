@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UserCreationHandlerTest extends KernelTestCase
 {
-
     private const PROFILE_PICTURE_TEST = '/tests/User/assets/profile-pic.jpg';
     private UserCreationHandler $sut;
 

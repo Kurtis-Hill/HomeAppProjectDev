@@ -215,6 +215,7 @@ class CardViewFormControllerTest extends WebTestCase
             $jsonRequestData
         );
 
+//        dd($this->client->getResponse()->getContent());
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 

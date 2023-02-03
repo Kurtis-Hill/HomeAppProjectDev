@@ -10,7 +10,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Repository\ORM\GroupNameRepository;
 
-#[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
 #[
     ORM\Entity(repositoryClass: GroupNameRepository::class),
     ORM\Table(name: "groupname"),
@@ -18,6 +17,7 @@ use App\User\Repository\ORM\GroupNameRepository;
     ORM\Index(columns: ["roomID"], name: "roomID"),
 
 ]
+#[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
 class GroupNames
 {
     private const GROUP_NAME_MIN_LENGTH = 2;

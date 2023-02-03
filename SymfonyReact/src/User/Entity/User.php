@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["groupNameID"], name: "GroupName"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
 ]
-#[UniqueEntity('email')]
+#[UniqueEntity(fields: ['email'], message: 'Email already exists')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';

@@ -75,6 +75,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['title']);
+//        dd($this->client->getResponse()->getContent());
     }
 
     //  Add addNewDevice
