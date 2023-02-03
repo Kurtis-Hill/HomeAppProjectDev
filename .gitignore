@@ -32,7 +32,7 @@ SymfonyReact/phpunit.xml
 SymfonyReact/.php-version
 SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
-
+SymfonyReact/tests/test-files/*
 SymfonyReact/config/jwt/private.pem
 SymfonyReact/config/jwt/public.pem
 SSL/ca-key.pem
