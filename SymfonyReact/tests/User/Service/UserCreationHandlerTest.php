@@ -10,7 +10,6 @@ use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\UserRepository;
 use App\User\Services\User\UserCreationHandler;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -53,7 +52,7 @@ class UserCreationHandlerTest extends KernelTestCase
 
     public function test_handle_new_user_creation_duplicate_groupname(): void
     {
-        $this->expectException(UniqueConstraintViolationException::class);
+        $this->expectException(GroupNameValidationException::class);
 
         $this->sut->handleNewUserCreation(
             'John',
@@ -62,19 +61,19 @@ class UserCreationHandlerTest extends KernelTestCase
             'password',
             UserDataFixtures::USER_GROUP,
         );
+    }
 
-//        $userCheck = $this->userRepository->findOneBy(['email' => 'test@gmail.com')
+    public function test_adding_duplicate_user_email(): void
+    {
+        $this->expectException(UserCreationValidationErrorsException::class);
 
-//        dd($handleUserCreationResult);
-
-//        $fixtureCheck = $this->groupRepository->findOneBy(['groupName' => UserDataFixtures::USER_GROUP]);
-
-//        if ($fixtureCheck === null) {
-//            self::fail('Fixture not found');
-//        }
-
-
-//        self::assertStringContainsString('Group name already exists', $handleUserCreationResult[0]);
+        $this->sut->handleNewUserCreation(
+            'first',
+            'last',
+            UserDataFixtures::ADMIN_USER,
+            'nhlkhhhgnbggfgg',
+            'test-group',
+        );
     }
 
     public function test_uploading_profile_picture_throws_file_exception(): void
@@ -245,20 +244,6 @@ class UserCreationHandlerTest extends KernelTestCase
 
         yield [
             'groupName' => 'testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest',
-            'errors' => [
-                'Group name is not valid',
-            ],
-        ];
-
-        yield [
-            'groupName' => 'test-test',
-            'errors' => [
-                'Group name is not valid',
-            ],
-        ];
-
-        yield [
-            'groupName' => 'test@test',
             'errors' => [
                 'Group name is not valid',
             ],

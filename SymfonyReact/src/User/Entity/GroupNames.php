@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Repository\ORM\GroupNameRepository;
 
-#[UniqueEntity('groupName')]
+#[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
 #[
     ORM\Entity(repositoryClass: GroupNameRepository::class),
     ORM\Table(name: "groupname"),
@@ -40,7 +40,6 @@ class GroupNames
         ORM\Column(name: "groupName", type: "string", length: 50, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
         Assert\Length(
             min: self::GROUP_NAME_MIN_LENGTH,
             max: self::GROUP_NAME_MAX_LENGTH,
