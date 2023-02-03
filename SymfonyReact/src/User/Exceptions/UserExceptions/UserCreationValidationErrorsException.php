@@ -6,16 +6,16 @@ use Exception;
 
 class UserCreationValidationErrorsException extends Exception
 {
-    private array $errors;
+    private array $validationErrors;
 
     public function __construct(array $errors, string $message = "", int $code = 0, ?Throwable $previous = null)
     {
-        $this->errors = $errors;
+        $this->validationErrors = $errors;
         parent::__construct($message, $code, $previous);
     }
 
-    public function getErrors(): array
+    public function getValidationErrors(): array
     {
-        return $this->errors;
+        return $this->validationErrors;
     }
 }

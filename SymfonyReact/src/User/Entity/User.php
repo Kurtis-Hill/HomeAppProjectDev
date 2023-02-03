@@ -91,13 +91,13 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             minMessage: 'Password must be at least {{ limit }} characters long',
             maxMessage: 'Password cannot be longer than {{ limit }} characters',
         ),
+//        Assert\NotBlank,
     ]
     private string $password;
 
     #[
         ORM\ManyToOne(targetEntity: GroupNames::class),
         ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
-        Assert\NotBlank,
     ]
     private GroupNames|int $groupNameID;
 

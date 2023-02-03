@@ -37,12 +37,8 @@ class NewUserBuilder
         }
 
         $user->setPassword(
-//            $this->passwordHasher->hashPassword(
-//                $user,
-                $password
-//            )
+            $password
         );
-//dd($user->getPassword(), $password);
         return $user;
     }
 

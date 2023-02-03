@@ -97,12 +97,14 @@ class UserCreationHandler
 
         $this->newUserBuilder->hashUserPassword($user, $password);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
+            $this->groupNameRepository->remove($groupNameObject);
             throw new UserCreationValidationErrorsException($this->getValidationErrorAsArray($validationErrors));
         }
 
         $saveSuccess = $this->saveUser($user);
 
         if ($saveSuccess !== true) {
+            $this->groupNameRepository->remove($groupNameObject);
             throw new UserCreationValidationErrorsException(['Failed to save user']);
         }
 

@@ -57,7 +57,7 @@ class RegistrationController extends AbstractController
             } catch (UniqueConstraintViolationException $e) {
                 $form->addError(new FormError('Email already exists!'));
             } catch (UserCreationValidationErrorsException|GroupNameValidationException $e) {
-                foreach ($e->getErrors() as $error) {
+                foreach ($e->getValidationErrors() as $error) {
                     $form->addError(new FormError($error));
                 }
             } catch (ORMException|Exception $e) {
