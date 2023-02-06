@@ -45,22 +45,22 @@ class GroupNameMapping
         $this->groupNameMappingID = $groupNameMappingID;
     }
 
-    public function getGroupNameID(): GroupNames
+    public function getGroupName(): GroupNames
     {
         return $this->groupNameID;
     }
 
-    public function setGroupNameID(GroupNames $groupNameID): void
+    public function setGroupName(GroupNames $groupNameID): void
     {
         $this->groupNameID = $groupNameID;
     }
 
-    public function getUserID(): User
+    public function getUser(): User
     {
         return $this->userID;
     }
 
-    public function setUserID(User $userID): void
+    public function setUser(User $userID): void
     {
         $this->userID = $userID;
     }

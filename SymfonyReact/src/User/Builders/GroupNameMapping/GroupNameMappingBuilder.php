@@ -13,8 +13,8 @@ class GroupNameMappingBuilder
         User $userObject
     ): GroupNameMapping {
         $groupNameMapping = new GroupNameMapping();
-        $groupNameMapping->setGroupNameID($groupNameObject);
-        $groupNameMapping->setUserID($userObject);
+        $groupNameMapping->setGroupName($groupNameObject);
+        $groupNameMapping->setUser($userObject);
 
         return $groupNameMapping;
     }

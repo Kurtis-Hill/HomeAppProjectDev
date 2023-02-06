@@ -31,10 +31,10 @@ class GroupNameMappingRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gmt')
-            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupNameID = gn.groupNameID')
-            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.userID = u.userID')
+            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupName = gn.groupNameID')
+            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.user = u.user')
             ->where(
-                $qb->expr()->eq('gmt.userID', ':user')
+                $qb->expr()->eq('gmt.user', ':user')
             )
             ->setParameter('user', $user);
 
@@ -47,7 +47,7 @@ class GroupNameMappingRepository extends ServiceEntityRepository
 
         $qb->select('gmt')
             ->where(
-                $qb->expr()->notIn('gmt.groupNameID', ':groups'),
+                $qb->expr()->notIn('gmt.groupName', ':groups'),
             )
             ->setParameter('groups', $groups);
 

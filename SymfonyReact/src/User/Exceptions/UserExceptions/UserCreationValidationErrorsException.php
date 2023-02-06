@@ -2,9 +2,11 @@
 
 namespace App\User\Exceptions\UserExceptions;
 
+use App\User\Exceptions\UserValidationErrorInterface;
 use Exception;
+use Throwable;
 
-class UserCreationValidationErrorsException extends Exception
+class UserCreationValidationErrorsException extends Exception implements UserValidationErrorInterface
 {
     private array $validationErrors;
 
