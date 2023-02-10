@@ -55,7 +55,7 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
             if (!$cardIcon instanceof Icons) {
                 $errors[] = 'Icon not found';
             } else {
-                $cardView->setCardIconID($cardIcon);
+                $cardView->setIconID($cardIcon);
             }
         }
 

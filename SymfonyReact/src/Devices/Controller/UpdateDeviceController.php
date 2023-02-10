@@ -128,7 +128,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceNameID()), ['user' => $this->getUser()?->getUserIdentifier()]);
+        $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceID()), ['user' => $this->getUser()?->getUserIdentifier()]);
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }

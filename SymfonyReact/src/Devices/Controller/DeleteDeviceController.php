@@ -47,7 +47,7 @@ class DeleteDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceDeletedID = $deviceToDelete->getDeviceNameID();
+        $deviceDeletedID = $deviceToDelete->getDeviceID();
         $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToDelete);
         if ($deviceDeleteSuccess !== true) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device'));

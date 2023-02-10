@@ -6,14 +6,17 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[
     ORM\Entity(repositoryClass: GroupNameMappingRepository::class),
     ORM\Table(name: "groupnnamemapping"),
-    ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
-    ORM\Index(columns: ["userID", "groupNameID"], name: "userID"),
-    ORM\Index(columns: ["userID"], name: "IDX_1C993DEE5FD86D04"),
+    ORM\Index(columns: ["groupName"], name: "groupName"),
+//    ORM\Index(columns: ["user", "groupName"], name: "user"),
+    ORM\Index(columns: ["user"], name: "IDX_1C993DEE5FD86D04"),
+    ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupName"]),
 ]
+#[UniqueEntity(fields: ['user', 'groupName'], message: 'User is already in this group')]
 class GroupNameMapping
 {
     #[
@@ -27,13 +30,13 @@ class GroupNameMapping
         ORM\ManyToOne(targetEntity: GroupNames::class),
         ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
     ]
-    private GroupNames $groupNameID;
+    private GroupNames $groupName;
 
     #[
         ORM\ManyToOne(targetEntity: User::class, inversedBy: "userGroupMappingEntities"),
         ORM\JoinColumn(name: "userID", referencedColumnName: "userID"),
     ]
-    private User $userID;
+    private User $user;
 
     public function getGroupNameMappingID(): int
     {
@@ -47,22 +50,22 @@ class GroupNameMapping
 
     public function getGroupName(): GroupNames
     {
-        return $this->groupNameID;
+        return $this->groupName;
     }
 
     public function setGroupName(GroupNames $groupNameID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupName = $groupNameID;
     }
 
     public function getUser(): User
     {
-        return $this->userID;
+        return $this->user;
     }
 
     public function setUser(User $userID): void
     {
-        $this->userID = $userID;
+        $this->user = $userID;
     }
 
 }

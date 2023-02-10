@@ -74,7 +74,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
-                    'groupName' => $sensorData->getDeviceObject()->getGroupNameObject(),
+                    'groupName' => $sensorData->getDevice()->getGroupNameObject(),
                 ]
             );
 
@@ -91,7 +91,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $qb->select($sensorAlias)
             ->where(
-                $qb->expr()->eq(Sensor::ALIAS. '.sensorNameID', ':id')
+                $qb->expr()->eq(Sensor::ALIAS. '.sensorID', ':id')
             )
             ->setParameters(['id' => $sensors]);
 
@@ -168,7 +168,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
     {
         $qb = $this->createQueryBuilder('sensors');
-        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
+        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensor']);
 
         $qb->select($sensorAlias)
             ->innerJoin(

@@ -52,6 +52,7 @@ class GetSensorTypesControllerTest extends WebTestCase
 
     public function test_wrong_token_returns_error(): void
     {
+        /** @var SensorType[] $sensorTypes */
         $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
 
         $this->client->request(
@@ -90,6 +91,7 @@ class GetSensorTypesControllerTest extends WebTestCase
 
     public function test_all_data_base_entries_are_returned(): void
     {
+        /** @var SensorType[] $sensorTypes */
         $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
 
         $this->client->request(

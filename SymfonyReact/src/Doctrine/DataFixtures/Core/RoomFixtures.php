@@ -24,19 +24,17 @@ class RoomFixtures extends Fixture implements OrderedFixtureInterface
       self::REGULAR_ROOM
     ];
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         //Create an admin room
         $adminAddedRoom = new Room();
         $adminAddedRoom->setRoom(self::ADMIN_ROOM_NAME);
-        $adminAddedRoom->setGroupNameID($this->getReference(UserDataFixtures::ADMIN_GROUP));
 
         $manager->persist($adminAddedRoom);
         $this->addReference(self::ADMIN_ROOM, $adminAddedRoom);
         //Create a Regular UserExceptions Room
         $regularAddedRoom = new Room();
         $regularAddedRoom->setRoom(self::REGULAR_ROOM_NAME);
-        $regularAddedRoom->setGroupNameID($this->getReference(UserDataFixtures::REGULAR_GROUP));
 
         $manager->persist($regularAddedRoom);
         $this->addReference(self::REGULAR_ROOM, $regularAddedRoom);
@@ -48,5 +46,4 @@ class RoomFixtures extends Fixture implements OrderedFixtureInterface
     {
         return self::FIXTURES_ORDER;
     }
-
 }

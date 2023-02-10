@@ -13,6 +13,7 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -73,6 +74,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        /** @var SensorType $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
@@ -83,7 +85,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -131,7 +133,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getTempObject(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getTemperature(), 'temperature');
         }
         if ($sensorTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getHumidObject(), 'humidity');
@@ -343,7 +345,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -387,7 +389,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), 'temperature');
         }
         if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
@@ -787,7 +789,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -822,7 +824,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), 'temperature');
         }
         if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
@@ -985,7 +987,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorNameID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],

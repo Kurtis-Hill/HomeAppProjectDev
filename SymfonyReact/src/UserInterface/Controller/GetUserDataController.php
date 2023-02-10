@@ -24,7 +24,6 @@ class GetUserDataController extends AbstractController
         }
 
         $userData = $userDataProvider->getGeneralUserData($user);
-
         if (!empty($userDataProvider->getProcessErrors())) {
             $this->sendBadRequestJsonResponse($userDataProvider->getProcessErrors());
         }

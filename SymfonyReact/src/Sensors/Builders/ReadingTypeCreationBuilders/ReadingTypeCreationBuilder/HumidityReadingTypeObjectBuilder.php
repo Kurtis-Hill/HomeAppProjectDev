@@ -21,7 +21,7 @@ class HumidityReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implem
         $humiditySensor->setHighReading($sensorTypeObject->getMaxHumidity());
         $humiditySensor->setLowReading($sensorTypeObject->getMinHumidity());
         $humiditySensor->setUpdatedAt();
-        $humiditySensor->setSensorObject($sensorTypeObject->getSensorObject());
+        $humiditySensor->setSensor($sensorTypeObject->getSensor());
 
         $sensorTypeObject->setHumidObject($humiditySensor);
 

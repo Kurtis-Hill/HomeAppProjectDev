@@ -30,7 +30,7 @@ class BmpNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
     public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $bmp = new Bmp();
-        $bmp->setSensorObject($sensor);
+        $bmp->setSensor($sensor);
         $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($bmp);
         $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($bmp);
         $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($bmp);

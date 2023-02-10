@@ -38,9 +38,8 @@ class AddNewRoomService implements AddNewRoomServiceInterface
      */
     private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
     {
-        $duplicateCheck = $this->roomRepository->findDuplicateRoom(
+        $duplicateCheck = $this->roomRepository->findRoomByName(
             $addNewRoomDTO->getRoomName(),
-            $addNewRoomDTO->getGroupNameID()->getGroupNameID()
         );
 
         if ($duplicateCheck instanceof Room) {

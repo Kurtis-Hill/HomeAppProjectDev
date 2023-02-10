@@ -14,8 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[
     ORM\Entity(repositoryClass: DhtRepository::class),
-    ORM\Table(name: "dhtsensor"),
-    ORM\UniqueConstraint(name: "cardviewID", columns: ["sensorNameID"]),
+    ORM\Table(name: "dht"),
+    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
 ]
@@ -55,9 +55,9 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     public function getSensorTypeID(): int
     {
@@ -69,24 +69,24 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         $this->dhtID = $dhtID;
     }
 
-    public function getTempObject(): Temperature
+    public function getTemperature(): Temperature
     {
         return $this->tempID;
     }
 
-    public function setTempObject(Temperature $tempID): void
+    public function setTemperature(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }
 
-    public function getSensorObject(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensor;
+        $this->sensor = $sensor;
     }
 
     public function getHumidObject(): Humidity

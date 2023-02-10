@@ -21,7 +21,7 @@ class AnalogReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implemen
         $analogSensor->setHighReading($sensorTypeObject->getMaxAnalog());
         $analogSensor->setLowReading($sensorTypeObject->getMinAnalog());
         $analogSensor->setUpdatedAt();
-        $analogSensor->setSensorObject($sensorTypeObject->getSensorObject());
+        $analogSensor->setSensor($sensorTypeObject->getSensor());
 
         $sensorTypeObject->setAnalogObject($analogSensor);
     }

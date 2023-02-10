@@ -31,6 +31,7 @@ class DeviceVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
+        /** @var User $user */
         $user = $token->getUser();
 
         return match ($attribute) {
@@ -43,10 +44,16 @@ class DeviceVoter extends Voter
 
     private function canAddNewDevice(UserInterface $user, NewDeviceDTO $newDeviceCheckDTO): bool
     {
-        return $this->checkCommon(
+        $checkCommon = $this->checkCommon(
             $user,
             $newDeviceCheckDTO->getGroupNameObject(),
         );
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
+        }
+
+        return true;
     }
 
     private function canUpdateDevice(UserInterface $user, UpdateDeviceDTO $updateDeviceDTO): bool
@@ -59,14 +66,14 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-        $checkedRoom = $this->checkUserIsApartOfProposedRoom(
-            $user,
-            $updateDeviceDTO->getProposedUpdatedRoom()
-        );
+//        $checkedRoom = $this->checkUserIsApartOfProposedRoom(
+//            $user,
+//            $updateDeviceDTO->getProposedUpdatedRoom()
+//        );
 
-        if ($checkedRoom === false) {
-            return false;
-        }
+//        if ($checkedRoom === false) {
+//            return false;
+//        }
         if (!in_array(
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
             $user->getGroupNameIds(),
@@ -76,32 +83,39 @@ class DeviceVoter extends Voter
             return false;
         }
 
-        if (
-            $updateDeviceDTO->getProposedUpdatedRoom() !== null
-            && !in_array(
-                $updateDeviceDTO->getProposedUpdatedRoom()->getGroupNameID(),
-                $user->getGroupNameIds(),
-                true
-            )
-        ) {
-            return false;
-        }
+//        if (
+//            $updateDeviceDTO->getProposedUpdatedRoom() !== null
+//            && !in_array(
+//                $updateDeviceDTO->getProposedUpdatedRoom()->getGroupNameID(),
+//                $user->getGroupNameIds(),
+//                true
+//            )
+//        ) {
+//            return false;
+//        }
 
-        return $commonSuccess;
+        return true;
     }
 
     private function cadDeleteDevice(UserInterface $user, Devices $devices): bool
     {
-        return $this->checkCommon(
-            $user,
-            $devices->getGroupNameObject(),
+
+        $checkCommon = $this->checkCommon(
+                $user,
+                $devices->getGroupNameObject(),
         );
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
+        }
+
+        return true;
     }
 
-    private function checkUserIsApartOfProposedRoom(User $user, ?Room $proposedRoom): bool
-    {
-        return !($proposedRoom !== null && !in_array($proposedRoom->getGroupNameID(), $user->getGroupNameIds(), true));
-    }
+//    private function checkUserIsApartOfProposedRoom(User $user, ?Room $proposedRoom): ?bool
+//    {
+//        return !($proposedRoom !== null && !in_array($proposedRoom->getGroupNameID(), $user->getGroupNameIds(), true));
+//    }
 
     private function checkCommon(UserInterface $user, GroupNames $proposedGroupName): ?bool
     {
@@ -112,9 +126,14 @@ class DeviceVoter extends Voter
             return true;
         }
 
+//        dd($proposedGroupName->getGroupNameID(), $user->getGroupNameIds());
         if (!in_array($proposedGroupName->getGroupNameID(), $user->getGroupNameIds(), true)) {
             return false;
         }
+
+//        if ($proposedGroupName->getGroupNameID() === $user->getGroupNameID()) {
+//            return true;
+//        }
 
         return null;
     }

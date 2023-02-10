@@ -49,6 +49,7 @@ class AuthenticationTest extends WebTestCase
     public function test_can_get_user_token(string $username, string $password, array $role): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var User $testUser */
         $testUser = $userRepository->findOneBy(['email' => $username]);
 
         $this->client->request(
@@ -81,6 +82,7 @@ class AuthenticationTest extends WebTestCase
      */
     public function test_can_get_device_token(string $username, string $password, string $ipAddress, string $externalIpAddress): void
     {
+        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $username]);
         $this->client->request(
             Request::METHOD_POST,

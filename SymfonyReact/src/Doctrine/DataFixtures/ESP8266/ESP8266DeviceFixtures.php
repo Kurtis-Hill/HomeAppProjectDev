@@ -29,6 +29,11 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         'password' => 'user-device'
     ];
 
+    public const REGULAR_TEST_DEVICE = [
+        'referenceName' => 'regular-device',
+        'password' => 'regular-device'
+    ];
+
     public const PERMISSION_CHECK_DEVICES = [
         //admin owned devices
         'AdminDeviceAdminRoomAdminGroup' => [
@@ -223,6 +228,19 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $userDevice->setPassword($this->passwordEncoder->hashPassword($userDevice, self::USER_TEST_DEVICE['password']));
         $userDevice->setRoles([Devices::ROLE]);
         $this->setReference(self::USER_TEST_DEVICE['referenceName'], $userDevice);
+
+        $manager->persist($userDevice);
+
+        $manager->flush();
+
+        $userDevice = new Devices();
+        $userDevice->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER));
+        $userDevice->setGroupNameObject($this->getReference(UserDataFixtures::USER_GROUP));
+        $userDevice->setRoomObject($this->getReference(RoomFixtures::REGULAR_ROOM));
+        $userDevice->setDeviceName(self::USER_TEST_DEVICE['referenceName']);
+        $userDevice->setPassword($this->passwordEncoder->hashPassword($userDevice, self::USER_TEST_DEVICE['password']));
+        $userDevice->setRoles([Devices::ROLE]);
+        $this->setReference(self::REGULAR_TEST_DEVICE['referenceName'], $userDevice);
 
         $manager->persist($userDevice);
 

@@ -119,7 +119,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                     | SensorReadingUpdateFactoryException
                     | ReadingTypeObjectBuilderException $e
                 ) {
-                    $this->logger->error($e->getMessage(), ['device' => $device->getDeviceNameID()]);
+                    $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
                     continue;
                 }
             }
@@ -127,7 +127,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         try {
             $this->sensorRepository->flush();
         } catch (ORMException|OptimisticLockException $e) {
-            $this->logger->error($e->getMessage(), ['device' => $device->getDeviceNameID()]);
+            $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
 
             return false;
         }

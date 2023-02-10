@@ -26,9 +26,9 @@ class TemperatureReadingTypeObjectBuilder extends AbstractReadingTypeBuilder imp
         $temperatureSensor->setHighReading($sensorTypeObject->getMaxTemperature());
         $temperatureSensor->setLowReading($sensorTypeObject->getMinTemperature());
         $temperatureSensor->setUpdatedAt();
-        $temperatureSensor->setSensorObject($sensorTypeObject->getSensorObject());
+        $temperatureSensor->setSensor($sensorTypeObject->getSensor());
 
-        $sensorTypeObject->setTempObject($temperatureSensor);
+        $sensorTypeObject->setTemperature($temperatureSensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($temperatureSensor->getReadingType());
         $readingTypeRepository->persist($temperatureSensor);

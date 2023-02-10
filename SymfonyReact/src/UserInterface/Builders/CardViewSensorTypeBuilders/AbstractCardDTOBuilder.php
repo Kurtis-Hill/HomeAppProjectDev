@@ -26,7 +26,7 @@ abstract class AbstractCardDTOBuilder
     public function formatSensorTypeObjectsByReadingType(SensorTypeInterface $cardDTOData): array
     {
         if ($cardDTOData instanceof TemperatureSensorTypeInterface) {
-            $sensorData[] = $this->setStandardSensorData($cardDTOData->getTempObject(), Temperature::getReadingTypeName(), Temperature::READING_SYMBOL);
+            $sensorData[] = $this->setStandardSensorData($cardDTOData->getTemperature(), Temperature::getReadingTypeName(), Temperature::READING_SYMBOL);
         }
         if ($cardDTOData instanceof HumiditySensorTypeInterface) {
             $sensorData[] = $this->setStandardSensorData($cardDTOData->getHumidObject(), Humidity::getReadingTypeName(), Humidity::READING_SYMBOL);

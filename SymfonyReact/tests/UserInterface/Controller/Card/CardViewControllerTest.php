@@ -51,7 +51,7 @@ class CardViewControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
     }
 
-    public function test_getting_all_card_data(): void
+    public function test_admin_getting_all_card_data(): void
     {
         $this->client->request(
             Request::METHOD_GET,
@@ -62,6 +62,7 @@ class CardViewControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+//        dd($requestResponse);
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals('Request Successful', $responseData['title']);
@@ -86,6 +87,7 @@ class CardViewControllerTest extends WebTestCase
                 ->getSensorTypeQueryDTOBuilder($payload['sensorType'])
                 ->buildSensorReadingTypes();
 
+            /** @var Sensor[] $cardSensorReadingTypeObjects */
             $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
                 $cardViewObject->getSensorNameID()->getDeviceObject()->getDeviceNameID(),
                 $cardViewObject->getSensorNameID()->getSensorName(),
@@ -93,6 +95,7 @@ class CardViewControllerTest extends WebTestCase
                 $readingTypeQueryDTOs,
             );
 
+            self::assertNotEmpty($cardSensorReadingTypeObjects);
             $sensorDataArrayCount = 0;
             foreach ($cardSensorReadingTypeObjects as $cardSensorReadingTypeObject) {
                 if ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface) {
@@ -222,32 +225,33 @@ class CardViewControllerTest extends WebTestCase
                 self::assertNotEquals($readingType, $payload['sensorData'][$sensorDataArrayCount]['readingType']);
             }
             foreach ($cardSensorReadingTypeObjects as $cardSensorReadingTypeObject) {
-                if (
-                    ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface)
-                    && $cardSensorReadingTypeObject::getReadingTypeName() === $payload['sensorData'][$sensorDataArrayCount]['readingType']
-                ) {
-                    self::assertEquals(
-                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
-                        $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
-                    );
-                    self::assertEquals(
-                        $cardSensorReadingTypeObject->getCurrentReading(),
-                        $payload['sensorData'][$sensorDataArrayCount]['currentReading']
-                    );
-                    self::assertEquals(
-                        $cardSensorReadingTypeObject->getHighReading(),
-                        $payload['sensorData'][$sensorDataArrayCount]['highReading']
-                    );
-                    self::assertEquals(
-                        $cardSensorReadingTypeObject->getLowReading(),
-                        $payload['sensorData'][$sensorDataArrayCount]['lowReading']
-                    );
-                    if (isset($payload['sensorData'][$sensorDataArrayCount]['readingSymbol'])) {
+                if ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+                    if ($cardSensorReadingTypeObject::getReadingTypeName() === $payload['sensorData'][$sensorDataArrayCount]['readingType']) {
                         self::assertEquals(
-                            $cardSensorReadingTypeObject::getReadingSymbol(),
-                            $payload['sensorData'][$sensorDataArrayCount]['readingSymbol']
+                            $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                            $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
                         );
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getCurrentReading(),
+                            $payload['sensorData'][$sensorDataArrayCount]['currentReading']
+                        );
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getHighReading(),
+                            $payload['sensorData'][$sensorDataArrayCount]['highReading']
+                        );
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getLowReading(),
+                            $payload['sensorData'][$sensorDataArrayCount]['lowReading']
+                        );
+                        if (isset($payload['sensorData'][$sensorDataArrayCount]['readingSymbol'])) {
+                            self::assertEquals(
+                                $cardSensorReadingTypeObject::getReadingSymbol(),
+                                $payload['sensorData'][$sensorDataArrayCount]['readingSymbol']
+                            );
+                        }
                     }
+                } else {
+                    self::fail('Reading type not supported');
                 }
 
                 ++$sensorDataArrayCount;

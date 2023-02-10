@@ -10,8 +10,9 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository;
 
 #[
     ORM\Entity(repositoryClass: CardColourRepository::class),
-    ORM\Table(name: "cardcolour"),
-    ORM\UniqueConstraint(name: "Colour", columns: ["colour"]),
+    ORM\Table(name: "colours"),
+    ORM\UniqueConstraint(name: "colour", columns: ["colour"]),
+    ORM\UniqueConstraint(name: "shade", columns: ["shade"]),
 ]
 #[UniqueEntity('colour')]
 class CardColour

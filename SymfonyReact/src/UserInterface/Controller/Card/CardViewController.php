@@ -121,7 +121,7 @@ class CardViewController extends AbstractController
         } catch (ORMException) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
 
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Icons filters')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Cards')]);
         }
 
         return $this->commonCardDTOResponse($cardData);
@@ -149,7 +149,7 @@ class CardViewController extends AbstractController
         } catch (ORMException $e) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
 
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Icons filters')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Card')]);
         }
 
         return $this->commonCardDTOResponse($cardData);

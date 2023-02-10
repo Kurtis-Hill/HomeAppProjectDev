@@ -14,8 +14,7 @@ use App\User\Repository\ORM\GroupNameRepository;
     ORM\Entity(repositoryClass: GroupNameRepository::class),
     ORM\Table(name: "groupname"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
-    ORM\Index(columns: ["roomID"], name: "roomID"),
-
+//    ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
 ]
 #[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
 class GroupNames
@@ -55,6 +54,12 @@ class GroupNames
     ]
     private DateTimeInterface $createdAt;
 
+//    #[
+//        ORM\ManyToOne(targetEntity: User::class),
+//        ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID", nullable: false),
+//    ]
+//    private User $createdBy;
+
     public function getGroupNameID(): int
     {
         return $this->groupNameID;
@@ -84,4 +89,14 @@ class GroupNames
     {
         $this->createdAt = new DateTimeImmutable('now');
     }
+
+//    public function getCreatedBy(): User
+//    {
+//        return $this->createdBy;
+//    }
+//
+//    public function setCreatedBy(User $createdBy): void
+//    {
+//        $this->createdBy = $createdBy;
+//    }
 }

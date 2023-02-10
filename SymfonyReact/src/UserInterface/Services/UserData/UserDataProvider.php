@@ -27,7 +27,6 @@ class UserDataProvider
     public function getGeneralUserData(User $user): UserDataResponseDTO
     {
         $userGroups = $user->getGroupNameObjects();
-
         try {
             $userRooms = $this->getRoomData($user);
         } catch (ORMException) {

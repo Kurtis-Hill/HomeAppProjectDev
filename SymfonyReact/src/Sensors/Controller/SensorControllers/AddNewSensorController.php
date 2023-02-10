@@ -143,7 +143,7 @@ class AddNewSensorController extends AbstractController
             try {
                 $deleteSensorService->deleteSensor($sensor);
             } catch (ORMException $e) {
-                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorNameID(), 'stack' => $e->getTrace()]);
+                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
             }
 
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);

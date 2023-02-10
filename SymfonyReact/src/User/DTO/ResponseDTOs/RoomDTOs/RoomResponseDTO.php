@@ -11,16 +11,16 @@ class RoomResponseDTO
 
     private string $roomName;
 
-    private int $groupNameID;
+//    private int $groupNameID;
 
     public function __construct(
       int $roomID,
       string $roomName,
-      int $groupNameID,
+//      int $groupNameID,
     ) {
         $this->roomID = $roomID;
         $this->roomName = $roomName;
-        $this->groupNameID = $groupNameID;
+//        $this->groupNameID = $groupNameID;
     }
 
     public function getRoomID(): int
@@ -33,8 +33,8 @@ class RoomResponseDTO
         return $this->roomName;
     }
 
-    public function getGroupNameID(): int
-    {
-        return $this->groupNameID;
-    }
+//    public function getGroupNameID(): int
+//    {
+//        return $this->groupNameID;
+//    }
 }

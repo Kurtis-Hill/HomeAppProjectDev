@@ -10,10 +10,10 @@ class SensorResponseDTOBuilder
     public static function buildSensorResponseDTO(Sensor $sensor): SensorResponseDTO
     {
         return new SensorResponseDTO(
-            $sensor->getSensorNameID(),
+            $sensor->getSensorID(),
             $sensor->getSensorName(),
             $sensor->getSensorTypeObject()->getSensorType(),
-            $sensor->getDeviceObject()->getDeviceName(),
+            $sensor->getDevice()->getDeviceName(),
             $sensor->getCreatedBy()->getUsername(),
         );
     }

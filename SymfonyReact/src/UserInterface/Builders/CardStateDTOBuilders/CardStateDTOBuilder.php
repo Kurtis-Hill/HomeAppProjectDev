@@ -10,7 +10,7 @@ class CardStateDTOBuilder
     public static function buildCardStateResponseDTO(Cardstate $cardState): CardStateResponseDTO
     {
         return new CardStateResponseDTO(
-            $cardState->getCardstateID(),
+            $cardState->getStateID(),
             $cardState->getState(),
         );
     }

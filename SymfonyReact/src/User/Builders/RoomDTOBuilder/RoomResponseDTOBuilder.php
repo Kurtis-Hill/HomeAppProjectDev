@@ -12,7 +12,6 @@ class RoomResponseDTOBuilder
         return new RoomResponseDTO(
             $room->getRoomID(),
             $room->getRoom(),
-            $room->getGroupNameID()->getGroupNameID(),
         );
     }
 }

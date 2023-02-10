@@ -7,7 +7,7 @@ use App\Sensors\Entity\Sensor;
 
 interface AllSensorReadingTypeInterface
 {
-    public function getSensorNameID(): Sensor;
+    public function getSensor(): Sensor;
 
     public function getSensorID(): int;
 

@@ -22,8 +22,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[
     ORM\Entity(repositoryClass: TemperatureRepository::class),
-    ORM\Table(name: "temp"),
-    ORM\UniqueConstraint(name: "sensorNameID", columns: ["sensorNameID"]),
+    ORM\Table(name: "temperature"),
+    ORM\UniqueConstraint(name: "temp_ibfk_1", columns: ["sensorID"]),
 ]
 class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
@@ -91,9 +91,9 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     public function getSensorID(): int
     {
@@ -105,14 +105,14 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         $this->tempID = $id;
     }
 
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $id): void
+    public function setSensor(Sensor $id): void
     {
-        $this->sensorNameID = $id;
+        $this->sensor = $id;
     }
 
     /**

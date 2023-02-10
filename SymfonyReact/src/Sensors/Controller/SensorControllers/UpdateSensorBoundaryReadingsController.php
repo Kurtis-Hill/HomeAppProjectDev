@@ -79,7 +79,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensorObject->getDeviceObject());
+            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensorObject->getDevice());
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
@@ -104,7 +104,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
             try {
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject(
-                    $sensorObject->getSensorNameID(),
+                    $sensorObject->getSensorID(),
                     $updateBoundaryDataDTO->getReadingType()
                 );
             } catch (SensorReadingTypeRepositoryFactoryException|SensorReadingTypeObjectNotFoundException $exception) {
@@ -169,7 +169,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 'Some sensor boundary update requests failed'
             );
         }
-        $this->logger->info('sensor boundary update successful for id:' . $sensorObject->getSensorNameID(), ['user' => $this->getUser()?->getUserIdentifier()]);
+        $this->logger->info('sensor boundary update successful for id:' . $sensorObject->getSensorID(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
     }

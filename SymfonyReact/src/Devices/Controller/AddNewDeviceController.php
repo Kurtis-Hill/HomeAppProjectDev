@@ -127,7 +127,7 @@ class AddNewDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
-        $this->logger->info('new device created with id: ' . $device->getDeviceNameID(), ['user' => $user->getUserIdentifier()]);
+        $this->logger->info('new device created with id: ' . $device->getDeviceID(), ['user' => $user->getUserIdentifier()]);
 
         return $this->sendSuccessfulJsonResponse($response);
     }

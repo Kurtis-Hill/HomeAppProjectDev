@@ -75,6 +75,8 @@ class GetReadingTypeControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
+
+        /** @var ReadingTypes[] $allReadingTypes */
         $allReadingTypes = $readingTypeRepository->findAll();
 
         self::assertEquals(200, $this->client->getResponse()->getStatusCode());

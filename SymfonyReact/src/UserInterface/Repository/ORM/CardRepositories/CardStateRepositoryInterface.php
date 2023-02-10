@@ -33,7 +33,7 @@ interface CardStateRepositoryInterface
     /**
      * @throws ORMException
      */
-    #[ArrayShape(['cardStateID' => 'int', 'state' => 'string'])]
+    #[ArrayShape(['stateID' => 'int', 'state' => 'string'])]
     public function getAllStatesAsArray(): array;
 
     #[ArrayShape([Cardstate::class])]

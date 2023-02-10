@@ -36,7 +36,7 @@ class NewSensorCreationFacade implements NewSensorCreationInterface
         $sensor = $newSensorDTO->getSensor();
         $sensor->setSensorName($newSensorDTO->getSensorName());
         $sensor->setSensorTypeID($newSensorDTO->getSensorType());
-        $sensor->setDeviceObject($newSensorDTO->getDevice());
+        $sensor->setDevice($newSensorDTO->getDevice());
         try {
             $sensor->setCreatedBy($newSensorDTO->getUser());
         } catch (TypeError) {

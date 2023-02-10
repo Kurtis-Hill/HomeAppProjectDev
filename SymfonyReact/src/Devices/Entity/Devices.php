@@ -15,16 +15,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: DeviceRepository::class),
-    ORM\Table(name: "devicenames"),
+    ORM\Table(name: "devices"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
     ORM\Index(columns: ["roomID"], name: "roomID"),
 ]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    private const DEVICE_MIN_LENGTH = 2;
+    private const DEVICE_NAME_MIN_LENGTH = 2;
 
-    private const DEVICE_MAX_LENGTH = 20;
+    private const DEVICE_NAME_MAX_LENGTH = 20;
 
     public const ROLE = 'ROLE_DEVICE';
 
@@ -33,9 +33,9 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
-        ORM\Column(name: 'deviceNameID', type: "integer", nullable: false)
+        ORM\Column(name: 'deviceID', type: "integer", nullable: false)
     ]
-    private int $deviceNameID;
+    private int $deviceID;
 
     #[ORM\Column(name: "deviceName", type: "string", length: 20, nullable: false)]
     #[
@@ -44,8 +44,8 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
             message: 'Device name should not be blank'
         ),
         Assert\Length(
-            min: self::DEVICE_MIN_LENGTH,
-            max: self::DEVICE_MAX_LENGTH,
+            min: self::DEVICE_NAME_MIN_LENGTH,
+            max: self::DEVICE_NAME_MAX_LENGTH,
             minMessage: "Device name must be at least {{ limit }} characters long",
             maxMessage: "Device name cannot be longer than {{ limit }} characters"
         )
@@ -96,19 +96,19 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     private string $secret;
 
-    public function getDeviceNameID(): int
+    public function getDeviceID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
     public function getUserID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
-    public function setDeviceNameID(int $deviceNameID): void
+    public function setDeviceID(int $deviceID): void
     {
-        $this->deviceNameID = $deviceNameID;
+        $this->deviceID = $deviceID;
     }
 
     public function getDeviceName(): ?string

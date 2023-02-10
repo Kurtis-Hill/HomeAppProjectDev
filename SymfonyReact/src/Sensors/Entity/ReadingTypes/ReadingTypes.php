@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: ReadingTypeRepository::class),
     ORM\Table(name: "readingtypes"),
+    ORM\UniqueConstraint(name: "readingType", columns: ["readingType"]),
+
 ]
 class ReadingTypes
 {

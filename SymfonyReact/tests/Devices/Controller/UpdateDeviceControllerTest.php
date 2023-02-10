@@ -2,6 +2,7 @@
 
 namespace App\Tests\Devices\Controller;
 
+use App\Authentication\Repository\ORM\GroupNameMappingRepository;
 use App\Common\API\HTTPStatusCodes;
 use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -46,7 +47,10 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function test_sending_wrong_encoding_request(): void
     {
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+
+        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
 
         $requestData = [
@@ -58,7 +62,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
@@ -80,7 +84,9 @@ class UpdateDeviceControllerTest extends WebTestCase
         mixed $deviceRoom,
         array $errorMessage,
     ): void {
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
 
         $requestData = [
@@ -94,7 +100,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -175,6 +181,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         while (true) {
             $nonExistentDeviceID = random_int(1, 100000);
 
+            /** @var Devices $device */
             $device = $deviceRepository->findOneBy(['deviceNameID' => $nonExistentDeviceID]);
             if (!$device instanceof Devices) {
                 break;
@@ -198,14 +205,17 @@ class UpdateDeviceControllerTest extends WebTestCase
         while (true) {
             $nonExistentRoomID = random_int(1, 100000);
 
+            /** @var Room $room */
             $room = $roomRepository->findOneBy(['roomID' => $nonExistentRoomID]);
             if (!$room instanceof Room) {
                 break;
             }
         }
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-        $room = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
 
+        /** @var Room $room */
+        $room = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
 
         $requestData = [
             'deviceName' => 'newDeviceName',
@@ -242,12 +252,16 @@ class UpdateDeviceControllerTest extends WebTestCase
         while (true) {
             $nonExistentGroupID = random_int(1, 100000);
 
+            /** @var GroupNames $group */
             $group = $groupRepository->findOneBy(['groupNameID' => $nonExistentGroupID]);
             if (!$group instanceof Room) {
                 break;
             }
         }
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+
+        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()->getGroupNameID()])[0];
 
         $requestData = [
@@ -261,7 +275,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -281,16 +295,21 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function testRegularUserCannotUpdateDeviceNotApartOf(): void
     {
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ISOLATED, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP, UserDataFixtures::REGULAR_PASSWORD);
+
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 
+        /** @var GroupNameMappingRepository $groupNameMappingRepository */
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
-        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+        /** @var GroupNameMapping $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
 
-        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupNameID()])[0];
+        /** @var Devices $device */
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupName()])[0];
 
         $requestData = [
             'deviceName' => 'newDeviceName',
@@ -303,7 +322,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
@@ -324,15 +343,16 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function testAdminCanUpdateDeviceNotApartOf(): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER_ISOLATED]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
-        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+        /** @var GroupNameMapping $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
 
-        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupNameID()])[0];
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupName()])[0];
 
         $newDeviceName = 'newDeviceName';
         $newPassword = 'NewPassword';
@@ -378,7 +398,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     public function testSendingOutOfRangeDeviceUpdate(string $deviceName, array $errorMessage): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
-            ['email' => UserDataFixtures::SECOND_ADMIN_USER_ISOLATED]
+            ['email' => UserDataFixtures::SECOND_ADMIN_USER]
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(
@@ -437,11 +457,12 @@ class UpdateDeviceControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
-        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+        /** @var GroupNameMapping $groupUserIsApartOf */
         $groupUserIsApartOf = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user)[0];
 
-        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsApartOf->getGroupNameID()])[0];
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsApartOf->getGroupName()])[0];
 
         $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($user->getGroupNameIds());
         foreach ($userRooms as $userRoom) {
@@ -498,7 +519,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     public function testDeviceWithPasswordUpdatedCanLogIn(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
-            ['email' => UserDataFixtures::SECOND_ADMIN_USER_ISOLATED]
+            ['email' => UserDataFixtures::SECOND_ADMIN_USER]
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(
@@ -558,12 +579,13 @@ class UpdateDeviceControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
-        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
+        /** @var GroupNameMapping $groupUserIsApartOf */
         $groupUserIsApartOf = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user)[0];
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsApartOf->getGroupNameID()])[0];
+        $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsApartOf->getGroupName()])[0];
 
         $requestData = match ($patchSubject) {
             'deviceName' => [
@@ -573,7 +595,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 'password' => 'NewDevicePassword',
             ],
             'deviceGroup' => [
-                'deviceGroup' => $groupUserIsApartOf->getGroupNameID()->getGroupNameID(),
+                'deviceGroup' => $groupUserIsApartOf->getGroupName()->getGroupNameID(),
             ],
             'deviceRoom' => [
                 'deviceRoom' => $device->getRoomObject()->getRoomID(),
@@ -585,7 +607,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PATCH,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceNameID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -605,7 +627,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         switch ($patchSubject) {
             case 'deviceName':
                 self::assertEquals($requestData['deviceName'], $responseData['payload']['deviceName']);
-                self::assertEquals($device->getDeviceNameID(), $responseData['payload']['deviceNameID']);
+                self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
                 self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
                 self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
@@ -619,7 +641,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             case 'deviceGroup':
                 self::assertEquals($requestData['deviceGroup'], $responseData['payload']['groupName']['groupNameID']);
                 self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                self::assertEquals($device->getDeviceNameID(), $responseData['payload']['deviceNameID']);
+                self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                 self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
@@ -628,7 +650,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             case 'deviceRoom':
                 self::assertEquals($requestData['deviceRoom'], $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                self::assertEquals($device->getDeviceNameID(), $responseData['payload']['deviceNameID']);
+                self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
                 self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
                 self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
                 self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);

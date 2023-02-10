@@ -15,8 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: HumidityRepository::class),
-    ORM\Table(name: "humid"),
-    ORM\UniqueConstraint(name: "sensorNameID", columns: ["sensorNameID"]),
+    ORM\Table(name: "humidity"),
+    ORM\UniqueConstraint(name: "humid_ibfk_1", columns: ["sensorID"]),
 ]
 class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
@@ -57,9 +57,9 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
 
     public function getSensorID(): int
@@ -72,14 +72,14 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         $this->humidID = $id;
     }
 
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $id): void
+    public function setSensor(Sensor $id): void
     {
-        $this->sensorNameID = $id;
+        $this->sensor = $id;
     }
 
     public function getCurrentReading(): int|float

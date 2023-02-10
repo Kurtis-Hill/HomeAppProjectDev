@@ -25,7 +25,7 @@ class DallasQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             Dallas::ALIAS,
             Dallas::class,
-            'sensorNameID',
+            'sensor',
             Sensor::ALIAS,
         );
     }

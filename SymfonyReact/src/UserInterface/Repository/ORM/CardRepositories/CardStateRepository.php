@@ -46,7 +46,7 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
     public function getAllStatesAsArray(): array
     {
         $qb = $this->createQueryBuilder('cs')
-            ->orderBy('cs.cardStateID', 'ASC');
+            ->orderBy('cs.stateID', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -55,7 +55,7 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
     public function getAllStateAsObjects(): array
     {
         $qb = $this->createQueryBuilder('cs')
-            ->orderBy('cs.cardStateID', 'ASC');
+            ->orderBy('cs.stateID', 'ASC');
 
         return $qb->getQuery()->getResult();
     }

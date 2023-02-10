@@ -39,9 +39,9 @@ class RoomVoter extends Voter
             return false;
         }
 
-        if (!in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
-            return false;
-        }
+//        if (!in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+//            return false;
+//        }
 
         return true;
     }

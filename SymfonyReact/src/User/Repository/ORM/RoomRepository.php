@@ -6,6 +6,7 @@ use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\Deprecated;
 
 /**
  * @extends ServiceEntityRepository<RoomRepository>
@@ -22,7 +23,7 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         parent::__construct($registry, Room::class);
     }
 
-    public function findDuplicateRoom(string $roomName, int $groupNameID): ?Room
+    public function findRoomByName(string $roomName): ?Room
     {
         $qb = $this->createQueryBuilder('room');
         $expr = $qb->expr();
@@ -30,11 +31,11 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         $qb->select('room')
             ->where(
                 $expr->eq('room.room', ':roomName'),
-                $expr->eq('room.groupNameID', ':groupNameID')
+//                $expr->eq('room.groupNameID', ':groupNameID')
             );
         $qb->setParameters([
             'roomName' => $roomName,
-            'groupNameID' => $groupNameID
+//            'groupNameID' => $groupNameID
         ]);
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -44,11 +45,11 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
     {
         $qb = $this->createQueryBuilder('r');
 
-        $qb->select('r')
-            ->where(
-                $qb->expr()->in('r.groupNameID', ':groupNameID')
-            )
-            ->setParameter('groupNameID', $groupNameIDs);
+        $qb->select('r');
+//            ->where(
+//                $qb->expr()->in('r.groupNameID', ':groupNameID')
+//            )
+//            ->setParameter('groupNameID', $groupNameIDs);
 
         return $qb->getQuery()->getResult($hydrationMethod);
     }
@@ -73,6 +74,7 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         $this->getEntityManager()->remove($room);
     }
 
+    #[Deprecated(reason: 'Use findRoomByName instead', replacement: 'findRoomByName')]
     public function findOneByRoomNameAndGroupNameId(int $groupNameId, string $roomName): ?Room
     {
         $qb = $this->createQueryBuilder('room');

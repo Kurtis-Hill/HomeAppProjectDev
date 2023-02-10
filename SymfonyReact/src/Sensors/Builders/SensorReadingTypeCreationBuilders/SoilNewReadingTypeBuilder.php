@@ -19,7 +19,7 @@ class SoilNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
     public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $soil = new Soil();
-        $soil->setSensorObject($sensor);
+        $soil->setSensor($sensor);
         $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($soil, Soil::LOW_SOIL_READING_BOUNDARY);
 
         return $soil;

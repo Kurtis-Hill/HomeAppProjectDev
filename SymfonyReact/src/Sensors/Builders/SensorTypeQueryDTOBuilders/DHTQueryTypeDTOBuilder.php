@@ -31,7 +31,7 @@ class DHTQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             Dht::ALIAS,
             Dht::class,
-            'sensorNameID',
+            'sensor',
             Sensor::ALIAS,
         );
     }

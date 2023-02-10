@@ -50,10 +50,14 @@ class CardViewFormControllerTest extends WebTestCase
      */
     public function testGetCardViewFormData(string $sensorType): void
     {
+        /** @var SensorType $sensorType */
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
+        /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['sensorTypeID' => $sensorType->getSensorTypeID()])[0];
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensorNameID' => $sensor->getSensorNameID()])[0];
+
+        /** @var CardView $cardViewObject */
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensorNameID' => $sensor->getSensorID()])[0];
 
         $this->client->request(
             Request::METHOD_GET,
@@ -81,13 +85,16 @@ class CardViewFormControllerTest extends WebTestCase
             self::assertIsBool($sensorData['constRecord']);
         }
 
+        /** @var Icons[] $allIcons */
         $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
+        /** @var CardColour[] $allCardColours */
         $allCardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+        /** @var Cardstate[] $allCardState */
         $allCardState = $this->entityManager->getRepository(Cardstate::class)->findAll();
 
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
 
-        self::assertEquals($cardViewObject->getCardIconID()->getIconID(), $responseData['currentCardIcon']['iconID']);
+        self::assertEquals($cardViewObject->getIconID()->getIconID(), $responseData['currentCardIcon']['iconID']);
         self::assertCount(count($allIcons), $responseData['cardUserSelectionOptions']['icons']);
 
         self::assertCount(count($allCardState), $responseData['cardUserSelectionOptions']['states']);
@@ -141,6 +148,7 @@ class CardViewFormControllerTest extends WebTestCase
     {
         while (true) {
             $randomNumber = random_int(1, 100000);
+            /** @var CardView $cardView */
             $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['cardViewID' => $randomNumber]);
 
             if (!$cardView instanceof CardView) {
@@ -161,11 +169,14 @@ class CardViewFormControllerTest extends WebTestCase
     /**
      * @dataProvider userCannotEditOtherUsersCardsDataProvider
      */
-    public function testUserCannotEditOtherUsersCards(string $username, string $password, $usersCardToAlter): void
+    public function test_user_cannot_edit_other_users_cards(string $username, string $password, $usersCardToAlter): void
     {
         $userToken = $this->setUserToken($this->client, $username, $password);
 
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
+
+        /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
         $this->client->request(
@@ -193,10 +204,21 @@ class CardViewFormControllerTest extends WebTestCase
         ];
 
         yield [
-            'username' => UserDataFixtures::ADMIN_USER,
-            'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'username' => UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
             'alter' => UserDataFixtures::REGULAR_USER,
         ];
+
+        yield [
+            'username' => UserDataFixtures::REGULAR_USER,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
+            'alter' => UserDataFixtures::SECOND_ADMIN_USER,
+        ];
+//        yield [
+//            'username' => UserDataFixtures::ADMIN_USER,
+//            'password' => UserDataFixtures::ADMIN_PASSWORD,
+//            'alter' => UserDataFixtures::REGULAR_USER,
+//        ];
     }
 
     // Start of CardViewController::getCardViewForm() tests
@@ -252,6 +274,7 @@ class CardViewFormControllerTest extends WebTestCase
     {
         while (true) {
             $randomCardViewID = random_int(1, 10000);
+            /** @var CardView $cardViewObject */
             $cardViewObject = $this->entityManager->getRepository(CardView::class)->findOneBy(['cardViewID' => $randomCardViewID]);
             if (!$cardViewObject instanceof CardView) {
                 break;
@@ -291,7 +314,9 @@ class CardViewFormControllerTest extends WebTestCase
     {
         $userToken = $this->setUserToken($this->client, $username, $password);
 
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
+        /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
         $sensorData = [
@@ -331,7 +356,9 @@ class CardViewFormControllerTest extends WebTestCase
         bool $wrongState,
         string $errorMessage,
     ): void {
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
         $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
@@ -341,6 +368,7 @@ class CardViewFormControllerTest extends WebTestCase
         if ($wrongColour === true) {
             while (true) {
                 $randomColour = random_int(1, 10000);
+                /** @var CardColour $cardColour */
                 $cardColour = $cardColourRepository->findOneBy(['colourID' => $randomColour]);
                 if (!$cardColour instanceof CardColour) {
                     $cardColour = $randomColour;
@@ -354,6 +382,7 @@ class CardViewFormControllerTest extends WebTestCase
         if ($wrongIcon === true) {
             while (true) {
                 $randomIcon = random_int(1, 10000);
+                /** @var Icons $cardIcon */
                 $cardIcon = $iconRepository->findOneBy(['iconID' => $randomIcon]);
                 if (!$cardIcon instanceof CardColour) {
                     $cardIcon = $randomIcon;
@@ -367,7 +396,8 @@ class CardViewFormControllerTest extends WebTestCase
         if ($wrongState === true) {
             while (true) {
                 $randomState = random_int(1, 10000);
-                $cardState = $cardStateRepository->findOneBy(['cardStateID' => $randomState]);
+                /** @var Cardstate $cardState */
+                $cardState = $cardStateRepository->find($randomState);
                 if (!$cardState instanceof Cardstate) {
                     $cardState = $randomState;
                     break;

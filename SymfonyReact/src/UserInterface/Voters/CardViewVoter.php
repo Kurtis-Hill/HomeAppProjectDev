@@ -54,9 +54,12 @@ class CardViewVoter extends Voter
 
     private function canUserEditCardViewObject(UserInterface $user, CardView $cardView): bool
     {
-        if (!$user instanceof User) {
-            return false;
+        $checkCommon = $this->checkCommon($user);
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
         }
+
         if ($cardView->getUserID()->getUserID() !== $user->getUserID()) {
             return false;
         }
@@ -66,37 +69,57 @@ class CardViewVoter extends Voter
 
     private function viewRoomCardData(UserInterface $user, Room $room): bool
     {
-        if (!$user instanceof User) {
-            return false;
+        $checkCommon = $this->checkCommon($user);
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
         }
 
-        if (!in_array(
-            $room->getGroupNameID()->getGroupNameID(),
-            $user->getGroupNameIds(), true
-        )
-        ) {
-            return false;
-        }
+//        if (!in_array(
+//            $room->getGroupNameID()->getGroupNameID(),
+//            $user->getGroupNameIds(), true
+//        )
+//        ) {
+//            return false;
+//        }
 
         return true;
     }
 
     private function viewDeviceCardData(UserInterface $user, Devices $devices): bool
     {
-        if (!$user instanceof User) {
-            return false;
+        $checkCommon = $this->checkCommon($user);
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
         }
 
-        if (!in_array(
-            $devices->getGroupNameObject()->getGroupNameID(),
-            $user->getGroupNameIds(),
-            true
-        )
-        ) {
-            return false;
-        }
+//        if (!$user instanceof User) {
+//            return false;
+//        }
+
+//        if (!in_array(
+//            $devices->getGroupNameObject()->getGroupNameID(),
+//            $user->getGroupNameIds(),
+//            true
+//        )
+//        ) {
+//            return false;
+//        }
 
         return true;
     }
 
+    private function checkCommon(UserInterface $user): ?bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return null;
+    }
 }

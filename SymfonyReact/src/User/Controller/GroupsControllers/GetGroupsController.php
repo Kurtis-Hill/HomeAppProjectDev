@@ -28,7 +28,7 @@ class GetGroupsController extends AbstractController
         $groupNameDTOs = [];
         foreach ($user->getUserGroupMappingEntities() as $groupName) {
             $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
-                $groupName->getGroupNameID()
+                $groupName->getGroupName()
             );
         }
 

@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: RoomRepository::class),
     ORM\Table(name: "room"),
-    ORM\Index(columns: ["groupNameID"], name: "GroupName"),
+    ORM\UniqueConstraint(name: "room", columns: ["room"]),
 ]
 class Room
 {
@@ -38,11 +38,11 @@ class Room
     ]
     private string $room;
 
-    #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
-    ]
-    private GroupNames $groupNameID;
+//    #[
+//        ORM\ManyToOne(targetEntity: GroupNames::class),
+//        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+//    ]
+//    private GroupNames $groupNameID;
 
     public function getRoomID(): int
     {
@@ -64,15 +64,15 @@ class Room
         $this->room = $room;
     }
 
-    public function getGroupNameID(): GroupNames
-    {
-        return $this->groupNameID;
-    }
-
-    public function setGroupNameID(GroupNames $groupNameID): void
-    {
-        $this->groupNameID = $groupNameID;
-    }
+//    public function getGroupNameID(): GroupNames
+//    {
+//        return $this->groupNameID;
+//    }
+//
+//    public function setGroupNameID(GroupNames $groupNameID): void
+//    {
+//        $this->groupNameID = $groupNameID;
+//    }
 
 
 }

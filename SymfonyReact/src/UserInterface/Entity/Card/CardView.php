@@ -12,12 +12,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: CardViewRepository::class),
     ORM\Table(name: "cardview"),
-    ORM\Index(columns: ["cardColourID"], name: "FK_E36636B5A356FF88"),
-    ORM\Index(columns: ["sensorNameID"], name: "FK_E36636B53BE475E6"),
-    ORM\Index(columns: ["cardStateID"], name: "FK_E36636B53casrdState"),
+    ORM\Index(columns: ["colourID"], name: "FK_E36636B5A356FF88"),
+    ORM\Index(columns: ["sensorID"], name: "FK_E36636B53BE475E6"),
+    ORM\Index(columns: ["stateID"], name: "FK_E36636B53casrdState"),
     ORM\Index(columns: ["userID"], name: "UserID"),
-    ORM\Index(columns: ["cardIconID"], name: "FK_E36636B5840D9A7A"),
+    ORM\Index(columns: ["iconID"], name: "FK_E36636B5840D9A7A"),
     ORM\Index(columns: ["cardViewID"], name: "cardview_show"),
+    ORM\UniqueConstraint(name: "user_cardview", columns: ["userID", "sensor"]),
 ]
 class CardView
 {
@@ -32,14 +33,14 @@ class CardView
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
     #[Assert\NotNull(message: "Sensor cannot be null")]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     #[
         ORM\ManyToOne(targetEntity: Cardstate::class),
-        ORM\JoinColumn(name: "cardStateID", referencedColumnName: "cardStateID"),
+        ORM\JoinColumn(name: "stateID", referencedColumnName: "stateID"),
     ]
     #[Assert\NotNull(message: "CardState state cannot be null")]
     private Cardstate $cardStateID;
@@ -53,14 +54,14 @@ class CardView
 
     #[
         ORM\ManyToOne(targetEntity: Icons::class),
-        ORM\JoinColumn(name: "cardIconID", referencedColumnName: "iconID"),
+        ORM\JoinColumn(name: "iconID", referencedColumnName: "iconID"),
     ]
     #[Assert\NotNull(message: "Icon cannot be null")]
-    private ?Icons $cardIconID;
+    private ?Icons $iconID;
 
     #[
         ORM\ManyToOne(targetEntity: CardColour::class),
-        ORM\JoinColumn(name: "cardColourID", referencedColumnName: "colourID"),
+        ORM\JoinColumn(name: "colourID", referencedColumnName: "colourID"),
     ]
     #[Assert\NotNull(message: "Card Colour colour cannot be null")]
     private CardColour $cardColourID;
@@ -75,14 +76,14 @@ class CardView
         $this->cardViewID = $cardViewID;
     }
 
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorNameID(Sensor $sensorNameID): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensorNameID;
+        $this->sensor = $sensor;
     }
 
     public function getCardStateID(): Cardstate
@@ -107,14 +108,14 @@ class CardView
         }
     }
 
-    public function getCardIconID(): Icons
+    public function getIconID(): Icons
     {
-        return $this->cardIconID;
+        return $this->iconID;
     }
 
-    public function setCardIconID(?Icons $cardIconID): void
+    public function setIconID(?Icons $iconID): void
     {
-        $this->cardIconID = $cardIconID;
+        $this->iconID = $iconID;
     }
 
     public function getCardColourID(): CardColour

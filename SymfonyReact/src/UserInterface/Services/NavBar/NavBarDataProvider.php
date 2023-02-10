@@ -99,7 +99,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
                     CommonURL::HOMEAPP_WEBAPP_URL_BASE,
                     'device',
                     http_build_query(
-                        ['device-id' => $device->getDeviceNameID()]
+                        ['device-id' => $device->getDeviceID()]
                     )
                 )
             );

@@ -36,7 +36,7 @@ class SoilQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             Soil::ALIAS,
             Soil::class,
-            'sensorNameID',
+            'sensor',
             Sensor::ALIAS,
         );
     }

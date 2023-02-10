@@ -26,7 +26,7 @@ class CardViewForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('cardColourID', EntityType::class, [
+            ->add('colourID', EntityType::class, [
                 'class' => CardColour::class,
                 'constraints' => [
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card colour')]),
@@ -38,7 +38,7 @@ class CardViewForm extends AbstractType
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card icon')]),
                 ],
             ])
-            ->add('cardStateID', EntityType::class, [
+            ->add('stateID', EntityType::class, [
                 'class' => Cardstate::class,
                 'constraints' => [
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card state')]),

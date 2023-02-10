@@ -43,12 +43,16 @@ class NavBarControllerTest extends WebTestCase
     public function test_get_navbar_data_response(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var User $testUser */
         $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
 
-        $groupNameMappingEntities = $this->entityManager->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
-        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
+//        $groupNameMappingEntities = $this->entityManager->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
+//        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
 
+        /** @var Room[] $userRooms */
         $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getGroupNameIds());
+
+        /** @var Devices[] $userDevices */
         $userDevices = $this->entityManager->getRepository(Devices::class)->getAllUsersDevicesByGroupId($testUser->getGroupNameIds());
 
         $this->client->request(

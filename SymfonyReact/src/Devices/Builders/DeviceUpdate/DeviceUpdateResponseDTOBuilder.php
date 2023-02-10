@@ -13,7 +13,7 @@ class DeviceUpdateResponseDTOBuilder
     public static function buildDeviceIDResponseDTO(Devices $device, bool $showPassword = false): DeviceResponseDTO
     {
         return new DeviceResponseDTO(
-            $device->getDeviceNameID(),
+            $device->getDeviceID(),
             $device->getDeviceName(),
             $device->getGroupNameObject()->getGroupNameID(),
             $device->getRoomObject()->getRoomID(),
@@ -45,7 +45,7 @@ class DeviceUpdateResponseDTOBuilder
         bool $showPassword = false
     ): DeviceFullDetailsResponseDTO {
         return new DeviceFullDetailsResponseDTO(
-            $device->getDeviceNameID(),
+            $device->getDeviceID(),
             $device->getDeviceName(),
             $showPassword === false ? null : $device->getDeviceSecret(),
             GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupNameObject()),

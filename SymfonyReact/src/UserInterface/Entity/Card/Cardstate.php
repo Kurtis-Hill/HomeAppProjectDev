@@ -9,8 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: CardStateRepository::class),
-    ORM\Table(name: "cardstate"),
-    ORM\UniqueConstraint(name: "State", columns: ["state"]),
+    ORM\Table(name: "state"),
+    ORM\UniqueConstraint(name: "state", columns: ["state"]),
 ]
 class Cardstate
 {
@@ -31,11 +31,11 @@ class Cardstate
     private const CARD_STATE_MIN_LENGTH = 2;
 
     #[
-        ORM\Column(name: "cardStateID", type: "integer", nullable: false),
+        ORM\Column(name: "stateID", type: "integer", nullable: false),
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
     ]
-    private int $cardStateID;
+    private int $stateID;
 
     #[
         ORM\Column(name: "state", type: "string", length: 50, nullable: false),
@@ -52,14 +52,14 @@ class Cardstate
     ]
     private string $state;
 
-    public function getCardstateID(): int
+    public function getStateID(): int
     {
-        return $this->cardStateID;
+        return $this->stateID;
     }
 
-    public function setCardstateID(int $cardStateID): void
+    public function setStateID(int $stateID): void
     {
-        $this->cardStateID = $cardStateID;
+        $this->stateID = $stateID;
     }
 
     public function getState(): string

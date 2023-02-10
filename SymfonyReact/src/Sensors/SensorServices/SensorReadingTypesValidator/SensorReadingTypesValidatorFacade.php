@@ -42,7 +42,7 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
         $errors = [];
         if ($sensorTypeObject instanceof TemperatureSensorTypeInterface) {
             $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
-                $sensorTypeObject->getTempObject(),
+                $sensorTypeObject->getTemperature(),
                 $sensorType
             );
 

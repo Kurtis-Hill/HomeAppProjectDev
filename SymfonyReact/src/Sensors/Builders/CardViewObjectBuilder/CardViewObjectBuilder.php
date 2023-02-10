@@ -19,9 +19,9 @@ class CardViewObjectBuilder
         Cardstate $cardState,
     ): CardView {
         $newCard = new CardView();
-        $newCard->setSensorNameID($sensor);
+        $newCard->setSensor($sensor);
         $newCard->setUserID($user);
-        $newCard->setCardIconID($icons);
+        $newCard->setIconID($icons);
         $newCard->setCardColourID($cardColour);
         $newCard->setCardStateID($cardState);
 

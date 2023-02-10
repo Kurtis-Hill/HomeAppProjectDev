@@ -23,8 +23,8 @@ class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder im
         $formattedSensorTypeObjects = $cardBuilder->formatSensorTypeObjectsByReadingType($sensorTypeObject);
 
         return new StandardCardViewSensorFormResponseDTO(
-            $sensorTypeObject->getSensorObject()->getSensorNameID(),
-            IconDTOBuilder::buildIconResponseDTO($cardViewObject->getCardIconID()),
+            $sensorTypeObject->getSensor()->getSensorID(),
+            IconDTOBuilder::buildIconResponseDTO($cardViewObject->getIconID()),
             ColourDTOBuilder::buildColourResponseDTO($cardViewObject->getCardColourID()),
             CardStateDTOBuilder::buildCardStateResponseDTO($cardViewObject->getCardStateID()),
             $cardViewObject->getCardViewID(),

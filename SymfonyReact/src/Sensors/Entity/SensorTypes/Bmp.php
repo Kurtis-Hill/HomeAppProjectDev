@@ -19,8 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Table(name: "bmp"),
     ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
     ORM\UniqueConstraint(name: "latitudeID", columns: ["latitudeID"]),
-    ORM\UniqueConstraint(name: "tempID*", columns: ["tempID"]),
-    ORM\Index(columns: ["sensorNameID"], name: "bmp_ibfk_1"),
+    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
+    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 
 ]
 class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
@@ -48,9 +48,9 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     #[
         ORM\ManyToOne(targetEntity: Temperature::class),
@@ -80,22 +80,22 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         $this->bmpID = $bmpID;
     }
 
-    public function getSensorObject(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensor;
+        $this->sensor = $sensor;
     }
 
-    public function getTempObject(): Temperature
+    public function getTemperature(): Temperature
     {
         return $this->tempID;
     }
 
-    public function setTempObject(Temperature $tempID): void
+    public function setTemperature(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }

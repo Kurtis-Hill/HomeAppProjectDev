@@ -33,13 +33,13 @@ class AbstractReadingTypeBuilder
         $analogSensor->setHighReading($analogSensorType->getMaxAnalog());
         $analogSensor->setLowReading($analogSensorType->getMinAnalog());
         $analogSensor->setUpdatedAt();
-        $analogSensor->setSensorObject($analogSensorType->getSensorObject());
+        $analogSensor->setSensor($analogSensorType->getSensor());
 
         $analogSensorType->setAnalogObject($analogSensor);
     }
 
     protected function setSensorObject(SensorTypeInterface $sensorType, Sensor $sensor): void
     {
-        $sensorType->setSensorObject($sensor);
+        $sensorType->setSensor($sensor);
     }
 }

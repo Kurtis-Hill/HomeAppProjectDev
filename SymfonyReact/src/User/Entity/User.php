@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
     ORM\Index(columns: ["groupNameID"], name: "GroupName"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
+    ORM\Index(columns: ["profilePic"], name: "profilePic"),
 ]
 #[UniqueEntity(fields: ['email'], message: 'Email already exists')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -108,7 +109,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[
         ArrayShape([GroupNameMapping::class]),
-        ORM\OneToMany(mappedBy: "userID", targetEntity: GroupNameMapping::class),
+        ORM\OneToMany(mappedBy: "user", targetEntity: GroupNameMapping::class),
     ]
     private Selectable|array $userGroupMappingEntities;
 
@@ -128,12 +129,18 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
+    public function getUsersGroupName(): GroupNames
+    {
+        return $this->groupNameID;
+    }
+
     #[ArrayShape([GroupNames::class])]
     public function getGroupNameObjects(): array
     {
         $groupNameArray[] = $this->getGroupNameID();
+        /** @var GroupNameMapping $groupName */
         foreach ($this->userGroupMappingEntities as $groupName) {
-            $groupNameArray[] = $groupName->getGroupNameID();
+            $groupNameArray[] = $groupName->getGroupName();
         }
 
         return $groupNameArray;
@@ -143,10 +150,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getGroupNameIds(): array
     {
         $groupNames[] = $this->getGroupNameID()->getGroupNameID();
+        /** @var GroupNameMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
+            $groupNames[] = $entity->getGroupName()->getGroupNameID();
         }
-
         return $groupNames;
     }
 
@@ -157,10 +164,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             'groupNameID' => $this->getGroupNameID()->getGroupNameID(),
             'groupName' => $this->getGroupNameID()->getGroupName()
         ];
+        /** @var GroupNameMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = [
-                'groupNameID' => $entity->getGroupNameID()->getGroupNameID(),
-                'groupName' => $entity->getGroupNameID()->getGroupName()
+                'groupNameID' => $entity->getGroupName()->getGroupNameID(),
+                'groupName' => $entity->getGroupName()->getGroupName()
             ];
         }
 
@@ -291,5 +299,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles(), true);
     }
 }
