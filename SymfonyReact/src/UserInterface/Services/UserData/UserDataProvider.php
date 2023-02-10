@@ -26,7 +26,7 @@ class UserDataProvider
     #[ArrayShape([UserDataResponseDTO::class])]
     public function getGeneralUserData(User $user): UserDataResponseDTO
     {
-        $userGroups = $user->getGroupNameObjects();
+        $userGroups = $user->getGroupNameMappings();
         try {
             $userRooms = $this->getRoomData($user);
         } catch (ORMException) {
@@ -50,6 +50,6 @@ class UserDataProvider
      */
     private function getRoomData(User $user): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($user->getGroupNameIDs(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->roomRepository->getAllUserRoomsByGroupId($user->getAssociatedGroupNameIds(), AbstractQuery::HYDRATE_OBJECT);
     }
 }

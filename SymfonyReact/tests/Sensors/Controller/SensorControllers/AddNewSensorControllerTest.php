@@ -454,7 +454,7 @@ class AddNewSensorControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.UserDataFixtures::REGULAR_USER.'","password":"'.UserDataFixtures::REGULAR_PASSWORD.'"}'
+            '{"username":"'.UserDataFixtures::REGULAR_USER_EMAIL.'","password":"'.UserDataFixtures::REGULAR_PASSWORD.'"}'
         );
 
         $requestResponse = $this->client->getResponse();

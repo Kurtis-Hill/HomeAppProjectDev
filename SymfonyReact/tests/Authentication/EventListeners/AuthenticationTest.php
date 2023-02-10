@@ -199,13 +199,13 @@ class AuthenticationTest extends WebTestCase
     public function userCredentialsDataProvider(): Generator
     {
         yield [
-            'username' => UserDataFixtures::ADMIN_USER,
+            'username' => UserDataFixtures::ADMIN_USER_EMAIL,
             'password' => UserDataFixtures::ADMIN_PASSWORD,
             'roles' => ['ROLE_ADMIN'],
         ];
 
         yield [
-            'username' => UserDataFixtures::REGULAR_USER,
+            'username' => UserDataFixtures::REGULAR_USER_EMAIL,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
             'roles' => ['ROLE_USER'],
         ];

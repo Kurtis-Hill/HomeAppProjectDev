@@ -14,13 +14,13 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 {
     private const FIXTURE_ORDER = 1;
 
-    public const ADMIN_USER = 'admin-user@gmail.com';
+    public const ADMIN_USER_EMAIL = 'admin-user@gmail.com';
 
-    public const SECOND_ADMIN_USER = 'admin-user-two@gmail.com';
+    public const SECOND_ADMIN_USER_EMAIL = 'admin-user-two@gmail.com';
 
     public const ADMIN_PASSWORD = 'admin1234';
 
-    public const REGULAR_USER = 'regular-user';
+    public const REGULAR_USER_EMAIL = 'regular-user-admin-group@gmail.com';
 
     public const REGULAR_PASSWORD = 'user1234';
 
@@ -47,7 +47,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         self::ADMIN_GROUP,
         self::USER_GROUP,
         self::REGULAR_GROUP,
-
     ];
 
     private UserPasswordHasherInterface $passwordEncoder;
@@ -72,7 +71,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
         $adminUser = new User();
 
-        $adminUser->setEmail(self::ADMIN_USER);
+        $adminUser->setEmail(self::ADMIN_USER_EMAIL);
         $adminUser->setFirstName('admin');
         $adminUser->setLastName('test');
         $adminUser->setPassword($this->passwordEncoder->hashPassword($adminUser, self::ADMIN_PASSWORD));
@@ -123,7 +122,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
         $adminUserInAdminGroup = new User();
 
-        $adminUserInAdminGroup->setEmail(self::SECOND_ADMIN_USER);
+        $adminUserInAdminGroup->setEmail(self::SECOND_ADMIN_USER_EMAIL);
         $adminUserInAdminGroup->setFirstName('second-admin-user');
         $adminUserInAdminGroup->setLastName('test');
         $adminUserInAdminGroup->setPassword($this->passwordEncoder->hashPassword($adminUserInAdminGroup, self::ADMIN_PASSWORD));
@@ -156,7 +155,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $this->addReference(self::USER_GROUP, $userGroupName);
         $regularUser = new User();
 
-        $regularUser->setEmail(self::REGULAR_USER);
+        $regularUser->setEmail(self::REGULAR_USER_EMAIL);
         $regularUser->setFirstName('user');
         $regularUser->setLastName('test');
         $regularUser->setPassword($this->passwordEncoder->hashPassword($regularUser, self::REGULAR_PASSWORD));
@@ -197,9 +196,9 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($secondRegularUser);
         $manager->persist($secondRegularUserGroupName);
 
-        $this->addReference(self::ADMIN_USER, $adminUser);
-        $this->addReference(self::REGULAR_USER, $regularUser);
-        $this->addReference(self::SECOND_ADMIN_USER, $adminUserInAdminGroup);
+        $this->addReference(self::ADMIN_USER_EMAIL, $adminUser);
+        $this->addReference(self::REGULAR_USER_EMAIL, $regularUser);
+        $this->addReference(self::SECOND_ADMIN_USER_EMAIL, $adminUserInAdminGroup);
 
         $this->addReference(self::ADMIN_GROUP, $adminGroupName);
         $this->addReference(self::REGULAR_GROUP, $userGroupName);

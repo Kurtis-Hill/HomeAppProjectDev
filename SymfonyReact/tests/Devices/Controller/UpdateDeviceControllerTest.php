@@ -48,7 +48,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     public function test_sending_wrong_encoding_request(): void
     {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
 
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
@@ -85,7 +85,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         array $errorMessage,
     ): void {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
 
@@ -212,7 +212,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             }
         }
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
 
         /** @var Room $room */
         $room = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()])[0];
@@ -259,7 +259,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             }
         }
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
 
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $user->getGroupNameID()->getGroupNameID()])[0];
@@ -298,16 +298,12 @@ class UpdateDeviceControllerTest extends WebTestCase
         $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP, UserDataFixtures::REGULAR_PASSWORD);
 
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL]);
 
-        /** @var GroupNameMappingRepository $groupNameMappingRepository */
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
 
-//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-        /** @var GroupNameMapping $groupUserIsNotApartOf */
-        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
-
+        /** @var GroupNames $groupUserIsNotApartOf */
+        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user)[0];
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupName()])[0];
 
@@ -343,14 +339,11 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function testAdminCanUpdateDeviceNotApartOf(): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL]);
 
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-
-//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-        /** @var GroupNameMapping $groupUserIsNotApartOf */
-        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
+        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        /** @var GroupNames $groupUserIsNotApartOf */
+        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user)[0];
 
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupName()])[0];
 
@@ -398,7 +391,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     public function testSendingOutOfRangeDeviceUpdate(string $deviceName, array $errorMessage): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
-            ['email' => UserDataFixtures::SECOND_ADMIN_USER]
+            ['email' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL]
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(
@@ -454,7 +447,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function testUpdatingDeviceCorrectly(): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
 //        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
@@ -519,7 +512,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     public function testDeviceWithPasswordUpdatedCanLogIn(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
-            ['email' => UserDataFixtures::SECOND_ADMIN_USER]
+            ['email' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL]
         );
 
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(
@@ -576,7 +569,7 @@ class UpdateDeviceControllerTest extends WebTestCase
      */
     public function testSendingPatchRequest(string $patchSubject): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
 //        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);

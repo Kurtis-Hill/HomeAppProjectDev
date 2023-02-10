@@ -44,16 +44,16 @@ class NavBarControllerTest extends WebTestCase
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
 
 //        $groupNameMappingEntities = $this->entityManager->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
 //        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
 
         /** @var Room[] $userRooms */
-        $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getGroupNameIds());
+        $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getAssociatedGroupNameIds());
 
         /** @var Devices[] $userDevices */
-        $userDevices = $this->entityManager->getRepository(Devices::class)->getAllUsersDevicesByGroupId($testUser->getGroupNameIds());
+        $userDevices = $this->entityManager->getRepository(Devices::class)->getAllUsersDevicesByGroupId($testUser->getAssociatedGroupNameIds());
 
         $this->client->request(
             Request::METHOD_GET,
@@ -100,7 +100,7 @@ class NavBarControllerTest extends WebTestCase
 
         self::assertCount(count($userRooms), $responseData[2]['listItemLinks'], sprintf($countMessage, 'rooms'));
         self::assertCount(count($userDevices), $responseData[0]['listItemLinks'], sprintf($countMessage, 'device'));
-        self::assertCount(count($testUser->getGroupNameIds()), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
+        self::assertCount(count($testUser->getAssociatedGroupNameIds()), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
         self::assertSameSize(RoomFixtures::ROOMS, $responseData[2]['listItemLinks'], sprintf($countMessage, 'room'));
         self::assertSameSize(UserDataFixtures::USER_GROUPS, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
 

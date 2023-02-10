@@ -16,7 +16,7 @@ trait TestLoginTrait
      */
     private function setUserToken(
         KernelBrowser $client,
-        ?string $username = UserDataFixtures::ADMIN_USER,
+        ?string $email = UserDataFixtures::ADMIN_USER_EMAIL,
         ?string $password = UserDataFixtures::ADMIN_PASSWORD,
     ): ?string {
         $client->request(
@@ -25,7 +25,7 @@ trait TestLoginTrait
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'. $username .'","password":"'. $password .'"}'
+            '{"username":"'. $email .'","password":"'. $password .'"}'
         );
 
         $requestResponse = $client->getResponse();

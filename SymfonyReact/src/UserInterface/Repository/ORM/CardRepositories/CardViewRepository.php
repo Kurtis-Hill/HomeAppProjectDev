@@ -10,6 +10,7 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\Cardstate;
 use App\UserInterface\Entity\Card\CardView;
@@ -74,7 +75,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         ];
 
         if ($user->isAdmin()) {
-            $groupNameIDs = $user->getGroupNameIds();
+            $groupNameIDs = $user->getAssociatedGroupNameIds();
             $parameters['groupNameID'] = $groupNameIDs;
 
             $qb->andWhere(
@@ -139,7 +140,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
     private function cardViewBuildBasicJoins(QueryBuilder $qb, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO): void
     {
-        $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensorID', CardView::ALIAS));
+        $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensor', CardView::ALIAS));
 
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO?->getReadingTypesToQuery(), $qb);
         $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, Sensor::ALIAS, Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS)
@@ -180,6 +181,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         }
 
         if ($cardDataPostFilterDTO !== null) {
+            /** @var SensorTypeNotJoinQueryDTO $excludeSensorType */
             foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {
                 $sensorTypeAlias = $excludeSensorType->getAlias();
                 $sensorTypeID = $excludeSensorType->getSensorTypeID();

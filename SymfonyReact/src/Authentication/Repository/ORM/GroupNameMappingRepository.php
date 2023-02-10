@@ -41,24 +41,25 @@ class GroupNameMappingRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findGroupsUserIsNotApartOf(array $groups): array
-    {
-        $qb = $this->createQueryBuilder('gmt');
-
-        $expr = $qb->expr();
-        $qb->select('gmt')
-            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupName = gn.groupNameID')
-            ->where(
-                $expr->orX(
-                $expr->notIn('gmt.groupName', ':groups'),
-//                    $expr->notIn('gmt.groupName', ':userGroups')
-                )
-            )
-            ->setParameter('groups', $groups);
-//            ->setParameter('userGroups', $user?->getGroupNameIds());
-
-        return $qb->getQuery()->getResult();
-    }
+//    public function findGroupsUserIsNotApartOf(array $groups, User $user): array
+//    {
+//        $qb = $this->createQueryBuilder('gmt');
+//
+//        $expr = $qb->expr();
+//        $qb->select('gmt')
+//            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupName = gn.groupNameID')
+//            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.user = u.userID')
+//            ->where(
+//                $expr->orX(
+//                $expr->notIn('gmt.groupName', ':groups'),
+//                    $expr->notIn('u.groupNameID', ':userGroups')
+//                )
+//            )
+//            ->setParameter('groups', $user?->getAssociatedGroupNameIds())
+//            ->setParameter('userGroups', $user?->getAssociatedGroupNameIds());
+//
+//        return $qb->getQuery()->getResult();
+//    }
 
     public function persist(GroupNameMapping $groupNameMapping): void
     {

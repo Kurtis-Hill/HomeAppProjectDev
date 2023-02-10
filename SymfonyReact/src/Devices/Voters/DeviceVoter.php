@@ -76,7 +76,7 @@ class DeviceVoter extends Voter
 //        }
         if (!in_array(
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
-            $user->getGroupNameIds(),
+            $user->getAssociatedGroupNameIds(),
             true
         )
         ) {
@@ -126,8 +126,7 @@ class DeviceVoter extends Voter
             return true;
         }
 
-//        dd($proposedGroupName->getGroupNameID(), $user->getGroupNameIds());
-        if (!in_array($proposedGroupName->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($proposedGroupName->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
             return false;
         }
 

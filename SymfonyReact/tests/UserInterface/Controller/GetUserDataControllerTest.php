@@ -40,10 +40,10 @@ class GetUserDataControllerTest extends WebTestCase
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
 
         /** @var Room[] $userRooms */
-        $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getGroupNameIds(), 1);
+        $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getAssociatedGroupNameIds(), 1);
         $this->client->request(
             Request::METHOD_GET,
             self::GET_USER_DATA_URL,
@@ -56,7 +56,7 @@ class GetUserDataControllerTest extends WebTestCase
 
         self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
         self::assertSameSize($userRooms, $responseData['userRooms']);
-        self::assertSameSize($testUser->getGroupNameIds(), $responseData['userGroups']);
+        self::assertSameSize($testUser->getAssociatedGroupNameIds(), $responseData['userGroups']);
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
 
         /** @var Room $room */
@@ -74,7 +74,7 @@ class GetUserDataControllerTest extends WebTestCase
             }
         }
 
-        foreach ($testUser->getGroupNameObjects() as $groupNameObject) {
+        foreach ($testUser->getGroupNameMappings() as $groupNameObject) {
             foreach ($responseData['userGroups'] as $userGroup) {
                 if ($userGroup['groupNameID'] === $groupNameObject->getGroupNameID()) {
                     self::assertEquals($groupNameObject->getGroupName(), $userGroup['groupName'], 'group name wrong');

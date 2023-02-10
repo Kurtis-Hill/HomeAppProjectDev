@@ -98,7 +98,6 @@ final class Version20220303160823 extends AbstractMigration
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
-
         $this->addSql('
             CREATE TABLE latitude (
                 latitudeID INT AUTO_INCREMENT NOT NULL, 
@@ -406,7 +405,6 @@ final class Version20220303160823 extends AbstractMigration
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
-
         $this->addSql("
             INSERT INTO `readingtypes` 
                 (`readingTypeID`, `readingType`) 
@@ -505,8 +503,7 @@ final class Version20220303160823 extends AbstractMigration
                 (27, 'smoking', 'smoking');
         ");
 
-
-
+        // Alter tables
         $this->addSql("
             ALTER TABLE `user`
               ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupNameID`) REFERENCES `groupname` (`groupNameID`);
@@ -525,7 +522,6 @@ final class Version20220303160823 extends AbstractMigration
               ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
-
         $this->addSql("
             ALTER TABLE `cardview`
               ADD CONSTRAINT `FK_E36636B53BE475E6` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON UPDATE CASCADE,
@@ -534,8 +530,6 @@ final class Version20220303160823 extends AbstractMigration
               ADD CONSTRAINT `FK_E36636B5840D9A7A` FOREIGN KEY (`iconID`) REFERENCES `icons` (`iconID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B5A356FF88` FOREIGN KEY (`colourID`) REFERENCES `colours` (`colourID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
-
-
 
         $this->addSql("
             ALTER TABLE `temperature`
@@ -584,10 +578,6 @@ final class Version20220303160823 extends AbstractMigration
               ADD CONSTRAINT `dhtsensor_ibfk_3` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
-
-
-
-
         $this->addSql("
             ALTER TABLE `constanalog`
                 ADD CONSTRAINT `constanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -603,7 +593,6 @@ final class Version20220303160823 extends AbstractMigration
               ADD CONSTRAINT `consttemp_ibfk_1` FOREIGN KEY (tempID) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
-
         $this->addSql("
             ALTER TABLE `outofrangeanalog`
                 ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -618,9 +607,6 @@ final class Version20220303160823 extends AbstractMigration
             ALTER TABLE `outofrangetemp`
                 ADD CONSTRAINT `outofrangetemp_ibfk_1` FOREIGN KEY (`tempID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
-
-
-
     }
 
     public function down(Schema $schema): void

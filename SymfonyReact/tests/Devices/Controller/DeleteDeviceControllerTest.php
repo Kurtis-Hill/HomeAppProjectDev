@@ -6,6 +6,7 @@ use App\Doctrine\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
+use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -39,16 +40,16 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     public function testRegularUserCannotDeleteAdminDevice(): void
     {
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL, UserDataFixtures::REGULAR_PASSWORD);
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL]);
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
 //        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
 //        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-        /** @var GroupNameMapping $groupUserIsNotApartOf */
-//        dd($groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds(), $user));
-        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
+        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        /** @var GroupNames $groupUserIsNotApartOf */
+        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user)[0];
 //dd($groupUserIsNotApartOf, $groupUserIsNotApartOf->getGroupName());
         /** @var Devices $device */
 //        dd($this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupName()]));
@@ -78,14 +79,11 @@ class DeleteDeviceControllerTest extends WebTestCase
     public function testAdminUserCanDeleteDeviceNotApartOf(): void
     {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL]);
 
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-
-//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-        /** @var GroupNameMapping $groupUserIsNotApartOf */
-        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
+        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        /** @var GroupNames $groupUserIsNotApartOf */
+        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user)[0];
 
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupName()])[0];
@@ -192,11 +190,11 @@ class DeleteDeviceControllerTest extends WebTestCase
     public function deletingDeviceDataProvider(): Generator
     {
         yield [
-            'username' => UserDataFixtures::ADMIN_USER
+            'username' => UserDataFixtures::ADMIN_USER_EMAIL
         ];
 
         yield [
-            'username' => UserDataFixtures::REGULAR_USER
+            'username' => UserDataFixtures::REGULAR_USER_EMAIL
         ];
     }
 

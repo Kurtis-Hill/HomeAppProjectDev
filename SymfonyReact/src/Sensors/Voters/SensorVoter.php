@@ -60,7 +60,7 @@ class SensorVoter extends Voter
         if (
             !in_array(
                 $newSensorDTO->getDevice()->getGroupNameObject()->getGroupNameID(),
-                $user->getGroupNameIds(), true
+                $user->getAssociatedGroupNameIds(), true
             )
         ) {
             return false;
@@ -75,7 +75,7 @@ class SensorVoter extends Voter
             return false;
         }
 
-        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getGroupNameIds(), true)) {
+        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
             return false;
         }
 

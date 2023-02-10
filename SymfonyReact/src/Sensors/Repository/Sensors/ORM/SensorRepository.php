@@ -91,7 +91,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $qb->select($sensorAlias)
             ->where(
-                $qb->expr()->eq(Sensor::ALIAS. '.sensorID', ':id')
+                $qb->expr()->eq(Sensor::ALIAS. '.sensor', ':id')
             )
             ->setParameters(['id' => $sensors]);
 

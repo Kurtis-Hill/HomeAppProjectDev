@@ -2,10 +2,13 @@
 
 namespace App\User\Repository\ORM;
 
+use App\Authentication\Entity\GroupNameMapping;
 use App\User\Entity\GroupNames;
+use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -52,5 +55,25 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
     {
         $this->getEntityManager()->remove($groupNames);
         $this->getEntityManager()->flush();
+    }
+
+    public function findGroupsUserIsNotApartOf(array $groups, User $user): array
+    {
+        $qb = $this->createQueryBuilder('gn');
+
+        $expr = $qb->expr();
+        $qb->select('gn')
+            ->leftJoin(GroupNameMapping::class, 'gnm', Join::WITH, 'gnm.groupName = gn.groupNameID')
+            ->leftJoin(User::class, 'u', Join::WITH, 'gnm.user = u.userID')
+            ->where(
+                $expr->orX(
+                $expr->notIn('gn.groupNameID', ':groups'),
+                    $expr->notIn('u.groupNameID', ':userGroups')
+                )
+            )
+            ->setParameter('groups', $user?->getAssociatedGroupNameIds())
+            ->setParameter('userGroups', $user?->getAssociatedGroupNameIds());
+
+        return $qb->getQuery()->getResult();
     }
 }

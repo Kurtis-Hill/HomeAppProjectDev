@@ -49,7 +49,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         }
         $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices ?? []);
 
-        $userGroups = $user->getGroupNameObjects();
+        $userGroups = $user->getGroupNameMappings();
         $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
 
         try {
@@ -148,7 +148,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getRoomData(User $user): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($user->getGroupNameIDs(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->roomRepository->getAllUserRoomsByGroupId($user->getAssociatedGroupNameIds(), AbstractQuery::HYDRATE_OBJECT);
     }
 
     /**
@@ -156,6 +156,6 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getDeviceData(User $user): array
     {
-        return $this->deviceRepository->getAllUsersDevicesByGroupId($user->getGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->deviceRepository->getAllUsersDevicesByGroupId($user->getAssociatedGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
     }
 }

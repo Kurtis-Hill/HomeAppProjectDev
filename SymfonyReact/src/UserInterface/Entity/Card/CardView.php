@@ -127,5 +127,4 @@ class CardView
     {
         $this->cardColourID = $cardColourID;
     }
-
 }

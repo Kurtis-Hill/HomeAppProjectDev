@@ -34,7 +34,7 @@ class GetGroupControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
         $this->userToken = $this->setUserToken($this->client);
     }
 

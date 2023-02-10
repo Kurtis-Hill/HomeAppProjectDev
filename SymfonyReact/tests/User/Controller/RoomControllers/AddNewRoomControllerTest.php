@@ -38,7 +38,7 @@ class AddNewRoomControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
+        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
         $this->userToken = $this->setUserToken($this->client);
     }
 
@@ -251,7 +251,7 @@ class AddNewRoomControllerTest extends WebTestCase
     public function addNewRoomNotApartOfDataProvider(): Generator
     {
         yield [
-            'adminUserName' => UserDataFixtures::SECOND_ADMIN_USER
+            'adminUserName' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL
         ];
 
         yield [

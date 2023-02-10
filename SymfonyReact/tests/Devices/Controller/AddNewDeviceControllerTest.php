@@ -113,7 +113,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
         self::assertEquals($this->groupName->getGroupNameID(), $payload['groupNameID']);
         self::assertEquals($this->room->getRoomID(), $payload['roomID']);
-        self::assertEquals(UserDataFixtures::ADMIN_USER, $payload['createdBy']);
+        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL, $payload['createdBy']);
         self::assertEquals(Devices::ROLE, $payload['roles'][0]);
         self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
 
@@ -447,22 +447,24 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     public function test_adding_device_to_group_not_apart_of(): void
     {
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL, UserDataFixtures::REGULAR_PASSWORD);
+
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
         $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
 
-        /** @var GroupNameMapping $groupUserIsNotApartOf */
-        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
-//dd($groupUserIsNotApartOf, $user->getGroupNameIds());
+        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        /** @var GroupNames $groupUserIsNotApartOf */
+        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user)[0];
+
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $groupUserIsNotApartOf->getGroupName()->getGroupNameID(),
+            'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -783,7 +785,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
         self::assertEquals($this->groupName->getGroupNameID(), $responseData['groupNameID']);
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
-        self::assertEquals(UserDataFixtures::ADMIN_USER, $responseData['createdBy']);
+        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $createResponseCode);
 

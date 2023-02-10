@@ -69,7 +69,7 @@ class UserCreationHandlerTest extends KernelTestCase
         $this->sut->handleNewUserCreation(
             'first',
             'last',
-            UserDataFixtures::ADMIN_USER,
+            UserDataFixtures::ADMIN_USER_EMAIL,
             'nhlkhhhgnbggfgg',
             'test-group',
         );
