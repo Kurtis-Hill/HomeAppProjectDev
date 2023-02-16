@@ -65,6 +65,7 @@ class CardViewFormController extends AbstractController
         ) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         } catch (ORMException) {
+            $this->logger->error('Query failure for card view form id: ' . $cardViewObject->getCardViewID());
             return $this->sendInternalServerErrorJsonResponse(['Query failure   ']);
         }
 
@@ -122,6 +123,8 @@ class CardViewFormController extends AbstractController
         try {
             $cardViewRepository->persist($cardViewObject);
             $cardViewRepository->flush();
+
+            $this->logger->info('Card view form updated successfully for id: ' . $cardViewObject->getCardViewID() . ' time: ' . date('d-m-Y-H-i-s'));
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }

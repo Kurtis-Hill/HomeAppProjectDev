@@ -116,7 +116,7 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $this->addReference(self::PERMISSION_CHECK_DEVICES['AdminUserTwoDeviceAdminGroupTwo']['referenceName'], $adminTwoDeviceAdminGroupTwo);
         $manager->persist($adminTwoDeviceAdminGroupTwo);
 
-        
+
         // Regular user one owned device regular group one
         $regularOwnedDeviceRegularGroupOne = new Devices();
 

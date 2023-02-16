@@ -1,11 +1,9 @@
 <?php
 
-namespace App\ORMca\DataFixtures\UserInterface;
+namespace App\ORM\DataFixtures\UserInterface;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\ORM\DataFixtures\UserInterface\ColourFixtures;
-use App\ORM\DataFixtures\UserInterface\IconFixtures;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
