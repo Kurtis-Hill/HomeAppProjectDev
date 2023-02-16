@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\SensorDataServices\SensorReadingUpdate\OutOfBounds;
 
-use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;

@@ -2,9 +2,8 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
-use App\Authentication\Controller\SecurityController;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Sensors\Entity\ReadingTypes\Analog;

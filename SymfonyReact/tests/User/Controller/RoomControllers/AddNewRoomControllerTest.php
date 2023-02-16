@@ -2,7 +2,7 @@
 
 namespace App\Tests\User\Controller\RoomControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
@@ -38,7 +38,7 @@ class AddNewRoomControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
+        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->userToken = $this->setUserToken($this->client);
     }
 
@@ -251,11 +251,11 @@ class AddNewRoomControllerTest extends WebTestCase
     public function addNewRoomNotApartOfDataProvider(): Generator
     {
         yield [
-            'adminUserName' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL
+            'adminUserName' => UserDataFixtures::ADMIN_USER_EMAIL_TWO
         ];
 
         yield [
-            'regularUserName' => UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP
+            'regularUserName' => UserDataFixtures::REGULAR_USER_EMAIL_TWO
         ];
     }
 

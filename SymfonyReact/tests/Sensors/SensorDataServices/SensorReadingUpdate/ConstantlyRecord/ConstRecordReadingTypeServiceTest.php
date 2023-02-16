@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\SensorDataServices\SensorReadingUpdate\ConstantlyRecord;
 
-use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\Entity\ConstantRecording\ConstAnalog;
 use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ConstantRecording\ConstHumid;

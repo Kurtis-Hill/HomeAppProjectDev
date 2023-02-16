@@ -2,7 +2,7 @@
 
 namespace App\Tests\User\Service;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
@@ -69,7 +69,7 @@ class UserCreationHandlerTest extends KernelTestCase
         $this->sut->handleNewUserCreation(
             'first',
             'last',
-            UserDataFixtures::ADMIN_USER_EMAIL,
+            UserDataFixtures::ADMIN_USER_EMAIL_ONE,
             'nhlkhhhgnbggfgg',
             'test-group',
         );

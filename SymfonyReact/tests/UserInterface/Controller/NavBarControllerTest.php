@@ -2,8 +2,8 @@
 
 namespace App\Tests\UserInterface\Controller;
 
-use App\Doctrine\DataFixtures\Core\RoomFixtures;
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\RoomFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\HTTPStatusCodes;
@@ -44,7 +44,7 @@ class NavBarControllerTest extends WebTestCase
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
+        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
 //        $groupNameMappingEntities = $this->entityManager->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
 //        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
@@ -102,7 +102,7 @@ class NavBarControllerTest extends WebTestCase
         self::assertCount(count($userDevices), $responseData[0]['listItemLinks'], sprintf($countMessage, 'device'));
         self::assertCount(count($testUser->getAssociatedGroupNameIds()), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
         self::assertSameSize(RoomFixtures::ROOMS, $responseData[2]['listItemLinks'], sprintf($countMessage, 'room'));
-        self::assertSameSize(UserDataFixtures::USER_GROUPS, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
+        self::assertSameSize(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
 
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
     }

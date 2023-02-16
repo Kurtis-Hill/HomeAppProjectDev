@@ -9,6 +9,6 @@ framework:
 #                  message: The email "{{ value }}" is not a valid email.
 
         # Enables validator auto-mapping support.
-        # For instance, basic validation constraints will be inferred from Doctrine's metadata.
+        # For instance, basic validation constraints will be inferred from ORM's metadata.
         #auto_mapping:
         #    App\Entity\: []

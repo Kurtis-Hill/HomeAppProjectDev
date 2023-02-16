@@ -2,7 +2,7 @@
 
 namespace App\Tests\User\Controller\GroupsController;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
@@ -34,7 +34,7 @@ class GetGroupControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
+        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->userToken = $this->setUserToken($this->client);
     }
 

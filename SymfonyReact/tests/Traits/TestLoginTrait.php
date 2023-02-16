@@ -3,8 +3,8 @@
 namespace App\Tests\Traits;
 
 use App\Authentication\Controller\SecurityController;
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +16,7 @@ trait TestLoginTrait
      */
     private function setUserToken(
         KernelBrowser $client,
-        ?string $email = UserDataFixtures::ADMIN_USER_EMAIL,
+        ?string $email = UserDataFixtures::ADMIN_USER_EMAIL_ONE,
         ?string $password = UserDataFixtures::ADMIN_PASSWORD,
     ): ?string {
         $client->request(

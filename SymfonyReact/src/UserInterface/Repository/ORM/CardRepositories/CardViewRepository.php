@@ -17,6 +17,7 @@ use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -55,7 +56,6 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         ?CardViewUriFilterDTO $cardViewTypeFilterDTO = null,
         int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array {
-//        dd('lol');
         $qb = $this->createQueryBuilder(CardView::ALIAS);
         $expr = $qb->expr();
 
@@ -74,7 +74,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             'cardViewTwo' => $cardViewTwo
         ];
 
-        if ($user->isAdmin()) {
+        if (!$user->isAdmin()) {
             $groupNameIDs = $user->getAssociatedGroupNameIds();
             $parameters['groupNameID'] = $groupNameIDs;
 
@@ -159,6 +159,8 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
      * @param CardDataQueryEncapsulationFilterDTO|null $cardDataPostFilterDTO
      * @param int $hydrationMode
      * @return float|int|mixed|string Depends on hydration mode
+     *
+     * @throws ORMException
      */
     private function cardViewFilterExecution(
         QueryBuilder $qb,
@@ -192,11 +194,6 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         }
         $qb->setParameters($parameters);
 
-        try {
-
         return $qb->getQuery()->getResult($hydrationMode);
-        } catch (\Exception $exception) {
-            dd($exception->getMessage());
-        }
     }
 }

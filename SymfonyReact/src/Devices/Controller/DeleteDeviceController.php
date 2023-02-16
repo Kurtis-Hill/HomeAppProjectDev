@@ -32,9 +32,9 @@ class DeleteDeviceController extends AbstractController
 
     #[
         Route(
-            path: '{deviceNameID}/delete-device',
+            path: '{deviceID}/delete-device',
             name: 'delete-esp-device',
-            methods: [Request::METHOD_POST]
+            methods: [Request::METHOD_DELETE]
         )
     ]
     public function deleteDevice(

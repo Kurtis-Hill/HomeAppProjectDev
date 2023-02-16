@@ -3,7 +3,7 @@
 namespace App\Tests\UserInterface\Controller\Card;
 
 use App\Authentication\Controller\SecurityController;
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;

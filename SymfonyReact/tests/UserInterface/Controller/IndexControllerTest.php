@@ -3,7 +3,7 @@
 namespace App\Tests\UserInterface\Controller;
 
 use App\Authentication\Controller\SecurityController;
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;

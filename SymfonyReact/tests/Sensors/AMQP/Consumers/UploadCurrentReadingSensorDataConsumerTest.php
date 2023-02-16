@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\AMQP\Consumers;
 
-use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Devices\Entity\Devices;
 use App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;

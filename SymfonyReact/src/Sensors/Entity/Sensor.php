@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Entity(repositoryClass: SensorRepository::class),
     ORM\Table(name: "sensors"),
     ORM\UniqueConstraint(name: "sensor_device", columns: ["sensorName", "deviceID"]),
-    ORM\Index(columns: ["deviceID"], name: "sensornames_ibfk_1"),
+    ORM\Index(columns: ["ddeviceID"], name: "sensornames_ibfk_1"),
     ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
     ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
 ]
@@ -21,7 +21,7 @@ class Sensor
 {
     public const ALIAS  = 'sensors';
 
-    private const SENSOR_NAME_MAX_LENGTH = 20;
+    private const SENSOR_NAME_MAX_LENGTH = 50;
 
     private const SENSOR_NAME_MIN_LENGTH = 2;
 

@@ -137,13 +137,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape([GroupNames::class])]
     public function getGroupNameMappings(): array
     {
-        $groupNameArray[] = $this->getGroupNameID();
         /** @var GroupNameMapping $groupName */
         foreach ($this->userGroupMappingEntities as $groupName) {
             $groupNameArray[] = $groupName->getGroupName();
         }
 
-        return $groupNameArray;
+        return $groupNameArray ?? [];
     }
 
     #[ArrayShape(['int'])]
@@ -157,7 +156,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $groupNames;
     }
 
-    #[ArrayShape(['groupNameID' => 'int'])]
+    #[ArrayShape(['groupNameID' => 'int', 'groupName' => 'string'])]
     public function getAssociatedGroupNameAndIds(): array
     {
         $groupNames[] = [

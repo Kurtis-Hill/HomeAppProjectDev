@@ -24,7 +24,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
     private const DEVICE_NAME_MIN_LENGTH = 2;
 
-    private const DEVICE_NAME_MAX_LENGTH = 20;
+    private const DEVICE_NAME_MAX_LENGTH = 50;
 
     public const ROLE = 'ROLE_DEVICE';
 

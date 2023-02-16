@@ -2,12 +2,7 @@
 
 namespace App\Tests\Sensors\Controller\SensorTypeControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Authentication\Controller\SecurityController;
-use App\Devices\Entity\Devices;
 use App\Sensors\Entity\SensorType;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;

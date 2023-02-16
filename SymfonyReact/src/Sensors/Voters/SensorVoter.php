@@ -88,6 +88,8 @@ class SensorVoter extends Voter
             return false;
         }
 
+         $user->getDeviceID();
+
          return true;
     }
 }

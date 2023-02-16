@@ -2,12 +2,9 @@
 
 namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;

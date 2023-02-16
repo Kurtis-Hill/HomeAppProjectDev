@@ -2,8 +2,8 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
@@ -454,7 +454,7 @@ class AddNewSensorControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            '{"username":"'.UserDataFixtures::REGULAR_USER_EMAIL.'","password":"'.UserDataFixtures::REGULAR_PASSWORD.'"}'
+            '{"username":"'.UserDataFixtures::REGULAR_USER_EMAIL_ONE.'","password":"'.UserDataFixtures::REGULAR_PASSWORD.'"}'
         );
 
         $requestResponse = $this->client->getResponse();

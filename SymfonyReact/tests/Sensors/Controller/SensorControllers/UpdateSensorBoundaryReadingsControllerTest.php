@@ -2,8 +2,7 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\ReadingTypes\Analog;
@@ -1100,8 +1099,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_sending_request_for_sensor_user_not_apart_of_group(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        $loggedInUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
-        $userNotInGroup = $userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL]);
+        $loggedInUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        $userNotInGroup = $userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $deviceRepository = $this->entityManager->getRepository(Devices::class);
         $deviceObject = $deviceRepository->findBy(['groupNameID' => $loggedInUser->getGroupNameID()])[0];
@@ -1127,7 +1126,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $jsonData = json_encode($sensorData);
 
-        $token = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL, UserDataFixtures::REGULAR_PASSWORD);
+        $token = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObjectLoggedInUser->getSensorNameID()),

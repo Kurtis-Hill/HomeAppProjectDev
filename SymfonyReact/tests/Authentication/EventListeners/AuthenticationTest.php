@@ -2,8 +2,8 @@
 
 namespace App\Tests\Authentication\EventListeners;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -199,13 +199,13 @@ class AuthenticationTest extends WebTestCase
     public function userCredentialsDataProvider(): Generator
     {
         yield [
-            'username' => UserDataFixtures::ADMIN_USER_EMAIL,
+            'username' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
             'password' => UserDataFixtures::ADMIN_PASSWORD,
             'roles' => ['ROLE_ADMIN'],
         ];
 
         yield [
-            'username' => UserDataFixtures::REGULAR_USER_EMAIL,
+            'username' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
             'roles' => ['ROLE_USER'],
         ];

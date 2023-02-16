@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Doctrine\DataFixtures\ESP8266;
+namespace App\ORM\DataFixtures\ESP8266;
 
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use Doctrine\Bundle\FixturesBundle\Fixture;

@@ -4,8 +4,8 @@ namespace App\Tests\UserInterface\Controller;
 
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\HTTPStatusCodes;
-use App\Doctrine\DataFixtures\Core\RoomFixtures;
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\RoomFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -40,7 +40,7 @@ class GetUserDataControllerTest extends WebTestCase
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
+        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
         /** @var Room[] $userRooms */
         $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getAssociatedGroupNameIds(), 1);

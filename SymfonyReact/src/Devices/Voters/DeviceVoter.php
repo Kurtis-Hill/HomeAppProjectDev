@@ -53,6 +53,10 @@ class DeviceVoter extends Voter
             return $checkCommon;
         }
 
+        if (!in_array($newDeviceCheckDTO->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -66,14 +70,10 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-//        $checkedRoom = $this->checkUserIsApartOfProposedRoom(
-//            $user,
-//            $updateDeviceDTO->getProposedUpdatedRoom()
-//        );
+        if (!in_array($updateDeviceDTO->getProposedGroupNameToUpdateTo()?->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+            return false;
+        }
 
-//        if ($checkedRoom === false) {
-//            return false;
-//        }
         if (!in_array(
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
             $user->getAssociatedGroupNameIds(),
@@ -82,17 +82,6 @@ class DeviceVoter extends Voter
         ) {
             return false;
         }
-
-//        if (
-//            $updateDeviceDTO->getProposedUpdatedRoom() !== null
-//            && !in_array(
-//                $updateDeviceDTO->getProposedUpdatedRoom()->getGroupNameID(),
-//                $user->getGroupNameIds(),
-//                true
-//            )
-//        ) {
-//            return false;
-//        }
 
         return true;
     }
@@ -107,6 +96,11 @@ class DeviceVoter extends Voter
 
         if ($checkCommon !== null) {
             return $checkCommon;
+        }
+
+        /** @var User $user */
+        if ($user->getGroupNameID()->getGroupNameID() !== $devices->getGroupNameObject()->getGroupNameID()) {
+            return false;
         }
 
         return true;

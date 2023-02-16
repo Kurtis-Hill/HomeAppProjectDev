@@ -2,9 +2,9 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Doctrine\DataFixtures\Core\RoomFixtures;
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\Core\RoomFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Common\API\APIErrorMessages;
@@ -48,8 +48,8 @@ class AddNewDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName( RoomFixtures::ADMIN_ROOM_NAME);
+        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
+        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName( RoomFixtures::LIVING_ROOM);
         $this->userToken = $this->setUserToken($this->client);
     }
 
@@ -113,7 +113,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
         self::assertEquals($this->groupName->getGroupNameID(), $payload['groupNameID']);
         self::assertEquals($this->room->getRoomID(), $payload['roomID']);
-        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL, $payload['createdBy']);
+        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $payload['createdBy']);
         self::assertEquals(Devices::ROLE, $payload['roles'][0]);
         self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
 
@@ -447,10 +447,10 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     public function test_adding_device_to_group_not_apart_of(): void
     {
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
 
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
@@ -785,7 +785,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
         self::assertEquals($this->groupName->getGroupNameID(), $responseData['groupNameID']);
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
-        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL, $responseData['createdBy']);
+        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_OK, $createResponseCode);
 

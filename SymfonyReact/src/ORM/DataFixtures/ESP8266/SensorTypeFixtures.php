@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Doctrine\DataFixtures\ESP8266;
+namespace App\ORM\DataFixtures\ESP8266;
 
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
@@ -13,11 +13,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 {
-    private const FIXTURES_ORDER = 4;
+    private const FIXTURE_ORDER = 7;
 
     public function getOrder(): int
     {
-        return self::FIXTURES_ORDER;
+        return self::FIXTURE_ORDER;
     }
 
     public function load(ObjectManager $manager): void

@@ -2,7 +2,7 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Sensors\Entity\Sensor;
@@ -198,21 +198,21 @@ class CardViewFormControllerTest extends WebTestCase
     public function userCannotEditOtherUsersCardsDataProvider(): Generator
     {
         yield [
-            'username' => UserDataFixtures::REGULAR_USER_EMAIL,
+            'username' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
-            'alter' => UserDataFixtures::ADMIN_USER_EMAIL,
+            'alter' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
         ];
 
         yield [
-            'username' => UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP,
+            'username' => UserDataFixtures::REGULAR_USER_EMAIL_TWO,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
-            'alter' => UserDataFixtures::REGULAR_USER_EMAIL,
+            'alter' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
         ];
 
         yield [
-            'username' => UserDataFixtures::REGULAR_USER_EMAIL,
+            'username' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
-            'alter' => UserDataFixtures::SECOND_ADMIN_USER_EMAIL,
+            'alter' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         ];
 //        yield [
 //            'username' => UserDataFixtures::ADMIN_USER,
@@ -357,7 +357,7 @@ class CardViewFormControllerTest extends WebTestCase
         string $errorMessage,
     ): void {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
@@ -475,7 +475,7 @@ class CardViewFormControllerTest extends WebTestCase
         $iconRepository = $this->entityManager->getRepository(Icons::class);
         $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
         if ($nullCardColour === true) {
