@@ -19,6 +19,7 @@ class LatitudeQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
             $latitudeData['alias'],
             $latitudeData['object'],
             'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

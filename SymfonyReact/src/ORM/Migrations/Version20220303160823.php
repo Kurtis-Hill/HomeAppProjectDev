@@ -602,17 +602,22 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `outofrangeanalog`
-                ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
+                ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `outofrangehumid`
-                ADD CONSTRAINT `outofrangehumid_ibfk_1` FOREIGN KEY (humidID) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
+                ADD CONSTRAINT `outofrangehumid_ibfk_1` FOREIGN KEY (humidID) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `outofrangetemp`
-                ADD CONSTRAINT `outofrangetemp_ibfk_1` FOREIGN KEY (`tempID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
+                ADD CONSTRAINT `outofrangetemp_ibfk_1` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
+        ");
+
+        $this->addSql("
+            ALTER TABLE `outofrangelatitude`
+                ADD CONSTRAINT `outofrangelatitude_ibfk_1` FOREIGN KEY (`latitudeID`) REFERENCES `latitude` (`latitudeID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
     }
 

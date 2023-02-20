@@ -136,6 +136,8 @@ class IconFixtures extends Fixture implements OrderedFixtureInterface
             $this->setReference($iconDetails['name'], $newIcon);
             $manager->persist($newIcon);
         }
+
+        $manager->flush();
     }
 
 }

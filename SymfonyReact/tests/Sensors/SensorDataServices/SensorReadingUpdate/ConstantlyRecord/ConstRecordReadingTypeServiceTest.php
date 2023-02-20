@@ -48,7 +48,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
         /** @var AnalogSensorTypeInterface $soilSensor */
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();
         $analogSensor->setConstRecord(true);
@@ -73,7 +73,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
         /** @var AnalogSensorTypeInterface $soilSensor */
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();
         $analogSensor->setConstRecord(false);
@@ -106,8 +106,8 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
 
-        /** @var Co $soilSensor */
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        /** @var Soil $soilSensor */
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $tempObject = $soilSensor->getTempObject();
         $tempObject->setConstRecord(true);
@@ -128,8 +128,11 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_doesnt_save_in_range_readings_temp(string $sensorName, string $sensorClass): void
     {
+        /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+
+        /** @var Soil $soilSensor */
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $tempObject = $soilSensor->getTempObject();
         $tempObject->setConstRecord(false);
@@ -167,8 +170,11 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_saves_out_of_range_high_readings_humid(string $sensorName, string $sensorClass): void
     {
+        /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+
+        /** @var Soil $soilSensor */
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorID' => $sensor->getSensorID()]);
 
         $humid = $soilSensor->getHumidObject();
         $humid->setConstRecord(true);

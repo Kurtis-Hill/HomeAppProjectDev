@@ -66,7 +66,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $expr = $qb->expr();
 
         $qb->select('sensor')
-            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
                 $expr->eq('device.groupNameID', ':groupName'),
@@ -91,7 +91,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $qb->select($sensorAlias)
             ->where(
-                $qb->expr()->eq(Sensor::ALIAS. '.sensor', ':id')
+                $qb->expr()->eq(Sensor::ALIAS. '.sensorID', ':id')
             )
             ->setParameters(['id' => $sensors]);
 
@@ -127,11 +127,11 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             Devices::class,
             'device',
             Join::WITH,
-            'sensors.deviceNameID = device.deviceNameID'
+            'sensors.deviceID = device.deviceID'
         )
             ->where(
                 $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+                $qb->expr()->eq('sensors.deviceID', ':deviceID')
             )
             ->setParameters([
                 'sensorName' => $sensorsName,
@@ -149,10 +149,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $qb = $this->createQueryBuilder('sensor');
 
         $qb->select('sensor')
-            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceID = sensor.deviceID')
             ->where(
                 $qb->expr()->eq('sensor.sensorName', ':sensorName'),
-                $qb->expr()->eq('device.deviceNameID', ':deviceID')
+                $qb->expr()->eq('device.deviceID', ':deviceID')
             )
             ->setParameters(
                 [
@@ -175,11 +175,11 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 Devices::class,
                 'device',
                 Join::WITH,
-                'sensors.deviceNameID = device.deviceNameID'
+                'sensors.deviceID = device.deviceID'
             )
             ->where(
                 $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+                $qb->expr()->eq('sensors.deviceID', ':deviceID')
             )
             ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
 

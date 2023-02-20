@@ -1024,7 +1024,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
         while (true) {
             $wrongSensorId = random_int(1, 10000);
-            $sensorTypeObject = $sensorRepository->findOneBy(['sensorNameID' => $wrongSensorId]);
+            $sensorTypeObject = $sensorRepository->findOneBy(['sensorID' => $wrongSensorId]);
 
             if (!$sensorTypeObject instanceof StandardSensorTypeInterface) {
                 break;

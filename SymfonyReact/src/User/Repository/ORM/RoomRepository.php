@@ -41,6 +41,7 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    #[Deprecated(reason: 'Use findRoomByName instead', replacement: 'findRoomByName')]
     public function getAllUserRoomsByGroupId(array $groupNameIDs, int $hydrationMethod = AbstractQuery::HYDRATE_ARRAY): array
     {
         $qb = $this->createQueryBuilder('r');

@@ -39,7 +39,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: "deviceName", type: "string", length: 20, nullable: false)]
     #[
-        NoSpecialCharactersConstraint,
+//        NoSpecialCharactersConstraint,
         Assert\NotBlank(
             message: 'Device name should not be blank'
         ),

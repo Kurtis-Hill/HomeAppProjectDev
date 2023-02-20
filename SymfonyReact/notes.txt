@@ -1,0 +1,1 @@
+remove sensio/framework-extra-bundle when tests are working - only needed for controller annotations not attributes

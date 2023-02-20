@@ -19,6 +19,7 @@ class HumidityQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
             $humidData['alias'],
             $humidData['object'],
             'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

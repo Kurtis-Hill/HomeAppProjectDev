@@ -75,7 +75,6 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['title']);
-//        dd($this->client->getResponse()->getContent());
     }
 
     //  Add addNewDevice
@@ -103,7 +102,6 @@ class AddNewDeviceControllerTest extends WebTestCase
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//dd($responseData);
         $payload = $responseData['payload'];
 
         self::assertNotNull($payload['deviceNameID']);
@@ -332,7 +330,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     public function test_adding_device_name_too_long(): void
     {
         $formData = [
-            'deviceName' => 'thisNameIsWaaaaaaaayTooooLoooong',
+            'deviceName' => 'thisNameIsWaaaaaaaayTooooLoooongthisNameIsWaaaaaaaayTooooLoooong',
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
@@ -354,7 +352,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device name cannot be longer than 20 characters', $responseData['errors'][0]);
+        self::assertStringContainsString('Device name cannot be longer than 50 characters', $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

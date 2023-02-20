@@ -2,16 +2,13 @@
 
 namespace App\ORM\DataFixtures\ESP8266;
 
-use App\ORM\DataFixtures\Card\CardFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -22,7 +19,6 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

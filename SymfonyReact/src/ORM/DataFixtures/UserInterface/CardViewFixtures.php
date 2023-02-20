@@ -29,9 +29,9 @@ class CardViewFixtures extends Fixture implements OrderedFixtureInterface
             $newCard = new CardView();
             $newCard->setSensor($this->getReference(SensorFixtures::PERMISSION_CHECK_SENSORS[$sensor]['sensorName']));
             $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['on']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+            $newCard->setCardStateID($this->getReference(StatesFixtures::CARD_STATES['on']));
+            $newCard->setCardColourID($this->getReference(ColourFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+            $newCard->setIconID($this->getReference(IconFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
             $manager->persist($newCard);
         }
@@ -41,9 +41,9 @@ class CardViewFixtures extends Fixture implements OrderedFixtureInterface
             $newCard = new CardView();
             $newCard->setSensor($this->getReference(SensorFixtures::PERMISSION_CHECK_SENSORS[$sensor]['sensorName']));
             $newCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_ONE));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['on']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+            $newCard->setCardStateID($this->getReference(StatesFixtures::CARD_STATES['on']));
+            $newCard->setCardColourID($this->getReference(ColourFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+            $newCard->setIconID($this->getReference(IconFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
             $manager->persist($newCard);
         }
@@ -53,9 +53,9 @@ class CardViewFixtures extends Fixture implements OrderedFixtureInterface
             $newCard = new CardView();
             $newCard->setSensor($this->getReference(SensorFixtures::PERMISSION_CHECK_SENSORS[$sensor]['sensorName']));
             $newCard->setUserID($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_TWO));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['off']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+            $newCard->setCardStateID($this->getReference(StatesFixtures::CARD_STATES['off']));
+            $newCard->setCardColourID($this->getReference(ColourFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+            $newCard->setIconID($this->getReference(IconFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
             $manager->persist($newCard);
         }
@@ -64,20 +64,20 @@ class CardViewFixtures extends Fixture implements OrderedFixtureInterface
             $newCard = new CardView();
             $newCard->setSensor($this->getReference(SensorFixtures::PERMISSION_CHECK_SENSORS[$sensor]['sensorName']));
             $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['device']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+            $newCard->setCardStateID($this->getReference(StatesFixtures::CARD_STATES['device']));
+            $newCard->setCardColourID($this->getReference(ColourFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+            $newCard->setIconID($this->getReference(IconFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
             $manager->persist($newCard);
         }
-//
+
         foreach (SensorFixtures::GROUP_TWO_SENSORS as $sensor) {
             $newCard = new CardView();
             $newCard->setSensor($this->getReference(SensorFixtures::PERMISSION_CHECK_SENSORS[$sensor]['sensorName']));
             $newCard->setUserID($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO));
-            $newCard->setCardStateID($this->getReference(CardFixtures::CARD_STATES['room']));
-            $newCard->setCardColourID($this->getReference(CardFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
-            $newCard->setIconID($this->getReference(CardFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
+            $newCard->setCardStateID($this->getReference(StatesFixtures::CARD_STATES['room']));
+            $newCard->setCardColourID($this->getReference(ColourFixtures::COLOURS[mt_rand(0, $amountOfColours)]['colour']));
+            $newCard->setIconID($this->getReference(IconFixtures::ICONS[mt_rand(0, $amountOfIcons)]['name']));
 
             $manager->persist($newCard);
         }

@@ -2,12 +2,18 @@
 
 namespace App\Common\Query\Traits;
 
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use JetBrains\PhpStorm\Pure;
 
 trait QueryJoinBuilderTrait
 {
+    /**
+     * @param JoinQueryDTO[] $joinConditionDTO
+     * @param QueryBuilder $qb
+     * @return string
+     */
     public function prepareSensorJoinsForQuery(array $joinConditionDTO, QueryBuilder $qb): string
     {
         $alias = [];
@@ -15,6 +21,7 @@ trait QueryJoinBuilderTrait
             /** @var  $sensorNameJoinConditionString */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
                 $cardSensorTypeQueryDTO->getJoinConditionId(),
+                $cardSensorTypeQueryDTO->getJoiningConditionId(),
                 $cardSensorTypeQueryDTO->getJoinConditionColumn()
             );
 
@@ -26,13 +33,14 @@ trait QueryJoinBuilderTrait
     }
 
     #[Pure]
-    public function createJoinConditionString(string $joinConditionId, string $joinConditionColumn): string
+    public function createJoinConditionString(string $joinConditionId, string $joiningConditionId, string $joinConditionColumn): string
     {
+//        dd($joinConditionId, $joinConditionColumn);
         return sprintf(
             '.%s = %s.%s',
             $joinConditionId,
             $joinConditionColumn,
-            $joinConditionId
+            $joiningConditionId
         );
     }
 }

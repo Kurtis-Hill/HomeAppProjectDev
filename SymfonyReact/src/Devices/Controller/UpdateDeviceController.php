@@ -44,7 +44,7 @@ class UpdateDeviceController extends AbstractController
 
     #[
         Route(
-            path: '{deviceNameID}/update-device',
+            path: '{deviceID}/update-device',
             name: 'update-esp-device',
             methods: [Request::METHOD_PUT, Request::METHOD_PATCH]
         )
@@ -77,7 +77,7 @@ class UpdateDeviceController extends AbstractController
 
         if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
             try {
-                $room = $roomRepository->findOneById($deviceUpdateRequestDTO->getDeviceRoom());
+                $room = $roomRepository->find($deviceUpdateRequestDTO->getDeviceRoom());
             } catch (NonUniqueResultException | ORMException) {
                 return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room')]);
             }
@@ -87,7 +87,7 @@ class UpdateDeviceController extends AbstractController
         }
         if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
             try {
-                $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceGroup());
+                $groupName = $groupNameRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
             } catch (NonUniqueResultException | ORMException) {
                 return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Group name')]);
             }
@@ -129,6 +129,7 @@ class UpdateDeviceController extends AbstractController
         }
 
         $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceID()), ['user' => $this->getUser()?->getUserIdentifier()]);
+//        dd('lol', $normalizedResponse);
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }

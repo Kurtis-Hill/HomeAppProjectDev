@@ -70,10 +70,16 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-        if (!in_array($updateDeviceDTO->getProposedGroupNameToUpdateTo()?->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
-            return false;
+//        dd('lol', $updateDeviceDTO->getProposedGroupNameToUpdateTo());
+        if ($updateDeviceDTO->getProposedGroupNameToUpdateTo() !== null) {
+            if (!in_array(
+                $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupNameID(),
+                $user->getAssociatedGroupNameIds(),
+                true
+            )) {
+                return false;
+            }
         }
-
         if (!in_array(
             $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
             $user->getAssociatedGroupNameIds(),
@@ -82,6 +88,7 @@ class DeviceVoter extends Voter
         ) {
             return false;
         }
+//dd('lol');
 
         return true;
     }
@@ -94,22 +101,8 @@ class DeviceVoter extends Voter
                 $devices->getGroupNameObject(),
         );
 
-        if ($checkCommon !== null) {
-            return $checkCommon;
-        }
-
-        /** @var User $user */
-        if ($user->getGroupNameID()->getGroupNameID() !== $devices->getGroupNameObject()->getGroupNameID()) {
-            return false;
-        }
-
-        return true;
+        return $checkCommon ?? true;
     }
-
-//    private function checkUserIsApartOfProposedRoom(User $user, ?Room $proposedRoom): ?bool
-//    {
-//        return !($proposedRoom !== null && !in_array($proposedRoom->getGroupNameID(), $user->getGroupNameIds(), true));
-//    }
 
     private function checkCommon(UserInterface $user, GroupNames $proposedGroupName): ?bool
     {
@@ -123,10 +116,6 @@ class DeviceVoter extends Voter
         if (!in_array($proposedGroupName->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
             return false;
         }
-
-//        if ($proposedGroupName->getGroupNameID() === $user->getGroupNameID()) {
-//            return true;
-//        }
 
         return null;
     }

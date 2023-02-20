@@ -31,5 +31,7 @@ class StatesFixtures extends Fixture implements OrderedFixtureInterface
             $this->setReference($state, $newCardState);
             $manager->persist($newCardState);
         }
+
+        $manager->flush();
     }
 }
