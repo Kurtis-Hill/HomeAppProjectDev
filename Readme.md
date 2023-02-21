@@ -52,4 +52,7 @@ and the password is:
 <code>admin1234</code>
 
 <h1>Permission System</h1>
-Permission system is rather simple, admin users have overview of everything on the system. Users are assigned to groups and devices are registered into these groups. None admin users that are granted access to a group can view/edit/update the devices in that group. Deletion of devices and sensors is only allowed if you created the group or an admin user, if you did not create the group or are not an admin user you need to contact the admin to delete the device.
+Permission system is rather simple, admin users have overview of everything on the system. Users are assigned to groups and devices are registered into these groups. None admin users that are granted access to a group can view/edit/update/delete the devices in that group. 
+
+Rooms can be added by anybody but only devices registered to that users groups will be able to be been.
+

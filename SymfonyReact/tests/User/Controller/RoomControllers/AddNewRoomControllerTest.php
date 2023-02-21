@@ -158,7 +158,7 @@ class AddNewRoomControllerTest extends WebTestCase
         ];
     }
 
-    public function test_add_new_room_correct_data(): void
+    public function test_add_new_room_correct_data_admin(): void
     {
         $formRequestData = [
             'roomName' => 'Testroom',
@@ -172,6 +172,43 @@ class AddNewRoomControllerTest extends WebTestCase
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        /** @var Room $newRoom */
+        $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
+
+        self::assertEquals($formRequestData['roomName'], $responseData['payload']['roomName']);
+        self::assertEquals($responseData['payload']['roomID'], $newRoom->getRoomID());
+
+        self::assertInstanceOf(Room::class, $newRoom);
+        self::assertEquals('Room created successfully', $responseData['title']);
+        self::assertEquals('Testroom', $responseData['payload']['roomName']);
+        self::assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_add_new_room_correct_data_regular_user(): void
+    {
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+
+        $formRequestData = [
+            'roomName' => 'Testroom',
+        ];
+
+        $jsonData = json_encode($formRequestData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_ROOM_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 

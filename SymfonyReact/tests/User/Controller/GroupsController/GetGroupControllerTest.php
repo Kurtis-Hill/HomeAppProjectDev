@@ -104,11 +104,9 @@ class GetGroupControllerTest extends WebTestCase
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
-        $count = 0;
         foreach ($responseData['payload'] as $payload) {
             self::assertEquals(UserDataFixtures::REGULAR_GROUP_ONE, $payload['groupName']);
             self::assertIsNumeric($payload['groupNameID']);
-            ++$count;
         }
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
