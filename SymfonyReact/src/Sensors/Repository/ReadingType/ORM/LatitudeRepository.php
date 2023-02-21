@@ -51,10 +51,10 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
         $expr = $qb->expr();
 
         $qb->select(Latitude::READING_TYPE)
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Latitude::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensor')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Latitude::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
-                    Sensor::ALIAS.'.sensor',
+                    Sensor::ALIAS.'.sensorID',
                     ':sensor'
                 )
             )

@@ -123,7 +123,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     public function test_add_duplicate_device_name_same_room(): void
     {
         $formData = [
-            'deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupNameID(),
             'deviceRoom' => $this->room->getRoomID(),
@@ -145,7 +145,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertStringContainsString(sprintf(
             'Your group already has a device named %s that is in room %s',
-            ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
             $this->room->getRoom(),
         ), $responseData['errors'][0]);
 
@@ -356,34 +356,37 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_device_name_special_characters(): void
-    {
-        $formData = [
-            'deviceName' => 'device&&**name',
-            'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
-            'deviceRoom' => $this->room->getRoomID(),
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
-        );
-
-        /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertNull($device);
-        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+    /**
+     * allowing special characters in device name at the moment @TODO only allow hypens and underscores
+     */
+//    public function test_adding_device_name_special_characters(): void
+//    {
+//        $formData = [
+//            'deviceName' => 'device&&**name',
+//            'devicePassword' => self::NEW_DEVICE_PASSWORD,
+//            'deviceGroup' => $this->groupName->getGroupNameID(),
+//            'deviceRoom' => $this->room->getRoomID(),
+//        ];
+//
+//        $jsonData = json_encode($formData);
+//
+//        $this->client->request(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_DEVICE_PATH,
+//            $formData,
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+//            $jsonData,
+//        );
+//
+//        /** @var Devices $device */
+//        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+//
+//        self::assertNull($device);
+//        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function test_adding_password_name_too_short(): void
     {

@@ -10,13 +10,11 @@ class NewRoomInternalDTOBuilder
 {
     public static function buildInternalNewRoomDTO(
         string $roomName,
-        GroupNames $groupNameID,
     ): AddNewRoomDTO {
         $room = new Room();
 
         return new AddNewRoomDTO(
             $roomName,
-            $groupNameID,
             $room
         );
     }

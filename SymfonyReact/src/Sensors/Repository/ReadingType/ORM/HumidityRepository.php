@@ -47,10 +47,10 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
         $expr = $qb->expr();
 
         $qb->select(Humidity::READING_TYPE)
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Humidity::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensor')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Humidity::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
-                    Sensor::ALIAS.'.sensor',
+                    Sensor::ALIAS.'.sensorID',
                     ':sensor'
                 )
             )

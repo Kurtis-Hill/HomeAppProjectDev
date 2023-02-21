@@ -26,7 +26,7 @@ class GetReadingTypeController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('all', name: 'all-reading-types')]
+    #[Route('all', name: 'all-reading-types', methods: ['GET'])]
     public function getReadingTypes(ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
     {
         $allReadingTypes = $readingTypeRepository->findAll();

@@ -47,8 +47,8 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     /** groups of users with mappings to each other */
     public const GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO = [
-        self::ADMIN_GROUP_ONE,
         self::REGULAR_GROUP_TWO,
+        self::ADMIN_GROUP_ONE,
     ];
 
     public const ALL_GROUPS = [

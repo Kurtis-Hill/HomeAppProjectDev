@@ -46,7 +46,7 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         $expr = $qb->expr();
 
         $qb->select(Temperature::getReadingTypeName())
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Temperature::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensor')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Temperature::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
                     Sensor::ALIAS.'.sensorName',
@@ -64,10 +64,10 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         $expr = $qb->expr();
 
         $qb->select(Temperature::getReadingTypeName())
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Temperature::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensor')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Temperature::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
-                    Sensor::ALIAS.'.sensor',
+                    Sensor::ALIAS.'.sensorID',
                     ':sensor'
                 )
             )

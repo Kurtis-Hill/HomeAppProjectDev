@@ -48,11 +48,10 @@ class AddNewRoomService implements AddNewRoomServiceInterface
     }
 
     #[ArrayShape(['validationErrors'])]
-    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): array
+    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO): array
     {
         $newRoom = $addNewRoomDTO->getNewRoom();
 
-        $newRoom->setGroupNameID($groupName);
         $newRoom->setRoom($addNewRoomDTO->getRoomName());
 
         return $this->validateNewRoom($newRoom);

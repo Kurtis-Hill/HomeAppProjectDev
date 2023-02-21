@@ -32,7 +32,6 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
     #[Assert\NotBlank(message: 'Out of range humidity date time should not be blank')]
     private DateTime $createdAt;
 
-
     #[
         ORM\ManyToOne(targetEntity: Humidity::class),
         ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),

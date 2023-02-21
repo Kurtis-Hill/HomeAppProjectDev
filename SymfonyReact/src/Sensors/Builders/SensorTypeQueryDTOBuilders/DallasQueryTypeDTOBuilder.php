@@ -26,6 +26,7 @@ class DallasQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
             Dallas::ALIAS,
             Dallas::class,
             'sensor',
+            'sensor',
             Sensor::ALIAS,
         );
     }

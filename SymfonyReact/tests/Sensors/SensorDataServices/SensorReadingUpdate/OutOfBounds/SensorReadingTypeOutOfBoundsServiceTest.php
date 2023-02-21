@@ -3,6 +3,8 @@
 namespace App\Tests\Sensors\SensorDataServices\SensorReadingUpdate\OutOfBounds;
 
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
+use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
@@ -40,9 +42,9 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function test_out_of_bounds_saves_out_of_range_high_readings_analog(string $sensorName, string $sensorClass): void
     {
         /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var AnalogSensorTypeInterface $soilSensor */
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();
 
@@ -56,6 +58,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var OutOfRangeAnalog[] $constRecordings */
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($analogSensor->getCurrentReading(), $constRecordings->getSensorReading());
@@ -67,9 +70,9 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function test_out_of_bounds_saves_out_of_range_low_readings_analog(string $sensorName, string $sensorClass): void
     {
         /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var AnalogSensorTypeInterface $soilSensor */
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();
 
@@ -83,6 +86,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var OutOfRangeAnalog[] $constRecordings */
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($analogSensor->getCurrentReading(), $constRecordings->getSensorReading());
@@ -91,7 +95,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function analogOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
-            'sensorName' => Soil::NAME,
+            'sensorName' => 'AdminUserOneDeviceAdminGroupOneSoil',
             'sensorClass' => Soil::class
         ];
     }
@@ -102,11 +106,11 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function test_out_of_bounds_saves_out_of_range_high_readings_temperature(string $sensorName, string $sensorClass): void
     {
         /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        /** @var TemperatureSensorTypeInterface $soilSensor */
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
+        /** @var TemperatureSensorTypeInterface $temperatureSensorType */
+        $temperatureSensorType = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
-        $tempObject = $soilSensor->getTemperature();
+        $tempObject = $temperatureSensorType->getTemperature();
 
         $highReading = $tempObject->getHighReading();
         $tempObject->setCurrentReading($highReading + 5);
@@ -117,6 +121,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $tempObject->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($tempObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -127,10 +132,12 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_low_readings_temperature(string $sensorName, string $sensorClass): void
     {
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        /** @var Sensor $sensor */
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
+        /** @var TemperatureSensorTypeInterface $soilSensor */
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
-        $analogSensor = $soilSensor->getTempObject();
+        $analogSensor = $soilSensor->getTemperature();
 
         $lowReading = $analogSensor->getLowReading();
         $analogSensor->setCurrentReading($lowReading - 5);
@@ -139,8 +146,10 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
+
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $analogSensor->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($analogSensor->getCurrentReading(), $constRecordings->getSensorReading());
@@ -149,17 +158,17 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function temperatureOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
-            'sensorName' => Bmp::NAME,
+            'sensorName' => "AdminUserOneDeviceAdminGroupOneBmp",
             'sensorClass' => Bmp::class
         ];
 
         yield [
-            'sensorName' => Dallas::NAME,
+            'sensorName' => "AdminUserOneDeviceAdminGroupOneDallas",
             'sensorClass' => Dallas::class
         ];
 
         yield [
-            'sensorName' => Dht::NAME,
+            'sensorName' => "AdminUserOneDeviceAdminGroupOneDht",
             'sensorClass' => Dht::class
         ];
     }
@@ -169,8 +178,8 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_high_readings_humidity(string $sensorName, string $sensorClass): void
     {
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $humidObject = $soilSensor->getHumidObject();
 
@@ -183,6 +192,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $humidObject->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($humidObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -193,8 +203,8 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_low_readings_humidity(string $sensorName, string $sensorClass): void
     {
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $humidObject = $soilSensor->getHumidObject();
 
@@ -207,6 +217,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $humidObject->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($humidObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -215,12 +226,12 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function humidityOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
-            'sensorName' => Bmp::NAME,
+            'sensorName' => "AdminUserOneDeviceAdminGroupOneBmp",
             'sensorClass' => Bmp::class
         ];
 
         yield [
-            'sensorName' => Dht::NAME,
+            'sensorName' => "AdminUserOneDeviceAdminGroupOneDht",
             'sensorClass' => Dht::class
         ];
     }
@@ -230,8 +241,8 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_high_readings_latitude(string $sensorName, string $sensorClass): void
     {
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $latitudeObject = $soilSensor->getLatitudeObject();
 
@@ -244,6 +255,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $latitudeObject->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($latitudeObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -254,8 +266,8 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_low_readings_latitude(string $sensorName, string $sensorClass): void
     {
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::SENSORS[$sensorName]]);
-        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensorNameID' => $sensor->getSensorID()]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
+        $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $latitudeObject = $soilSensor->getLatitudeObject();
 
@@ -268,6 +280,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
         $constRecordings = $constRecord->findBy(['sensorReadingID' => $latitudeObject->getSensorID()]);
 
+        /** @var OutOfBoundsEntityInterface[] $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($latitudeObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -276,7 +289,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function latitudeOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
-            'sensorName' => Bmp::NAME,
+            'sensorName' => "AdminUserOneDeviceAdminGroupOneBmp",
             'sensorClass' => Bmp::class
         ];
     }

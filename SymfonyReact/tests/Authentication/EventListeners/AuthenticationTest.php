@@ -189,8 +189,8 @@ class AuthenticationTest extends WebTestCase
     public function deviceCredentialsDataProvider(): Generator
     {
         yield [
-            'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
-            'password' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'],
+            'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
+            'password' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['password'],
             'ipAddress' => "192.168.1.43",
             'externalIpAddress' => "86.24.1.113",
         ];
@@ -292,13 +292,13 @@ class AuthenticationTest extends WebTestCase
     public function deviceWrongCredentialsDataProvider(): Generator
     {
         yield [
-            'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['name'],
+            'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
             'password' => 'wrong_password',
         ];
 
         yield [
             'username' => 'Wrong_username',
-            'password' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME['password'],
+            'password' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['password'],
         ];
 
         yield [

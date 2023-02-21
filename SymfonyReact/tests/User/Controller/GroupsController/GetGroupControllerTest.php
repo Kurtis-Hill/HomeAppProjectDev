@@ -38,19 +38,18 @@ class GetGroupControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
     }
 
-    public function test_user_groups_are_correct(): void
+    public function test_user_groups_are_correct_admin(): void
     {
         $this->client->request(
             Request::METHOD_GET,
             self::GET_USER_GROUPS_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '.$this->userToken]
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer ' . $this->userToken]
         );
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
-
         $count = 0;
         foreach ($responseData['payload'] as $payload) {
             self::assertEquals(UserDataFixtures::ALL_GROUPS[$count], $payload['groupName']);
@@ -59,6 +58,85 @@ class GetGroupControllerTest extends WebTestCase
         }
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
+    }
+
+    public function test_user_groups_are_correct_regular_user_admin_group(): void
+    {
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_TWO,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_USER_GROUPS_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer ' . $userToken]
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true);
+        $count = 0;
+        foreach ($responseData['payload'] as $payload) {
+            self::assertEquals(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO[$count], $payload['groupName']);
+            self::assertIsNumeric($payload['groupNameID']);
+            ++$count;
+        }
+        self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
+        self::assertCount(2, $responseData);
+    }
+
+    public function test_user_groups_are_correct_regular_user_none_other_groups(): void
+    {
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_USER_GROUPS_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer ' . $userToken]
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true);
+        $count = 0;
+        foreach ($responseData['payload'] as $payload) {
+            self::assertEquals(UserDataFixtures::REGULAR_GROUP_ONE, $payload['groupName']);
+            self::assertIsNumeric($payload['groupNameID']);
+            ++$count;
+        }
+        self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
+        self::assertCount(2, $responseData);
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            self::GET_USER_GROUPS_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_PUT],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
+        ];
     }
 
     protected function tearDown(): void

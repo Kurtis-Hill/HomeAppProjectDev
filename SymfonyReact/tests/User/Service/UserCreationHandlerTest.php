@@ -58,7 +58,7 @@ class UserCreationHandlerTest extends KernelTestCase
             'Doe',
             'test@gmail.com',
             'password',
-            UserDataFixtures::USER_GROUP,
+            UserDataFixtures::ADMIN_GROUP_ONE,
         );
     }
 

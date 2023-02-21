@@ -43,7 +43,6 @@ class AddNewRoomController extends AbstractController
     public function addNewRoom(
         Request $request,
         AddNewRoomServiceInterface $addNewRoomService,
-        GroupNameRepositoryInterface $groupNameRepository,
         ValidatorInterface $validator,
     ): Response {
         $addNewRoomRequestDTO = new AddNewRoomRequestDTO();
@@ -63,14 +62,8 @@ class AddNewRoomController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors), 'Validation Errors Occurred');
         }
 
-        $groupName = $groupNameRepository->findOneById($addNewRoomRequestDTO->getGroupNameID());
-        if (!$groupName instanceof GroupNames) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_NOT_FOUND_FOR_ID, 'Groupname', $addNewRoomRequestDTO->getGroupNameID())]);
-        }
-
         $addNewRoomDTO = NewRoomInternalDTOBuilder::buildInternalNewRoomDTO(
             $addNewRoomRequestDTO->getRoomName(),
-            $groupName,
         );
 
         try {
@@ -83,7 +76,7 @@ class AddNewRoomController extends AbstractController
             return $this->sendBadRequestJsonResponse(['Failed to process room request']);
         }
 
-        $validationErrors = $addNewRoomService->createNewRoom($addNewRoomDTO, $groupName);
+        $validationErrors = $addNewRoomService->createNewRoom($addNewRoomDTO);
         $newRoom = $addNewRoomDTO->getNewRoom();
         try {
             $this->denyAccessUnlessGranted(RoomVoter::ADD_NEW_ROOM, $newRoom);

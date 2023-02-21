@@ -17,7 +17,7 @@ class GetGroupsController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('all', name: 'get-user-groups')]
+    #[Route('all', name: 'get-user-groups', methods: ['GET'])]
     public function getUsersGroups(Security $token): Response
     {
         $user = $token->getUser();
@@ -26,9 +26,9 @@ class GetGroupsController extends AbstractController
         }
 
         $groupNameDTOs = [];
-        foreach ($user->getUserGroupMappingEntities() as $groupName) {
+        foreach ($user->getAssociatedGroupNames() as $groupName) {
             $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
-                $groupName->getGroupName()
+                $groupName
             );
         }
 

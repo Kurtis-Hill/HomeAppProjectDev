@@ -18,7 +18,7 @@ interface AddNewRoomServiceInterface
     public function preProcessNewRoomValues(AddNewRoomDTO $addNewRoomDTO): void;
 
     #[ArrayShape(['validationErrors'])]
-    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): array;
+    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO): array;
 
     /**
      * @throws ORMException

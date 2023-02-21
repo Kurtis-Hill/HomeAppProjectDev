@@ -14,7 +14,7 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 {
     private const FIXTURE_ORDER = 3;
 
-    public const LOGIN_TEST_ACCOUNT_NAME = [
+    public const LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE = [
         'name' => 'apiLoginTest',
         'password' => 'device1234'
     ];
@@ -163,8 +163,8 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $duplicateCheck->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
         $duplicateCheck->setGroupNameObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
         $duplicateCheck->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
-        $duplicateCheck->setDeviceName(self::LOGIN_TEST_ACCOUNT_NAME['name']);
-        $duplicateCheck->setPassword($this->passwordEncoder->hashPassword($duplicateCheck, self::LOGIN_TEST_ACCOUNT_NAME['password']));
+        $duplicateCheck->setDeviceName(self::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']);
+        $duplicateCheck->setPassword($this->passwordEncoder->hashPassword($duplicateCheck, self::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['password']));
         $duplicateCheck->setRoles([Devices::ROLE]);
 
         $manager->persist($duplicateCheck);

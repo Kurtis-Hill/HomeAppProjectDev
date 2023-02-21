@@ -174,6 +174,17 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $groupNames;
     }
 
+    #[ArrayShape([GroupNames::class])]
+    public function getAssociatedGroupNames(): array
+    {
+        $groupNames[] = $this->getGroupNameID();
+        /** @var GroupNameMapping $entity */
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = $entity->getGroupName();
+        }
+        return $groupNames;
+    }
+
     public function getUsername(): string
     {
         return $this->email;
