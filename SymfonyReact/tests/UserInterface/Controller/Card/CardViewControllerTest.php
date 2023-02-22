@@ -79,7 +79,7 @@ class CardViewControllerTest extends WebTestCase
             self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
             self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
             self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
-            self::assertEquals($cardViewObject->getIconID()->getIconName(), $payload['cardIcon']);
+            self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
 
             $readingTypeQueryDTOs = $this->sensorTypeQueryFactory
@@ -187,13 +187,13 @@ class CardViewControllerTest extends WebTestCase
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         foreach ($responseData['payload'] as $payload) {
-            /** @var CardView $cardView */
+            /** @var CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
-            self::assertEquals($cardViewObject->getSensorNameID()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensorNameID()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-            self::assertEquals($cardViewObject->getSensorNameID()->getDeviceObject()->getRoomObject()->getRoom(), $payload['sensorRoom']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
             self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
 
@@ -213,8 +213,8 @@ class CardViewControllerTest extends WebTestCase
             }
 
             $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
-                $cardViewObject->getSensorNameID()->getDeviceObject()->getDeviceNameID(),
-                $cardViewObject->getSensorNameID()->getSensorName(),
+                $cardViewObject->getSensor()->getDevice()->getDeviceID(),
+                $cardViewObject->getSensor()->getSensorName(),
                 null,
                 $readingTypeQueryDTOs,
             );

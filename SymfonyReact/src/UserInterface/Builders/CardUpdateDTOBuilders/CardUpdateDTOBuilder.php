@@ -28,7 +28,7 @@ class CardUpdateDTOBuilder
     ): CardViewResponseDTO {
         return new CardViewResponseDTO(
             $cardView->getCardViewID(),
-            IconDTOBuilder::buildIconResponseDTO($cardView->getIconID()),
+            IconDTOBuilder::buildIconResponseDTO($cardView->getCardIconID()),
             ColourDTOBuilder::buildColourResponseDTO($cardView->getCardColourID()),
             CardStateDTOBuilder::buildCardStateResponseDTO($cardView->getCardStateID()),
         );

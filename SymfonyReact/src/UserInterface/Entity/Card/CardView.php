@@ -57,7 +57,7 @@ class CardView
         ORM\JoinColumn(name: "iconID", referencedColumnName: "iconID"),
     ]
     #[Assert\NotNull(message: "Icon cannot be null")]
-    private ?Icons $iconID;
+    private ?Icons $cardIconID;
 
     #[
         ORM\ManyToOne(targetEntity: CardColour::class),
@@ -108,14 +108,14 @@ class CardView
         }
     }
 
-    public function getIconID(): Icons
+    public function getCardIconID(): Icons
     {
-        return $this->iconID;
+        return $this->cardIconID;
     }
 
-    public function setIconID(?Icons $iconID): void
+    public function setCardIconID(?Icons $cardIconID): void
     {
-        $this->iconID = $iconID;
+        $this->cardIconID = $cardIconID;
     }
 
     public function getCardColourID(): CardColour

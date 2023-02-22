@@ -22,7 +22,7 @@ trait QueryJoinBuilderTrait
             $sensorNameJoinConditionString = $this->createJoinConditionString(
                 $cardSensorTypeQueryDTO->getJoinConditionId(),
                 $cardSensorTypeQueryDTO->getJoiningConditionId(),
-                $cardSensorTypeQueryDTO->getJoinConditionColumn()
+                $cardSensorTypeQueryDTO->getJoiningConditionColumn()
             );
 
             $alias[] = $cardSensorTypeQueryDTO->getAlias();

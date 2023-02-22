@@ -66,7 +66,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $expr = $qb->expr();
 
         $qb->select('sensor')
-            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceID = sensor.deviceID')
+            ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
                 $expr->eq('device.groupNameID', ':groupName'),

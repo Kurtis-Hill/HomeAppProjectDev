@@ -32,7 +32,7 @@ class DHTQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
             Dht::ALIAS,
             Dht::class,
             'sensor',
-            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

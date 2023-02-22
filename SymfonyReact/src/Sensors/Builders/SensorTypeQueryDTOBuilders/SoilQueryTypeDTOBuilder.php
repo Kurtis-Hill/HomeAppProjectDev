@@ -37,7 +37,7 @@ class SoilQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
             Soil::ALIAS,
             Soil::class,
             'sensor',
-            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

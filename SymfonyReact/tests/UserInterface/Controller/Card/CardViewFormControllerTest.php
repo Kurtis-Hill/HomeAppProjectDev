@@ -48,7 +48,7 @@ class CardViewFormControllerTest extends WebTestCase
     /**
      * @dataProvider getCardViewFormDataProvider
      */
-    public function testGetCardViewFormData(string $sensorType): void
+    public function test_get_card_view_form_data(string $sensorType): void
     {
         /** @var SensorType $sensorType */
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
@@ -57,7 +57,7 @@ class CardViewFormControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['sensorTypeID' => $sensorType->getSensorTypeID()])[0];
 
         /** @var CardView $cardViewObject */
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensorNameID' => $sensor->getSensorID()])[0];
+        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensor' => $sensor->getSensorID()])[0];
 
         $this->client->request(
             Request::METHOD_GET,
@@ -94,7 +94,7 @@ class CardViewFormControllerTest extends WebTestCase
 
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
 
-        self::assertEquals($cardViewObject->getIconID()->getIconID(), $responseData['currentCardIcon']['iconID']);
+        self::assertEquals($cardViewObject->getCardIconID()->getIconID(), $responseData['currentCardIcon']['iconID']);
         self::assertCount(count($allIcons), $responseData['cardUserSelectionOptions']['icons']);
 
         self::assertCount(count($allCardState), $responseData['cardUserSelectionOptions']['states']);
@@ -404,7 +404,9 @@ class CardViewFormControllerTest extends WebTestCase
                 }
             }
         } else {
-            $cardState = $cardStateRepository->findAll()[0]->getCardstateID();
+            /** @var Cardstate[] $cardStates */
+            $cardStates = $cardStateRepository->findAll();
+            $cardState = $cardStates[0]->getStateID();
         }
 
         $sensorData = [
@@ -495,8 +497,9 @@ class CardViewFormControllerTest extends WebTestCase
         if ($nullCardState === true) {
             $cardState = null;
         } else {
-            $cardStateObject = $cardStateRepository->findAll()[0];
-            $cardState = $cardStateObject->getCardstateID();
+            /** @var Cardstate[] $cardStateObject */
+            $cardStateObject = $cardStateRepository->findAll();
+            $cardState = $cardStateObject[0]->getStateID();
         }
 
         $sensorData = [

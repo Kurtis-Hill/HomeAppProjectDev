@@ -10,6 +10,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,35 +37,42 @@ class GetUserDataControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
     }
 
-    public function test_get_user_data_response(): void
+    /**
+     * @dataProvider getUserDataResponseDataProvider
+     */
+    public function test_get_user_data_response(string $email, string $password, int $groupNameNumber): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        $testUser = $userRepository->findOneBy(['email' => $email]);
 
         /** @var Room[] $userRooms */
-        $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getAssociatedGroupNameIds(), 1);
+        $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            $email,
+            $password
+        );
         $this->client->request(
             Request::METHOD_GET,
             self::GET_USER_DATA_URL,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
 
         self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
         self::assertSameSize($userRooms, $responseData['userRooms']);
-        self::assertSameSize($testUser->getAssociatedGroupNameIds(), $responseData['userGroups']);
+        self::assertCount($groupNameNumber, $responseData['userGroups']);
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
 
-        /** @var Room $room */
         foreach ($userRooms as $room) {
             foreach ($responseData['userRooms'] as $userRoom) {
                 if ($userRoom['roomID'] === $room->getRoomID()) {
                     self::assertEquals($room->getRoom(), $userRoom['roomName'], 'room name wrong');
-//                    self::assertEquals($room->getGroupNameID()->getGroupNameID(), $userRoom['groupNameID'], 'room type wrong');
                     $passed = true;
                     continue;
                 }
@@ -86,6 +94,30 @@ class GetUserDataControllerTest extends WebTestCase
                 }
             }
         }
+    }
+
+    public function getUserDataResponseDataProvider(): Generator
+    {
+        yield [
+            'email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'groupNameNumber' => count(UserDataFixtures::ALL_GROUPS),
+        ];
+        yield [
+            'email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
+                'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'groupNameNumber' => count(UserDataFixtures::ALL_GROUPS),
+        ];
+        yield [
+            'email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
+            'groupNameNumber' => 1,
+        ];
+        yield [
+            'email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
+            'groupNameNumber' => 2,
+        ];
     }
 
     public function test_navbar_data_response_wrong_token(): void

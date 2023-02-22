@@ -64,8 +64,9 @@ class CardViewFormController extends AbstractController
             | SensorTypeBuilderFailureException $e
         ) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
-        } catch (ORMException) {
+        } catch (ORMException $e) {
             $this->logger->error('Query failure for card view form id: ' . $cardViewObject->getCardViewID());
+
             return $this->sendInternalServerErrorJsonResponse(['Query failure   ']);
         }
 

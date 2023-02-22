@@ -48,7 +48,6 @@ class NavBarController extends AbstractController
             return $this->sendMultiStatusJsonResponse($navBarDataProvider->getNavbarRequestErrors(), $normalizedResponse ?? []);
         }
 
-//        dd($normalizedResponse);
         return $this->sendSuccessfulJsonResponse($normalizedResponse ?? []);
     }
 }

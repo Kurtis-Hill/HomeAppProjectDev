@@ -140,13 +140,13 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
     private function cardViewBuildBasicJoins(QueryBuilder $qb, CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO): void
     {
-        $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensor', 'sensor', CardView::ALIAS));
-
+        $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensorID', 'sensor', CardView::ALIAS));
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO?->getReadingTypesToQuery(), $qb);
+
         $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, Sensor::ALIAS, Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS)
             ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceID', 'deviceID', Sensor::ALIAS))
-            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('stateID', 'stateID', CardView::ALIAS))
-            ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.colourID')
+            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('stateID', 'cardStateID', CardView::ALIAS))
+            ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
             ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
             ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', 'roomID', Room::ALIAS))
             ->innerJoin(SensorType::class, SensorType::ALIAS, Join::WITH, SensorType::ALIAS . $this->createJoinConditionString('sensorTypeID', 'sensorTypeID', Sensor::ALIAS));
@@ -181,7 +181,6 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
                 $parameters['roomID'] = $cardViewTypeFilterDTO->getRoom()->getRoomID();
             }
         }
-
         if ($cardDataPostFilterDTO !== null) {
             /** @var SensorTypeNotJoinQueryDTO $excludeSensorType */
             foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {

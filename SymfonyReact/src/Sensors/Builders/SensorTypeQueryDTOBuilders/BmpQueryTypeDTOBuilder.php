@@ -37,7 +37,7 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
             Bmp::ALIAS,
             Bmp::class,
             'sensor',
-            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

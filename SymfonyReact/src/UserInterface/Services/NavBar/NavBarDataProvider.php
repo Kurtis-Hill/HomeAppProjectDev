@@ -9,6 +9,7 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
+use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarListLinkDTOBuilder;
@@ -27,16 +28,20 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private NavBarDTOBuilder $navBarDTOBuilder;
 
+    private GroupNameRepository $groupNameRepository;
+
     private array $errors = [];
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
         DeviceRepositoryInterface $deviceRepository,
         NavBarDTOBuilder $navBarDTOBuilder,
+        GroupNameRepository $groupNameRepository,
     ) {
         $this->roomRepository = $roomRepository;
         $this->deviceRepository = $deviceRepository;
         $this->navBarDTOBuilder = $navBarDTOBuilder;
+        $this->groupNameRepository = $groupNameRepository;
     }
 
     #[ArrayShape([NavBarResponseDTO::class])]
@@ -49,7 +54,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         }
         $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices ?? []);
 
-        $userGroups = $user->getGroupNameMappings();
+        $userGroups = $this->getGroupNames($user);
         $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
 
         try {
@@ -141,6 +146,13 @@ class NavBarDataProvider implements NavBarDataProviderInterface
     public function getNavbarRequestErrors(): array
     {
         return $this->errors;
+    }
+
+    public function getGroupNames(User $user): array
+    {
+        return $user->isAdmin()
+            ? $this->groupNameRepository->findAll()
+            : $user->getAssociatedGroupNames();
     }
 
     /**

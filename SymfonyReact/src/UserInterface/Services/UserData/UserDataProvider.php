@@ -4,6 +4,7 @@ namespace App\UserInterface\Services\UserData;
 
 use App\Common\API\APIErrorMessages;
 use App\User\Entity\User;
+use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use App\UserInterface\Builders\UserData\UserDataDTOBuilder;
 use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
@@ -15,20 +16,24 @@ class UserDataProvider
 {
     private RoomRepositoryInterface $roomRepository;
 
+    private GroupNameRepository $groupNameRepository;
+
     private array $errors = [];
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
+        GroupNameRepository $groupNameRepository,
     ) {
         $this->roomRepository = $roomRepository;
+        $this->groupNameRepository = $groupNameRepository;
     }
 
     #[ArrayShape([UserDataResponseDTO::class])]
     public function getGeneralUserData(User $user): UserDataResponseDTO
     {
-        $userGroups = $user->getGroupNameMappings();
+        $userGroups = $this->getGroupNameData($user);
         try {
-            $userRooms = $this->getRoomData($user);
+            $userRooms = $this->getRoomData();
         } catch (ORMException) {
             $userRooms[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms');
             $this->errors[] = 'Failed to get Rooms';
@@ -48,8 +53,15 @@ class UserDataProvider
     /**
      * @throws ORMException
      */
-    private function getRoomData(User $user): array
+    private function getRoomData(): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($user->getAssociatedGroupNameIds(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->roomRepository->findAll();
+    }
+
+    private function getGroupNameData(User $user): array
+    {
+        return $user->isAdmin()
+            ? $this->groupNameRepository->findAll()
+            : $user->getAssociatedGroupNames();
     }
 }

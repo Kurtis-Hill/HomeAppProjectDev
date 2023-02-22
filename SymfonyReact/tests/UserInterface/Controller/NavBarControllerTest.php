@@ -12,6 +12,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -40,17 +41,19 @@ class NavBarControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
     }
 
-    public function test_get_navbar_data_response(): void
+    /**
+     * @dataProvider getNavBarDataUserDataProvider
+     */
+    public function test_get_navbar_data_response_admin_user(string $email, string $password, int $groupCount): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        $testUser = $userRepository->findOneBy(['email' => $email]);
 
-//        $groupNameMappingEntities = $this->entityManager->getRepository(GroupNameMapping::class)->getAllGroupMappingEntitiesForUser($testUser);
-//        $testUser->setUserGroupMappingEntities($groupNameMappingEntities);
+        $userToken = $this->setUserToken($this->client, $email, $password);
 
         /** @var Room[] $userRooms */
-        $userRooms = $this->entityManager->getRepository(Room::class)->getAllUserRoomsByGroupId($testUser->getAssociatedGroupNameIds());
+        $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
 
         /** @var Devices[] $userDevices */
         $userDevices = $this->entityManager->getRepository(Devices::class)->getAllUsersDevicesByGroupId($testUser->getAssociatedGroupNameIds());
@@ -60,16 +63,16 @@ class NavBarControllerTest extends WebTestCase
             self::NAVBAR_DATA_URL,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
 
         foreach ($responseData as $response) {
             $userLinks = $response['listItemLinks'];
-
             self::assertEmpty($response['errors'], 'errors is not empty');
             self::assertNotEmpty($userLinks, 'userLinks is empty');
+
             foreach ($userLinks as $links) {
                 self::assertIsString($links['displayName'], 'Device name is not string');
                 self::assertIsString($links['link'], 'device link is not string');
@@ -100,11 +103,38 @@ class NavBarControllerTest extends WebTestCase
 
         self::assertCount(count($userRooms), $responseData[2]['listItemLinks'], sprintf($countMessage, 'rooms'));
         self::assertCount(count($userDevices), $responseData[0]['listItemLinks'], sprintf($countMessage, 'device'));
-        self::assertCount(count($testUser->getAssociatedGroupNameIds()), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
+        self::assertCount($groupCount, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
         self::assertSameSize(RoomFixtures::ROOMS, $responseData[2]['listItemLinks'], sprintf($countMessage, 'room'));
-        self::assertSameSize(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
+        self::assertCount($groupCount, $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
 
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
+    }
+
+    public function getNavBarDataUserDataProvider(): Generator
+    {
+        yield [
+            'email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'groupCount' => count(UserDataFixtures::ALL_GROUPS),
+        ];
+
+        yield [
+            'email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'groupCount' => count(UserDataFixtures::ALL_GROUPS),
+        ];
+
+        yield [
+            'email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
+            'groupCount' => 1,
+        ];
+
+        yield [
+            'email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO,
+            'password' => UserDataFixtures::REGULAR_PASSWORD,
+            'groupCount' => count(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO),
+        ];
     }
 
     public function test_navbar_data_response_wrong_token(): void
