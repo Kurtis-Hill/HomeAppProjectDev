@@ -12,12 +12,15 @@ use App\Sensors\Builders\SensorCreationBuilders\NewSensorDTOBuilder;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Exceptions\DeviceNotFoundException;
+use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface;
 use App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationInterface;
 use App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface;
 use App\Sensors\Voters\SensorVoter;
+use App\User\Entity\User;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationHandlerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
@@ -50,8 +53,6 @@ class AddNewSensorController extends AbstractController
         ValidatorInterface $validator,
         NewSensorCreationInterface $newSensorCreationService,
         ReadingTypeCreationInterface $readingTypeCreation,
-        DeviceRepositoryInterface $deviceRepository,
-        SensorTypeRepositoryInterface $sensorTypeRepository,
         CardCreationHandlerInterface $cardCreationService,
         DeleteSensorHandlerInterface $deleteSensorService,
     ): JsonResponse {
@@ -72,47 +73,20 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-        try {
-            $deviceObject = $deviceRepository->findOneById($newSensorRequestDTO->getDeviceNameID());
-        } catch (ORMException) {
-            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Device'), ['deviceID' => $newSensorRequestDTO->getDeviceNameID()]);
-
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Device')]);
-        }
-        if (!$deviceObject instanceof Devices) {
-            return $this->sendBadRequestJsonResponse([
-                sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    'Device',
-                ),
-            ]);
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse();
         }
 
         try {
-            $sensorTypeObject = $sensorTypeRepository->findOneById($newSensorRequestDTO->getSensorTypeID());
-        } catch (ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([
-                sprintf(
-                    APIErrorMessages::QUERY_FAILURE,
-                    'Sensor Type',
-                ),
-            ]);
-        }
-        if (!$sensorTypeObject instanceof SensorType) {
-            return $this->sendBadRequestJsonResponse([
-                sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    'SensorType',
-                ),
-            ]);
-        }
+            $newSensorDTO = $newSensorCreationService->buildNewSensorDTO($newSensorRequestDTO, $user);
+        } catch (ORMException $e) {
+            $this->logger->error($e->getMessage(), ['user' => $user->getUserIdentifier()]);
 
-        $newSensorDTO = NewSensorDTOBuilder::buildNewSensorDTO(
-            $newSensorRequestDTO->getSensorName(),
-            $sensorTypeObject,
-            $deviceObject,
-            $this->getUser()
-        );
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::QUERY_FAILURE, 'Sensor data']);
+        } catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
+            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+        }
 
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);

@@ -6,16 +6,14 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
-use App\User\Entity\GroupNames;
-use App\User\Entity\Room;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
-use App\User\Repository\ORM\RoomRepositoryInterface;
+use App\User\Entity\User;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
@@ -53,9 +51,7 @@ class UpdateDeviceController extends AbstractController
         Devices $deviceToUpdate,
         Request $request,
         ValidatorInterface $validator,
-        UpdateDeviceHandlerInterface $updateDeviceObjectBuilder,
-        RoomRepositoryInterface $roomRepository,
-        GroupNameRepositoryInterface $groupNameRepository
+        UpdateDeviceHandlerInterface $updateDeviceHandler,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -75,45 +71,35 @@ class UpdateDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors), APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
-            try {
-                $room = $roomRepository->find($deviceUpdateRequestDTO->getDeviceRoom());
-            } catch (NonUniqueResultException | ORMException) {
-                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room')]);
-            }
-            if (!$room instanceof Room) {
-                return $this->sendBadRequestJsonResponse(['The id provided for room doesnt match any room we have'], 'Room not found');
-            }
-        }
-        if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
-            try {
-                $groupName = $groupNameRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
-            } catch (NonUniqueResultException | ORMException) {
-                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Group name')]);
-            }
-            if (!$groupName instanceof GroupNames) {
-                return $this->sendBadRequestJsonResponse(['The id provided for groupname doesnt match any groupname we have'], 'Group name not found');
-            }
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'User')]);
         }
 
-        $updateDeviceDTO = DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
-            $deviceUpdateRequestDTO,
-            $deviceToUpdate,
-            $room ?? null,
-            $groupName ?? null
-        );
+        try {
+            $updateDeviceDTO = $updateDeviceHandler->buildUpdateDeviceDTO(
+                $deviceUpdateRequestDTO,
+                $user,
+                $deviceToUpdate,
+            );
+        } catch (NonUniqueResultException | ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room or group name')]);
+        } catch (GroupNameNotFoundException|RoomNotFoundException $e) {
+            return $this->sendNotFoundResponse([$e->getMessage()]);
+        }
+
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::UPDATE_DEVICE, $updateDeviceDTO);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceUpdateValidationErrors = $updateDeviceObjectBuilder->updateDevice($updateDeviceDTO);
+        $deviceUpdateValidationErrors = $updateDeviceHandler->updateDevice($updateDeviceDTO);
         if (!empty($deviceUpdateValidationErrors)) {
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        $savedDevice = $updateDeviceObjectBuilder->saveDevice($deviceToUpdate);
+        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate);
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
@@ -129,7 +115,6 @@ class UpdateDeviceController extends AbstractController
         }
 
         $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceID()), ['user' => $this->getUser()?->getUserIdentifier()]);
-//        dd('lol', $normalizedResponse);
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }

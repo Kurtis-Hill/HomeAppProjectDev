@@ -4,6 +4,7 @@
 namespace App\Common\API\Traits;
 
 use App\Common\API\HTTPStatusCodes;
+use App\Devices\Controller\GetDeviceController;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,8 @@ trait HomeAppAPITrait
     public const SERVER_ERROR_TRY_AGAIN = 'Server Error Please Try Again';
 
     public const NOT_AUTHORIZED_TO_BE_HERE = 'You Are Not Authorised To Be Here';
+
+    public const BAD_REQUEST_NO_DATA_RETURNED = 'Bad Request No Data Returned';
 
     // 20x Successfull
     public function sendSuccessfulJsonResponse(array $data = [], $title = self::REQUEST_SUCCESSFUL): JsonResponse
@@ -182,7 +185,7 @@ trait HomeAppAPITrait
     }
 
     // 40x Client Error Response
-    public function sendBadRequestJsonResponse(array $errors = [], string $title = 'Bad Request No Data Returned'): JsonResponse
+    public function sendBadRequestJsonResponse(array $errors = [], string $title = GetDeviceController::BAD_REQUEST_NO_DATA_RETURNED): JsonResponse
     {
         if (!empty($errors)) {
             return $this->returnJsonResponse(
@@ -289,7 +292,7 @@ trait HomeAppAPITrait
         return $normalizer->normalize($data);
     }
 
-    public function deserializeRequest(string $data, ?string $class = null, ?string $format = null, array $extraContexts = []): mixed
+    public function deserializeRequest(string|array $data, ?string $class = null, ?string $format = null, array $extraContexts = []): mixed
     {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];

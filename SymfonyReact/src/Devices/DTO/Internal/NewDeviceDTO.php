@@ -9,34 +9,16 @@ use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Immutable]
-class NewDeviceDTO
+readonly class NewDeviceDTO
 {
-    private UserInterface $createdBy;
-
-    private GroupNames  $groupNameId;
-
-    private Room  $roomId;
-
-    private ?string $deviceName;
-
-    private Devices $devices;
-
-    private string $devicePassword;
-
     public function __construct(
-        UserInterface $createdBy,
-        GroupNames $groupNameId,
-        Room $roomId,
-        ?string $deviceName,
-        string $devicePassword,
-        Devices $devices,
+        private UserInterface $createdBy,
+        private GroupNames $groupNameId,
+        private Room $roomId,
+        private ?string $deviceName,
+        private string $devicePassword,
+        private Devices $devices,
     ) {
-        $this->createdBy = $createdBy;
-        $this->groupNameId = $groupNameId;
-        $this->roomId = $roomId;
-        $this->deviceName = $deviceName;
-        $this->devicePassword = $devicePassword;
-        $this->devices = $devices;
     }
 
     public function getDeviceName(): ?string

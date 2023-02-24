@@ -3,6 +3,7 @@
 namespace App\Tests\Devices\Controller;
 
 use App\Common\API\HTTPStatusCodes;
+use App\Devices\Controller\UpdateDeviceController;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
@@ -244,9 +245,9 @@ class UpdateDeviceControllerTest extends WebTestCase
             JSON_THROW_ON_ERROR
         );
 
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(['The id provided for room doesnt match any room we have'], $responseData['errors']);
-        self::assertEquals('Room not found', $responseData['title']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        self::assertEquals(['Room not found for id ' . $nonExistentRoomID], $responseData['errors']);
+        self::assertEquals(UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
     }
 
     public function test_sending_none_existent_groupID(): void
@@ -291,9 +292,9 @@ class UpdateDeviceControllerTest extends WebTestCase
             JSON_THROW_ON_ERROR
         );
 
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(['The id provided for groupname doesnt match any groupname we have'], $responseData['errors']);
-        self::assertEquals('Group name not found', $responseData['title']);
+        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(['Group name not found for id ' . $nonExistentGroupID], $responseData['errors']);
+        self::assertEquals(UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
     }
 
     public function test_regular_user_cannot_update_device_group_not_apart_of(): void

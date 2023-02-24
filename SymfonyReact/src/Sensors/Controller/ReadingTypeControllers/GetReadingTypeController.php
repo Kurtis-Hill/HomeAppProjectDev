@@ -52,7 +52,7 @@ class GetReadingTypeController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedReadingTypesDTOs);
     }
 
-    #[Route('{readingTypeID}', name: 'all-reading-types', methods: ['GET'])]
+    #[Route('{readingTypeID}', name: 'singular-reading-types', methods: ['GET'])]
     public function getSingleReadingTypes(ReadingTypes $readingType): JsonResponse
     {
         $readingTypeResponseDTO = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingType);

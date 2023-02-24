@@ -298,8 +298,6 @@ class GetDeviceControllerTest extends WebTestCase
         }
     }
 
-    // @TODO check
-
     /**
      * @dataProvider limitAndOffsetDataProvider
      */
@@ -322,8 +320,6 @@ class GetDeviceControllerTest extends WebTestCase
 
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
         self::assertCount($limit, $payload);
-
-        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
         $devices = $this->deviceRepository->findBy(
             [],
@@ -375,6 +371,97 @@ class GetDeviceControllerTest extends WebTestCase
             'offset' => 3,
         ];
     }
+
+    /**
+     * @dataProvider limitAndOffsetWrongDataProvider
+     */
+    public function test_limit_and_offset_incorrect_data_types_admin_user(mixed $limit, mixed $offset, array $message = []): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_ALL_DEVICES_URL,
+            ['limit' => $limit, 'offset' => $offset],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $title = $responseData['title'];
+        if (empty($responseData['errors'])) {
+            self::fail('No errors or payload returned');
+        }
+        $errors = $responseData['errors'];
+
+        self::assertEquals($message, $errors);
+        self::assertEquals(GetDeviceController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+    }
+
+    public function limitAndOffsetWrongDataProvider(): Generator
+    {
+        yield [
+            'limit' => [],
+            'offset' => 1,
+            'messages' => [
+                "limit must be an int|null you have provided array",
+            ],
+        ];
+
+        yield [
+            'limit' => 2,
+            'offset' => [],
+            'messages' => [
+                'offset must be an int|null you have provided array',
+            ],
+        ];
+
+        yield [
+            'limit' => 'string',
+            'offset' => 1,
+            'messages' => [
+                'limit must be an int|null you have provided "string"',
+            ],
+        ];
+
+        yield [
+            'limit' => 2,
+            'offset' => 'string',
+            'messages' => [
+                'offset must be an int|null you have provided "string"',
+            ],
+        ];
+
+        yield [
+            'limit' => false,
+            'offset' => 4,
+            'messages' => [
+                'limit must be an int|null you have provided ""',
+            ],
+        ];
+
+        // true counts as 1 which is valid
+//        yield [
+//            'limit' => true,
+//            'offset' => 3,
+//            'messages' => [
+//                'limit must be an int|null you have provided "1"',
+//            ],
+//        ];
+
+        yield [
+            'limit' => [],
+            'offset' => [],
+            'messages' => [
+                'limit must be an int|null you have provided array',
+                'offset must be an int|null you have provided array',
+            ],
+        ];
+    }
+
+
+
 
     /**
      * @dataProvider wrongHttpsMethodDataProvider

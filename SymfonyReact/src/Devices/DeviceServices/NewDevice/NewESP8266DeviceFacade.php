@@ -2,17 +2,56 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
+use App\Common\API\APIErrorMessages;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\AbstractESPDeviceService;
+use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\User\Entity\GroupNames;
+use App\User\Entity\Room;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
+use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
+    /**
+     * @throws GroupNameNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ORMException
+     */
+    public function findObjectNeededForNewDevice(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
+    {
+        $groupNameObject = $this->groupNameRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
+        if (!$groupNameObject instanceof GroupNames) {
+            throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
+        }
+
+        $roomObject = $this->roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
+        if (!$roomObject instanceof Room) {
+            throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $newDeviceRequestDTO->getDeviceRoom()));
+        }
+
+        return DeviceDTOBuilder::buildNewDeviceDTO(
+            $createdByUser,
+            $groupNameObject,
+            $roomObject,
+            $newDeviceRequestDTO->getDeviceName(),
+            $newDeviceRequestDTO->getDevicePassword(),
+        );
+    }
+
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {

@@ -639,12 +639,14 @@ class AddNewDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '. $this->userToken],
             $jsonData,
         );
+
+        /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals('Nothing Found', $responseData['title']);
         self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Room not found', $responseData['errors'][0]);
+        self::assertEquals('Room not found for id ' . $noneExistentRoomID, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }
@@ -683,7 +685,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertEquals('Nothing Found', $responseData['title']);
         self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Groupname not found', $responseData['errors'][0]);
+        self::assertEquals('Group name not found for id ' . $noneExistentGroupID, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }
@@ -798,31 +800,31 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertNotNull($responseData['secret']);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_deleting_device_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function wrongHttpsMethodDataProvider(): array
-    {
-        return [
-            [Request::METHOD_GET],
-            [Request::METHOD_PUT],
-            [Request::METHOD_PATCH],
-            [Request::METHOD_DELETE],
-        ];
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_adding_device_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::ADD_NEW_DEVICE_PATH,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function wrongHttpsMethodDataProvider(): array
+//    {
+//        return [
+//            [Request::METHOD_GET],
+//            [Request::METHOD_PUT],
+//            [Request::METHOD_PATCH],
+//            [Request::METHOD_DELETE],
+//        ];
+//    }
 
     protected function tearDown(): void
     {

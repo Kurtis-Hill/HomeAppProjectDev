@@ -2,6 +2,8 @@
 
 namespace App\Devices\DeviceServices\GetDevices;
 
+use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
+use App\Devices\DTO\Internal\GetDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\User\Entity\User;
@@ -23,15 +25,27 @@ class GetDevicesForUserHandler implements GetDevicesForUserInterface
     #[ArrayShape([Devices::class])]
     public function getDevicesForUser(
         User $user,
-        $limit = GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE,
-        $offset = 0,
+        GetDeviceDTO $getDeviceDTO,
     ): array {
         $groupNamesForUser = $this->getGroupNamesHandler->getGroupNameDataForUser($user);
 
         return $this->deviceRepository->findAllDevicesByGroupNamePaginated(
             $groupNamesForUser,
-            $limit,
-            $offset,
+            $getDeviceDTO->getLimit(),
+            $getDeviceDTO->getOffset(),
         );
+    }
+
+    /**
+     * @param Devices[] $devices
+     */
+    public function handleDeviceResponseDTOCreation(array $devices): array
+    {
+        $deviceResponseDTOs = [];
+        foreach ($devices as $device) {
+            $deviceResponseDTOs[] = DeviceResponseDTOBuilder::buildDeviceFullDetailsResponseDTO($device);
+        }
+
+        return $deviceResponseDTOs;
     }
 }

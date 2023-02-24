@@ -6,17 +6,15 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
-use App\User\Entity\GroupNames;
-use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
-use App\User\Repository\ORM\RoomRepositoryInterface;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
+use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,9 +43,7 @@ class AddNewDeviceController extends AbstractController
     public function addNewDevice(
         Request $request,
         ValidatorInterface $validator,
-        RoomRepositoryInterface $roomRepository,
         NewDeviceHandlerInterface $newDeviceHandler,
-        GroupNameRepositoryInterface $groupNameRepository,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
@@ -67,38 +63,20 @@ class AddNewDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-        $groupNameObject = $groupNameRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
-        if (!$groupNameObject instanceof GroupNames) {
-            return $this->sendNotFoundResponse([
-                sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    'Groupname'
-                ),
-            ]);
-        }
-
-        $roomObject = $roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
-        if (!$roomObject instanceof Room) {
-            return $this->sendNotFoundResponse([
-                sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    'Room'
-                ),
-            ]);
-        }
-
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
         }
 
-        $newDeviceCheckDTO = DeviceDTOBuilder::buildNewDeviceDTO(
-            $user,
-            $groupNameObject,
-            $roomObject,
-            $newDeviceRequestDTO->getDeviceName(),
-            $newDeviceRequestDTO->getDevicePassword(),
-        );
+        try {
+            $newDeviceCheckDTO = $newDeviceHandler->findObjectNeededForNewDevice($newDeviceRequestDTO, $user);
+        } catch (GroupNameNotFoundException|RoomNotFoundException $e) {
+            return $this->sendNotFoundResponse([$e->getMessage()]);
+        } catch (ORMException $e) {
+            $this->logger->error($e->getMessage());
+
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
+        }
 
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
@@ -126,7 +104,6 @@ class AddNewDeviceController extends AbstractController
 
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
-
         $this->logger->info('new device created with id: ' . $device->getDeviceID(), ['user' => $user->getUserIdentifier()]);
 
         return $this->sendSuccessfulJsonResponse($response);

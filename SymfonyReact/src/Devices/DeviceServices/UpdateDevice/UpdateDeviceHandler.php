@@ -3,19 +3,55 @@
 namespace App\Devices\DeviceServices\UpdateDevice;
 
 use App\Common\API\APIErrorMessages;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\AbstractESPDeviceService;
-use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
+use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\User\Entity\GroupNames;
+use App\User\Entity\Room;
+use App\User\Entity\User;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDeviceHandlerInterface
 {
+    /**
+     * @throws GroupNameNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ORMException
+     */
+    public function buildUpdateDeviceDTO(
+        DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
+        User $createdByUser,
+        Devices $deviceToUpdate,
+    ): UpdateDeviceDTO {
+        if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
+            $room = $this->roomRepository->find($deviceUpdateRequestDTO->getDeviceRoom());
+
+            if (!$room instanceof Room) {
+                throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $deviceUpdateRequestDTO->getDeviceRoom()));
+            }
+        }
+        if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
+            $groupName = $this->groupNameRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
+
+            if (!$groupName instanceof GroupNames) {
+                throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $deviceUpdateRequestDTO->getDeviceGroup()));
+            }
+        }
+
+        return DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
+            $deviceUpdateRequestDTO,
+            $deviceToUpdate,
+            $room ?? null,
+            $groupName ?? null
+        );
+    }
+
     #[ArrayShape(['validationErrors'])]
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array
     {

@@ -403,7 +403,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         self::assertNull($sensor);
-        self::assertStringContainsString('SensorType not found', $responseData['errors'][0]);
+        self::assertStringContainsString('Sensor type not found for id ' . $randomID, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

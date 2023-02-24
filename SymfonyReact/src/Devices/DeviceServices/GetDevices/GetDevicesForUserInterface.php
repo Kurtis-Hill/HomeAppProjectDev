@@ -2,6 +2,7 @@
 
 namespace App\Devices\DeviceServices\GetDevices;
 
+use App\Devices\DTO\Internal\GetDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
 use JetBrains\PhpStorm\ArrayShape;
@@ -13,7 +14,11 @@ interface GetDevicesForUserInterface
     #[ArrayShape([Devices::class])]
     public function getDevicesForUser(
         User $user,
-        $limit = GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE,
-        $offset = 0,
+        GetDeviceDTO $getDeviceDTO,
     ): array;
+
+    /**
+     * @param Devices[] $devices
+     */
+    public function handleDeviceResponseDTOCreation(array $devices): array;
 }

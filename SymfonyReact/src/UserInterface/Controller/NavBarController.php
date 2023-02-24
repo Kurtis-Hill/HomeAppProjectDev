@@ -37,7 +37,6 @@ class NavBarController extends AbstractController
         }
 
         $navbarDTOs = $navBarDataProvider->getNavBarData($user);
-
         if (empty($navbarDTOs)) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }

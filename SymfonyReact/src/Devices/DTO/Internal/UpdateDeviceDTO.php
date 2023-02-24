@@ -9,31 +9,19 @@ use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateDeviceDTO
+readonly class UpdateDeviceDTO
 {
-    private DeviceUpdateRequestDTO $deviceUpdateRequestDTO;
-
-    private Devices $devices;
-
-    private ?Room $proposedRoomToUpdateTo;
-
-    private ?GroupNames $proposedGroupNameToUpdateTo;
-
     public function __construct(
-        DeviceUpdateRequestDTO $updateDeviceDTO,
-        Devices $devices,
-        ?Room $room,
-        ?GroupNames $groupName
+        private DeviceUpdateRequestDTO $updateDeviceDTO,
+        private Devices $devices,
+        private ?Room $room,
+        private ?GroupNames $groupName
     ) {
-        $this->deviceUpdateRequestDTO = $updateDeviceDTO;
-        $this->devices = $devices;
-        $this->proposedRoomToUpdateTo = $room;
-        $this->proposedGroupNameToUpdateTo = $groupName;
     }
 
     public function getDeviceUpdateRequestDTO(): DeviceUpdateRequestDTO
     {
-        return $this->deviceUpdateRequestDTO;
+        return $this->updateDeviceDTO;
     }
 
     public function getDeviceToUpdate(): Devices
@@ -43,11 +31,11 @@ class UpdateDeviceDTO
 
     public function getProposedUpdatedRoom(): ?Room
     {
-        return $this->proposedRoomToUpdateTo;
+        return $this->room;
     }
 
     public function getProposedGroupNameToUpdateTo(): ?GroupNames
     {
-        return $this->proposedGroupNameToUpdateTo;
+        return $this->groupName;
     }
 }
