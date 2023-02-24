@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
@@ -118,7 +118,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceFullDetailsResponseDTO(
+        $deviceUpdateSuccessResponseDTO = DeviceResponseDTOBuilder::buildDeviceFullDetailsResponseDTO(
             $deviceToUpdate,
             $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword() !== null
         );

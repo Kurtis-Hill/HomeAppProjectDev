@@ -305,7 +305,10 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
@@ -352,7 +355,10 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
@@ -744,7 +750,10 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var GroupNames[] $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsApartOf]);

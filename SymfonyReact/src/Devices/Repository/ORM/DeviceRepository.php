@@ -2,11 +2,14 @@
 
 namespace App\Devices\Repository\ORM;
 
+use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
 use App\Devices\Entity\Devices;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -61,7 +64,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function getAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array
+    public function findAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array
     {
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv')
@@ -70,7 +73,33 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         $qb->where(
             $qb->expr()->in('dv.groupNameID', ':groupNameID')
         )
+            ->orderBy('dv.deviceName', 'ASC')
             ->setParameters(['groupNameID' => $groupNameIDs]);
+
+        return $qb->getQuery()->getResult($hydration);
+    }
+
+    /**
+     * @throws ORMException
+     */
+    public function findAllDevicesByGroupNamePaginated(
+        array $groupNameIDs,
+        int $limit = GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE,
+        int $offset = 0,
+        int $hydration = AbstractQuery::HYDRATE_OBJECT,
+    ): array {
+        $qb = $this->createQueryBuilder('dv');
+        $qb->select('dv')
+            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupNameID = gn.groupNameID')
+            ->innerJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
+            ->innerJoin(User::class, 'u', Join::WITH, 'dv.createdBy = u.userID');
+        $qb->where(
+            $qb->expr()->in('dv.groupNameID', ':groupNameID')
+        )
+            ->orderBy('dv.deviceName', 'ASC')
+            ->setParameters(['groupNameID' => $groupNameIDs])
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
 
         return $qb->getQuery()->getResult($hydration);
     }

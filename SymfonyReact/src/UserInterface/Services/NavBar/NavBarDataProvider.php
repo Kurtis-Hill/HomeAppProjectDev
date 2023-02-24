@@ -5,19 +5,19 @@ namespace App\UserInterface\Services\NavBar;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Devices\Entity\Devices;
+use App\Devices\Exceptions\DeviceQueryException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
+use App\User\Services\GroupNameServices\GetGroupNamesHandler;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarListLinkDTOBuilder;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NavBarDataProvider implements NavBarDataProviderInterface
 {
@@ -28,7 +28,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private NavBarDTOBuilder $navBarDTOBuilder;
 
-    private GroupNameRepository $groupNameRepository;
+    private GetGroupNamesHandler $getGroupNamesHandler;
 
     private array $errors = [];
 
@@ -36,12 +36,12 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         RoomRepositoryInterface $roomRepository,
         DeviceRepositoryInterface $deviceRepository,
         NavBarDTOBuilder $navBarDTOBuilder,
-        GroupNameRepository $groupNameRepository,
+        GetGroupNamesHandler $getGroupNamesHandler,
     ) {
         $this->roomRepository = $roomRepository;
         $this->deviceRepository = $deviceRepository;
         $this->navBarDTOBuilder = $navBarDTOBuilder;
-        $this->groupNameRepository = $groupNameRepository;
+        $this->getGroupNamesHandler = $getGroupNamesHandler;
     }
 
     #[ArrayShape([NavBarResponseDTO::class])]
@@ -49,13 +49,17 @@ class NavBarDataProvider implements NavBarDataProviderInterface
     {
         try {
             $userDevices = $this->getDeviceData($user);
+            $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices ?? []);
         } catch (ORMException) {
             $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices')];
         }
-        $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices ?? []);
 
-        $userGroups = $this->getGroupNames($user);
-        $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
+        try {
+            $userGroups = $this->getGroupNamesHandler->getGroupNameDataForUser($user);
+            $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
+        } catch (ORMException) {
+            $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groups')];
+        }
 
         try {
             $userRooms = $this->getRoomData($user);
@@ -143,16 +147,10 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         );
     }
 
+    #[ArrayShape(['errors'])]
     public function getNavbarRequestErrors(): array
     {
         return $this->errors;
-    }
-
-    public function getGroupNames(User $user): array
-    {
-        return $user->isAdmin()
-            ? $this->groupNameRepository->findAll()
-            : $user->getAssociatedGroupNames();
     }
 
     /**
@@ -168,6 +166,6 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getDeviceData(User $user): array
     {
-        return $this->deviceRepository->getAllUsersDevicesByGroupId($user->getAssociatedGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->deviceRepository->findAllUsersDevicesByGroupId($user->getAssociatedGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
     }
 }

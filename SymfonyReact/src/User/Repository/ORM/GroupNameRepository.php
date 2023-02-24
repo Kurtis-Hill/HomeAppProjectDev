@@ -57,7 +57,7 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
         $this->getEntityManager()->flush();
     }
 
-    public function findGroupsUserIsNotApartOf(array $groups, User $user): array
+    public function findGroupsUserIsNotApartOf(User $user = null, array $groups = []): array
     {
         $qb = $this->createQueryBuilder('gn');
 

@@ -15,11 +15,25 @@ use Symfony\Component\Serializer\Serializer;
 
 trait HomeAppAPITrait
 {
+    public const NO_RESPONSE_MESSAGE = 'No Response Message';
+
+    public const REQUEST_SUCCESSFUL = 'Request Successful';
+
+    public const REQUEST_ACCEPTED = 'Request Accepted';
+
+    public const REQUEST_ACCEPTED_SUCCESS_CREATED = 'Request Accepted Successfully Created';
+
+    public const REQUEST_PARTIALLY_ACCEPTED = 'Request Accepted Only Partial Response Sent';
+
+    public const NOTHING_FOUND = 'Nothing Found';
+
+    public const SERVER_ERROR_TRY_AGAIN = 'Server Error Please Try Again';
+
     // 20x Successfull
-    public function sendSuccessfulJsonResponse(array $data = [], $title = 'Request Successful'): JsonResponse
+    public function sendSuccessfulJsonResponse(array $data = [], $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
                     'title' => $title,
                     'payload' => $data
@@ -28,19 +42,19 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
                 'title' => $title,
-                'payload' => 'No Response Message'
+                'payload' => self::NO_RESPONSE_MESSAGE
             ],
             HTTPStatusCodes::HTTP_OK
         );
     }
 
-    public function sendSuccessfulUpdateJsonResponse(array $data = [], string $title = 'Request Successful'): JsonResponse
+    public function sendSuccessfulUpdateJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
                     'title' => $title,
                     'payload' => $data
@@ -49,10 +63,10 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
                 'title' => $title,
-                'payload' => 'No Response Message'
+                'payload' => self::NO_RESPONSE_MESSAGE
             ],
             Response::HTTP_ACCEPTED
         );
@@ -62,33 +76,39 @@ trait HomeAppAPITrait
     public function sendSuccessfulResponse(string $data = null): Response
     {
         if ($data !== null) {
-            return new Response(
+            return $this->returnResponse(
                 $data,
                 HTTPStatusCodes::HTTP_OK
             );
         }
 
-        return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
+        return $this->returnResponse(
+            'Request Successful',
+            HTTPStatusCodes::HTTP_OK
+        );
     }
 
     public function sendSuccessfulUpdatedResponse(string $data = null): Response
     {
         if ($data !== null) {
-            return new Response(
+            return $this->returnResponse(
                 $data,
                 HTTPStatusCodes::HTTP_UPDATED_SUCCESSFULLY
             );
         }
 
-        return new Response('Request Successful', HTTPStatusCodes::HTTP_OK);
+        return $this->returnResponse(
+            'Request Successful',
+            HTTPStatusCodes::HTTP_OK
+        );
     }
 
     public function sendCreatedResourceJsonResponse(
         array $data = [],
-        string $title = 'Request Accepted Successfully Created'
+        string $title = self::REQUEST_ACCEPTED_SUCCESS_CREATED
     ): JsonResponse {
         if (!empty($data)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
                     'title' => $title,
                     'payload' => $data
@@ -97,10 +117,10 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
                 'title' => $title,
-                'payload' => 'No Response Message'
+                'payload' => self::NO_RESPONSE_MESSAGE
             ],
             HTTPStatusCodes::HTTP_CREATED
         );
@@ -109,9 +129,9 @@ trait HomeAppAPITrait
     public function sendPartialContentJsonResponse(array $errors = [], array $data = []): JsonResponse
     {
         if (!empty($data)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
-                    'title' => 'Request Accepted Only Partial Response Sent',
+                    'title' => self::REQUEST_PARTIALLY_ACCEPTED,
                     'errors' => $errors,
                     'payload' => $data
                 ],
@@ -119,10 +139,10 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
-                'title' => 'Request Accepted Only Partial Response Sent',
-                'payload' => 'No Response Message',
+                'title' => self::REQUEST_PARTIALLY_ACCEPTED,
+                'payload' => self::NO_RESPONSE_MESSAGE,
                 'errors' => $errors,
             ],
             HTTPStatusCodes::HTTP_PARTIAL_CONTENT
@@ -131,7 +151,7 @@ trait HomeAppAPITrait
 
     public function sendMultiStatusJsonResponse(array $errors = [], array $data = [], string $title = 'Part of the request was accepted'): JsonResponse
     {
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
                 'title' => $title,
                 'payload' => $data,
@@ -144,16 +164,16 @@ trait HomeAppAPITrait
     public function sendPartialContentResponse(string $data = null): Response
     {
         if ($data !== null) {
-            return new Response(
+            return $this->returnResponse(
                 $data,
                 HTTPStatusCodes::HTTP_PARTIAL_CONTENT
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
-                'title' => 'Request Accepted Only Partial Response Sent',
-                'payload' => 'No Response Message'
+                'title' => self::REQUEST_PARTIALLY_ACCEPTED,
+                'payload' => self::NO_RESPONSE_MESSAGE
             ],
             HTTPStatusCodes::HTTP_PARTIAL_CONTENT
         );
@@ -163,7 +183,7 @@ trait HomeAppAPITrait
     public function sendBadRequestJsonResponse(array $errors = [], string $title = 'Bad Request No Data Returned'): JsonResponse
     {
         if (!empty($errors)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
                     'title' => $title,
                     'errors' => $errors,
@@ -172,35 +192,41 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(['title' => $title, 'payload' => 'No Response Message'], HTTPStatusCodes::HTTP_BAD_REQUEST);
+        return $this->returnJsonResponse(
+            [
+                'title' => $title,
+                'payload' => self::NO_RESPONSE_MESSAGE
+            ],
+            HTTPStatusCodes::HTTP_BAD_REQUEST
+        );
     }
 
     public function sendNotFoundResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
-                    'title' => 'Nothing Found',
+                    'title' => self::NOTHING_FOUND,
                     'errors' => $errors
                 ],
                 HTTPStatusCodes::HTTP_NOT_FOUND
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
-                'title' => 'Nothing Found',
-                'errors' => 'No Response Message'
+                'title' => self::NOTHING_FOUND,
+                'errors' => self::NO_RESPONSE_MESSAGE
             ],
             HTTPStatusCodes::HTTP_NOT_FOUND
         );
     }
 
     // 50x Server Error Response
-    public function sendInternalServerErrorJsonResponse(array $data = [], string $title = 'Server Error Please Try Again'): JsonResponse
+    public function sendInternalServerErrorJsonResponse(array $data = [], string $title = self::SERVER_ERROR_TRY_AGAIN): JsonResponse
     {
         if (!empty($data)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
                     'title' => $title,
                     'errors' => $data
@@ -209,10 +235,10 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
-                'title' => 'Server Error Please Try Again',
-                'errors' => 'No Response Message'
+                'title' => self::SERVER_ERROR_TRY_AGAIN,
+                'errors' => self::NO_RESPONSE_MESSAGE
             ],
             HTTPStatusCodes::HTTP_INTERNAL_SERVER_ERROR
         );
@@ -221,7 +247,7 @@ trait HomeAppAPITrait
     public function sendForbiddenAccessJsonResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
-            return new JsonResponse(
+            return $this->returnJsonResponse(
                 [
                     'title' => 'You Are Not Authorised To Be Here',
                     'errors' => $errors,
@@ -230,15 +256,25 @@ trait HomeAppAPITrait
             );
         }
 
-        return new JsonResponse(
+        return $this->returnJsonResponse(
             [
                 'title' => 'You Are Not Authorised To Be Here',
-                'errors' => ['No Response Message']
+                'errors' => [self::NO_RESPONSE_MESSAGE]
             ],
             HTTPStatusCodes::HTTP_FORBIDDEN
         );
     }
 
+    private function returnResponse(string $data, int $statusCode): Response
+    {
+        return new Response($data, $statusCode);
+    }
+
+
+    private function returnJsonResponse(array $data, int $statusCode): JsonResponse
+    {
+        return new JsonResponse($data, $statusCode);
+    }
     /**
      * @throws ExceptionInterface
      */
@@ -256,8 +292,14 @@ trait HomeAppAPITrait
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
 
-        $serializer = new Serializer($normalizers, $encoders);
-
-        return $serializer->deserialize($data, $class, $format, $extraContexts);
+        return (new Serializer(
+            $normalizers,
+            $encoders)
+        )->deserialize(
+            $data,
+            $class,
+            $format,
+            $extraContexts
+        );
     }
 }

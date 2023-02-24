@@ -8,6 +8,7 @@ use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
+use App\Sensors\Controller\SensorControllers\AddNewSensorController;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -168,7 +169,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -452,7 +453,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -474,7 +475,10 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var GroupNameRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsNotApartOf */
-        $groupsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
 
         $counter = 0;
@@ -527,7 +531,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
                 self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
                 self::assertInstanceOf(Sensor::class, $sensor);
-                self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
+                self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
                 self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
                 self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -592,8 +596,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString('Request Accepted Successfully Created', $responseData['title']);
-
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
         self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
         self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
@@ -620,7 +623,10 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         /** @var GroupNames[] $groupNames */
-        $groupNames = $groupRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupNames = $groupRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
         if (empty($groupNames)) {
             self::fail('No groups found for user to add sensor to');

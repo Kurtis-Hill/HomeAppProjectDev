@@ -5,6 +5,7 @@ namespace App\Tests\UserInterface\Controller\Card;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
+use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Tests\Traits\TestLoginTrait;
@@ -529,7 +530,7 @@ class CardViewFormControllerTest extends WebTestCase
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true);
 
-        self::assertEquals('Request Successful', $responseData['title']);
+        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['payload']['cardViewID']);
 

@@ -8,7 +8,7 @@ use App\Devices\Entity\Devices;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 
-class DeviceUpdateResponseDTOBuilder
+class DeviceResponseDTOBuilder
 {
     public static function buildDeviceIDResponseDTO(Devices $device, bool $showPassword = false): DeviceResponseDTO
     {

@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
@@ -117,7 +117,7 @@ class AddNewDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
         }
 
-        $newDeviceResponseDTO = DeviceUpdateResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);
+        $newDeviceResponseDTO = DeviceResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO);
         } catch (ExceptionInterface $e) {

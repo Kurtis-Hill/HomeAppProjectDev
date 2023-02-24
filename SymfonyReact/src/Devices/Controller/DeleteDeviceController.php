@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
@@ -32,7 +32,7 @@ class DeleteDeviceController extends AbstractController
 
     #[
         Route(
-            path: '{deviceID}/delete-device',
+            path: '{deviceID}/delete',
             name: 'delete-esp-device',
             methods: [Request::METHOD_DELETE]
         )
@@ -54,7 +54,7 @@ class DeleteDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Delete device')]);
         }
 
-        $deviceDTO = DeviceUpdateResponseDTOBuilder::buildDeletedDeviceResponseDTO($deviceToDelete);
+        $deviceDTO = DeviceResponseDTOBuilder::buildDeletedDeviceResponseDTO($deviceToDelete);
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTO);
         } catch (ExceptionInterface $e) {

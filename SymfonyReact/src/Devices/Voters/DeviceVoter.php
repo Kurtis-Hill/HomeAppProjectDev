@@ -20,9 +20,16 @@ class DeviceVoter extends Voter
 
     public const DELETE_DEVICE = 'delete-device';
 
+    public const GET_DEVICE = 'get-device';
+
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_DEVICE, self::UPDATE_DEVICE, self::DELETE_DEVICE])) {
+        if (!in_array($attribute, [
+            self::ADD_NEW_DEVICE,
+            self::UPDATE_DEVICE,
+            self::DELETE_DEVICE,
+            self::GET_DEVICE,
+        ])) {
             return false;
         }
 
@@ -38,6 +45,7 @@ class DeviceVoter extends Voter
             self::ADD_NEW_DEVICE => $this->canAddNewDevice($user, $subject),
             self::UPDATE_DEVICE => $this->canUpdateDevice($user, $subject),
             self::DELETE_DEVICE => $this->cadDeleteDevice($user, $subject),
+            self::GET_DEVICE => $this->canGetDevice($user, $subject),
             default => false
         };
     }
@@ -70,7 +78,6 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-//        dd('lol', $updateDeviceDTO->getProposedGroupNameToUpdateTo());
         if ($updateDeviceDTO->getProposedGroupNameToUpdateTo() !== null) {
             if (!in_array(
                 $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupNameID(),
@@ -88,7 +95,6 @@ class DeviceVoter extends Voter
         ) {
             return false;
         }
-//dd('lol');
 
         return true;
     }
@@ -109,6 +115,7 @@ class DeviceVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
+//        dd('here1', $user);
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
@@ -118,5 +125,15 @@ class DeviceVoter extends Voter
         }
 
         return null;
+    }
+
+    public function canGetDevice(UserInterface $user, Devices $devices): bool
+    {
+        $checkCommon = $this->checkCommon(
+            $user,
+            $devices->getGroupNameObject(),
+        );
+
+        return $checkCommon ?? true;
     }
 }

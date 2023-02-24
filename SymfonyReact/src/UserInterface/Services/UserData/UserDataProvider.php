@@ -6,6 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
+use App\User\Services\GroupNameServices\GetGroupNamesHandler;
 use App\UserInterface\Builders\UserData\UserDataDTOBuilder;
 use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
 use Doctrine\ORM\AbstractQuery;
@@ -18,14 +19,18 @@ class UserDataProvider
 
     private GroupNameRepository $groupNameRepository;
 
+    private GetGroupNamesHandler $getGroupNamesHandler;
+
     private array $errors = [];
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
         GroupNameRepository $groupNameRepository,
+        GetGroupNamesHandler $getGroupNamesHandler,
     ) {
         $this->roomRepository = $roomRepository;
         $this->groupNameRepository = $groupNameRepository;
+        $this->getGroupNamesHandler = $getGroupNamesHandler;
     }
 
     #[ArrayShape([UserDataResponseDTO::class])]

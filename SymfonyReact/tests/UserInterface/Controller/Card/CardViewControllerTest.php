@@ -4,6 +4,7 @@ namespace App\Tests\UserInterface\Controller\Card;
 
 use App\Authentication\Controller\SecurityController;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
@@ -64,7 +65,7 @@ class CardViewControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Request Successful', $responseData['title']);
+        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
@@ -179,7 +180,7 @@ class CardViewControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Request Successful', $responseData['title']);
+        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 

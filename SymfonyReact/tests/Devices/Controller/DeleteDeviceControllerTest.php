@@ -2,6 +2,7 @@
 
 namespace App\Tests\Devices\Controller;
 
+use App\Devices\Controller\DeleteDeviceController;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Devices\Entity\Devices;
@@ -19,7 +20,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/delete-device';
+    private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/delete';
 
     private ?string $userToken = null;
 
@@ -45,7 +46,10 @@ class DeleteDeviceControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
@@ -178,7 +182,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             self::assertNull($responseData['payload']['secret']);
 
 
-            self::assertEquals('Request Successful', $responseData['title']);
+            self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
             self::assertResponseStatusCodeSame(Response::HTTP_OK);
         }
     }
@@ -191,7 +195,10 @@ class DeleteDeviceControllerTest extends WebTestCase
 
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        );
 
             /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
@@ -220,7 +227,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             $deletedDevice = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceID' => $device->getDeviceID()]);
 
             self::assertNull($deletedDevice);
-            self::assertEquals('Request Successful', $responseData['title']);
+            self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
             self::assertIsArray($responseData['payload']);
             self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
             self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);

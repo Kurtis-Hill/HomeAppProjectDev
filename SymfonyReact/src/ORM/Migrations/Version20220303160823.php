@@ -299,7 +299,7 @@ final class Version20220303160823 extends AbstractMigration
         $this->addSql('
             CREATE TABLE devices (
                 deviceID INT AUTO_INCREMENT NOT NULL, 
-                deviceName VARCHAR(20) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
+                deviceName VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
                 password LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
                 groupNameID INT NOT NULL, 
                 roomID INT NOT NULL, 
@@ -372,7 +372,7 @@ final class Version20220303160823 extends AbstractMigration
             CREATE TABLE sensors (
                 sensorID INT AUTO_INCREMENT NOT NULL, 
                 createdBy INT NOT NULL, 
-                sensorName VARCHAR(20) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
+                sensorName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 deviceID INT NOT NULL, 
                 sensorTypeID INT NOT NULL, 
                 INDEX sensornames_ibfk_1 (deviceID), 
@@ -628,64 +628,69 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $this->addSql('DROP TABLE readingtypes');
+        $this->addSql("SET FOREIGN_KEY_CHECKS = 0;");
 
-        $this->addSql('DROP TABLE analog');
+        $this->addSql('DROP TABLE IF EXISTS colours');
 
-        $this->addSql('DROP TABLE bmp');
+        $this->addSql('DROP TABLE IF EXISTS state');
 
-        $this->addSql('DROP TABLE colours');
+        $this->addSql('DROP TABLE IF EXISTS icons');
 
-        $this->addSql('DROP TABLE state');
+        $this->addSql('DROP TABLE IF EXISTS room');
 
-        $this->addSql('DROP TABLE cardview');
+        $this->addSql('DROP TABLE IF EXISTS bmp');
 
-        $this->addSql('DROP TABLE constanalog');
+        $this->addSql('DROP TABLE IF EXISTS  dallas');
 
-        $this->addSql('DROP TABLE consthumid');
+        $this->addSql('DROP TABLE IF EXISTS dht');
 
-        $this->addSql('DROP TABLE constlatitude');
+        $this->addSql('DROP TABLE IF EXISTS soil');
 
-        $this->addSql('DROP TABLE consttemp');
+        $this->addSql('DROP TABLE IF EXISTS constanalog');
 
-        $this->addSql('DROP TABLE dallas');
+        $this->addSql('DROP TABLE IF EXISTS consthumid');
 
-        $this->addSql('DROP TABLE devices');
+        $this->addSql('DROP TABLE IF EXISTS constlatitude');
 
-        $this->addSql('DROP TABLE dht');
+        $this->addSql('DROP TABLE IF EXISTS consttemp');
 
-        $this->addSql('DROP TABLE groupname');
+        $this->addSql('DROP TABLE IF EXISTS outofrangeanalog');
 
-        $this->addSql('DROP TABLE groupnnamemapping');
+        $this->addSql('DROP TABLE IF EXISTS outofrangehumid');
 
-        $this->addSql('DROP TABLE humidity');
+        $this->addSql('DROP TABLE IF EXISTS outofrangelatitude');
 
-        $this->addSql('DROP TABLE icons');
+        $this->addSql('DROP TABLE IF EXISTS outofrangetemp');
 
-        $this->addSql('DROP TABLE latitude');
+        $this->addSql('DROP TABLE IF EXISTS sensors');
+
+        $this->addSql('DROP TABLE IF EXISTS analog');
+
+        $this->addSql('DROP TABLE IF EXISTS humidity');
+
+        $this->addSql('DROP TABLE IF EXISTS temperature');
+
+        $this->addSql('DROP TABLE IF EXISTS latitude');
 
         $this->addSql('DROP TABLE IF EXISTS migration_versions');
 
-        $this->addSql('DROP TABLE outofrangeanalog');
+        $this->addSql('DROP TABLE IF EXISTS refresh_tokens');
 
-        $this->addSql('DROP TABLE outofrangehumid');
+        $this->addSql('DROP TABLE IF EXISTS devices');
 
-        $this->addSql('DROP TABLE outofrangelatitude');
+        $this->addSql('DROP TABLE IF EXISTS sensortype');
 
-        $this->addSql('DROP TABLE outofrangetemp');
+        $this->addSql('DROP TABLE IF EXISTS cardview');
 
-        $this->addSql('DROP TABLE refresh_tokens');
+        $this->addSql('DROP TABLE IF EXISTS readingtypes');
 
-        $this->addSql('DROP TABLE room');
+        $this->addSql('DROP TABLE IF EXISTS groupname');
 
-        $this->addSql('DROP TABLE sensors');
+        $this->addSql('DROP TABLE IF EXISTS groupnnamemapping');
 
-        $this->addSql('DROP TABLE sensortype');
+        $this->addSql('DROP TABLE IF EXISTS user');
 
-        $this->addSql('DROP TABLE soil');
-
-        $this->addSql('DROP TABLE temperature');
-
-        $this->addSql('DROP TABLE user');
+        $this->addSql("SET FOREIGN_KEY_CHECKS = 1;");
     }
+
 }

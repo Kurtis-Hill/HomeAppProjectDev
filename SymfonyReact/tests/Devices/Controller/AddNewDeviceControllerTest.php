@@ -19,6 +19,7 @@ use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AddNewDeviceControllerTest extends WebTestCase
 {
@@ -460,7 +461,10 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames $groupUserIsNotApartOf */
-        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf($user->getAssociatedGroupNameIds(), $user)[0];
+        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+            $user,
+            $user->getAssociatedGroupNameIds(),
+        )[0];
 
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -792,6 +796,32 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertArrayHasKey('secret', $responseData);
         self::assertNotNull($responseData['secret']);
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_deleting_device_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_GET],
+            [Request::METHOD_PUT],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_POST],
+        ];
     }
 
     protected function tearDown(): void

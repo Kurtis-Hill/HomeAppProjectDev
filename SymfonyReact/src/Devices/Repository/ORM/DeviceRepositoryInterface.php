@@ -45,7 +45,7 @@ interface DeviceRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array;
+    public function findAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array;
 
     /**
      * @throws ORMException

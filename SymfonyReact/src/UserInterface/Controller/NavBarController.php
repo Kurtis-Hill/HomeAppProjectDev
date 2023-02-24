@@ -5,6 +5,7 @@ namespace App\UserInterface\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Devices\Exceptions\DeviceQueryException;
 use App\User\Entity\User;
 use App\UserInterface\Exceptions\WrongUserTypeException;
 use App\UserInterface\Services\NavBar\NavBarDataProviderInterface;
@@ -35,9 +36,13 @@ class NavBarController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse();
         }
 
-        $navbarDTO = $navBarDataProvider->getNavBarData($user);
+        $navbarDTOs = $navBarDataProvider->getNavBarData($user);
+
+        if (empty($navbarDTOs)) {
+            return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
         try {
-            $normalizedResponse = $this->normalizeResponse($navbarDTO);
+            $normalizedResponse = $this->normalizeResponse($navbarDTOs);
         } catch (ExceptionInterface) {
             $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
