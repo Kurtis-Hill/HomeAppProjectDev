@@ -2,9 +2,12 @@
 
 namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
 
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
+use App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +19,11 @@ class GetReadingTypeControllerTest extends WebTestCase
 
     private const GET_READING_TYPES_URL = '/HomeApp/api/user/reading-types/all';
 
+    private const GET_SINGLE_READING_TYPE_URL = '/HomeApp/api/user/reading-types/%d';
+
     private ?EntityManagerInterface $entityManager;
+
+    private ReadingTypeRepository $readingTypeRepository;
 
     private KernelBrowser $client;
 
@@ -29,6 +36,8 @@ class GetReadingTypeControllerTest extends WebTestCase
         $this->entityManager = static::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
+        $this->readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
 
         $this->userToken = $this->setUserToken($this->client);
     }
@@ -86,9 +95,113 @@ class GetReadingTypeControllerTest extends WebTestCase
     }
 
     /**
+     * @dataProvider singleReadingTypeNamesDataProvider
+     */
+    public function test_getting_single_reading_type_admin_user(string $readingTypeName): void
+    {
+        /** @var ReadingTypes $readingTypes */
+        $readingTypeToTest = $this->readingTypeRepository->findOneBy(
+            ['readingType' => $readingTypeName]
+        );
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_READING_TYPE_URL, $readingTypeToTest->getReadingTypeID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $this->userToken]
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        $readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
+
+        /** @var ReadingTypes $readingType */
+        $readingType = $readingTypeRepository->find($readingTypeToTest->getReadingTypeID());
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertEquals($readingType->getReadingType(), $responseData['payload']['readingTypeName']);
+        self::assertEquals($readingType->getReadingTypeID(), $responseData['payload']['readingTypeID']);
+    }
+
+    /**
+     * @dataProvider singleReadingTypeNamesDataProvider
+     */
+    public function test_getting_single_reading_type_admin_regular_user(string $readingTypeName): void
+    {
+        /** @var ReadingTypes $readingTypes */
+        $readingTypeToTest = $this->readingTypeRepository->findOneBy(
+            ['readingType' => $readingTypeName]
+        );
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_READING_TYPE_URL, $readingTypeToTest->getReadingTypeID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $userToken]
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        $readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
+
+        /** @var ReadingTypes $readingType */
+        $readingType = $readingTypeRepository->find($readingTypeToTest->getReadingTypeID());
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertEquals($readingType->getReadingType(), $responseData['payload']['readingTypeName']);
+        self::assertEquals($readingType->getReadingTypeID(), $responseData['payload']['readingTypeID']);
+    }
+
+    public function singleReadingTypeNamesDataProvider(): Generator
+    {
+        yield [
+            'temperature',
+        ];
+
+        yield [
+            'humidity',
+        ];
+
+        yield [
+            'latitude',
+        ];
+
+        yield [
+            'analog',
+        ];
+    }
+
+
+    /**
      * @dataProvider wrongHttpsMethodDataProvider
      */
-    public function test_using_wrong_http_method(string $httpVerb): void
+    public function test_using_wrong_http_method_singular(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            sprintf(self::GET_SINGLE_READING_TYPE_URL, 1)
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method_all(string $httpVerb): void
     {
         $this->client->request(
             $httpVerb,

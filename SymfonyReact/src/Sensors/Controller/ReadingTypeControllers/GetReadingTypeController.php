@@ -27,7 +27,7 @@ class GetReadingTypeController extends AbstractController
     }
 
     #[Route('all', name: 'all-reading-types', methods: ['GET'])]
-    public function getReadingTypes(ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
+    public function getAllReadingTypes(ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
     {
         $allReadingTypes = $readingTypeRepository->findAll();
 
@@ -40,6 +40,22 @@ class GetReadingTypeController extends AbstractController
         if (empty($readingTypeResponseDTO)) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Reading types')]);
         }
+
+        try {
+            $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO);
+        } catch (ExceptionInterface $e) {
+            $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
+
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+        }
+
+        return $this->sendSuccessfulJsonResponse($normalizedReadingTypesDTOs);
+    }
+
+    #[Route('{readingTypeID}', name: 'all-reading-types', methods: ['GET'])]
+    public function getSingleReadingTypes(ReadingTypes $readingType): JsonResponse
+    {
+        $readingTypeResponseDTO = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingType);
 
         try {
             $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO);

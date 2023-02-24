@@ -29,6 +29,8 @@ trait HomeAppAPITrait
 
     public const SERVER_ERROR_TRY_AGAIN = 'Server Error Please Try Again';
 
+    public const NOT_AUTHORIZED_TO_BE_HERE = 'You Are Not Authorised To Be Here';
+
     // 20x Successfull
     public function sendSuccessfulJsonResponse(array $data = [], $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
@@ -249,7 +251,7 @@ trait HomeAppAPITrait
         if (!empty($errors)) {
             return $this->returnJsonResponse(
                 [
-                    'title' => 'You Are Not Authorised To Be Here',
+                    'title' => self::NOT_AUTHORIZED_TO_BE_HERE,
                     'errors' => $errors,
                 ],
                 HTTPStatusCodes::HTTP_FORBIDDEN
@@ -258,7 +260,7 @@ trait HomeAppAPITrait
 
         return $this->returnJsonResponse(
             [
-                'title' => 'You Are Not Authorised To Be Here',
+                'title' => self::NOT_AUTHORIZED_TO_BE_HERE,
                 'errors' => [self::NO_RESPONSE_MESSAGE]
             ],
             HTTPStatusCodes::HTTP_FORBIDDEN

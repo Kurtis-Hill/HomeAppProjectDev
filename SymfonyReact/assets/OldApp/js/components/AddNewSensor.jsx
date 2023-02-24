@@ -63,7 +63,7 @@ function AddNewSensor(props) {
 
         try {
             const addNewSensorRequest = await axios.post(
-                `${apiURL}sensors/add-new-sensor`,
+                `${apiURL}sensors/add`,
                 JSON.stringify(jsonRequestData),
                 getAPIHeader()
             );

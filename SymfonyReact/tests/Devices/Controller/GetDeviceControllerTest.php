@@ -23,9 +23,9 @@ use Symfony\Component\HttpFoundation\Response;
 class GetDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
-    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-devices/%d/get';
+    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-devices/%d';
 
-    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-devices/get/all';
+    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-devices/all';
 
     private ?string $userToken = null;
 

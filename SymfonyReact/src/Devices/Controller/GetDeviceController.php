@@ -30,13 +30,12 @@ class GetDeviceController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('{deviceID}/get', name: 'get-user-devices_single', methods: [Request::METHOD_GET])]
+    #[Route('{deviceID}', name: 'get-user-devices_single', methods: [Request::METHOD_GET])]
     public function getDeviceByID(Devices $devices): Response
     {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::GET_DEVICE, $devices);
         } catch (AccessDeniedException) {
-//        dd('here');
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
@@ -53,7 +52,7 @@ class GetDeviceController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 
-    #[Route('get/all', name: 'get-user-devices_multiple', methods: [Request::METHOD_GET])]
+    #[Route('all', name: 'get-user-devices_multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(Request $request, GetDevicesForUserInterface $getDevicesForUser): Response
     {
         $user = $this->getUser();
@@ -71,7 +70,7 @@ class GetDeviceController extends AbstractController
             $limit,
             $offset,
         );
-//        dd($devices);
+
         $deviceDTOs = [];
         foreach ($devices as $device) {
             $deviceDTOs[] = DeviceResponseDTOBuilder::buildDeviceFullDetailsResponseDTO($device);

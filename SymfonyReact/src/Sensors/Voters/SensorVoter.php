@@ -6,6 +6,7 @@ namespace App\Sensors\Voters;
 
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
+use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -19,6 +20,8 @@ class SensorVoter extends Voter
 
     public const UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
 
+    public const DELETE_SENSOR = 'delete-sensor';
+
     /**
      * @param string $attribute
      * @param mixed $subject
@@ -26,7 +29,12 @@ class SensorVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_SENSOR, self::UPDATE_SENSOR_READING_BOUNDARY, self::UPDATE_SENSOR_CURRENT_READING])) {
+        if (!in_array($attribute, [
+            self::ADD_NEW_SENSOR,
+            self::UPDATE_SENSOR_READING_BOUNDARY,
+            self::UPDATE_SENSOR_CURRENT_READING,
+            self::DELETE_SENSOR,
+        ])) {
             return false;
         }
 
@@ -47,6 +55,7 @@ class SensorVoter extends Voter
             self::ADD_NEW_SENSOR => $this->canAddNewSensor($user, $subject),
             self::UPDATE_SENSOR_READING_BOUNDARY => $this->canUpdateSensorBoundaryReading($user, $subject),
             self::UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
+            self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             default => false
         };
     }
@@ -95,5 +104,22 @@ class SensorVoter extends Voter
          $user->getDeviceID();
 
          return true;
+    }
+
+    private function canDeleteSensor(UserInterface $user, Sensor $sensor): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return true;
+        }
+
+        if (!in_array($sensor->getDevice()->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+            return false;
+        }
+
+        return true;
     }
 }

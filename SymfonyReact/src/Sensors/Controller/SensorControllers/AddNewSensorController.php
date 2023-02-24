@@ -44,7 +44,7 @@ class AddNewSensorController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('/add-new-sensor', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
+    #[Route('/add', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
         ValidatorInterface $validator,

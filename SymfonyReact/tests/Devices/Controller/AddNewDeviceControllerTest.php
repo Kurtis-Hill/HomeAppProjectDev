@@ -820,7 +820,7 @@ class AddNewDeviceControllerTest extends WebTestCase
             [Request::METHOD_GET],
             [Request::METHOD_PUT],
             [Request::METHOD_PATCH],
-            [Request::METHOD_POST],
+            [Request::METHOD_DELETE],
         ];
     }
 
