@@ -560,7 +560,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 //@TODO fix this and the one above for room group name
 //    public function test_adding_device_in_room_not_apart_of_none_admin(): void
 //    {
-//        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
+//        $user = $this->entityManager->getRepository(UserDTOs::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
 //
 //        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP, UserDataFixtures::REGULAR_PASSWORD);
 //        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);

@@ -309,7 +309,8 @@ final class Version20220303160823 extends AbstractMigration
                 roles JSON NOT NULL COLLATE `utf8mb4_general_ci`, 
                 INDEX createdBy (createdBy), 
                 INDEX groupNameID (groupNameID), 
-                INDEX roomID (roomID), 
+                INDEX roomID (roomID),
+                UNIQUE INDEX device_room_un (deviceName, roomID), 
                 PRIMARY KEY(deviceID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 

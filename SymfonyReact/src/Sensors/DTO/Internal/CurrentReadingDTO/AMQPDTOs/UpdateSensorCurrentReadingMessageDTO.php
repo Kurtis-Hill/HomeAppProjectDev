@@ -7,27 +7,14 @@ use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateSensorCurrentReadingMessageDTO
+readonly class UpdateSensorCurrentReadingMessageDTO
 {
-    private string $sensorType;
-
-    private string $sensorName;
-
-    #[ArrayShape([AbstractCurrentReadingUpdateRequestDTO::class])]
-    private array $currentReadings;
-
-    private int $deviceID;
-
     public function __construct(
-        string $sensorType,
-        string $sensorName,
-        array $currentReadings,
-        int $deviceID,
+        private string $sensorType,
+        private string $sensorName,
+        private array $currentReadings,
+        private int $deviceID,
     ) {
-        $this->sensorName = $sensorName;
-        $this->sensorType = $sensorType;
-        $this->currentReadings = $currentReadings;
-        $this->deviceID = $deviceID;
     }
 
     public function getSensorType(): string

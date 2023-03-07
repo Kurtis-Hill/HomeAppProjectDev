@@ -144,7 +144,7 @@ class GetDeviceControllerTest extends WebTestCase
 
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
@@ -185,7 +185,7 @@ class GetDeviceControllerTest extends WebTestCase
     {
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
@@ -233,7 +233,7 @@ class GetDeviceControllerTest extends WebTestCase
 
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);

@@ -3,6 +3,7 @@
 namespace App\User\Repository\ORM;
 
 use App\User\Entity\GroupNames;
+use App\User\Entity\User;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Exception\ORMException;
 
@@ -14,9 +15,17 @@ use Doctrine\ORM\Exception\ORMException;
  */
 interface GroupNameRepositoryInterface
 {
-    /**
-     * @throws NonUniqueResultException
-     * @throws ORMException
-     */
     public function findOneById(int $id): ?GroupNames;
+
+    public function findOneByName(string $name): ?GroupNames;
+
+    public function persist(GroupNames $groupNames): void;
+
+    public function flush(): void;
+
+    public function remove(GroupNames $groupNames): void;
+
+    public function findGroupsUserIsNotApartOf(User $user = null, array $groups = []): array;
+
+    public function findGroupsUserIsApartOf(User $user, array $groups = []): array;
 }

@@ -90,12 +90,12 @@ class GroupNames
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-//    public function getCreatedBy(): User
+//    public function getCreatedBy(): UserDTOs
 //    {
 //        return $this->createdBy;
 //    }
 //
-//    public function setCreatedBy(User $createdBy): void
+//    public function setCreatedBy(UserDTOs $createdBy): void
 //    {
 //        $this->createdBy = $createdBy;
 //    }

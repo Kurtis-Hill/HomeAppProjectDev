@@ -5,7 +5,9 @@ namespace App\Sensors\Voters;
 
 
 use App\Devices\Entity\Devices;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
+use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,6 +16,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SensorVoter extends Voter
 {
+    private DeviceRepositoryInterface $deviceRepository;
+
+    public function __construct(DeviceRepositoryInterface $deviceRepository)
+    {
+        $this->deviceRepository = $deviceRepository;
+    }
+
     public const ADD_NEW_SENSOR = 'add-new-sensor';
 
     public const UPDATE_SENSOR_READING_BOUNDARY = 'update-sensor-boundary-reading';
@@ -21,6 +30,8 @@ class SensorVoter extends Voter
     public const UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
 
     public const DELETE_SENSOR = 'delete-sensor';
+
+    public const UPDATE_SENSOR = 'update-sensor';
 
     /**
      * @param string $attribute
@@ -34,6 +45,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR_READING_BOUNDARY,
             self::UPDATE_SENSOR_CURRENT_READING,
             self::DELETE_SENSOR,
+            self::UPDATE_SENSOR,
         ])) {
             return false;
         }
@@ -56,6 +68,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR_READING_BOUNDARY => $this->canUpdateSensorBoundaryReading($user, $subject),
             self::UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
+            self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
             default => false
         };
     }
@@ -117,6 +130,25 @@ class SensorVoter extends Voter
         }
 
         if (!in_array($sensor->getDevice()->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function canUpdateSensor(UserInterface $user, UpdateSensorDTO $updateSensorDTO): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return true;
+        }
+
+        $sensor = $updateSensorDTO->getSensor();
+
+        if (!in_array($updateSensorDTO->getDeviceID()?->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
             return false;
         }
 

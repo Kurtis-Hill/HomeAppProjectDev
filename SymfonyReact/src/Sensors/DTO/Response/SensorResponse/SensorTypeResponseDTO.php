@@ -5,22 +5,13 @@ namespace App\Sensors\DTO\Response\SensorResponse;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class SensorTypeResponseDTO
+readonly class SensorTypeResponseDTO
 {
-    private int $sensorTypeID;
-
-    private string $sensorTypeName;
-
-    private string $sensorTypeDescription;
-
     public function __construct(
-        int $sensorTypeID,
-        string $sensorTypeName,
-        string $sensorTypeDescription
+        private int $sensorTypeID,
+        private string $sensorTypeName,
+        private string $sensorTypeDescription
     ) {
-        $this->sensorTypeID = $sensorTypeID;
-        $this->sensorTypeName = $sensorTypeName;
-        $this->sensorTypeDescription = $sensorTypeDescription;
     }
 
     public function getSensorTypeID(): int

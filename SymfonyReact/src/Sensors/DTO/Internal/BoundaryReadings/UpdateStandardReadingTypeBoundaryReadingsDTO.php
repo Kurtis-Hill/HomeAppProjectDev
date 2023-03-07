@@ -5,45 +5,17 @@ namespace App\Sensors\DTO\Internal\BoundaryReadings;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UpdateStandardReadingTypeBoundaryReadingsDTO
+readonly class UpdateStandardReadingTypeBoundaryReadingsDTO
 {
-    private int $sensorReadingID;
-
-    private string $readingType;
-
-    private int|float|null $highReading;
-
-    private int|float|null $lowReading;
-
-    private bool $currentConstRecord;
-
-    private int|float|null $currentHighReading;
-
-    private int|float|null $currentLowReading;
-
-    private ?bool $constRecord;
-
     public function __construct(
-        string $readingType,
-        int|float $currentHighReading,
-        int|float $currentLowReading,
-        bool $currentConstRecord,
-        int|float|null $highReading,
-        int|float|null $lowReading,
-        ?bool $constRecord,
+        private string $readingType,
+        private int|float $currentHighReading,
+        private int|float $currentLowReading,
+        private bool $currentConstRecord,
+        private int|float|null $highReading,
+        private int|float|null $lowReading,
+        private ?bool $constRecord,
     ) {
-        $this->readingType = $readingType;
-        $this->highReading = $highReading;
-        $this->lowReading = $lowReading;
-        $this->currentConstRecord = $currentConstRecord;
-        $this->constRecord = $constRecord;
-        $this->currentHighReading = $currentHighReading;
-        $this->currentLowReading = $currentLowReading;
-    }
-
-    public function getSensorReadingID(): int
-    {
-        return $this->sensorReadingID;
     }
 
     public function getReadingType(): string

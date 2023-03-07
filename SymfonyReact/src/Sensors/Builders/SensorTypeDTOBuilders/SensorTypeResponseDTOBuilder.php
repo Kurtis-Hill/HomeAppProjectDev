@@ -15,4 +15,13 @@ class SensorTypeResponseDTOBuilder
             $sensorType->getDescription()
         );
     }
+
+    public static function buildFullSensorTypeResponseDTO(SensorType $sensorType): SensorTypeResponseDTO
+    {
+        return new SensorTypeResponseDTO(
+            $sensorType->getSensorTypeID(),
+            $sensorType->getSensorType(),
+            $sensorType->getDescription()
+        );
+    }
 }

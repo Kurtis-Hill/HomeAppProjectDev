@@ -103,7 +103,7 @@ class DeleteSensorControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
 
-        $groupsUserIsPartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsPartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
 
         $devicesInGroupsUserIsPartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsPartOf]);
 

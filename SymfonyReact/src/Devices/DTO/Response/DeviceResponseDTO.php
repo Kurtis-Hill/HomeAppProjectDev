@@ -7,46 +7,19 @@ use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class DeviceResponseDTO
+readonly class DeviceResponseDTO
 {
-    private ?int $deviceNameID;
-
-    private string $deviceName;
-
-    private ?string $secret;
-
-    private int $groupNameID;
-
-    private int $roomID;
-
-    private string|int $createdBy;
-
-    private ?string $ipAddress;
-
-    private ?string $externalIpAddress;
-
-    private array $roles;
-
     public function __construct(
-        ?int $deviceNameID,
-        string $deviceName,
-        int $groupNameID,
-        int $roomID,
-        string|int $createdBy,
-        ?string $secret = null,
-        ?string $ipAddress = null,
-        ?string $externalIpAddress = null,
-        ?array $roles = []
+        private ?int $deviceNameID,
+        private string $deviceName,
+        private int $groupNameID,
+        private int $roomID,
+        private string|int $createdBy,
+        private ?string $secret = null,
+        private ?string $ipAddress = null,
+        private ?string $externalIpAddress = null,
+        private ?array $roles = []
     ) {
-        $this->deviceNameID = $deviceNameID;
-        $this->deviceName = $deviceName;
-        $this->secret = $secret;
-        $this->groupNameID = $groupNameID;
-        $this->roomID = $roomID;
-        $this->createdBy = $createdBy;
-        $this->ipAddress = $ipAddress;
-        $this->externalIpAddress = $externalIpAddress;
-        $this->roles = $roles;
     }
 
     public function getDeviceNameID(): int

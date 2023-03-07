@@ -81,7 +81,7 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
         return $qb->getQuery()->getResult();
     }
 
-    public function findGroupsUserIsApartOf(array $groups, User $user): array
+    public function findGroupsUserIsApartOf(User $user, array $groups = []): array
     {
         $qb = $this->createQueryBuilder('gn');
 

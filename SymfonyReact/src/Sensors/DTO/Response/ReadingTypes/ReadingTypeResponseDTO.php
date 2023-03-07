@@ -5,16 +5,12 @@ namespace App\Sensors\DTO\Response\ReadingTypes;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class ReadingTypeResponseDTO
+readonly class ReadingTypeResponseDTO
 {
-    private int $readingTypeID;
-
-    private string $readingTypeName;
-
-    public function __construct(int $id, string $readingType)
-    {
-        $this->readingTypeID = $id;
-        $this->readingTypeName = $readingType;
+    public function __construct(
+        private int $readingTypeID,
+        private string $readingType
+    ) {
     }
 
     public function getReadingTypeID(): int
@@ -24,6 +20,6 @@ class ReadingTypeResponseDTO
 
     public function getReadingTypeName(): string
     {
-        return $this->readingTypeName;
+        return $this->readingType;
     }
 }

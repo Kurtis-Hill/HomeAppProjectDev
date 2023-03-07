@@ -13,6 +13,7 @@ use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Exceptions\DeviceNotFoundException;
+use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
@@ -68,11 +69,6 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $requestValidationErrors = $validator->validate($newSensorRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
-        }
-
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
@@ -84,7 +80,10 @@ class AddNewSensorController extends AbstractController
             $this->logger->error($e->getMessage(), ['user' => $user->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::QUERY_FAILURE, 'Sensor data']);
-        } catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
+        } catch (SensorRequestException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidationErrors());
+        }
+        catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 

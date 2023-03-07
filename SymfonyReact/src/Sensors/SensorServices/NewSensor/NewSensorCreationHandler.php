@@ -12,6 +12,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\DuplicateSensorException;
+use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -23,7 +24,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use TypeError;
 
-class NewSensorCreationFacade implements NewSensorCreationInterface
+class NewSensorCreationHandler implements NewSensorCreationInterface
 {
     use ValidatorProcessorTrait;
 
@@ -47,12 +48,13 @@ class NewSensorCreationFacade implements NewSensorCreationInterface
         $this->validator = $validator;
     }
 
-    /**
-     * @throws DeviceNotFoundException
-     * @throws SensorTypeNotFoundException
-     */
     public function buildNewSensorDTO(AddNewSensorRequestDTO $newSensorRequestDTO, User $user): NewSensorDTO
     {
+        $requestValidationErrors = $this->validator->validate($newSensorRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            throw new SensorRequestException($this->getValidationErrorAsArray($requestValidationErrors));
+        }
+
         $deviceObject = $this->deviceRepository->findOneById($newSensorRequestDTO->getDeviceNameID());
         if (!$deviceObject instanceof Devices) {
             throw new DeviceNotFoundException(
@@ -95,6 +97,11 @@ class NewSensorCreationFacade implements NewSensorCreationInterface
         $sensor->setDevice($newSensorDTO->getDevice());
 
         return $this->validateSensor($sensor);
+    }
+
+    private function checkTypesAreValid(NewSensorDTO $newSensorDTO)
+    {
+
     }
 
     private function validateSensor(Sensor $sensor): array

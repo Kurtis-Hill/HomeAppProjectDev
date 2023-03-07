@@ -17,7 +17,6 @@
         "phpdocumentor/reflection-docblock": "^5.2",
         "predis/predis": "^2.0",
         "ruflin/elastica": "^7.2",
-        "sensio/framework-extra-bundle": "^6.1",
         "snc/redis-bundle": "^4.3",
         "symfony/asset": "6.2.*",
         "symfony/console": "6.2.*",
@@ -77,7 +76,7 @@
             "App\\Tests\\": "tests/"
         },
         "exclude-from-classmap": [
-            "/src/Migrations/",
+            "/src/ORM/Migrations/",
             "/tests/Traits/"
         ]
     },

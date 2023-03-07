@@ -12,7 +12,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     ORM\Entity(repositoryClass: GroupNameMappingRepository::class),
     ORM\Table(name: "groupnnamemapping"),
     ORM\Index(columns: ["groupName"], name: "groupName"),
-//    ORM\Index(columns: ["user", "groupName"], name: "user"),
     ORM\Index(columns: ["user"], name: "IDX_1C993DEE5FD86D04"),
     ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupName"]),
 ]

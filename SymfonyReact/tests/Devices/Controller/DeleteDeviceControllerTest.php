@@ -144,7 +144,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
 
         if (empty($groupsUserIsApartOf)) {
             self::fail('No group found for testing');

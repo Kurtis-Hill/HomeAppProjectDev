@@ -414,7 +414,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         /** @var GroupNameRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsApartOf]);
@@ -531,7 +531,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var GroupNameMapping[] $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsApartOf]);
@@ -607,7 +607,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var GroupNameMapping[] $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsApartOf]);
@@ -871,7 +871,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var GroupNames[] $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+        $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsApartOf]);

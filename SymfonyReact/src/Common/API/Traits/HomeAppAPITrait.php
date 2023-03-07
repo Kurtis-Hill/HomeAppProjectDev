@@ -185,7 +185,7 @@ trait HomeAppAPITrait
     }
 
     // 40x Client Error Response
-    public function sendBadRequestJsonResponse(array $errors = [], string $title = GetDeviceController::BAD_REQUEST_NO_DATA_RETURNED): JsonResponse
+    public function sendBadRequestJsonResponse(array $errors = [], string $title = self::BAD_REQUEST_NO_DATA_RETURNED): JsonResponse
     {
         if (!empty($errors)) {
             return $this->returnJsonResponse(

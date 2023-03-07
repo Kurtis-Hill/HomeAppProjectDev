@@ -2,30 +2,18 @@
 
 namespace App\Sensors\DTO\Response\SensorResponse;
 
-class SensorResponseDTO
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
+readonly class SensorPartialResponseDTO
 {
-    private int $sensorNameID;
-
-    private string $sensorName;
-
-    private string $sensorType;
-
-    private string $deviceName;
-
-    private string $createdBy;
-
     public function __construct(
-        int $sensorNameID,
-        string $sensorName,
-        string $sensorType,
-        string $deviceName,
-        string $createdBy
+        private int $sensorNameID,
+        private string $sensorName,
+        private string $sensorType,
+        private string $deviceName,
+        private string $createdBy
     ) {
-        $this->sensorNameID = $sensorNameID;
-        $this->sensorName = $sensorName;
-        $this->sensorType = $sensorType;
-        $this->deviceName = $deviceName;
-        $this->createdBy = $createdBy;
     }
 
     public function getSensorNameID(): int
