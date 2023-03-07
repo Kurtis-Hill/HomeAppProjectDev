@@ -148,6 +148,14 @@ class SensorVoter extends Voter
 
         $sensor = $updateSensorDTO->getSensor();
 
+        if (!in_array(
+            $sensor->getDevice()->getGroupNameObject()->getGroupNameID(),
+            $user->getAssociatedGroupNameIds(),
+            true
+        )) {
+            return false;
+        }
+
         if (!in_array($updateSensorDTO->getDeviceID()?->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
             return false;
         }

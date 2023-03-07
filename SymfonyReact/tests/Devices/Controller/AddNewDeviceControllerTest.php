@@ -360,34 +360,34 @@ class AddNewDeviceControllerTest extends WebTestCase
     /**
      * allowing special characters in device name at the moment @TODO only allow hypens and underscores
      */
-//    public function test_adding_device_name_special_characters(): void
-//    {
-//        $formData = [
-//            'deviceName' => 'device&&**name',
-//            'devicePassword' => self::NEW_DEVICE_PASSWORD,
-//            'deviceGroup' => $this->groupName->getGroupNameID(),
-//            'deviceRoom' => $this->room->getRoomID(),
-//        ];
-//
-//        $jsonData = json_encode($formData);
-//
-//        $this->client->request(
-//            Request::METHOD_POST,
-//            self::ADD_NEW_DEVICE_PATH,
-//            $formData,
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-//            $jsonData,
-//        );
-//
-//        /** @var Devices $device */
-//        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//
-//        self::assertNull($device);
-//        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
-//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-//    }
+    public function test_adding_device_name_special_characters(): void
+    {
+        $formData = [
+            'deviceName' => 'device&&**name',
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
+            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceRoom' => $this->room->getRoomID(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_DEVICE_PATH,
+            $formData,
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            $jsonData,
+        );
+
+        /** @var Devices $device */
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertNull($device);
+        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
 
     public function test_adding_password_name_too_short(): void
     {

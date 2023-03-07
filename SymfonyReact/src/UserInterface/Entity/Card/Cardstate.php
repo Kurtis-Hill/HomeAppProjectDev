@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Entity\Card;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,7 +41,7 @@ class Cardstate
         ORM\Column(name: "state", type: "string", length: 50, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::CARD_STATE_MIN_LENGTH,
             max: self::CARD_STATE_MAX_LENGTH,

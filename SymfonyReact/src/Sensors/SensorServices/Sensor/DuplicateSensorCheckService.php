@@ -20,22 +20,23 @@ class DuplicateSensorCheckService
      * @throws DuplicateSensorException
      */
     public function checkSensorForDuplicates(
-        UpdateSensorDTO $updateSensorDTO
+        Sensor $sensor,
+        int $deviceID,
+        string $sensorNameToUpdateTo = null,
     ): void {
-        $sensorToUpdate = $updateSensorDTO->getSensor();
         $duplicateSensorCheck = $this->sensorRepository->findSensorObjectByDeviceIdAndSensorName(
-            $updateSensorDTO->getDeviceID()?->getDeviceID() ?? $sensorToUpdate->getDevice()->getDeviceID(),
-            $updateSensorDTO->getSensorName() ?? $sensorToUpdate->getSensorName()
+            $deviceID,
+            $sensorNameToUpdateTo ?? $sensor->getSensorName(),
         );
 
         if (
             $duplicateSensorCheck instanceof Sensor
-            && $duplicateSensorCheck->getSensorID() !== $sensorToUpdate->getSensorID()
+            && $duplicateSensorCheck->getSensorID() !== $sensor->getSensorID()
         ) {
             throw new DuplicateSensorException(
                 sprintf(
                     DuplicateSensorException::MESSAGE,
-                    $updateSensorDTO->getSensorName(),
+                    $sensorNameToUpdateTo ?? $sensor->getSensorName(),
                 )
             );
         }

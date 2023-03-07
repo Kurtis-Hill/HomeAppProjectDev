@@ -2,7 +2,7 @@
 
 namespace App\Devices\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
@@ -40,7 +40,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: "deviceName", type: "string", length: 20, nullable: false)]
     #[
-//        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\NotBlank(
             message: 'Device name should not be blank'
         ),

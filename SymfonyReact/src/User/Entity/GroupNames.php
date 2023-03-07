@@ -2,7 +2,6 @@
 
 namespace App\User\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

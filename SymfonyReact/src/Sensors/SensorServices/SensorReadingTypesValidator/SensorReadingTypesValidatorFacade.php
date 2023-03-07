@@ -115,7 +115,6 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
             $sensorReadingTypeObject,
             $sensorType
         );
-
         if (empty($validationErrors)) {
             try {
                 $this->saveReadingType($sensorReadingTypeObject);

@@ -5,6 +5,7 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 use App\Devices\Entity\Devices;
 use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -79,6 +80,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
             throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION);
         }
         foreach ($sensorReadingObjects as $sensorReadingObject) {
+            /** @var AbstractCurrentReadingUpdateRequestDTO $currentReadingDTO */
             foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingDTO) {
                 if ($currentReadingDTO->getReadingType() !== $sensorReadingObject->getReadingType()) {
                     continue;
@@ -125,7 +127,9 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
             }
         }
         try {
+
             $this->sensorRepository->flush();
+//                        dd('log error');
         } catch (ORMException|OptimisticLockException $e) {
             $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
 

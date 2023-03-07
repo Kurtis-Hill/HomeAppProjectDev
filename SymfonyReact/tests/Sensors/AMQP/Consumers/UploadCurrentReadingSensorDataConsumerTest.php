@@ -109,8 +109,8 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
 
         self::assertTrue($result);
         self::assertEquals(
+            $analogCurrentReadingUpdateMessage->getCurrentReading(),
             $soilSensor->getAnalogObject()->getCurrentReading(),
-            $analogCurrentReadingUpdateMessage->getCurrentReading()
         );
     }
 

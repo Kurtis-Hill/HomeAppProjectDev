@@ -2,7 +2,7 @@
 
 namespace App\User\Forms;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Common\CustomValidators\NotNumericConstraint;
 use App\User\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -30,7 +30,7 @@ class RegistrationForm  extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your first name',
                     ]),
-                    new NoSpecialCharactersConstraint(),
+                    new NoSpecialCharactersNameConstraint(),
                 ],
                 'error_bubbling' => true,
                 'attr' => [
@@ -45,7 +45,7 @@ class RegistrationForm  extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter your last name',
                     ]),
-                    new NoSpecialCharactersConstraint(),
+                    new NoSpecialCharactersNameConstraint(),
                 ],
                 'error_bubbling' => true,
                 'attr' => [

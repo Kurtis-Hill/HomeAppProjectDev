@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
@@ -34,7 +34,7 @@ class Sensor
 
     #[ORM\Column(name: "sensorName", type: "string", length: 20, nullable: false)]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::SENSOR_NAME_MIN_LENGTH,
             max: self::SENSOR_NAME_MAX_LENGTH,

@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Entity\Card;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,7 +38,7 @@ class CardColour
         ORM\Column(name: "colour", type: "string", length: 20, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::COLOUR_MIN_LENGTH,
             max: self::COLOUR_MAX_LENGTH,
@@ -53,7 +53,7 @@ class CardColour
         ORM\Column(name: "shade", type: "string", length: 20, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::SHADE_MIN_LENGTH,
             max: self::SHADE_MAX_LENGTH,

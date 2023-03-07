@@ -58,7 +58,12 @@ class UpdateSensorHandler implements UpdateSensorInterface
 
     public function handleSensorUpdate(UpdateSensorDTO $updateSensorDTO): array
     {
-        $this->duplicateSensorCheckService->checkSensorForDuplicates($updateSensorDTO);
+        $this->duplicateSensorCheckService->checkSensorForDuplicates(
+            $updateSensorDTO->getSensor(),
+            $updateSensorDTO->getDeviceID()?->getDeviceID() ?? $updateSensorDTO->getSensor()->getDevice()->getDeviceID(),
+            $updateSensorDTO->getSensorName(),
+
+        );
 
         $sensorToUpdate = $updateSensorDTO->getSensor();
         if ($updateSensorDTO->getDeviceID() !== null) {

@@ -9,6 +9,7 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Controller\SensorControllers\UpdateSensorController;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
@@ -89,11 +90,11 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals([APIErrorMessages::FORMAT_NOT_SUPPORTED], $errorsPayload);
     }
@@ -129,13 +130,18 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals($errorMessage, $errorsPayload);
+
+        /** @var Sensor $sensorAfterUpdate */
+        $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensor->getSensorID()]);
+        self::assertEquals($sensor->getSensorName(), $sensorAfterUpdate->getSensorName());
+        self::assertEquals($sensor->getDevice(), $sensorAfterUpdate->getDevice());
     }
 
     public function incorrectDataTypesDataProvider(): Generator
@@ -224,14 +230,20 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $payload = $responseData['payload'];
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorNameID']);
+
+        self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($newSensorName, $payload['sensorName']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-        self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']);
+        self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
+
+//        /** @var Sensor $sensorAfterUpdate */
+//        $sensorAfterUpdate = $this->sensorRepository->find($sensorToUpdate->getSensorID());
+//        self::assertEquals($newSensorName, $sensorAfterUpdate->getSensorName());
+//        self::assertEquals($deviceId, $sensorAfterUpdate->getDevice()->getDeviceID());
     }
 
     public function test_user_cannot_change_sensor_to_group_not_apart_of(): void
@@ -293,58 +305,253 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
-
-        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         self::assertEquals(UpdateSensorController::NOT_AUTHORIZED_TO_BE_HERE, $title);
         self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errorsPayload);
 
+        /** @var Sensor $sensorAfterUpdate */
+        $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
+
+        self::assertEquals($sensorToUpdate->getSensorName(), $sensorAfterUpdate->getSensorName());
+        self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $sensorAfterUpdate->getDevice()->getDeviceID());
     }
 
     public function test_just_updating_device_id(): void
     {
+        $sensors = $this->sensorRepository->findAll();
 
+        /** @var Sensor $sensorToUpdate */
+        $sensorToUpdate = $sensors[0];
+
+        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+
+        /** @var GroupNames[] $groupUserIsApartOf */
+        $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
+
+        if (empty($groupUserIsApartOf)) {
+            self::fail('UserDTOs is not apart of any group');
+        }
+        foreach ($groupUserIsApartOf as $group) {
+            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            if ($device !== null) {
+                break;
+            }
+        }
+
+        if (!isset($device)) {
+            self::fail('No device found for user');
+        }
+
+        $deviceId = $device->getDeviceID();
+
+        $this->client->request(
+            Request::METHOD_PATCH,
+            sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            json_encode(['deviceID' => $deviceId]),
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $payload = $responseData['payload'];
+
+        /** @var Sensor $sensorAfterUpdate */
+        $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
+        self::assertEquals($sensorAfterUpdate->getDevice()->getDeviceID(), $deviceId);
+
+        self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
+        self::assertEquals($sensorToUpdate->getSensorName(), $payload['sensorName']);
+        self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
     }
 
     public function test_just_updating_sensor_name(): void
     {
+        $sensors = $this->sensorRepository->findAll();
 
+        /** @var Sensor $sensorToUpdate */
+        $sensorToUpdate = $sensors[0];
+
+        $newSensorName = 'newName';
+
+        $this->client->request(
+            Request::METHOD_PATCH,
+            sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            json_encode(['sensorName' => $newSensorName]),
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $payload = $responseData['payload'];
+
+        self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
+        self::assertEquals($newSensorName, $payload['sensorName']);
+        self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
     }
 
-    public function test_updating_sensor_correct_data(): void
+    public function test_updating_sensor_correct_data_regular_user(): void
     {
+        $sensors = $this->sensorRepository->findAll();
 
+        /** @var User $user */
+        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+        foreach ($sensors as $sensor) {
+            if (
+                in_array(
+                    $sensor->getDevice()->getGroupNameObject()->getGroupNameID(),
+                    $user->getAssociatedGroupNameIds(),
+                    true
+                )) {
+                /** @var Sensor $sensorToUpdate */
+                $sensorToUpdate = $sensor;
+                break;
+            }
+        }
+
+        if (!isset($sensorToUpdate)) {
+            self::fail('No sensor found for user');
+        }
+
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
+
+        /** @var GroupNames[] $groupUserIsApartOf */
+        $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
+
+        if (empty($groupUserIsApartOf)) {
+            self::fail('UserDTOs is not apart of any group');
+        }
+        foreach ($groupUserIsApartOf as $group) {
+            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            if ($device !== null) {
+                break;
+            }
+        }
+
+        if (!isset($device)) {
+            self::fail('No device found for user');
+        }
+
+        $deviceId = $device->getDeviceID();
+        $newSensorName = 'newName';
+
+        $this->client->request(
+            Request::METHOD_PATCH,
+            sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
+            json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $payload = $responseData['payload'];
+        self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
+        self::assertEquals($newSensorName, $payload['sensorName']);
+        self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+
+        /** @var Sensor $sensorAfterUpdate */
+        $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
+        self::assertEquals($sensorAfterUpdate->getDevice()->getDeviceID(), $deviceId);
+        self::assertEquals($sensorAfterUpdate->getSensorName(), $newSensorName);
     }
 
-    /**
-     * @dataProvider updatingSensorPartialDataDataProvider
-     */
-    public function test_updating_sensor_partial_data(array $formData, array $messages): void
+    public function test_full_successful_response(): void
     {
-    // method PATCH
-    }
+        $sensors = $this->sensorRepository->findAll();
 
-    public function updatingSensorPartialDataDataProvider(): Generator
-    {
-        yield [
-            'formData' => [
-                'sensorName' => 'newName',
-            ],
-            'messages' => [
-                'sensorName' => null,
-            ],
-        ];
+        /** @var Sensor $sensorToUpdate */
+        $sensorToUpdate = $sensors[0];
 
+        $newSensorName = 'newName';
 
+        $this->client->request(
+            Request::METHOD_PATCH,
+            sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            json_encode(['sensorName' => $newSensorName]),
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $payload = $responseData['payload'];
+
+        self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
+        self::assertEquals($newSensorName, $payload['sensorName']);
+
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getFirstName(), $payload['createdBy']['firstName']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getLastName(), $payload['createdBy']['lastName']);
+        self::assertNull($payload['createdBy']['profilePicture']);
+        self::assertNull($payload['createdBy']['roles']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupNameID()->getGroupNameID(), $payload['createdBy']['group']['groupNameID']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupNameID()->getGroupName(), $payload['createdBy']['group']['groupName']);
+
+        self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $payload['device']['deviceNameID']);
+        self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);
+        self::assertEquals($sensorToUpdate->getDevice()->getGroupNameObject()->getGroupNameID(), $payload['device']['groupNameID']);
+        self::assertEquals($sensorToUpdate->getDevice()->getRoomObject()->getRoomID(), $payload['device']['roomID']);
+        self::assertNull($payload['device']['secret']);
+
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorTypeID(), $payload['sensorType']['sensorTypeID']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getDescription(), $payload['sensorType']['sensorTypeDescription']);
     }
 
     public function test_adding_sensor_to_device_with_same_name(): void
     {
         $sensors = $this->sensorRepository->findAll();
+        /** @var Sensor $sensor */
+        $sensor = array_pop($sensors);
 
-        $sensor = $sensors[0];
+        foreach ($sensors as $sens) {
+            if ($sens->getDevice()->getDeviceID() === $sensor->getDevice()->getDeviceID()) {
+                $sensorToUpdate = $sens;
+                break;
+            }
+        }
+
+        if (!isset($sensorToUpdate)) {
+            self::fail('No sensor found to update');
+        }
 
         $content = [
             'sensorName' => $sensor->getSensorName(),
@@ -353,7 +560,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_URL, $sensor->getSensorID()),
+            sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -366,22 +573,14 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
-        self::assertEquals([APIErrorMessages::READING_TYPE_NOT_VALID_FOR_SENSOR], $errorsPayload);
+        self::assertEquals([sprintf(DuplicateSensorException::MESSAGE, $sensor->getSensorName())], $errorsPayload);
     }
-
-
-
-
-
-
-
-
 
     /**
      * @dataProvider wrongHttpsMethodDataProvider
@@ -389,8 +588,8 @@ class UpdateSensorControllerTest extends WebTestCase
     public function test_using_wrong_http_method(string $httpVerb): void
     {
         $sensors = $this->sensorRepository->findAll();
-
         $sensor = $sensors[0];
+
         $this->client->request(
             $httpVerb,
             sprintf(self::UPDATE_SENSOR_URL, $sensor->getSensorID()),
@@ -402,12 +601,10 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public function wrongHttpsMethodDataProvider(): Generator
     {
-        return [
-            [Request::METHOD_GET],
-            [Request::METHOD_POST],
-            [Request::METHOD_DELETE],
-        ];
+        yield [Request::METHOD_GET];
+        yield [Request::METHOD_POST];
+        yield [Request::METHOD_DELETE];
     }
 }

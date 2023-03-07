@@ -3,9 +3,8 @@
 namespace App\Devices\Forms;
 
 use App\Common\API\APIErrorMessages;
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
-use App\Form\FormMessages;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -24,7 +23,7 @@ class AddNewDeviceForm extends AbstractType
             ->add('deviceName', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                    new NoSpecialCharactersConstraint(),
+                    new NoSpecialCharactersNameConstraint(),
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'Device')]),
                     new Length(
                         [

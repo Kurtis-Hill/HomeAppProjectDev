@@ -17,6 +17,7 @@ use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
+use App\Sensors\SensorServices\Sensor\DuplicateSensorCheckService;
 use App\User\Entity\User;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -34,17 +35,21 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
 
     private SensorTypeRepositoryInterface $sensorTypeRepository;
 
+    private DuplicateSensorCheckService $duplicateSensorCheckService;
+
     private ValidatorInterface $validator;
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         DeviceRepositoryInterface $deviceRepository,
         SensorTypeRepositoryInterface $sensorTypeRepository,
+        DuplicateSensorCheckService $duplicateSensorCheckService,
         ValidatorInterface $validator,
     ) {
         $this->sensorRepository = $sensorRepository;
         $this->deviceRepository = $deviceRepository;
         $this->sensorTypeRepository = $sensorTypeRepository;
+        $this->duplicateSensorCheckService = $duplicateSensorCheckService;
         $this->validator = $validator;
     }
 
@@ -99,11 +104,6 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
         return $this->validateSensor($sensor);
     }
 
-    private function checkTypesAreValid(NewSensorDTO $newSensorDTO)
-    {
-
-    }
-
     private function validateSensor(Sensor $sensor): array
     {
         $validationErrors = $this->validator->validate($sensor);
@@ -112,6 +112,10 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
         }
 
         try {
+            $this->duplicateSensorCheckService->checkSensorForDuplicates(
+                $sensor,
+                $sensor->getDevice()->getDeviceID(),
+            );
             $this->duplicateSensorOnSameDeviceCheck($sensor);
         } catch (DuplicateSensorException $e) {
             $errors[] = $e->getMessage();

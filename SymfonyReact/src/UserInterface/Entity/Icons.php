@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\UserInterface\Repository\ORM\IconsRepository;
@@ -35,7 +35,7 @@ class Icons
         ORM\Column(name: "iconName", type: "string", length: 20, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::ICON_NAME_MIN_LENGTH,
             max: self::ICON_NAME_MAX_LENGTH,
@@ -50,7 +50,7 @@ class Icons
         ORM\Column(name: "description", type: "string", length: 20, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::ICON_DESCRIPTION_MIN_LENGTH,
             max: self::ICON_DESCRIPTION_MAX_LENGTH,

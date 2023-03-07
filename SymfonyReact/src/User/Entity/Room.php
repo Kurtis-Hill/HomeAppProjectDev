@@ -2,7 +2,7 @@
 
 namespace App\User\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\User\Repository\ORM\RoomRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,7 +27,7 @@ class Room
         ORM\Column(name: "room", type: "string", length: 255, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: 2,
             max: 20,
