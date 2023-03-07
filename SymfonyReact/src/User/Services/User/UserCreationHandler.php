@@ -12,6 +12,7 @@ use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\UserRepository;
+use App\User\Services\GroupNameServices\AddGroupNameHandler;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Exception\ORMException;
@@ -33,6 +34,8 @@ class UserCreationHandler
 
     private UserRepository $userRepository;
 
+    private AddGroupNameHandler $addGroupNameHandler;
+
     private ValidatorInterface $validator;
 
     private LoggerInterface $logger;
@@ -46,6 +49,7 @@ class UserCreationHandler
         GroupNameRepository $groupNameRepository,
         NewUserBuilder $newUserBuilder,
         UserRepository $userRepository,
+        AddGroupNameHandler $addGroupNameHandler,
         ValidatorInterface $validator,
         LoggerInterface $logger,
         string $profilePictureDir,
@@ -55,6 +59,7 @@ class UserCreationHandler
         $this->groupNameRepository = $groupNameRepository;
         $this->newUserBuilder = $newUserBuilder;
         $this->userRepository = $userRepository;
+        $this->addGroupNameHandler = $addGroupNameHandler;
         $this->logger = $logger;
         $this->validator = $validator;
         $this->profilePictureDir = $profilePictureDir;
@@ -77,7 +82,7 @@ class UserCreationHandler
         ?UploadedFile $profilePic = null,
         array $roles = ['ROLE_USER'],
     ): User {
-        $groupNameObject = $this->createUsersGroupName($groupName);
+        $groupNameObject = $this->addGroupNameHandler->addNewGroup($groupName, null);
 
         if ($profilePic instanceof UploadedFile) {
             $profilePicFileName = $this->handleProfilePicFileUpload($profilePic);

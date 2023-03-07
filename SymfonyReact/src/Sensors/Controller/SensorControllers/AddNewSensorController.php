@@ -51,7 +51,6 @@ class AddNewSensorController extends AbstractController
     #[Route('/add', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
-        ValidatorInterface $validator,
         NewSensorCreationInterface $newSensorCreationService,
         ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,

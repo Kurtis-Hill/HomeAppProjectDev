@@ -47,4 +47,6 @@ class APIErrorMessages
     public const FAILED_TO_NORMALIZE_RESPONSE = 'Failed to normalize response';
 
     public const FORBIDDEN_ACTION = 'You are not supposed to be here';
+
+    public const OBJECT_ALREADY_EXISTS = '%s already exists';
 }

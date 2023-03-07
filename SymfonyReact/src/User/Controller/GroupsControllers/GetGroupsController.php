@@ -8,6 +8,7 @@ use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -17,10 +18,10 @@ class GetGroupsController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('all', name: 'get-user-groups', methods: ['GET'])]
-    public function getUsersGroups(Security $token): Response
+    #[Route('all', name: 'get-user-groups', methods: [Request::METHOD_GET])]
+    public function getUsersGroups(): Response
     {
-        $user = $token->getUser();
+        $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendBadRequestJsonResponse();
         }

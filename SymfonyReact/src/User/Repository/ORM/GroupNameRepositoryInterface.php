@@ -17,15 +17,34 @@ interface GroupNameRepositoryInterface
 {
     public function findOneById(int $id): ?GroupNames;
 
+    /**
+     * @throws ORMException
+     */
     public function findOneByName(string $name): ?GroupNames;
 
+    /**
+     * @throws ORMException
+     */
     public function persist(GroupNames $groupNames): void;
 
+    /**
+     * @throws ORMException
+     * @throws NonUniqueResultException
+     */
     public function flush(): void;
 
+    /**
+     * @throws ORMException
+     */
     public function remove(GroupNames $groupNames): void;
 
+    /**
+     * @throws ORMException
+     */
     public function findGroupsUserIsNotApartOf(User $user = null, array $groups = []): array;
 
+    /**
+     * @throws ORMException
+     */
     public function findGroupsUserIsApartOf(User $user, array $groups = []): array;
 }

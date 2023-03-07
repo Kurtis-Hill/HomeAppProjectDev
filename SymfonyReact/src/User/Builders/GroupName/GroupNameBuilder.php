@@ -6,7 +6,7 @@ use App\User\Entity\GroupNames;
 
 class GroupNameBuilder
 {
-    public function buildNewGroupName($groupName): GroupNames
+    public function buildNewGroupName(string $groupName): GroupNames
     {
         $groupNames = new GroupNames();
         $groupNames->setGroupName($groupName);
