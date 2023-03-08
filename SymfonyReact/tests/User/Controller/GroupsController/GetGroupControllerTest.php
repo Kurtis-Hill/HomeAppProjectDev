@@ -38,6 +38,13 @@ class GetGroupControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
     }
 
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
+    }
+
     public function test_user_groups_are_correct_admin(): void
     {
         $this->client->request(
@@ -135,12 +142,5 @@ class GetGroupControllerTest extends WebTestCase
             [Request::METHOD_PATCH],
             [Request::METHOD_DELETE],
         ];
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
     }
 }

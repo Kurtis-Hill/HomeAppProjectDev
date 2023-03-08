@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Services\GroupNameServices;
+namespace App\User\Services\GroupMappingServices;
 
 use App\Authentication\Entity\GroupNameMapping;
 use App\Authentication\Repository\ORM\GroupNameMappingRepository;

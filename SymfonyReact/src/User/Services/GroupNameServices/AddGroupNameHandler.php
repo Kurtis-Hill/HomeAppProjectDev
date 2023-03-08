@@ -9,6 +9,7 @@ use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameMappingValidationException;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Services\GroupMappingServices\AddGroupNameMappingHandler;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;

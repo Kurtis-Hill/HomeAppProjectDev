@@ -58,11 +58,12 @@ class AddNewRoomControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertEquals('Room name cannot be longer than 20 characters', $responseData['errors'][0]);
         self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_new_room_name_too_short(): void

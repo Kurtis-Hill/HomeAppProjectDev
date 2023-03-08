@@ -13,7 +13,7 @@ use App\User\Repository\ORM\GroupNameRepository;
     ORM\Entity(repositoryClass: GroupNameRepository::class),
     ORM\Table(name: "groupname"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
-//    ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
+    ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
 ]
 #[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
 class GroupNames
