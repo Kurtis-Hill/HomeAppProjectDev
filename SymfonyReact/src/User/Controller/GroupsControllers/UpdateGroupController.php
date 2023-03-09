@@ -77,7 +77,7 @@ class UpdateGroupController extends AbstractController
         try {
             $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO);
         } catch (NotEncodableValueException) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE, 'Group Saved']);
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE . ' Group Saved']);
         }
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedGroupResponseDTO);

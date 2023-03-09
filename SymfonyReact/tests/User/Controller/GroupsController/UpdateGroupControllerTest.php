@@ -87,6 +87,31 @@ class UpdateGroupControllerTest extends WebTestCase
     }
 
     /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $groups = $this->groupNameRepository->findAll();
+        $group = $groups[0];
+        $this->client->request(
+            $httpVerb,
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): Generator
+    {
+        yield [Request::METHOD_POST];
+        yield [Request::METHOD_GET];
+        yield [Request::METHOD_DELETE];
+    }
+
+    /**
      * @dataProvider invalidDataTypesDataProvider
      */
     public function test_sending_invalid_data_types(mixed $groupName, array $message): void

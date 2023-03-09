@@ -1,4 +1,4 @@
-esp-device-sensors:
+sensors:
     resource: ../../src/Sensors/Controller
     type: attribute
 
