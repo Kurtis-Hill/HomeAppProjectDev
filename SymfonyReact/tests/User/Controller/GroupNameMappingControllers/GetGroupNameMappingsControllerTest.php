@@ -110,7 +110,7 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
 
     public function test_regular_users_can_see_all_own_group_name_mappings(): void
     {
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo, UserDataFixtures::REGULAR_PASSWORD);
+        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
         $this->client->request(
             Request::METHOD_GET,
             self::GET_GROUP_MAPPING_URL,

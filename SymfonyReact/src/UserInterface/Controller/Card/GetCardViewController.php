@@ -32,8 +32,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-data/')]
-class CardViewController extends AbstractController
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'cards/')]
+class GetCardViewController extends AbstractController
 {
     use HomeAppAPITrait;
 
@@ -67,7 +67,7 @@ class CardViewController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('device-cards/{id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
+    #[Route('device/{id}', name: 'device-card-data-v2', methods: [Request::METHOD_GET])]
     public function deviceCards(Devices $device, Request $request): JsonResponse
     {
         try {
@@ -97,7 +97,7 @@ class CardViewController extends AbstractController
         return $this->commonCardDTOResponse($cardData);
     }
 
-    #[Route('room-cards/{id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
+    #[Route('room/{id}', name: 'room-card-data-v2', methods: [Request::METHOD_GET])]
     public function roomCards(Room $room, Request $request): Response
     {
         try {

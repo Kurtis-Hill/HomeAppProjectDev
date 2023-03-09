@@ -3,7 +3,7 @@
 namespace App\UserInterface\Services\Cards\CardPreparation;
 
 use App\User\Entity\User;
-use App\UserInterface\Controller\Card\CardViewController;
+use App\UserInterface\Controller\Card\GetCardViewController;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\Entity\Card\Cardstate;
@@ -29,8 +29,8 @@ class CurrentReadingCardViewPreparationHandler
         string $view = null,
     ): array {
         $cardViewTwo = match ($view) {
-            CardViewController::ROOM_VIEW => Cardstate::ROOM_ONLY,
-            CardViewController::DEVICE_VIEW => Cardstate::DEVICE_ONLY,
+            GetCardViewController::ROOM_VIEW => Cardstate::ROOM_ONLY,
+            GetCardViewController::DEVICE_VIEW => Cardstate::DEVICE_ONLY,
             default => Cardstate::INDEX_ONLY
         };
 

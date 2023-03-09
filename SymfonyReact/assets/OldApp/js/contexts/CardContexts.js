@@ -79,13 +79,13 @@ class CardContextProvider extends Component {
 
         if (window.location.pathname ===`${webappURL}device`) {
             const deviceName = urlParam.get('device-id');
-            const deviceURL = `${cardAPI}device-cards/${deviceName}`;
+            const deviceURL = `${cardAPI}device/${deviceName}`;
             this.setState({url:  deviceURL});
             return;
         }
         if (window.location.pathname === `${webappURL}room`) {
             const roomName = urlParam.get('room-id');
-            const roomURL = `${cardAPI}room-cards/${roomName}`;
+            const roomURL = `${cardAPI}room/${roomName}`;
             this.setState({url:  roomURL});
             return;
         }

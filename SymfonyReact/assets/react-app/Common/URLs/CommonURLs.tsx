@@ -10,4 +10,4 @@ export const indexUrl = `${webappURL}index`;
 
 export const loginUrl = `${webappURL}login`;
 
-export const baseCardDataURL = `${apiURL}card-data/`;
+export const baseCardDataURL = `${apiURL}cards/`;

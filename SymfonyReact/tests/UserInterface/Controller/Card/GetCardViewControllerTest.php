@@ -24,11 +24,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CardViewControllerTest extends WebTestCase
+class GetCardViewControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    public const CARD_VIEW_URL = '/HomeApp/api/user/card-data/%s';
+    public const CARD_VIEW_URL = '/HomeApp/api/user/cards/%s';
 
     private ?string $userToken = null;
 
@@ -366,7 +366,7 @@ class CardViewControllerTest extends WebTestCase
 
     }
     
-
+//@TODO add tests for device and room
     protected function tearDown(): void
     {
         $this->entityManager->close();
