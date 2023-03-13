@@ -28,7 +28,6 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'update-sensor')]
-
 class UpdateSensorController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -67,12 +66,10 @@ class UpdateSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-
         $sensorUpdateDTO = $updateSensorService->buildSensorUpdateDTO(
             $updateSensorRequestDTO,
             $sensor
         );
-
         try {
             $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR, $sensorUpdateDTO);
         } catch (AccessDeniedException) {

@@ -33,6 +33,8 @@ class SensorVoter extends Voter
 
     public const UPDATE_SENSOR = 'update-sensor';
 
+    public const GET_SINGLE_SENSOR = 'get-single-sensor';
+
     /**
      * @param string $attribute
      * @param mixed $subject
@@ -46,6 +48,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR_CURRENT_READING,
             self::DELETE_SENSOR,
             self::UPDATE_SENSOR,
+            self::GET_SINGLE_SENSOR
         ])) {
             return false;
         }
@@ -69,6 +72,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
+            self::GET_SINGLE_SENSOR => $this->canGetSingleSensor($user, $subject),
             default => false
         };
     }
@@ -157,6 +161,27 @@ class SensorVoter extends Voter
         }
 
         if (!in_array($updateSensorDTO->getDeviceID()?->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function canGetSingleSensor(UserInterface $user, Sensor $sensor): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (!in_array(
+            $sensor->getDevice()->getGroupNameObject()->getGroupNameID(),
+            $user->getAssociatedGroupNameIds(),
+            true
+        )) {
             return false;
         }
 

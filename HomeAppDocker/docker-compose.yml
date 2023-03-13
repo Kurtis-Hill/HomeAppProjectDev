@@ -21,6 +21,7 @@ services:
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
       ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro

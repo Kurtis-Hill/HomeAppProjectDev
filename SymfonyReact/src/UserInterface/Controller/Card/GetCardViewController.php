@@ -130,8 +130,6 @@ class GetCardViewController extends AbstractController
     #[Route('index', name: 'index-card-data', methods: [Request::METHOD_GET])]
     public function indexCards(Request $request): JsonResponse
     {
-//        dd('lol');
-//        return $this->sendBadRequestJsonResponse(['oops']);
         try {
             $cardViewRequestDTO = $this->validateRequestDTO($request);
         } catch (CardViewRequestException $e) {
@@ -144,10 +142,10 @@ class GetCardViewController extends AbstractController
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
         } catch (WrongUserTypeException) {
-//            dd('lol');
+
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException $e) {
-            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
+            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Card')]);
         }

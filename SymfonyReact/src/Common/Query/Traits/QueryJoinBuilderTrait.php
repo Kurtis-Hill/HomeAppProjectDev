@@ -35,7 +35,6 @@ trait QueryJoinBuilderTrait
     #[Pure]
     public function createJoinConditionString(string $joinConditionId, string $joiningConditionId, string $joinConditionColumn): string
     {
-//        dd($joinConditionId, $joinConditionColumn);
         return sprintf(
             '.%s = %s.%s',
             $joinConditionId,

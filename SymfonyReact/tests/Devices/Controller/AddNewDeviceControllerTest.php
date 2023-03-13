@@ -357,9 +357,6 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * allowing special characters in device name at the moment @TODO only allow hypens and underscores
-     */
     public function test_adding_device_name_special_characters(): void
     {
         $formData = [

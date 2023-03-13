@@ -2,6 +2,7 @@
 
 namespace App\Sensors\DTO\Request;
 
+use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SensorUpdateRequestDTO

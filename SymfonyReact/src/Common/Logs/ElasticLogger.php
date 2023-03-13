@@ -47,7 +47,6 @@ class ElasticLogger implements LoggerInterface
         Index $logIndex,
         ElasticLogDTOFactory $elasticLogDTOFactory
     ) {
-//        dd($logger);
         $this->emergencyIndex = $emergencyIndex;
         $this->alertIndex = $alertIndex;
         $this->criticalIndex = $criticalIndex;
@@ -130,7 +129,6 @@ class ElasticLogger implements LoggerInterface
 
     public function info(Stringable|string $message, array $context = []): void
     {
-//        dd('hih');
         $elasticDTO = $this->elasticLogDTOFactory
             ->getElasticDTOBuilder('info')
             ->buildLogDTO($message, $context);

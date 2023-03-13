@@ -2,24 +2,19 @@
 
 namespace App\Authentication\EventListeners;
 
-use App\Authentication\Entity\GroupNameMapping;
 use App\Authentication\Repository\ORM\GroupNameMappingRepository;
 use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
+use DateTimeImmutable;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
 use Psr\Log\LoggerInterface;
 
 class JWTAuthenticatedListener
 {
-    private GroupNameMappingRepository $groupNameMappingTableRepository;
-
     private LoggerInterface $logger;
 
     public function __construct(GroupNameMappingRepository $groupNameMappingTableRepository, LoggerInterface $elasticLogger)
     {
         $this->logger = $elasticLogger;
-        $this->groupNameMappingTableRepository = $groupNameMappingTableRepository;
     }
 
     /**
@@ -27,7 +22,17 @@ class JWTAuthenticatedListener
      */
     public function onJWTAuthenticated(JWTAuthenticatedEvent $authenticatedEvent): void
     {
-        //@TODO remove i think
+        $authenticatedUser = $authenticatedEvent->getToken()->getUser();
+
+        $userType = $authenticatedUser instanceof User
+            ? 'User'
+            : 'Device';
+
+        $this->logger->info('User authenticated', [
+            'user' => $authenticatedUser,
+            'userType' => $userType,
+            'time' => (new DateTimeImmutable('now'))->format('d/m/y H:i:s'),
+            ]);
 //        $user = $authenticatedEvent->getToken()->getUser();
 //
 //        $userCredentials = [$user, 'getUserID'];

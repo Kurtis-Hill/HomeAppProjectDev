@@ -31,8 +31,10 @@ COPY ./apache/php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
 COPY ./apache/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 
-#RUN chown www-data /var/www/html/assets/images/profile-pics
+RUN mkdir -p /var/www/html/assets/images/profile-pics
+RUN chown www-data /var/www/html/assets/images/profile-pics
 
+RUN mkdir -p /var/www/html/tests/test-files
 RUN chown www-data /var/www/html/tests/test-files
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]

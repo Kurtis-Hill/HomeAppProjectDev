@@ -24,7 +24,6 @@ class SensorTypeRequestConstraintValidator extends ConstraintValidator
             $value
         );
 
-//        dd($missingSensorTypes);
         if (empty($missingSensorTypes)) {
             $this->context->buildViolation($constraint->allSensorTypeFilteredMessage)
                 ->setInvalidValue($value)

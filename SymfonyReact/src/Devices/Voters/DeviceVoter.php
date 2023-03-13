@@ -115,7 +115,6 @@ class DeviceVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
-//        dd('here1', $user);
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }

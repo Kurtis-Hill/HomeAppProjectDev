@@ -26,7 +26,7 @@ class SensorTypeRepositoryFactory
     public function __construct(
         DallasRepository $dallasRepository,
         BmpRepository $bmpRepository,
-        \App\Sensors\Repository\SensorType\ORM\SoilRepository $soilRepository,
+        SoilRepository $soilRepository,
         DhtRepository $dhtRepository,
     ) {
         $this->dallasRepository = $dallasRepository;
