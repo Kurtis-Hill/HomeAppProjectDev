@@ -331,4 +331,9 @@ class UserCreationHandlerTest extends KernelTestCase
 
         self::assertSame($userSaved->getRoles()[0], 'ROLE_ADMIN');
     }
+
+    public function test_every_new_user_gets_added_to_home_app_group(): void
+    {
+
+    }
 }

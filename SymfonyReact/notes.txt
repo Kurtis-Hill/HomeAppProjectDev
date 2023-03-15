@@ -1,1 +1,1 @@
-remove sensio/framework-extra-bundle when tests are working - only needed for controller annotations not attributes
+add constant group - Home-Group to every user and add to mapping table so people can still be removed from it

@@ -2,7 +2,7 @@
 
 namespace App\Devices\DeviceServices\GetDevices;
 
-use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DTO\Internal\GetDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
@@ -43,7 +43,7 @@ class GetDevicesForUserHandler implements GetDevicesForUserInterface
     {
         $deviceResponseDTOs = [];
         foreach ($devices as $device) {
-            $deviceResponseDTOs[] = DeviceResponseDTOBuilder::buildDeviceFullDetailsResponseDTO($device);
+            $deviceResponseDTOs[] = DeviceResponseDTOBuilder::buildDeviceOnlyResponseDTO($device);
         }
 
         return $deviceResponseDTOs;

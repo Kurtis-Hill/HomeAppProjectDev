@@ -7,6 +7,7 @@ use App\Sensors\Entity\Sensor;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface SensorRepositoryInterface
 {
@@ -37,4 +38,8 @@ interface SensorRepositoryInterface
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findSensorObjectByDeviceIdAndSensorName(int $deviceId, string $sensorName): ?Sensor;
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorObjectsByDeviceID(int $deviceId): array;
+
 }

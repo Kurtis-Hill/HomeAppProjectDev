@@ -5,11 +5,13 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
+use App\Devices\Normalizers\DeviceResponseNormalizer;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
@@ -52,6 +54,7 @@ class UpdateDeviceController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
+        DeviceResponseNormalizer $deviceResponseNormalizer,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -68,7 +71,10 @@ class UpdateDeviceController extends AbstractController
 
         $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors), APIErrorMessages::VALIDATION_ERRORS);
+            return $this->sendBadRequestJsonResponse(
+                $this->getValidationErrorAsArray($requestValidationErrors),
+                APIErrorMessages::VALIDATION_ERRORS
+            );
         }
 
         $user = $this->getUser();
@@ -104,17 +110,31 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceResponseDTOBuilder::buildDeviceFullDetailsResponseDTO(
+        $deviceUpdateSuccessResponseDTO = DeviceResponseDTOBuilder::buildDeviceOnlyResponseDTO(
             $deviceToUpdate,
-            $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword() !== null
         );
+
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);
+            $normalizedResponse = $deviceResponseNormalizer->normalize(
+                $deviceUpdateSuccessResponseDTO,
+                'json',
+                $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword() !== null
+                    ? [RequestDTOBuilder::REQUEST_TYPE_SENSITIVE]
+                    : []
+            );
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        $this->logger->info(sprintf('Device %s updated successfully', $deviceToUpdate->getDeviceID()), ['user' => $this->getUser()?->getUserIdentifier()]);
+        $this->logger->info(
+            sprintf(
+                'Device %s updated successfully',
+                $deviceToUpdate->getDeviceID()
+            ),
+            [
+                'user' => $this->getUser()?->getUserIdentifier()
+            ]
+        );
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }

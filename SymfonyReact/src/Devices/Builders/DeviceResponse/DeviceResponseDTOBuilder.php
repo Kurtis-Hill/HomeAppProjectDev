@@ -1,15 +1,29 @@
 <?php
 
-namespace App\Devices\Builders\DeviceUpdate;
+namespace App\Devices\Builders\DeviceResponse;
 
 use App\Devices\DTO\Response\DeviceFullDetailsResponseDTO;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Devices\Entity\Devices;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 
 class DeviceResponseDTOBuilder
 {
+    private SensorRepositoryInterface $sensorRepository;
+
+    private GetSensorReadingTypeHandler $getSensorReadingTypeHandler;
+
+    public function __construct(
+        SensorRepositoryInterface $sensorRepository,
+        GetSensorReadingTypeHandler $getSensorReadingTypeHandler,
+    ) {
+        $this->sensorRepository = $sensorRepository;
+        $this->getSensorReadingTypeHandler = $getSensorReadingTypeHandler;
+    }
+
     public static function buildDeviceIDResponseDTO(Devices $device, bool $showPassword = false): DeviceResponseDTO
     {
         return new DeviceResponseDTO(
@@ -40,19 +54,38 @@ class DeviceResponseDTOBuilder
         );
     }
 
-    public static function buildDeviceFullDetailsResponseDTO(
+    public static function buildDeviceOnlyResponseDTO(
         Devices $device,
-        bool $showPassword = false
+        array $sensorReadingTypeDTOs = [],
     ): DeviceFullDetailsResponseDTO {
         return new DeviceFullDetailsResponseDTO(
             $device->getDeviceID(),
             $device->getDeviceName(),
-            $showPassword === false ? null : $device->getDeviceSecret(),
+            $device->getDeviceSecret(),
             GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupNameObject()),
             RoomResponseDTOBuilder::buildRoomResponseDTO($device->getRoomObject()),
             $device->getIpAddress(),
             $device->getExternalIpAddress(),
             $device->getRoles(),
+            $sensorReadingTypeDTOs,
+        );
+    }
+
+    public function buildDeviceResponseDTO(Devices $device, bool $includeSensors = false): DeviceFullDetailsResponseDTO
+    {
+        if ($includeSensors === true) {
+            $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());
+            if (!empty($deviceSensors)) {
+                $sensorReadingTypeDTOs = [];
+                foreach ($deviceSensors as $sensor) {
+                    $sensorReadingTypeDTOs[] = $this->getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreating($sensor);
+                }
+            }
+        }
+
+        return self::buildDeviceOnlyResponseDTO(
+            $device,
+            $sensorReadingTypeDTOs ?? [],
         );
     }
 }

@@ -95,7 +95,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "externalIpAddress", type: "string", length: 13, nullable: true, options: ["default" => "NULL"])]
     private ?string $externalIpAddress = null;
 
-    private string $secret;
+    private ?string $secret = null;
 
     public function getDeviceID(): int
     {
@@ -122,7 +122,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->deviceName = $deviceName;
     }
 
-    public function getDeviceSecret(): string
+    public function getDeviceSecret(): ?string
     {
         return $this->secret;
     }

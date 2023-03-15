@@ -5,9 +5,10 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceGet\GetDeviceDTOBuilder;
-use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
 use App\Devices\DTO\Request\GetDeviceRequestDTO;
 use App\Devices\Entity\Devices;
@@ -20,7 +21,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'get-user-devices')]
@@ -74,7 +74,15 @@ class GetDeviceController extends AbstractController
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTOs);
         } catch (ExceptionInterface $e) {
-            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Get device'), ['error' => $e->getMessage()]);
+            $this->logger->error(
+                sprintf(
+                    APIErrorMessages::QUERY_FAILURE,
+                    'Get device'
+                ),
+                [
+                    'error' => $e->getMessage()
+                ]
+            );
 
             return $this->sendBadRequestJsonResponse([
                 sprintf(
@@ -88,15 +96,35 @@ class GetDeviceController extends AbstractController
     }
 
     #[Route('{deviceID}', name: 'get-user-devices_single', methods: [Request::METHOD_GET])]
-    public function getDeviceByID(Devices $devices): Response
-    {
+    public function getDeviceByID(
+        Devices $devices,
+        Request $request,
+        ValidatorInterface $validator,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+    ): Response {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::GET_DEVICE, $devices);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceDTO = DeviceResponseDTOBuilder::buildDeviceFullDetailsResponseDTO($devices);
+        $responseType = $request->query->get('responseType');
+        if ($responseType) {
+            $requestTypeDTO = RequestDTOBuilder::buildRequestTypeDTO($responseType);
+            try {
+                $validationErrors = $validator->validate($requestTypeDTO);
+
+                if ($this->checkIfErrorsArePresent($validationErrors)) {
+                    return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+                }
+
+            } catch (ExceptionInterface) {
+                return $this->sendInternalServerErrorJsonResponse();
+            }
+            $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTO($devices, true);
+        } else {
+            $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTO($devices);
+        }
 
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTO);
@@ -108,4 +136,6 @@ class GetDeviceController extends AbstractController
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
+
+    //@TODO add tests for getting full device response
 }

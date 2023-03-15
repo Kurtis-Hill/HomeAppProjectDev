@@ -5,12 +5,15 @@ namespace App\Common\API\Traits;
 
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Controller\GetDeviceController;
+use Doctrine\Common\Annotations\AnnotationReader;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -283,17 +286,30 @@ trait HomeAppAPITrait
     /**
      * @throws ExceptionInterface
      */
-    #[ArrayShape(["mixed"])]
-    public function normalizeResponse(mixed $data): array
+    public function normalizeResponse(mixed $data, array $groups = []): mixed
     {
-        $normalizer = [new ObjectNormalizer()];
+        if (!empty($groups)) {
+            $classMetadataFactory = new ClassMetadataFactory(
+                new AnnotationLoader(
+                    new AnnotationReader()
+                )
+            );
+
+            $context = ['groups' => $groups];
+        }
+
+        $normalizer = [new ObjectNormalizer($classMetadataFactory ?? null)];
         $normalizer = new Serializer($normalizer);
 
-        return $normalizer->normalize($data);
+        return $normalizer->normalize($data, null, $context ?? []);
     }
 
-    public function deserializeRequest(string|array $data, ?string $class = null, ?string $format = null, array $extraContexts = []): mixed
-    {
+    public function deserializeRequest(
+        string|array $data,
+        ?string $class = null,
+        ?string $format = null,
+        array $extraContexts = []
+    ): mixed {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
 

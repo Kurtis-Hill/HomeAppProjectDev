@@ -387,6 +387,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
                 $jsonPayload
             );
+            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
             $responseData = json_decode(
                 $this->client->getResponse()->getContent(),
@@ -403,7 +404,6 @@ class UpdateDeviceControllerTest extends WebTestCase
             self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
             self::assertEquals($newPassword, $responseData['payload']['secret']);
 
-            self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
         }
     }
 
@@ -622,7 +622,6 @@ class UpdateDeviceControllerTest extends WebTestCase
             UserDataFixtures::REGULAR_PASSWORD
         );
 
-
         foreach ($devices as $device) {
             /** @var Room[] $userRooms */
             $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
@@ -663,6 +662,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
                 $jsonPayload
             );
+            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
             $responseData = json_decode(
                 $this->client->getResponse()->getContent(),
@@ -678,7 +678,6 @@ class UpdateDeviceControllerTest extends WebTestCase
             self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
             self::assertEquals($newGroupNameID ?? $device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
             self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
-            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
         }
 
     }
@@ -723,6 +722,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                     ['CONTENT_TYPE' => 'application/json'],
                     '{"username":"' . $newDeviceName . '","password":"' . $newPassword .'","ipAddress":"192.168.1.2"}'
                 );
+                self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
                 $responseData = json_decode(
                     $this->client->getResponse()->getContent(),
@@ -733,7 +733,6 @@ class UpdateDeviceControllerTest extends WebTestCase
 
                 self::assertArrayHasKey('token', $responseData);
                 self::assertArrayHasKey('refreshToken', $responseData);
-                self::assertResponseStatusCodeSame(Response::HTTP_OK);
             } else {
                 self::fail('failed to get success response from device update');
             }
@@ -780,7 +779,6 @@ class UpdateDeviceControllerTest extends WebTestCase
                 }
             }
 
-
             $requestData = match ($patchSubject) {
                 'deviceName' => [
                     'deviceName' => 'NewDeviceName',
@@ -807,6 +805,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
                 $jsonPayload
             );
+            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
             $responseData = json_decode(
                 $this->client->getResponse()->getContent(),
@@ -816,12 +815,10 @@ class UpdateDeviceControllerTest extends WebTestCase
             );
 
             self::assertEquals('Device Successfully Updated', $responseData['title']);
-            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
             switch ($patchSubject) {
                 case 'deviceName':
                     self::assertEquals($requestData['deviceName'], $responseData['payload']['deviceName']);
-                    self::assertNull($responseData['payload']['secret']);
                     self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
                     self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
                     self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
@@ -837,7 +834,6 @@ class UpdateDeviceControllerTest extends WebTestCase
                 case 'deviceGroup':
                     self::assertEquals($newGroupNameID, $responseData['payload']['groupName']['groupNameID']);
                     self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                    self::assertNull($responseData['payload']['secret']);
                     self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                     self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                     break;
@@ -846,7 +842,6 @@ class UpdateDeviceControllerTest extends WebTestCase
                     self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
                     self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
                     self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
-                    self::assertNull($responseData['payload']['secret']);
                     break;
             }
             self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
@@ -922,6 +917,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
                 $jsonPayload
             );
+            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
             $responseData = json_decode(
                 $this->client->getResponse()->getContent(),
@@ -931,12 +927,10 @@ class UpdateDeviceControllerTest extends WebTestCase
             );
 
             self::assertEquals('Device Successfully Updated', $responseData['title']);
-            self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
             switch ($patchSubject) {
                 case 'deviceName':
                     self::assertEquals($requestData['deviceName'], $responseData['payload']['deviceName']);
-                    self::assertNull($responseData['payload']['secret']);
                     self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
                     self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
                     self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
@@ -952,14 +946,12 @@ class UpdateDeviceControllerTest extends WebTestCase
                 case 'deviceGroup':
                     self::assertEquals($requestData['deviceGroup'], $responseData['payload']['groupName']['groupNameID']);
                     self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                    self::assertNull($responseData['payload']['secret']);
                     self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                     self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                     break;
                 case 'deviceRoom':
                     self::assertEquals($requestData['deviceRoom'], $responseData['payload']['room']['roomID']);
                     self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                    self::assertNull($responseData['payload']['secret']);
                     self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
                     self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
                     break;

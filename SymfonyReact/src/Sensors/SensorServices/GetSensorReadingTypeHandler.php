@@ -38,6 +38,7 @@ class GetSensorReadingTypeHandler
      * @return SensorReadingTypeResponseDTOInterface[]
      * @throws ReadingTypeNotExpectedException
      */
+    #[ArrayShape([StandardReadingTypeResponseInterface::class])]
     public function handleSensorReadingTypeDTOCreating(Sensor $sensor): array
     {
         $sensorType = $sensor->getSensorTypeObject();

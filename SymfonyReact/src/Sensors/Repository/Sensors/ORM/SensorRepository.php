@@ -164,6 +164,25 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    #[ArrayShape([Sensor::class])]
+    public function findSensorObjectsByDeviceID(int $deviceId): array
+    {
+        $qb = $this->createQueryBuilder('sensor');
+
+        $qb->select(Sensor::ALIAS)
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->where(
+                $qb->expr()->eq(Devices::ALIAS . '.deviceID', ':deviceID')
+            )
+            ->setParameters(
+                [
+                    'deviceID' => $deviceId,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
+    }
+
     #[Deprecated]
     public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
     {

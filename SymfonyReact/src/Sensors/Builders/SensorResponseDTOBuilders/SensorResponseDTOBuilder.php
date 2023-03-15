@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Builders\SensorResponseDTOBuilders;
 
-use App\Devices\Builders\DeviceUpdate\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\DTO\Response\SensorResponse\SensorFullResponseDTO;
 use App\Sensors\DTO\Response\SensorResponse\SensorPartialResponseDTO;

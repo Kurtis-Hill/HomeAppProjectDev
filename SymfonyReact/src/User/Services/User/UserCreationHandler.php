@@ -124,25 +124,6 @@ class UserCreationHandler
         return $user;
     }
 
-    /**
-     * @throws GroupNameValidationException
-     */
-    private function createUsersGroupName(string $groupName): GroupNames
-    {
-        $groupNames = $this->groupNameBuilder->buildNewGroupName($groupName);
-
-        $validationErrors = $this->validator->validate($groupNames);
-
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            throw new GroupNameValidationException($this->getValidationErrorAsArray($validationErrors));
-        }
-
-        $this->groupNameRepository->persist($groupNames);
-        $this->groupNameRepository->flush();
-
-        return $groupNames;
-    }
-
     //@TODO - move this to a service
     private function handleProfilePicFileUpload(UploadedFile $profilePic): ?string
     {
