@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor')]
 class GetSingleSensorsController extends AbstractController
 {
     use HomeAppAPITrait;

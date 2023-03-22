@@ -7,20 +7,13 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-class DallasNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
+class DallasNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    private TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder;
-
-    public function __construct(TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder)
-    {
-        $this->temperatureReadingTypeObjectBuilder = $temperatureReadingTypeObjectBuilder;
-    }
-
     public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $dallas = new Dallas();
         $dallas->setSensor($sensor);
-        $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($dallas);
+        $this->buildStandardSensorReadingTypeObjects($dallas, Dallas::LOW_TEMPERATURE_READING_BOUNDARY);
 
         return $dallas;
     }

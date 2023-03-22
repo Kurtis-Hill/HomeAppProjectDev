@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DeleteSensorControllerTest extends WebTestCase
 {
-    private const DELETE_SENSOR_URL = CommonURL::USER_HOMEAPP_API_URL . 'sensors/%d/delete';
+    private const DELETE_SENSOR_URL = CommonURL::USER_HOMEAPP_API_URL . 'sensor/%d/delete';
 
     use TestLoginTrait;
 

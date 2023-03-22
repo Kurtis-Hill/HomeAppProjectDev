@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'get-user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-device/', name: 'get-user-devices')]
 class GetDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -141,5 +141,4 @@ class GetDeviceController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 
-    //@TODO add tests for getting full device response
 }

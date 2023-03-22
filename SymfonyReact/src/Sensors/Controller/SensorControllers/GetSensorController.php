@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor')]
 class GetSensorController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -42,6 +42,9 @@ class GetSensorController extends AbstractController
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
+//        $responseType = $request->query->get('responseType');
+//        $requestTypeDTO = RequestDTOBuilder::buildRequestTypeDTO($responseType);
+
 
         $validationErrors = $validator->validate($sensorRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {

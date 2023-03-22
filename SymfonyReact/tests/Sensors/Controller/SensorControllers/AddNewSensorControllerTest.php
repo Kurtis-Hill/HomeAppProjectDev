@@ -39,7 +39,7 @@ class AddNewSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensors/add';
+    private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensor/add';
 
     private ?EntityManagerInterface $entityManager;
 

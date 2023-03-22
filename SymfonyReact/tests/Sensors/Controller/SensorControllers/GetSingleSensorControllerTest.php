@@ -34,7 +34,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_SINGULAR_SENSOR_URL = '/HomeApp/api/user/sensors/%d/get';
+    private const GET_SINGULAR_SENSOR_URL = '/HomeApp/api/user/sensor/%d/get';
 
     private ?EntityManagerInterface $entityManager;
 

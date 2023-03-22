@@ -32,7 +32,7 @@ class GetSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_SENSOR_URL = '/HomeApp/api/user/sensors/all';
+    private const GET_SENSOR_URL = '/HomeApp/api/user/sensor/all';
 
     private ?EntityManagerInterface $entityManager;
 

@@ -23,9 +23,9 @@ use Symfony\Component\HttpFoundation\Response;
 class GetDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
-    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-devices/%d';
+    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d';
 
-    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-devices/all';
+    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/all';
 
     private ?string $userToken = null;
 
@@ -39,6 +39,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     private GroupNameRepository $groupNameRepository;
 
+    //@TODO add tests for getting full device response
     protected function setUp(): void
     {
         $this->client = static::createClient();

@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensors', name: 'update-sensor')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor', name: 'update-sensor')]
 class UpdateSensorController extends AbstractController
 {
     use HomeAppAPITrait;

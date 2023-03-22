@@ -27,7 +27,7 @@ class UpdateSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_SENSOR_URL = CommonURL::USER_HOMEAPP_API_URL . 'sensors/%d/update';
+    private const UPDATE_SENSOR_URL = CommonURL::USER_HOMEAPP_API_URL . 'sensor/%d/update';
 
     private KernelBrowser $client;
 
