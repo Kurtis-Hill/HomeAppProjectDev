@@ -52,7 +52,6 @@ class GetSingleSensorControllerTest extends WebTestCase
 
     private SensorTypeRepository $sensorTypeRepository;
 
-
     private User $adminUser;
 
     private User $regularUserTwo;
@@ -77,7 +76,6 @@ class GetSingleSensorControllerTest extends WebTestCase
         $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->sensorTypeRepository = $this->entityManager->getRepository(SensorType::class);
-
     }
 
     protected function tearDown(): void

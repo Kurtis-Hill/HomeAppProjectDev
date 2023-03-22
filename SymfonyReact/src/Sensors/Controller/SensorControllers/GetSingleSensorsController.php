@@ -49,22 +49,4 @@ class GetSingleSensorsController extends AbstractController
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
-
-//    #[Route('/get/all', name: 'get-multiple-sensor', methods: [Request::METHOD_GET])]
-//    public function getAllSensors(Request $request, GetSensorReadingTypeHandler $getSensorReadingTypeHandler): JsonResponse
-//    {
-//        $sensorRequestDTO = new GetSensorRequestDTO();
-//        try {
-//            $this->deserializeRequest(
-//                $request->getQueryString(),
-//                GetSensorRequestDTO::class,
-//                'json',
-//                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorRequestDTO]
-//            );
-//        } catch (NotEncodableValueException) {
-//            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-//        }
-//
-//        dd($sensorRequestDTO->getOffset());
-//    }
 }

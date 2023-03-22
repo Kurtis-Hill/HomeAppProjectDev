@@ -118,7 +118,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 );
                 $sensorProcessingErrors[] = sprintf(
                     APIErrorMessages::CONTACT_SYSTEM_ADMIN,
-                    'None unique result found for sensor reading type query',
+                    'None unique result found for sensor reading type',
                 );
                 continue;
             }

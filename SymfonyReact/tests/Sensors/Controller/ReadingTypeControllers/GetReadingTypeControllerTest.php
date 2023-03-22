@@ -4,6 +4,7 @@ namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -181,46 +182,36 @@ class GetReadingTypeControllerTest extends WebTestCase
         ];
     }
 
-// @TODO fix these none priority tests
-//    /**
-//     * @dataProvider wrongHttpsMethodDataProvider
-//     */
-//    public function test_using_wrong_http_method_singular(string $httpVerb): void
-//    {
-//        $this->client->request(
-//            $httpVerb,
-//            sprintf(self::GET_SINGLE_READING_TYPE_URL, 1)
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-//        );
-//
-//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-//    }
-//
-//    /**
-//     * @dataProvider wrongHttpsMethodDataProvider
-//     */
-//    public function test_using_wrong_http_method_all(string $httpVerb): void
-//    {
-//        $this->client->request(
-//            $httpVerb,
-//            self::GET_READING_TYPES_URL,
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-//        );
-//
-//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-//    }
-//
-//    public function wrongHttpsMethodDataProvider(): array
-//    {
-//        return [
-//            [Request::METHOD_POST],
-//            [Request::METHOD_PUT],
-//            [Request::METHOD_PATCH],
-//            [Request::METHOD_DELETE],
-//        ];
-//    }
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method_singular(string $httpVerb): void
+    {
+        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
+
+        /** @var Sensor[] $allSensors */
+        $allSensors = $sensorRepository->findAll();
+
+        $sensor = $allSensors[0];
+
+        $this->client->request(
+            $httpVerb,
+            sprintf(self::GET_SINGLE_READING_TYPE_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_POST],
+            [Request::METHOD_PUT],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
+        ];
+    }
 }

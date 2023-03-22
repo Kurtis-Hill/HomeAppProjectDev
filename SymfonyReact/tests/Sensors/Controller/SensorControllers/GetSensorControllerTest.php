@@ -31,57 +31,57 @@ use Symfony\Component\HttpFoundation\Response;
 class GetSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
-//single sensor in other test file
-//    private const GET_SENSOR_URL = '/HomeApp/api/user/sensors/%d/get';
-//
-//    private ?EntityManagerInterface $entityManager;
-//
-//    private KernelBrowser $client;
-//
-//    private ?Devices $device;
-//
-//    private SensorRepositoryInterface $sensorRepository;
-//
-//    private UserRepositoryInterface $userRepository;
-//
-//    private GroupNameRepository $groupNameRepository;
-//
-//    private DeviceRepositoryInterface $deviceRepository;
-//
-//    private SensorTypeRepository $sensorTypeRepository;
-//
-//    private User $adminUser;
-//
-//    private User $regularUserTwo;
-//
-//    private ?string $userToken = null;
-//
-//    protected function setUp(): void
-//    {
-//        $this->client = static::createClient();
-//
-//        $this->entityManager = static::$kernel->getContainer()
-//            ->get('doctrine')
-//            ->getManager();
-//
-//        $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-//        $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-//
-//        $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
-//        $this->userToken = $this->setUserToken($this->client);
-//        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
-//        $this->userRepository = $this->entityManager->getRepository(User::class);
-//        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
-//        $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
-//        $this->sensorTypeRepository = $this->entityManager->getRepository(SensorType::class);
-//    }
-//
-//    protected function tearDown(): void
-//    {
-//        $this->entityManager->close();
-//        $this->entityManager = null;
-//        parent::tearDown();
-//    }
+
+    private const GET_SENSOR_URL = '/HomeApp/api/user/sensors/all';
+
+    private ?EntityManagerInterface $entityManager;
+
+    private KernelBrowser $client;
+
+    private ?Devices $device;
+
+    private SensorRepositoryInterface $sensorRepository;
+
+    private UserRepositoryInterface $userRepository;
+
+    private GroupNameRepository $groupNameRepository;
+
+    private DeviceRepositoryInterface $deviceRepository;
+
+    private SensorTypeRepository $sensorTypeRepository;
+
+    private User $adminUser;
+
+    private User $regularUserTwo;
+
+    private ?string $userToken = null;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+
+        $this->entityManager = static::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
+
+        $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
+
+        $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
+        $this->userToken = $this->setUserToken($this->client);
+        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
+        $this->userRepository = $this->entityManager->getRepository(User::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
+        $this->sensorTypeRepository = $this->entityManager->getRepository(SensorType::class);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+        parent::tearDown();
+    }
 //
 //    public function test_admin_user_can_get_sensor_device_group_not_apart_of(): void
 //    {

@@ -4,6 +4,7 @@ namespace App\Sensors\Repository\Sensors\ORM;
 
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
+use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Latitude;
@@ -183,42 +184,51 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getResult();
     }
 
-    #[Deprecated]
-    public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO): array
     {
-        $qb = $this->createQueryBuilder('sensors');
-        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensor']);
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
-        $qb->select($sensorAlias)
-            ->innerJoin(
-                Devices::class,
-                'device',
-                Join::WITH,
-                'sensors.deviceID = device.deviceID'
+        $qb->select(Sensor::ALIAS);
+
+        if (!empty($getSensorQueryDTO->getDeviceIDs())) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->andWhere(
+                $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID')
             )
-            ->where(
-                $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-                $qb->expr()->eq('sensors.deviceID', ':deviceID')
-            )
-            ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
-
-        $result = array_filter($qb->getQuery()->getResult());
-        $result = array_values($result);
-
-        return $result;
-    }
-
-    #[Deprecated]
-    private function prepareSensorTypeDataObjectsForQuery(array $sensors, QueryBuilder $qb, array $joinCondition): string
-    {
-        $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
-
-        $sensorAlias = [];
-        foreach ($sensors as $sensorNames => $sensorData) {
-            $sensorAlias[] = $sensorData['alias'];
-            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
+            ->setParameters(
+                [
+                    'deviceID' => $getSensorQueryDTO->getDeviceIDs(),
+                ]
+            );
         }
 
-        return implode(', ', $sensorAlias);
+        if (!empty($getSensorQueryDTO->getDeviceNames())) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS . '2', Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->andWhere(
+                $qb->expr()->in(Devices::ALIAS . '.deviceName', ':deviceNames')
+            )
+            ->setParameters(
+                [
+                    'deviceNames' => $getSensorQueryDTO->getDeviceNames(),
+                ]
+            );
+        }
+
+        if (!empty($getSensorQueryDTO->getGroupIDs())) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS . '3', Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->andWhere(
+                $qb->expr()->in(Devices::ALIAS . '.groupNameID', ':groupIDs')
+            )
+            ->setParameters(
+                [
+                    'groupIDs' => $getSensorQueryDTO->getGroupIDs(),
+                ]
+            );
+        }
+
+        $qb->setFirstResult($getSensorQueryDTO->getOffset())
+            ->setMaxResults($getSensorQueryDTO->getLimit());
+        return $qb->getQuery()->getResult();
     }
 }

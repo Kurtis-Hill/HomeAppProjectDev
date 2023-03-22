@@ -2,6 +2,7 @@
 
 namespace App\Sensors\DTO\Request\GetSensorRequestDTO;
 
+use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -18,13 +19,9 @@ class GetSensorRequestDTO
     private mixed $limit;
 
     #[
-        Assert\Range(
-            minMessage: 'offset must be greater than {{ min }}',
-            invalidMessage: 'offset must be an int|null you have provided {{ value }}',
-            min: 0,
-        ),
+        Assert\Type(type: ['int', "null"], message: 'page must be a {{ type }} you have provided {{ value }}'),
     ]
-    private mixed $offset;
+    private mixed $page;
 
     #[
         Assert\Type(type: ['array', "null"], message: 'deviceIDs must be a {{ type }} you have provided {{ value }}'),
@@ -41,6 +38,9 @@ class GetSensorRequestDTO
     ]
     private mixed $groupIDs;
 
+    #[Assert\Choice(choices: [RequestDTOBuilder::REQUEST_TYPE_ONLY, RequestDTOBuilder::REQUEST_TYPE_FULL], message: 'responseType must be one of {{ choices }} you have provided {{ value }}')]
+    private mixed $responseType;
+
     public function getLimit(): mixed
     {
         return $this->limit;
@@ -49,16 +49,6 @@ class GetSensorRequestDTO
     public function setLimit(mixed $limit): void
     {
         $this->limit = $limit;
-    }
-
-    public function getOffset(): mixed
-    {
-        return $this->offset;
-    }
-
-    public function setOffset(mixed $offset): void
-    {
-        $this->offset = $offset;
     }
 
     public function getDeviceIDs(): mixed
@@ -89,5 +79,25 @@ class GetSensorRequestDTO
     public function setGroupIDs(mixed $groupIDs): void
     {
         $this->groupIDs = $groupIDs;
+    }
+
+    public function getPage(): mixed
+    {
+        return $this->page;
+    }
+
+    public function setPage(mixed $page): void
+    {
+        $this->page = $page;
+    }
+
+    public function getResponseType(): mixed
+    {
+        return $this->responseType ?? RequestDTOBuilder::REQUEST_TYPE_ONLY;
+    }
+
+    public function setResponseType(mixed $responseType): void
+    {
+        $this->responseType = $responseType;
     }
 }
