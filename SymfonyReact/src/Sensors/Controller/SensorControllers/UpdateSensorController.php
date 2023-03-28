@@ -100,7 +100,7 @@ class UpdateSensorController extends AbstractController
             )
         );
 
-        $sensorResponseDTO = SensorResponseDTOBuilder::buildFullResponseDTO($sensor);
+        $sensorResponseDTO = SensorResponseDTOBuilder::buildDetailedResponseDTO($sensor);
         try {
             $normalizedResponse = $this->normalizeResponse($sensorResponseDTO);
         } catch (ExceptionInterface) {

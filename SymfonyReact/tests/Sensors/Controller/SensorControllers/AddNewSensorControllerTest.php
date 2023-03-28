@@ -160,6 +160,7 @@ class AddNewSensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $sensorID = $responseData['payload']['sensorNameID'];

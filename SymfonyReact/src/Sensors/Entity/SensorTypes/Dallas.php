@@ -5,7 +5,7 @@ namespace App\Sensors\Entity\SensorTypes;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DallasRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 //    ORM\Index(columns: ["sensor"], name: "sensor"),
 ]
-class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
+class Dallas implements SensorTypeInterface, StandardSensorReadingTypeInterface, TemperatureSensorTypeInterface
 {
     public const NAME = 'Dallas';
 

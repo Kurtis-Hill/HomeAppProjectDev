@@ -14,7 +14,7 @@ class DhtNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements 
     {
         $dht = new Dht();
         $dht->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($dht, Dht::LOW_TEMPERATURE_READING_BOUNDARY);
+        $this->buildStandardSensorReadingTypeObjects($dht);
 
         return $dht;
     }

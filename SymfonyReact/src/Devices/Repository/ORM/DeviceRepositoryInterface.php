@@ -9,6 +9,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<Devices>
@@ -46,6 +47,12 @@ interface DeviceRepositoryInterface
      * @throws ORMException
      */
     public function findAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array;
+
+    #[ArrayShape([Devices::class])]
+    public function findAllDevicesByGroupNameIDs(
+        array $groupNameIDs,
+        int $hydration = AbstractQuery::HYDRATE_OBJECT,
+    ): array;
 
     /**
      * @throws ORMException

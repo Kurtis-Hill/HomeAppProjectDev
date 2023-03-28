@@ -2,57 +2,25 @@
 
 namespace App\Sensors\DTO\Response\SensorResponse;
 
-use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\User\DTO\ResponseDTOs\UserDTOs\UserFullResponseDTO;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
+use JetBrains\PhpStorm\ArrayShape;
 
-class SensorFullResponseDTO
+readonly class SensorFullResponseDTO
 {
-    private int $sensorID;
-
-    private UserFullResponseDTO $createdBy;
-
-    private string $sensorName;
-
-    private DeviceResponseDTO $device;
-
-    private SensorTypeResponseDTO $sensorType;
-
     public function __construct(
-        int $sensorID,
-        UserFullResponseDTO $createdBy,
-        string $sensorName,
-        DeviceResponseDTO $device,
-        SensorTypeResponseDTO $sensorType
+        private SensorPartialResponseDTO $sensor,
+        #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
+        private array $sensorReadingTypes
     ) {
-        $this->sensorID = $sensorID;
-        $this->createdBy = $createdBy;
-        $this->sensorName = $sensorName;
-        $this->device = $device;
-        $this->sensorType = $sensorType;
     }
 
-    public function getSensorID(): int
+    public function getSensor(): SensorPartialResponseDTO
     {
-        return $this->sensorID;
+        return $this->sensor;
     }
 
-    public function getCreatedBy(): UserFullResponseDTO
+    public function getSensorReadingTypes(): array
     {
-        return $this->createdBy;
-    }
-
-    public function getSensorName(): string
-    {
-        return $this->sensorName;
-    }
-
-    public function getDevice(): DeviceResponseDTO
-    {
-        return $this->device;
-    }
-
-    public function getSensorType(): SensorTypeResponseDTO
-    {
-        return $this->sensorType;
+        return $this->sensorReadingTypes;
     }
 }

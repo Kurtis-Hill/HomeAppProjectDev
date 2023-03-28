@@ -191,7 +191,8 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $qb->select(Sensor::ALIAS);
 
-        if (!empty($getSensorQueryDTO->getDeviceIDs())) {
+        if ($getSensorQueryDTO->getDeviceIDs() !== null) {
+//            dd('here');
             $qb->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
             ->andWhere(
                 $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID')
@@ -203,10 +204,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             );
         }
 
-        if (!empty($getSensorQueryDTO->getDeviceNames())) {
-            $qb->innerJoin(Devices::class, Devices::ALIAS . '2', Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+        if ($getSensorQueryDTO->getDeviceNames() !== null) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS . '2', Join::WITH, Devices::ALIAS . '2.deviceID = ' . Sensor::ALIAS . '.deviceID')
             ->andWhere(
-                $qb->expr()->in(Devices::ALIAS . '.deviceName', ':deviceNames')
+                $qb->expr()->in(Devices::ALIAS . '2' . '.deviceName', ':deviceNames')
             )
             ->setParameters(
                 [
@@ -215,10 +216,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             );
         }
 
-        if (!empty($getSensorQueryDTO->getGroupIDs())) {
-            $qb->innerJoin(Devices::class, Devices::ALIAS . '3', Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+        if ($getSensorQueryDTO->getGroupIDs() !== null) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS . '3', Join::WITH, Devices::ALIAS . '3.deviceID = ' . Sensor::ALIAS . '.deviceID')
             ->andWhere(
-                $qb->expr()->in(Devices::ALIAS . '.groupNameID', ':groupIDs')
+                $qb->expr()->in(Devices::ALIAS . '3' . '.groupNameID', ':groupIDs')
             )
             ->setParameters(
                 [

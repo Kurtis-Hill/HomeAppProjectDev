@@ -2,23 +2,23 @@
 
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
-use App\Sensors\DTO\Response\SensorResponse\SensorFullResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
 readonly class AbstractStandardResponseDTO
 {
     public function __construct(
-        private SensorFullResponseDTO $sensor,
+        private SensorDetailedResponseDTO $sensor,
         private float $currentReading,
         private float $highReading,
         private float $lowReading,
-        private bool $constRecordedAt,
-        private string $updatedAt,
+        private bool $constRecorded,
+        private string $updated,
     ) {
     }
 
-    public function getSensor(): SensorFullResponseDTO
+    public function getSensor(): SensorDetailedResponseDTO
     {
         return $this->sensor;
     }
@@ -38,13 +38,13 @@ readonly class AbstractStandardResponseDTO
         return $this->lowReading;
     }
 
-    public function getConstRecordedAt(): bool
+    public function getConstRecorded(): bool
     {
-        return $this->constRecordedAt;
+        return $this->constRecorded;
     }
 
     public function getUpdatedAt(): string
     {
-        return $this->updatedAt;
+        return $this->updated;
     }
 }

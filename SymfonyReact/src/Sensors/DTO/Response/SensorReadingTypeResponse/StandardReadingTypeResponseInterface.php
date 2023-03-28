@@ -2,11 +2,11 @@
 
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
-use App\Sensors\DTO\Response\SensorResponse\SensorFullResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
 
 interface StandardReadingTypeResponseInterface
 {
-    public function getSensor(): SensorFullResponseDTO;
+    public function getSensor(): SensorDetailedResponseDTO;
 
     public function getCurrentReading(): float|int|string;
 
@@ -14,7 +14,7 @@ interface StandardReadingTypeResponseInterface
 
     public function getLowReading(): float|int|string;
 
-    public function getConstRecordedAt(): bool;
+    public function getConstRecorded(): bool;
 
     public function getUpdatedAt(): string;
 }

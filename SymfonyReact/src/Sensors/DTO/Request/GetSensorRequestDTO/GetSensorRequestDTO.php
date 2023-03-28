@@ -4,6 +4,7 @@ namespace App\Sensors\DTO\Request\GetSensorRequestDTO;
 
 use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
+use App\Sensors\Controller\SensorControllers\GetSensorController;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class GetSensorRequestDTO
@@ -13,13 +14,17 @@ class GetSensorRequestDTO
             notInRangeMessage: 'limit must be greater than {{ min }} but less than {{ max }}',
             invalidMessage: 'limit must be an int|null you have provided {{ value }}',
             min: 1,
-            max: GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE
+            max: GetSensorController::GET_SENSOR_DEFAULT_LIMIT
         ),
     ]
     private mixed $limit;
 
     #[
-        Assert\Type(type: ['int', "null"], message: 'page must be a {{ type }} you have provided {{ value }}'),
+        Assert\Range(
+            minMessage: 'page must be greater than {{ value }}',
+            invalidMessage: 'page must be an int|null you have provided {{ value }}',
+            min: 0,
+        ),
     ]
     private mixed $page;
 
@@ -37,9 +42,6 @@ class GetSensorRequestDTO
         Assert\Type(type: ['array', "null"], message: 'groupIDs must be a {{ type }} you have provided {{ value }}'),
     ]
     private mixed $groupIDs;
-
-    #[Assert\Choice(choices: [RequestDTOBuilder::REQUEST_TYPE_ONLY, RequestDTOBuilder::REQUEST_TYPE_FULL], message: 'responseType must be one of {{ choices }} you have provided {{ value }}')]
-    private mixed $responseType;
 
     public function getLimit(): mixed
     {
@@ -91,13 +93,8 @@ class GetSensorRequestDTO
         $this->page = $page;
     }
 
-    public function getResponseType(): mixed
-    {
-        return $this->responseType ?? RequestDTOBuilder::REQUEST_TYPE_ONLY;
-    }
-
-    public function setResponseType(mixed $responseType): void
-    {
-        $this->responseType = $responseType;
-    }
+//    public function setResponseType(mixed $responseType): void
+//    {
+//        $this->responseType = $responseType;
+//    }
 }

@@ -2,8 +2,10 @@
 
 namespace App\User\Services\GroupNameServices;
 
+use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupNameRepository;
+use JetBrains\PhpStorm\ArrayShape;
 
 class GetGroupNamesHandler
 {
@@ -14,7 +16,8 @@ class GetGroupNamesHandler
         $this->groupNameRepository = $groupNameRepository;
     }
 
-    public function getGroupNameDataForUser(User $user): array
+    #[ArrayShape([GroupNames::class])]
+    public function getGroupNamesForUser(User $user): array
     {
         return $user->isAdmin()
             ? $this->groupNameRepository->findAll()

@@ -55,7 +55,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         }
 
         try {
-            $userGroups = $this->getGroupNamesHandler->getGroupNameDataForUser($user);
+            $userGroups = $this->getGroupNamesHandler->getGroupNamesForUser($user);
             $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
         } catch (ORMException) {
             $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groups')];

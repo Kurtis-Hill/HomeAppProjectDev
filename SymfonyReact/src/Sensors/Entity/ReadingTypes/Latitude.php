@@ -105,9 +105,9 @@ class Latitude extends AbstractReadingType implements AllSensorReadingTypeInterf
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $currentReading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
-        $this->latitude = $currentReading;
+        $this->latitude = $reading;
     }
 
     public function setHighReading(int|float|string $reading): void

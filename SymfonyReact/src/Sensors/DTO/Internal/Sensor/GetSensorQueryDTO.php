@@ -4,17 +4,35 @@ namespace App\Sensors\DTO\Internal\Sensor;
 
 use JetBrains\PhpStorm\Immutable;
 
-#[Immutable]
-readonly class GetSensorQueryDTO
+//#[Immutable]
+class GetSensorQueryDTO
 {
+     private ?int $limit;
+
+     private ?int $offset;
+
+     private ?int $page;
+
+     private ?array  $deviceIDs;
+
+     private ?array  $deviceNames;
+
+     private ?array  $groupIDs;
+
     public function __construct(
-        private ?int $limit = null,
-        private ?int $offset = null,
-        private ?int $page = null,
-        private array $deviceIDs = [],
-        private array $deviceNames = [],
-        private array $groupIDs = []
+        ?int $limit = null,
+        ?int $offset = null,
+        ?int $page = null,
+        ?array $deviceIDs = null,
+        ?array $deviceNames = null,
+        ?array $groupIDs = null,
     ) {
+        $this->limit = $limit;
+        $this->offset = $offset;
+        $this->page = $page;
+        $this->deviceIDs = $deviceIDs;
+        $this->deviceNames = $deviceNames;
+        $this->groupIDs = $groupIDs;
     }
 
     public function getLimit(): ?int
@@ -32,18 +50,33 @@ readonly class GetSensorQueryDTO
         return $this->page;
     }
 
-    public function getDeviceIDs(): array
+    public function getDeviceIDs(): ?array
     {
         return $this->deviceIDs;
     }
 
-    public function getDeviceNames(): array
+    public function getDeviceNames(): ?array
     {
         return $this->deviceNames;
     }
 
-    public function getGroupIDs(): array
+    public function getGroupIDs(): ?array
     {
         return $this->groupIDs;
+    }
+
+    public function setDeviceIDs(array $deviceIDs): void
+    {
+        $this->deviceIDs = $deviceIDs;
+    }
+
+    public function setDeviceNames(array $deviceNames): void
+    {
+        $this->deviceNames = $deviceNames;
+    }
+
+    public function setGroupIDs(array $groupIDs): void
+    {
+        $this->groupIDs = $groupIDs;
     }
 }

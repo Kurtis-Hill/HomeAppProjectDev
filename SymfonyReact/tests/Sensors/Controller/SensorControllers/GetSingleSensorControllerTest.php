@@ -204,16 +204,16 @@ class GetSingleSensorControllerTest extends WebTestCase
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
-
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertEquals(GetSingleSensorsController::REQUEST_SUCCESSFUL, $responseData['title']);
 
         $payload = $responseData['payload'];
         self::assertCount(count($allowedTypes), $payload);
 
-        foreach ($payload as $key => $responseDTO) {
-            self::assertArrayHasKey($allowedTypes[$key], $responseDTO);
+        foreach ($allowedTypes as $key => $type) {
+            self::assertArrayHasKey($type, $payload[$key]);
         }
     }
 
@@ -222,44 +222,34 @@ class GetSingleSensorControllerTest extends WebTestCase
         yield [
             'sensorType' => Dht::class,
             'allowedTypes' => [
-                'temperatureID',
-                'humidityID',
+                'temperature' => 'temperatureID',
+                'humidity' => 'humidityID',
             ]
         ];
 
         yield [
             'sensorType' => Bmp::class,
             'allowedTypes' => [
-                'temperatureID',
-                'humidityID',
-                'latitudeID',
+                'temperature' => 'temperatureID',
+                'humidity' => 'humidityID',
+                'latitude' => 'latitudeID',
             ]
         ];
 
         yield [
             'sensorType' => Dallas::class,
             'allowedTypes' => [
-                'temperatureID',
+                'temperature' => 'temperatureID',
             ]
         ];
 
         yield [
             'sensorType' => Soil::class,
             'allowedTypes' => [
-                'analogID',
+                'analog' => 'analogID',
             ]
         ];
     }
-
-
-
-
-
-
-
-
-
-
 
     public function test_admin_user_can_get_sensor_device_group_not_apart_of(): void
     {

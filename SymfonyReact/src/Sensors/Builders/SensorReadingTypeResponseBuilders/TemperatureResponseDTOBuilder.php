@@ -14,7 +14,7 @@ class TemperatureResponseDTOBuilder implements StandardSensorResponseDTOBuilderI
     {
         return new TemperatureResponseDTO(
             $analog->getSensorID(),
-            SensorResponseDTOBuilder::buildFullResponseDTO($analog->getSensor()),
+            SensorResponseDTOBuilder::buildDetailedResponseDTO($analog->getSensor()),
             $analog->getCurrentReading(),
             $analog->getHighReading(),
             $analog->getLowReading(),

@@ -2,17 +2,17 @@
 
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
-use App\Sensors\DTO\Response\SensorResponse\SensorFullResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
 
 readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implements StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
 {
     public function __construct(
         private int $humidityID,
-        SensorFullResponseDTO $sensorID,
+        SensorDetailedResponseDTO $sensorID,
         float $currentReading,
         float $highReading,
         float $lowReading,
-        bool $constRecordedAt,
+        bool $constRecorded,
         string $updatedAt
     ) {
         parent::__construct(
@@ -20,8 +20,8 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,
-            constRecordedAt: $constRecordedAt,
-            updatedAt: $updatedAt
+            constRecorded: $constRecorded,
+            updated: $updatedAt
         );
     }
 

@@ -12,6 +12,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<Devices>
@@ -100,6 +101,27 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->setParameters(['groupNameID' => $groupNameIDs])
             ->setMaxResults($limit)
             ->setFirstResult($offset);
+
+        return $qb->getQuery()->getResult($hydration);
+    }
+
+    #[ArrayShape([Devices::class])]
+    public function findAllDevicesByGroupNameIDs(
+        array $groupNameIDs,
+        int $hydration = AbstractQuery::HYDRATE_OBJECT,
+    ): array {
+        $qb = $this->createQueryBuilder('dv');
+        $expr = $qb->expr();
+
+        $qb->select('dv');
+//            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupNameID = gn.groupNameID')
+//            ->innerJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
+//            ->innerJoin(User::class, 'u', Join::WITH, 'dv.createdBy = u.userID');
+        $qb->where(
+            $expr->in('dv.groupNameID', ':groupNameID')
+        )
+            ->orderBy('dv.deviceName', 'ASC')
+            ->setParameters(['groupNameID' => $groupNameIDs]);
 
         return $qb->getQuery()->getResult($hydration);
     }

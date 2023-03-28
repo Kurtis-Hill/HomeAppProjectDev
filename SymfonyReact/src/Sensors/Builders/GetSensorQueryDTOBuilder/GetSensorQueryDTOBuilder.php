@@ -10,9 +10,9 @@ class GetSensorQueryDTOBuilder
         int $limit = null,
         int $offset = null,
         int $page = null,
-        array $deviceIDs = [],
-        array $deviceNames = [],
-        array $groupIDs = []
+        ?array $deviceIDs = null,
+        ?array $deviceNames = null,
+        ?array $groupIDs = null,
     ): GetSensorQueryDTO {
         return new GetSensorQueryDTO(
             $limit,

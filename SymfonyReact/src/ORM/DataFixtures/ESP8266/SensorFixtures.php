@@ -16,7 +16,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -318,7 +318,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $newObject->setSensor($newSensor);
             $newObject->setUpdatedAt();
 
-            if ($newSensorType instanceof StandardSensorTypeInterface) {
+            if ($newSensorType instanceof StandardSensorReadingTypeInterface) {
                 $newSensorType->setSensor($newSensor);
                 if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
                     $newObject->setCurrentReading(10);

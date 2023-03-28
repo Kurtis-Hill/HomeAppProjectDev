@@ -21,7 +21,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Tests\Traits\TestLoginTrait;
@@ -77,7 +77,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -338,7 +338,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var StandardReadingSensorInterface $sensorReadingTypeObject */
         $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorReadingTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -371,7 +371,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         foreach ($dataPayloads as $dataPayload) {
             self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
 
-            if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
+            if ($sensorReadingTypeObject instanceof StandardSensorReadingTypeInterface) {
                 self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
                 self::assertEquals($expectedDataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
                 self::assertEquals($expectedDataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
@@ -785,7 +785,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -985,7 +985,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
 
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 $sensorDataToSend
             ];
@@ -1034,7 +1034,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             $wrongSensorId = random_int(1, 10000);
             $sensorTypeObject = $sensorRepository->findOneBy(['sensorID' => $wrongSensorId]);
 
-            if (!$sensorTypeObject instanceof StandardSensorTypeInterface) {
+            if (!$sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
                 break;
             }
         }

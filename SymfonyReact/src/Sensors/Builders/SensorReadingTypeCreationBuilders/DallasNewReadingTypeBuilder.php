@@ -13,7 +13,7 @@ class DallasNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implemen
     {
         $dallas = new Dallas();
         $dallas->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($dallas, Dallas::LOW_TEMPERATURE_READING_BOUNDARY);
+        $this->buildStandardSensorReadingTypeObjects($dallas);
 
         return $dallas;
     }

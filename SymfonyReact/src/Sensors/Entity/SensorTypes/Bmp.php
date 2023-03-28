@@ -9,7 +9,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\BmpRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 
 ]
-class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
+class Bmp implements SensorTypeInterface, StandardSensorReadingTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface, LatitudeSensorTypeInterface
 {
     public const NAME = 'Bmp';
 

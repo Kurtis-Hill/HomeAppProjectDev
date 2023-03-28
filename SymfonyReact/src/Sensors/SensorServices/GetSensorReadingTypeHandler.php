@@ -12,7 +12,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
@@ -46,8 +46,8 @@ class GetSensorReadingTypeHandler
         $sensorReadingTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensorType->getSensorType());
         $sensorTypeObject = $sensorReadingTypeRepository->findOneBy(['sensor' => $sensor]);
 
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
-            return $this->handleStandardSensorTypeDTOCreation($sensorTypeObject);
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
+            return $this->handleStandardSensorReadingTypeDTOCreation($sensorTypeObject);
         }
 
         return [];
@@ -58,23 +58,23 @@ class GetSensorReadingTypeHandler
      * @throws ReadingTypeNotExpectedException
      */
     #[ArrayShape([StandardReadingTypeResponseInterface::class])]
-    private function handleStandardSensorTypeDTOCreation(StandardSensorTypeInterface $sensorTypeObject): array
+    private function handleStandardSensorReadingTypeDTOCreation(StandardSensorReadingTypeInterface $sensorTypeObject): array
     {
         if ($sensorTypeObject instanceof TemperatureSensorTypeInterface) {
             $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Temperature::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getTemperature());
+            $sensorReadingTypeResponseDTOs[Temperature::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getTemperature());
         }
         if ($sensorTypeObject instanceof HumiditySensorTypeInterface) {
             $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Humidity::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getHumidObject());
+            $sensorReadingTypeResponseDTOs[Humidity::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getHumidObject());
         }
         if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
             $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Latitude::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getLatitudeObject());
+            $sensorReadingTypeResponseDTOs[Latitude::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getLatitudeObject());
         }
         if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
             $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Analog::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getAnalogObject());
+            $sensorReadingTypeResponseDTOs[Analog::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getAnalogObject());
         }
 
         if (empty($sensorReadingTypeResponseDTOs)) {

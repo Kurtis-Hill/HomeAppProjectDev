@@ -6,7 +6,7 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\SoilRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]
-class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
+class Soil implements SensorTypeInterface, StandardSensorReadingTypeInterface, AnalogSensorTypeInterface
 {
     public const NAME = 'Soil';
 

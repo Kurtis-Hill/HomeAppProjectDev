@@ -13,7 +13,7 @@ class HumidityResponseDTOBuilder implements StandardSensorResponseDTOBuilderInte
     {
         return new HumidityResponseDTO(
             $analog->getSensorID(),
-            SensorResponseDTOBuilder::buildFullResponseDTO($analog->getSensor()),
+            SensorResponseDTOBuilder::buildDetailedResponseDTO($analog->getSensor()),
             $analog->getCurrentReading(),
             $analog->getHighReading(),
             $analog->getLowReading(),

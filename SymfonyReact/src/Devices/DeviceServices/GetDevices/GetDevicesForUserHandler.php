@@ -27,7 +27,7 @@ class GetDevicesForUserHandler implements GetDevicesForUserInterface
         User $user,
         GetDeviceDTO $getDeviceDTO,
     ): array {
-        $groupNamesForUser = $this->getGroupNamesHandler->getGroupNameDataForUser($user);
+        $groupNamesForUser = $this->getGroupNamesHandler->getGroupNamesForUser($user);
 
         return $this->deviceRepository->findAllDevicesByGroupNamePaginated(
             $groupNamesForUser,

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
-use App\Sensors\DTO\Response\SensorResponse\SensorFullResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -10,11 +10,11 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
 {
     public function __construct(
         private int $temperatureID,
-        SensorFullResponseDTO $sensorID,
+        SensorDetailedResponseDTO $sensorID,
         float $currentReading,
         float $highReading,
         float $lowReading,
-        bool $constRecordedAt,
+        bool $constRecorded,
         string $updatedAt
     ) {
         parent::__construct(
@@ -22,8 +22,8 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,
-            constRecordedAt: $constRecordedAt,
-            updatedAt: $updatedAt
+            constRecorded: $constRecorded,
+            updated: $updatedAt
         );
     }
 

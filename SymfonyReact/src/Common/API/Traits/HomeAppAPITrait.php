@@ -37,6 +37,8 @@ trait HomeAppAPITrait
 
     public const BAD_REQUEST_NO_DATA_RETURNED = 'Bad Request No Data Returned';
 
+    public const SOME_ISSUES_WITH_REQUEST = 'Some issues were found with your request';
+
     // 20x Successfull
     public function sendSuccessfulJsonResponse(array $data = [], $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {

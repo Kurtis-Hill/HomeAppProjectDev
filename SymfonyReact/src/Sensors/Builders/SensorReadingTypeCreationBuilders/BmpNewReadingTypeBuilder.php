@@ -15,7 +15,7 @@ class BmpNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements 
     {
         $bmp = new Bmp();
         $bmp->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($bmp, Bmp::LOW_TEMPERATURE_READING_BOUNDARY);
+        $this->buildStandardSensorReadingTypeObjects($bmp);
 
         return $bmp;
     }

@@ -24,7 +24,7 @@ class ResponseTypeRequestDTO
 
     public function getResponseType(): string
     {
-        return $this->responseType;
+        return $this->responseType ?? RequestDTOBuilder::REQUEST_TYPE_ONLY;
     }
 
     public function setResponseType(mixed $responseType): void

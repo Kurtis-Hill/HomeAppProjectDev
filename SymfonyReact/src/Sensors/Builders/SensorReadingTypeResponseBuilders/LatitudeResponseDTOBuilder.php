@@ -13,7 +13,7 @@ class LatitudeResponseDTOBuilder implements StandardSensorResponseDTOBuilderInte
     {
         return new LatitudeResponseDTO(
             $analog->getSensorID(),
-            SensorResponseDTOBuilder::buildFullResponseDTO($analog->getSensor()),
+            SensorResponseDTOBuilder::buildDetailedResponseDTO($analog->getSensor()),
             $analog->getCurrentReading(),
             $analog->getHighReading(),
             $analog->getLowReading(),

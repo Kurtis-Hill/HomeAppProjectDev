@@ -126,7 +126,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse($errors);
         }
 
-        $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
+        $sensorResponseDTO = SensorResponseDTOBuilder::buildOnlyResponseDTO($sensor);
         try {
             $normalizedResponse = $this->normalizeResponse($sensorResponseDTO);
         } catch (ExceptionInterface) {
