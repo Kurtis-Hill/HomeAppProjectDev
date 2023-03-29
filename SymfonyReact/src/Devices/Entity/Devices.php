@@ -9,6 +9,7 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
     ORM\Index(columns: ["roomID"], name: "roomID"),
-    ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"])
+    ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
 ]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {

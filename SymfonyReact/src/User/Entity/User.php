@@ -26,6 +26,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'Email already exists')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
+    public const ROLE_USER = 'ROLE_USER';
+
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
+    public const USER_ROLES = [
+        self::ROLE_USER,
+        self::ROLE_ADMIN,
+    ];
     public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';
 
     #[

@@ -132,28 +132,6 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
         self::assertCount(count($allGroupNameMappingsForUser), $payload);
     }
 
-    public function test_regular_users_can_see_all_own_group_name_mappings_no_results(): void
-    {
-        $regularUserOne = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-        $userToken = $this->setUserToken($this->client, $regularUserOne->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
-
-        $this->client->request(
-            Request::METHOD_GET,
-            self::GET_GROUP_MAPPING_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-        );
-
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        $payload = $responseData['payload'];
-
-        self::assertEquals(GetGroupNameMappingsController::NO_RESPONSE_MESSAGE, $payload);
-    }
-
     public function test_full_response_data_is_correct(): void
     {
         $this->client->request(

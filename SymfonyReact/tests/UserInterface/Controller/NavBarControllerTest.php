@@ -127,7 +127,7 @@ class NavBarControllerTest extends WebTestCase
         yield [
             'email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
-            'groupCount' => 1,
+            'groupCount' => 2,
         ];
 
         yield [

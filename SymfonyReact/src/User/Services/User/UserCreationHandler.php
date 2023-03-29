@@ -4,14 +4,15 @@ namespace App\User\Services\User;
 
 use App\Common\Logs\LogMessages;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\User\Builders\GroupName\GroupNameBuilder;
 use App\User\Builders\User\NewUserBuilder;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Repository\ORM\GroupNameRepository;
 use App\User\Repository\ORM\UserRepository;
+use App\User\Services\GroupMappingServices\AddGroupNameMappingHandler;
 use App\User\Services\GroupNameServices\AddGroupNameHandler;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -26,8 +27,6 @@ class UserCreationHandler
 {
     use ValidatorProcessorTrait;
 
-    private GroupNameBuilder $groupNameBuilder;
-
     private GroupNameRepository $groupNameRepository;
 
     private NewUserBuilder $newUserBuilder;
@@ -35,6 +34,8 @@ class UserCreationHandler
     private UserRepository $userRepository;
 
     private AddGroupNameHandler $addGroupNameHandler;
+
+    private AddGroupNameMappingHandler $addGroupNameMappingHandler;
 
     private ValidatorInterface $validator;
 
@@ -45,21 +46,21 @@ class UserCreationHandler
     private string $projectDir;
 
     public function __construct(
-        GroupNameBuilder $groupNameBuilder,
         GroupNameRepository $groupNameRepository,
         NewUserBuilder $newUserBuilder,
         UserRepository $userRepository,
         AddGroupNameHandler $addGroupNameHandler,
+        AddGroupNameMappingHandler $addGroupNameMappingHandler,
         ValidatorInterface $validator,
         LoggerInterface $logger,
         string $profilePictureDir,
         string $projectDir,
     ) {
-        $this->groupNameBuilder = $groupNameBuilder;
         $this->groupNameRepository = $groupNameRepository;
         $this->newUserBuilder = $newUserBuilder;
         $this->userRepository = $userRepository;
         $this->addGroupNameHandler = $addGroupNameHandler;
+        $this->addGroupNameMappingHandler = $addGroupNameMappingHandler;
         $this->logger = $logger;
         $this->validator = $validator;
         $this->profilePictureDir = $profilePictureDir;
@@ -72,6 +73,7 @@ class UserCreationHandler
      * @throws UniqueConstraintViolationException
      * @throws UserCreationValidationErrorsException
      * @throws GroupNameValidationException
+     * @throws GroupNameNotFoundException
      */
     public function handleNewUserCreation(
         string $firstName,
@@ -113,6 +115,10 @@ class UserCreationHandler
             throw new UserCreationValidationErrorsException(['Failed to save user']);
         }
 
+        if (!$user->isAdmin()) {
+            $this->addNewUserToSharedUserGroups($user);
+        }
+
         $this->logger->info(
             sprintf(
                 LogMessages::NEW_USER_CREATED,
@@ -122,6 +128,29 @@ class UserCreationHandler
         );
 
         return $user;
+    }
+
+    /**
+     * @throws GroupNameNotFoundException
+     */
+    private function addNewUserToSharedUserGroups(User $user): void
+    {
+        $sharedUserGroup = $this->groupNameRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+        if (!$sharedUserGroup instanceof GroupNames) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to create group mapping entry for shared user group for userID %d at %s',
+                    $user->getUserID(),
+                    (new DateTimeImmutable('now'))->format('d-M-Y H:i:s'),
+                )
+            );
+            throw new GroupNameNotFoundException('Base group name not found, contact your system admins');
+        }
+
+        $this->addGroupNameMappingHandler->addNewGroupNameMappingEntry(
+            $sharedUserGroup,
+            $user,
+        );
     }
 
     //@TODO - move this to a service

@@ -22,9 +22,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public const ADMIN_GROUP_TWO = 'admin-group-two';
 
-
     public const ADMIN_PASSWORD = 'admin1234';
-
 
     public const REGULAR_USER_EMAIL_ONE = 'regular-user@gmail.com';
 
@@ -37,9 +35,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public const REGULAR_GROUP_TWO = 'regular-group-two';
 
-
     public const ADMIN_USER_GROUP_TWO = 'second-admin-user-group';
-
 
     public const UNIQUE_USER_EMAIL_NOT_TO_BE_USED = 'unique-user@gmail.com';
 
@@ -48,10 +44,12 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
     /** groups of users with mappings to each other */
     public const GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO = [
         self::REGULAR_GROUP_TWO,
+        GroupNames::HOME_APP_GROUP_NAME,
         self::ADMIN_GROUP_ONE,
     ];
 
     public const ALL_GROUPS = [
+        GroupNames::HOME_APP_GROUP_NAME,
         self::ADMIN_GROUP_ONE,
         self::ADMIN_GROUP_TWO,
         self::REGULAR_GROUP_ONE,
@@ -72,6 +70,13 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        //Default home app group name
+        $homeAppGroupName = new GroupNames();
+        $homeAppGroupName->setGroupName(GroupNames::HOME_APP_GROUP_NAME);
+        $homeAppGroupName->setCreatedAt();
+
+        $manager->persist($homeAppGroupName);
+
         // Admin User One
         $adminGroupOne = new GroupNames();
 
@@ -88,40 +93,8 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserOne->setCreatedAt();
         $adminUserOne->setGroupNameID($adminGroupOne);
 
-//        $firstAminGroupName = new GroupNameMapping();
-//
-//        $firstAminGroupName->setGroupName($adminGroupName);
-//        $firstAminGroupName->setUser($adminUser);
-
-//        $manager->persist($firstAminGroupName);
         $manager->persist($adminGroupOne);
         $manager->persist($adminUserOne);
-
-
-
-
-//        $firstRegularGroupMapping = new GroupNameMapping();
-
-//        $firstRegularGroupMapping->setGroupName($userGroupName);
-//        $firstRegularGroupMapping->setUser($regularUser);
-
-//        $manager->persist($firstRegularGroupMapping);
-
-
-
-        // Joining the two users by group mapping
-//        $adminUserInAdminGroup = new GroupNameMapping();
-//
-//        $adminUserInAdminGroup->setGroupName($userGroupName);
-//        $adminUserInAdminGroup->setUser($adminUser);
-//
-//        $manager->persist($adminUserInAdminGroup);
-
-//        $regularUserAdminGroup = new GroupNameMapping();
-//
-//        $regularUserAdminGroup->setGroupName($adminGroupName);
-//        $regularUserAdminGroup->setUser($regularUser);
-
 
         //Second Admin User
         $adminTwoGroupName = new GroupNames();
@@ -141,19 +114,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($adminTwoGroupName);
         $manager->persist($adminUserTwo);
-//        $secondAdminGroupMapping = new GroupNameMapping();
-//
-//        $secondAdminGroupMapping->setGroupName($adminUserGroupName);
-//        $secondAdminGroupMapping->setUser($adminUserInAdminGroup);
-
-//        $adminAdminGroupMapping = new GroupNameMapping();
-
-//        $adminAdminGroupMapping->setGroupName($adminGroupName);
-//        $adminAdminGroupMapping->setUser($adminUserInAdminGroup);
-
-//        $manager->persist($adminAdminGroupMapping);
-//        $manager->persist($secondAdminGroupMapping);
-
 
         //Regular User Not part of Admin Group
         $userGroupOne = new GroupNames();
@@ -174,12 +134,17 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($regularUserOne);
 
 
-
         //Regular User in Admin Group
         $regularUserGroupTwo = new GroupNames();
 
         $regularUserGroupTwo->setGroupName(self::REGULAR_GROUP_TWO);
         $regularUserGroupTwo->setCreatedAt();
+
+        $regularUserHomeGroupNameMappingEntry = new GroupNameMapping();
+        $regularUserHomeGroupNameMappingEntry->setGroupName($homeAppGroupName);
+        $regularUserHomeGroupNameMappingEntry->setUser($regularUserOne);
+
+        $manager->persist($regularUserHomeGroupNameMappingEntry);
 
         $regularUserTwo = new User();
 
@@ -196,6 +161,12 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUserTwoAdminGroupOneGroupNameMapping->setGroupName($adminGroupOne);
         $regularUserTwoAdminGroupOneGroupNameMapping->setUser($regularUserTwo);
 
+        $regularUserTwoHomeGroupNameMappingEntry = new GroupNameMapping();
+        $regularUserTwoHomeGroupNameMappingEntry->setGroupName($homeAppGroupName);
+        $regularUserTwoHomeGroupNameMappingEntry->setUser($regularUserTwo);
+
+        $manager->persist($regularUserTwoHomeGroupNameMappingEntry);
+
         $manager->persist($regularUserTwoAdminGroupOneGroupNameMapping);
         $manager->persist($regularUserTwo);
         $manager->persist($regularUserGroupTwo);
@@ -205,7 +176,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $this->addReference(self::REGULAR_USER_EMAIL_ONE, $regularUserOne);
         $this->addReference(self::REGULAR_USER_EMAIL_TWO, $regularUserTwo);
 
-//        $this->addReference();
         $this->addReference(self::ADMIN_GROUP_ONE, $adminGroupOne);
         $this->addReference(self::ADMIN_GROUP_TWO, $adminTwoGroupName);
         $this->addReference(self::REGULAR_GROUP_ONE, $userGroupOne);

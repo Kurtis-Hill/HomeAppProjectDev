@@ -123,14 +123,15 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
-        $groupNotApartOf = $groupsNotApartOf[0];
-        $devicesUserIsNotApartOf = $this->deviceRepository->findOneBy([
-            'groupNameID' => $groupNotApartOf->getGroupNameID(),
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy([
+            'groupNameID' => $groupsNotApartOf,
         ]);
+
+        $device = $devicesUserIsNotApartOf[0];
 
         /** @var Sensor[] $sensorsNotOwnedByUser */
         $sensorsNotOwnedByUser = $this->sensorRepository->findBy([
-            'deviceID' => $devicesUserIsNotApartOf->getDeviceID(),
+            'deviceID' => $device->getDeviceID(),
         ]);
 
         $sensorNotOwnedByUser = $sensorsNotOwnedByUser[0];
@@ -155,14 +156,15 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
-        $groupNotApartOf = $groupsNotApartOf[0];
-        $devicesUserIsNotApartOf = $this->deviceRepository->findOneBy([
-            'groupNameID' => $groupNotApartOf->getGroupNameID(),
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy([
+            'groupNameID' => $groupsNotApartOf,
         ]);
+
+        $device = $devicesUserIsNotApartOf[0];
 
         /** @var Sensor[] $sensorsNotOwnedByUser */
         $sensorsNotOwnedByUser = $this->sensorRepository->findBy([
-            'deviceID' => $devicesUserIsNotApartOf->getDeviceID(),
+            'deviceID' => $device->getDeviceID(),
         ]);
 
         $sensorNotOwnedByUser = $sensorsNotOwnedByUser[0];

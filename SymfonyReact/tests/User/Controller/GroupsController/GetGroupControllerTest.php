@@ -57,14 +57,13 @@ class GetGroupControllerTest extends WebTestCase
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
-        $count = 0;
-        foreach ($responseData['payload'] as $payload) {
-            self::assertEquals(UserDataFixtures::ALL_GROUPS[$count], $payload['groupName']);
-            self::assertIsNumeric($payload['groupNameID']);
-            ++$count;
-        }
+
+        $payload = $responseData['payload'];
+
+        self::assertCount(1, $payload);
+        self::assertEquals(UserDataFixtures::ADMIN_GROUP_ONE, $payload[0]['groupName']);
+        self::assertIsNumeric($payload[0]['groupNameID']);
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
-        self::assertCount(2, $responseData);
     }
 
     public function test_user_groups_are_correct_regular_user_admin_group(): void
@@ -84,11 +83,10 @@ class GetGroupControllerTest extends WebTestCase
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
-        $count = 0;
-        foreach ($responseData['payload'] as $payload) {
-            self::assertEquals(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO[$count], $payload['groupName']);
+
+        foreach ($responseData['payload'] as $key => $payload) {
+            self::assertEquals(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO[$key], $payload['groupName']);
             self::assertIsNumeric($payload['groupNameID']);
-            ++$count;
         }
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
@@ -111,10 +109,11 @@ class GetGroupControllerTest extends WebTestCase
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true);
-        foreach ($responseData['payload'] as $payload) {
-            self::assertEquals(UserDataFixtures::REGULAR_GROUP_ONE, $payload['groupName']);
-            self::assertIsNumeric($payload['groupNameID']);
-        }
+
+        $payload = $responseData['payload'];
+        self::assertEquals(UserDataFixtures::REGULAR_GROUP_ONE, $payload[0]['groupName']);
+        self::assertIsNumeric($payload[0]['groupNameID']);
+
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);
     }

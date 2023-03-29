@@ -304,7 +304,8 @@ class GetSensorControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
-        $groupIDs = array_map(function (GroupNames $group) {
+
+        $groupIDs = array_map(static function (GroupNames $group) {
             return $group->getGroupNameID();
         }, $groupsNotApartOf);
 
@@ -332,6 +333,7 @@ class GetSensorControllerTest extends WebTestCase
         self::assertEquals(GetSensorController::SOME_ISSUES_WITH_REQUEST, $title);
 
         $errors = $responseData['errors'];
+
         self::assertCount(count($groupIDs), $errors);
     }
 

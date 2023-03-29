@@ -60,24 +60,26 @@ class GroupNameRepository extends ServiceEntityRepository implements GroupNameRe
     public function findGroupsUserIsNotApartOf(User $user = null, array $groups = []): array
     {
         $qb = $this->createQueryBuilder('gn');
-
         $expr = $qb->expr();
+
         $qb->select('gn')
             ->leftJoin(GroupNameMapping::class, 'gnm', Join::WITH, 'gnm.groupName = gn.groupNameID')
             ->leftJoin(User::class, 'u', Join::WITH, 'gnm.user = u.userID')
             ->where(
-                $expr->orX(
+//                $expr->orX(
                 $expr->notIn('gn.groupNameID', ':groups'),
-                    $expr->notIn('u.groupNameID', ':userGroups')
-                )
+//                    $expr->notIn('u.groupNameID', ':userGroups')
+//                )
             )
-            ->setParameter('groups', $user?->getAssociatedGroupNameIds())
-            ->setParameter('userGroups', $user?->getAssociatedGroupNameIds());
+            ->setParameter('groups', $user?->getAssociatedGroupNameIds());
+//            ->setParameter('userGroups', $user?->getAssociatedGroupNameIds());
 
         if (!empty($groups)) {
             $qb->andWhere($expr->notIn('gn.groupNameID', ':groups'));
             $qb->setParameter('groups', $groups);
         }
+
+//        dd($qb->getQuery()->getResult(), $user?->getAssociatedGroupNameIds());
         return $qb->getQuery()->getResult();
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\User\Entity\GroupNames;
+use DateTimeImmutable;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -24,6 +26,9 @@ final class Version20220303160823 extends AbstractMigration
             !$this->connection->getDatabasePlatform() instanceof MySQL80Platform,
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
+
+        $homeAppGroupName = GroupNames::HOME_APP_GROUP_NAME;
+        $this->addSql("CREATE DATABASE IF NOT EXISTS HomeApp");
 
         $this->addSql('
             CREATE TABLE user (
@@ -454,14 +459,15 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO `user` 
                 (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `groupNameID`, `createdAt`) 
             VALUES
-                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, 1, '2021-07-15 17:19:32');
+                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, 2, '2021-07-15 17:19:32');
         ");
 
         $this->addSql("
             INSERT INTO `groupname` 
-                (`groupNameID`, `groupName`, `createdAt`) 
+                (`groupNameID`, `groupName`) 
             VALUES
-                (1, 'admin', '2021-06-06 02:54:58');
+                (1, 'home-app-group'),
+                (2, 'admin-group');
         ");
 
         $this->addSql("

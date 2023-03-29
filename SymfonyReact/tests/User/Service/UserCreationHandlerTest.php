@@ -2,6 +2,7 @@
 
 namespace App\Tests\User\Service;
 
+use App\Authentication\Entity\GroupNameMapping;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
@@ -332,8 +333,61 @@ class UserCreationHandlerTest extends KernelTestCase
         self::assertSame($userSaved->getRoles()[0], 'ROLE_ADMIN');
     }
 
-    public function test_every_new_user_gets_added_to_home_app_group(): void
+    public function test_every_new_user_none_admin_gets_added_to_home_app_group(): void
     {
+        $this->sut->handleNewUserCreation(
+            'John',
+            'Doe',
+            UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
+            'hghnkjhgfhgfghgf',
+            UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            null,
+            ['ROLE_USER'],
+        );
 
+        /** @var User $userSaved */
+        $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
+
+        $groupMappingRepository = $this->entityManager->getRepository(GroupNames::class);
+        /** @var GroupNames $homeAppGroup */
+        $homeAppGroup = $groupMappingRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+
+        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+
+        /** @var GroupNameMapping $homeGroupMappingEntry */
+        $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
+            'groupName' => $homeAppGroup->getGroupNameID(),
+            'user' => $userSaved->getUserID(),
+        ]);
+
+        self::assertNotNull($homeGroupMappingEntry);
+    }
+
+    public function test_every_new_admin_user_gets_added_to_home_app_group(): void
+    {
+        $this->sut->handleNewUserCreation(
+            'John',
+            'Doe',
+            UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
+            'hghnkjhgfhgfghgf',
+            UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            null,
+            [User::ROLE_ADMIN],
+        );
+
+        /** @var User $userSaved */
+        $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
+
+        $groupMappingRepository = $this->entityManager->getRepository(GroupNames::class);
+        $homeAppGroup = $groupMappingRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+
+        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+
+        $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
+            'groupName' => $homeAppGroup->getGroupNameID(),
+            'user' => $userSaved->getUserID(),
+        ]);
+
+        self::assertNull($homeGroupMappingEntry);
     }
 }

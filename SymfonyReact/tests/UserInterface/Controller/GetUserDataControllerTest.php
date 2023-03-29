@@ -7,6 +7,7 @@ use App\Common\API\HTTPStatusCodes;
 use App\ORM\DataFixtures\Core\RoomFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
+use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -84,7 +85,7 @@ class GetUserDataControllerTest extends WebTestCase
         }
 
         foreach ($testUser->getUserGroupMappingEntities() as $groupNameMappingObject) {
-            /** @var GroupNameMapping $groupName */
+            /** @var GroupNames $groupName */
             $groupName = $groupNameMappingObject->getGroupName();
             foreach ($responseData['userGroups'] as $userGroup) {
                 if ($userGroup['groupNameID'] === $groupName->getGroupNameID()) {
@@ -108,18 +109,18 @@ class GetUserDataControllerTest extends WebTestCase
         ];
         yield [
             'email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
-                'password' => UserDataFixtures::ADMIN_PASSWORD,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
             'groupNameNumber' => count(UserDataFixtures::ALL_GROUPS),
         ];
         yield [
             'email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
-            'groupNameNumber' => 1,
+            'groupNameNumber' => 2,
         ];
         yield [
             'email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
-            'groupNameNumber' => 2,
+            'groupNameNumber' => count(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO),
         ];
     }
 

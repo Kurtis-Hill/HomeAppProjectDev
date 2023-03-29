@@ -18,6 +18,8 @@ use App\User\Repository\ORM\GroupNameRepository;
 #[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
 class GroupNames
 {
+    public const HOME_APP_GROUP_NAME = 'home-app-group';
+
     private const GROUP_NAME_MIN_LENGTH = 2;
 
     private const GROUP_NAME_MAX_LENGTH = 50;
