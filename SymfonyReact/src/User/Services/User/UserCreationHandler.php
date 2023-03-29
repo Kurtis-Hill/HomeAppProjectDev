@@ -79,10 +79,11 @@ class UserCreationHandler
         string $firstName,
         string $lastName,
         string $email,
-        string $password,
         string $groupName,
+        string $password,
         ?UploadedFile $profilePic = null,
         array $roles = ['ROLE_USER'],
+        bool $userApproved = false,
     ): User {
         $groupNameObject = $this->addGroupNameHandler->addNewGroup($groupName, null);
 
@@ -115,7 +116,7 @@ class UserCreationHandler
             throw new UserCreationValidationErrorsException(['Failed to save user']);
         }
 
-        if (!$user->isAdmin()) {
+        if ($userApproved === true && !$user->isAdmin()) {
             $this->addNewUserToSharedUserGroups($user);
         }
 

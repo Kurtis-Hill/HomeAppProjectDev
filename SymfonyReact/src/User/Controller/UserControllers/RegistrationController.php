@@ -47,8 +47,8 @@ class RegistrationController extends AbstractController
                     $form->get('firstName')->getData(),
                     $form->get('lastName')->getData(),
                     $form->get('email')->getData(),
-                    $form->get('plainPassword')->getData(),
                     $form->get('groupName')->getData(),
+                    $form->get('plainPassword')->getData(),
                     $form->get('profilePicture')->getData(),
                 );
                 $this->addFlash('success', 'Registration successful!');
