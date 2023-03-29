@@ -89,7 +89,7 @@ class GetGroupControllerTest extends WebTestCase
             self::assertIsNumeric($payload['groupNameID']);
         }
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
-        self::assertCount(2, $responseData);
+        self::assertCount(count(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO), $responseData['payload']);
     }
 
     public function test_user_groups_are_correct_regular_user_none_other_groups(): void

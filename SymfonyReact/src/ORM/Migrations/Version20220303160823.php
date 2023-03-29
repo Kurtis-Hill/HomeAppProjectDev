@@ -471,13 +471,6 @@ final class Version20220303160823 extends AbstractMigration
         ");
 
         $this->addSql("
-            INSERT INTO `groupnnamemapping` 
-                (`groupNameMappingID`, `userID`, `groupNameID`) 
-            VALUES
-                (1, 1, 1);
-        ");
-
-        $this->addSql("
             INSERT INTO `icons` 
                 (`iconID`, `iconName`, `description`) 
             VALUES
