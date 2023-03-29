@@ -49,4 +49,6 @@ class APIErrorMessages
     public const FORBIDDEN_ACTION = 'You are not supposed to be here';
 
     public const OBJECT_ALREADY_EXISTS = '%s already exists';
+
+    public const USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED = 'User does not have access to requested %s: %s';
 }

@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 class GetUserDataControllerTest extends WebTestCase
 {
     use TestLoginTrait;
+
     private const GET_USER_DATA_URL = '/HomeApp/api/user/user-data/get';
 
     private ?string $userToken = null;
@@ -82,10 +83,12 @@ class GetUserDataControllerTest extends WebTestCase
             }
         }
 
-        foreach ($testUser->getGroupNameMappings() as $groupNameObject) {
+        foreach ($testUser->getUserGroupMappingEntities() as $groupNameMappingObject) {
+            /** @var GroupNameMapping $groupName */
+            $groupName = $groupNameMappingObject->getGroupName();
             foreach ($responseData['userGroups'] as $userGroup) {
-                if ($userGroup['groupNameID'] === $groupNameObject->getGroupNameID()) {
-                    self::assertEquals($groupNameObject->getGroupName(), $userGroup['groupName'], 'group name wrong');
+                if ($userGroup['groupNameID'] === $groupName->getGroupName()->getGroupNameID()) {
+                    self::assertEquals($groupName->getGroupName()->getGroupName(), $userGroup['groupName'], 'group name wrong');
                     $passed = true;
                     continue;
                 }

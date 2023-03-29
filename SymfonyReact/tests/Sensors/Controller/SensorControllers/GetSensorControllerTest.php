@@ -350,7 +350,6 @@ class GetSensorControllerTest extends WebTestCase
         $dataToSend = [
             'deviceIDs' => $deviceIDs
         ];
-
         $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
 
         $this->client->request(

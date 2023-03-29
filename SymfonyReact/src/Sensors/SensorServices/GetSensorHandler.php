@@ -2,6 +2,7 @@
 
 namespace App\Sensors\SensorServices;
 
+use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
@@ -27,46 +28,58 @@ class GetSensorHandler
     #[ArrayShape(['errors'])]
     public function validateUserIsAllowedToGetSensors(GetSensorQueryDTO $getSensorQueryDTO, User $user): array
     {
-        $allGroupsUserIsApartOf = $this->getGroupNamesHandler->getGroupNamesForUser($user);
-        $groupNameIDs = array_map(static function($groupName) {
-            /** @var GroupNames $groupName */
-            return $groupName->getGroupNameID();
-        }, $allGroupsUserIsApartOf);
-
-        $allDevicesUserHasAccessTo = $this->deviceRepository->findAllDevicesByGroupNameIDs($groupNameIDs);
         $usersDeviceIDs = [];
-
         $userDeviceNames = [];
-        /** @var Devices $device */
-        foreach ($allDevicesUserHasAccessTo as $device) {
-            $usersDeviceIDs[] = $device->getDeviceID();
-            $userDeviceNames[] = $device->getDeviceName();
-        }
 
-        $requestedGroupsNameIds = $getSensorQueryDTO->getGroupIDs();
         $requestedDeviceNames = $getSensorQueryDTO->getDeviceNames();
         $requestedDeviceIDs = $getSensorQueryDTO->getDeviceIDs();
+        $groupNameIDs = $this->getGroupNamesHandler->getGroupNamesForUser($user);
+        if (!empty($requestedDeviceNames) || !empty($requestedDeviceIDs)) {
+            $allDevicesUserHasAccessTo = $this->deviceRepository->findAllDevicesByGroupNameIDs($groupNameIDs);
+            /** @var Devices $device */
+            foreach ($allDevicesUserHasAccessTo as $device) {
+                $usersDeviceIDs[] = $device->getDeviceID();
+                $userDeviceNames[] = $device->getDeviceName();
+            }
+        }
 
         $errors = [];
 
-        if (!empty($requestedGroupsNameIds) && !in_array($requestedGroupsNameIds, $allGroupsUserIsApartOf, true)) {
-            $groupNamesIDsUserHasAccessTo = array_filter($requestedGroupsNameIds, static function($groupName) use ($groupNameIDs, &$errors) {
-                if (in_array($groupName, $groupNameIDs, false)) {
-                    return true;
-                }
-                $errors[] = 'User does not have access to requested group: ' . $groupName;
+        $requestedGroupsNameIds = $getSensorQueryDTO->getGroupIDs();
+        if (!empty($requestedGroupsNameIds)) {
+            $allGroupsUserIsApartOf = $this->getGroupNamesHandler->getGroupNamesForUser($user);
+            $groupNameIDs = array_map(static function($groupName) {
+                /** @var GroupNames $groupName */
+                return $groupName->getGroupNameID();
+            }, $allGroupsUserIsApartOf);
+            if (!in_array($requestedGroupsNameIds, $allGroupsUserIsApartOf, true)) {
+                $groupNamesIDsUserHasAccessTo = array_filter($requestedGroupsNameIds, static function($groupName) use ($groupNameIDs, &$errors) {
+                    if (in_array($groupName, $groupNameIDs, false)) {
+                        return true;
+                    }
+                    $errors[] = sprintf(
+                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+                        'group',
+                        $groupName
+                    );
 
-                return false;
-            });
-            $getSensorQueryDTO->setGroupIDs($groupNamesIDsUserHasAccessTo);
+                    return false;
+                });
+                $getSensorQueryDTO->setGroupIDs($groupNamesIDsUserHasAccessTo);
+            }
         }
+
 
         if (!empty($requestedDeviceNames) && !in_array($requestedDeviceNames, $userDeviceNames, true)) {
             $deviceNamesUserHasAccessTo = array_filter($requestedDeviceNames, static function($deviceName) use ($userDeviceNames, &$errors) {
                 if (in_array($deviceName, $userDeviceNames, false)) {
                     return true;
                 }
-                $errors[] = 'User does not have access to requested device: ' . $deviceName;
+                $errors[] = sprintf(
+                    APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+                    'device',
+                    $deviceName
+                );
 
                 return false;
             });
@@ -78,7 +91,11 @@ class GetSensorHandler
                 if (in_array($deviceID, $usersDeviceIDs, false)) {
                     return true;
                 }
-                $errors[] = 'User does not have access to requested device: ' . $deviceID;
+                $errors[] = sprintf(
+                    APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+                    'device',
+                    $deviceID
+                );
 
                 return false;
             });
