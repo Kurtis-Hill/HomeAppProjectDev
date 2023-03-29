@@ -87,8 +87,8 @@ class GetUserDataControllerTest extends WebTestCase
             /** @var GroupNameMapping $groupName */
             $groupName = $groupNameMappingObject->getGroupName();
             foreach ($responseData['userGroups'] as $userGroup) {
-                if ($userGroup['groupNameID'] === $groupName->getGroupName()->getGroupNameID()) {
-                    self::assertEquals($groupName->getGroupName()->getGroupName(), $userGroup['groupName'], 'group name wrong');
+                if ($userGroup['groupNameID'] === $groupName->getGroupNameID()) {
+                    self::assertEquals($groupName->getGroupName(), $userGroup['groupName'], 'group name wrong');
                     $passed = true;
                     continue;
                 }
