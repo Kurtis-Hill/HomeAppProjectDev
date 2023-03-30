@@ -11,6 +11,7 @@ class GroupNameMappingValidationException extends Exception
 
     public function __construct(array $validationErrors = [], string $message = "", int $code = 0, Throwable $previous = null)
     {
+        $this->validationErrors = $validationErrors;
         parent::__construct($message, $code, $previous);
     }
 

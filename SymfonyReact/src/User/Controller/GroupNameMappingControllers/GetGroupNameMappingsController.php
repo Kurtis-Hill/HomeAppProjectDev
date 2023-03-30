@@ -34,7 +34,7 @@ class GetGroupNameMappingsController extends AbstractController
 
         $groupNameMappingResponseDTOs = [];
         foreach ($groupNameMappingsForUser as $groupNameMapping) {
-            $groupNameMappingResponseDTOs[] = GroupNameMappingResponseBuilder::buildGroupNameResponseDTO($groupNameMapping);
+            $groupNameMappingResponseDTOs[] = GroupNameMappingResponseBuilder::buildGroupNameFullResponseDTO($groupNameMapping);
         }
 
         try {

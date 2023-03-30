@@ -4,6 +4,9 @@ namespace App\User\Services\User;
 
 use App\Common\Logs\LogMessages;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\User\Builders\GroupName\AddNewGroupNameDTOBuilder;
+use App\User\Builders\GroupNameMapping\GroupNameMappingBuilder;
+use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTO;
 use App\User\Builders\User\NewUserBuilder;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
@@ -148,9 +151,13 @@ class UserCreationHandler
             throw new GroupNameNotFoundException('Base group name not found, contact your system admins');
         }
 
-        $this->addGroupNameMappingHandler->addNewGroupNameMappingEntry(
-            $sharedUserGroup,
+        $newGroupNameMappingDTO = GroupNameMappingInternalDTO::buildGroupNameMappingInternalDTO(
             $user,
+            $sharedUserGroup,
+        );
+
+        $this->addGroupNameMappingHandler->addNewGroupNameMappingEntry(
+            $newGroupNameMappingDTO
         );
     }
 

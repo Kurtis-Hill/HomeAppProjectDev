@@ -153,6 +153,7 @@ export default function Login(): void {
                                             {loading === true
                                                 ? <DotCircleSpinner spinnerSize={2} classes="center-spinner" />
                                                 : <SubmitButton
+                                                     type='submit'
                                                       text="Login" 
                                                       onClickFunction={handleLoginRequest}
                                                       classes="btn-block"

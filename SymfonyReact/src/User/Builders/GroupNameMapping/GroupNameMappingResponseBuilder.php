@@ -9,7 +9,7 @@ use App\User\DTO\ResponseDTOs\GroupNameMappingDTOs\GroupNameMappingFullResponseD
 
 class GroupNameMappingResponseBuilder
 {
-    public static function buildGroupNameResponseDTO(GroupNameMapping $groupNameMapping): GroupNameMappingFullResponseDTO
+    public static function buildGroupNameFullResponseDTO(GroupNameMapping $groupNameMapping): GroupNameMappingFullResponseDTO
     {
         return new GroupNameMappingFullResponseDTO(
             $groupNameMapping->getGroupNameMappingID(),

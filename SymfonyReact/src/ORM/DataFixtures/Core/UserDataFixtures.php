@@ -29,11 +29,15 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
     /** this user has group name mapping relating to the first admin users groups */
     public const REGULAR_USER_EMAIL_TWO = 'regular-user-admin-group@gmail.com';
 
+    public const REGULAR_USER_EMAIL_THREE = 'regular-user-3-regular-user-one-group@gmail.com';
+
     public const REGULAR_PASSWORD = 'user1234';
 
     public const REGULAR_GROUP_ONE = 'regular-group-one';
 
     public const REGULAR_GROUP_TWO = 'regular-group-two';
+
+    public const REGULAR_GROUP_THREE = 'regular-group-three';
 
     public const ADMIN_USER_GROUP_TWO = 'second-admin-user-group';
 
@@ -171,10 +175,38 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($regularUserTwo);
         $manager->persist($regularUserGroupTwo);
 
+        $regularUserThreeGroup = new GroupNames();
+        $regularUserThreeGroup->setGroupName(self::REGULAR_GROUP_THREE);
+        $regularUserThreeGroup->setCreatedAt();
+        $manager->persist($regularUserThreeGroup);
+
+        $regularUserThree = new User();
+        $regularUserThree->setGroupNameID($regularUserThreeGroup);
+        $regularUserThree->setEmail(self::REGULAR_USER_EMAIL_THREE);
+        $regularUserThree->setFirstName('third-regular-user');
+        $regularUserThree->setLastName('test');
+        $regularUserThree->setPassword($this->passwordEncoder->hashPassword($regularUserThree, self::REGULAR_PASSWORD));
+        $regularUserThree->setRoles(['ROLE_USER']);
+        $regularUserThree->setCreatedAt();
+
+        $regularUserThreeHomeGroupNameMapping = new GroupNameMapping();
+        $regularUserThreeHomeGroupNameMapping->setGroupName($homeAppGroupName);
+        $regularUserThreeHomeGroupNameMapping->setUser($regularUserThree);
+        $manager->persist($regularUserThreeHomeGroupNameMapping);
+
+        $regularUserThreeRegularUserTwoGroupNameMapping = new GroupNameMapping();
+        $regularUserThreeRegularUserTwoGroupNameMapping->setGroupName($regularUserGroupTwo);
+        $regularUserThreeRegularUserTwoGroupNameMapping->setUser($regularUserThree);
+        $manager->persist($regularUserThreeRegularUserTwoGroupNameMapping);
+
+        $manager->persist($regularUserThree);
+
+
         $this->addReference(self::ADMIN_USER_EMAIL_ONE, $adminUserOne);
         $this->addReference(self::ADMIN_USER_EMAIL_TWO, $adminUserTwo);
         $this->addReference(self::REGULAR_USER_EMAIL_ONE, $regularUserOne);
         $this->addReference(self::REGULAR_USER_EMAIL_TWO, $regularUserTwo);
+        $this->addReference(self::REGULAR_USER_EMAIL_THREE, $regularUserThree);
 
         $this->addReference(self::ADMIN_GROUP_ONE, $adminGroupOne);
         $this->addReference(self::ADMIN_GROUP_TWO, $adminTwoGroupName);

@@ -31,7 +31,7 @@ class AddGroupNameControllerTest extends WebTestCase
 
     private string $userToken;
 
-    private User $user;
+    private User $adminUser;
 
     private GroupNameRepositoryInterface $groupNameRepository;
 
@@ -47,7 +47,7 @@ class AddGroupNameControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->userToken = $this->setUserToken($this->client);
         $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);

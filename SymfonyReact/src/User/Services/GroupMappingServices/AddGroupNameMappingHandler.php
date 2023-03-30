@@ -5,6 +5,7 @@ namespace App\User\Services\GroupMappingServices;
 use App\Authentication\Entity\GroupNameMapping;
 use App\Authentication\Repository\ORM\GroupNameMappingRepository;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\User\DTO\InternalDTOs\GroupNameMappingDTOs\AddGroupNameMappingDTO;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameMappingValidationException;
@@ -31,11 +32,11 @@ class AddGroupNameMappingHandler
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function addNewGroupNameMappingEntry(GroupNames $groupName, User $user): void
+    public function addNewGroupNameMappingEntry(AddGroupNameMappingDTO $addGroupNameMappingDTO): void
     {
-        $newGroupNameMapping = new GroupNameMapping();
-        $newGroupNameMapping->setUser($user);
-        $newGroupNameMapping->setGroupName($groupName);
+        $newGroupNameMapping = $addGroupNameMappingDTO->getNewGroupNameMapping();
+        $newGroupNameMapping->setUser($addGroupNameMappingDTO->getUserToAddMappingTo());
+        $newGroupNameMapping->setGroupName($addGroupNameMappingDTO->getGroupToAddUserTo());
 
         $validationErrors = $this->validator->validate($newGroupNameMapping);
 

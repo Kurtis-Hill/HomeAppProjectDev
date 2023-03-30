@@ -61,6 +61,9 @@ class GroupNameMappingRepository extends ServiceEntityRepository
 //        return $qb->getQuery()->getResult();
 //    }
 
+    /**
+     * @throws ORMException
+     */
     public function persist(GroupNameMapping $groupNameMapping): void
     {
         $this->getEntityManager()->persist($groupNameMapping);

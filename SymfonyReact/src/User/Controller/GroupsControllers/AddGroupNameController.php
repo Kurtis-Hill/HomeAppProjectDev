@@ -68,19 +68,19 @@ class AddGroupNameController extends AbstractController
 
         try {
            $newGroup = $addGroupNameHandler->addNewGroup($newGroupDTO->getGroupName(), $user);
-        } catch (ORMException|OptimisticLockException) {
+        }  catch (NonUniqueResultException){
             return $this->sendInternalServerErrorJsonResponse();
         } catch (GroupNameValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
-        } catch (NonUniqueResultException) {
-            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_ALREADY_EXISTS, $newGroupDTO->getGroup()->getGroupName())]);
+        } catch (ORMException|OptimisticLockException) {
+            return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_ALREADY_EXISTS, $newGroupDTO->getGroupName())]);
         }
 
         $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
         try {
             $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO);
         } catch (NotEncodableValueException) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE, 'Group Saved']);
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Group Saved']);
         }
 
         return $this->sendCreatedResourceJsonResponse($normalizedGroupResponseDTO);

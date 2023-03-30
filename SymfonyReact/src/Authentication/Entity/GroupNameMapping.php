@@ -15,9 +15,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     ORM\Index(columns: ["user"], name: "IDX_1C993DEE5FD86D04"),
     ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupName"]),
 ]
-#[UniqueEntity(fields: ['user', 'groupName'], message: 'User is already in this group')]
+#[UniqueEntity(fields: ['user', 'groupName'], message: self::GROUP_NAME_MAPPING_EXISTS)]
 class GroupNameMapping
 {
+    public const GROUP_NAME_MAPPING_EXISTS = 'User is already in this group';
+
     #[
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
