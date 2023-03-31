@@ -42,7 +42,7 @@ function AddNewRoom(props) {
     const handleNewRoomFormSubmission = async (event) => {
         event.preventDefault();
         try {
-            const newRoomResponse = await axios.post(`${apiURL}user-rooms/add-user-room`, {
+            const newRoomResponse = await axios.post(`${apiURL}user-rooms/add`, {
                 'roomName': userRoom.value,
                 'groupNameID': selectedGroup
             }, getAPIHeader());

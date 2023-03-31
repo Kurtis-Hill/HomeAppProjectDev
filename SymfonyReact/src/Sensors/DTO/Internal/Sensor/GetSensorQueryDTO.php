@@ -7,17 +7,17 @@ use JetBrains\PhpStorm\Immutable;
 //#[Immutable]
 class GetSensorQueryDTO
 {
-     private ?int $limit;
+    private ?int $limit;
 
-     private ?int $offset;
+    private ?int $offset;
 
-     private ?int $page;
+    private ?int $page;
 
-     private ?array  $deviceIDs;
+    private ?array  $deviceIDs;
 
-     private ?array  $deviceNames;
+    private ?array  $deviceNames;
 
-     private ?array  $groupIDs;
+    private ?array  $groupIDs;
 
     public function __construct(
         ?int $limit = null,

@@ -43,5 +43,4 @@ echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
 echo "Supervisor Started..."
 
-# exec /usr/local/bin/docker-php-entrypoint "$@"
 exec "$@"

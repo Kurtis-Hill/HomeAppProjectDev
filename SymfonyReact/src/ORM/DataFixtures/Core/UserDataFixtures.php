@@ -58,6 +58,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         self::ADMIN_GROUP_TWO,
         self::REGULAR_GROUP_ONE,
         self::REGULAR_GROUP_TWO,
+        self::REGULAR_GROUP_THREE,
     ];
 
     private UserPasswordHasherInterface $passwordEncoder;
@@ -200,7 +201,6 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($regularUserThreeRegularUserTwoGroupNameMapping);
 
         $manager->persist($regularUserThree);
-
 
         $this->addReference(self::ADMIN_USER_EMAIL_ONE, $adminUserOne);
         $this->addReference(self::ADMIN_USER_EMAIL_TWO, $adminUserTwo);

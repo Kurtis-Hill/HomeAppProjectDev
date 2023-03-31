@@ -32,6 +32,7 @@ class DeleteGroupNameMappingController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse();
         }
+
         $deletedGroupNameMappingID = $groupNameMappingID->getGroupNameMappingID();
         $deviceDeleteSuccess = $deleteGroupNameMappingHandler->deleteGroupNameMapping($groupNameMappingID);
 

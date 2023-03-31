@@ -2,6 +2,8 @@
 
 namespace App\Tests\Devices\Controller;
 
+use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\RoomFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -14,6 +16,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
+use App\User\Repository\ORM\GroupNameRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -41,6 +44,16 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private Room $room;
 
+    private DeviceRepositoryInterface $deviceRepository;
+
+    private User $regularUserTwo;
+
+    private User $adminUser;
+
+    private GroupNameRepositoryInterface $groupNameRepository;
+
+    private GroupNameMappingRepository $groupNameMappingRepository;
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -49,6 +62,13 @@ class AddNewDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
+        $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
+        $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+
+        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+
+        $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
         $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName( RoomFixtures::LIVING_ROOM);
         $this->userToken = $this->setUserToken($this->client);
@@ -100,7 +120,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
@@ -141,7 +161,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString(sprintf(
@@ -198,7 +218,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($device);
@@ -226,7 +246,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($device);
@@ -254,7 +274,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($device);
@@ -279,7 +299,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
 
         self::assertNull($device);
         self::assertEquals($errors, $responseData['errors']);
@@ -349,7 +369,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
@@ -378,7 +398,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
@@ -407,7 +427,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
@@ -436,7 +456,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
@@ -451,14 +471,11 @@ class AddNewDeviceControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-
-        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
+        $groupNameMappingEntities = $this->groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
 
-        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames $groupUserIsNotApartOf */
-        $groupUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+        $groupUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupNameIds(),
         )[0];
@@ -482,130 +499,13 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
         self::assertNull($device);
         self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
-
-//    public function test_adding_device_in_room_not_apart_of_admin(): void
-//    {
-//        /** @var User $user */
-//        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
-//
-//        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-//
-////        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-////        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-//
-//        /** @var Room $rooms */
-//        $rooms = $this->entityManager->getRepository(Room::class)->findAll();
-//
-//        foreach ($rooms as $room) {
-//            if (($room instanceof Room) && !in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
-//                $roomNotApartOf = $room->getRoomID();
-//            }
-//        }
-//
-//        if (!isset($roomNotApartOf)) {
-//            self::fail('No room found for user that is not apart of');
-//        }
-//        /** @var GroupNameMapping $groupUserIsNotApartOf */
-//        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
-//
-//        $formData = [
-//            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
-//            'devicePassword' => self::NEW_DEVICE_PASSWORD,
-//            'deviceGroup' => $groupUserIsNotApartOf->getGroupName()->getGroupNameID(),
-//            'deviceRoom' => $roomNotApartOf,
-//        ];
-//
-//        $jsonData = json_encode($formData);
-//
-//        $this->client->request(
-//            Request::METHOD_POST,
-//            self::ADD_NEW_DEVICE_PATH,
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-//            $jsonData,
-//        );
-//        /** @var Devices $device */
-//        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//
-////        dd($responseData);
-//        self::assertEquals('Request Successful', $responseData['title']);
-//        self::assertArrayHasKey('secret', $responseData['payload']);
-//        self::assertArrayHasKey('deviceNameID', $responseData['payload']);
-//
-//        self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['payload']['deviceName']);
-////        dd($this->groupName, $responseData['payload']['groupNameID']);
-//        self::assertEquals($groupUserIsNotApartOf->getGroupName()->getGroupNameID(), $responseData['payload']['groupNameID']);
-//        self::assertEquals($this->room->getRoomID(), $responseData['payload']['roomID']);
-//        self::assertEquals(UserDataFixtures::ADMIN_USER, $responseData['payload']['createdBy']);
-//        self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
-//
-//        self::assertArrayHasKey('secret', $responseData['payload']);
-//        self::assertNotNull($responseData['payload']['secret']);
-//
-//        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
-//        self::assertInstanceOf(Devices::class, $device);
-//    }
-
-//@TODO fix this and the one above for room group name
-//    public function test_adding_device_in_room_not_apart_of_none_admin(): void
-//    {
-//        $user = $this->entityManager->getRepository(UserDTOs::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
-//
-//        $userToken = $this->setUserToken($this->client, UserDataFixtures::SECOND_REGULAR_USER_ADMIN_GROUP, UserDataFixtures::REGULAR_PASSWORD);
-//        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-//
-////        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-////        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-//
-//        /** @var Room[] $rooms */
-//        $rooms = $this->entityManager->getRepository(Room::class)->findAll();
-//
-//        foreach ($rooms as $room) {
-//            if (($room instanceof Room) && !in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
-//                $roomNotApartOf = $room->getRoomID();
-//            }
-//        }
-//
-//        if (!isset($roomNotApartOf)) {
-//            self::fail('No room found for user that is not apart of');
-//        }
-//        /** @var GroupNameMapping $groupUserIsNotApartOf */
-//        $groupUserIsNotApartOf = $groupNameMappingRepository->findGroupsUserIsNotApartOf($user->getGroupNameIds())[0];
-//
-//        $formData = [
-//            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
-//            'devicePassword' => self::NEW_DEVICE_PASSWORD,
-//            'deviceGroup' => $groupUserIsNotApartOf->getGroupName()->getGroupNameID(),
-//            'deviceRoom' => $roomNotApartOf,
-//        ];
-//
-//        $jsonData = json_encode($formData);
-//
-//        $this->client->request(
-//            Request::METHOD_POST,
-//            self::ADD_NEW_DEVICE_PATH,
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
-//            $jsonData,
-//        );
-//        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//
-//        self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
-//        self::assertArrayHasKey('errors', $responseData);
-//        self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
-//        self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
-//        self::assertNull($device);
-//    }
 
     public function test_adding_device_unrecognised_room(): void
     {
@@ -638,7 +538,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals('Nothing Found', $responseData['title']);
@@ -677,7 +577,7 @@ class AddNewDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '. $this->userToken],
             $jsonData,
         );
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $formData['deviceName']]);
+        $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals('Nothing Found', $responseData['title']);
@@ -797,31 +697,31 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertNotNull($responseData['secret']);
     }
 
-//    /**
-//     * @dataProvider wrongHttpsMethodDataProvider
-//     */
-//    public function test_adding_device_wrong_http_method(string $httpVerb): void
-//    {
-//        $this->client->request(
-//            $httpVerb,
-//            self::ADD_NEW_DEVICE_PATH,
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-//        );
-//
-//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-//    }
-//
-//    public function wrongHttpsMethodDataProvider(): array
-//    {
-//        return [
-//            [Request::METHOD_GET],
-//            [Request::METHOD_PUT],
-//            [Request::METHOD_PATCH],
-//            [Request::METHOD_DELETE],
-//        ];
-//    }
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_adding_device_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_GET],
+            [Request::METHOD_PUT],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
+        ];
+    }
 
     protected function tearDown(): void
     {

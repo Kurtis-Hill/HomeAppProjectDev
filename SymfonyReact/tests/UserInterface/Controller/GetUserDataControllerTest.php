@@ -63,13 +63,14 @@ class GetUserDataControllerTest extends WebTestCase
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
 
         self::assertSameSize(RoomFixtures::ROOMS, $responseData['userRooms']);
         self::assertSameSize($userRooms, $responseData['userRooms']);
+
         self::assertCount($groupNameNumber, $responseData['userGroups']);
-        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
 
         foreach ($userRooms as $room) {
             foreach ($responseData['userRooms'] as $userRoom) {

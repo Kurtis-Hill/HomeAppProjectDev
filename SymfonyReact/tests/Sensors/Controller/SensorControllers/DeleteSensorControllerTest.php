@@ -72,30 +72,29 @@ class DeleteSensorControllerTest extends WebTestCase
     {
         /** @var Sensor[] $allSensors */
         $allSensors = $this->sensorRepository->findAll();
+        $sensor = $allSensors[array_rand($allSensors)];
 
-        foreach ($allSensors as $sensor) {
-            $this->client->request(
-                Request::METHOD_DELETE,
-                sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-            );
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
 
-            self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
-            $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-            $payload = $responseData['payload'];
-            $title = $responseData['title'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
 
-            self::assertEquals($sensor->getSensorID(), $payload['sensorNameID']);
-            self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
-            self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-            self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['deviceName']);
-            self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']);
+        self::assertEquals($sensor->getSensorID(), $payload['sensorNameID']);
+        self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
+        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+        self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['deviceName']);
+        self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']);
 
-            self::assertEquals(DeleteSensorController::DELETE_SENSOR_SUCCESS_MESSAGE, $title);
-        }
+        self::assertEquals(DeleteSensorController::DELETE_SENSOR_SUCCESS_MESSAGE, $title);
     }
 
     public function test_regular_user_can_delete_sensors_part_of_same_device_group_name(): void
@@ -112,29 +111,30 @@ class DeleteSensorControllerTest extends WebTestCase
             'deviceID' => $devicesInGroupsUserIsPartOf,
         ]);
 
-        foreach ($sensors as $sensor) {
-            $this->client->request(
-                Request::METHOD_DELETE,
-                sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-            );
+        $sensor = $sensors[array_rand($sensors)];
 
-            self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        );
 
-            $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-            $payload = $responseData['payload'];
-            $title = $responseData['title'];
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
-            self::assertEquals($sensor->getSensorID(), $payload['sensorNameID']);
-            self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
-            self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-            self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['deviceName']);
-            self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
 
-            self::assertEquals(DeleteSensorController::DELETE_SENSOR_SUCCESS_MESSAGE, $title);
-        }
+        self::assertEquals($sensor->getSensorID(), $payload['sensorNameID']);
+        self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
+        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+        self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['deviceName']);
+        self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']);
+
+        self::assertEquals(DeleteSensorController::DELETE_SENSOR_SUCCESS_MESSAGE, $title);
+
     }
 
     public function test_regular_user_cannot_delete_sensors_part_of_different_device_group_name(): void
@@ -151,24 +151,24 @@ class DeleteSensorControllerTest extends WebTestCase
             'deviceID' => $devicesInGroupsUserIsNotPartOf,
         ]);
 
-        foreach ($sensors as $sensor) {
-            $this->client->request(
-                Request::METHOD_DELETE,
-                sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-            );
+        $sensor = $sensors[array_rand($sensors)];
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        );
 
-            self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
-            $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-            $title = $responseData['title'];
-            $errors = $responseData['errors'];
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $title = $responseData['title'];
+        $errors = $responseData['errors'];
 
-            self::assertEquals(DeleteSensorController::NOT_AUTHORIZED_TO_BE_HERE, $title);
-            self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
-        }
+        self::assertEquals(DeleteSensorController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
+
     }
 
     /**

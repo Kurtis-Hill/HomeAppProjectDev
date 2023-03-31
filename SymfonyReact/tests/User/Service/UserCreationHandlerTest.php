@@ -47,6 +47,7 @@ class UserCreationHandlerTest extends KernelTestCase
 
     protected function tearDown(): void
     {
+        $this->entityManager->close();
         $this->entityManager = null;
         parent::tearDown();
     }
@@ -59,8 +60,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             'test@gmail.com',
-            'password',
             UserDataFixtures::ADMIN_GROUP_ONE,
+            'password',
         );
     }
 
@@ -72,8 +73,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'first',
             'last',
             UserDataFixtures::ADMIN_USER_EMAIL_ONE,
-            'nhlkhhhgnbggfgg',
             'test-group',
+            'nhlkhhhgnbggfgg',
         );
     }
 
@@ -86,8 +87,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'password',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'password',
             $uploadFile,
         );
 
@@ -119,8 +120,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'password',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'password',
             $uploadFile,
         );
 
@@ -154,9 +155,10 @@ class UserCreationHandlerTest extends KernelTestCase
             $firstName,
             $lastName,
             $email,
-            $password,
             $groupName,
+            $password,
         );
+        self::assertEquals($errors, $this->sut->getErrors());
     }
 
 
@@ -229,8 +231,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'password',
             $groupName,
+            'password',
         );
     }
 
@@ -257,8 +259,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'nhlkhhhgnbggfgg',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'nhlkhhhgnbggfgg',
         );
 
         $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
@@ -285,8 +287,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'hghnkjhgfhgfghgf',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'hghnkjhgfhgfghgf',
             $uploadFile,
         );
 
@@ -307,8 +309,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'hghnkjhgfhgfghgf',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'hghnkjhgfhgfghgf',
         );
 
         $group = $this->groupRepository->findOneBy(['groupName' => UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED]);
@@ -322,8 +324,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'hghnkjhgfhgfghgf',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'hghnkjhgfhgfghgf',
             null,
             ['ROLE_ADMIN'],
         );
@@ -333,35 +335,36 @@ class UserCreationHandlerTest extends KernelTestCase
         self::assertSame($userSaved->getRoles()[0], 'ROLE_ADMIN');
     }
 
-    public function test_every_new_user_none_admin_gets_added_to_home_app_group(): void
-    {
-        $this->sut->handleNewUserCreation(
-            'John',
-            'Doe',
-            UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'hghnkjhgfhgfghgf',
-            UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
-            null,
-            ['ROLE_USER'],
-        );
-
-        /** @var User $userSaved */
-        $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
-
-        $groupMappingRepository = $this->entityManager->getRepository(GroupNames::class);
-        /** @var GroupNames $homeAppGroup */
-        $homeAppGroup = $groupMappingRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
-
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-
-        /** @var GroupNameMapping $homeGroupMappingEntry */
-        $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
-            'groupName' => $homeAppGroup->getGroupNameID(),
-            'user' => $userSaved->getUserID(),
-        ]);
-
-        self::assertNotNull($homeGroupMappingEntry);
-    }
+    //  Disabled on open system for security reasons
+//    public function test_every_new_user_none_admin_gets_added_to_home_app_group(): void
+//    {
+//        $this->sut->handleNewUserCreation(
+//            'John',
+//            'Doe',
+//            UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
+//            UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+//            'hghnkjhgfhgfghgf',
+//            null,
+//            ['ROLE_USER'],
+//        );
+//
+//        /** @var User $userSaved */
+//        $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
+//
+//        $groupMappingRepository = $this->entityManager->getRepository(GroupNames::class);
+//        /** @var GroupNames $homeAppGroup */
+//        $homeAppGroup = $groupMappingRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+//
+//        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+//
+//        /** @var GroupNameMapping $homeGroupMappingEntry */
+//        $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
+//            'groupName' => $homeAppGroup->getGroupNameID(),
+//            'user' => $userSaved->getUserID(),
+//        ]);
+//
+//        self::assertNotNull($homeGroupMappingEntry);
+//    }
 
     public function test_every_new_admin_user_gets_added_to_home_app_group(): void
     {
@@ -369,8 +372,8 @@ class UserCreationHandlerTest extends KernelTestCase
             'John',
             'Doe',
             UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED,
-            'hghnkjhgfhgfghgf',
             UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED,
+            'hghnkjhgfhgfghgf',
             null,
             [User::ROLE_ADMIN],
         );

@@ -6,6 +6,7 @@ use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Devices\Entity\Devices;
 use App\User\Entity\User;
+use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -27,6 +28,8 @@ class AuthenticationTest extends WebTestCase
 
     private ?EntityManagerInterface $entityManager;
 
+    private UserRepositoryInterface $userRepository;
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -34,6 +37,8 @@ class AuthenticationTest extends WebTestCase
         $this->entityManager = static::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
+        $this->userRepository = $this->entityManager->getRepository(User::class);
     }
 
     protected function tearDown(): void
@@ -48,9 +53,8 @@ class AuthenticationTest extends WebTestCase
      */
     public function test_can_get_user_token(string $username, string $password, array $role): void
     {
-        $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
-        $testUser = $userRepository->findOneBy(['email' => $username]);
+        $testUser = $this->userRepository->findOneBy(['email' => $username]);
 
         $this->client->request(
             Request::METHOD_POST,

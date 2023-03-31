@@ -7,7 +7,7 @@ use App\User\DTO\InternalDTOs\GroupNameMappingDTOs\AddGroupNameMappingDTO;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 
-class GroupNameMappingInternalDTO
+class GroupNameMappingInternalDTOBuilder
 {
     public static function buildGroupNameMappingInternalDTO(
         User $userToAddToGroupName,

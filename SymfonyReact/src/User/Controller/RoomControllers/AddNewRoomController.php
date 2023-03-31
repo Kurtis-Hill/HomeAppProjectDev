@@ -39,7 +39,7 @@ class AddNewRoomController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('add-user-room', name:'add-new-room', methods: [Request::METHOD_POST])]
+    #[Route('add', name:'add-new-room', methods: [Request::METHOD_POST])]
     public function addNewRoom(
         Request $request,
         AddNewRoomServiceInterface $addNewRoomService,

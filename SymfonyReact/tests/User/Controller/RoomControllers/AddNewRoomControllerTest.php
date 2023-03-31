@@ -2,6 +2,7 @@
 
 namespace App\Tests\User\Controller\RoomControllers;
 
+use App\Common\API\CommonURL;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
@@ -20,7 +21,7 @@ class AddNewRoomControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_ROOM_URL = '/HomeApp/api/user/user-rooms/add-user-room';
+    private const ADD_NEW_ROOM_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/add';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -213,18 +214,20 @@ class AddNewRoomControllerTest extends WebTestCase
             $jsonData
         );
 
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        /** @var Room $newRoom */
-        $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
-
-        self::assertEquals($formRequestData['roomName'], $responseData['payload']['roomName']);
-        self::assertEquals($responseData['payload']['roomID'], $newRoom->getRoomID());
-
-        self::assertInstanceOf(Room::class, $newRoom);
-        self::assertEquals('Room created successfully', $responseData['title']);
-        self::assertEquals('Testroom', $responseData['payload']['roomName']);
-        self::assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+//        Uncomment if regular users can create rooms
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        /** @var Room $newRoom */
+//        $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
+//
+//        self::assertEquals($formRequestData['roomName'], $responseData['payload']['roomName']);
+//        self::assertEquals($responseData['payload']['roomID'], $newRoom->getRoomID());
+//
+//        self::assertInstanceOf(Room::class, $newRoom);
+//        self::assertEquals('Room created successfully', $responseData['title']);
+//        self::assertEquals('Testroom', $responseData['payload']['roomName']);
+//        self::assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
     // End Of AddNewRoomTests
 

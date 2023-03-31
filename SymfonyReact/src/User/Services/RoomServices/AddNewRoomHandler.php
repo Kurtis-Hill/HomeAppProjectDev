@@ -12,7 +12,7 @@ use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AddNewRoomService implements AddNewRoomServiceInterface
+class AddNewRoomHandler implements AddNewRoomServiceInterface
 {
     use ValidatorProcessorTrait;
 

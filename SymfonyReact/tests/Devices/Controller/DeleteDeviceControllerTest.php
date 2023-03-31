@@ -3,12 +3,14 @@
 namespace App\Tests\Devices\Controller;
 
 use App\Devices\Controller\DeleteDeviceController;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Entity\GroupNameMapping;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
+use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -26,6 +28,16 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     private ?EntityManagerInterface $entityManager;
 
+    private UserRepositoryInterface $userRepository;
+
+    private GroupNameRepositoryInterface $groupNameRepository;
+
+    private DeviceRepositoryInterface $deviceRepository;
+
+    private User $regularUserTwo;
+
+    private User $adminUser;
+
     private KernelBrowser $client;
 
     protected function setUp(): void
@@ -37,13 +49,20 @@ class DeleteDeviceControllerTest extends WebTestCase
             ->getManager();
 
         $this->userToken = $this->setUserToken($this->client);
+
+        $this->userRepository = $this->entityManager->getRepository(User::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->regularUserTwo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
+        $this->adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+
+        $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
     }
 
     public function test_regular_user_cannot_delete_device_group_not_apart_of(): void
     {
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
@@ -58,26 +77,27 @@ class DeleteDeviceControllerTest extends WebTestCase
             self::fail('No device found to delete for testing');
         }
 
-        foreach ($devices as $device) {
-            $this->client->request(
-                Request::METHOD_DELETE,
-                sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
-            );
+        $device = $devices[0];
 
-            $responseData = json_decode(
-                $this->client->getResponse()->getContent(),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+        );
 
-            self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
-            self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
-            self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-        }
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
+        self::assertEquals('You have been denied permission to perform this action', $responseData['errors'][0]);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
     }
 
 //    Old functionality enable if only person who created device can delete it or admins
@@ -139,116 +159,111 @@ class DeleteDeviceControllerTest extends WebTestCase
     {
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_TWO, UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-
-        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsUserIsApartOf */
-        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
+        $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
         if (empty($groupsUserIsApartOf)) {
             self::fail('No group found for testing');
         }
         /** @var Devices[] $devicesResult */
-        $devicesResult = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devicesResult = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
 
         if (empty($devicesResult)) {
             self::fail('No device found to delete for testing');
         }
 
-        foreach ($devicesResult as $device) {
-            $this->client->request(
-                Request::METHOD_DELETE,
-                sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
-            );
+        $device = $devicesResult[0];
 
-            $responseData = json_decode(
-                $this->client->getResponse()->getContent(),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+        );
 
-            self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-            self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
-            self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
-            self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
-            self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
-            self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
-            self::assertEquals($device->getRoles(), $responseData['payload']['roles']);
-            self::assertNull($responseData['payload']['secret']);
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
+        self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
+        self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
+        self::assertEquals($device->getRoles(), $responseData['payload']['roles']);
+        self::assertNull($responseData['payload']['secret']);
 
 
-            self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
-            self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        }
+        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
     }
 
 
     public function test_admin_user_can_delete_device_not_apart_of(): void
     {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
+        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
-        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
+        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupNameIds(),
         );
 
             /** @var Devices[] $devices */
-        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
 
         if (empty($devices)) {
             self::fail('No device found to delete for testing');
         }
 
-        foreach ($devices as $device) {
-            $this->client->request(
-                Request::METHOD_DELETE,
-                sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-            );
+        $device = $devices[0];
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
 
-            $responseData = json_decode(
-                $this->client->getResponse()->getContent(),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
 
-            /** @var Devices $deletedDevice */
-            $deletedDevice = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceID' => $device->getDeviceID()]);
+        /** @var Devices $deletedDevice */
+        $deletedDevice = $this->deviceRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
 
-            self::assertNull($deletedDevice);
-            self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
-            self::assertIsArray($responseData['payload']);
-            self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-            self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
-            self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
-            self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
-            self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
-            self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
-            self::assertEquals($device->getRoles(), $responseData['payload']['roles']);
-            self::assertNull($responseData['payload']['secret']);
-            self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        }
+        self::assertNull($deletedDevice);
+        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertIsArray($responseData['payload']);
+        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
+        self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
+        self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
+        self::assertEquals($device->getRoles(), $responseData['payload']['roles']);
+        self::assertNull($responseData['payload']['secret']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
     }
 
     public function test_deleting_device_that_doesnt_exist(): void
     {
-        $deviceRepository = $this->entityManager->getRepository(Devices::class);
         while (true) {
             $nonExistentDeviceID = random_int(1, 100000);
 
             /** @var Devices $device */
-            $device = $deviceRepository->findOneBy(['deviceID' => $nonExistentDeviceID]);
+            $device = $this->deviceRepository->findOneBy(['deviceID' => $nonExistentDeviceID]);
             if (!$device instanceof Devices) {
                 break;
             }

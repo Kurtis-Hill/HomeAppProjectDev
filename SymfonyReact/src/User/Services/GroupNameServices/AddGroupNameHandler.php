@@ -4,6 +4,8 @@ namespace App\User\Services\GroupNameServices;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\GroupNameBuilder;
+use App\User\Builders\GroupNameMapping\GroupNameMappingBuilder;
+use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameMappingValidationException;
@@ -60,8 +62,12 @@ class AddGroupNameHandler
         $this->groupNameRepository->flush();
 
         if ($user !== null && !$user->isAdmin()) {
+            $addGroupNameMappingBuilder = GroupNameMappingInternalDTOBuilder::buildGroupNameMappingInternalDTO(
+                $user,
+                $newGroupName,
+            );
             try {
-                $this->addGroupNameMappingHandler->addNewGroupNameMappingEntry($newGroupName, $user);
+                $this->addGroupNameMappingHandler->addNewGroupNameMappingEntry($addGroupNameMappingBuilder);
             } catch (ORMException|OptimisticLockException $e) {
                 $this->groupNameRepository->remove($newGroupName);
                 $this->groupNameRepository->flush();

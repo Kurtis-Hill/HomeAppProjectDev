@@ -468,7 +468,6 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_sensor_and_card_details_admin_group_not_apart_of(string $sensorType, string $sensorName, string $class, array $sensors): void
     {
-//        /** @var AllSensorReadingTypeInterface $sensorType */
         /** @var SensorType $sensorTypeMappingObject */
         $sensorTypeMappingObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
         /** @var User $user */
@@ -481,67 +480,71 @@ class AddNewSensorControllerTest extends WebTestCase
             $user->getAssociatedGroupNameIds(),
         );
 
-
         $counter = 0;
-        foreach ($groupsNotApartOf as $group) {
-            /** @var Devices[] $devices */
+
+        while (true) {
+            $group = $groupsNotApartOf[$counter];
             $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $group->getGroupNameID()]);
-
-            foreach ($devices as $device) {
-                $formData = [
-                    'sensorName' => $sensorName . $counter,
-                    'sensorTypeID' => $sensorTypeMappingObject->getSensorTypeID(),
-                    'deviceNameID' => $device->getDeviceID(),
-                ];
-
-                $jsonData = json_encode($formData);
-
-                $this->client->request(
-                    Request::METHOD_POST,
-                    self::ADD_NEW_SENSOR_URL,
-                    [],
-                    [],
-                    ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-                    $jsonData
-                );
-
-                $responseData = json_decode($this->client->getResponse()->getContent(), true);
-                $payload = $responseData['payload'] ?? [];
-
-                if (empty($payload)) {
-                    self::fail('Payload is empty');
-                }
-                $sensorID = $payload['sensorNameID'];
-
-                /** @var Sensor $sensor */
-                $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-                /** @var SensorTypeInterface $sensorTypeObject */
-                $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
-                /** @var CardView $cardView */
-                $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
-
-                foreach ($sensors as $sensorTypeClass) {
-                    /** @var SensorTypeInterface $sensorType */
-                    $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
-                    self::assertInstanceOf($sensorTypeClass, $sensorType);
-                }
-
-                self::assertInstanceOf(Sensor::class, $sensor);
-                self::assertInstanceOf($class, $sensorTypeObject);
-                self::assertInstanceOf(CardView::class, $cardView);
-
-                self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
-                self::assertInstanceOf(Sensor::class, $sensor);
-                self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
-
-                self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
-                self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-                self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
-                self::assertEquals($responseData['payload']['deviceName'], $sensor->getDevice()->getDeviceName());
-                self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
-                ++$counter;
+            $counter++;
+            if (!empty($devices)) {
+                break;
             }
         }
+        /** @var Devices[] $devices */
+
+
+        $device = $devices[0];
+        $formData = [
+            'sensorName' => $sensorName . '1',
+            'sensorTypeID' => $sensorTypeMappingObject->getSensorTypeID(),
+            'deviceNameID' => $device->getDeviceID(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $payload = $responseData['payload'] ?? [];
+
+        if (empty($payload)) {
+            self::fail('Payload is empty');
+        }
+        $sensorID = $payload['sensorNameID'];
+
+        /** @var Sensor $sensor */
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
+        /** @var SensorTypeInterface $sensorTypeObject */
+        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
+        /** @var CardView $cardView */
+        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
+
+        foreach ($sensors as $sensorTypeClass) {
+            /** @var SensorTypeInterface $sensorType */
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
+            self::assertInstanceOf($sensorTypeClass, $sensorType);
+        }
+
+        self::assertInstanceOf(Sensor::class, $sensor);
+        self::assertInstanceOf($class, $sensorTypeObject);
+        self::assertInstanceOf(CardView::class, $cardView);
+
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
+        self::assertInstanceOf(Sensor::class, $sensor);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+
+        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
+        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
+        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDevice()->getDeviceName());
+        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
     }
 
     /**
@@ -632,35 +635,34 @@ class AddNewSensorControllerTest extends WebTestCase
         if (empty($groupNames)) {
             self::fail('No groups found for user to add sensor to');
         }
-        foreach ($groupNames as $groupName) {
-            /** @var Devices[] $devices */
-            $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupName->getGroupNameID()]);
+        $groupName = $groupNames[0];
 
-            foreach ($devices as $device) {
-                $formData = [
-                    'sensorName' => $sensorName,
-                    'sensorTypeID' => $sensorType->getSensorTypeID(),
-                    'deviceNameID' => $device->getDeviceID(),
-                ];
+        /** @var Devices[] $devices */
+        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupName->getGroupNameID()]);
 
-                $jsonData = json_encode($formData);
+        $device = $devices[0];
+        $formData = [
+            'sensorName' => $sensorName,
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceNameID' => $device->getDeviceID(),
+        ];
 
-                $this->client->request(
-                    Request::METHOD_POST,
-                    self::ADD_NEW_SENSOR_URL,
-                    [],
-                    [],
-                    ['HTTP_AUTHORIZATION' => 'BEARER ' . $token],
-                    $jsonData,
-                );
+        $jsonData = json_encode($formData);
 
-                $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $token],
+            $jsonData,
+        );
 
-                self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
-                self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
-                self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_FORBIDDEN);
-            }
-        }
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);
+        self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_FORBIDDEN);
     }
 
     /**

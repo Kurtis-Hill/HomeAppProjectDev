@@ -40,6 +40,10 @@ class GetDeviceControllerTest extends WebTestCase
 
     private GroupNameRepository $groupNameRepository;
 
+    private User $regularUserOne;
+
+    private User $adminUser;
+
     //@TODO add tests for getting full device response
     protected function setUp(): void
     {
@@ -51,9 +55,12 @@ class GetDeviceControllerTest extends WebTestCase
 
         $this->userToken = $this->setUserToken($this->client);
 
+
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->regularUserOne = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+        $this->adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
     }
 
     public function test_get_device_of_group_user_is_not_assigned_to_regular_user(): void
@@ -64,9 +71,7 @@ class GetDeviceControllerTest extends WebTestCase
             UserDataFixtures::REGULAR_PASSWORD
         );
 
-        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-
-        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
+        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotAssignedTo]);
@@ -96,9 +101,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_of_group_user_is_not_assigned_to_admin(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-
-        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
+        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotAssignedTo]);
@@ -138,15 +141,8 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_of_group_user_is_assigned_to_regular_user(): void
     {
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
 
-        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
@@ -155,6 +151,11 @@ class GetDeviceControllerTest extends WebTestCase
         }
         $device = $devices[0];
 
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
@@ -185,9 +186,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_of_group_user_is_assigned_to_admin(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
@@ -227,22 +226,19 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_all_devices_doesnt_return_devices_of_group_user_is_not_assigned_to_regular_user(): void
     {
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-
-        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($user);
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
-        $device = $devices[0];
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_DEVICES_URL,

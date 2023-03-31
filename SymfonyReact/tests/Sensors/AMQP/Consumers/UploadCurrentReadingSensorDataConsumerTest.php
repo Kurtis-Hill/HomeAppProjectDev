@@ -47,6 +47,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
 
     protected function tearDown(): void
     {
+        $this->entityManager->close();
         $this->entityManager = null;
         parent::tearDown();
     }

@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTO;
+use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
 use App\User\Builders\GroupNameMapping\GroupNameMappingResponseBuilder;
 use App\User\DTO\RequestDTOs\GroupNameMapping\NewGroupNameMappingRequestDTO;
 use App\User\Entity\User;
@@ -78,7 +78,7 @@ class AddGroupNameMappingController extends AbstractController
             return $this->sendBadRequestJsonResponse($errorMessages);
         }
 
-        $groupNameMappingDTO = GroupNameMappingInternalDTO::buildGroupNameMappingInternalDTO(
+        $groupNameMappingDTO = GroupNameMappingInternalDTOBuilder::buildGroupNameMappingInternalDTO(
             $userThatIsBeingMapped,
             $groupNameToBeMappedTo,
         );

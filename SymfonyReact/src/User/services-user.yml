@@ -22,7 +22,7 @@ services:
 
   ######################## UserExceptions Services ######################################################
   App\User\Services\RoomServices\AddNewRoomServiceInterface:
-    alias: 'App\User\Services\RoomServices\AddNewRoomService'
+    alias: 'App\User\Services\RoomServices\AddNewRoomHandler'
 
   App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface:
     alias: 'App\User\Services\GroupServices\GroupCheck\GroupCheckService'

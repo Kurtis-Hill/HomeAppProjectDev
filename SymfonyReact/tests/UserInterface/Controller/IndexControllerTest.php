@@ -55,15 +55,19 @@ class IndexControllerTest extends WebTestCase
         yield [
             'index',
         ];
+
         yield [
             'cards',
         ];
+
         yield [
             'navbar',
         ];
+
         yield [
             'sensors',
         ];
+
         yield [
             'devices',
         ];
