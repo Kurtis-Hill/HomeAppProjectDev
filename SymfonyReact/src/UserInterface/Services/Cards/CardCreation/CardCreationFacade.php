@@ -145,7 +145,11 @@ class CardCreationFacade implements CardCreationHandlerInterface
     {
         $errors = $this->validator->validate($cardView);
 
-        return $this->getValidationErrorAsArray($errors);
+        if ($this->checkIfErrorsArePresent($errors)) {
+            return $this->getValidationErrorAsArray($errors);
+        }
+
+        return [];
     }
 
     /**

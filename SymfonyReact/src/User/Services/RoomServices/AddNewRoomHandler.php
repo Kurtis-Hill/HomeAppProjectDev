@@ -61,7 +61,11 @@ class AddNewRoomHandler implements AddNewRoomServiceInterface
     {
         $validationErrors = $this->validator->validate($newRoom);
 
-        return $this->getValidationErrorAsArray($validationErrors);
+        if ($this->checkIfErrorsArePresent($validationErrors)) {
+            return $this->getValidationErrorAsArray($validationErrors);
+        }
+
+        return [];
     }
 
     public function saveNewRoom(Room $room): void

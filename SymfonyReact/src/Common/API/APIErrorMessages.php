@@ -53,4 +53,6 @@ class APIErrorMessages
     public const USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED = 'User does not have access to requested %s: %s';
 
     public const SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN = 'Something went wrong, please try again';
+
+    public const FAILED_TO_PROCESS_REQUEST = 'Failed to process request';
 }

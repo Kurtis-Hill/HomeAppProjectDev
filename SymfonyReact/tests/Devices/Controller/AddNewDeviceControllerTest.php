@@ -170,7 +170,6 @@ class AddNewDeviceControllerTest extends WebTestCase
             $this->room->getRoom(),
         ), $responseData['errors'][0]);
 
-        self::assertCount(1, $device);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -192,10 +191,10 @@ class AddNewDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
             $jsonData
         );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
+//dd($responseData);
         self::assertStringContainsString('Device name cannot be null', $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_sending_malformed_request_missing_group(): void

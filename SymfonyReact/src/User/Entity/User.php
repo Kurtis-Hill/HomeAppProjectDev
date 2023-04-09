@@ -83,6 +83,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[
         ORM\Column(name: "roles", type: "json", nullable: false),
+        Assert\Choice(
+            choices: self::USER_ROLES,
+            multiple: true,
+            message: 'Choose a valid role.',
+        ),
     ]
     private array $roles;
 
@@ -100,7 +105,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             minMessage: 'Password must be at least {{ limit }} characters long',
             maxMessage: 'Password cannot be longer than {{ limit }} characters',
         ),
-//        Assert\NotBlank,
     ]
     private string $password;
 

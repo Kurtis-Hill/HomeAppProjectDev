@@ -2,6 +2,7 @@
 
 namespace App\Common\Validation\Traits;
 
+use App\Common\Exceptions\ValidatorProcessorException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
@@ -12,6 +13,9 @@ trait ValidatorProcessorTrait
         return count($constraintViolationList) > 0;
     }
 
+    /**
+     * @throws ValidatorProcessorException
+     */
     public function getValidationErrorAsArray(ConstraintViolationListInterface $constraintViolationList): array
     {
         foreach ($constraintViolationList as $error) {
@@ -21,6 +25,9 @@ trait ValidatorProcessorTrait
         return $validationErrors ?? [];
     }
 
+    /**
+     * @throws ValidatorProcessorException
+     */
     public function getValidationErrorsAsStrings(ConstraintViolation $constraintViolation): string
     {
         return $constraintViolation->getMessage();

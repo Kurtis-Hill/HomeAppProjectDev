@@ -71,6 +71,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool
     {
+//        dd('d');
         return $this->validateSensorData($sensorDataCurrentReadingUpdateDTO);
     }
 
@@ -78,7 +79,9 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
     {
         $passedValidation = true;
         $objectValidationErrors = $this->validator->validate($sensorDataCurrentReadingUpdateDTO);
+//        dd($objectValidationErrors);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
+//            dd($objectValidationErrors, 's');
             foreach ($objectValidationErrors as $error) {
                 $this->validationErrors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($this->getValidationErrorsAsStrings($error));
             }
@@ -93,7 +96,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             );
             $passedValidation = false;
         }
-
+//dd($this->errors, $passedValidation);
         return $passedValidation;
     }
 

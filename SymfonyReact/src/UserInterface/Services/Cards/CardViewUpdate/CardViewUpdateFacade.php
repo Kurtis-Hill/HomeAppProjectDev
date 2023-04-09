@@ -75,7 +75,11 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
     {
         $constraintViolationList = $this->validator->validate($cardView);
 
-        return $this->getValidationErrorAsArray($constraintViolationList);
+        if ($this->checkIfErrorsArePresent($constraintViolationList)) {
+            return $this->getValidationErrorAsArray($constraintViolationList);
+        }
+
+        return [];
     }
 
 }

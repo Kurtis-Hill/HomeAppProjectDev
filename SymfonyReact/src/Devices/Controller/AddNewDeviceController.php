@@ -60,6 +60,7 @@ class AddNewDeviceController extends AbstractController
 
         $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+//            dd($requestValidationErrors);
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 

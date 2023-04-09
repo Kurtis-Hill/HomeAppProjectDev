@@ -83,7 +83,7 @@ class AuthenticationSuccessListener
                 );
 
                 $validationErrors = $this->validator->validate($deviceIpRequestDTO);
-                if (empty($this->getValidationErrorAsArray($validationErrors))) {
+                if (!$this->checkIfErrorsArePresent($validationErrors)) {
                     if ($deviceIpRequestDTO->getIpAddress() !== null) {
                         $user->setIpAddress($deviceIpRequestDTO->getIpAddress());
                     }

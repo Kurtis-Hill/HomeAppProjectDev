@@ -32,4 +32,10 @@ interface UserRepositoryInterface
      * @throws ORMException
      */
     public function flush(): void;
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public function remove(User $user): void;
 }
