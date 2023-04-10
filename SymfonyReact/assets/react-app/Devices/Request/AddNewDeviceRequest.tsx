@@ -11,12 +11,12 @@ export async function addNewDeviceRequest(addNewDeviceInputs: AddNewDeviceInputI
 
         if (addNewDeviceResponse.status === 200) {
             return addNewDeviceResponse;
-        } else {
-            throw Error('Error in addNewDeviceRequest');
         }
+
+        throw Error('Error in addNewDeviceRequest');
     } catch (err) {
         const error = err as Error | AxiosError;
-        // Promise.reject()
+        Promise.reject()
     }
 
     return null;

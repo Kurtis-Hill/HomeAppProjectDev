@@ -172,15 +172,15 @@
 
 /*}*/
 
-/*.form-modal-error-box {*/
-/*    margin: 0 auto;*/
-/*    vertical-align: 0%;*/
-/*    max-width: 98%;*/
-/*    background-color: #e74a3b;*/
-/*    border-radius: 15px;*/
-/*    margin-top: 2%;*/
-/*    padding-top: 1%;*/
-/*}*/
+/* .form-modal-error-box {
+   margin: 0 auto;
+   vertical-align: 0%;
+   max-width: 98%;
+   background-color: #e74a3b;
+   border-radius: 15px;
+   margin-top: 2%;
+   padding-top: 1%;
+} */
 
 /*.form-modal-error-box {*/
 /*    margin: 0 auto;*/
@@ -193,15 +193,15 @@
 /*    padding-top: 1%;*/
 /*}*/
 
-/*.form-modal-success-box {*/
-/*    margin: 0 auto;*/
-/*    vertical-align: middle;*/
-/*    vertical-align: 0%;*/
-/*    max-width: 98%;*/
-/*    background-color: #068a3d;*/
-/*    border-radius: 15px;*/
-/*    padding-top: 1%;*/
-/*}*/
+.form-modal-success-box {
+   margin: 0 auto;
+   vertical-align: middle;
+   vertical-align: 0%;
+   max-width: 98%;
+   background-color: #068a3d;
+   border-radius: 15px;
+   padding-top: 1%;
+}
 
 /*.login-banner {*/
 /*    padding: 0 0 5% 5%;*/
@@ -280,7 +280,11 @@
     height: 570px;
 }
 
-.add-new-device-submit-button {
+.snap-modal-height {
+    overflow-y: auto;
+}
+
+.add-new-submit-button {
     margin-top: 1%;
 }
 /*@media only screen and (max-width: 700px) {*/

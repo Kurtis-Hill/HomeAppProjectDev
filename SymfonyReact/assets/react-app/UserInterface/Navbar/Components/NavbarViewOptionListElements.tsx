@@ -1,24 +1,34 @@
 import * as React from 'react';
-import { useState, useEffect, useMemo } from 'react';
-
+import { useState, useMemo } from 'react';
 
 import { IndividualNavBarResponse, NavBarResponseInterface } from "../Response/NavBarResponseInterface";
 import NavbarListItem from './NavbarListItem'
 import { BuildNavbarItem } from '../Builders/NavbarItemBuilder';
-
-
+import BaseModal from '../../../Common/Components/Modals/BaseModal';
+import { AddNewDevice } from '../../../Devices/Components/Devices/AddNewDevice';
+import { AddNewRoom } from '../../../User/Components/AddNewRoom';
+import { checkAdmin } from '../../../Authentication/Session/UserSession';
 
 export default function NavbarViewOptionListElements(props: {
     navbarResponseData: NavBarResponseInterface,
-    showAddNewDeviceModalFlag: (show: boolean) => void,
 }) {  
-    const showAddNewDeviceModalFlag = props.showAddNewDeviceModalFlag;
     const navbarResponseData = props.navbarResponseData
+
+    const [showAddNewDeviceModal, setAddNewDeviceModal] = useState<boolean>(false);
+    const [showAddNewRoomModal, setAddNewRoomModal] = useState<boolean>(false);
 
     const navbarItems = useMemo(
         () => createNavListItems(props.navbarResponseData), 
         [navbarResponseData]
     );
+
+    const setAddNewDeviceModalFlag = (show: boolean): void => {
+        setAddNewDeviceModal(show);
+    }
+
+    const setAddNewRoomModalFlag = (show: boolean): void => {
+        setAddNewRoomModal(show);
+    }
 
     function createNavListItems(navbarResponseData: NavBarResponseInterface): React {
         const builtNavItems: Array<typeof NavbarListItem> = [];
@@ -28,10 +38,14 @@ export default function NavbarViewOptionListElements(props: {
                 const individualNavBarItem: IndividualNavBarResponse = navbarResponseData.payload[i];
                 let showAddNewModalFlag: (show: boolean) => void|null = null;
                 let addNewText: string = '+Add New';
-                console.log('hi', individualNavBarItem);
+
                 if (individualNavBarItem.itemName === 'devices') {
-                    showAddNewModalFlag = showAddNewDeviceModalFlag;
+                    showAddNewModalFlag = setAddNewDeviceModal;
                     addNewText = '+Add New Device';
+                } 
+                if (individualNavBarItem.itemName === 'rooms' && checkAdmin()) {
+                    showAddNewModalFlag = setAddNewRoomModal;
+                    addNewText = '+Add New Room';
                 } 
                 builtNavItems.push(
                     BuildNavbarItem({
@@ -58,6 +72,32 @@ export default function NavbarViewOptionListElements(props: {
     return (
         <React.Fragment>
             { navbarItems }
+
+            <BaseModal 
+                title={'Add New Device'}
+                modalShow={showAddNewDeviceModal}
+                setShowModal={setAddNewDeviceModalFlag}
+                heightClasses="standard-modal-height"
+
+            >
+                <AddNewDevice
+                    showAddNewDeviceModal={showAddNewDeviceModal}                    
+                    setAddNewDeviceModal={setAddNewDeviceModal}
+                />
+            </BaseModal>
+
+            <BaseModal 
+                title={'Add New Room'}
+                modalShow={showAddNewRoomModal}
+                setShowModal={setAddNewRoomModalFlag}
+                heightClasses="snap-modal-height"
+
+            >
+                <AddNewRoom
+                    showAddNewRoomModal={showAddNewRoomModal}                    
+                    setAddNewRoomModal={setAddNewRoomModalFlag}
+                />
+            </BaseModal>
         </React.Fragment>
     );
 }

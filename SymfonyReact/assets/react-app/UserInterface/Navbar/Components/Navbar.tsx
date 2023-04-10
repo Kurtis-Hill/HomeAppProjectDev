@@ -30,13 +30,8 @@ export default function NavBar(props: {
     const [navbarResponseData, setNavbarResponseData] = useState<NavBarResponseInterface>([]);
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
-    const [showAddNewDeviceModal, setAddNewDeviceModal] = useState<boolean>(false);
 
     const admin: boolean = checkAdmin();
-
-    const setAddNewDeviceModalFlag = (show: boolean): void => {
-        setAddNewDeviceModal(show);
-    }
 
     useEffect(() => {
         if (refreshNavbarIndicator === true) {
@@ -101,21 +96,8 @@ export default function NavBar(props: {
                         ? <DotCircleSpinner classes="margin-spinner" />
                         : null
                 }
-                <NavbarViewOptionListElements navbarResponseData={navbarResponseData} showAddNewDeviceModalFlag={setAddNewDeviceModalFlag} />
+                <NavbarViewOptionListElements navbarResponseData={navbarResponseData} />
 
-                    <BaseModal 
-                        title={'Add New Device'}
-                        modalShow={showAddNewDeviceModal}
-                        setShowModal={setAddNewDeviceModalFlag}
-                        heightClasses="standard-modal-height"
-
-                    >
-                        <AddNewDevice
-                            showAddNewDeviceModal={showAddNewDeviceModal}                    
-                            setAddNewDeviceModal={setAddNewDeviceModal}
-                        
-                        />
-                    </BaseModal>
                 <hr className="sidebar-divider d-none d-md-block" />
 
                 <div className="text-center d-none d-md-inline">

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import AddNewDeviceUserInputsInterface from './AddNewDeviceUserInputsInterface';
 
@@ -39,9 +39,6 @@ export function AddNewDevice(props: {
 
     const [newDeviceAddedData, setNewDeviceAddedData] = useState<AddNewDeviceResponse|null>(null);
 
-    // useEffect(() => {
-
-    // },[newDeviceAddedData])
     const handleAddNewDeviceInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
@@ -53,7 +50,6 @@ export function AddNewDevice(props: {
         e.preventDefault();
         setErrors([]);
         const validationFailed: boolean = validateAddNewDeviceUserInputs();
-        // console.log('we are here at least', validationFailed)
         if (validationFailed === false) {
             setDeviceRequestLoading(true);
             console.log('validation passed', validationFailed)
@@ -67,7 +63,6 @@ export function AddNewDevice(props: {
 
             const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);
 
-            console.log('we passed and status is 201', addNewDeviceResponse);
             if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 200) {
                 const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
                 setNewDeviceAddedData(addNewDevicePayload);
@@ -121,8 +116,6 @@ export function AddNewDevice(props: {
     const buildNewDeviceUrl = (newDeviceID: number): string => {
         return `${webappURL}device?device-id=${newDeviceID}`;
     }
-
-    // const 
 
     return (
         <>
@@ -216,7 +209,7 @@ export function AddNewDevice(props: {
                                             type="submit"
                                             text="Add Device"
                                             name="Add-Device"
-                                            action="GET"
+                                            action="POST"
                                             classes="add-new-device-submit-button"
                                         />
                                     :
