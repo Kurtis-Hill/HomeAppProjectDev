@@ -19,10 +19,10 @@ import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import RoomNavbarResponseInterface from '../../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
 
 export function AddNewDevice(props: {
-    showAddNewDeviceModal: boolean; 
     setAddNewDeviceModal: ((show: boolean) => void);
+    setRefreshNavDataFlag: (newValue: boolean) => void;
 }) {
-    const showAddNewDeviceModal = props.showAddNewDeviceModal;
+    const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const setAddNewDeviceModal = props.setAddNewDeviceModal;
     
     const [addNewDeviceUserInputs, setAddNewDeviceUserInputs] = useState<AddNewDeviceUserInputsInterface>({
@@ -45,14 +45,12 @@ export function AddNewDevice(props: {
         setAddNewDeviceUserInputs((values: AddNewDeviceUserInputsInterface) => ({...values, [name]: value}))
     }
     
-    
     const handleNewDeviceFormSubmission = async (e: Event) => {
         e.preventDefault();
         setErrors([]);
         const validationFailed: boolean = validateAddNewDeviceUserInputs();
         if (validationFailed === false) {
             setDeviceRequestLoading(true);
-            console.log('validation passed', validationFailed)
             const jsonFormData: AddNewDeviceInputInterface = {
                 'deviceName' : addNewDeviceUserInputs.deviceName,
                 'devicePassword' : addNewDeviceUserInputs.devicePassword,
@@ -68,8 +66,8 @@ export function AddNewDevice(props: {
                 setNewDeviceAddedData(addNewDevicePayload);
                 setDeviceRequestLoading(false);
                 setErrors([]);
+                setRefreshNavDataFlag(true);
             } else {
-                console.log('why here too');
                 setDeviceRequestLoading(false);
                 setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
             }
@@ -78,7 +76,6 @@ export function AddNewDevice(props: {
 
 
     const validateAddNewDeviceUserInputs = (): boolean => {
-        console.log('here is inputs', addNewDeviceUserInputs)
         let failedValidation = false;
         if (addNewDeviceUserInputs.deviceName === '' || addNewDeviceUserInputs.deviceName === null) {
             setErrors((errors: string[]) => [...errors, 'Device name is required']);

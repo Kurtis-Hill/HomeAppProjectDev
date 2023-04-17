@@ -22,7 +22,6 @@ export default function NavBar(props: {
     setRefreshNavDataFlag: (newValue: boolean) => void,
     showErrorAnnouncementFlash: (errors: Array<string>, title: string, timer?: number|null) => void,
 }) {
-    console.log('cause ferfresh')
     const refreshNavbarIndicator = props.refreshNavbar;
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const errorAnnouncementFlash = props.showErrorAnnouncementFlash;
@@ -96,7 +95,10 @@ export default function NavBar(props: {
                         ? <DotCircleSpinner classes="margin-spinner" />
                         : null
                 }
-                <NavbarViewOptionListElements navbarResponseData={navbarResponseData} />
+                <NavbarViewOptionListElements 
+                    navbarResponseData={navbarResponseData} 
+                    setRefreshNavDataFlag={setRefreshNavDataFlag}
+                />
 
                 <hr className="sidebar-divider d-none d-md-block" />
 

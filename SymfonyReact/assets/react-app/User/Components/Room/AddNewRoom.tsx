@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { useState } from 'react';
-import AddNewRoomUserInputInterface from './AddNewRoomUserInputInterface';
-import RoomResponseInterface from '../Response/Room/RoomResponseInterface';
+import RoomResponseInterface from '../../Response/Room/RoomResponseInterface';
 
-import { addNewRoomRequest } from '../Request/Room/AddNewRoomRequest';
-import InputWLabel from '../../Common/Components/Inputs/InputWLabel';
-import CloseButton from '../../Common/Components/Buttons/CloseButton';
-import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
-import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
+import { addNewRoomRequest } from '../../Request/Room/AddNewRoomRequest';
+import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
+import CloseButton from '../../../Common/Components/Buttons/CloseButton';
+import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
+import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
+import AddNewGroupUserInputInterface from '../Group/AddNewGroupUserInputInterface';
 
 export function AddNewRoom(props: {
-        showAddNewRoomModal: boolean;
         setAddNewRoomModal: ((show: boolean) => void);
+        setRefreshNavDataFlag: (newValue: boolean) => void;
 }) {
-    const showAddNewRoomModal = props.showAddNewRoomModal;
+    const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const setAddNewRoomModal = props.setAddNewRoomModal;
 
-    const [addNewRoomInputs, setAddNewRoomInputs] = useState<AddNewRoomUserInputInterface>({
+    const [addNewRoomInputs, setAddNewRoomInputs] = useState<AddNewGroupUserInputInterface>({
         roomName: '',
     })
 
@@ -29,7 +29,7 @@ export function AddNewRoom(props: {
     const handleAddNewRoomInput = (event: { target: { name: string; value: string; }; }) => {
         const name = (event.target as HTMLInputElement).name;
         const value = (event.target as HTMLInputElement).value;
-        // const { name, value } = event.target;
+
         setAddNewRoomInputs({
             ...addNewRoomInputs,
             [name]: value,
@@ -54,8 +54,8 @@ export function AddNewRoom(props: {
                 setNewRoomAddedData(addNewRoomPayload);
                 setRoomRequestLoading(false);
                 setErrors([]);
+                setRefreshNavDataFlag(true);
             } else {
-                console.log('dameeeee', addNewRoomResponse.status);
                 setRoomRequestLoading(false);
                 setErrors(['Something has gone wrong']);
             }
@@ -64,6 +64,34 @@ export function AddNewRoom(props: {
             const addNewRoomErrors: string[] = error;
             setErrors(addNewRoomErrors);
         }
+    }
+
+    const addNewRoomFormInputs = (): React => {
+        return (
+            <>
+                <InputWLabel
+                    labelName='Room Name'
+                    name='roomName'
+                    value={addNewRoomInputs.roomName}
+                    onChangeFunction={handleAddNewRoomInput}
+                />
+
+                {
+                    roomRequestLoading === false && newRoomAddData === null
+                        ?
+                            <SubmitButton
+                                type="submit"
+                                text="Add Room"
+                                name="Add-Room"
+                                action="POST"
+                                classes="add-new-submit-button"
+                            />
+                        :
+                            null
+                }
+            </>
+                
+        );
     }
 
     return (
@@ -82,47 +110,27 @@ export function AddNewRoom(props: {
                         </div>
                     : null
             }
-            {
-                newRoomAddData !== null
-                    ? <div className="form-modal-success-box">
-                        <span>New room ID {`${newRoomAddData.roomID}`}</span>
-                    </div>
-                    : null
-            }
             <form onSubmit={(e: Event) => {handleAddNewRoomSubmit(e)}} id="add-new-room-form">
-                <InputWLabel
-                    labelName='Room Name'
-                    name='roomName'
-                    value={addNewRoomInputs.roomName}
-                    onChangeFunction={handleAddNewRoomInput}
-                />
-
-                { 
-                    roomRequestLoading === false
-                        ?
-                            <SubmitButton
-                                type="submit"
-                                text="Add Room"
-                                name="Add-Room"
-                                action="POST"
-                                classes="add-new-submit-button"
-                            />
+                {
+                    roomRequestLoading !== false
+                        ? <DotCircleSpinner classes="spinner-inline-center" spinnerSize={3} />
                         :
-                            null
+                        newRoomAddData === null
+                            ? addNewRoomFormInputs()
+                            : <div className="padding-bottom">Success new room name: {`${newRoomAddData.roomName}`} new roomID: {`${newRoomAddData.roomID}`}</div>
                 }
                 { 
-                    roomRequestLoading === false &&  newRoomAddData === null
+                    roomRequestLoading === false
                         ?
                             <CloseButton 
                                 close={setAddNewRoomModal} 
                                 classes={"modal-cancel-button"} 
                             />
                         : 
-                            newRoomAddData === null && newRoomAddData === true
-                                ? <DotCircleSpinner classes="center-spinner" />
-                                : null
+                            null
                 }
             </form>
+
         </>
     );
 }

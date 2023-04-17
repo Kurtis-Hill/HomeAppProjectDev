@@ -97,7 +97,7 @@ class GetDeviceController extends AbstractController
 
     #[Route(
         '{deviceID}',
-        name: 'get-user-devices_single',
+        name: 'get-user-devices-single',
         methods: [Request::METHOD_GET]
     )]
     public function getDeviceByID(
@@ -140,5 +140,4 @@ class GetDeviceController extends AbstractController
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
-
 }

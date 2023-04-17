@@ -60,7 +60,6 @@ class AddNewDeviceController extends AbstractController
 
         $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-//            dd($requestValidationErrors);
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
@@ -107,6 +106,6 @@ class AddNewDeviceController extends AbstractController
         }
         $this->logger->info('new device created with id: ' . $device->getDeviceID(), ['user' => $user->getUserIdentifier()]);
 
-        return $this->sendSuccessfulJsonResponse($response);
+        return $this->sendCreatedResourceJsonResponse($response);
     }
 }

@@ -3,23 +3,16 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { apiURL } from "../../Common/URLs/CommonURLs";
 
 export async function addNewDeviceRequest(addNewDeviceInputs: AddNewDeviceInputInterface): Promise<AxiosResponse> {
-    try {
-        const addNewDeviceResponse: AxiosResponse = await axios.post(
-            `${apiURL}user-devices/add`,
-            addNewDeviceInputs
-        );
+    const addNewDeviceResponse: AxiosResponse = await axios.post(
+        `${apiURL}user-devices/add`,
+        addNewDeviceInputs
+    );
 
-        if (addNewDeviceResponse.status === 200) {
-            return addNewDeviceResponse;
-        }
-
-        throw Error('Error in addNewDeviceRequest');
-    } catch (err) {
-        const error = err as Error | AxiosError;
-        Promise.reject()
+    if (addNewDeviceResponse.status === 201) {
+        return addNewDeviceResponse;
+    } else {
+        throw new Error('Something went wrong');
     }
-
-    return null;
 }   
 
 export interface AddNewDeviceInputInterface {

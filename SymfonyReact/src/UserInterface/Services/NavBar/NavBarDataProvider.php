@@ -104,12 +104,10 @@ class NavBarDataProvider implements NavBarDataProviderInterface
             $userGroupNavbarListLinkResponseDTO[] = NavBarListLinkDTOBuilder::buildNavBarListLinkDTO(
                 $device->getDeviceName(),
                 sprintf(
-                    '%s%s?%s',
+                    '%s%s/%d',
                     CommonURL::HOMEAPP_WEBAPP_URL_BASE,
-                    'device',
-                    http_build_query(
-                        ['device-id' => $device->getDeviceID()]
-                    )
+                    'devices',
+                    $device->getDeviceID()
                 )
             );
         }

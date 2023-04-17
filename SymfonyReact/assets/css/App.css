@@ -83,6 +83,12 @@
     left: 40%;
     position: absolute;
 }
+
+.spinner-inline-center {
+    margin-left: 45%;
+    display: inline-block;
+    text-align: center;
+}
 .error-container-register {
     margin-bottom: 0;
     text-align: center;
@@ -91,6 +97,9 @@
     list-style: none;
 }
 
+.padding-bottom {
+    padding-bottom: 5%;
+}
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
 /*    -moz-transition: 0.5s;*/

@@ -138,7 +138,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertInstanceOf(Devices::class, $device);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_duplicate_device_name_same_room(): void
@@ -160,8 +160,6 @@ class AddNewDeviceControllerTest extends WebTestCase
             $jsonData
         );
 
-        /** @var Devices $device */
-        $device = $this->deviceRepository->findBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString(sprintf(
@@ -193,7 +191,6 @@ class AddNewDeviceControllerTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//dd($responseData);
         self::assertStringContainsString('Device name cannot be null', $responseData['errors'][0]);
     }
 
@@ -683,14 +680,14 @@ class AddNewDeviceControllerTest extends WebTestCase
         }
         self::assertArrayHasKey('token', $loginResponseData);
         self::assertArrayHasKey('refreshToken', $loginResponseData);
-        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
 
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
         self::assertEquals($this->groupName->getGroupNameID(), $responseData['groupNameID']);
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
         self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_OK, $createResponseCode);
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $createResponseCode);
 
         self::assertArrayHasKey('secret', $responseData);
         self::assertNotNull($responseData['secret']);

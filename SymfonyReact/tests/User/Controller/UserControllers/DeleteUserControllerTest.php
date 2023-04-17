@@ -114,6 +114,9 @@ class DeleteUserControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken]
         );
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        $deletedUser = $this->userRepository->find($user->getUserID());
+        self::assertNotNull($deletedUser);
     }
 
     public function test_deleting_user_admin_user(): void

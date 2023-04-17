@@ -478,6 +478,9 @@ class AddUserControllerTest extends WebTestCase
             $jsonData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
+        self::assertNull($user);
     }
 
     public function test_admin_user_can_create_a_new_user(): void

@@ -11,7 +11,13 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
 
     axios.interceptors.response.use(function (response) {
         const errors: ErrorResponseInterface = response.data;
-        if (response.status !== 200 || errors?.errors !== undefined) {
+        if (
+            response.status !== 200
+            && response.status !== 201
+            && response.status !== 202
+            && response.status !== 204
+            || errors?.errors !== undefined
+        ) {
             let errorMessages: Array<string> = [];
             errors?.errors.forEach((error: string) => {
                 errorMessages.push(error);

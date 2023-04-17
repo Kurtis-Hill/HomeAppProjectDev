@@ -12,9 +12,9 @@ class GroupNameResponseDTO
 
     private string $groupName;
 
-    public function __construct(int $groupNameId, string $groupName)
+    public function __construct(int $groupNameID, string $groupName)
     {
-        $this->groupNameID = $groupNameId;
+        $this->groupNameID = $groupNameID;
         $this->groupName = $groupName;
     }
 

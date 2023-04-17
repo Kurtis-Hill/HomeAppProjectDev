@@ -14,9 +14,12 @@ import UserDataContextProvider from "../User/Contexts/UserDataContext";
 
 import Login from "../Routes/Login/Login";
 
-import { LandingPage } from "../Routes/LandingPage/LandingPage";
+import { CardLandingPage } from "../Routes/LandingPage/CardLandingPage";
+
 
 import { MainPageTop } from "../Common/Components/Pages/MainPageTop";
+import { LandingPage } from '../Routes/LandingPage/LandingPage';
+import { DevicePage } from '../Routes/Device/DevicePage';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -25,6 +28,9 @@ root.render(
             <Route path="/HomeApp/WebApp/login" element={<Login />}></Route>
                 <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
                     <Route path="index" element={<LandingPage />} />
+                    <Route path="cards/index" element={<CardLandingPage />} />
+                    <Route path="devices/:deviceID" element={<DevicePage />} />
+                    {/*<Route path="cards/device/{id}" element={<CardLandingPage />} />*/}
                 </Route>
         </Routes>
     </BrowserRouter>

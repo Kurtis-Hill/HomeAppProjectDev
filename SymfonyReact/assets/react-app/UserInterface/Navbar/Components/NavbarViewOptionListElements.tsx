@@ -6,11 +6,12 @@ import NavbarListItem from './NavbarListItem'
 import { BuildNavbarItem } from '../Builders/NavbarItemBuilder';
 import BaseModal from '../../../Common/Components/Modals/BaseModal';
 import { AddNewDevice } from '../../../Devices/Components/Devices/AddNewDevice';
-import { AddNewRoom } from '../../../User/Components/AddNewRoom';
+import { AddNewRoom } from '../../../User/Components/Room/AddNewRoom';
 import { checkAdmin } from '../../../Authentication/Session/UserSession';
 
 export default function NavbarViewOptionListElements(props: {
     navbarResponseData: NavBarResponseInterface,
+    setRefreshNavDataFlag: (newValue: boolean) => void,
 }) {  
     const navbarResponseData = props.navbarResponseData
 
@@ -78,11 +79,10 @@ export default function NavbarViewOptionListElements(props: {
                 modalShow={showAddNewDeviceModal}
                 setShowModal={setAddNewDeviceModalFlag}
                 heightClasses="standard-modal-height"
-
             >
                 <AddNewDevice
-                    showAddNewDeviceModal={showAddNewDeviceModal}                    
                     setAddNewDeviceModal={setAddNewDeviceModal}
+                    setRefreshNavDataFlag={props.setRefreshNavDataFlag}
                 />
             </BaseModal>
 
@@ -91,11 +91,10 @@ export default function NavbarViewOptionListElements(props: {
                 modalShow={showAddNewRoomModal}
                 setShowModal={setAddNewRoomModalFlag}
                 heightClasses="snap-modal-height"
-
             >
                 <AddNewRoom
-                    showAddNewRoomModal={showAddNewRoomModal}                    
                     setAddNewRoomModal={setAddNewRoomModalFlag}
+                    setRefreshNavDataFlag={props.setRefreshNavDataFlag}
                 />
             </BaseModal>
         </React.Fragment>
