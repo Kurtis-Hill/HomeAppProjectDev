@@ -8,6 +8,7 @@ import BaseModal from '../../../Common/Components/Modals/BaseModal';
 import { AddNewDevice } from '../../../Devices/Components/Devices/AddNewDevice';
 import { AddNewRoom } from '../../../User/Components/Room/AddNewRoom';
 import { checkAdmin } from '../../../Authentication/Session/UserSession';
+import { AddNewGroup } from '../../../User/Components/Group/AddNewGroup';
 
 export default function NavbarViewOptionListElements(props: {
     navbarResponseData: NavBarResponseInterface,
@@ -17,6 +18,7 @@ export default function NavbarViewOptionListElements(props: {
 
     const [showAddNewDeviceModal, setAddNewDeviceModal] = useState<boolean>(false);
     const [showAddNewRoomModal, setAddNewRoomModal] = useState<boolean>(false);
+    const [showAddNewGroupModal, setAddNewGroupModal] = useState<boolean>(false);
 
     const navbarItems = useMemo(
         () => createNavListItems(props.navbarResponseData), 
@@ -29,6 +31,10 @@ export default function NavbarViewOptionListElements(props: {
 
     const setAddNewRoomModalFlag = (show: boolean): void => {
         setAddNewRoomModal(show);
+    }
+
+    const setAddNewGroupModalFlag = (show: boolean): void => {
+        setAddNewGroupModal(show);
     }
 
     function createNavListItems(navbarResponseData: NavBarResponseInterface): React {
@@ -48,6 +54,10 @@ export default function NavbarViewOptionListElements(props: {
                     showAddNewModalFlag = setAddNewRoomModal;
                     addNewText = '+Add New Room';
                 } 
+                if (individualNavBarItem.itemName === 'groups') {
+                    showAddNewModalFlag = setAddNewGroupModal;
+                    addNewText = '+Add New Group';
+                }
                 builtNavItems.push(
                     BuildNavbarItem({
                         heading: individualNavBarItem.header,
@@ -97,6 +107,20 @@ export default function NavbarViewOptionListElements(props: {
                     setRefreshNavDataFlag={props.setRefreshNavDataFlag}
                 />
             </BaseModal>
+
+
+            <BaseModal
+                title={'Add New Group'}
+                modalShow={showAddNewGroupModal}
+                setShowModal={setAddNewGroupModalFlag}
+                heightClasses="snap-modal-height"
+            >
+                <AddNewGroup
+                    setAddNewGroupModal={setAddNewGroupModalFlag}
+                    setRefreshNavDataFlag={props.setRefreshNavDataFlag}
+                />
+            </BaseModal>
+
         </React.Fragment>
     );
 }

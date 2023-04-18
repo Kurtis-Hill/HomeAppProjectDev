@@ -25,7 +25,7 @@ export function AddNewGroup(props: {
 
     const [groupRequestLoading, setGroupRequestLoading] = useState<boolean>(false);
 
-    const [newGroupAddData, setNewGroupAddedData] = useState<GroupResponseInterface|null>(null);
+    const [newGroupAddData, setNewGroupAddedData] = useState<AddNewGroupResponseInterface|null>(null);
 
     const handleAddNewGroupInput = (event: { target: { name: string; value: string; }; }) => {
         const name = (event.target as HTMLInputElement).name;
@@ -65,12 +65,12 @@ export function AddNewGroup(props: {
         }
     }
 
-    const addNewGroupForm = (): React => {
+    const addNewGroupFormInputs = (): React => {
         return (
-            <form onSubmit={handleAddNewGroupSubmit}>
+            <>
                 <InputWLabel
-                    labelName='Room Name'
-                    name='roomName'
+                    labelName='Group Name'
+                    name='groupName'
                     value={addNewGroupInputs.groupName}
                     onChangeFunction={handleAddNewGroupInput}
                 />
@@ -82,25 +82,52 @@ export function AddNewGroup(props: {
                                 type="submit"
                                 text='Add New Group'
                                 name='Add New Group'
-                                action='POST'
+                                action='submit'
                                 classes='add-new-submit-button'
                             />
                         :
                             null
                 }
-                {
-                    groupRequestLoading === false
-                        ?
-                            <CloseButton
-                                close={setAddNewGroupModal}
-                                classes={'modal-cancel-button'}
-                            />
-                        :
-                            <DotCircleSpinner />
-
-
-                }
-            </form>
+            </>
         );
     }
+
+    return (
+        <>
+            {
+                errors.length > 0 
+                    ?
+                        <div className="error-container">
+                            <div className="form-modal-error-box">
+                                <ol>
+                                    {errors.map((error: string, index: number) => (
+                                        <li key={index} className="form-modal-error-text">{Object.keys(error).length === 0 ? 'Something has gone wrong' : error}</li>
+                                    ))}
+                                </ol>
+                            </div>
+                        </div>
+                    : null
+            }
+            <form onSubmit={(e: Event) => {handleAddNewGroupSubmit(e)}} id="add-new-group-form">
+            {
+                    groupRequestLoading !== false
+                        ? <DotCircleSpinner classes="spinner-inline-center" spinnerSize={3} />
+                        :
+                        newGroupAddData === null
+                            ? addNewGroupFormInputs()
+                            : <div className="padding-bottom">Success new group name: {`${newGroupAddData.groupName}`} new groupID: {`${newGroupAddData.groupNameID}`}</div>
+                }
+                { 
+                    groupRequestLoading === false
+                        ?
+                            <CloseButton 
+                                close={setAddNewGroupModal} 
+                                classes={"modal-cancel-button"} 
+                            />
+                        : 
+                            null
+                }
+            </form>
+        </>
+    );
 }

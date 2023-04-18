@@ -8,6 +8,7 @@ import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import AddNewGroupUserInputInterface from '../Group/AddNewGroupUserInputInterface';
+import AddNewRoomUserInputInterface from './AddNewRoomUserInputInterface';
 
 export function AddNewRoom(props: {
         setAddNewRoomModal: ((show: boolean) => void);
@@ -16,7 +17,7 @@ export function AddNewRoom(props: {
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const setAddNewRoomModal = props.setAddNewRoomModal;
 
-    const [addNewRoomInputs, setAddNewRoomInputs] = useState<AddNewGroupUserInputInterface>({
+    const [addNewRoomInputs, setAddNewRoomInputs] = useState<AddNewRoomUserInputInterface>({
         roomName: '',
     })
 
@@ -48,7 +49,7 @@ export function AddNewRoom(props: {
         try {
             const addNewRoomResponse = await addNewRoomRequest(jsonFormData);
             if (addNewRoomResponse !== undefined && addNewRoomResponse.status === 201) {
-                console.log('mee twoo', addNewRoomResponse);
+                // console.log('mee twoo', addNewRoomResponse);
                 const addNewRoomPayload: RoomResponseInterface = addNewRoomResponse.data.payload;
                 // const addNewRoomResponse = addNewRoomResponse;
                 setNewRoomAddedData(addNewRoomPayload);
@@ -83,7 +84,7 @@ export function AddNewRoom(props: {
                                 type="submit"
                                 text="Add Room"
                                 name="Add-Room"
-                                action="POST"
+                                action="submit"
                                 classes="add-new-submit-button"
                             />
                         :
@@ -130,7 +131,6 @@ export function AddNewRoom(props: {
                             null
                 }
             </form>
-
         </>
     );
 }

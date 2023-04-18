@@ -18,8 +18,7 @@ export function DevicePage() {
 
     useEffect(() => {
         getDeviceData();
-
-    }, []);
+    }, [deviceID]);
 
     return (
         <>
