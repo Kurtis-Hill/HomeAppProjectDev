@@ -14,7 +14,7 @@ import DotCircleSpinner from "../../../Common/Components/Spinners/DotCircleSpinn
 import { apiURL, webappURL } from '../../../Common/URLs/CommonURLs';
 import { Link } from 'react-router-dom';
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
-import GroupNameNavbarResponseInterface from '../../../UserInterface/Navbar/Response/GroupNameNavbarResponseInterface';
+import GroupNameResponseInterface from '../../../User/Response/GroupName/GroupNameResponseInterface';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import RoomNavbarResponseInterface from '../../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
 
@@ -170,7 +170,7 @@ export function AddNewDevice(props: {
                                     {
                                         userData.userData.userGroups.length > 0 
                                             ? 
-                                                userData.userData.userGroups.map((group: GroupNameNavbarResponseInterface, index: number) => (
+                                                userData.userData.userGroups.map((group: GroupNameResponseInterface, index: number) => (
                                                     <option key={index} value={group.groupNameID}>{group.groupName}</option>
                                                 )) 
                                             : 

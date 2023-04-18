@@ -76,7 +76,6 @@ class DeviceResponseDTOBuilder
         if ($includeSensors === true) {
             $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());
             if (!empty($deviceSensors)) {
-                $sensorReadingTypeDTOs = [];
                 foreach ($deviceSensors as $sensor) {
                     $sensorReadingTypeDTOs[] = $this->getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreating($sensor);
                 }

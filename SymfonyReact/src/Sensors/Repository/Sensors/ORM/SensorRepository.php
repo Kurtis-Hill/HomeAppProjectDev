@@ -168,7 +168,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     #[ArrayShape([Sensor::class])]
     public function findSensorObjectsByDeviceID(int $deviceId): array
     {
-        $qb = $this->createQueryBuilder('sensor');
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
         $qb->select(Sensor::ALIAS)
             ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')

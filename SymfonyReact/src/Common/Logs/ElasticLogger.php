@@ -47,6 +47,7 @@ class ElasticLogger implements LoggerInterface
         Index $logIndex,
         ElasticLogDTOFactory $elasticLogDTOFactory
     ) {
+        $this->logger = $logger;
         $this->emergencyIndex = $emergencyIndex;
         $this->alertIndex = $alertIndex;
         $this->criticalIndex = $criticalIndex;

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
-import AddNewGroupUserInputInterface from './AddNewGroupUserInputInterface';
+
 import { addNewGroupRequest } from '../../Request/Group/AddNewGroupRequest';
+import AddNewGroupUserInputInterface from './AddNewGroupUserInputInterface';
 import AddNewGroupResponseInterface from '../../Request/Group/AddNewGroupResponseInterface';
 
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
-
 
 export function AddNewGroup(props: {
     setAddNewGroupModal: ((show: boolean) => void);

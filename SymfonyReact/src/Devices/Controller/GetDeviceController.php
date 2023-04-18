@@ -113,7 +113,7 @@ class GetDeviceController extends AbstractController
         }
 
         $responseType = $request->query->get('responseType');
-        if ($responseType) {
+        if ($responseType === RequestDTOBuilder::REQUEST_TYPE_FULL) {
             $requestTypeDTO = RequestDTOBuilder::buildRequestTypeDTO($responseType);
             try {
                 $validationErrors = $validator->validate($requestTypeDTO);
