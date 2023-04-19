@@ -2,7 +2,7 @@
 
 namespace App\User\DTO\Internal\GroupDTOs;
 
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -10,7 +10,7 @@ readonly class UpdateGroupDTO
 {
     public function __construct(
         private string $groupName,
-        private GroupNames $groupToUpdate,
+        private Group $groupToUpdate,
     ){
     }
 
@@ -19,7 +19,7 @@ readonly class UpdateGroupDTO
         return $this->groupName;
     }
 
-    public function getGroupToUpdate(): GroupNames
+    public function getGroupToUpdate(): Group
     {
         return $this->groupToUpdate;
     }

@@ -11,12 +11,15 @@ import UserDataContext from "../Contexts/UserDataContext";
 export function UserDataContextProvider({ children }) {
     // const [userGroups, setUserGroups] = useState<RoomNavbarResponseInterfaceInterface[]|[]>([]);
     const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
+    const [refreshUserData, setRefreshUserData] = useState<boolean>(true);
     // const [userRooms, setUserRooms] = useState<GroupNameNavbarResponseInterface[]|[]>([]);
 
     useEffect(() => {
-        // if (userData.userGroups.length)
-        handleUserDataRequest();
-    }, []);
+        if (refreshUserData === true) {
+            handleUserDataRequest();
+            setRefreshUserData(false);
+        }
+    }, [refreshUserData]);
 
     const handleUserDataRequest = async () => {
         console.log('handleUserDataRequest');
@@ -32,11 +35,19 @@ export function UserDataContextProvider({ children }) {
         }
     }
 
+    const refreshAllUserData = (trigger: boolean) => {
+        console.log('refresh is being triggeredddd')
+        setRefreshUserData(true);
+    }
+
 
     return (
         <UserDataContext.Provider value={
             {
-                userData
+                userData,
+                // setRefreshUserData: (value: boolean) => refreshAllUserData(value)
+                setRefreshUserData,
+                refreshAllUserData
             }
         }
         >

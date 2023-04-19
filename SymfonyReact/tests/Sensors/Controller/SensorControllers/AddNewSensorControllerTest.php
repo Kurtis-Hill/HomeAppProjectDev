@@ -23,7 +23,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepository;
 use App\UserInterface\Entity\Card\CardView;
@@ -473,8 +473,8 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
         /** @var GroupRepository $groupNameRepository */
-        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
-        /** @var GroupNames[] $groupsNotApartOf */
+        $groupNameRepository = $this->entityManager->getRepository(Group::class);
+        /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),
@@ -622,11 +622,11 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         /** @var GroupRepository $groupRepository */
-        $groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        $groupRepository = $this->entityManager->getRepository(Group::class);
 
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-        /** @var GroupNames[] $groupNames */
+        /** @var Group[] $groupNames */
         $groupNames = $groupRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),

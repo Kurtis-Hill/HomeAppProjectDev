@@ -17,7 +17,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepository;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
@@ -66,7 +66,7 @@ class GetCardViewControllerTest extends WebTestCase
 
         $this->userToken = $this->setUserToken($this->client);
 
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
 
         $this->regularUserOne = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);

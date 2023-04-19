@@ -9,10 +9,10 @@ use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -20,7 +20,7 @@ use JetBrains\PhpStorm\ArrayShape;
 class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDeviceHandlerInterface
 {
     /**
-     * @throws GroupNameNotFoundException
+     * @throws GroupNotFoundException
      * @throws RoomNotFoundException
      * @throws ORMException
      */
@@ -39,8 +39,8 @@ class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDevi
         if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
             $groupName = $this->groupRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
 
-            if (!$groupName instanceof GroupNames) {
-                throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $deviceUpdateRequestDTO->getDeviceGroup()));
+            if (!$groupName instanceof Group) {
+                throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $deviceUpdateRequestDTO->getDeviceGroup()));
             }
         }
 

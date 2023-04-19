@@ -3,7 +3,7 @@
 namespace App\User\Builders\RoomDTOBuilder;
 
 use App\User\DTO\Internal\RoomDTOs\AddNewRoomDTO;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 
 class NewRoomInternalDTOBuilder

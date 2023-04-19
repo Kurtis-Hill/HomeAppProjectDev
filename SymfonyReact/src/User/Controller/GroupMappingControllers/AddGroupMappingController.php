@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Controller\GroupNameMappingControllers;
+namespace App\User\Controller\GroupMappingControllers;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
@@ -8,13 +8,13 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
 use App\User\Builders\GroupNameMapping\GroupNameMappingResponseBuilder;
-use App\User\DTO\Request\GroupNameMapping\NewGroupNameMappingRequestDTO;
+use App\User\DTO\Request\GroupNameMapping\NewGroupMappingRequestDTO;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameMappingValidationException;
+use App\User\Exceptions\GroupExceptions\GroupMappingValidationException;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use App\User\Services\GroupMappingServices\AddGroupMappingHandler;
-use App\User\Voters\GroupNameMappingVoter;
+use App\User\Voters\GroupMappingVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,12 +41,12 @@ class AddGroupMappingController extends AbstractController
         GroupRepositoryInterface $groupNameRepository,
         AddGroupMappingHandler $addGroupNameMappingHandler,
     ): Response {
-        $addGroupNameMappingRequestDTO = new NewGroupNameMappingRequestDTO();
+        $addGroupNameMappingRequestDTO = new NewGroupMappingRequestDTO();
 
         try {
             $this->deserializeRequest(
                 $request->getContent(),
-                NewGroupNameMappingRequestDTO::class,
+                NewGroupMappingRequestDTO::class,
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $addGroupNameMappingRequestDTO],
             );
@@ -85,7 +85,7 @@ class AddGroupMappingController extends AbstractController
 
         try {
             $this->denyAccessUnlessGranted(
-                GroupNameMappingVoter::ADD_NEW_GROUP_NAME_MAPPING,
+                GroupMappingVoter::ADD_NEW_GROUP_NAME_MAPPING,
                 $groupNameMappingDTO,
             );
         } catch (AccessDeniedException) {
@@ -94,13 +94,13 @@ class AddGroupMappingController extends AbstractController
 
         try {
             $addGroupNameMappingHandler->addNewGroupNameMappingEntry($groupNameMappingDTO);
-        } catch (GroupNameMappingValidationException $e) {
+        } catch (GroupMappingValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
         } catch (ORMException|OptimisticLockException) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN]);
         }
 
-        $groupNameMappingResponseDTO = GroupNameMappingResponseBuilder::buildGroupNameFullResponseDTO($groupNameMappingDTO->getNewGroupNameMapping());
+        $groupNameMappingResponseDTO = GroupNameMappingResponseBuilder::buildGroupNameFullResponseDTO($groupNameMappingDTO->getNewGroupMapping());
 
         try {
             $normalizedResponse = $this->normalizeResponse($groupNameMappingResponseDTO);

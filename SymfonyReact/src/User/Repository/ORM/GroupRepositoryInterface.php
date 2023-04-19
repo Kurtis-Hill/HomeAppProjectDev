@@ -2,30 +2,30 @@
 
 namespace App\User\Repository\ORM;
 
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Exception\ORMException;
 
 /**
- * @method GroupNames|null find($id, $lockMode = null, $lockVersion = null)
- * @method GroupNames|null findOneBy(array $criteria, array $orderBy = null)
- * @method GroupNames[]    findAll()
- * @method GroupNames[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Group|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Group|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Group[]    findAll()
+ * @method Group[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 interface GroupRepositoryInterface
 {
-    public function findOneById(int $id): ?GroupNames;
+    public function findOneById(int $id): ?Group;
 
     /**
      * @throws ORMException
      */
-    public function findOneByName(string $name): ?GroupNames;
+    public function findOneByName(string $name): ?Group;
 
     /**
      * @throws ORMException
      */
-    public function persist(GroupNames $groupNames): void;
+    public function persist(Group $groupNames): void;
 
     /**
      * @throws ORMException
@@ -36,7 +36,7 @@ interface GroupRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function remove(GroupNames $groupNames): void;
+    public function remove(Group $groupNames): void;
 
     /**
      * @throws ORMException

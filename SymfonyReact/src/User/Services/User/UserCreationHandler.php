@@ -6,15 +6,15 @@ use App\Common\Logs\LogMessages;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
 use App\User\Builders\User\NewUserBuilder;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
-use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
 use App\User\Services\GroupMappingServices\AddGroupMappingHandler;
-use App\User\Services\GroupNameServices\AddGroupHandler;
+use App\User\Services\GroupServices\AddGroupHandler;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Exception\ORMException;
@@ -73,8 +73,8 @@ class UserCreationHandler
      * @throws OptimisticLockException
      * @throws UniqueConstraintViolationException
      * @throws UserCreationValidationErrorsException
-     * @throws GroupNameValidationException
-     * @throws GroupNameNotFoundException
+     * @throws GroupValidationException
+     * @throws GroupNotFoundException
      */
     public function handleNewUserCreation(
         string $firstName,
@@ -133,12 +133,12 @@ class UserCreationHandler
     }
 
     /**
-     * @throws GroupNameNotFoundException
+     * @throws GroupNotFoundException
      */
     private function addNewUserToSharedUserGroups(User $user): void
     {
-        $sharedUserGroup = $this->groupRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
-        if (!$sharedUserGroup instanceof GroupNames) {
+        $sharedUserGroup = $this->groupRepository->findOneBy(['groupName' => Group::HOME_APP_GROUP_NAME]);
+        if (!$sharedUserGroup instanceof Group) {
             $this->logger->error(
                 sprintf(
                     'Failed to create group mapping entry for shared user group for userID %d at %s',
@@ -146,7 +146,7 @@ class UserCreationHandler
                     (new DateTimeImmutable('now'))->format('d-M-Y H:i:s'),
                 )
             );
-            throw new GroupNameNotFoundException('Base group name not found, contact your system admins');
+            throw new GroupNotFoundException('Base group name not found, contact your system admins');
         }
 
         $newGroupNameMappingDTO = GroupNameMappingInternalDTOBuilder::buildGroupNameMappingInternalDTO(
@@ -194,7 +194,7 @@ class UserCreationHandler
 
             return true;
         } catch (ORMException|OptimisticLockException) {
-            $this->groupRepository->remove($user->getGroupID());
+            $this->groupRepository->remove($user->getGroup());
             $this->logger->error(
                 sprintf(
                     LogMessages::ERROR_CREATING_NEW_USER,

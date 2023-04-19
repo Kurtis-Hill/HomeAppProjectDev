@@ -7,7 +7,7 @@ use App\Devices\DTO\Internal\GetDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\User\Entity\User;
-use App\User\Services\GroupNameServices\UserGroupsFinder;
+use App\User\Services\GroupServices\UserGroupsFinder;
 use JetBrains\PhpStorm\ArrayShape;
 
 class GetDevicesForUserHandler implements GetDevicesForUserInterface

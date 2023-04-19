@@ -7,11 +7,11 @@ use App\Common\API\CommonURL;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceQueryException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupNameServices\UserGroupsFinder;
+use App\User\Services\GroupServices\UserGroupsFinder;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarListLinkDTOBuilder;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
@@ -28,7 +28,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private NavBarDTOBuilder $navBarDTOBuilder;
 
-    private UserGroupsFinder $getGroupNamesHandler;
+    private UserGroupsFinder $getGroupNamesFinder;
 
     private array $errors = [];
 
@@ -41,7 +41,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         $this->roomRepository = $roomRepository;
         $this->deviceRepository = $deviceRepository;
         $this->navBarDTOBuilder = $navBarDTOBuilder;
-        $this->getGroupNamesHandler = $getGroupNamesHandler;
+        $this->getGroupNamesFinder = $getGroupNamesHandler;
     }
 
     #[ArrayShape([NavBarResponseDTO::class])]
@@ -55,7 +55,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         }
 
         try {
-            $userGroups = $this->getGroupNamesHandler->getGroupNamesForUser($user);
+            $userGroups = $this->getGroupNamesFinder->getGroupNamesForUser($user);
             $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
         } catch (ORMException) {
             $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groups')];
@@ -74,7 +74,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private function getGroupNameNavBarResponseObjects(array $userGroups): NavBarResponseDTO
     {
-        /** @var GroupNames $group */
+        /** @var Group $group */
         foreach ($userGroups as $group) {
             $userGroupNavbarListLinkResponseDTO[] = NavBarListLinkDTOBuilder::buildNavBarListLinkDTO(
                 $group->getGroupName(),
@@ -156,7 +156,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getRoomData(User $user): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($user->getAssociatedGroupIDs(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->roomRepository->getAllUserRoomsByGroupId($this->getGroupNamesFinder->getGroupNamesForUser($user), AbstractQuery::HYDRATE_OBJECT);
     }
 
     /**
@@ -164,6 +164,6 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getDeviceData(User $user): array
     {
-        return $this->deviceRepository->findAllUsersDevicesByGroupId($user->getAssociatedGroupNameAndIds(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->deviceRepository->findAllUsersDevicesByGroupId($this->getGroupNamesFinder->getGroupNamesForUser($user), AbstractQuery::HYDRATE_OBJECT);
     }
 }

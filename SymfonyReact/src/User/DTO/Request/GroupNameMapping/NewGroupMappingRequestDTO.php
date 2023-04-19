@@ -4,7 +4,7 @@ namespace App\User\DTO\Request\GroupNameMapping;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class NewGroupNameMappingRequestDTO
+class NewGroupMappingRequestDTO
 {
     #[
         Assert\Type(type: 'integer', message: 'userID must be a {{ type }} you have provided {{ value }}'),

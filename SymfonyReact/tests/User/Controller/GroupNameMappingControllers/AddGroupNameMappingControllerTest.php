@@ -2,14 +2,14 @@
 
 namespace App\Tests\User\Controller\GroupNameMappingControllers;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Entity\GroupMapping;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupNameMappingControllers\AddGroupMappingController;
+use App\User\Controller\GroupMappingControllers\AddGroupMappingController;
 use App\User\Controller\GroupsControllers\AddGroupController;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
@@ -40,7 +40,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupMappingRepository $groupNameMappingRepository;
 
     protected function setUp(): void
     {
@@ -53,9 +53,9 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->userToken = $this->setUserToken($this->client);
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-        $this->groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupRepository = $this->entityManager->getRepository(Group::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
     }
 
     protected function tearDown(): void
@@ -201,7 +201,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
             }
         }
 
-        /** @var GroupNames[] $groupName */
+        /** @var Group[] $groupName */
         $groupName = $this->groupRepository->findAll();
 
         $jsonData = json_encode([
@@ -292,7 +292,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $errors = $responseData['errors'];
-        self::assertEquals([GroupNameMapping::GROUP_NAME_MAPPING_EXISTS], $errors);
+        self::assertEquals([GroupMapping::GROUP_NAME_MAPPING_EXISTS], $errors);
 
         $title = $responseData['title'];
 
@@ -301,7 +301,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
     public function test_sending_group_name_mapping_request_for_group_name_regular_user_doesnt_belong_to(): void
     {
-        /** @var GroupNames[] $groupsNotApartOf */
+        /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $regularUserToAddGroupNameToo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
@@ -337,7 +337,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
     public function test_admin_can_add_user_to_group_doesnt_belong_to(): void
     {
-        /** @var GroupNames[] $groupsNotApartOf */
+        /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $regularUserToAddGroupNameToo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
@@ -371,7 +371,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $payload = $responseData['payload'];
 
-        self::assertEquals($groupNameMapping->getGroupNameMappingID(), $payload['groupNameMappingID']);
+        self::assertEquals($groupNameMapping->getGroupMappingID(), $payload['groupMappingID']);
         self::assertArrayHasKey('user', $payload);
         self::assertArrayHasKey('group', $payload);
     }
@@ -382,7 +382,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $jsonData = json_encode([
             'userID' => $this->regularUserTwo->getUserID(),
-            'groupID' => $regularUserToAddUserToo->getGroupID()->getGroupID(),
+            'groupID' => $regularUserToAddUserToo->getGroup()->getGroupID(),
         ], JSON_THROW_ON_ERROR);
 
         $userToken = $this->setUserToken(
@@ -408,14 +408,14 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $groupNameMapping = $this->groupNameMappingRepository->findOneBy([
             'user' => $this->regularUserTwo->getUserID(),
-            'groupID' => $regularUserToAddUserToo->getGroupID(),
+            'groupID' => $regularUserToAddUserToo->getGroup(),
         ]);
 
         self::assertNotNull($groupNameMapping);
 
         $payload = $responseData['payload'];
 
-        self::assertEquals($groupNameMapping->getGroupNameMappingID(), $payload['groupNameMappingID']);
+        self::assertEquals($groupNameMapping->getGroupMappingID(), $payload['groupMappingID']);
         self::assertArrayHasKey('user', $payload);
         self::assertArrayHasKey('group', $payload);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Authentication\EventListeners;
 
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\User\Entity\User;
 use DateTimeImmutable;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
@@ -12,7 +12,7 @@ class JWTAuthenticatedListener
 {
     private LoggerInterface $logger;
 
-    public function __construct(GroupNameMappingRepository $groupNameMappingTableRepository, LoggerInterface $elasticLogger)
+    public function __construct(GroupMappingRepository $groupNameMappingTableRepository, LoggerInterface $elasticLogger)
     {
         $this->logger = $elasticLogger;
     }

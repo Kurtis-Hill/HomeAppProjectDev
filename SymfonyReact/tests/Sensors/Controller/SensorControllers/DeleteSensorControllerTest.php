@@ -11,7 +11,7 @@ use App\Sensors\Controller\SensorControllers\DeleteSensorController;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
@@ -53,7 +53,7 @@ class DeleteSensorControllerTest extends WebTestCase
         try {
             $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
             $this->userRepository = $this->entityManager->getRepository(User::class);
-            $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+            $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
             $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
             $this->userToken = $this->setUserToken($this->client);
         } catch (JsonException $e) {

@@ -5,7 +5,7 @@ namespace App\Tests\UserInterface\Controller;
 use App\ORM\DataFixtures\Core\RoomFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;

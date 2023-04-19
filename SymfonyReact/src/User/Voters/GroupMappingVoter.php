@@ -2,13 +2,13 @@
 
 namespace App\User\Voters;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\User\DTO\Internal\GroupNameMappingDTOs\AddGroupMappingDTO;
+use App\Authentication\Entity\GroupMapping;
+use App\User\DTO\Internal\GroupMappingDTOs\AddGroupMappingDTO;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class GroupNameMappingVoter extends Voter
+class GroupMappingVoter extends Voter
 {
     public const ADD_NEW_GROUP_NAME_MAPPING = 'add-new-group-name-mapping';
 
@@ -47,20 +47,20 @@ class GroupNameMappingVoter extends Voter
             return true;
         }
 
-        if ($user->getGroupID()->getGroupID() === $addNewGroupNameMappingDTO->getGroupToAddUserTo()->getGroupID()) {
+        if ($user->getGroup()->getGroupID() === $addNewGroupNameMappingDTO->getGroupToAddUserTo()->getGroupID()) {
             return true;
         }
 
         return false;
     }
 
-    private function canDeleteGroupNameMapping(User $user, GroupNameMapping $groupNameMapping): bool
+    private function canDeleteGroupNameMapping(User $user, GroupMapping $groupNameMapping): bool
     {
         if ($user->isAdmin()) {
             return true;
         }
 
-        if ($user->getGroupID()->getGroupID() === $groupNameMapping->getGroupID()->getGroupID()) {
+        if ($user->getGroup()->getGroupID() === $groupNameMapping->getGroup()->getGroupID()) {
             return true;
         }
 

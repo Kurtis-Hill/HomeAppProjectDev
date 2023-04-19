@@ -1,9 +1,9 @@
 <?php
 
-namespace App\User\DTO\Internal\GroupNameMappingDTOs;
+namespace App\User\DTO\Internal\GroupMappingDTOs;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\User\Entity\GroupNames;
+use App\Authentication\Entity\GroupMapping;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use JetBrains\PhpStorm\Immutable;
 
@@ -12,12 +12,12 @@ readonly class AddGroupMappingDTO
 {
     public function __construct(
         private User $userToAddMappingTo,
-        private GroupNames $groupToAddUserTo,
-        private GroupNameMapping $newGroupNameMapping,
+        private Group $groupToAddUserTo,
+        private GroupMapping $newGroupNameMapping,
     ) {
     }
 
-    public function getNewGroupNameMapping(): GroupNameMapping
+    public function getNewGroupMapping(): GroupMapping
     {
         return $this->newGroupNameMapping;
     }
@@ -27,7 +27,7 @@ readonly class AddGroupMappingDTO
         return $this->userToAddMappingTo;
     }
 
-    public function getGroupToAddUserTo(): GroupNames
+    public function getGroupToAddUserTo(): Group
     {
         return $this->groupToAddUserTo;
     }

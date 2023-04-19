@@ -6,9 +6,9 @@ use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
-use App\User\Services\GroupNameServices\UserGroupsFinder;
+use App\User\Services\GroupServices\UserGroupsFinder;
 use JetBrains\PhpStorm\ArrayShape;
 
 class GetSensorHandler
@@ -49,7 +49,7 @@ class GetSensorHandler
         if (!empty($requestedGroupsNameIds)) {
             $allGroupsUserIsApartOf = $this->getGroupNamesHandler->getGroupNamesForUser($user);
             $groupID = array_map(static function($groupName) {
-                /** @var GroupNames $groupName */
+                /** @var Group $groupName */
                 return $groupName->getGroupID();
             }, $allGroupsUserIsApartOf);
             if (!in_array($requestedGroupsNameIds, $allGroupsUserIsApartOf, true)) {

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
-use App\User\Entity\GroupNames;
-use DateTimeImmutable;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -47,7 +45,7 @@ final class Version20220303160823 extends AbstractMigration
         ');
 
         $this->addSql('
-            CREATE TABLE groupname (
+            CREATE TABLE `groups` (
                 groupID INT AUTO_INCREMENT NOT NULL,
                 groupName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
@@ -58,14 +56,14 @@ final class Version20220303160823 extends AbstractMigration
         ');
 
         $this->addSql('
-            CREATE TABLE groupnnamemapping (
-                groupNameMappingID INT AUTO_INCREMENT NOT NULL, 
+            CREATE TABLE groupmapping (
+                groupMappingID INT AUTO_INCREMENT NOT NULL, 
                 userID INT NOT NULL, 
                 groupID INT NOT NULL, 
                 INDEX groupID (groupID), 
                 INDEX userID (userID), 
                 UNIQUE INDEX IDX_1C993DEE5FD86D04 (userID, groupID), 
-                PRIMARY KEY(groupNameMappingID)
+                PRIMARY KEY(groupMappingID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
@@ -460,7 +458,7 @@ final class Version20220303160823 extends AbstractMigration
         ");
 
         $this->addSql("
-            INSERT INTO `groupname` 
+            INSERT INTO groups
                 (`groupID`, `groupName`) 
             VALUES
                 (1, 'home-app-group'),
@@ -503,13 +501,13 @@ final class Version20220303160823 extends AbstractMigration
         // Alter tables
         $this->addSql("
             ALTER TABLE `user`
-              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groupname` (`groupID`);
+              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
         ");
 
         $this->addSql("
-            ALTER TABLE `groupnnamemapping`
-              ADD CONSTRAINT `groupnnamemapping_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groupname` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `groupnnamemapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+            ALTER TABLE `groupmapping`
+              ADD CONSTRAINT `groupmapping_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
+              ADD CONSTRAINT `groupmapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
@@ -521,7 +519,7 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `devices`
-              ADD CONSTRAINT `devicenames_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groupname` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
+              ADD CONSTRAINT `devicenames_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `devicenames_ibfk_2` FOREIGN KEY (`roomID`) REFERENCES `room` (`roomID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
@@ -681,9 +679,9 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql('DROP TABLE IF EXISTS readingtypes');
 
-        $this->addSql('DROP TABLE IF EXISTS groupname');
+        $this->addSql('DROP TABLE IF EXISTS groups');
 
-        $this->addSql('DROP TABLE IF EXISTS groupnnamemapping');
+        $this->addSql('DROP TABLE IF EXISTS groupmapping');
 
         $this->addSql('DROP TABLE IF EXISTS user');
 

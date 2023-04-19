@@ -1,12 +1,12 @@
 <?php
 
-namespace App\User\Exceptions\GroupNameExceptions;
+namespace App\User\Exceptions\GroupExceptions;
 
 use App\User\Exceptions\UserValidationErrorInterface;
 use Exception;
 use Throwable;
 
-class GroupNameValidationException extends Exception implements UserValidationErrorInterface
+class GroupValidationException extends Exception implements UserValidationErrorInterface
 {
     private array $validationErrors;
 

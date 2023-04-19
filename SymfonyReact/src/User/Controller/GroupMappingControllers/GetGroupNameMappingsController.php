@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Controller\GroupNameMappingControllers;
+namespace App\User\Controller\GroupMappingControllers;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\User\Services\GroupNameServices;
+namespace App\User\Services\GroupServices;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\GroupNameBuilder;
-use App\User\Builders\GroupNameMapping\GroupNameMappingBuilder;
+use App\User\Builders\GroupNameMapping\GroupMappingBuilder;
 use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameMappingValidationException;
-use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
+use App\User\Exceptions\GroupExceptions\GroupMappingValidationException;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Services\GroupMappingServices\AddGroupMappingHandler;
 use Doctrine\ORM\Exception\ORMException;
@@ -42,20 +42,20 @@ class AddGroupHandler
     }
 
     /**
-     * @throws GroupNameValidationException
+     * @throws GroupValidationException
      * @throws ORMException
      * @throws OptimisticLockException
      * @throws NonUniqueResultException
-     * @throws GroupNameMappingValidationException
+     * @throws GroupMappingValidationException
      */
-    public function addNewGroup(string $groupName, User $user = null): GroupNames
+    public function addNewGroup(string $groupName, User $user = null): Group
     {
         $newGroupName = $this->groupNameBuilder->buildNewGroupName($groupName);
 
         $validationErrors = $this->validator->validate($newGroupName);
 
         if ($this->checkIfErrorsArePresent($validationErrors)) {
-            throw new GroupNameValidationException($this->getValidationErrorAsArray($validationErrors));
+            throw new GroupValidationException($this->getValidationErrorAsArray($validationErrors));
         }
 
         $this->groupNameRepository->persist($newGroupName);

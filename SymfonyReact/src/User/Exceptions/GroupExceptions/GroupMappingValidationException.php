@@ -1,11 +1,11 @@
 <?php
 
-namespace App\User\Exceptions\GroupNameExceptions;
+namespace App\User\Exceptions\GroupExceptions;
 
 use Exception;
 use Throwable;
 
-class GroupNameMappingValidationException extends Exception
+class GroupMappingValidationException extends Exception
 {
     private array $validationErrors;
 

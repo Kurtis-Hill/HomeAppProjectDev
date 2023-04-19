@@ -2,12 +2,12 @@
 
 namespace App\Tests\User\Controller\GroupNameMappingControllers;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Entity\GroupMapping;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupNameMappingControllers\GetGroupNameMappingsController;
-use App\User\Entity\GroupNames;
+use App\User\Controller\GroupMappingControllers\GetGroupNameMappingsController;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
@@ -38,7 +38,7 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameMappingRepository $groupMappingRepository;
+    private GroupMappingRepository $groupMappingRepository;
 
     protected function setUp(): void
     {
@@ -51,9 +51,9 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
         $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $this->userToken = $this->setUserToken($this->client);
-        $this->groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupRepository = $this->entityManager->getRepository(Group::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $this->groupMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
     }
 
     protected function tearDown(): void
@@ -154,7 +154,7 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
         self::assertCount(count($allGroupNameMappings), $payload);
 
         foreach ($payload as $groupNameMapping) {
-            self::assertArrayHasKey('groupNameMappingID', $groupNameMapping);
+            self::assertArrayHasKey('groupMappingID', $groupNameMapping);
             self::assertArrayHasKey('group', $groupNameMapping);
             self::assertArrayHasKey('user', $groupNameMapping);
         }

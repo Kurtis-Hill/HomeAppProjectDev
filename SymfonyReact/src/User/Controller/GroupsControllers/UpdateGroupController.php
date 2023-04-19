@@ -9,9 +9,9 @@ use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\GroupName\UpdateGroupDTOBuilder;
 use App\User\DTO\Request\GroupDTOs\UpdateGroupRequestDTO;
-use App\User\Entity\GroupNames;
-use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
-use App\User\Services\GroupNameServices\UpdateGroupHandler;
+use App\User\Entity\Group;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
+use App\User\Services\GroupServices\UpdateGroupHandler;
 use App\User\Voters\GroupVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -32,7 +32,7 @@ class UpdateGroupController extends AbstractController
 
     #[Route('{groupID}/update', name: 'update-group', methods: [Request::METHOD_PATCH, Request::METHOD_PUT])]
     public function updateGroupName(
-        GroupNames $groupID,
+        Group $groupID,
         Request $request,
         ValidatorInterface $validator,
         UpdateGroupHandler $updateGroupHandler,
@@ -67,7 +67,7 @@ class UpdateGroupController extends AbstractController
 
         try {
             $updateGroupHandler->updateGroup($updateGroupDTO);
-        } catch (GroupNameValidationException $e) {
+        } catch (GroupValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
         } catch (OptimisticLockException|ORMException) {
             return $this->sendInternalServerErrorJsonResponse();

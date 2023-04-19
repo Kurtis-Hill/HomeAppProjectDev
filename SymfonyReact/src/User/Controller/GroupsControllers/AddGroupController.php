@@ -10,8 +10,8 @@ use App\User\Builders\GroupName\AddNewGroupNameDTOBuilder;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\DTO\Request\GroupDTOs\NewGroupRequestDTO;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
-use App\User\Services\GroupNameServices\AddGroupHandler;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
+use App\User\Services\GroupServices\AddGroupHandler;
 use App\User\Voters\GroupVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
@@ -70,7 +70,7 @@ class AddGroupController extends AbstractController
            $newGroup = $addGroupNameHandler->addNewGroup($newGroupDTO->getGroupName(), $user);
         }  catch (NonUniqueResultException){
             return $this->sendInternalServerErrorJsonResponse();
-        } catch (GroupNameValidationException $e) {
+        } catch (GroupValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
         } catch (ORMException|OptimisticLockException) {
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_ALREADY_EXISTS, $newGroupDTO->getGroupName())]);

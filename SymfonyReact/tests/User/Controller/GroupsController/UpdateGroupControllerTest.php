@@ -2,14 +2,14 @@
 
 namespace App\Tests\User\Controller\GroupsController;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Entity\GroupMapping;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Controller\GroupsControllers\AddGroupController;
 use App\User\Controller\GroupsControllers\UpdateGroupController;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
@@ -40,7 +40,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupMappingRepository $groupNameMappingRepository;
 
     protected function setUp(): void
     {
@@ -53,9 +53,9 @@ class UpdateGroupControllerTest extends WebTestCase
         $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $this->userToken = $this->setUserToken($this->client);
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
     }
 
     protected function tearDown(): void
@@ -67,7 +67,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_sending_malformed_request(): void
     {
-        /** @var GroupNames[] $groups */
+        /** @var Group[] $groups */
         $groups = $this->groupNameRepository->findAll();
         $group = $groups[0];
 
@@ -116,7 +116,7 @@ class UpdateGroupControllerTest extends WebTestCase
      */
     public function test_sending_invalid_data_types(mixed $groupName, array $message): void
     {
-        /** @var GroupNames[] $groups */
+        /** @var Group[] $groups */
         $groups = $this->groupNameRepository->findAll();
         $group = $groups[0];
 
@@ -173,7 +173,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_regular_user_cannot_update_group_not_apart_of(): void
     {
-        /** @var GroupNames[] $groupsUserNotApartOf */
+        /** @var Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         if (empty($groupsUserNotApartOf)) {
@@ -215,7 +215,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_admin_user_can_update_group_not_apart_of(): void
     {
-        /** @var GroupNames[] $groupsUserNotApartOf */
+        /** @var Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->user);
 
         if (empty($groupsUserNotApartOf)) {
@@ -254,7 +254,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_updating_group_name_too_long(): void
     {
-        /** @var GroupNames[] $groupsUserNotApartOf */
+        /** @var Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->user);
 
         if (empty($groupsUserNotApartOf)) {
@@ -288,7 +288,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_updating_group_name_too_short(): void
     {
-        /** @var GroupNames[] $groupsUserNotApartOf */
+        /** @var Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->user);
 
         if (empty($groupsUserNotApartOf)) {
@@ -322,7 +322,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_updating_group_name_to_already_existing_group_name(): void
     {
-        /** @var GroupNames[] $groups */
+        /** @var Group[] $groups */
         $groups = $this->groupNameRepository->findAll();
 
         if (empty($groups)) {
@@ -357,7 +357,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_updating_group_name_correct_data_admin_user(): void
     {
-        /** @var GroupNames[] $groups */
+        /** @var Group[] $groups */
         $groups = $this->groupNameRepository->findAll();
 
         if (empty($groups)) {
@@ -397,7 +397,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_updating_group_name_correct_data_regular_user(): void
     {
-        /** @var GroupNames[] $groupsUserNotApartOf */
+        /** @var Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
         if (empty($groupsUserNotApartOf)) {
@@ -437,7 +437,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_updating_group_check_full_response(): void
     {
-        /** @var GroupNames[] $groups */
+        /** @var Group[] $groups */
         $groups = $this->groupNameRepository->findAll();
 
         if (empty($groups)) {

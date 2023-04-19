@@ -2,12 +2,12 @@
 
 namespace App\Tests\UserInterface\Controller;
 
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\Common\API\HTTPStatusCodes;
 use App\ORM\DataFixtures\Core\RoomFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -85,10 +85,10 @@ class GetUserDataControllerTest extends WebTestCase
             }
         }
 
-        /** @var GroupNameMapping[] $userGroupMappingEntities */
+        /** @var GroupMapping[] $userGroupMappingEntities */
         $userGroupMappingEntities = $testUser->getUserGroupMappingEntities();
         foreach ($userGroupMappingEntities as $groupNameMappingObject) {
-            $groupName = $groupNameMappingObject->getGroupID();
+            $groupName = $groupNameMappingObject->getGroup();
             foreach ($responseData['userGroups'] as $userGroup) {
                 if ($userGroup['groupID'] === $groupName->getGroupID()) {
                     self::assertEquals($groupName->getGroupName(), $userGroup['groupName'], 'group name wrong');

@@ -11,12 +11,12 @@ use App\User\Repository\ORM\GroupRepository;
 
 #[
     ORM\Entity(repositoryClass: GroupRepository::class),
-    ORM\Table(name: "groupname"),
+    ORM\Table(name: "groups"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
 ]
 #[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
-class GroupNames
+class Group
 {
     public const HOME_APP_GROUP_NAME = 'home-app-group';
 

@@ -12,7 +12,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
@@ -54,7 +54,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
 
         $this->userToken = $this->setUserToken($this->client);
     }
@@ -181,7 +181,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER_EMAIL_TWO);
 
-        /** @var GroupNames[] $groupUserIsApartOf */
+        /** @var Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -203,7 +203,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $sensorToUpdate = $sensors[0];
 
-        /** @var GroupNames[] $groupsUserIsNotApartOf */
+        /** @var Group[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         foreach ($groupsUserIsNotApartOf as $group) {
@@ -253,7 +253,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_TWO, UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var GroupNames[] $groupUserIsApartOf */
+        /** @var Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -275,7 +275,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $sensorToUpdate = $sensors[0];
 
-        /** @var GroupNames[] $groupsUserIsNotApartOf */
+        /** @var Group[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         foreach ($groupsUserIsNotApartOf as $group) {
@@ -328,7 +328,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        /** @var GroupNames[] $groupUserIsApartOf */
+        /** @var Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -437,7 +437,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var GroupNames[] $groupUserIsApartOf */
+        /** @var Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -522,8 +522,8 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getCreatedBy()->getLastName(), $payload['createdBy']['lastName']);
         self::assertNull($payload['createdBy']['profilePicture']);
         self::assertNull($payload['createdBy']['roles']);
-        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupID()->getGroupID(), $payload['createdBy']['group']['groupID']);
-        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupID()->getGroupName(), $payload['createdBy']['group']['groupName']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroup()->getGroupID(), $payload['createdBy']['group']['groupID']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroup()->getGroupName(), $payload['createdBy']['group']['groupName']);
 
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $payload['device']['deviceNameID']);
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);

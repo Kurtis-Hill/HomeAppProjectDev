@@ -2,7 +2,7 @@
 
 namespace App\User\Entity;
 
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\User\Repository\ORM\UserRepository;
 use DateTime;
 use DateTimeInterface;
@@ -109,10 +109,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private string $password;
 
     #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
+        ORM\ManyToOne(targetEntity: Group::class),
         ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
-    private GroupNames|int $groupID;
+    private Group|int $groupID;
 
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
@@ -120,8 +120,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private DateTimeInterface $createdAt;
 
     #[
-        ArrayShape([GroupNameMapping::class]),
-        ORM\OneToMany(mappedBy: "user", targetEntity: GroupNameMapping::class),
+        ArrayShape([GroupMapping::class]),
+        ORM\OneToMany(mappedBy: "user", targetEntity: GroupMapping::class),
     ]
     private Selectable|array $userGroupMappingEntities;
 
@@ -130,7 +130,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = new ArrayCollection();
     }
 
-    #[ArrayShape([GroupNameMapping::class])]
+    #[ArrayShape([GroupMapping::class])]
     public function getUserGroupMappingEntities(): ArrayCollection|Selectable
     {
         return $this->userGroupMappingEntities;
@@ -141,17 +141,17 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
-    public function getUsersGroupName(): GroupNames
+    public function getUsersGroupName(): Group
     {
         return $this->groupID;
     }
 
-    #[ArrayShape([GroupNames::class])]
-    public function getGroupNameMappings(): array
+    #[ArrayShape([Group::class])]
+    public function getGroupMappings(): array
     {
-        /** @var GroupNameMapping $groupName */
+        /** @var GroupMapping $groupName */
         foreach ($this->userGroupMappingEntities as $groupName) {
-            $groupNameArray[] = $groupName->getGroupID();
+            $groupNameArray[] = $groupName->getGroup();
         }
 
         return $groupNameArray ?? [];
@@ -160,10 +160,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape(['int'])]
     public function getAssociatedGroupIDs(): array
     {
-        $groupNames[] = $this->getGroupID()->getGroupID();
-        /** @var GroupNameMapping $entity */
+        $groupNames[] = $this->getGroup()->getGroupID();
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupID()->getGroupID();
+            $groupNames[] = $entity->getGroup()->getGroupID();
         }
         return $groupNames;
     }
@@ -172,27 +172,27 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getAssociatedGroupNameAndIds(): array
     {
         $groupNames[] = [
-            'groupID' => $this->getGroupID()->getGroupID(),
-            'groupName' => $this->getGroupID()->getGroupName()
+            'groupID' => $this->getGroup()->getGroupID(),
+            'groupName' => $this->getGroup()->getGroupName()
         ];
-        /** @var GroupNameMapping $entity */
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = [
-                'groupID' => $entity->getGroupID()->getGroupID(),
-                'groupName' => $entity->getGroupID()->getGroupName()
+                'groupID' => $entity->getGroup()->getGroupID(),
+                'groupName' => $entity->getGroup()->getGroupName()
             ];
         }
 
         return $groupNames;
     }
 
-    #[ArrayShape([GroupNames::class])]
-    public function getAssociatedGroupNames(): array
+    #[ArrayShape([Group::class])]
+    public function getAssociatedGroups(): array
     {
-        $groupNames[] = $this->getGroupID();
-        /** @var GroupNameMapping $entity */
+        $groupNames[] = $this->getGroup();
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupID();
+            $groupNames[] = $entity->getGroup();
         }
         return $groupNames;
     }
@@ -296,12 +296,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getGroupID(): GroupNames
+    public function getGroup(): Group
     {
         return $this->groupID;
     }
 
-    public function setGroupID(int|GroupNames $groupID): void
+    public function setGroup(int|Group $groupID): void
     {
         $this->groupID = $groupID;
     }
@@ -325,6 +325,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function isAdmin(): bool
     {
-        return in_array('ROLE_ADMIN', $this->getRoles(), true);
+        return in_array(self::ROLE_ADMIN, $this->getRoles(), true);
     }
 }

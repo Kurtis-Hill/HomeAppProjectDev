@@ -4,7 +4,7 @@ namespace App\Devices\DTO\Internal;
 
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
 
@@ -15,7 +15,7 @@ readonly class UpdateDeviceDTO
         private DeviceUpdateRequestDTO $updateDeviceDTO,
         private Devices $devices,
         private ?Room $room,
-        private ?GroupNames $groupName
+        private ?Group $groupName
     ) {
     }
 
@@ -34,7 +34,7 @@ readonly class UpdateDeviceDTO
         return $this->room;
     }
 
-    public function getProposedGroupNameToUpdateTo(): ?GroupNames
+    public function getProposedGroupNameToUpdateTo(): ?Group
     {
         return $this->groupName;
     }

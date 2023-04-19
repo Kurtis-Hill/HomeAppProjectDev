@@ -2,13 +2,13 @@
 
 namespace App\Tests\User\Controller\GroupsController;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Entity\GroupMapping;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Controller\GroupsControllers\AddGroupController;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
@@ -37,7 +37,7 @@ class AddGroupControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupMappingRepository $groupNameMappingRepository;
 
     protected function setUp(): void
     {
@@ -49,9 +49,9 @@ class AddGroupControllerTest extends WebTestCase
 
         $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->userToken = $this->setUserToken($this->client);
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
     }
 
     protected function tearDown(): void
@@ -158,7 +158,7 @@ class AddGroupControllerTest extends WebTestCase
 
         self::assertEquals(AddGroupController::REQUEST_ACCEPTED_SUCCESS_CREATED, $response['title']);
 
-        /** @var GroupNames $newGroupName */
+        /** @var Group $newGroupName */
         $newGroupName = $this->groupNameRepository->findOneBy(['groupName' => 'newGroupNameUnique']);
 
         self::assertNotNull($newGroupName);
@@ -191,7 +191,7 @@ class AddGroupControllerTest extends WebTestCase
 
         self::assertEquals(AddGroupController::REQUEST_ACCEPTED_SUCCESS_CREATED, $response['title']);
 
-        /** @var GroupNames $newGroupName */
+        /** @var Group $newGroupName */
         $newGroupName = $this->groupNameRepository->findOneBy(['groupName' => 'newGroupNameUnique']);
 
         self::assertNotNull($newGroupName);
@@ -228,7 +228,7 @@ class AddGroupControllerTest extends WebTestCase
 
         self::assertEquals(AddGroupController::REQUEST_ACCEPTED_SUCCESS_CREATED, $response['title']);
 
-        /** @var GroupNames $newGroupName */
+        /** @var Group $newGroupName */
         $newGroupName = $this->groupNameRepository->findOneBy(['groupName' => $groupNameForRequest]);
         self::assertNotNull($newGroupName);
         self::assertEquals($groupNameForRequest, $newGroupName->getGroupName());

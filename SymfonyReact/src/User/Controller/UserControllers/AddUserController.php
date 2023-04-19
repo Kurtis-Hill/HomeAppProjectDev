@@ -8,7 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\DTO\Request\UserDTOs\NewUserRequestDTO;
-use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Services\User\UserCreationHandler;
 use App\User\Voters\UserVoter;
@@ -70,7 +70,7 @@ class AddUserController extends AbstractController
                 $newUserRequestDTO->getRoles(),
                 true,
             );
-        } catch (UserCreationValidationErrorsException|GroupNameValidationException $e) {
+        } catch (UserCreationValidationErrorsException|GroupValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
         }
 

@@ -61,12 +61,18 @@ export function AddNewDevice(props: {
 
             const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);
 
-            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 200) {
+            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
                 const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
                 setNewDeviceAddedData(addNewDevicePayload);
                 setDeviceRequestLoading(false);
                 setErrors([]);
                 setRefreshNavDataFlag(true);
+
+                <UserDataContext.Consumer>
+                    {(setRefreshUserData: (value: boolean) => void) => (
+                        setRefreshUserData(true)
+                    )}
+                </UserDataContext.Consumer>
             } else {
                 setDeviceRequestLoading(false);
                 setErrors((errors: string[]) => ['Error adding new device, unexpected response']);

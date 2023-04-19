@@ -2,8 +2,8 @@
 
 namespace App\Authentication\Repository\ORM;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\User\Entity\GroupNames;
+use App\Authentication\Entity\GroupMapping;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -12,18 +12,18 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<GroupNameMapping>
+ * @extends ServiceEntityRepository<GroupMapping>
  *
- * @method GroupNameMapping|null find($id, $lockMode = null, $lockVersion = null)
- * @method GroupNameMapping|null findOneBy(array $criteria, array $orderBy = null)
- * @method GroupNameMapping[]    findAll()
- * @method GroupNameMapping[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method GroupMapping|null find($id, $lockMode = null, $lockVersion = null)
+ * @method GroupMapping|null findOneBy(array $criteria, array $orderBy = null)
+ * @method GroupMapping[]    findAll()
+ * @method GroupMapping[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GroupNameMappingRepository extends ServiceEntityRepository
+class GroupMappingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, GroupNameMapping::class);
+        parent::__construct($registry, GroupMapping::class);
     }
 
     public function getAllGroupMappingEntitiesForUser(User $user): array
@@ -31,7 +31,7 @@ class GroupNameMappingRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gmt')
-            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupID = gn.groupID')
+            ->innerJoin(Group::class, 'gn', Join::WITH, 'gmt.groupID = gn.groupID')
             ->innerJoin(User::class, 'u', Join::WITH, 'gmt.user = u.userID')
             ->where(
                 $qb->expr()->eq('gmt.user', ':user')
@@ -44,7 +44,7 @@ class GroupNameMappingRepository extends ServiceEntityRepository
     /**
      * @throws ORMException
      */
-    public function persist(GroupNameMapping $groupNameMapping): void
+    public function persist(GroupMapping $groupNameMapping): void
     {
         $this->getEntityManager()->persist($groupNameMapping);
     }
@@ -58,7 +58,7 @@ class GroupNameMappingRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-    public function remove(GroupNameMapping $groupNameMapping): void
+    public function remove(GroupMapping $groupNameMapping): void
     {
         $this->getEntityManager()->remove($groupNameMapping);
         $this->getEntityManager()->flush();

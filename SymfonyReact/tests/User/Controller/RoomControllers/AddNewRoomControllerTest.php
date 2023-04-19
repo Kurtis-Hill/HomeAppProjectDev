@@ -7,7 +7,7 @@ use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,7 +71,7 @@ class AddNewRoomControllerTest extends WebTestCase
     {
         $formRequestData = [
             'roomName' => 'T',
-            'groupID' => $this->user->getGroupID()->getGroupID(),
+            'groupID' => $this->user->getGroup()->getGroupID(),
         ];
 
         $jsonData = json_encode($formRequestData);

@@ -27,7 +27,7 @@ class GetGroupsController extends AbstractController
         }
 
         $groupNameDTOs = [];
-        foreach ($user->getAssociatedGroupNames() as $groupName) {
+        foreach ($user->getAssociatedGroups() as $groupName) {
             $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
                 $groupName
             );

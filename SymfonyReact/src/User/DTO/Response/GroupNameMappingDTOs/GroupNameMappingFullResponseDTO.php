@@ -10,15 +10,15 @@ use JetBrains\PhpStorm\Immutable;
 readonly class GroupNameMappingFullResponseDTO
 {
     public function __construct(
-        private int $groupNameMappingID,
+        private int $groupMappingID,
         private UserFullResponseDTO $user,
         private GroupResponseDTO $group,
     ) {
     }
 
-    public function getGroupNameMappingID(): int
+    public function getGroupMappingID(): int
     {
-        return $this->groupNameMappingID;
+        return $this->groupMappingID;
     }
 
     public function getUser(): UserFullResponseDTO

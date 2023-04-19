@@ -7,7 +7,7 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
@@ -51,7 +51,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
 
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->regularUserTwo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $this->adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
@@ -63,8 +63,8 @@ class DeleteDeviceControllerTest extends WebTestCase
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
-        /** @var GroupNames[] $groupsUserIsNotApartOf */
+        $groupNameRepository = $this->entityManager->getRepository(Group::class);
+        /** @var Group[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),
@@ -159,7 +159,7 @@ class DeleteDeviceControllerTest extends WebTestCase
     {
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_TWO, UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var GroupNames[] $groupsUserIsApartOf */
+        /** @var Group[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
         if (empty($groupsUserIsApartOf)) {
@@ -210,7 +210,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
-        /** @var GroupNames[] $groupsUserIsNotApartOf */
+        /** @var Group[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),

@@ -2,32 +2,32 @@
 
 namespace App\User\Services\GroupMappingServices;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Entity\GroupMapping;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
 
 class DeleteGroupNameMappingHandler
 {
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupMappingRepository $groupNameMappingRepository;
 
     private LoggerInterface $elasticLogger;
 
-    public function __construct(GroupNameMappingRepository $groupNameMappingRepository, LoggerInterface $elasticLogger)
+    public function __construct(GroupMappingRepository $groupNameMappingRepository, LoggerInterface $elasticLogger)
     {
         $this->groupNameMappingRepository = $groupNameMappingRepository;
         $this->elasticLogger = $elasticLogger;
     }
 
-    public function deleteGroupNameMapping(GroupNameMapping $groupNameMapping): bool
+    public function deleteGroupNameMapping(GroupMapping $groupNameMapping): bool
     {
         try {
             $this->groupNameMappingRepository->remove($groupNameMapping);
             $this->groupNameMappingRepository->flush();
         } catch (ORMException|OptimisticLockException $e) {
             $this->elasticLogger->error('Error deleting group name mapping', [
-                'groupNameMappingID' => $groupNameMapping->getGroupNameMappingID(),
+                'groupMappingID' => $groupNameMapping->getGroupMappingID(),
                 $e->getMessage(),
             ]);
 

@@ -9,6 +9,7 @@ import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
+import UserDataContext from '../../Contexts/UserDataContext';
 
 export function AddNewRoom(props: {
         setAddNewRoomModal: ((show: boolean) => void);
@@ -56,6 +57,16 @@ export function AddNewRoom(props: {
                 setRoomRequestLoading(false);
                 setErrors([]);
                 setRefreshNavDataFlag(true);
+
+                    console.log('in consumer');
+
+                        // <UserDataContext.Consumer>
+                            // value.refreshAllUserData(true);
+                            {/* {(setRefreshUserData: (value: boolean) => void) => (
+                                setRefreshUserData(true)
+                                // refreshAllUserData(true)
+                            )} */}
+                        // </UserDataContext.Consumer>
             } else {
                 setRoomRequestLoading(false);
                 setErrors(['Something has gone wrong']);

@@ -4,7 +4,7 @@ namespace App\Devices\Repository\ORM;
 
 use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -70,7 +70,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv')
             ->leftJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
-            ->leftJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupID = gn.groupID');
+            ->leftJoin(Group::class, 'gn', Join::WITH, 'dv.groupID = gn.groupID');
         $qb->where(
             $qb->expr()->in('dv.groupID', ':groupID')
         )
@@ -91,7 +91,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
     ): array {
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv')
-            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupID = gn.groupID')
+            ->innerJoin(Group::class, 'gn', Join::WITH, 'dv.groupID = gn.groupID')
             ->innerJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
             ->innerJoin(User::class, 'u', Join::WITH, 'dv.createdBy = u.userID');
         $qb->where(

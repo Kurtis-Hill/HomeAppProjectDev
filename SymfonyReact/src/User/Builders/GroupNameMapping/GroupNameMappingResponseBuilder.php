@@ -2,19 +2,19 @@
 
 namespace App\User\Builders\GroupNameMapping;
 
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\DTO\Response\GroupNameMappingDTOs\GroupNameMappingFullResponseDTO;
 
 class GroupNameMappingResponseBuilder
 {
-    public static function buildGroupNameFullResponseDTO(GroupNameMapping $groupNameMapping): GroupNameMappingFullResponseDTO
+    public static function buildGroupNameFullResponseDTO(GroupMapping $groupNameMapping): GroupNameMappingFullResponseDTO
     {
         return new GroupNameMappingFullResponseDTO(
-            $groupNameMapping->getGroupNameMappingID(),
+            $groupNameMapping->getGroupMappingID(),
             UserResponseBuilder::buildFullUserResponseDTO($groupNameMapping->getUser()),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupNameMapping->getGroupID()),
+            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupNameMapping->getGroup()),
         );
     }
 }

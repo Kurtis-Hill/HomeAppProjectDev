@@ -2,36 +2,36 @@
 
 namespace App\Authentication\Entity;
 
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[
-    ORM\Entity(repositoryClass: GroupNameMappingRepository::class),
-    ORM\Table(name: "groupnnamemapping"),
+    ORM\Entity(repositoryClass: GroupMappingRepository::class),
+    ORM\Table(name: "groupmapping"),
     ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["user"], name: "IDX_1C993DEE5FD86D04"),
     ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupID"]),
 ]
 #[UniqueEntity(fields: ['user', 'groupID'], message: self::GROUP_NAME_MAPPING_EXISTS)]
-class GroupNameMapping
+class GroupMapping
 {
     public const GROUP_NAME_MAPPING_EXISTS = 'User is already in this group';
 
     #[
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
-        ORM\Column(name: "groupNameMappingID", type: "integer", nullable: false)
+        ORM\Column(name: "groupMappingID", type: "integer", nullable: false)
     ]
-    private int $groupNameMappingID;
+    private int $groupMappingID;
 
     #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
+        ORM\ManyToOne(targetEntity: Group::class),
         ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
-    private GroupNames $groupID;
+    private Group $groupID;
 
     #[
         ORM\ManyToOne(targetEntity: User::class, inversedBy: "userGroupMappingEntities"),
@@ -39,22 +39,22 @@ class GroupNameMapping
     ]
     private User $user;
 
-    public function getGroupNameMappingID(): int
+    public function getGroupMappingID(): int
     {
-        return $this->groupNameMappingID;
+        return $this->groupMappingID;
     }
 
-    public function setGroupNameMappingID(int $groupNameMappingID): void
+    public function setGroupMappingID(int $groupMappingID): void
     {
-        $this->groupNameMappingID = $groupNameMappingID;
+        $this->groupMappingID = $groupMappingID;
     }
 
-    public function getGroupID(): GroupNames
+    public function getGroup(): Group
     {
         return $this->groupID;
     }
 
-    public function setGroupID(GroupNames $groupID): void
+    public function setGroup(Group $groupID): void
     {
         $this->groupID = $groupID;
     }
@@ -68,5 +68,4 @@ class GroupNameMapping
     {
         $this->user = $userID;
     }
-
 }

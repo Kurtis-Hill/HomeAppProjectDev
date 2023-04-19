@@ -18,7 +18,7 @@ class UserResponseBuilder
             $user->getFirstName(),
             $user->getLastName(),
             $user->getEmail(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroupID()),
+            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroup()),
             $user->getCreatedAt(),
             $showProfilePic !== true ? null : $user->getProfilePic(),
             $showRoles !== true ? null : $user->getRoles(),

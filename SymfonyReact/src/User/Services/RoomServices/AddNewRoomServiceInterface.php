@@ -3,9 +3,9 @@
 namespace App\User\Services\RoomServices;
 
 use App\User\DTO\Internal\RoomDTOs\AddNewRoomDTO;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use JetBrains\PhpStorm\ArrayShape;
 use Doctrine\ORM\Exception\ORMException;

@@ -14,7 +14,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Normalizers\DeviceResponseNormalizer;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
@@ -90,7 +90,7 @@ class UpdateDeviceController extends AbstractController
             );
         } catch (NonUniqueResultException | ORMException) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room or group name')]);
-        } catch (GroupNameNotFoundException|RoomNotFoundException $e) {
+        } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         }
 

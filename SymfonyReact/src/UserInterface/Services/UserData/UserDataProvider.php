@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupNameServices\UserGroupsFinder;
+use App\User\Services\GroupServices\UserGroupsFinder;
 use App\UserInterface\Builders\UserData\UserDataDTOBuilder;
 use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
 use Doctrine\ORM\AbstractQuery;
@@ -67,6 +67,6 @@ class UserDataProvider
     {
         return $user->isAdmin()
             ? $this->groupNameRepository->findAll()
-            : $user->getAssociatedGroupNames();
+            : $user->getAssociatedGroups();
     }
 }

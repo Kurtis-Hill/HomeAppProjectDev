@@ -3,7 +3,7 @@
 namespace App\UserInterface\DTO\Response\UserData;
 
 use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
@@ -13,7 +13,7 @@ class UserDataResponseDTO
     #[ArrayShape([RoomResponseDTO::class])]
     private array $userRooms;
 
-    #[ArrayShape([GroupNames::class])]
+    #[ArrayShape([Group::class])]
     private array $userGroups;
 
     public function __construct(

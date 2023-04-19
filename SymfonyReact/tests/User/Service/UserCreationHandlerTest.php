@@ -2,11 +2,11 @@
 
 namespace App\Tests\User\Service;
 
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
@@ -39,7 +39,7 @@ class UserCreationHandlerTest extends KernelTestCase
         $container = self::getContainer();
         $this->sut = $container->get(UserCreationHandler::class);
         $this->entityManager = $container->get('doctrine')->getManager();
-        $this->groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupRepository = $this->entityManager->getRepository(Group::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->projectDir = $kernel->getProjectDir();
         $this->uploadProfilePictureDir = $_ENV['USER_PROFILE_DIRECTORY'];
@@ -54,7 +54,7 @@ class UserCreationHandlerTest extends KernelTestCase
 
     public function test_handle_new_user_creation_duplicate_groupname(): void
     {
-        $this->expectException(GroupNameValidationException::class);
+        $this->expectException(GroupValidationException::class);
 
         $this->sut->handleNewUserCreation(
             'John',
@@ -98,7 +98,7 @@ class UserCreationHandlerTest extends KernelTestCase
         self::assertEquals('John', $userCheck->getFirstName());
         self::assertEquals('Doe', $userCheck->getLastName());
         self::assertEquals(UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED, $userCheck->getEmail());
-        self::assertEquals(UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED, $userCheck->getGroupID()->getGroupName());
+        self::assertEquals(UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED, $userCheck->getGroup()->getGroupName());
         self::assertEquals(User::DEFAULT_PROFILE_PICTURE, $userCheck->getProfilePic());
     }
 
@@ -225,7 +225,7 @@ class UserCreationHandlerTest extends KernelTestCase
      */
     public function test_create_user_invalid_group_name_data(string $groupName, array $errors): void
     {
-        $this->expectException(GroupNameValidationException::class);
+        $this->expectException(GroupValidationException::class);
 
         $this->sut->handleNewUserCreation(
             'John',
@@ -315,7 +315,7 @@ class UserCreationHandlerTest extends KernelTestCase
 
         $group = $this->groupRepository->findOneBy(['groupName' => UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED]);
 
-        self::assertEquals($group, $user->getGroupID());
+        self::assertEquals($group, $user->getGroup());
     }
 
     public function test_adding_user_with_admin_roles(): void
@@ -381,11 +381,11 @@ class UserCreationHandlerTest extends KernelTestCase
         /** @var User $userSaved */
         $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
 
-        $groupRepository = $this->entityManager->getRepository(GroupNames::class);
-        /** @var GroupNames $homeAppGroup */
-        $homeAppGroup = $groupRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+        $groupRepository = $this->entityManager->getRepository(Group::class);
+        /** @var Group $homeAppGroup */
+        $homeAppGroup = $groupRepository->findOneBy(['groupName' => Group::HOME_APP_GROUP_NAME]);
 
-        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
 
         $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
             'groupID' => $homeAppGroup->getGroupID(),

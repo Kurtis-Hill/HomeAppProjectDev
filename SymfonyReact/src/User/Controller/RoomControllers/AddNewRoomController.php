@@ -9,7 +9,7 @@ use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\RoomDTOBuilder\NewRoomInternalDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\DTO\Request\AddNewRoomRequestDTO;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Services\RoomServices\AddNewRoomServiceInterface;

@@ -2,21 +2,21 @@
 
 namespace App\User\Services\GroupMappingServices;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Entity\GroupMapping;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\User\Entity\User;
 use JetBrains\PhpStorm\ArrayShape;
 
 class GetGroupNameMappingHandler
 {
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupMappingRepository $groupNameMappingRepository;
 
-    public function __construct(GroupNameMappingRepository $groupNameMappingRepository)
+    public function __construct(GroupMappingRepository $groupNameMappingRepository)
     {
         $this->groupNameMappingRepository = $groupNameMappingRepository;
     }
 
-    #[ArrayShape([GroupNameMapping::class])]
+    #[ArrayShape([GroupMapping::class])]
     public function getGroupNameMappingsForUser(User $user): array
     {
         if ($user->isAdmin()) {

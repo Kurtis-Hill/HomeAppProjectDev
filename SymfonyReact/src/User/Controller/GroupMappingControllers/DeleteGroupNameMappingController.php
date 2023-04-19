@@ -1,13 +1,13 @@
 <?php
 
-namespace App\User\Controller\GroupNameMappingControllers;
+namespace App\User\Controller\GroupMappingControllers;
 
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Services\GroupMappingServices\DeleteGroupNameMappingHandler;
-use App\User\Voters\GroupNameMappingVoter;
+use App\User\Voters\GroupMappingVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,19 +22,19 @@ class DeleteGroupNameMappingController extends AbstractController
 
     public const DELETE_GROUP_NAME_MAPPING_SUCCESS = 'Group name mapping with id: %d deleted successfully';
 
-    #[Route('{groupNameMappingID}/delete', name: 'delete-group', methods: [Request::METHOD_DELETE])]
+    #[Route('{groupMappingID}/delete', name: 'delete-group', methods: [Request::METHOD_DELETE])]
     public function deleteGroupNameMapping(
-        GroupNameMapping $groupNameMappingID,
+        GroupMapping $groupMappingID,
         DeleteGroupNameMappingHandler $deleteGroupNameMappingHandler,
     ): JsonResponse {
         try {
-            $this->denyAccessUnlessGranted(GroupNameMappingVoter::DELETE_GROUP_NAME_MAPPING, $groupNameMappingID);
+            $this->denyAccessUnlessGranted(GroupMappingVoter::DELETE_GROUP_NAME_MAPPING, $groupMappingID);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse();
         }
 
-        $deletedGroupNameMappingID = $groupNameMappingID->getGroupNameMappingID();
-        $deviceDeleteSuccess = $deleteGroupNameMappingHandler->deleteGroupNameMapping($groupNameMappingID);
+        $deletedGroupNameMappingID = $groupMappingID->getGroupMappingID();
+        $deviceDeleteSuccess = $deleteGroupNameMappingHandler->deleteGroupNameMapping($groupMappingID);
 
         if ($deviceDeleteSuccess === false) {
             return $this->sendBadRequestJsonResponse();

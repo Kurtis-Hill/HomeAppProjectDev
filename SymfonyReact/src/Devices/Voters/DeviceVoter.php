@@ -5,7 +5,7 @@ namespace App\Devices\Voters;
 use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -110,7 +110,7 @@ class DeviceVoter extends Voter
         return $checkCommon ?? true;
     }
 
-    private function checkCommon(UserInterface $user, GroupNames $proposedGroupName): ?bool
+    private function checkCommon(UserInterface $user, Group $proposedGroupName): ?bool
     {
         if (!$user instanceof User) {
             return false;

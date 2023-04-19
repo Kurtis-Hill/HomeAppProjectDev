@@ -2,18 +2,18 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Authentication\Repository\ORM\GroupNameMappingRepository;
+use App\Authentication\Repository\ORM\GroupMappingRepository;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\RoomFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
@@ -40,7 +40,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private KernelBrowser $client;
 
-    private GroupNames $groupName;
+    private Group $groupName;
 
     private Room $room;
 
@@ -52,7 +52,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private GroupRepositoryInterface $groupNameRepository;
 
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupMappingRepository $groupNameMappingRepository;
 
     protected function setUp(): void
     {
@@ -65,11 +65,11 @@ class AddNewDeviceControllerTest extends WebTestCase
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
+        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
-        $this->groupName = $this->entityManager->getRepository(GroupNames::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
+        $this->groupName = $this->entityManager->getRepository(Group::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
         $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName( RoomFixtures::LIVING_ROOM);
         $this->userToken = $this->setUserToken($this->client);
     }
@@ -470,7 +470,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $groupNameMappingEntities = $this->groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
         $user->setUserGroupMappingEntities($groupNameMappingEntities);
 
-        /** @var GroupNames $groupUserIsNotApartOf */
+        /** @var Group $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),
@@ -546,7 +546,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     public function test_adding_device_unrecognised_group(): void
     {
-        $groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        $groupRepository = $this->entityManager->getRepository(Group::class);
         while (true) {
             $noneExistentGroupID = random_int(1, 10000);
             $group = $groupRepository->find($noneExistentGroupID);

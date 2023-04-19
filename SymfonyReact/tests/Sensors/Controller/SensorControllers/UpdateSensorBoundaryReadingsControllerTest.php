@@ -1115,7 +1115,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $deviceRepository = $this->entityManager->getRepository(Devices::class);
         /** @var Devices $deviceObject */
-        $deviceObject = $deviceRepository->findBy(['groupID' => $loggedInUser->getGroupID()])[0];
+        $deviceObject = $deviceRepository->findBy(['groupID' => $loggedInUser->getGroup()])[0];
 
         if (in_array($deviceObject->getGroupObject()->getGroupID(), $userNotInGroup->getAssociatedGroupIDs(), true)) {
             throw new Exception();

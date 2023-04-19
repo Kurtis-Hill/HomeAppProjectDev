@@ -11,10 +11,10 @@ use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -22,15 +22,15 @@ use JetBrains\PhpStorm\ArrayShape;
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
     /**
-     * @throws GroupNameNotFoundException
+     * @throws GroupNotFoundException
      * @throws RoomNotFoundException
      * @throws ORMException
      */
     public function findObjectNeededForNewDevice(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {
         $groupObject = $this->groupRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
-        if (!$groupObject instanceof GroupNames) {
-            throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
+        if (!$groupObject instanceof Group) {
+            throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
         }
 
         $roomObject = $this->roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());

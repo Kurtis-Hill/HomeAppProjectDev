@@ -4,7 +4,7 @@ namespace App\Devices\Entity;
 
 use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Repository\ORM\DeviceRepository;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -74,11 +74,11 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     private User $createdBy;
 
     #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
+        ORM\ManyToOne(targetEntity: Group::class),
         ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
     #[Assert\NotBlank(message: 'Group name should not be blank')]
-    private GroupNames $groupID;
+    private Group $groupID;
 
     #[
         ORM\ManyToOne(targetEntity: Room::class),
@@ -160,12 +160,12 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdBy = $createdBy;
     }
 
-    public function getGroupObject(): GroupNames
+    public function getGroupObject(): Group
     {
         return $this->groupID;
     }
 
-    public function setGroupObject(GroupNames $groupID): void
+    public function setGroupObject(Group $groupID): void
     {
         $this->groupID = $groupID;
     }

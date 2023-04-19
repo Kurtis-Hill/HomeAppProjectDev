@@ -5,7 +5,7 @@ namespace App\Devices\Forms;
 use App\Common\API\APIErrorMessages;
 use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -36,7 +36,7 @@ class AddNewDeviceForm extends AbstractType
             ])
 
             ->add('groupNameObject', EntityType::class, [
-                'class' => GroupNames::class,
+                'class' => Group::class,
             ])
 
             ->add('roomObject', EntityType::class, [

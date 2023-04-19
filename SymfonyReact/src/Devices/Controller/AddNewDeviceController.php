@@ -12,7 +12,7 @@ use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
@@ -70,7 +70,7 @@ class AddNewDeviceController extends AbstractController
 
         try {
             $newDeviceCheckDTO = $newDeviceHandler->findObjectNeededForNewDevice($newDeviceRequestDTO, $user);
-        } catch (GroupNameNotFoundException|RoomNotFoundException $e) {
+        } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         } catch (ORMException $e) {
             $this->logger->error($e->getMessage());
