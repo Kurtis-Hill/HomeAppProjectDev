@@ -21,7 +21,7 @@ use App\Sensors\Repository\SensorType\ORM\GenericSensorTypeRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -46,7 +46,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupNameRepository;
 
     private DeviceRepositoryInterface $deviceRepository;
 
@@ -124,7 +124,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy([
-            'groupNameID' => $groupsNotApartOf,
+            'groupID' => $groupsNotApartOf,
         ]);
 
         $device = $devicesUserIsNotApartOf[0];
@@ -157,7 +157,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy([
-            'groupNameID' => $groupsNotApartOf,
+            'groupID' => $groupsNotApartOf,
         ]);
 
         $device = $devicesUserIsNotApartOf[0];
@@ -264,7 +264,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         while (true) {
             $randomGroup = $groupsNotApartOf[array_rand($groupsNotApartOf)];
             /** @var Devices $device */
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $randomGroup]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
@@ -300,7 +300,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         while (true) {
             $randomGroup = $groupsNotApartOf[array_rand($groupsNotApartOf)];
             /** @var Devices $device */
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $randomGroup]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
@@ -337,7 +337,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         while (true) {
             $randomGroup = $groupsApartOf[array_rand($groupsApartOf)];
             /** @var Devices $device */
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $randomGroup]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
@@ -376,7 +376,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         while (true) {
             $randomGroup = $groupsApartOf[array_rand($groupsApartOf)];
             /** @var Devices $device */
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $randomGroup]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }

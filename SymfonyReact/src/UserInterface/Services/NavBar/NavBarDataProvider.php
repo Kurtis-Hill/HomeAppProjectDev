@@ -11,7 +11,7 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupNameServices\GetGroupNamesHandler;
+use App\User\Services\GroupNameServices\UserGroupsFinder;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\UserInterface\Builders\NavBarDTOBuilders\NavBarListLinkDTOBuilder;
 use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
@@ -28,7 +28,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private NavBarDTOBuilder $navBarDTOBuilder;
 
-    private GetGroupNamesHandler $getGroupNamesHandler;
+    private UserGroupsFinder $getGroupNamesHandler;
 
     private array $errors = [];
 
@@ -36,7 +36,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         RoomRepositoryInterface $roomRepository,
         DeviceRepositoryInterface $deviceRepository,
         NavBarDTOBuilder $navBarDTOBuilder,
-        GetGroupNamesHandler $getGroupNamesHandler,
+        UserGroupsFinder $getGroupNamesHandler,
     ) {
         $this->roomRepository = $roomRepository;
         $this->deviceRepository = $deviceRepository;
@@ -83,7 +83,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
                     CommonURL::HOMEAPP_WEBAPP_URL_BASE,
                     'group',
                     http_build_query(
-                        ['group' => $group->getGroupNameID()]
+                        ['group' => $group->getGroupID()]
                     )
                 )
             );
@@ -156,7 +156,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getRoomData(User $user): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($user->getAssociatedGroupNameIds(), AbstractQuery::HYDRATE_OBJECT);
+        return $this->roomRepository->getAllUserRoomsByGroupId($user->getAssociatedGroupIDs(), AbstractQuery::HYDRATE_OBJECT);
     }
 
     /**

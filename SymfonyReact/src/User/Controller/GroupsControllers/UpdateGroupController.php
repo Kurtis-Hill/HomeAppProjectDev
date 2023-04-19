@@ -8,7 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\GroupName\UpdateGroupDTOBuilder;
-use App\User\DTO\RequestDTOs\GroupDTOs\UpdateGroupRequestDTO;
+use App\User\DTO\Request\GroupDTOs\UpdateGroupRequestDTO;
 use App\User\Entity\GroupNames;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Services\GroupNameServices\UpdateGroupHandler;
@@ -30,9 +30,9 @@ class UpdateGroupController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('{groupNameID}/update', name: 'update-group', methods: [Request::METHOD_PATCH, Request::METHOD_PUT])]
+    #[Route('{groupID}/update', name: 'update-group', methods: [Request::METHOD_PATCH, Request::METHOD_PUT])]
     public function updateGroupName(
-        GroupNames $groupNameID,
+        GroupNames $groupID,
         Request $request,
         ValidatorInterface $validator,
         UpdateGroupHandler $updateGroupHandler,
@@ -56,7 +56,7 @@ class UpdateGroupController extends AbstractController
 
         $updateGroupDTO = UpdateGroupDTOBuilder::buildUpdateGroupDTO(
             $updateGroupRequestDTO->getGroupName(),
-            $groupNameID
+            $groupID
         );
 
         try {
@@ -73,7 +73,7 @@ class UpdateGroupController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse();
         }
 
-        $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupNameID);
+        $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupID);
         try {
             $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO);
         } catch (NotEncodableValueException) {

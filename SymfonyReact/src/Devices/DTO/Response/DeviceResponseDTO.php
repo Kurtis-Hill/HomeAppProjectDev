@@ -12,7 +12,7 @@ readonly class DeviceResponseDTO
     public function __construct(
         private ?int $deviceNameID,
         private string $deviceName,
-        private int $groupNameID,
+        private int $groupID,
         private int $roomID,
         private string|int $createdBy,
         private ?string $secret = null,
@@ -32,9 +32,9 @@ readonly class DeviceResponseDTO
         return $this->deviceName;
     }
 
-    public function getGroupNameID(): int
+    public function getGroupID(): int
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
     public function getRoomID(): int

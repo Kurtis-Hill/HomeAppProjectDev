@@ -29,7 +29,7 @@ class DeviceResponseDTOBuilder
         return new DeviceResponseDTO(
             $device->getDeviceID(),
             $device->getDeviceName(),
-            $device->getGroupNameObject()->getGroupNameID(),
+            $device->getGroupObject()->getGroupID(),
             $device->getRoomObject()->getRoomID(),
             $device->getCreatedBy()->getUsername(),
             $showPassword === false ? null : $device->getDeviceSecret(),
@@ -44,7 +44,7 @@ class DeviceResponseDTOBuilder
         return new DeviceResponseDTO(
             null,
             $device->getDeviceName(),
-            $device->getGroupNameObject()->getGroupNameID(),
+            $device->getGroupObject()->getGroupID(),
             $device->getRoomObject()->getRoomID(),
             $device->getCreatedBy()->getUsername(),
             $showPassword === false ? null : $device->getDeviceSecret(),
@@ -62,7 +62,7 @@ class DeviceResponseDTOBuilder
             $device->getDeviceID(),
             $device->getDeviceName(),
             $device->getDeviceSecret(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupNameObject()),
+            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
             RoomResponseDTOBuilder::buildRoomResponseDTO($device->getRoomObject()),
             $device->getIpAddress(),
             $device->getExternalIpAddress(),

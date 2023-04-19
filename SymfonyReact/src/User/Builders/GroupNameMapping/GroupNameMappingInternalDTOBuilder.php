@@ -3,7 +3,7 @@
 namespace App\User\Builders\GroupNameMapping;
 
 use App\Authentication\Entity\GroupNameMapping;
-use App\User\DTO\InternalDTOs\GroupNameMappingDTOs\AddGroupNameMappingDTO;
+use App\User\DTO\Internal\GroupNameMappingDTOs\AddGroupMappingDTO;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 
@@ -12,10 +12,10 @@ class GroupNameMappingInternalDTOBuilder
     public static function buildGroupNameMappingInternalDTO(
         User $userToAddToGroupName,
         GroupNames $groupNameObject,
-    ): AddGroupNameMappingDTO {
+    ): AddGroupMappingDTO {
         $newGroupNameMapping = new GroupNameMapping();
 
-        $groupNameMapping = new AddGroupNameMappingDTO(
+        $groupNameMapping = new AddGroupMappingDTO(
             $userToAddToGroupName,
             $groupNameObject,
             $newGroupNameMapping,

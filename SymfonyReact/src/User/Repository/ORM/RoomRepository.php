@@ -31,26 +31,20 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         $qb->select('room')
             ->where(
                 $expr->eq('room.room', ':roomName'),
-//                $expr->eq('room.groupNameID', ':groupNameID')
             );
         $qb->setParameters([
             'roomName' => $roomName,
-//            'groupNameID' => $groupNameID
         ]);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     #[Deprecated(reason: 'Use findRoomByName instead', replacement: 'findRoomByName')]
-    public function getAllUserRoomsByGroupId(array $groupNameIDs, int $hydrationMethod = AbstractQuery::HYDRATE_ARRAY): array
+    public function getAllUserRoomsByGroupId(array $groupIDs, int $hydrationMethod = AbstractQuery::HYDRATE_ARRAY): array
     {
         $qb = $this->createQueryBuilder('r');
 
         $qb->select('r');
-//            ->where(
-//                $qb->expr()->in('r.groupNameID', ':groupNameID')
-//            )
-//            ->setParameter('groupNameID', $groupNameIDs);
 
         return $qb->getQuery()->getResult($hydrationMethod);
     }
@@ -76,7 +70,7 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
     }
 
     #[Deprecated(reason: 'Use findRoomByName instead', replacement: 'findRoomByName')]
-    public function findOneByRoomNameAndGroupNameId(int $groupNameId, string $roomName): ?Room
+    public function findOneByRoomNameAndGroupId(int $groupID, string $roomName): ?Room
     {
         $qb = $this->createQueryBuilder('room');
         $expr = $qb->expr();
@@ -84,11 +78,11 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         $qb->select('room')
             ->where(
                 $expr->eq('room.room', ':roomName'),
-                $expr->eq('room.groupNameID', ':groupNameId')
+                $expr->eq('room.groupID', ':groupID')
             );
         $qb->setParameters([
             'roomName' => $roomName,
-            'groupNameId' => $groupNameId
+            'groupID' => $groupID
         ]);
 
         return $qb->getQuery()->getOneOrNullResult();

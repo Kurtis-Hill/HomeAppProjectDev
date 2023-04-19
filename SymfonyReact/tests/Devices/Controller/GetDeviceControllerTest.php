@@ -11,7 +11,7 @@ use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -38,7 +38,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     private UserRepository $userRepository;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupNameRepository;
 
     private User $regularUserOne;
 
@@ -74,7 +74,7 @@ class GetDeviceControllerTest extends WebTestCase
         $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotAssignedTo]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
@@ -104,7 +104,7 @@ class GetDeviceControllerTest extends WebTestCase
         $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotAssignedTo]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
@@ -130,8 +130,8 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getDeviceID(), $payload['deviceNameID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertNull($payload['secret']);
-        self::assertEquals($device->getGroupNameObject()->getGroupName(), $payload['groupName']['groupName']);
-        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $payload['groupName']['groupNameID']);
+        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
@@ -145,7 +145,7 @@ class GetDeviceControllerTest extends WebTestCase
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
@@ -174,8 +174,8 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getDeviceID(), $payload['deviceNameID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertNull($payload['secret']);
-        self::assertEquals($device->getGroupNameObject()->getGroupName(), $payload['groupName']['groupName']);
-        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $payload['groupName']['groupNameID']);
+        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
@@ -189,7 +189,7 @@ class GetDeviceControllerTest extends WebTestCase
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
@@ -214,8 +214,8 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getDeviceID(), $payload['deviceNameID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertNull($payload['secret']);
-        self::assertEquals($device->getGroupNameObject()->getGroupName(), $payload['groupName']['groupName']);
-        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $payload['groupName']['groupNameID']);
+        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
@@ -229,7 +229,7 @@ class GetDeviceControllerTest extends WebTestCase
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsAssignedTo]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
@@ -259,10 +259,10 @@ class GetDeviceControllerTest extends WebTestCase
         $allDevices = $this->deviceRepository->findAll();
 
         foreach ($allDevices as $device) {
-            if ($device->getGroupNameObject()->getGroupNameID() === $groupsUserIsAssignedTo) {
+            if ($device->getGroupObject()->getGroupID() === $groupsUserIsAssignedTo) {
                 self::assertContains($device->getDeviceID(), $payload);
             }
-            if ($device->getGroupNameObject()->getGroupNameID() !== $groupsUserIsAssignedTo) {
+            if ($device->getGroupObject()->getGroupID() !== $groupsUserIsAssignedTo) {
                 self::assertNotContains($device->getDeviceID(), $payload);
             }
         }

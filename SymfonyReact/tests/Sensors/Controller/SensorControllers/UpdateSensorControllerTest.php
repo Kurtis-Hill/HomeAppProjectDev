@@ -14,7 +14,7 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -41,7 +41,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupNameRepository;
 
     protected function setUp(): void
     {
@@ -188,7 +188,7 @@ class UpdateSensorControllerTest extends WebTestCase
             self::fail('UserDTOs is not apart of any group');
         }
         foreach ($groupUserIsApartOf as $group) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $group]);
             if ($device !== null) {
                 break;
             }
@@ -207,7 +207,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         foreach ($groupsUserIsNotApartOf as $group) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $group]);
             if ($device !== null) {
                 break;
             }
@@ -260,7 +260,7 @@ class UpdateSensorControllerTest extends WebTestCase
             self::fail('UserDTOs is not apart of any group');
         }
         foreach ($groupUserIsApartOf as $group) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $group]);
             if ($device !== null) {
                 break;
             }
@@ -279,7 +279,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         foreach ($groupsUserIsNotApartOf as $group) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $group]);
             if ($device !== null) {
                 break;
             }
@@ -335,7 +335,7 @@ class UpdateSensorControllerTest extends WebTestCase
             self::fail('UserDTOs is not apart of any group');
         }
         foreach ($groupUserIsApartOf as $group) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $group]);
             if ($device !== null) {
                 break;
             }
@@ -421,8 +421,8 @@ class UpdateSensorControllerTest extends WebTestCase
         foreach ($sensors as $sensor) {
             if (
                 in_array(
-                    $sensor->getDevice()->getGroupNameObject()->getGroupNameID(),
-                    $user->getAssociatedGroupNameIds(),
+                    $sensor->getDevice()->getGroupObject()->getGroupID(),
+                    $user->getAssociatedGroupIDs(),
                     true
                 )) {
                 /** @var Sensor $sensorToUpdate */
@@ -444,7 +444,7 @@ class UpdateSensorControllerTest extends WebTestCase
             self::fail('UserDTOs is not apart of any group');
         }
         foreach ($groupUserIsApartOf as $group) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $group]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $group]);
             if ($device !== null) {
                 break;
             }
@@ -522,12 +522,12 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getCreatedBy()->getLastName(), $payload['createdBy']['lastName']);
         self::assertNull($payload['createdBy']['profilePicture']);
         self::assertNull($payload['createdBy']['roles']);
-        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupNameID()->getGroupNameID(), $payload['createdBy']['group']['groupNameID']);
-        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupNameID()->getGroupName(), $payload['createdBy']['group']['groupName']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupID()->getGroupID(), $payload['createdBy']['group']['groupID']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getGroupID()->getGroupName(), $payload['createdBy']['group']['groupName']);
 
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $payload['device']['deviceNameID']);
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensorToUpdate->getDevice()->getGroupNameObject()->getGroupNameID(), $payload['device']['groupNameID']);
+        self::assertEquals($sensorToUpdate->getDevice()->getGroupObject()->getGroupID(), $payload['device']['groupID']);
         self::assertEquals($sensorToUpdate->getDevice()->getRoomObject()->getRoomID(), $payload['device']['roomID']);
         self::assertNull($payload['device']['secret']);
 

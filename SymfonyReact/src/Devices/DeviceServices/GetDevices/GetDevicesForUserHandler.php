@@ -7,16 +7,16 @@ use App\Devices\DTO\Internal\GetDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\User\Entity\User;
-use App\User\Services\GroupNameServices\GetGroupNamesHandler;
+use App\User\Services\GroupNameServices\UserGroupsFinder;
 use JetBrains\PhpStorm\ArrayShape;
 
 class GetDevicesForUserHandler implements GetDevicesForUserInterface
 {
     private DeviceRepository $deviceRepository;
 
-    private GetGroupNamesHandler $getGroupNamesHandler;
+    private UserGroupsFinder $getGroupNamesHandler;
 
-    public function __construct(DeviceRepository $deviceRepository, GetGroupNamesHandler $getGroupNamesHandler)
+    public function __construct(DeviceRepository $deviceRepository, UserGroupsFinder $getGroupNamesHandler)
     {
         $this->deviceRepository = $deviceRepository;
         $this->getGroupNamesHandler = $getGroupNamesHandler;

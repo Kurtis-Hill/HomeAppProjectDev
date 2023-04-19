@@ -37,7 +37,7 @@ class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDevi
             }
         }
         if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
-            $groupName = $this->groupNameRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
+            $groupName = $this->groupRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
 
             if (!$groupName instanceof GroupNames) {
                 throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $deviceUpdateRequestDTO->getDeviceGroup()));
@@ -58,7 +58,7 @@ class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDevi
         $deviceToUpdate = $deviceUpdateRequestDTO->getDeviceToUpdate();
 
         if ($deviceUpdateRequestDTO->getProposedGroupNameToUpdateTo() !== null) {
-            $deviceToUpdate->setGroupNameObject($deviceUpdateRequestDTO->getProposedGroupNameToUpdateTo());
+            $deviceToUpdate->setGroupObject($deviceUpdateRequestDTO->getProposedGroupNameToUpdateTo());
         }
         if ($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getDeviceName() !== null) {
             $deviceToUpdate->setDeviceName($deviceUpdateRequestDTO->getDeviceUpdateRequestDTO()->getDeviceName());

@@ -4,8 +4,6 @@ namespace App\User\Services\User;
 
 use App\Common\Logs\LogMessages;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\User\Builders\GroupName\AddNewGroupNameDTOBuilder;
-use App\User\Builders\GroupNameMapping\GroupNameMappingBuilder;
 use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
 use App\User\Builders\User\NewUserBuilder;
 use App\User\Entity\GroupNames;
@@ -13,10 +11,10 @@ use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
-use App\User\Services\GroupMappingServices\AddGroupNameMappingHandler;
-use App\User\Services\GroupNameServices\AddGroupNameHandler;
+use App\User\Services\GroupMappingServices\AddGroupMappingHandler;
+use App\User\Services\GroupNameServices\AddGroupHandler;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Exception\ORMException;
@@ -30,15 +28,15 @@ class UserCreationHandler
 {
     use ValidatorProcessorTrait;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupRepository;
 
     private NewUserBuilder $newUserBuilder;
 
     private UserRepository $userRepository;
 
-    private AddGroupNameHandler $addGroupNameHandler;
+    private AddGroupHandler $addGroupHandler;
 
-    private AddGroupNameMappingHandler $addGroupNameMappingHandler;
+    private AddGroupMappingHandler $addGroupMappingHandler;
 
     private ValidatorInterface $validator;
 
@@ -49,21 +47,21 @@ class UserCreationHandler
     private string $projectDir;
 
     public function __construct(
-        GroupNameRepository $groupNameRepository,
+        GroupRepository $groupNameRepository,
         NewUserBuilder $newUserBuilder,
         UserRepository $userRepository,
-        AddGroupNameHandler $addGroupNameHandler,
-        AddGroupNameMappingHandler $addGroupNameMappingHandler,
+        AddGroupHandler $addGroupNameHandler,
+        AddGroupMappingHandler $addGroupNameMappingHandler,
         ValidatorInterface $validator,
         LoggerInterface $logger,
         string $profilePictureDir,
         string $projectDir,
     ) {
-        $this->groupNameRepository = $groupNameRepository;
+        $this->groupRepository = $groupNameRepository;
         $this->newUserBuilder = $newUserBuilder;
         $this->userRepository = $userRepository;
-        $this->addGroupNameHandler = $addGroupNameHandler;
-        $this->addGroupNameMappingHandler = $addGroupNameMappingHandler;
+        $this->addGroupHandler = $addGroupNameHandler;
+        $this->addGroupMappingHandler = $addGroupNameMappingHandler;
         $this->logger = $logger;
         $this->validator = $validator;
         $this->profilePictureDir = $profilePictureDir;
@@ -88,7 +86,7 @@ class UserCreationHandler
         array $roles = ['ROLE_USER'],
         bool $userApproved = false,
     ): User {
-        $groupNameObject = $this->addGroupNameHandler->addNewGroup($groupName, null);
+        $groupNameObject = $this->addGroupHandler->addNewGroup($groupName, null);
 
         if ($profilePic instanceof UploadedFile) {
             $profilePicFileName = $this->handleProfilePicFileUpload($profilePic);
@@ -108,14 +106,14 @@ class UserCreationHandler
 
         $this->newUserBuilder->hashUserPassword($user, $password);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
-            $this->groupNameRepository->remove($groupNameObject);
+            $this->groupRepository->remove($groupNameObject);
             throw new UserCreationValidationErrorsException($this->getValidationErrorAsArray($validationErrors));
         }
 
         $saveSuccess = $this->saveUser($user);
 
         if ($saveSuccess !== true) {
-            $this->groupNameRepository->remove($groupNameObject);
+            $this->groupRepository->remove($groupNameObject);
             throw new UserCreationValidationErrorsException(['Failed to save user']);
         }
 
@@ -139,7 +137,7 @@ class UserCreationHandler
      */
     private function addNewUserToSharedUserGroups(User $user): void
     {
-        $sharedUserGroup = $this->groupNameRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+        $sharedUserGroup = $this->groupRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
         if (!$sharedUserGroup instanceof GroupNames) {
             $this->logger->error(
                 sprintf(
@@ -156,7 +154,7 @@ class UserCreationHandler
             $sharedUserGroup,
         );
 
-        $this->addGroupNameMappingHandler->addNewGroupNameMappingEntry(
+        $this->addGroupMappingHandler->addNewGroupNameMappingEntry(
             $newGroupNameMappingDTO
         );
     }
@@ -196,7 +194,7 @@ class UserCreationHandler
 
             return true;
         } catch (ORMException|OptimisticLockException) {
-            $this->groupNameRepository->remove($user->getGroupNameID());
+            $this->groupRepository->remove($user->getGroupID());
             $this->logger->error(
                 sprintf(
                     LogMessages::ERROR_CREATING_NEW_USER,

@@ -85,11 +85,12 @@ class GetUserDataControllerTest extends WebTestCase
             }
         }
 
-        foreach ($testUser->getUserGroupMappingEntities() as $groupNameMappingObject) {
-            /** @var GroupNames $groupName */
-            $groupName = $groupNameMappingObject->getGroupName();
+        /** @var GroupNameMapping[] $userGroupMappingEntities */
+        $userGroupMappingEntities = $testUser->getUserGroupMappingEntities();
+        foreach ($userGroupMappingEntities as $groupNameMappingObject) {
+            $groupName = $groupNameMappingObject->getGroupID();
             foreach ($responseData['userGroups'] as $userGroup) {
-                if ($userGroup['groupNameID'] === $groupName->getGroupNameID()) {
+                if ($userGroup['groupID'] === $groupName->getGroupID()) {
                     self::assertEquals($groupName->getGroupName(), $userGroup['groupName'], 'group name wrong');
                     $passed = true;
                     continue;

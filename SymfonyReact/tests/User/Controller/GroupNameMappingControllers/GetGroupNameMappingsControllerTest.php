@@ -9,7 +9,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Controller\GroupNameMappingControllers\GetGroupNameMappingsController;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -34,11 +34,11 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
 
     private User $regularUserTwo;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupRepository;
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameMappingRepository $groupNameMappingRepository;
+    private GroupNameMappingRepository $groupMappingRepository;
 
     protected function setUp(): void
     {
@@ -51,9 +51,9 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
         $this->user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $this->userToken = $this->setUserToken($this->client);
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupRepository = $this->entityManager->getRepository(GroupNames::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
+        $this->groupMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
     }
 
     protected function tearDown(): void
@@ -103,7 +103,7 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
 
         $payload = $responseData['payload'];
 
-        $allGroupNameMappings = $this->groupNameMappingRepository->findAll();
+        $allGroupNameMappings = $this->groupMappingRepository->findAll();
 
         self::assertCount(count($allGroupNameMappings), $payload);
     }
@@ -125,7 +125,7 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
 
         $payload = $responseData['payload'];
 
-        $allGroupNameMappingsForUser = $this->groupNameMappingRepository->findBy([
+        $allGroupNameMappingsForUser = $this->groupMappingRepository->findBy([
             'user' => $this->regularUserTwo,
         ]);
 
@@ -149,13 +149,13 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
         $payload = $responseData['payload'];
         self::assertNotEmpty($payload);
 
-        $allGroupNameMappings = $this->groupNameMappingRepository->findAll();
+        $allGroupNameMappings = $this->groupMappingRepository->findAll();
 
         self::assertCount(count($allGroupNameMappings), $payload);
 
         foreach ($payload as $groupNameMapping) {
             self::assertArrayHasKey('groupNameMappingID', $groupNameMapping);
-            self::assertArrayHasKey('groupName', $groupNameMapping);
+            self::assertArrayHasKey('group', $groupNameMapping);
             self::assertArrayHasKey('user', $groupNameMapping);
         }
     }

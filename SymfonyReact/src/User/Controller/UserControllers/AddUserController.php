@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\User\UserResponseBuilder;
-use App\User\DTO\RequestDTOs\UserDTOs\NewUserRequestDTO;
+use App\User\DTO\Request\UserDTOs\NewUserRequestDTO;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Services\User\UserCreationHandler;

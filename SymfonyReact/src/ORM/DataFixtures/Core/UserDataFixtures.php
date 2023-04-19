@@ -96,7 +96,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserOne->setPassword($this->passwordEncoder->hashPassword($adminUserOne, self::ADMIN_PASSWORD));
         $adminUserOne->setRoles(['ROLE_ADMIN']);
         $adminUserOne->setCreatedAt();
-        $adminUserOne->setGroupNameID($adminGroupOne);
+        $adminUserOne->setGroupID($adminGroupOne);
 
         $manager->persist($adminGroupOne);
         $manager->persist($adminUserOne);
@@ -115,7 +115,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $adminUserTwo->setPassword($this->passwordEncoder->hashPassword($adminUserTwo, self::ADMIN_PASSWORD));
         $adminUserTwo->setRoles(['ROLE_ADMIN']);
         $adminUserTwo->setCreatedAt();
-        $adminUserTwo->setGroupNameID($adminTwoGroupName);
+        $adminUserTwo->setGroupID($adminTwoGroupName);
 
         $manager->persist($adminTwoGroupName);
         $manager->persist($adminUserTwo);
@@ -134,7 +134,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUserOne->setPassword($this->passwordEncoder->hashPassword($regularUserOne, self::REGULAR_PASSWORD));
         $regularUserOne->setRoles(['ROLE_USER']);
         $regularUserOne->setCreatedAt();
-        $regularUserOne->setGroupNameID($userGroupOne);
+        $regularUserOne->setGroupID($userGroupOne);
         $manager->persist($userGroupOne);
         $manager->persist($regularUserOne);
 
@@ -146,7 +146,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUserGroupTwo->setCreatedAt();
 
         $regularUserHomeGroupNameMappingEntry = new GroupNameMapping();
-        $regularUserHomeGroupNameMappingEntry->setGroupName($homeAppGroupName);
+        $regularUserHomeGroupNameMappingEntry->setGroupID($homeAppGroupName);
         $regularUserHomeGroupNameMappingEntry->setUser($regularUserOne);
 
         $manager->persist($regularUserHomeGroupNameMappingEntry);
@@ -159,15 +159,15 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUserTwo->setPassword($this->passwordEncoder->hashPassword($regularUserTwo, self::REGULAR_PASSWORD));
         $regularUserTwo->setRoles(['ROLE_USER']);
         $regularUserTwo->setCreatedAt();
-        $regularUserTwo->setGroupNameID($regularUserGroupTwo);
+        $regularUserTwo->setGroupID($regularUserGroupTwo);
 
         $regularUserTwoAdminGroupOneGroupNameMapping = new GroupNameMapping();
 
-        $regularUserTwoAdminGroupOneGroupNameMapping->setGroupName($adminGroupOne);
+        $regularUserTwoAdminGroupOneGroupNameMapping->setGroupID($adminGroupOne);
         $regularUserTwoAdminGroupOneGroupNameMapping->setUser($regularUserTwo);
 
         $regularUserTwoHomeGroupNameMappingEntry = new GroupNameMapping();
-        $regularUserTwoHomeGroupNameMappingEntry->setGroupName($homeAppGroupName);
+        $regularUserTwoHomeGroupNameMappingEntry->setGroupID($homeAppGroupName);
         $regularUserTwoHomeGroupNameMappingEntry->setUser($regularUserTwo);
 
         $manager->persist($regularUserTwoHomeGroupNameMappingEntry);
@@ -182,7 +182,7 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $manager->persist($regularUserThreeGroup);
 
         $regularUserThree = new User();
-        $regularUserThree->setGroupNameID($regularUserThreeGroup);
+        $regularUserThree->setGroupID($regularUserThreeGroup);
         $regularUserThree->setEmail(self::REGULAR_USER_EMAIL_THREE);
         $regularUserThree->setFirstName('third-regular-user');
         $regularUserThree->setLastName('test');
@@ -191,12 +191,12 @@ class UserDataFixtures extends Fixture implements OrderedFixtureInterface
         $regularUserThree->setCreatedAt();
 
         $regularUserThreeHomeGroupNameMapping = new GroupNameMapping();
-        $regularUserThreeHomeGroupNameMapping->setGroupName($homeAppGroupName);
+        $regularUserThreeHomeGroupNameMapping->setGroupID($homeAppGroupName);
         $regularUserThreeHomeGroupNameMapping->setUser($regularUserThree);
         $manager->persist($regularUserThreeHomeGroupNameMapping);
 
         $regularUserThreeRegularUserTwoGroupNameMapping = new GroupNameMapping();
-        $regularUserThreeRegularUserTwoGroupNameMapping->setGroupName($regularUserGroupTwo);
+        $regularUserThreeRegularUserTwoGroupNameMapping->setGroupID($regularUserGroupTwo);
         $regularUserThreeRegularUserTwoGroupNameMapping->setUser($regularUserThree);
         $manager->persist($regularUserThreeRegularUserTwoGroupNameMapping);
 

@@ -11,11 +11,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[
     ORM\Entity(repositoryClass: GroupNameMappingRepository::class),
     ORM\Table(name: "groupnnamemapping"),
-    ORM\Index(columns: ["groupName"], name: "groupName"),
+    ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["user"], name: "IDX_1C993DEE5FD86D04"),
-    ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupName"]),
+    ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupID"]),
 ]
-#[UniqueEntity(fields: ['user', 'groupName'], message: self::GROUP_NAME_MAPPING_EXISTS)]
+#[UniqueEntity(fields: ['user', 'groupID'], message: self::GROUP_NAME_MAPPING_EXISTS)]
 class GroupNameMapping
 {
     public const GROUP_NAME_MAPPING_EXISTS = 'User is already in this group';
@@ -29,9 +29,9 @@ class GroupNameMapping
 
     #[
         ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
-    private GroupNames $groupName;
+    private GroupNames $groupID;
 
     #[
         ORM\ManyToOne(targetEntity: User::class, inversedBy: "userGroupMappingEntities"),
@@ -49,14 +49,14 @@ class GroupNameMapping
         $this->groupNameMappingID = $groupNameMappingID;
     }
 
-    public function getGroupName(): GroupNames
+    public function getGroupID(): GroupNames
     {
-        return $this->groupName;
+        return $this->groupID;
     }
 
-    public function setGroupName(GroupNames $groupNameID): void
+    public function setGroupID(GroupNames $groupID): void
     {
-        $this->groupName = $groupNameID;
+        $this->groupID = $groupID;
     }
 
     public function getUser(): User

@@ -25,7 +25,7 @@ interface RoomRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllUserRoomsByGroupId(array $groupNameIDs, int $hydrationMethod = AbstractQuery::HYDRATE_ARRAY): array;
+    public function getAllUserRoomsByGroupId(array $groupIDs, int $hydrationMethod = AbstractQuery::HYDRATE_ARRAY): array;
 
     /**
      * @throws ORMInvalidArgumentException
@@ -49,5 +49,5 @@ interface RoomRepositoryInterface
      */
     public function findOneById(int $id): ?Room;
 
-    public function findOneByRoomNameAndGroupNameId(int $groupNameId, string $roomName): ?Room;
+    public function findOneByRoomNameAndGroupId(int $groupID, string $roomName): ?Room;
 }

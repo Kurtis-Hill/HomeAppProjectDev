@@ -2,7 +2,7 @@
 
 namespace App\User\Builders\GroupName;
 
-use App\User\DTO\InternalDTOs\GroupDTOs\AddNewGroupDTO;
+use App\User\DTO\Internal\GroupDTOs\AddNewGroupDTO;
 
 class AddNewGroupNameDTOBuilder
 {

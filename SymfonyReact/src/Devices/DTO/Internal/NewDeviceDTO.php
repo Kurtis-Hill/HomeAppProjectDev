@@ -13,7 +13,7 @@ readonly class NewDeviceDTO
 {
     public function __construct(
         private UserInterface $createdBy,
-        private GroupNames $groupNameId,
+        private GroupNames $groupID,
         private Room $roomId,
         private ?string $deviceName,
         private string $devicePassword,
@@ -33,7 +33,7 @@ readonly class NewDeviceDTO
 
     public function getGroupNameObject(): GroupNames
     {
-        return $this->groupNameId;
+        return $this->groupID;
     }
 
     public function getRoomObject(): Room

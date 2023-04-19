@@ -5,8 +5,8 @@ namespace App\Devices\DTO\Response;
 use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
-use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
-use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
+use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
+use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
@@ -18,7 +18,7 @@ readonly class DeviceFullDetailsResponseDTO
         private int $deviceNameID,
         private string $deviceName,
         private ?string $secret,
-        private GroupNameResponseDTO $groupName,
+        private GroupResponseDTO $group,
         private RoomResponseDTO $room,
         private ?string $ipAddress,
         private ?string $externalIpAddress,
@@ -46,9 +46,9 @@ readonly class DeviceFullDetailsResponseDTO
     }
 
     #[Groups([RequestDTOBuilder::REQUEST_TYPE_FULL])]
-    public function getGroupName(): GroupNameResponseDTO
+    public function getGroup(): GroupResponseDTO
     {
-        return $this->groupName;
+        return $this->group;
     }
 
     #[Groups([RequestDTOBuilder::REQUEST_TYPE_FULL])]

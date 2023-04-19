@@ -3,7 +3,7 @@
 namespace App\Sensors\DTO\Response\SensorResponse;
 
 use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\User\DTO\ResponseDTOs\UserDTOs\UserFullResponseDTO;
+use App\User\DTO\Response\UserDTOs\UserFullResponseDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]

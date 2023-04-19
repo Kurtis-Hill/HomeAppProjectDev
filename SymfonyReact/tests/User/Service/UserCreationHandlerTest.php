@@ -8,7 +8,7 @@ use App\User\Entity\GroupNames;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
 use App\User\Services\User\UserCreationHandler;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,7 +25,7 @@ class UserCreationHandlerTest extends KernelTestCase
 
     private ?EntityManagerInterface $entityManager = null;
 
-    private GroupNameRepository $groupRepository;
+    private GroupRepository $groupRepository;
 
     private UserRepository $userRepository;
 
@@ -98,7 +98,7 @@ class UserCreationHandlerTest extends KernelTestCase
         self::assertEquals('John', $userCheck->getFirstName());
         self::assertEquals('Doe', $userCheck->getLastName());
         self::assertEquals(UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED, $userCheck->getEmail());
-        self::assertEquals(UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED, $userCheck->getGroupNameID()->getGroupName());
+        self::assertEquals(UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED, $userCheck->getGroupID()->getGroupName());
         self::assertEquals(User::DEFAULT_PROFILE_PICTURE, $userCheck->getProfilePic());
     }
 
@@ -315,7 +315,7 @@ class UserCreationHandlerTest extends KernelTestCase
 
         $group = $this->groupRepository->findOneBy(['groupName' => UserDataFixtures::UNIQUE_GROUP_NAME_NOT_TO_BE_USED]);
 
-        self::assertEquals($group, $user->getGroupNameID());
+        self::assertEquals($group, $user->getGroupID());
     }
 
     public function test_adding_user_with_admin_roles(): void
@@ -359,7 +359,7 @@ class UserCreationHandlerTest extends KernelTestCase
 //
 //        /** @var GroupNameMapping $homeGroupMappingEntry */
 //        $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
-//            'groupName' => $homeAppGroup->getGroupNameID(),
+//            'groupName' => $homeAppGroup->getgroupID(),
 //            'user' => $userSaved->getUserID(),
 //        ]);
 //
@@ -381,13 +381,14 @@ class UserCreationHandlerTest extends KernelTestCase
         /** @var User $userSaved */
         $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
 
-        $groupMappingRepository = $this->entityManager->getRepository(GroupNames::class);
-        $homeAppGroup = $groupMappingRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
+        $groupRepository = $this->entityManager->getRepository(GroupNames::class);
+        /** @var GroupNames $homeAppGroup */
+        $homeAppGroup = $groupRepository->findOneBy(['groupName' => GroupNames::HOME_APP_GROUP_NAME]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
 
         $homeGroupMappingEntry = $groupNameMappingRepository->findOneBy([
-            'groupName' => $homeAppGroup->getGroupNameID(),
+            'groupID' => $homeAppGroup->getGroupID(),
             'user' => $userSaved->getUserID(),
         ]);
 

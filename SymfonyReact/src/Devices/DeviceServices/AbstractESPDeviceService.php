@@ -7,7 +7,7 @@ use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterf
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
@@ -23,7 +23,7 @@ class AbstractESPDeviceService
 
     protected DevicePasswordEncoderInterface $devicePasswordEncoder;
 
-    protected GroupNameRepositoryInterface $groupNameRepository;
+    protected GroupRepositoryInterface $groupRepository;
 
     protected RoomRepositoryInterface $roomRepository;
 
@@ -33,14 +33,14 @@ class AbstractESPDeviceService
         DeviceRepositoryInterface $deviceRepository,
         ValidatorInterface $validator,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
-        GroupNameRepositoryInterface $groupNameRepository,
+        GroupRepositoryInterface $groupNameRepository,
         RoomRepositoryInterface $roomRepository,
         LoggerInterface $elasticLogger,
     ) {
         $this->validator = $validator;
         $this->deviceRepository = $deviceRepository;
         $this->devicePasswordEncoder = $devicePasswordEncoder;
-        $this->groupNameRepository = $groupNameRepository;
+        $this->groupRepository = $groupNameRepository;
         $this->roomRepository = $roomRepository;
         $this->logger = $elasticLogger;
     }

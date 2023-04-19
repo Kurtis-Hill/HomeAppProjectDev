@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Entity(repositoryClass: UserRepository::class),
     ORM\Table(name: "user"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
-    ORM\Index(columns: ["groupNameID"], name: "GroupName"),
+    ORM\Index(columns: ["groupID"], name: "GroupName"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
     ORM\Index(columns: ["profilePic"], name: "profilePic"),
 ]
@@ -110,9 +110,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[
         ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
-    private GroupNames|int $groupNameID;
+    private GroupNames|int $groupID;
 
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
@@ -143,7 +143,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getUsersGroupName(): GroupNames
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
     #[ArrayShape([GroupNames::class])]
@@ -151,35 +151,35 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     {
         /** @var GroupNameMapping $groupName */
         foreach ($this->userGroupMappingEntities as $groupName) {
-            $groupNameArray[] = $groupName->getGroupName();
+            $groupNameArray[] = $groupName->getGroupID();
         }
 
         return $groupNameArray ?? [];
     }
 
     #[ArrayShape(['int'])]
-    public function getAssociatedGroupNameIds(): array
+    public function getAssociatedGroupIDs(): array
     {
-        $groupNames[] = $this->getGroupNameID()->getGroupNameID();
+        $groupNames[] = $this->getGroupID()->getGroupID();
         /** @var GroupNameMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupName()->getGroupNameID();
+            $groupNames[] = $entity->getGroupID()->getGroupID();
         }
         return $groupNames;
     }
 
-    #[ArrayShape(['groupNameID' => 'int', 'groupName' => 'string'])]
+    #[ArrayShape(['groupID' => 'int', 'groupName' => 'string'])]
     public function getAssociatedGroupNameAndIds(): array
     {
         $groupNames[] = [
-            'groupNameID' => $this->getGroupNameID()->getGroupNameID(),
-            'groupName' => $this->getGroupNameID()->getGroupName()
+            'groupID' => $this->getGroupID()->getGroupID(),
+            'groupName' => $this->getGroupID()->getGroupName()
         ];
         /** @var GroupNameMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = [
-                'groupNameID' => $entity->getGroupName()->getGroupNameID(),
-                'groupName' => $entity->getGroupName()->getGroupName()
+                'groupID' => $entity->getGroupID()->getGroupID(),
+                'groupName' => $entity->getGroupID()->getGroupName()
             ];
         }
 
@@ -189,10 +189,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape([GroupNames::class])]
     public function getAssociatedGroupNames(): array
     {
-        $groupNames[] = $this->getGroupNameID();
+        $groupNames[] = $this->getGroupID();
         /** @var GroupNameMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupName();
+            $groupNames[] = $entity->getGroupID();
         }
         return $groupNames;
     }
@@ -296,14 +296,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getGroupNameID(): GroupNames
+    public function getGroupID(): GroupNames
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
-    public function setGroupNameID(int|GroupNames $groupNameID): void
+    public function setGroupID(int|GroupNames $groupID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupID = $groupID;
     }
 
     public function getCreatedAt(): ?DateTimeInterface

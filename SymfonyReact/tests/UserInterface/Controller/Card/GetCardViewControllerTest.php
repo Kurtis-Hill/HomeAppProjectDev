@@ -19,7 +19,7 @@ use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +49,7 @@ class GetCardViewControllerTest extends WebTestCase
 
     private User $adminUserOne;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupNameRepository;
 
     private DeviceRepository $deviceRepository;
 
@@ -283,7 +283,7 @@ class GetCardViewControllerTest extends WebTestCase
 
         $device = null;
         foreach ($userGroupsNotApartOf as $userGroupNotApartOf) {
-            $device = $this->deviceRepository->findOneBy(['groupNameID' => $userGroupNotApartOf]);
+            $device = $this->deviceRepository->findOneBy(['groupID' => $userGroupNotApartOf]);
             if ($device !== null) {
                 break;
             }

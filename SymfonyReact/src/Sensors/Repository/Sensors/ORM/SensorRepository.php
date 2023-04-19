@@ -70,12 +70,12 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                $expr->eq('device.groupNameID', ':groupName'),
+                $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
-                    'groupName' => $sensorData->getDevice()->getGroupNameObject(),
+                    'groupName' => $sensorData->getDevice()->getGroupObject(),
                 ]
             );
 
@@ -219,7 +219,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         if ($getSensorQueryDTO->getGroupIDs() !== null) {
             $qb->innerJoin(Devices::class, Devices::ALIAS . '3', Join::WITH, Devices::ALIAS . '3.deviceID = ' . Sensor::ALIAS . '.deviceID')
             ->andWhere(
-                $qb->expr()->in(Devices::ALIAS . '3' . '.groupNameID', ':groupIDs')
+                $qb->expr()->in(Devices::ALIAS . '3' . '.groupID', ':groupIDs')
             )
             ->setParameters(
                 [

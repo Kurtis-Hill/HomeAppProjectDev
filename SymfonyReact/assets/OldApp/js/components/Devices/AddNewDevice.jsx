@@ -52,7 +52,7 @@ const addNewDevice = () => {
                                     {
                                         navBarContext.userGroupNames.length >= 1
                                             ? navBarContext.userGroupNames.map((groupNames, index) => (
-                                                <option className="form-control" value={groupNames.groupNameID} key={index}>{groupNames.groupName}</option>
+                                                <option className="form-control" value={groupNames.groupID} key={index}>{groupNames.groupName}</option>
                                                 ))
                                             :
                                         <option>No group names available try to Log Out then back in again</option>

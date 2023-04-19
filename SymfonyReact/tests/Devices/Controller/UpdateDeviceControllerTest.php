@@ -15,7 +15,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -60,7 +60,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     public function test_sending_wrong_encoding_request(): void
     {
         /** @var Devices $device */
-        $device = $this->deviceRepository->findBy(['groupNameID' => $this->adminUser->getGroupNameID()])[0];
+        $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroupID()])[0];
 
         $requestData = [
             'deviceName' => '$deviceName',
@@ -95,7 +95,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         array $errorMessage,
     ): void {
         /** @var Devices $device */
-        $device = $this->deviceRepository->findBy(['groupNameID' => $this->adminUser->getGroupNameID()])[0];
+        $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroupID()])[0];
 
         $requestData = [
             'deviceName' => $deviceName,
@@ -219,7 +219,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             }
         }
         /** @var Devices $device */
-        $device = $this->deviceRepository->findBy(['groupNameID' => $this->adminUser->getGroupNameID()])[0];
+        $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroupID()])[0];
 
         if ($device === null) {
             self::fail('no device found for test');
@@ -227,7 +227,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $requestData = [
             'deviceName' => 'newDeviceName',
-            'deviceGroup' => $this->adminUser->getGroupNameID()->getGroupNameID(),
+            'deviceGroup' => $this->adminUser->getGroupID()->getGroupID(),
             'deviceRoom' => $nonExistentRoomID,
         ];
 
@@ -260,7 +260,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             $nonExistentGroupID = random_int(1, 100000);
 
             /** @var GroupNames $group */
-            $group = $groupRepository->findOneBy(['groupNameID' => $nonExistentGroupID]);
+            $group = $groupRepository->findOneBy(['groupID' => $nonExistentGroupID]);
             if (!$group instanceof Room) {
                 break;
             }
@@ -268,7 +268,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         /** @var User $user */
 
         /** @var Devices $device */
-        $device = $this->deviceRepository->findBy(['groupNameID' => $this->adminUser->getGroupNameID()->getGroupNameID()])[0];
+        $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroupID()->getGroupID()])[0];
 
         $requestData = [
             'deviceName' => 'newDeviceName',
@@ -310,11 +310,11 @@ class UpdateDeviceControllerTest extends WebTestCase
         /** @var GroupNames $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         );
 
         /** @var Devices[] $devices */
-        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         if (empty($devices)) {
             self::fail('no device found for test');
@@ -324,7 +324,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => 'newDeviceName',
             'password' => 'NewPassword',
-            'deviceGroup' => $user->getGroupNameID()->getGroupNameID(),
+            'deviceGroup' => $user->getGroupID()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
         ];
 
@@ -361,7 +361,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         );
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
         if (empty($devices)) {
             self::fail('no device found for test');
         }
@@ -373,7 +373,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => $newDeviceName,
             'password' => $newPassword,
-            'deviceGroup' => $this->adminUser->getGroupNameID()->getGroupNameID(),
+            'deviceGroup' => $this->adminUser->getGroupID()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
         ];
         $jsonPayload = json_encode($requestData);
@@ -397,8 +397,8 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         self::assertEquals('Device Successfully Updated', $responseData['title']);
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
-        self::assertEquals($this->adminUser->getGroupNameID()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-        self::assertEquals($this->adminUser->getGroupNameID()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+        self::assertEquals($this->adminUser->getGroupID()->getGroupID(), $responseData['payload']['group']['groupID']);
+        self::assertEquals($this->adminUser->getGroupID()->getGroupName(), $responseData['payload']['group']['groupName']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
         self::assertEquals($newPassword, $responseData['payload']['secret']);
@@ -406,15 +406,16 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function test_admin_can_update_device_is_apart_of(): void
     {
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
-        /** @var GroupNameRepository $groupNameRepository */
+        /** @var GroupRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames $groupsUserIsApartOf */
         $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
         if (empty($devices)) {
             self::fail('no device found for test');
         }
@@ -427,7 +428,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => $newDeviceName,
             'password' => $newPassword,
-            'deviceGroup' => $user->getGroupNameID()->getGroupNameID(),
+            'deviceGroup' => $user->getGroupID()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
         ];
 
@@ -451,8 +452,8 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         self::assertEquals('Device Successfully Updated', $responseData['title']);
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
-        self::assertEquals($user->getGroupNameID()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-        self::assertEquals($user->getGroupNameID()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+        self::assertEquals($user->getGroupID()->getGroupID(), $responseData['payload']['group']['groupID']);
+        self::assertEquals($user->getGroupID()->getGroupName(), $responseData['payload']['group']['groupName']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
         self::assertEquals($newPassword, $responseData['payload']['secret']);
@@ -478,7 +479,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => $deviceName,
             'password' => 'NewPassword',
-            'deviceGroup' => $user->getGroupNameID()->getGroupNameID(),
+            'deviceGroup' => $user->getGroupID()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
         ];
 
@@ -530,7 +531,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($this->adminUser);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         if (empty($devices)) {
             self::fail('no device found for test');
@@ -547,9 +548,9 @@ class UpdateDeviceControllerTest extends WebTestCase
             }
         }
 
-        foreach ($this->adminUser->getAssociatedGroupNameIds() as $groupNameId) {
-            if ($groupNameId !== $device->getGroupNameObject()->getGroupNameID()) {
-                $newGroupNameID = $groupNameId;
+        foreach ($this->adminUser->getAssociatedGroupIDs() as $groupID) {
+            if ($groupID !== $device->getGroupObject()->getGroupID()) {
+                $newGroupID = $groupID;
                 break;
             }
         }
@@ -563,7 +564,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => $newDeviceName,
             'password' => $newPassword,
-            'deviceGroup' => $newGroupNameID ?? $device->getGroupNameObject()->getGroupNameID(),
+            'deviceGroup' => $newGroupID ?? $device->getGroupObject()->getGroupID(),
             'deviceRoom' => $newRoomID,
         ];
 
@@ -590,7 +591,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($newPassword, $responseData['payload']['secret']);
 
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
-        self::assertEquals($newGroupNameID ?? $device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
+        self::assertEquals($newGroupID ?? $device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
         self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
         self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
     }
@@ -605,7 +606,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         if (empty($devices)) {
             self::fail('no device found for test');
@@ -628,8 +629,8 @@ class UpdateDeviceControllerTest extends WebTestCase
             }
         }
 
-        foreach ($user->getAssociatedGroupNameIds() as $groupNameId) {
-            if ($groupNameId !== $device->getGroupNameObject()->getGroupNameID()) {
+        foreach ($user->getAssociatedGroupIDs() as $groupNameId) {
+            if ($groupNameId !== $device->getGroupObject()->getGroupID()) {
                 $newGroupNameID = $groupNameId;
                 break;
             }
@@ -644,7 +645,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => $newDeviceName,
             'password' => $newPassword,
-            'deviceGroup' => $newGroupNameID ?? $device->getGroupNameObject()->getGroupNameID(),
+            'deviceGroup' => $newGroupNameID ?? $device->getGroupObject()->getGroupID(),
             'deviceRoom' => $newRoomID,
         ];
 
@@ -672,7 +673,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($newPassword, $responseData['payload']['secret']);
 
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
-        self::assertEquals($newGroupNameID ?? $device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
+        self::assertEquals($newGroupNameID ?? $device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
         self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
 
     }
@@ -698,7 +699,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $requestData = [
             'deviceName' => $newDeviceName,
             'password' => $newPassword,
-            'deviceGroup' => $user->getGroupNameID()->getGroupNameID(),
+            'deviceGroup' => $user->getGroupID()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
         ];
 
@@ -746,17 +747,17 @@ class UpdateDeviceControllerTest extends WebTestCase
     {
         $user = $this->adminUser;
 
-        /** @var GroupNameRepository $groupNameRepository */
+        /** @var GroupRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var GroupNames[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         );
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         if (empty($devices)) {
             self::fail('no device found for test');
@@ -766,8 +767,8 @@ class UpdateDeviceControllerTest extends WebTestCase
         $rooms = $this->entityManager->getRepository(Room::class)->findAll();
 
         foreach ($groupsUserIsApartOf as $group) {
-            if ($device->getGroupNameObject()->getGroupNameID() !== $group->getGroupNameID()) {
-                $newGroupNameID = $group->getGroupNameID();
+            if ($device->getGroupObject()->getGroupID() !== $group->getGroupID()) {
+                $newGroupNameID = $group->getGroupID();
                 break;
             }
         }
@@ -819,20 +820,20 @@ class UpdateDeviceControllerTest extends WebTestCase
         switch ($patchSubject) {
             case 'deviceName':
                 self::assertEquals($requestData['deviceName'], $responseData['payload']['deviceName']);
-                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
+                self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                 break;
             case 'password':
-                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
+                self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 self::assertEquals($requestData['password'], $responseData['payload']['secret']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                 break;
             case 'deviceGroup':
-                self::assertEquals($newGroupNameID, $responseData['payload']['groupName']['groupNameID']);
+                self::assertEquals($newGroupNameID, $responseData['payload']['group']['groupID']);
                 self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
@@ -840,8 +841,8 @@ class UpdateDeviceControllerTest extends WebTestCase
             case 'deviceRoom':
                 self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
+                self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 break;
         }
         self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
@@ -861,14 +862,14 @@ class UpdateDeviceControllerTest extends WebTestCase
             UserDataFixtures::REGULAR_PASSWORD,
         );
 
-        /** @var GroupNameRepository $groupNameMappingRepository */
+        /** @var GroupRepository $groupNameMappingRepository */
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var GroupNames[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user);
 
         /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $rooms = $this->entityManager->getRepository(Room::class)->findAll();
         if (empty($devices)) {
@@ -878,8 +879,8 @@ class UpdateDeviceControllerTest extends WebTestCase
         $device = $devices[0];
 
         foreach ($groupsUserIsApartOf as $group) {
-            if ($device->getGroupNameObject()->getGroupNameID() !== $group->getGroupNameID()) {
-                $newGroupNameID = $group->getGroupNameID();
+            if ($device->getGroupObject()->getGroupID() !== $group->getGroupID()) {
+                $newGroupNameID = $group->getGroupID();
                 break;
             }
         }
@@ -931,20 +932,20 @@ class UpdateDeviceControllerTest extends WebTestCase
         switch ($patchSubject) {
             case 'deviceName':
                 self::assertEquals($requestData['deviceName'], $responseData['payload']['deviceName']);
-                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
+                self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                 break;
             case 'password':
                 self::assertEquals($requestData['password'], $responseData['payload']['secret']);
-                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
+                self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
                 break;
             case 'deviceGroup':
-                self::assertEquals($requestData['deviceGroup'], $responseData['payload']['groupName']['groupNameID']);
+                self::assertEquals($requestData['deviceGroup'], $responseData['payload']['group']['groupID']);
                 self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
                 self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
@@ -952,8 +953,8 @@ class UpdateDeviceControllerTest extends WebTestCase
             case 'deviceRoom':
                 self::assertEquals($requestData['deviceRoom'], $responseData['payload']['room']['roomID']);
                 self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-                self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupName']['groupNameID']);
-                self::assertEquals($device->getGroupNameObject()->getGroupName(), $responseData['payload']['groupName']['groupName']);
+                self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
+                self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 break;
         }
         self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);

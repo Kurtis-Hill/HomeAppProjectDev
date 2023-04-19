@@ -3,8 +3,8 @@
 namespace App\UserInterface\DTO\Response\NavBar;
 
 use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
-use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
+use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
+use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Ignore;

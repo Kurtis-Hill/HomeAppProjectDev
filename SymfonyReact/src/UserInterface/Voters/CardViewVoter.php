@@ -75,14 +75,6 @@ class CardViewVoter extends Voter
             return $checkCommon;
         }
 
-//        if (!in_array(
-//            $room->getGroupNameID()->getGroupNameID(),
-//            $user->getGroupNameIds(), true
-//        )
-//        ) {
-//            return false;
-//        }
-
         return true;
     }
 
@@ -96,24 +88,12 @@ class CardViewVoter extends Voter
 
         /** @var $user User */
         if (!in_array(
-            $devices->getGroupNameObject()->getGroupNameID(),
-            $user->getAssociatedGroupNameIds(),
+            $devices->getGroupObject()->getGroupID(),
+            $user->getAssociatedGroupIDs(),
             true
         )) {
             return false;
         }
-//        if (!$user instanceof User) {
-//            return false;
-//        }
-
-//        if (!in_array(
-//            $devices->getGroupNameObject()->getGroupNameID(),
-//            $user->getGroupNameIds(),
-//            true
-//        )
-//        ) {
-//            return false;
-//        }
 
         return true;
     }

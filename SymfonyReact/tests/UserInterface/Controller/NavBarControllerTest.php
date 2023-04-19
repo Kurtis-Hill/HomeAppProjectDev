@@ -56,7 +56,7 @@ class NavBarControllerTest extends WebTestCase
         $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
 
         /** @var Devices[] $userDevices */
-        $userDevices = $this->entityManager->getRepository(Devices::class)->findAllUsersDevicesByGroupId($testUser->getAssociatedGroupNameIds());
+        $userDevices = $this->entityManager->getRepository(Devices::class)->findAllUsersDevicesByGroupId($testUser->getAssociatedGroupIDs());
 
         $this->client->request(
             Request::METHOD_GET,

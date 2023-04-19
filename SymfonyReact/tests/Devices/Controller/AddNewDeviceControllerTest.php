@@ -16,7 +16,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -50,7 +50,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private User $adminUser;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupNameRepository;
 
     private GroupNameMappingRepository $groupNameMappingRepository;
 
@@ -79,7 +79,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -104,7 +104,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -130,7 +130,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertNull($payload['externalIpAddress']);
 
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
-        self::assertEquals($this->groupName->getGroupNameID(), $payload['groupNameID']);
+        self::assertEquals($this->groupName->getGroupID(), $payload['groupID']);
         self::assertEquals($this->room->getRoomID(), $payload['roomID']);
         self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $payload['createdBy']);
         self::assertEquals(Devices::ROLE, $payload['roles'][0]);
@@ -146,7 +146,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -175,7 +175,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -227,7 +227,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -254,7 +254,7 @@ class AddNewDeviceControllerTest extends WebTestCase
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -349,7 +349,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => 'thisNameIsWaaaaaaaayTooooLoooongthisNameIsWaaaaaaaayTooooLoooong',
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -378,7 +378,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => 'device&&**name',
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -407,7 +407,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => 'devicename',
             'devicePassword' => '1',
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -436,7 +436,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => 'devicename',
             'devicePassword' => 'devicePasswordIsWayTooLong1111111111111devicePasswordIsWayTooLong1111111111111devicePasswordIsWayTooLong1111111111111',
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -473,13 +473,13 @@ class AddNewDeviceControllerTest extends WebTestCase
         /** @var GroupNames $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         )[0];
 
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $groupUserIsNotApartOf->getGroupNameID(),
+            'deviceGroup' => $groupUserIsNotApartOf->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -518,7 +518,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $noneExistentRoomID,
         ];
 
@@ -588,7 +588,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -613,7 +613,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 //    {
 //        $formData = [
 //            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
-//            'deviceGroup' => $this->groupName->getGroupNameID(),
+//            'deviceGroup' => $this->groupName->getgroupID(),
 //            'deviceRoom' => $this->room->getRoomID(),
 //        ];
 //
@@ -638,7 +638,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
-            'deviceGroup' => $this->groupName->getGroupNameID(),
+            'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
@@ -684,7 +684,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertArrayHasKey('refreshToken', $loginResponseData);
 
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
-        self::assertEquals($this->groupName->getGroupNameID(), $responseData['groupNameID']);
+        self::assertEquals($this->groupName->getGroupID(), $responseData['groupID']);
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
         self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);

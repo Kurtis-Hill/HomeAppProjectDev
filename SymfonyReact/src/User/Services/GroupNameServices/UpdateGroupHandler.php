@@ -3,21 +3,21 @@
 namespace App\User\Services\GroupNameServices;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\User\DTO\InternalDTOs\GroupDTOs\UpdateGroupDTO;
+use App\User\DTO\Internal\GroupDTOs\UpdateGroupDTO;
 use App\User\Exceptions\GroupNameExceptions\GroupNameValidationException;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateGroupHandler
 {
     use ValidatorProcessorTrait;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupNameRepository;
 
     private ValidatorInterface $validator;
 
     public function __construct(
-        GroupNameRepositoryInterface $groupNameRepository,
+        GroupRepositoryInterface $groupNameRepository,
         ValidatorInterface $validator,
     ) {
         $this->groupNameRepository = $groupNameRepository;

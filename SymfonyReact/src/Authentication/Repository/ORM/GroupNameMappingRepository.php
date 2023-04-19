@@ -31,7 +31,7 @@ class GroupNameMappingRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('gmt');
 
         $qb->select('gmt')
-            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupName = gn.groupNameID')
+            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupID = gn.groupID')
             ->innerJoin(User::class, 'u', Join::WITH, 'gmt.user = u.userID')
             ->where(
                 $qb->expr()->eq('gmt.user', ':user')
@@ -40,26 +40,6 @@ class GroupNameMappingRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
-
-//    public function findGroupsUserIsNotApartOf(array $groups, User $user): array
-//    {
-//        $qb = $this->createQueryBuilder('gmt');
-//
-//        $expr = $qb->expr();
-//        $qb->select('gmt')
-//            ->innerJoin(GroupNames::class, 'gn', Join::WITH, 'gmt.groupName = gn.groupNameID')
-//            ->innerJoin(User::class, 'u', Join::WITH, 'gmt.user = u.userID')
-//            ->where(
-//                $expr->orX(
-//                $expr->notIn('gmt.groupName', ':groups'),
-//                    $expr->notIn('u.groupNameID', ':userGroups')
-//                )
-//            )
-//            ->setParameter('groups', $user?->getAssociatedGroupNameIds())
-//            ->setParameter('userGroups', $user?->getAssociatedGroupNameIds());
-//
-//        return $qb->getQuery()->getResult();
-//    }
 
     /**
      * @throws ORMException

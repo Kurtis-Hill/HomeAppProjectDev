@@ -71,7 +71,7 @@ class AddNewRoomControllerTest extends WebTestCase
     {
         $formRequestData = [
             'roomName' => 'T',
-            'groupNameID' => $this->user->getGroupNameID()->getGroupNameID(),
+            'groupID' => $this->user->getGroupID()->getGroupID(),
         ];
 
         $jsonData = json_encode($formRequestData);

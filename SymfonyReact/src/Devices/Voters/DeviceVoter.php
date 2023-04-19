@@ -61,7 +61,7 @@ class DeviceVoter extends Voter
             return $checkCommon;
         }
 
-        if (!in_array($newDeviceCheckDTO->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+        if (!in_array($newDeviceCheckDTO->getGroupNameObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 
@@ -72,7 +72,7 @@ class DeviceVoter extends Voter
     {
         $commonSuccess = $this->checkCommon(
             $user,
-            $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject(),
+            $updateDeviceDTO->getDeviceToUpdate()->getGroupObject(),
         );
         if ($commonSuccess !== null) {
             return $commonSuccess;
@@ -80,16 +80,16 @@ class DeviceVoter extends Voter
 
         if ($updateDeviceDTO->getProposedGroupNameToUpdateTo() !== null) {
             if (!in_array(
-                $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupNameID(),
-                $user->getAssociatedGroupNameIds(),
+                $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupID(),
+                $user->getAssociatedgroupIDs(),
                 true
             )) {
                 return false;
             }
         }
         if (!in_array(
-            $updateDeviceDTO->getDeviceToUpdate()->getGroupNameObject()->getGroupNameID(),
-            $user->getAssociatedGroupNameIds(),
+            $updateDeviceDTO->getDeviceToUpdate()->getGroupObject()->getGroupID(),
+            $user->getAssociatedGroupIDs(),
             true
         )
         ) {
@@ -104,7 +104,7 @@ class DeviceVoter extends Voter
 
         $checkCommon = $this->checkCommon(
                 $user,
-                $devices->getGroupNameObject(),
+                $devices->getGroupObject(),
         );
 
         return $checkCommon ?? true;
@@ -119,7 +119,7 @@ class DeviceVoter extends Voter
             return true;
         }
 
-        if (!in_array($proposedGroupName->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+        if (!in_array($proposedGroupName->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 
@@ -130,7 +130,7 @@ class DeviceVoter extends Voter
     {
         $checkCommon = $this->checkCommon(
             $user,
-            $devices->getGroupNameObject(),
+            $devices->getGroupObject(),
         );
 
         return $checkCommon ?? true;

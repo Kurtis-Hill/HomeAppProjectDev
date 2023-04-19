@@ -29,7 +29,7 @@ class NewUserBuilder
         $user->setLastName($lastName);
         $user->setEmail($email);
         $user->setRoles($roles);
-        $user->setGroupNameID($groupNameObject);
+        $user->setGroupID($groupNameObject);
         $user->setCreatedAt(new DateTimeImmutable('now'));
 
         if ($profilePic !== null) {

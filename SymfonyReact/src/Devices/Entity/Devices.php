@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Entity(repositoryClass: DeviceRepository::class),
     ORM\Table(name: "devices"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
-    ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
+    ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["roomID"], name: "roomID"),
     ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
 ]
@@ -75,10 +75,10 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[
         ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
     #[Assert\NotBlank(message: 'Group name should not be blank')]
-    private GroupNames $groupNameID;
+    private GroupNames $groupID;
 
     #[
         ORM\ManyToOne(targetEntity: Room::class),
@@ -160,14 +160,14 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdBy = $createdBy;
     }
 
-    public function getGroupNameObject(): GroupNames
+    public function getGroupObject(): GroupNames
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
-    public function setGroupNameObject(GroupNames $groupNameID): void
+    public function setGroupObject(GroupNames $groupID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupID = $groupID;
     }
 
     public function getRoomObject(): Room

@@ -27,9 +27,6 @@ final class Version20220303160823 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
         );
 
-        $homeAppGroupName = GroupNames::HOME_APP_GROUP_NAME;
-        $this->addSql("CREATE DATABASE IF NOT EXISTS HomeApp");
-
         $this->addSql('
             CREATE TABLE user (
                 userID INT AUTO_INCREMENT NOT NULL, 
@@ -40,9 +37,9 @@ final class Version20220303160823 extends AbstractMigration
                 profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', 
                 password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, 
                 salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, 
-                groupNameID INT DEFAULT NULL, 
+                groupID INT DEFAULT NULL, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX GroupName (groupNameID), 
+                INDEX GroupName (groupID), 
                 INDEX profilePic (profilePic), 
                 UNIQUE INDEX email (email), 
                 PRIMARY KEY(userID)
@@ -51,11 +48,11 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql('
             CREATE TABLE groupname (
-                groupNameID INT AUTO_INCREMENT NOT NULL,
+                groupID INT AUTO_INCREMENT NOT NULL,
                 groupName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
                 UNIQUE INDEX groupName (groupName), 
-                PRIMARY KEY(groupNameID)
+                PRIMARY KEY(groupID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
@@ -64,10 +61,10 @@ final class Version20220303160823 extends AbstractMigration
             CREATE TABLE groupnnamemapping (
                 groupNameMappingID INT AUTO_INCREMENT NOT NULL, 
                 userID INT NOT NULL, 
-                groupNameID INT NOT NULL, 
-                INDEX groupNameID (groupNameID), 
+                groupID INT NOT NULL, 
+                INDEX groupID (groupID), 
                 INDEX userID (userID), 
-                UNIQUE INDEX IDX_1C993DEE5FD86D04 (userID, groupNameID), 
+                UNIQUE INDEX IDX_1C993DEE5FD86D04 (userID, groupID), 
                 PRIMARY KEY(groupNameMappingID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
@@ -306,14 +303,14 @@ final class Version20220303160823 extends AbstractMigration
                 deviceID INT AUTO_INCREMENT NOT NULL, 
                 deviceName VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
                 password LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
-                groupNameID INT NOT NULL, 
+                groupID INT NOT NULL, 
                 roomID INT NOT NULL, 
                 createdBy INT NOT NULL, 
                 ipAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 externalIpAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 roles JSON NOT NULL COLLATE `utf8mb4_general_ci`, 
                 INDEX createdBy (createdBy), 
-                INDEX groupNameID (groupNameID), 
+                INDEX groupID (groupID), 
                 INDEX roomID (roomID),
                 UNIQUE INDEX device_room_un (deviceName, roomID), 
                 PRIMARY KEY(deviceID)
@@ -457,14 +454,14 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql("
             INSERT INTO `user` 
-                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `groupNameID`, `createdAt`) 
+                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `groupID`, `createdAt`) 
             VALUES
                 (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, 2, '2021-07-15 17:19:32');
         ");
 
         $this->addSql("
             INSERT INTO `groupname` 
-                (`groupNameID`, `groupName`) 
+                (`groupID`, `groupName`) 
             VALUES
                 (1, 'home-app-group'),
                 (2, 'admin-group');
@@ -506,12 +503,12 @@ final class Version20220303160823 extends AbstractMigration
         // Alter tables
         $this->addSql("
             ALTER TABLE `user`
-              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupNameID`) REFERENCES `groupname` (`groupNameID`);
+              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groupname` (`groupID`);
         ");
 
         $this->addSql("
             ALTER TABLE `groupnnamemapping`
-              ADD CONSTRAINT `groupnnamemapping_ibfk_1` FOREIGN KEY (`groupNameID`) REFERENCES `groupname` (`groupNameID`) ON DELETE CASCADE ON UPDATE CASCADE,
+              ADD CONSTRAINT `groupnnamemapping_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groupname` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `groupnnamemapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
@@ -519,14 +516,14 @@ final class Version20220303160823 extends AbstractMigration
             ALTER TABLE `sensors`
               ADD CONSTRAINT `FK_82F2A8F46B4A071A` FOREIGN KEY (`sensorTypeID`) REFERENCES `sensortype` (`sensorTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `sensornames_ibfk_1` FOREIGN KEY (`deviceID`) REFERENCES `devices` (`deviceID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE NO ACTION ON UPDATE CASCADE;
+              ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `devices`
-              ADD CONSTRAINT `devicenames_ibfk_1` FOREIGN KEY (`groupNameID`) REFERENCES `groupname` (`groupNameID`) ON DELETE CASCADE ON UPDATE CASCADE,
+              ADD CONSTRAINT `devicenames_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groupname` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `devicenames_ibfk_2` FOREIGN KEY (`roomID`) REFERENCES `room` (`roomID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE NO ACTION ON UPDATE CASCADE;
+              ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("

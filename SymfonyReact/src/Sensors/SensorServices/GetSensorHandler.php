@@ -8,18 +8,18 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Services\GroupNameServices\GetGroupNamesHandler;
+use App\User\Services\GroupNameServices\UserGroupsFinder;
 use JetBrains\PhpStorm\ArrayShape;
 
 class GetSensorHandler
 {
     private DeviceRepositoryInterface $deviceRepository;
 
-    private GetGroupNamesHandler $getGroupNamesHandler;
+    private UserGroupsFinder $getGroupNamesHandler;
 
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
-        GetGroupNamesHandler $getGroupNamesHandler,
+        UserGroupsFinder $getGroupNamesHandler,
     ) {
         $this->deviceRepository = $deviceRepository;
         $this->getGroupNamesHandler = $getGroupNamesHandler;
@@ -33,9 +33,9 @@ class GetSensorHandler
 
         $requestedDeviceNames = $getSensorQueryDTO->getDeviceNames();
         $requestedDeviceIDs = $getSensorQueryDTO->getDeviceIDs();
-        $groupNameIDs = $this->getGroupNamesHandler->getGroupNamesForUser($user);
+        $groupID = $this->getGroupNamesHandler->getGroupNamesForUser($user);
         if (!empty($requestedDeviceNames) || !empty($requestedDeviceIDs)) {
-            $allDevicesUserHasAccessTo = $this->deviceRepository->findAllDevicesByGroupNameIDs($groupNameIDs);
+            $allDevicesUserHasAccessTo = $this->deviceRepository->findAllDevicesByGroupIDs($groupID);
             /** @var Devices $device */
             foreach ($allDevicesUserHasAccessTo as $device) {
                 $usersDeviceIDs[] = $device->getDeviceID();
@@ -48,13 +48,13 @@ class GetSensorHandler
         $requestedGroupsNameIds = $getSensorQueryDTO->getGroupIDs();
         if (!empty($requestedGroupsNameIds)) {
             $allGroupsUserIsApartOf = $this->getGroupNamesHandler->getGroupNamesForUser($user);
-            $groupNameIDs = array_map(static function($groupName) {
+            $groupID = array_map(static function($groupName) {
                 /** @var GroupNames $groupName */
-                return $groupName->getGroupNameID();
+                return $groupName->getGroupID();
             }, $allGroupsUserIsApartOf);
             if (!in_array($requestedGroupsNameIds, $allGroupsUserIsApartOf, true)) {
-                $groupNamesIDsUserHasAccessTo = array_filter($requestedGroupsNameIds, static function($groupName) use ($groupNameIDs, &$errors) {
-                    if (in_array($groupName, $groupNameIDs, false)) {
+                $groupNamesIDsUserHasAccessTo = array_filter($requestedGroupsNameIds, static function($groupName) use ($groupID, &$errors) {
+                    if (in_array($groupName, $groupID, false)) {
                         return true;
                     }
                     $errors[] = sprintf(

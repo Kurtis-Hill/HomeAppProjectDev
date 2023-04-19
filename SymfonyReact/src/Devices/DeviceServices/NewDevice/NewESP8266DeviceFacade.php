@@ -11,18 +11,13 @@ use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
-use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
@@ -33,8 +28,8 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
      */
     public function findObjectNeededForNewDevice(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {
-        $groupNameObject = $this->groupNameRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
-        if (!$groupNameObject instanceof GroupNames) {
+        $groupObject = $this->groupRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
+        if (!$groupObject instanceof GroupNames) {
             throw new GroupNameNotFoundException(sprintf(GroupNameNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
         }
 
@@ -45,7 +40,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
 
         return DeviceDTOBuilder::buildNewDeviceDTO(
             $createdByUser,
-            $groupNameObject,
+            $groupObject,
             $roomObject,
             $newDeviceRequestDTO->getDeviceName(),
             $newDeviceRequestDTO->getDevicePassword(),
@@ -66,7 +61,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         $newDevice = $newDeviceDTO->getNewDevice();
         $newDevice->setDeviceName($newDeviceDTO->getDeviceName());
         $newDevice->setCreatedBy($deviceUser);
-        $newDevice->setGroupNameObject($newDeviceDTO->getGroupNameObject());
+        $newDevice->setGroupObject($newDeviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($newDeviceDTO->getRoomObject());
         $newDevice->setDeviceSecret($newDeviceDTO->getDevicePassword());
         $newDevice->setPassword($newDeviceDTO->getDevicePassword());

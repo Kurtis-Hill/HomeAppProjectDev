@@ -21,7 +21,7 @@ function AddNewRoom(props) {
             if (userGroupsResponse.data && Array.isArray(userGroupsResponse.data.payload)) {
                 const payload = userGroupsResponse.data.payload; 
                 setGroups(payload);
-                setSelectedGroup(payload[0].groupNameID);
+                setSelectedGroup(payload[0].groupID);
                 setErrors([]);
             }
         } catch (error) {
@@ -44,7 +44,7 @@ function AddNewRoom(props) {
         try {
             const newRoomResponse = await axios.post(`${apiURL}user-rooms/add`, {
                 'roomName': userRoom.value,
-                'groupNameID': selectedGroup
+                'groupID': selectedGroup
             }, getAPIHeader());
             
             setErrors([]);        
@@ -111,7 +111,7 @@ function AddNewRoom(props) {
                     {
                         groups.length >= 1
                             ? groups.map((group) => (
-                                <option className="form-control" value={group.groupNameId} key={group.groupNameId}>{group.groupName}</option>
+                                <option className="form-control" value={group.groupID} key={group.groupID}>{group.groupName}</option>
                             ))
                             :
                             <option>No group names available try to Log Out then back in again</option>

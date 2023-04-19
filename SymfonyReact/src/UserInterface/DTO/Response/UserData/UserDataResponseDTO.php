@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\DTO\Response\UserData;
 
-use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
+use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
 use App\User\Entity\GroupNames;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;

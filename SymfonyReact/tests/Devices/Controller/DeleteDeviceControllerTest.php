@@ -9,7 +9,7 @@ use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -30,7 +30,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupNameRepository;
 
     private DeviceRepositoryInterface $deviceRepository;
 
@@ -67,11 +67,11 @@ class DeleteDeviceControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         );
 
         /** @var Devices[] $devices */
-        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         if (empty($devices)) {
             self::fail('No device found to delete for testing');
@@ -108,7 +108,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 //        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 //        $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
 //        /** @var GroupNames[] $groupsUserIsApartOf */
-//        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedGroupNameIds(), $user);
+//        $groupsUserIsApartOf = $groupNameRepository->findGroupsUserIsApartOf($user->getAssociatedgroupIDs(), $user);
 //
 //        if (empty($groupsUserIsApartOf)) {
 //            self::fail('No group found for testing');
@@ -116,14 +116,14 @@ class DeleteDeviceControllerTest extends WebTestCase
 //        /** @var Devices[] $devices */
 //        $devices = [];
 //        foreach ($groupsUserIsApartOf as $groupUserIsNotApartOf) {
-//            $devicesResult = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupUserIsNotApartOf->getGroupNameID()]);
+//            $devicesResult = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $groupUserIsNotApartOf->getgroupID()]);
 //            if ($devicesResult) {
 //                $devices = array_merge($devicesResult, $devices);
 //            }
 //        }
 //
 //        foreach ($devices as $potentialDevice) {
-//            if ($potentialDevice->getGroupNameObject()->getGroupNameID() !== $user->getGroupNameID()->getGroupNameID()) {
+//            if ($potentialDevice->getGroupNameObject()->getgroupID() !== $user->getgroupID()->getgroupID()) {
 //                $device = $potentialDevice;
 //                break;
 //            }
@@ -166,7 +166,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             self::fail('No group found for testing');
         }
         /** @var Devices[] $devicesResult */
-        $devicesResult = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devicesResult = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         if (empty($devicesResult)) {
             self::fail('No device found to delete for testing');
@@ -190,7 +190,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         );
 
         self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
         self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
         self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
@@ -213,11 +213,11 @@ class DeleteDeviceControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         );
 
             /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         if (empty($devices)) {
             self::fail('No device found to delete for testing');
@@ -246,7 +246,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-        self::assertEquals($device->getGroupNameObject()->getGroupNameID(), $responseData['payload']['groupNameID']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
         self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
         self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);

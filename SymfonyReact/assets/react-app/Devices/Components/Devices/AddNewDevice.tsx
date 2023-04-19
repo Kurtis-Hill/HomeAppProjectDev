@@ -171,7 +171,7 @@ export function AddNewDevice(props: {
                                         userData.userData.userGroups.length > 0 
                                             ? 
                                                 userData.userData.userGroups.map((group: GroupNameResponseInterface, index: number) => (
-                                                    <option key={index} value={group.groupNameID}>{group.groupName}</option>
+                                                    <option key={index} value={group.groupID}>{group.groupName}</option>
                                                 )) 
                                             : 
                                                 null

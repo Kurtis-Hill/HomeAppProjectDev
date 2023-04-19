@@ -115,7 +115,7 @@ export function AddNewGroup(props: {
                         :
                         newGroupAddData === null
                             ? addNewGroupFormInputs()
-                            : <div className="padding-bottom">Success new group name: {`${newGroupAddData.groupName}`} new groupID: {`${newGroupAddData.groupNameID}`}</div>
+                            : <div className="padding-bottom">Success new group name: {`${newGroupAddData.groupName}`} new groupID: {`${newGroupAddData.groupID}`}</div>
                 }
                 { 
                     groupRequestLoading === false

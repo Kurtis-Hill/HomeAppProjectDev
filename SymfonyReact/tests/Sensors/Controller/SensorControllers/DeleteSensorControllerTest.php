@@ -13,7 +13,7 @@ use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
@@ -38,7 +38,7 @@ class DeleteSensorControllerTest extends WebTestCase
 
     private UserRepository $userRepository;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupNameRepository;
 
     private DeviceRepository $deviceRepository;
 
@@ -102,9 +102,9 @@ class DeleteSensorControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
 
-        $groupsUserIsPartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupNameIds());
+        $groupsUserIsPartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user, $user->getAssociatedGroupIDs());
 
-        $devicesInGroupsUserIsPartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsPartOf]);
+        $devicesInGroupsUserIsPartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsPartOf]);
 
         /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy([
@@ -144,7 +144,7 @@ class DeleteSensorControllerTest extends WebTestCase
 
         $groupsUserIsNotPartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
-        $devicesInGroupsUserIsNotPartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotPartOf]);
+        $devicesInGroupsUserIsNotPartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotPartOf]);
 
         /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy([

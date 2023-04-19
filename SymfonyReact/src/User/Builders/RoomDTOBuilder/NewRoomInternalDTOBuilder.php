@@ -2,7 +2,7 @@
 
 namespace App\User\Builders\RoomDTOBuilder;
 
-use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
+use App\User\DTO\Internal\RoomDTOs\AddNewRoomDTO;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 

@@ -38,12 +38,6 @@ class Room
     ]
     private string $room;
 
-//    #[
-//        ORM\ManyToOne(targetEntity: GroupNames::class),
-//        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
-//    ]
-//    private GroupNames $groupNameID;
-
     public function getRoomID(): int
     {
         return $this->roomID;
@@ -63,16 +57,4 @@ class Room
     {
         $this->room = $room;
     }
-
-//    public function getGroupNameID(): GroupNames
-//    {
-//        return $this->groupNameID;
-//    }
-//
-//    public function setGroupNameID(GroupNames $groupNameID): void
-//    {
-//        $this->groupNameID = $groupNameID;
-//    }
-
-
 }

@@ -7,11 +7,11 @@ use App\Authentication\Repository\ORM\GroupNameMappingRepository;
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupNameMappingControllers\AddGroupNameMappingController;
-use App\User\Controller\GroupsControllers\AddGroupNameController;
+use App\User\Controller\GroupNameMappingControllers\AddGroupMappingController;
+use App\User\Controller\GroupsControllers\AddGroupController;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -36,7 +36,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
     private User $regularUserTwo;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupRepository;
 
     private UserRepositoryInterface $userRepository;
 
@@ -53,7 +53,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->userToken = $this->setUserToken($this->client);
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->groupRepository = $this->entityManager->getRepository(GroupNames::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
     }
@@ -105,7 +105,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         self::assertEquals($errorMessages, $errors);
 
         $title = $responseData['title'];
-        self::assertEquals(AddGroupNameMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
     public function sendingWrongDataTypesDataProvider(): Generator
@@ -113,33 +113,33 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         yield [
             'dataToSend' => [
                 'userID' => 'string',
-                'groupNameID' => 'string',
+                'groupID' => 'string',
             ],
             'errorMessages' => [
                 'userID must be a integer you have provided "string"',
-                'groupNameID must be a integer you have provided "string"',
+                'groupID must be a integer you have provided "string"',
             ],
         ];
 
         yield [
             'dataToSend' => [
                 'userID' => [],
-                'groupNameID' => [],
+                'groupID' => [],
             ],
             'errorMessages' => [
                 'userID must be a integer you have provided array',
-                'groupNameID must be a integer you have provided array',
+                'groupID must be a integer you have provided array',
             ],
         ];
 
         yield [
             'dataToSend' => [
                 'userID' => true,
-                'groupNameID' => false,
+                'groupID' => false,
             ],
             'errorMessages' => [
                 'userID must be a integer you have provided true',
-                'groupNameID must be a integer you have provided false',
+                'groupID must be a integer you have provided false',
             ],
         ];
     }
@@ -167,7 +167,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         self::assertEquals($errorMessages, $errors);
 
         $title = $responseData['title'];
-        self::assertEquals(AddGroupNameMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
     public function missingDataDataProvider(): Generator
@@ -177,13 +177,13 @@ class AddGroupNameMappingControllerTest extends WebTestCase
                 'userID' => 1,
             ],
             'errorMessages' => [
-                'groupNameID cannot be null',
+                'groupID cannot be null',
             ],
         ];
 
         yield [
             'dataToSend' => [
-                'groupNameID' => 1,
+                'groupID' => 1,
             ],
             'errorMessages' => [
                 'userID cannot be null',
@@ -202,11 +202,11 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         }
 
         /** @var GroupNames[] $groupName */
-        $groupName = $this->groupNameRepository->findAll();
+        $groupName = $this->groupRepository->findAll();
 
         $jsonData = json_encode([
             'userID' => $userID,
-            'groupNameID' => $groupName[0]->getGroupNameID(),
+            'groupID' => $groupName[0]->getGroupID(),
         ], JSON_THROW_ON_ERROR);
 
         $this->client->request(
@@ -227,14 +227,14 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $title = $responseData['title'];
 
-        self::assertEquals(AddGroupNameMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
-    public function test_sending_groupNameID_that_does_not_exist(): void
+    public function test_sending_groupID_that_does_not_exist(): void
     {
         while (true) {
-            $groupNameID = random_int(1, 999999);
-            $groupName = $this->groupNameRepository->find($groupNameID);
+            $groupID = random_int(1, 999999);
+            $groupName = $this->groupRepository->find($groupID);
             if ($groupName === null) {
                 break;
             }
@@ -245,7 +245,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $jsonData = json_encode([
             'userID' => $user[0]->getUserID(),
-            'groupNameID' => $groupNameID,
+            'groupID' => $groupID,
         ], JSON_THROW_ON_ERROR);
 
         $this->client->request(
@@ -262,20 +262,20 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $errors = $responseData['errors'];
-        self::assertEquals([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'GroupName')], $errors);
+        self::assertEquals([sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Group')], $errors);
 
         $title = $responseData['title'];
 
-        self::assertEquals(AddGroupNameMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
     public function test_sending_group_name_mapping_request_for_group_name_that_is_already_mapped_to_user(): void
     {
-        $adminGroupRegularUserIsApartOf = $this->groupNameRepository->findOneBy(['groupName' => UserDataFixtures::ADMIN_GROUP_ONE]);
+        $adminGroupRegularUserIsApartOf = $this->groupRepository->findOneBy(['groupName' => UserDataFixtures::ADMIN_GROUP_ONE]);
 
         $jsonData = json_encode([
             'userID' => $this->regularUserTwo->getUserID(),
-            'groupNameID' => $adminGroupRegularUserIsApartOf->getGroupNameID(),
+            'groupID' => $adminGroupRegularUserIsApartOf->getGroupID(),
         ], JSON_THROW_ON_ERROR);
 
         $this->client->request(
@@ -296,19 +296,19 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $title = $responseData['title'];
 
-        self::assertEquals(AddGroupNameMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
     public function test_sending_group_name_mapping_request_for_group_name_regular_user_doesnt_belong_to(): void
     {
         /** @var GroupNames[] $groupsNotApartOf */
-        $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
+        $groupsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $regularUserToAddGroupNameToo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $jsonData = json_encode([
             'userID' => $regularUserToAddGroupNameToo->getUserID(),
-            'groupNameID' => $groupsNotApartOf[0]->getGroupNameID(),
+            'groupID' => $groupsNotApartOf[0]->getGroupID(),
         ], JSON_THROW_ON_ERROR);
 
         $userToken = $this->setUserToken(
@@ -331,20 +331,20 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $title = $responseData['title'];
-        self::assertEquals(AddGroupNameController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(AddGroupController::NOT_AUTHORIZED_TO_BE_HERE, $title);
 
     }
 
     public function test_admin_can_add_user_to_group_doesnt_belong_to(): void
     {
         /** @var GroupNames[] $groupsNotApartOf */
-        $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
+        $groupsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $regularUserToAddGroupNameToo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $jsonData = json_encode([
             'userID' => $regularUserToAddGroupNameToo->getUserID(),
-            'groupNameID' => $groupsNotApartOf[0]->getGroupNameID(),
+            'groupID' => $groupsNotApartOf[0]->getGroupID(),
         ], JSON_THROW_ON_ERROR);
 
         $this->client->request(
@@ -360,12 +360,11 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $title = $responseData['title'];
-
-        self::assertEquals(AddGroupNameMappingController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(AddGroupMappingController::REQUEST_SUCCESSFUL, $title);
 
         $groupNameMapping = $this->groupNameMappingRepository->findOneBy([
             'user' => $regularUserToAddGroupNameToo->getUserID(),
-            'groupName' => $groupsNotApartOf[0]->getGroupNameID(),
+            'groupID' => $groupsNotApartOf[0]->getGroupID(),
         ]);
 
         self::assertNotNull($groupNameMapping);
@@ -374,7 +373,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         self::assertEquals($groupNameMapping->getGroupNameMappingID(), $payload['groupNameMappingID']);
         self::assertArrayHasKey('user', $payload);
-        self::assertArrayHasKey('groupName', $payload);
+        self::assertArrayHasKey('group', $payload);
     }
 
     public function test_regular_user_can_add_another_user_to_own_group(): void
@@ -383,7 +382,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $jsonData = json_encode([
             'userID' => $this->regularUserTwo->getUserID(),
-            'groupNameID' => $regularUserToAddUserToo->getGroupNameID()->getGroupNameID(),
+            'groupID' => $regularUserToAddUserToo->getGroupID()->getGroupID(),
         ], JSON_THROW_ON_ERROR);
 
         $userToken = $this->setUserToken(
@@ -405,11 +404,11 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $title = $responseData['title'];
-        self::assertEquals(AddGroupNameMappingController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(AddGroupMappingController::REQUEST_SUCCESSFUL, $title);
 
         $groupNameMapping = $this->groupNameMappingRepository->findOneBy([
             'user' => $this->regularUserTwo->getUserID(),
-            'groupName' => $regularUserToAddUserToo->getGroupNameID(),
+            'groupID' => $regularUserToAddUserToo->getGroupID(),
         ]);
 
         self::assertNotNull($groupNameMapping);
@@ -418,7 +417,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
         self::assertEquals($groupNameMapping->getGroupNameMappingID(), $payload['groupNameMappingID']);
         self::assertArrayHasKey('user', $payload);
-        self::assertArrayHasKey('groupName', $payload);
+        self::assertArrayHasKey('group', $payload);
     }
 
     /**

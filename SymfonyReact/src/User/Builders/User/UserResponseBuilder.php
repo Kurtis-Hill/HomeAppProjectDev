@@ -3,7 +3,7 @@
 namespace App\User\Builders\User;
 
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
-use App\User\DTO\ResponseDTOs\UserDTOs\UserFullResponseDTO;
+use App\User\DTO\Response\UserDTOs\UserFullResponseDTO;
 use App\User\Entity\User;
 
 class UserResponseBuilder
@@ -18,7 +18,7 @@ class UserResponseBuilder
             $user->getFirstName(),
             $user->getLastName(),
             $user->getEmail(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroupNameID()),
+            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroupID()),
             $user->getCreatedAt(),
             $showProfilePic !== true ? null : $user->getProfilePic(),
             $showRoles !== true ? null : $user->getRoles(),

@@ -17,7 +17,7 @@ export function UpdateDevice(props: {
     const [deviceUpdateFormInputs, setDeviceUpdateFormInputs] = useState<UpdateDeviceFormInputsInterface|null>({
             deviceName: deviceName,
             password: '',
-            deviceGroup: groupName.groupNameID,
+            deviceGroup: groupName.groupID,
             deviceRoom: room.roomID,
     });
 

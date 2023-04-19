@@ -3,7 +3,7 @@
 namespace App\User\Voters;
 
 use App\Authentication\Entity\GroupNameMapping;
-use App\User\DTO\InternalDTOs\GroupNameMappingDTOs\AddGroupNameMappingDTO;
+use App\User\DTO\Internal\GroupNameMappingDTOs\AddGroupMappingDTO;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -41,13 +41,13 @@ class GroupNameMappingVoter extends Voter
         };
     }
 
-    private function canAddNewGroupNameMapping(User $user, AddGroupNameMappingDTO $addNewGroupNameMappingDTO): bool
+    private function canAddNewGroupNameMapping(User $user, AddGroupMappingDTO $addNewGroupNameMappingDTO): bool
     {
         if ($user->isAdmin()) {
             return true;
         }
 
-        if ($user->getGroupNameID()->getGroupNameID() === $addNewGroupNameMappingDTO->getGroupToAddUserTo()->getGroupNameID()) {
+        if ($user->getGroupID()->getGroupID() === $addNewGroupNameMappingDTO->getGroupToAddUserTo()->getGroupID()) {
             return true;
         }
 
@@ -60,7 +60,7 @@ class GroupNameMappingVoter extends Voter
             return true;
         }
 
-        if ($user->getGroupNameID()->getGroupNameID() === $groupNameMapping->getGroupName()->getGroupNameID()) {
+        if ($user->getGroupID()->getGroupID() === $groupNameMapping->getGroupID()->getGroupID()) {
             return true;
         }
 

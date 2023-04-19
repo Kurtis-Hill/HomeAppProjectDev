@@ -7,10 +7,10 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 
 #[
-    ORM\Entity(repositoryClass: GroupNameRepository::class),
+    ORM\Entity(repositoryClass: GroupRepository::class),
     ORM\Table(name: "groupname"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
@@ -30,11 +30,11 @@ class GroupNames
     }
 
     #[
-        ORM\Column(name: "groupNameID", type: "integer", nullable: false),
+        ORM\Column(name: "groupID", type: "integer", nullable: false),
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
     ]
-    private int $groupNameID;
+    private int $groupID;
 
     #[
         ORM\Column(name: "groupName", type: "string", length: 50, nullable: false),
@@ -61,14 +61,14 @@ class GroupNames
 //    ]
 //    private User $createdBy;
 
-    public function getGroupNameID(): int
+    public function getGroupID(): int
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
-    public function setGroupNameID(int $groupNameID): void
+    public function setGroupID(int $groupID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupID = $groupID;
     }
 
     public function getGroupName(): string

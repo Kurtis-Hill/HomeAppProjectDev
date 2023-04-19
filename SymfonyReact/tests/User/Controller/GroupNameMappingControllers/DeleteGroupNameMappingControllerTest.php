@@ -10,7 +10,7 @@ use App\Tests\Traits\TestLoginTrait;
 use App\User\Controller\GroupNameMappingControllers\DeleteGroupNameMappingController;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -35,7 +35,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
 
     private User $regularUserTwo;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupNameRepository;
 
     private UserRepositoryInterface $userRepository;
 
@@ -96,15 +96,15 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsRegularUserTwoDoesntOwn */
         $groupsRegularUserTwoDoesntOwn = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
-        $groupNameMappingsRegularUserTwoDoesntOwn = $this->groupNameMappingRepository->findBy(['groupName' => $groupsRegularUserTwoDoesntOwn]);
+        $groupMappingsRegularUserTwoDoesntOwn = $this->groupNameMappingRepository->findBy(['groupID' => $groupsRegularUserTwoDoesntOwn]);
 
-        self::assertNotEmpty($groupNameMappingsRegularUserTwoDoesntOwn);
+        self::assertNotEmpty($groupMappingsRegularUserTwoDoesntOwn);
 
         $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
 
         $this->client->request(
             Request::METHOD_DELETE,
-            sprintf(self::DELETE_GROUP_NAME_MAPPING_URL, $groupNameMappingsRegularUserTwoDoesntOwn[0]->getGroupNameMappingID()),
+            sprintf(self::DELETE_GROUP_NAME_MAPPING_URL, $groupMappingsRegularUserTwoDoesntOwn[0]->getGroupNameMappingID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
@@ -121,7 +121,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
     public function test_regular_user_can_delete_mapping_for_group_owns(): void
     {
         /** @var GroupNameMapping[] $groupNameMappingsRegularUserTwoOwns */
-        $groupNameMappingsRegularUserTwoOwns = $this->groupNameMappingRepository->findBy(['groupName' => $this->regularUserTwo->getGroupNameID()->getGroupNameID()]);
+        $groupNameMappingsRegularUserTwoOwns = $this->groupNameMappingRepository->findBy(['groupID' => $this->regularUserTwo->getGroupID()->getGroupID()]);
 
         self::assertNotEmpty($groupNameMappingsRegularUserTwoOwns);
         $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
@@ -157,7 +157,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsAdminNotApartOf */
         $groupsAdminNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
-        $groupNameMapping = $this->groupNameMappingRepository->findBy(['groupName' => $groupsAdminNotApartOf[0]->getGroupNameID()]);
+        $groupNameMapping = $this->groupNameMappingRepository->findBy(['groupID' => $groupsAdminNotApartOf[0]->getGroupID()]);
         $this->client->request(
             Request::METHOD_DELETE,
             sprintf(self::DELETE_GROUP_NAME_MAPPING_URL, $groupNameMapping[0]->getGroupNameMappingID()),

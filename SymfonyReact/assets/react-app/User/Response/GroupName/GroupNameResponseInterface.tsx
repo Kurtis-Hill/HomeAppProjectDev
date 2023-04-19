@@ -1,4 +1,4 @@
 export default interface GroupNameResponseInterface {
-    groupNameID: number;
+    groupID: number;
     groupName: string;
 }

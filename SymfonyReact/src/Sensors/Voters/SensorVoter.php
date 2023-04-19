@@ -89,8 +89,8 @@ class SensorVoter extends Voter
 
         if (
             !in_array(
-                $newSensorDTO->getDevice()->getGroupNameObject()->getGroupNameID(),
-                $user->getAssociatedGroupNameIds(), true
+                $newSensorDTO->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(), true
             )
         ) {
             return false;
@@ -105,7 +105,7 @@ class SensorVoter extends Voter
             return false;
         }
 
-        if (!in_array($devices->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+        if (!in_array($devices->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 
@@ -133,7 +133,7 @@ class SensorVoter extends Voter
             return true;
         }
 
-        if (!in_array($sensor->getDevice()->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 
@@ -153,14 +153,14 @@ class SensorVoter extends Voter
         $sensor = $updateSensorDTO->getSensor();
 
         if (!in_array(
-            $sensor->getDevice()->getGroupNameObject()->getGroupNameID(),
-            $user->getAssociatedGroupNameIds(),
+            $sensor->getDevice()->getGroupObject()->getGroupID(),
+            $user->getAssociatedGroupIDs(),
             true
         )) {
             return false;
         }
 
-        if (!in_array($updateSensorDTO->getDeviceID()?->getGroupNameObject()->getGroupNameID(), $user->getAssociatedGroupNameIds(), true)) {
+        if (!in_array($updateSensorDTO->getDeviceID()?->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 
@@ -178,8 +178,8 @@ class SensorVoter extends Voter
         }
 
         if (!in_array(
-            $sensor->getDevice()->getGroupNameObject()->getGroupNameID(),
-            $user->getAssociatedGroupNameIds(),
+            $sensor->getDevice()->getGroupObject()->getGroupID(),
+            $user->getAssociatedGroupIDs(),
             true
         )) {
             return false;

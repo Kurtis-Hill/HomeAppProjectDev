@@ -33,8 +33,8 @@ services:
   App\User\Repository\ORM\RoomRepositoryInterface:
     alias: 'App\User\Repository\ORM\RoomRepository'
 
-  App\User\Repository\ORM\GroupNameRepositoryInterface:
-    alias: 'App\User\Repository\ORM\GroupNameRepository'
+  App\User\Repository\ORM\GroupRepositoryInterface:
+    alias: 'App\User\Repository\ORM\GroupRepository'
 
   App\User\Repository\ORM\UserRepositoryInterface:
     alias: 'App\User\Repository\ORM\UserRepository'

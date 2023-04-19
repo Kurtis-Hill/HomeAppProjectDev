@@ -62,7 +62,7 @@ class GetGroupControllerTest extends WebTestCase
 
         self::assertCount(1, $payload);
         self::assertEquals(UserDataFixtures::ADMIN_GROUP_ONE, $payload[0]['groupName']);
-        self::assertIsNumeric($payload[0]['groupNameID']);
+        self::assertIsNumeric($payload[0]['groupID']);
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
     }
 
@@ -86,7 +86,7 @@ class GetGroupControllerTest extends WebTestCase
 
         foreach ($responseData['payload'] as $key => $payload) {
             self::assertEquals(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO[$key], $payload['groupName']);
-            self::assertIsNumeric($payload['groupNameID']);
+            self::assertIsNumeric($payload['groupID']);
         }
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(count(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO), $responseData['payload']);
@@ -112,7 +112,7 @@ class GetGroupControllerTest extends WebTestCase
 
         $payload = $responseData['payload'];
         self::assertEquals(UserDataFixtures::REGULAR_GROUP_ONE, $payload[0]['groupName']);
-        self::assertIsNumeric($payload[0]['groupNameID']);
+        self::assertIsNumeric($payload[0]['groupID']);
 
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
         self::assertCount(2, $responseData);

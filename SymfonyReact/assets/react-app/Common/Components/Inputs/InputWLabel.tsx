@@ -5,7 +5,7 @@ import Input from '../Inputs/Input'
 export default function InputWLabel(props: { 
     labelName: string; 
     name: string; 
-    value: object; 
+    value: object;
     type?: string; 
     placeHolder?: string; 
     autoComplete?: string; 
@@ -34,7 +34,7 @@ export default function InputWLabel(props: {
                 // className={"form-control form-control-user login-form-field"}
                 placeHolder={placeHolder}
                 onChangeFunction={onChangeFunction}
-                {...value}
+                { ...value }
             />
         </>
     )

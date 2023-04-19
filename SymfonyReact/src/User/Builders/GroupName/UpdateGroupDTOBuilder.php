@@ -2,7 +2,7 @@
 
 namespace App\User\Builders\GroupName;
 
-use App\User\DTO\InternalDTOs\GroupDTOs\UpdateGroupDTO;
+use App\User\DTO\Internal\GroupDTOs\UpdateGroupDTO;
 use App\User\Entity\GroupNames;
 
 class UpdateGroupDTOBuilder

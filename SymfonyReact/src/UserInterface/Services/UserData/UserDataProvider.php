@@ -4,9 +4,9 @@ namespace App\UserInterface\Services\UserData;
 
 use App\Common\API\APIErrorMessages;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupNameServices\GetGroupNamesHandler;
+use App\User\Services\GroupNameServices\UserGroupsFinder;
 use App\UserInterface\Builders\UserData\UserDataDTOBuilder;
 use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
 use Doctrine\ORM\AbstractQuery;
@@ -17,16 +17,16 @@ class UserDataProvider
 {
     private RoomRepositoryInterface $roomRepository;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupNameRepository;
 
-    private GetGroupNamesHandler $getGroupNamesHandler;
+    private UserGroupsFinder $getGroupNamesHandler;
 
     private array $errors = [];
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
-        GroupNameRepository $groupNameRepository,
-        GetGroupNamesHandler $getGroupNamesHandler,
+        GroupRepository $groupNameRepository,
+        UserGroupsFinder $getGroupNamesHandler,
     ) {
         $this->roomRepository = $roomRepository;
         $this->groupNameRepository = $groupNameRepository;

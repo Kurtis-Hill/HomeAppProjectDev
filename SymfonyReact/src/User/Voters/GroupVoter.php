@@ -2,8 +2,8 @@
 
 namespace App\User\Voters;
 
-use App\User\DTO\InternalDTOs\GroupDTOs\AddNewGroupDTO;
-use App\User\DTO\InternalDTOs\GroupDTOs\UpdateGroupDTO;
+use App\User\DTO\Internal\GroupDTOs\AddNewGroupDTO;
+use App\User\DTO\Internal\GroupDTOs\UpdateGroupDTO;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -59,8 +59,8 @@ class GroupVoter extends Voter
 
         $groupToUpdate = $addNewGroupDTO->getGroupToUpdate();
         if (!in_array(
-            $groupToUpdate->getGroupNameID(),
-            $user->getAssociatedGroupNameIds(),
+            $groupToUpdate->getGroupID(),
+            $user->getAssociatedGroupIDs(),
             true
         )) {
             return false;

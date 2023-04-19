@@ -26,7 +26,7 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -51,7 +51,7 @@ class GetSensorControllerTest extends WebTestCase
 
     private UserRepositoryInterface $userRepository;
 
-    private GroupNameRepository $groupNameRepository;
+    private GroupRepository $groupNameRepository;
 
     private DeviceRepositoryInterface $deviceRepository;
 
@@ -227,7 +227,7 @@ class GetSensorControllerTest extends WebTestCase
         /** @var GroupNames[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
-        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsNotApartOf]);
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsNotApartOf]);
 
         $deviceIDs = array_map(function (Devices $device) {
             return $device->getDeviceID();
@@ -266,7 +266,7 @@ class GetSensorControllerTest extends WebTestCase
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         /** @var Devices[] $devicesUserIsNotApartOf */
-        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsNotApartOf]);
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsNotApartOf]);
 
         $deviceNames = array_map(function (Devices $device) {
             return $device->getDeviceName();
@@ -306,7 +306,7 @@ class GetSensorControllerTest extends WebTestCase
 
 
         $groupIDs = array_map(static function (GroupNames $group) {
-            return $group->getGroupNameID();
+            return $group->getGroupID();
         }, $groupsNotApartOf);
 
         $dataToSend = [
@@ -343,7 +343,7 @@ class GetSensorControllerTest extends WebTestCase
         $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
         /** @var Devices[] $devicesUserIsApartOf */
-        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $deviceIDs = array_map(function (Devices $device) {
             return $device->getDeviceID();
@@ -382,7 +382,7 @@ class GetSensorControllerTest extends WebTestCase
         $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
         /** @var Devices[] $devicesUserIsApartOf */
-        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $deviceNames = array_map(function (Devices $device) {
             return $device->getDeviceName();
@@ -422,10 +422,10 @@ class GetSensorControllerTest extends WebTestCase
         $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
         /** @var Devices[] $devicesUserIsApartOf */
-        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsApartOf]);
+        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $groupIDs = array_map(function (GroupNames $group) {
-            return $group->getGroupNameID();
+            return $group->getGroupID();
         }, $groupsUserIsApartOf);
 
         $dataToSend = [
@@ -461,7 +461,7 @@ class GetSensorControllerTest extends WebTestCase
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
         /** @var Devices[] $devicesUserIsNotApartOf */
-        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         $deviceIDs = array_map(function (Devices $device) {
             return $device->getDeviceID();
@@ -499,7 +499,7 @@ class GetSensorControllerTest extends WebTestCase
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
         /** @var Devices[] $devicesUserIsNotApartOf */
-        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         $deviceNames = array_map(function (Devices $device) {
             return $device->getDeviceName();
@@ -537,10 +537,10 @@ class GetSensorControllerTest extends WebTestCase
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
         /** @var Devices[] $devicesUserIsNotApartOf */
-        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupNameID' => $groupsUserIsNotApartOf]);
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         $groupIDs = array_map(function (GroupNames $group) {
-            return $group->getGroupNameID();
+            return $group->getGroupID();
         }, $groupsUserIsNotApartOf);
 
         $dataToSend = [

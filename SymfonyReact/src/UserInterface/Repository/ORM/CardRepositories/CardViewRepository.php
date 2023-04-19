@@ -75,11 +75,11 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         ];
 
         if (!$user->isAdmin()) {
-            $groupNameIDs = $user->getAssociatedGroupNameIds();
-            $parameters['groupNameID'] = $groupNameIDs;
+            $groupIDs = $user->getAssociatedGroupIDs();
+            $parameters['groupID'] = $groupIDs;
 
             $qb->andWhere(
-                $expr->in(Devices::ALIAS . '.groupNameID', ':groupNameID'),
+                $expr->in(Devices::ALIAS . '.groupID', ':groupID'),
             );
         }
 

@@ -5,7 +5,7 @@ namespace App\User\Builders\GroupNameMapping;
 use App\Authentication\Entity\GroupNameMapping;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\User\UserResponseBuilder;
-use App\User\DTO\ResponseDTOs\GroupNameMappingDTOs\GroupNameMappingFullResponseDTO;
+use App\User\DTO\Response\GroupNameMappingDTOs\GroupNameMappingFullResponseDTO;
 
 class GroupNameMappingResponseBuilder
 {
@@ -14,7 +14,7 @@ class GroupNameMappingResponseBuilder
         return new GroupNameMappingFullResponseDTO(
             $groupNameMapping->getGroupNameMappingID(),
             UserResponseBuilder::buildFullUserResponseDTO($groupNameMapping->getUser()),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupNameMapping->getGroupName()),
+            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupNameMapping->getGroupID()),
         );
     }
 }

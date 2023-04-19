@@ -111,7 +111,7 @@ class RegistrationForm  extends AbstractType
                 ],
                 'label' => false,
             ])
-//            ->add('groupNameID', EntityType::class, [
+//            ->add('groupID', EntityType::class, [
 //                'label' => 'Please Select Group Name',
 //                'class' => GroupNames::class,
 //                'required' => 'true',

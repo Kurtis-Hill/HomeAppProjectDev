@@ -1,7 +1,7 @@
 export interface AddNewDeviceResponse {
     deviceNameID?: number,
     deviceName: string,
-    groupNameID: number,
+    groupID: number,
     roomID: number,
     createdBy: string|number,
     secret: string|null,

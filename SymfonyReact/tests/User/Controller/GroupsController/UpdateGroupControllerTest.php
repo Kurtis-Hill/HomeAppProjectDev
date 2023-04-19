@@ -7,11 +7,11 @@ use App\Authentication\Repository\ORM\GroupNameMappingRepository;
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupsControllers\AddGroupNameController;
+use App\User\Controller\GroupsControllers\AddGroupController;
 use App\User\Controller\GroupsControllers\UpdateGroupController;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -36,7 +36,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     private User $regularUserTwo;
 
-    private GroupNameRepositoryInterface $groupNameRepository;
+    private GroupRepositoryInterface $groupNameRepository;
 
     private UserRepositoryInterface $userRepository;
 
@@ -73,7 +73,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -95,7 +95,7 @@ class UpdateGroupControllerTest extends WebTestCase
         $group = $groups[0];
         $this->client->request(
             $httpVerb,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -128,7 +128,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -140,7 +140,7 @@ class UpdateGroupControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertEquals($message, $response['errors']);
-        self::assertEquals(AddGroupNameController::BAD_REQUEST_NO_DATA_RETURNED, $response['title']);
+        self::assertEquals(AddGroupController::BAD_REQUEST_NO_DATA_RETURNED, $response['title']);
     }
 
     public function invalidDataTypesDataProvider(): Generator
@@ -195,7 +195,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
@@ -208,7 +208,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         self::assertEquals(UpdateGroupController::NOT_AUTHORIZED_TO_BE_HERE, $response['title']);
 
-        $updatedGroup = $this->groupNameRepository->findOneBy(['groupNameID' => $group->getGroupNameID()]);
+        $updatedGroup = $this->groupNameRepository->findOneBy(['groupID' => $group->getGroupID()]);
 
         self::assertEquals($group->getGroupName(), $updatedGroup->getGroupName());
     }
@@ -232,7 +232,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -245,9 +245,9 @@ class UpdateGroupControllerTest extends WebTestCase
         $payload = $response['payload'];
 
         self::assertEquals($formRequestData['groupName'], $payload['groupName']);
-        self::assertEquals($group->getGroupNameID(), $payload['groupNameID']);
+        self::assertEquals($group->getGroupID(), $payload['groupID']);
 
-        $updatedGroup = $this->groupNameRepository->findOneBy(['groupNameID' => $group->getGroupNameID()]);
+        $updatedGroup = $this->groupNameRepository->findOneBy(['groupID' => $group->getGroupID()]);
 
         self::assertEquals($formRequestData['groupName'], $updatedGroup->getGroupName());
     }
@@ -271,7 +271,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -305,7 +305,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -340,7 +340,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $groupToUpdate->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $groupToUpdate->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -374,7 +374,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -388,9 +388,9 @@ class UpdateGroupControllerTest extends WebTestCase
         $payload = $response['payload'];
 
         self::assertEquals($formRequestData['groupName'], $payload['groupName']);
-        self::assertEquals($group->getGroupNameID(), $payload['groupNameID']);
+        self::assertEquals($group->getGroupID(), $payload['groupID']);
 
-        $updatedGroup = $this->groupNameRepository->findOneBy(['groupNameID' => $group->getGroupNameID()]);
+        $updatedGroup = $this->groupNameRepository->findOneBy(['groupID' => $group->getGroupID()]);
 
         self::assertEquals($formRequestData['groupName'], $updatedGroup->getGroupName());
     }
@@ -414,7 +414,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -428,9 +428,9 @@ class UpdateGroupControllerTest extends WebTestCase
         $payload = $response['payload'];
 
         self::assertEquals($formRequestData['groupName'], $payload['groupName']);
-        self::assertEquals($group->getGroupNameID(), $payload['groupNameID']);
+        self::assertEquals($group->getGroupID(), $payload['groupID']);
 
-        $updatedGroup = $this->groupNameRepository->findOneBy(['groupNameID' => $group->getGroupNameID()]);
+        $updatedGroup = $this->groupNameRepository->findOneBy(['groupID' => $group->getGroupID()]);
 
         self::assertEquals($formRequestData['groupName'], $updatedGroup->getGroupName());
     }
@@ -454,7 +454,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupNameID()),
+            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -468,6 +468,6 @@ class UpdateGroupControllerTest extends WebTestCase
         $payload = $response['payload'];
 
         self::assertEquals($formRequestData['groupName'], $payload['groupName']);
-        self::assertEquals($group->getGroupNameID(), $payload['groupNameID']);
+        self::assertEquals($group->getGroupID(), $payload['groupID']);
     }
 }

@@ -25,7 +25,7 @@ use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\GroupNames;
 use App\User\Entity\User;
-use App\User\Repository\ORM\GroupNameRepository;
+use App\User\Repository\ORM\GroupRepository;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -472,19 +472,19 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensorTypeMappingObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
-        /** @var GroupNameRepository $groupNameRepository */
+        /** @var GroupRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
         /** @var GroupNames[] $groupsNotApartOf */
         $groupsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         );
 
         $counter = 0;
 
         while (true) {
             $group = $groupsNotApartOf[$counter];
-            $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $group->getGroupNameID()]);
+            $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $group->getGroupID()]);
             $counter++;
             if (!empty($devices)) {
                 break;
@@ -621,7 +621,7 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var SensorType $sensorType */
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
-        /** @var GroupNameRepository $groupRepository */
+        /** @var GroupRepository $groupRepository */
         $groupRepository = $this->entityManager->getRepository(GroupNames::class);
 
         /** @var User $user */
@@ -629,7 +629,7 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var GroupNames[] $groupNames */
         $groupNames = $groupRepository->findGroupsUserIsNotApartOf(
             $user,
-            $user->getAssociatedGroupNameIds(),
+            $user->getAssociatedGroupIDs(),
         );
 
         if (empty($groupNames)) {
@@ -638,7 +638,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $groupName = $groupNames[0];
 
         /** @var Devices[] $devices */
-        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupNameID' => $groupName->getGroupNameID()]);
+        $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $groupName->getGroupID()]);
 
         $device = $devices[0];
         $formData = [

@@ -2,7 +2,7 @@ export default interface DeviceNavbarResponseInterface {
     deviceNameID: number|null;
     deviceName: string;
     deviceSecret: string|null;
-    groupNameID: number;
+    groupID: number;
     roomID: number;
     // updatedAt: Date = new DateTime();
     createdBy: number;
