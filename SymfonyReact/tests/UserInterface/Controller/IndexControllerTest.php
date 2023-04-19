@@ -10,6 +10,7 @@ use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class IndexControllerTest extends WebTestCase
 {
@@ -37,7 +38,7 @@ class IndexControllerTest extends WebTestCase
     /**
      * @dataProvider variousRoutesDataProvider
      */
-    public function test_various_routes_return_correct_response(string $uri): void
+    public function test_various_routes_return_forbidden_response_no_credentials(string $uri): void
     {
         $this->client->request(
             Request::METHOD_GET,
@@ -46,8 +47,7 @@ class IndexControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json'],
         );
-
-        self::assertEquals(200, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
     public function variousRoutesDataProvider(): Generator
