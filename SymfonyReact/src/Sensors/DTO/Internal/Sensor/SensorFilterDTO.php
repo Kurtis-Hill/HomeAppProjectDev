@@ -1,11 +1,11 @@
 <?php
 
-namespace App\UserInterface\DTO\Internal\CardDataFiltersDTO;
+namespace App\Sensors\DTO\Internal\Sensor;
 
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class CardDataPreFilterDTO
+class SensorFilterDTO
 {
     private array $sensorTypesToFilter;
 

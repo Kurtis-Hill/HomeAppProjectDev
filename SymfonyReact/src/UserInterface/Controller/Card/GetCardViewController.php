@@ -7,17 +7,18 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
+use App\Sensors\Builders\SensorFilterDTOBuilders\SensorFilterDTOBuilder;
+use App\Sensors\DTO\Internal\Sensor\SensorFilterDTO;
+use App\Sensors\SensorServices\SensorFilter\SensorFilter;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\Builders\CardRequestDTOBuilders\CardViewTypeFilterDTOBuilder;
-use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\RequestDTO\CardViewFilterRequestDTO;
 use App\UserInterface\Exceptions\CardTypeNotRecognisedException;
 use App\UserInterface\Exceptions\CardViewRequestException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Exceptions\WrongUserTypeException;
-use App\UserInterface\Services\Cards\CardDataFilter\CardDataFilter;
 use App\UserInterface\Services\Cards\CardPreparation\CurrentReadingCardViewPreparationHandler;
 use App\UserInterface\Services\Cards\CardViewDTOCreation\CardViewDTOCreationHandler;
 use App\UserInterface\Voters\CardViewVoter;
@@ -43,7 +44,7 @@ class GetCardViewController extends AbstractController
 
     public const DEVICE_VIEW = 'device';
 
-    private CardDataFilter $cardDataFilterService;
+    private SensorFilter $cardDataFilterService;
 
     private CurrentReadingCardViewPreparationHandler $cardPreparationService;
 
@@ -54,7 +55,7 @@ class GetCardViewController extends AbstractController
     private LoggerInterface $logger;
 
     public function __construct(
-        CardDataFilter $cardDataFilterService,
+        SensorFilter $cardDataFilterService,
         CurrentReadingCardViewPreparationHandler $currentReadingCardViewPreparationHandler,
         CardViewDTOCreationHandler $cardViewDTOCreationService,
         ValidatorInterface $validator,
@@ -80,7 +81,6 @@ class GetCardViewController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-
         $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
         $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO(null, $device);
@@ -183,7 +183,7 @@ class GetCardViewController extends AbstractController
      * @throws ORMException|WrongUserTypeException
      */
     private function prepareCardDataForUser(
-        CardDataPreFilterDTO $cardDataPreFilterDTO,
+        SensorFilterDTO $cardDataPreFilterDTO,
         CardViewUriFilterDTO $cardViewTypeFilterDTO,
         string $view = null,
     ): array {
@@ -202,9 +202,9 @@ class GetCardViewController extends AbstractController
         );
     }
 
-    private function prepareFilters(CardViewFilterRequestDTO $cardViewFilterRequestDTO): CardDataPreFilterDTO
+    private function prepareFilters(CardViewFilterRequestDTO $cardViewFilterRequestDTO): SensorFilterDTO
     {
-        return CardViewTypeFilterDTOBuilder::buildCardDataPreFilterDTO(
+        return SensorFilterDTOBuilder::buildCardDataPreFilterDTO(
             $cardViewFilterRequestDTO->getSensorTypes(),
             $cardViewFilterRequestDTO->getReadingTypes(),
         );

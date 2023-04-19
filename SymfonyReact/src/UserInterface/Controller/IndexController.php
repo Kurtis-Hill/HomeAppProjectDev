@@ -16,7 +16,7 @@ class IndexController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            $this->createAccessDeniedException('Access Denied');
+            throw $this->createAccessDeniedException('Access Denied');
         }
 
         return $this->render('index/index.html.twig');

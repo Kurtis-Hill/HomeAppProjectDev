@@ -2,7 +2,9 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\Authentication\Controller\SecurityController;
+use App\Common\API\APIErrorMessages;
+use App\Devices\Entity\Devices;
+use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
 use App\Sensors\Entity\ReadingTypes\Analog;
@@ -15,6 +17,9 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Tests\Traits\TestLoginTrait;
+use App\User\Entity\GroupNames;
+use App\User\Entity\User;
+use App\User\Repository\ORM\GroupNameRepository;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,6 +35,8 @@ class GetCardViewControllerTest extends WebTestCase
 
     public const CARD_VIEW_URL = '/HomeApp/api/user/cards/%s';
 
+    public const DEVICE_CARD_VIEW_URL = self::CARD_VIEW_URL . '/%d';
+
     private ?string $userToken = null;
 
     private ?EntityManagerInterface $entityManager;
@@ -37,6 +44,14 @@ class GetCardViewControllerTest extends WebTestCase
     private KernelBrowser $client;
 
     private SensorTypeQueryFactory $sensorTypeQueryFactory;
+
+    private User $regularUserOne;
+
+    private User $adminUserOne;
+
+    private GroupNameRepository $groupNameRepository;
+
+    private DeviceRepository $deviceRepository;
 
     protected function setUp(): void
     {
@@ -50,6 +65,12 @@ class GetCardViewControllerTest extends WebTestCase
             ->get(SensorTypeQueryFactory::class);
 
         $this->userToken = $this->setUserToken($this->client);
+
+        $this->groupNameRepository = $this->entityManager->getRepository(GroupNames::class);
+        $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
+
+        $this->regularUserOne = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+        $this->adminUserOne = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
     }
 
     public function test_admin_getting_all_card_data(): void
@@ -149,19 +170,146 @@ class GetCardViewControllerTest extends WebTestCase
                 ++$sensorDataArrayCount;
             }
         }
+    }
 
-//        $user = $this->entityManager->getRepository(UserExceptions::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-//        $groupNameMappingRepository = $this->entityManager->getRepository(GroupNameMapping::class);
-//
-//        $groupNameMappingEntities = $groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-//        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-//
-//        $cardViewAllCardSensorData = $cardViewRepository->getAllCardSensorData(
-//            $user,
-//            Cardstate::INDEX_ONLY,
-//        );
-//
-//        dd($cardViewAllCardSensorData);
+    public function test_regular_user_getting_all_card_data(): void
+    {
+        $userToken = $this->setUserToken(
+            $this->client,
+            $this->regularUserOne->getEmail(),
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::CARD_VIEW_URL, 'index'),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertIsArray($responseData['payload']);
+        self::assertGreaterThan(1, count($responseData['payload']));
+
+        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
+        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
+
+        foreach ($responseData['payload'] as $payload) {
+            /** @var CardView $cardViewObject */
+            $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
+
+            self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
+            self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
+            self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
+
+            $readingTypeQueryDTOs = $this->sensorTypeQueryFactory
+                ->getSensorTypeQueryDTOBuilder($payload['sensorType'])
+                ->buildSensorReadingTypes();
+
+            /** @var Sensor[] $cardSensorReadingTypeObjects */
+            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+                $cardViewObject->getSensor()->getDevice()->getDeviceID(),
+                $cardViewObject->getSensor()->getSensorName(),
+                null,
+                $readingTypeQueryDTOs,
+            );
+
+            self::assertNotEmpty($cardSensorReadingTypeObjects);
+            $sensorDataArrayCount = 0;
+            foreach ($cardSensorReadingTypeObjects as $cardSensorReadingTypeObject) {
+                if ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+                    if ($cardSensorReadingTypeObject instanceof Temperature) {
+                        self::assertEquals(
+                            Temperature::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                    if ($cardSensorReadingTypeObject instanceof Humidity) {
+                        self::assertEquals(
+                            Humidity::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                    if ($cardSensorReadingTypeObject instanceof Analog) {
+                        self::assertEquals(
+                            Analog::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                    if ($cardSensorReadingTypeObject instanceof Latitude) {
+                        self::assertEquals(
+                            Latitude::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                        $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getCurrentReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['currentReading']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getHighReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['highReading']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getLowReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['lowReading']
+                    );
+                    if (isset($payload['sensorData'][$sensorDataArrayCount]['readingSymbol'])) {
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject::getReadingSymbol(),
+                            $payload['sensorData'][$sensorDataArrayCount]['readingSymbol']
+                        );
+                    }
+                }
+                ++$sensorDataArrayCount;
+            }
+        }
+    }
+
+    public function test_getting_device_card_data_device_not_apart_of(): void
+    {
+        $userGroupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserOne);
+
+        $device = null;
+        foreach ($userGroupsNotApartOf as $userGroupNotApartOf) {
+            $device = $this->deviceRepository->findOneBy(['groupNameID' => $userGroupNotApartOf]);
+            if ($device !== null) {
+                break;
+            }
+        }
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            $this->regularUserOne->getEmail(),
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::DEVICE_CARD_VIEW_URL, 'device', $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        $title = $responseData['title'];
+        self::assertEquals(UpdateSensorBoundaryReadingsController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+
+        $errors = $responseData['errors'];
+        self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errors);
     }
 
     /**

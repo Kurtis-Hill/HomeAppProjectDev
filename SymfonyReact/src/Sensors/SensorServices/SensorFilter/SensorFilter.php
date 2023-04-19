@@ -1,22 +1,23 @@
 <?php
 
-namespace App\UserInterface\Services\Cards\CardDataFilter;
+namespace App\Sensors\SensorServices\SensorFilter;
 
+use App\Sensors\DTO\Internal\Sensor\SensorFilterDTO;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use App\UserInterface\Builders\CardDataQueryDTOBuilders\CardDataQueryEncapsulationDTOBuilder;
-use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardDataPreFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\Log\LoggerInterface;
 
-class CardDataFilter
+class SensorFilter
 {
     private SensorTypeRepositoryInterface $sensorTypeRepository;
 
@@ -26,29 +27,29 @@ class CardDataFilter
 
     private ReadingTypeQueryFactory $readingTypeQueryFactory;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         SensorTypeRepositoryInterface $sensorTypeRepository,
         ReadingTypeRepositoryInterface $readingTypeRepository,
         SensorTypeQueryFactory $sensorTypeQueryFactory,
         ReadingTypeQueryFactory $readingTypeQueryFactory,
+        LoggerInterface $logger,
     ) {
         $this->sensorTypeRepository = $sensorTypeRepository;
         $this->readingTypeRepository = $readingTypeRepository;
         $this->sensorTypeQueryFactory = $sensorTypeQueryFactory;
         $this->readingTypeQueryFactory = $readingTypeQueryFactory;
+        $this->logger = $logger;
     }
 
-    public function filterSensorsToQuery(CardDataPreFilterDTO $cardFilters): CardDataQueryEncapsulationFilterDTO
+    public function filterSensorsToQuery(SensorFilterDTO $cardFilters): CardDataQueryEncapsulationFilterDTO
     {
-        $allSensorTypes = $this->sensorTypeRepository->findAll();
-        $sortedQueryTypes = $this->getSensorTypeJoinQueryDTOs(
-            $allSensorTypes,
+        $sortedQueryTypes = $this->createSensorTypeJoinQueryDTOs(
             $cardFilters->getSensorTypesToFilter()
         );
 
-        $allReadingTypes = $this->readingTypeRepository->findAll();
-        $readingTypesToQuery = $this->getReadingTypeJoinQueryDTOs(
-            $allReadingTypes,
+        $readingTypesToQuery = $this->createReadingTypeJoinQueryDTOs(
             $cardFilters->getReadingTypesToFilter()
         );
 
@@ -60,19 +61,22 @@ class CardDataFilter
     }
 
     #[ArrayShape(['sensorTypesToQuery' => JoinQueryDTO::class, 'sensorTypesNotToQuery' => SensorTypeNotJoinQueryDTO::class])]
-    private function getSensorTypeJoinQueryDTOs(array $sensorTypes, array $sensorTypesToFilter = []): array
+    private function createSensorTypeJoinQueryDTOs(array $sensorTypesToFilterOut = []): array
     {
-        foreach ($sensorTypes as $sensorType) {
+        $allSensorTypes = $this->sensorTypeRepository->findAll();
+        foreach ($allSensorTypes as $sensorType) {
             try {
                 $queryTypeBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorType->getSensorType());
-                if (in_array($sensorType->getSensorType(), $sensorTypesToFilter, true)) {
+                if (in_array($sensorType->getSensorType(), $sensorTypesToFilterOut, true)) {
                     $sensorTypesNotToQuery[] = $queryTypeBuilder->buildSensorTypeQueryExcludeDTO($sensorType->getSensorTypeID());
                 }
                 else {
                     $sensorTypesToQuery[] = $queryTypeBuilder->buildSensorTypeQueryJoinDTO();
                 }
             } catch (SensorTypeBuilderFailureException) {
-                error_log('failed to retrieve query dto builder for' . $sensorType->getSensorType());
+                $this->logger->error(
+                    'failed to retrieve query dto builder for' . $sensorType->getSensorType()
+                );
             }
         }
 
@@ -83,8 +87,9 @@ class CardDataFilter
     }
 
     #[ArrayShape([JoinQueryDTO::class||[]])]
-    private function getReadingTypeJoinQueryDTOs(array $allReadingTypes, array $readingTypesToFilter = []): array
+    private function createReadingTypeJoinQueryDTOs(array $readingTypesToFilter = []): array
     {
+        $allReadingTypes = $this->readingTypeRepository->findAll();
         foreach ($allReadingTypes as $readingType) {
             if ($readingType instanceof ReadingTypes) {
                 try {
@@ -93,7 +98,9 @@ class CardDataFilter
                         $readingTypesToQuery[] = $queryTypeBuilder->buildReadingTypeJoinQueryDTO();
                     }
                 } catch (ReadingTypeBuilderFailureException) {
-                    error_log('failed to retrieve query dto builder for' . $readingType->getReadingType());
+                    $this->logger->error(
+                        'failed to retrieve query dto builder for' . $readingType->getReadingType()
+                    );
                 }
             }
         }

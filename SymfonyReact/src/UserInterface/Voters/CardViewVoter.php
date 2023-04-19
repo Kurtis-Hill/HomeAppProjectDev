@@ -94,6 +94,14 @@ class CardViewVoter extends Voter
             return $checkCommon;
         }
 
+        /** @var $user User */
+        if (!in_array(
+            $devices->getGroupNameObject()->getGroupNameID(),
+            $user->getAssociatedGroupNameIds(),
+            true
+        )) {
+            return false;
+        }
 //        if (!$user instanceof User) {
 //            return false;
 //        }

@@ -656,6 +656,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
 
         $createResponseCode = $this->client->getResponse()->getStatusCode();
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $createResponseCode);
 
         $loginFormData = [
             'username' => $responseData['deviceName'],
@@ -672,6 +673,7 @@ class AddNewDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             $loginJsonData,
         );
+        self::assertEquals(HTTPStatusCodes::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $loginResponseData = json_decode($this->client->getResponse()->getContent(), true, 512);
 
@@ -680,14 +682,12 @@ class AddNewDeviceControllerTest extends WebTestCase
         }
         self::assertArrayHasKey('token', $loginResponseData);
         self::assertArrayHasKey('refreshToken', $loginResponseData);
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
 
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
         self::assertEquals($this->groupName->getGroupNameID(), $responseData['groupNameID']);
         self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
         self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $responseData['createdBy']);
         self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $createResponseCode);
 
         self::assertArrayHasKey('secret', $responseData);
         self::assertNotNull($responseData['secret']);
