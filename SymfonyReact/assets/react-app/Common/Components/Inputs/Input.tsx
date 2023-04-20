@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export default function Input(props: { name: string; value?: object; type?: string; placeHolder?: string; autoComplete?: string; onChangeFunction?: any; extraClasses?: string; required?: boolean; }) {
+export default function Input(props: { name: string; value?: object; type?: string; placeHolder?: string; autoComplete?: string; onChangeFunction?: any; extraClasses?: string; required?: boolean; autoFocus?: boolean; }) {
     const name: string = props.name ?? ''
     const value: object = props.value
     const type: string = props.type ?? 'text'
@@ -8,6 +8,8 @@ export default function Input(props: { name: string; value?: object; type?: stri
     const autoComplete: string = props.autoComplete ?? ''
     const extraClasses: string = props.extraClasses ?? ''
     const required: boolean = props.required ?? true
+    const autoFocus: boolean = props.autoFocus ?? false
+
     const onChangeFunction: (event: { target: { name: string; value: string; }; }) => void = props.onChangeFunction ?? function (){}
 
     return (
@@ -22,6 +24,7 @@ export default function Input(props: { name: string; value?: object; type?: stri
                     className={`form-control form-control-user ${extraClasses}`}
                     onChange={onChangeFunction}
                     {...value}
+                    autoFocus={autoFocus}
                 />
             </div>
         </React.Fragment>

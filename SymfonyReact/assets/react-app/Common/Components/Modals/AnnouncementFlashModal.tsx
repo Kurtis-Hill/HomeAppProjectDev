@@ -20,7 +20,7 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
       if (modalOpacity !== 0 && modalShow === true) {
         setModalOpacity(modalOpacity - 1);
       } else {
-        console.log('count', props.announcementModals)
+        // console.log('count', props.announcementModals)
         setModalShow(false);
         clearInterval(interval)
         // console.log('data number', dataNumber)

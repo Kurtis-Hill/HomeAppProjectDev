@@ -84,29 +84,40 @@ export default function NavbarViewOptionListElements(props: {
         <React.Fragment>
             { navbarItems }
 
-            <BaseModal 
-                title={'Add New Device'}
-                modalShow={showAddNewDeviceModal}
-                setShowModal={setAddNewDeviceModalFlag}
-                heightClasses="standard-modal-height"
-            >
-                <AddNewDevice
-                    setAddNewDeviceModal={setAddNewDeviceModal}
-                    setRefreshNavDataFlag={props.setRefreshNavDataFlag}
-                />
-            </BaseModal>
-
-            <BaseModal 
-                title={'Add New Room'}
-                modalShow={showAddNewRoomModal}
-                setShowModal={setAddNewRoomModalFlag}
-                heightClasses="snap-modal-height"
-            >
-                <AddNewRoom
-                    setAddNewRoomModal={setAddNewRoomModalFlag}
-                    setRefreshNavDataFlag={props.setRefreshNavDataFlag}
-                />
-            </BaseModal>
+            {            
+                showAddNewDeviceModal === true
+                    ?
+                        <BaseModal 
+                            title={'Add New Device'}
+                            modalShow={showAddNewDeviceModal}
+                            setShowModal={setAddNewDeviceModalFlag}
+                            heightClasses="standard-modal-height"
+                        >
+                            <AddNewDevice
+                                setAddNewDeviceModal={setAddNewDeviceModal}
+                                setRefreshNavDataFlag={props.setRefreshNavDataFlag}
+                            />
+                        </BaseModal>
+                    :
+                        null
+            }
+            {
+                showAddNewRoomModal === true
+                    ?
+                        <BaseModal 
+                            title={'Add New Room'}
+                            modalShow={showAddNewRoomModal}
+                            setShowModal={setAddNewRoomModalFlag}
+                            heightClasses="snap-modal-height"
+                        >
+                            <AddNewRoom
+                                setAddNewRoomModal={setAddNewRoomModalFlag}
+                                setRefreshNavDataFlag={props.setRefreshNavDataFlag}
+                            />
+                        </BaseModal>
+                    :
+                        null
+            }
 
 
             <BaseModal

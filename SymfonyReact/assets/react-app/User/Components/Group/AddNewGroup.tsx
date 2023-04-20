@@ -73,6 +73,7 @@ export function AddNewGroup(props: {
                     name='groupName'
                     value={addNewGroupInputs.groupName}
                     onChangeFunction={handleAddNewGroupInput}
+                    autoFocus={true}
                 />
 
                 {

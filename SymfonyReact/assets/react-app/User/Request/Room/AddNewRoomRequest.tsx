@@ -12,10 +12,8 @@ export async function addNewRoomRequest(addNewRoomInputs: AddNewRoomUserInputInt
 
         return addNewRoomResponse;
     } catch (err) {
-        const error = err as Error | AxiosError;
-        console.log('mee twoo22', error)
-        Promise.reject();
-        
+        // const error = err as Error | AxiosError;
+
         return err;
     }
 }

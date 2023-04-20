@@ -9,6 +9,7 @@ export default function InputWLabel(props: {
     type?: string; 
     placeHolder?: string; 
     autoComplete?: string; 
+    autoFocus?: boolean;
     onChangeFunction: (event: { target: { name: string; value: string; }; }) => void; 
 }) {
     const labelName = props.labelName ?? ''
@@ -17,6 +18,8 @@ export default function InputWLabel(props: {
     const type: string = props.type ?? 'text'
     const placeHolder: string = props.placeHolder ?? ''
     const autoComplete: string = props.autoComplete ?? 'true'
+    const autoFocus: boolean = props.autoFocus ?? false
+
     const onChangeFunction: (event: { 
         target: { 
             name: string; 
@@ -34,6 +37,7 @@ export default function InputWLabel(props: {
                 // className={"form-control form-control-user login-form-field"}
                 placeHolder={placeHolder}
                 onChangeFunction={onChangeFunction}
+                autoFocus={autoFocus}
                 { ...value }
             />
         </>

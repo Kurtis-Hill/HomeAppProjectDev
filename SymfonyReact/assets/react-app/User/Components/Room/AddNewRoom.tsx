@@ -12,8 +12,8 @@ import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import UserDataContext from '../../Contexts/UserDataContext';
 
 export function AddNewRoom(props: {
-        setAddNewRoomModal: ((show: boolean) => void);
-        setRefreshNavDataFlag: (newValue: boolean) => void;
+    setAddNewRoomModal: ((show: boolean) => void);
+    setRefreshNavDataFlag: (newValue: boolean) => void;
 }) {
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const setAddNewRoomModal = props.setAddNewRoomModal;
@@ -50,23 +50,12 @@ export function AddNewRoom(props: {
         try {
             const addNewRoomResponse = await addNewRoomRequest(jsonFormData);
             if (addNewRoomResponse !== undefined && addNewRoomResponse.status === 201) {
-                // console.log('mee twoo', addNewRoomResponse);
                 const addNewRoomPayload: RoomResponseInterface = addNewRoomResponse.data.payload;
-                // const addNewRoomResponse = addNewRoomResponse;
+
                 setNewRoomAddedData(addNewRoomPayload);
                 setRoomRequestLoading(false);
                 setErrors([]);
                 setRefreshNavDataFlag(true);
-
-                    console.log('in consumer');
-
-                        // <UserDataContext.Consumer>
-                            // value.refreshAllUserData(true);
-                            {/* {(setRefreshUserData: (value: boolean) => void) => (
-                                setRefreshUserData(true)
-                                // refreshAllUserData(true)
-                            )} */}
-                        // </UserDataContext.Consumer>
             } else {
                 setRoomRequestLoading(false);
                 setErrors(['Something has gone wrong']);
@@ -86,6 +75,7 @@ export function AddNewRoom(props: {
                     name='roomName'
                     value={addNewRoomInputs.roomName}
                     onChangeFunction={handleAddNewRoomInput}
+                    autoFocus={true}
                 />
 
                 {

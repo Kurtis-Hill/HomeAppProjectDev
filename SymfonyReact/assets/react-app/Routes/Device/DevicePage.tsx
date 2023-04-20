@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 import { getDeviceRequest, DeviceResponseInterface } from '../../Devices/Request/GetDeviceRequest';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
-import { UpdateDevice } from '../../Devices/Components/UpdateDevice';
+import { UpdateDevice } from '../../Devices/Components/UpdateDevice/UpdateDevice';
 
 export function DevicePage() {
     const params = useParams();

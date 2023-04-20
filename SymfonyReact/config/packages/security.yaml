@@ -66,6 +66,8 @@ security:
             pattern: ^/HomeApp/WebApp
             stateless: true
             provider: 'app_user_provider'
+            entry_point: jwt
+            jwt: ~
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
@@ -80,8 +82,8 @@ security:
         - { path: ^/HomeApp/WebApp/register, roles: PUBLIC_ACCESS }
 
         # WebApp auth access areas
-        - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
-        - { path: ^/HomeApp/WebApp/, roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
+        # - { path: ^/HomeApp/WebApp/, roles: IS_AUTHENTICATED_FULLY }
 
         # api endpoints pending on user
         - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }

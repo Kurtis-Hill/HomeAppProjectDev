@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo } from 'react';
-import GroupNameResponseInterface from '../../User/Response/GroupName/GroupNameResponseInterface';
-import RoomResponseInterface from '../../User/Response/Room/RoomResponseInterface';
-import InputWLabel from '../../Common/Components/Inputs/InputWLabel';
+import GroupNameResponseInterface from '../../../User/Response/GroupName/GroupNameResponseInterface';
+import RoomResponseInterface from '../../../User/Response/Room/RoomResponseInterface';
+import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
+
+import { UpdateDeviceFormInputsInterface } from './UpdateDeviceFormInputsInterface';
 
 export function UpdateDevice(props: {
     deviceNameID: number;
@@ -45,11 +47,4 @@ export function UpdateDevice(props: {
             </form>
         </>
     )
-}
-
-export interface UpdateDeviceFormInputsInterface {
-    deviceName?: string;
-    password?: string;
-    deviceGroup?: number;
-    deviceRoom?: number;
 }

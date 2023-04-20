@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import AddNewDeviceUserInputsInterface from './AddNewDeviceUserInputsInterface';
 
@@ -22,6 +22,7 @@ export function AddNewDevice(props: {
     setAddNewDeviceModal: ((show: boolean) => void);
     setRefreshNavDataFlag: (newValue: boolean) => void;
 }) {
+    console.log('init!!!');
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const setAddNewDeviceModal = props.setAddNewDeviceModal;
     
@@ -39,6 +40,9 @@ export function AddNewDevice(props: {
 
     const [newDeviceAddedData, setNewDeviceAddedData] = useState<AddNewDeviceResponse|null>(null);
 
+    // useEffect(() => {
+    //     console.log('JUST CREATED')
+    // }, [])
     const handleAddNewDeviceInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
@@ -61,18 +65,12 @@ export function AddNewDevice(props: {
 
             const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);
 
-            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
+            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 200) {
                 const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
                 setNewDeviceAddedData(addNewDevicePayload);
                 setDeviceRequestLoading(false);
                 setErrors([]);
                 setRefreshNavDataFlag(true);
-
-                <UserDataContext.Consumer>
-                    {(setRefreshUserData: (value: boolean) => void) => (
-                        setRefreshUserData(true)
-                    )}
-                </UserDataContext.Consumer>
             } else {
                 setDeviceRequestLoading(false);
                 setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
@@ -142,6 +140,8 @@ export function AddNewDevice(props: {
                     name='deviceName'
                     value={addNewDeviceUserInputs.deviceName}
                     onChangeFunction={handleAddNewDeviceInput}
+                    type="text"
+                    autoFocus={true}
                 />
 
                 <InputWLabel
@@ -160,9 +160,16 @@ export function AddNewDevice(props: {
                     type="password"
                 />
 
-                <UserDataContext.Consumer>                    
-                    {(userData: {'userData': UserDataContextInterface}) => (
+                <UserDataContext.Consumer>
+                    {/* {(setRefreshUserData: (value: boolean) => void) => (
+                        setRefreshUserData(true)
+                        
+                        )
+                    }                     */}
+                    {(userData: {'userData': UserDataContextInterface, 'refreshAllUserData': (value?: boolean) => void, 'handleUserDataRequest': () => void;}) => (
                         <>
+                            {/* {userData.refreshAllUserData()} */}
+                            {/* {userData.handleUserDataRequest()} */}
                             <div className="form-group">
                                 <label className="large font-weight-bold" htmlFor="deviceGroup">Device Group</label>
                                 <select
@@ -174,7 +181,7 @@ export function AddNewDevice(props: {
                                 >
                                     <option value="0">Select a group</option>
                                     {
-                                        userData.userData.userGroups.length > 0 
+                                        userData.userData && userData.userData.userGroups.length > 0 
                                             ? 
                                                 userData.userData.userGroups.map((group: GroupNameResponseInterface, index: number) => (
                                                     <option key={index} value={group.groupID}>{group.groupName}</option>
@@ -195,7 +202,7 @@ export function AddNewDevice(props: {
                                 >
                                     <option value="0">Select a room</option>
                                     {
-                                        userData.userData.userRooms.length > 0
+                                        userData.userData && userData.userData.userRooms.length > 0
                                             ?
                                                 userData.userData.userRooms.map((room: RoomNavbarResponseInterface, index: number) => (
                                                     <option key={index} value={room.roomID}>{room.roomName}</option>

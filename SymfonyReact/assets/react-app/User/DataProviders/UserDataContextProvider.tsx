@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo, useReducer } from 'react';
 import { userDataRequest } from '../Request/UserDataRequest';
 
 import GroupNameResponseInterface from '../Response/GroupName/GroupNameResponseInterface';
@@ -10,44 +10,66 @@ import UserDataContext from "../Contexts/UserDataContext";
 
 export function UserDataContextProvider({ children }) {
     // const [userGroups, setUserGroups] = useState<RoomNavbarResponseInterfaceInterface[]|[]>([]);
-    const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
-    const [refreshUserData, setRefreshUserData] = useState<boolean>(true);
+    // const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
+    const userData = useRef<UserDataContextInterface>({ userGroups: [], userRooms: [] })
+    // const userData = useMemo<UserDataContextInterface>(() => handleUserDataRequest(), []);
+    // const [refreshUserData, setRefreshUserData] = useState<boolean>(true);
+
     // const [userRooms, setUserRooms] = useState<GroupNameNavbarResponseInterface[]|[]>([]);
 
     useEffect(() => {
-        if (refreshUserData === true) {
+        // if (refreshUserData === true) {
             handleUserDataRequest();
-            setRefreshUserData(false);
-        }
-    }, [refreshUserData]);
+            // setRefreshUserData(false);
+        // }
+    }, []);
 
+    // function handleRequest() {
+    //     handleUserDataRequest();
+    // }
+    
     const handleUserDataRequest = async () => {
         console.log('handleUserDataRequest');
-        if (userData.userGroups.length === 0 || userData.userRooms.length === 0) {
+        // if (userData.userGroups.length === 0 || userData.userRooms.length === 0) {
             const userDataResponse = await userDataRequest();
             if (userDataResponse.status === 200) {
                 const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
 
-                setUserData({ userGroups: userDataPayload.userGroups, userRooms: userDataPayload.userRooms });
+                console.log('payload', userDataPayload)
+                userData.current = {
+                    userGroups: userDataPayload.userGroups,
+                    userRooms: userDataPayload.userRooms
+                }
+                // setUserData({ userGroups: userDataPayload.userGroups, userRooms: userDataPayload.userRooms });
                 console.log('this is user Data', userData);
-                setUserData({ userGroups: userDataPayload.userGroups, userRooms: userDataPayload.userRooms });
+                // setUserData({ userGroups: userDataPayload.userGroups, userRooms: userDataPayload.userRooms });
             }
-        }
+        // }
     }
 
-    const refreshAllUserData = (trigger: boolean) => {
+    const refreshAllUserData = (trigger?: boolean) => {
         console.log('refresh is being triggeredddd')
-        setRefreshUserData(true);
+        // if (refreshUserData === false) {
+        //     setRefreshUserData(true);
+        // }
+        // setRefreshUserData(true);
+        // setRefreshUserData(refreshUserData => !refreshUserData);
+        // handleUserDataRequest();
     }
 
 
     return (
         <UserDataContext.Provider value={
             {
-                userData,
-                // setRefreshUserData: (value: boolean) => refreshAllUserData(value)
-                setRefreshUserData,
-                refreshAllUserData
+                userData: userData.current,
+                // forceUpdate,
+                // userData,
+                // setUserData,
+                // setRefreshUserData,
+                // setRefreshUserData: (value: boolean) => refreshAllUserData(value),
+                // setRefreshUserData,
+                // refreshAllUserData,
+                // handleUserDataRequest: handleRequest
             }
         }
         >
