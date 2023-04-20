@@ -22,7 +22,7 @@ export function UserDataContextProvider({ children }) {
             handleUserDataRequest();
             // setRefreshUserData(false);
         // }
-    }, []);
+    });
 
     // function handleRequest() {
     //     handleUserDataRequest();

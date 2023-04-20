@@ -40,9 +40,11 @@ export function AddNewDevice(props: {
 
     const [newDeviceAddedData, setNewDeviceAddedData] = useState<AddNewDeviceResponse|null>(null);
 
-    // useEffect(() => {
-    //     console.log('JUST CREATED')
-    // }, [])
+    useEffect(() => {
+        console.log('JUST CREATED')
+    }, [addNewDeviceUserInputs]);
+
+
     const handleAddNewDeviceInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
@@ -160,12 +162,8 @@ export function AddNewDevice(props: {
                     type="password"
                 />
 
+
                 <UserDataContext.Consumer>
-                    {/* {(setRefreshUserData: (value: boolean) => void) => (
-                        setRefreshUserData(true)
-                        
-                        )
-                    }                     */}
                     {(userData: {'userData': UserDataContextInterface, 'refreshAllUserData': (value?: boolean) => void, 'handleUserDataRequest': () => void;}) => (
                         <>
                             {/* {userData.refreshAllUserData()} */}
@@ -228,6 +226,11 @@ export function AddNewDevice(props: {
                         </>
                     )} 
                 </UserDataContext.Consumer>
+
+
+
+
+
                 { 
                     deviceRequestLoading === false &&  newDeviceAddedData === null
                         ?
