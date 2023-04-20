@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 
 import AddNewDeviceUserInputsInterface from './AddNewDeviceUserInputsInterface';
 
-import UserDataContext from '../../../User/Contexts/UserDataContext';
 import { UserDataContextInterface } from "../../../User/DataProviders/UserDataContextProvider";
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 
@@ -17,6 +16,8 @@ import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import GroupNameResponseInterface from '../../../User/Response/GroupName/GroupNameResponseInterface';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import RoomNavbarResponseInterface from '../../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
+import { userDataRequest } from '../../../User/Request/UserDataRequest';
+import { UserDataResponseInterface } from '../../../User/Response/UserDataResponseInterface';
 
 export function AddNewDevice(props: {
     setAddNewDeviceModal: ((show: boolean) => void);
@@ -40,10 +41,26 @@ export function AddNewDevice(props: {
 
     const [newDeviceAddedData, setNewDeviceAddedData] = useState<AddNewDeviceResponse|null>(null);
 
+    const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
+
+
     useEffect(() => {
-        console.log('JUST CREATED')
+        handleUserDataRequest();
     }, [addNewDeviceUserInputs]);
 
+    const handleUserDataRequest = async () => {
+        console.log('handleUserDataRequest ADD DEVICE');
+        const userDataResponse = await userDataRequest();
+        if (userDataResponse.status === 200) {
+            const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
+
+            console.log('payload ADD DEVICE', userDataPayload)
+            setUserData({ 
+                userGroups: userDataPayload.userGroups, 
+                userRooms: userDataPayload.userRooms 
+            });
+        }
+    }
 
     const handleAddNewDeviceInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
@@ -79,7 +96,6 @@ export function AddNewDevice(props: {
             }
         } 
     }
-
 
     const validateAddNewDeviceUserInputs = (): boolean => {
         let failedValidation = false;
@@ -163,8 +179,8 @@ export function AddNewDevice(props: {
                 />
 
 
-                <UserDataContext.Consumer>
-                    {(userData: {'userData': UserDataContextInterface, 'refreshAllUserData': (value?: boolean) => void, 'handleUserDataRequest': () => void;}) => (
+                {/* <UserDataContext.Consumer>
+                    {(userData: {'userData': UserDataContextInterface, 'refreshAllUserData': (value?: boolean) => void, 'handleUserDataRequest': () => void;}) => ( */}
                         <>
                             {/* {userData.refreshAllUserData()} */}
                             {/* {userData.handleUserDataRequest()} */}
@@ -179,9 +195,9 @@ export function AddNewDevice(props: {
                                 >
                                     <option value="0">Select a group</option>
                                     {
-                                        userData.userData && userData.userData.userGroups.length > 0 
+                                        userData && userData.userGroups.length > 0 
                                             ? 
-                                                userData.userData.userGroups.map((group: GroupNameResponseInterface, index: number) => (
+                                                userData.userGroups.map((group: GroupNameResponseInterface, index: number) => (
                                                     <option key={index} value={group.groupID}>{group.groupName}</option>
                                                 )) 
                                             : 
@@ -200,9 +216,9 @@ export function AddNewDevice(props: {
                                 >
                                     <option value="0">Select a room</option>
                                     {
-                                        userData.userData && userData.userData.userRooms.length > 0
+                                        userData && userData.userRooms.length > 0
                                             ?
-                                                userData.userData.userRooms.map((room: RoomNavbarResponseInterface, index: number) => (
+                                                userData.userRooms.map((room: RoomNavbarResponseInterface, index: number) => (
                                                     <option key={index} value={room.roomID}>{room.roomName}</option>
                                                 ))
                                             :
@@ -224,8 +240,8 @@ export function AddNewDevice(props: {
                                         null
                             }
                         </>
-                    )} 
-                </UserDataContext.Consumer>
+                    {/* )} 
+                </UserDataContext.Consumer> */}
 
 
 
