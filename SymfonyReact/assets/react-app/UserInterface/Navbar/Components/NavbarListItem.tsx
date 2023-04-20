@@ -39,7 +39,7 @@ export default function NavbarListItem(props: {
 
     return (
         <li className="nav-item" onClick={() => {toggleNavTabElement()}}>
-            <div className="nav-link collapsed hover" data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
+            <div className={`nav-link ${navbarItemToggleDropdown === true ? '' :'collapsed'} hover`} data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
                 <i className={`fas fa-fw fa-${icon}`}/>
                 <span>{ heading }</span>
             </div>

@@ -43,7 +43,6 @@ export function AddNewDevice(props: {
 
     const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
 
-
     useEffect(() => {
         handleUserDataRequest();
     }, [addNewDeviceUserInputs]);
@@ -242,9 +241,6 @@ export function AddNewDevice(props: {
                         </>
                     {/* )} 
                 </UserDataContext.Consumer> */}
-
-
-
 
 
                 { 
