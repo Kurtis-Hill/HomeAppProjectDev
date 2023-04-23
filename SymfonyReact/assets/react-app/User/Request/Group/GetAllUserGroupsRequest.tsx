@@ -6,7 +6,7 @@ import { apiURL } from "../../../Common/URLs/CommonURLs";
 
 export async function getAllUserGroupsRequest(responseType?: string) {
     const getAllUserGroupsResponse: AxiosResponse = await axios.get(
-        `${apiURL}user-group/all`,
+        `${apiURL}user-groups/all`,
         { params: { responseType: responseType } }
     );
 

@@ -6,6 +6,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Entity\User;
+use App\User\Services\GroupServices\UserGroupsFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ class GetGroupsController extends AbstractController
     use HomeAppAPITrait;
 
     #[Route('all', name: 'get-user-groups', methods: [Request::METHOD_GET])]
-    public function getUsersGroups(): Response
+    public function getUsersGroups(UserGroupsFinder $userGroupsFinder): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -27,7 +28,7 @@ class GetGroupsController extends AbstractController
         }
 
         $groupNameDTOs = [];
-        foreach ($user->getAssociatedGroups() as $groupName) {
+        foreach ($userGroupsFinder->getGroupNamesForUser($user) as $groupName) {
             $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
                 $groupName
             );

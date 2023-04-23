@@ -313,6 +313,10 @@
     padding-right: 1%;
 }
 
+.padding-l-1 {
+    padding-left: 1%;
+}
+
 .displayBlockImportant {
     display: block !important;
 }

@@ -8,6 +8,9 @@ import { UpdateDeviceFormInputsInterface } from './UpdateDeviceFormInputsInterfa
 import Input from '../../../Common/Components/Inputs/Input';
 
 import { getAllUserGroupsRequest, GroupResponseInterface } from '../../../User/Request/Group/GetAllUserGroupsRequest'
+import { userDataRequest } from '../../../User/Request/UserDataRequest';
+import { UserDataResponseInterface } from '../../../User/Response/UserDataResponseInterface';
+import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 
 export function UpdateDevice(props: {
     deviceID: number;
@@ -30,6 +33,7 @@ export function UpdateDevice(props: {
             deviceName: deviceName,
             password: '',
             deviceGroup: groupName.groupID,
+            deviceGroupName: groupName.groupName,
             deviceRoom: room.roomID,
     });
 
@@ -37,12 +41,44 @@ export function UpdateDevice(props: {
         deviceName: deviceName,
         password: '',
         deviceGroup: groupName.groupID,
+        deviceGroupName: groupName.groupName,
         deviceRoom: room.roomID,
     });
 
+    // const userData = useRef({
+    //     userGroups: [] as GroupResponseInterface[],
+    //     userRooms: [] as RoomResponseInterface[],
+    // });
+
+    const [userData, setUserData] = useState({
+        userGroups: [] as GroupResponseInterface[],
+        userRooms: [] as RoomResponseInterface[],
+    });
+
+    const handleUserGroupDataRequest = async () => {
+        console.log('handleUserDataRequest')
+        const groupDataResponse = await getAllUserGroupsRequest();
+        if (groupDataResponse.status === 200) {
+            const groupDataPayload = groupDataResponse.data.payload as UserDataResponseInterface;
+
+            console.log('payload UPDATE DEVICE', groupDataPayload)
+            setUserData({
+                ...userData,
+                userGroups: groupDataPayload,
+            })
+            // userData.current = { 
+            //     userGroups: userDataPayload.userGroups, 
+            //     userRooms: userDataPayload.userRooms 
+            // };
+        }
+    }
+
     useEffect(() => {
         console.log('props', activeFormForUpdating)
-    }, [activeFormForUpdating]);
+        if (activeFormForUpdating.deviceGroup === true || activeFormForUpdating.deviceRoom === true) {
+            handleUserGroupDataRequest();
+        }
+    }, [activeFormForUpdating, originalDeviceData]);
 
     const handleUpdateDeviceInput = (event: Event) => {
         const name = (event.target as HTMLInputElement).name;
@@ -86,6 +122,8 @@ export function UpdateDevice(props: {
     ) => {
         return (
             <>
+            {/* <div className="col-6"> */}
+
                 <InputWLabel
                     labelName={labelName}
                     name={name}
@@ -93,11 +131,14 @@ export function UpdateDevice(props: {
                     onChangeFunction={handleUpdateDeviceInput}
                     autoFocus={true}
                     value={value}
-                    labelExtraClasses='form-inline font-size-1-5 hover padding-r-1 displayBlockImportant'
-                    extraClasses='hover col-6'
-                />
+                    labelExtraClasses='form-inline font-size-1-5 padding-r-1 displayBlockImportant'
+                    extraClasses='hover'
+                    />
+            {/* </div> */}
+            <span>
                 <i className="fas fa-check-circle fa-2x hover accept-button" onClick={(e: Event) => sendUpdateDeviceRequest()}></i>
                 <i className="fas fa-times-circle fa-2x hover cancel-button" onClick={(e: Event) => toggleFormInput(e)} data-name={name}></i>
+            </span>
             </>
         )
     }
@@ -110,31 +151,44 @@ export function UpdateDevice(props: {
     ) => {
         return (
             <>
-                <select name={name} className="form-control" onChange={(e) => handleUpdateDeviceInput(e)}>
-                    {
-                        options.map((option: any) => {
-                            return (
-                                <option value={option.value} selected={option.value === value}>{option.label}</option>
-                            )
-                        })
-                    }
-                </select>
+                <label className="large font-weight-bold form-inline font-size-1-5 hover padding-r-1 displayBlockImportant">{labelName}</label>
+                <div className="form-group">
+                    <select name={name} defaultValue={originalDeviceData.deviceGroup} className="form-control" onChange={(e) => handleUpdateDeviceInput(e)}>
+                        {
+                            options.map((option: any, index: number) => {
+                                return (
+                                    <option key={index} value={option.value}>{option.label}</option>
+                                )
+                            })
+                        }
+                    </select>
+                </div>
+                <span>
+                    <i className="fas fa-check-circle fa-2x hover accept-button" onClick={(e: Event) => sendUpdateDeviceRequest()}></i>
+                    <i className="fas fa-times-circle fa-2x hover cancel-button" onClick={(e: Event) => toggleFormInput(e)} data-name={name}></i>
+                </span>
             </>
         )
     }
 
-    const buildGroupWithSaveRejectButtons = async () => {
-        const allGroupsOptionsForUser = await getAllUserGroupsRequest();
+    const buildGroupWithSaveRejectButtons = () => {
+        // const allGroupsOptionsForUser = await getAllUserGroupsRequest();
 
-        const allGroupsPayload: GroupNameResponseInterface[] = allGroupsOptionsForUser.data.payload;
+        // const allGroupsPayload: GroupNameResponseInterface[] = allGroupsOptionsForUser.data.payload;
 
-        const optionsForBuilder = allGroupsPayload.map((group: GroupResponseInterface) => {
+        // const optionsForBuilder = userData.current.userGroups.map((group: GroupResponseInterface) => {
+        const optionsForBuilder = userData.userGroups.map((group: GroupResponseInterface) => {
             return {
                 value: group.groupID,
                 label: group.groupName,
             }
         });
 
+        if (optionsForBuilder.length === 0) {
+            return (
+                <DotCircleSpinner />
+            )
+        }
         return (
             buildSelectsWithSaveRejectButtons(
                 'Device Group: ',
@@ -142,6 +196,22 @@ export function UpdateDevice(props: {
                 deviceUpdateFormInputs.deviceGroup,
                 optionsForBuilder,
             )
+        )
+    }
+
+    const buildDeviceDisplayViewFormElement = () => {
+        return (
+            // <div className="col-6">
+                <span style={{width: "100%", paddingBottom: "3%"}} onClick={(e: Event) => toggleFormInput(e)} data-name="deviceName" className="large font-weight-bold form-inline font-size-1-5 hover padding-r-1">Device Name: <span className="padding-l-1">{deviceUpdateFormInputs.deviceName}</span></span>
+            // </div>
+        )
+    }
+
+    const buildDeviceGroupDisplayViewFormElement = () => {
+        return (
+            // <div className="col-6">
+                <span style={{width: "100%", paddingBottom: "3%"}} onClick={(e: Event) => toggleFormInput(e)} data-name="deviceGroup" className="large font-weight-bold form-inline font-size-1-5 hover padding-r-1">Device Group: <span className="padding-l-1">{deviceUpdateFormInputs.deviceGroupName}</span></span>
+            // </div>
         )
     }
 
@@ -153,8 +223,6 @@ export function UpdateDevice(props: {
                 </div>
                 <form>
                     <div className="row" style={{paddingTop: "2%"}}>
-                        <div className="col-6">
-
                             { 
                                 activeFormForUpdating.deviceName === true 
                                     ?
@@ -164,18 +232,17 @@ export function UpdateDevice(props: {
                                             deviceUpdateFormInputs.deviceName,
                                         )
                                     :
-                                        <span style={{width: "100%", paddingBottom: "3%"}} onClick={(e: Event) => toggleFormInput(e)} data-name="deviceName" className="large font-weight-bold form-inline font-size-1-5 hover padding-r-1">Device Name: {deviceUpdateFormInputs.deviceName}</span>
+                                        buildDeviceDisplayViewFormElement()
                             }
                         </div>
-                        <br />
-                        <br />
+                        <div className="row" style={{paddingTop: "2%"}}>
                         {
                             activeFormForUpdating.deviceGroup === true
                                 ? 
                                     buildGroupWithSaveRejectButtons()
                                 :
-                                        <span style={{width: "100%", paddingBottom: "3%"}} onClick={(e: Event) => toggleFormInput(e)} data-name="deviceGroup" className="large font-weight-bold form-inline font-size-1-5 hover padding-r-1">Device Group: {deviceUpdateFormInputs.deviceGroup}</span>
-                        }
+                                    buildDeviceGroupDisplayViewFormElement()
+                        } 
                     </div>
                 </form>
             </div>
