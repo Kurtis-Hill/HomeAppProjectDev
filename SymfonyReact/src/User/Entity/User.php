@@ -210,7 +210,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function setRoles(array $roles = []): self
     {
-        $this->roles = $roles ?? ['ROLE_USER'];
+        $this->roles = $roles ?? [self::ROLE_USER];
 
         return $this;
     }

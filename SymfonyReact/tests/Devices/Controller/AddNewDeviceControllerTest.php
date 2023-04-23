@@ -125,7 +125,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
-        self::assertNotNull($payload['deviceNameID']);
+        self::assertNotNull($payload['deviceID']);
         self::assertNull($payload['ipAddress']);
         self::assertNull($payload['externalIpAddress']);
 

@@ -9,6 +9,7 @@ use App\Authentication\Entity\GroupMapping;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
 use App\Tests\Traits\TestLoginTrait;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,9 +43,9 @@ class NavBarControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getNavBarDataUserDataProvider
+     * @dataProvider getNavBarDataRegularUserDataProvider
      */
-    public function test_get_navbar_data_response_admin_user(string $email, string $password, int $groupCount): void
+    public function test_get_navbar_data_response_regular_user(string $email, string $password, int $groupCount): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var User $testUser */
@@ -77,25 +78,24 @@ class NavBarControllerTest extends WebTestCase
                 self::assertIsString($links['displayName'], 'Device name is not string');
                 self::assertIsString($links['link'], 'device link is not string');
             }
-            if ($response['header'] === 'View Devices') {
+            if ($response['header'] === 'Devices') {
                 self::assertEquals('microchip', $response['icon'], 'device icon is wrong');
                 self::assertEquals('devices', $response['itemName']);
                 continue;
             }
 
 
-            if ($response['header'] === 'View Rooms') {
+            if ($response['header'] === 'Rooms') {
                 self::assertEquals('person-booth', $response['icon'], 'room icon is wrong');
                 self::assertEquals('rooms', $response['itemName']);
                 continue;
             }
 
-            if ($response['header'] === 'View Groups') {
+            if ($response['header'] === 'Groups') {
                 self::assertEquals('users', $response['icon'], 'group icon is wrong');
                 self::assertEquals('groups', $response['itemName']);
                 continue;
             }
-
             self::fail('header is not valid');
         }
 
@@ -110,20 +110,8 @@ class NavBarControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
     }
 
-    public function getNavBarDataUserDataProvider(): Generator
+    public function getNavBarDataRegularUserDataProvider(): Generator
     {
-        yield [
-            'email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
-            'password' => UserDataFixtures::ADMIN_PASSWORD,
-            'groupCount' => count(UserDataFixtures::ALL_GROUPS),
-        ];
-
-        yield [
-            'email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
-            'password' => UserDataFixtures::ADMIN_PASSWORD,
-            'groupCount' => count(UserDataFixtures::ALL_GROUPS),
-        ];
-
         yield [
             'email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
@@ -134,6 +122,87 @@ class NavBarControllerTest extends WebTestCase
             'email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO,
             'password' => UserDataFixtures::REGULAR_PASSWORD,
             'groupCount' => count(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO),
+        ];
+    }
+
+    /**
+     * @dataProvider getNavBarDataAdminUserDataProvider
+     */
+    public function test_get_navbar_data_response_admin_user(string $email, string $password): void
+    {
+        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var User $testUser */
+        $testUser = $userRepository->findOneBy(['email' => $email]);
+
+        $userToken = $this->setUserToken($this->client, $email, $password);
+
+        /** @var Room[] $userRooms */
+        $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
+
+        $this->client->request(
+            Request::METHOD_GET,
+            self::NAVBAR_DATA_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true)['payload'];
+
+        foreach ($responseData as $response) {
+            $userLinks = $response['listItemLinks'];
+            self::assertEmpty($response['errors'], 'errors is not empty');
+            self::assertNotEmpty($userLinks, 'userLinks is empty');
+
+            foreach ($userLinks as $links) {
+                self::assertIsString($links['displayName'], 'Device name is not string');
+                self::assertIsString($links['link'], 'device link is not string');
+            }
+            if ($response['header'] === 'Devices') {
+                self::assertEquals('microchip', $response['icon'], 'device icon is wrong');
+                self::assertEquals('devices', $response['itemName']);
+                continue;
+            }
+
+
+            if ($response['header'] === 'Rooms') {
+                self::assertEquals('person-booth', $response['icon'], 'room icon is wrong');
+                self::assertEquals('rooms', $response['itemName']);
+                continue;
+            }
+
+            if ($response['header'] === 'Groups') {
+                self::assertEquals('users', $response['icon'], 'group icon is wrong');
+                self::assertEquals('groups', $response['itemName']);
+                continue;
+            }
+            self::fail('header is not valid');
+        }
+
+        $countMessage = '%s count is wrong';
+
+        $allDevice = $this->entityManager->getRepository(Devices::class)->findAll();
+
+        $allGroups = $this->entityManager->getRepository(Group::class)->findAll();
+        self::assertCount(count($userRooms), $responseData[2]['listItemLinks'], sprintf($countMessage, 'rooms'));
+        self::assertCount(count($allDevice), $responseData[0]['listItemLinks'], sprintf($countMessage, 'device'));
+        self::assertCount(count($allGroups), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group name'));
+        self::assertSameSize(RoomFixtures::ROOMS, $responseData[2]['listItemLinks'], sprintf($countMessage, 'room'));
+        self::assertCount(count($allGroups), $responseData[1]['listItemLinks'], sprintf($countMessage, 'group'));
+
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
+    }
+
+    public function getNavBarDataAdminUserDataProvider(): Generator
+    {
+        yield [
+            'email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
+        ];
+
+        yield [
+            'email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
+            'password' => UserDataFixtures::ADMIN_PASSWORD,
         ];
     }
 

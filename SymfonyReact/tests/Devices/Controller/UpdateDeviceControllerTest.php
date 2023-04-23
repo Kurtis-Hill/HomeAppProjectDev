@@ -845,7 +845,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 break;
         }
-        self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
+        self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceID']);
         self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
     }
 
@@ -957,7 +957,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 self::assertEquals($device->getGroupObject()->getGroupName(), $responseData['payload']['group']['groupName']);
                 break;
         }
-        self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceNameID']);
+        self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceID']);
         self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
     }
 

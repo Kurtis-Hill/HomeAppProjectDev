@@ -127,7 +127,7 @@ class GetDeviceControllerTest extends WebTestCase
         $title = $responseData['title'];
 
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceNameID']);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertNull($payload['secret']);
         self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
@@ -171,7 +171,7 @@ class GetDeviceControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceNameID']);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertNull($payload['secret']);
         self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
@@ -211,7 +211,7 @@ class GetDeviceControllerTest extends WebTestCase
         $title = $responseData['title'];
 
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceNameID']);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertNull($payload['secret']);
         self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
@@ -290,7 +290,7 @@ class GetDeviceControllerTest extends WebTestCase
 
         $allDevices = $this->deviceRepository->findAll();
 
-        $deviceIDs = array_column($payload, 'deviceNameID');
+        $deviceIDs = array_column($payload, 'deviceID');
         foreach ($allDevices as $device) {
             self::assertContains($device->getDeviceID(), $deviceIDs, $device->getDeviceName());
         }
@@ -326,7 +326,7 @@ class GetDeviceControllerTest extends WebTestCase
 
         $devicesThatShouldBeReturned = array_slice($devices, $offset, $limit);
         $devicesThatShouldNotBeReturned = array_slice($devices, 0, $limit - 1);
-        $deviceIds = array_column($payload, 'deviceNameID');
+        $deviceIds = array_column($payload, 'deviceID');
 
         foreach ($devicesThatShouldBeReturned as $device) {
             self::assertContains($device->getDeviceID(), $deviceIds);

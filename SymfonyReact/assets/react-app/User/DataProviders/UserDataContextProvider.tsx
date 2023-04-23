@@ -16,25 +16,20 @@ export function UserDataContextProvider({ children }) {
             handleUserDataRequest();
             // setRefreshUserData(false);
         // }
-    });
+    }, []);
 
     const handleUserDataRequest = async () => {
         console.log('handleUserDataRequest');
-        // if (userData.userGroups.length === 0 || userData.userRooms.length === 0) {
-            const userDataResponse = await userDataRequest();
-            if (userDataResponse.status === 200) {
-                const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
+        const userDataResponse = await userDataRequest();
+        if (userDataResponse.status === 200) {
+            const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
 
-                console.log('payload', userDataPayload)
-                userData.current = {
-                    userGroups: userDataPayload.userGroups,
-                    userRooms: userDataPayload.userRooms
-                }
-                // setUserData({ userGroups: userDataPayload.userGroups, userRooms: userDataPayload.userRooms });
-                console.log('this is user Data', userData);
-                // setUserData({ userGroups: userDataPayload.userGroups, userRooms: userDataPayload.userRooms });
+            console.log('payload', userDataPayload)
+            userData.current = {
+                userGroups: userDataPayload.userGroups,
+                userRooms: userDataPayload.userRooms
             }
-        // }
+        }
     }
 
 

@@ -525,7 +525,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getCreatedBy()->getGroup()->getGroupID(), $payload['createdBy']['group']['groupID']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getGroup()->getGroupName(), $payload['createdBy']['group']['groupName']);
 
-        self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $payload['device']['deviceNameID']);
+        self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $payload['device']['deviceID']);
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);
         self::assertEquals($sensorToUpdate->getDevice()->getGroupObject()->getGroupID(), $payload['device']['groupID']);
         self::assertEquals($sensorToUpdate->getDevice()->getRoomObject()->getRoomID(), $payload['device']['roomID']);

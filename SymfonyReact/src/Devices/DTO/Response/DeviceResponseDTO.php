@@ -10,7 +10,7 @@ use JetBrains\PhpStorm\Immutable;
 readonly class DeviceResponseDTO
 {
     public function __construct(
-        private ?int $deviceNameID,
+        private ?int $deviceID,
         private string $deviceName,
         private int $groupID,
         private int $roomID,
@@ -22,9 +22,9 @@ readonly class DeviceResponseDTO
     ) {
     }
 
-    public function getDeviceNameID(): int
+    public function getDeviceID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
     public function getDeviceName(): string

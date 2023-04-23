@@ -23,7 +23,6 @@ export function AddNewDevice(props: {
     setAddNewDeviceModal: ((show: boolean) => void);
     setRefreshNavDataFlag: (newValue: boolean) => void;
 }) {
-    console.log('init!!!');
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
     const setAddNewDeviceModal = props.setAddNewDeviceModal;
     
@@ -45,7 +44,7 @@ export function AddNewDevice(props: {
 
     useEffect(() => {
         handleUserDataRequest();
-    }, [addNewDeviceUserInputs]);
+    }, []);
 
     const handleUserDataRequest = async () => {
         console.log('handleUserDataRequest ADD DEVICE');
@@ -61,9 +60,10 @@ export function AddNewDevice(props: {
         }
     }
 
-    const handleAddNewDeviceInput = (event: { target: { name: string; value: string; }; }) => {
-        const name: string = event.target.name;
-        const value: string = event.target.value;
+    const handleAddNewDeviceInput = (event: Event) => {
+        const name = (event.target as HTMLInputElement).name;
+        const value = (event.target as HTMLInputElement).value;
+        
         setAddNewDeviceUserInputs((values: AddNewDeviceUserInputsInterface) => ({...values, [name]: value}))
     }
     
@@ -83,7 +83,7 @@ export function AddNewDevice(props: {
 
             const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);
 
-            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 200) {
+            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
                 const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
                 setNewDeviceAddedData(addNewDevicePayload);
                 setDeviceRequestLoading(false);
@@ -132,7 +132,7 @@ export function AddNewDevice(props: {
     }
 
     const buildNewDeviceUrl = (newDeviceID: number): string => {
-        return `${webappURL}device?device-id=${newDeviceID}`;
+        return `${webappURL}device/{newDeviceID}`;
     }
 
     return (

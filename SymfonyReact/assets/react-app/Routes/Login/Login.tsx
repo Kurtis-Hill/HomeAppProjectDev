@@ -142,6 +142,7 @@ export default function Login(): void {
                                             name="username"
                                             onChangeFunction={handleInput}
                                             extraClasses={"login-form-field"}
+                                            autoFocus={true}
                                         />
                                         <Input
                                             name="password"

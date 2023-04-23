@@ -15,7 +15,7 @@ use JetBrains\PhpStorm\Immutable;
 readonly class DeviceFullDetailsResponseDTO
 {
     public function __construct(
-        private int $deviceNameID,
+        private int $deviceID,
         private string $deviceName,
         private ?string $secret,
         private GroupResponseDTO $group,
@@ -28,9 +28,9 @@ readonly class DeviceFullDetailsResponseDTO
     }
 
     #[Groups([RequestDTOBuilder::REQUEST_TYPE_FULL])]
-    public function getDeviceNameID(): int
+    public function getDeviceID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
     #[Groups([RequestDTOBuilder::REQUEST_TYPE_FULL])]

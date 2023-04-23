@@ -27,7 +27,7 @@ export function AddNewGroup(props: {
 
     const [newGroupAddData, setNewGroupAddedData] = useState<AddNewGroupResponseInterface|null>(null);
 
-    const handleAddNewGroupInput = (event: { target: { name: string; value: string; }; }) => {
+    const handleAddNewGroupInput = (event: Event) => {
         const name = (event.target as HTMLInputElement).name;
         const value = (event.target as HTMLInputElement).value;
 

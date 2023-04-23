@@ -28,7 +28,7 @@ export function AddNewRoom(props: {
 
     const [newRoomAddData, setNewRoomAddedData] = useState<RoomResponseInterface|null>(null);
 
-    const handleAddNewRoomInput = (event: { target: { name: string; value: string; }; }) => {
+    const handleAddNewRoomInput = (event: Event) => {
         const name = (event.target as HTMLInputElement).name;
         const value = (event.target as HTMLInputElement).value;
 

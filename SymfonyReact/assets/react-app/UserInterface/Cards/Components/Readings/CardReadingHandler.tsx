@@ -114,28 +114,29 @@ export function CardReadingHandler(props: {
         }
     }
 
+    if (loadingCards === true) {
+        <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
+    }
     return (   
         <React.Fragment>
-                {            
-                    loadingCards === true 
-                    ? <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
-                    : cardsForDisplay.length > 0 
-                        ? cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
-                            if (card !== undefined) {
-                                        return (
-                                            <React.Fragment key={index}>
-                                                <CardReadingFactory
-                                                    cardData={card} 
-                                                    setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
-                                                    loadingCardModalView={props.loadingCardModalView}
-                                                    setLoadingCardModalView={props.setLoadingCardModalView}
-                                                />
-                                            </React.Fragment>
-                                        )
-                                    }
-                                })
-                        : <div className="no-data-message">No data to display</div>
-                }
+            {            
+                cardsForDisplay.length > 0 
+                    ? cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
+                        if (card !== undefined) {
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <CardReadingFactory
+                                                cardData={card} 
+                                                setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
+                                                loadingCardModalView={props.loadingCardModalView}
+                                                setLoadingCardModalView={props.setLoadingCardModalView}
+                                            />
+                                        </React.Fragment>
+                                    )
+                                }
+                            })
+                    : <div className="no-data-message">No data to display</div>
+            }
         </React.Fragment>
     );
 }

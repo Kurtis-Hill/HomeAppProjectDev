@@ -25,7 +25,6 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private DeviceRepositoryInterface $deviceRepository;
 
-
     private NavBarDTOBuilder $navBarDTOBuilder;
 
     private UserGroupsFinder $getGroupNamesFinder;
@@ -160,6 +159,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getDeviceData(User $user): array
     {
+//        dd($user);
         return $this->deviceRepository->findAllUsersDevicesByGroupId($this->getGroupNamesFinder->getGroupNamesForUser($user), AbstractQuery::HYDRATE_OBJECT);
     }
 }

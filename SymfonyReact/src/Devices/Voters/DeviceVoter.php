@@ -50,6 +50,23 @@ class DeviceVoter extends Voter
         };
     }
 
+    private function checkCommon(UserInterface $user, Group $proposedGroupName): ?bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (!in_array($proposedGroupName->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+            return false;
+        }
+
+        return null;
+    }
+
+
     private function canAddNewDevice(UserInterface $user, NewDeviceDTO $newDeviceCheckDTO): bool
     {
         $checkCommon = $this->checkCommon(
@@ -57,15 +74,8 @@ class DeviceVoter extends Voter
             $newDeviceCheckDTO->getGroupNameObject(),
         );
 
-        if ($checkCommon !== null) {
-            return $checkCommon;
-        }
+        return $checkCommon ?? false;
 
-        if (!in_array($newDeviceCheckDTO->getGroupNameObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
-            return false;
-        }
-
-        return true;
     }
 
     private function canUpdateDevice(UserInterface $user, UpdateDeviceDTO $updateDeviceDTO): bool
@@ -78,23 +88,13 @@ class DeviceVoter extends Voter
             return $commonSuccess;
         }
 
-        if ($updateDeviceDTO->getProposedGroupNameToUpdateTo() !== null) {
-            if (!in_array(
+        if (($updateDeviceDTO->getProposedGroupNameToUpdateTo() !== null) && !in_array(
                 $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupID(),
                 $user->getAssociatedgroupIDs(),
                 true
             )) {
                 return false;
             }
-        }
-        if (!in_array(
-            $updateDeviceDTO->getDeviceToUpdate()->getGroupObject()->getGroupID(),
-            $user->getAssociatedGroupIDs(),
-            true
-        )
-        ) {
-            return false;
-        }
 
         return true;
     }
@@ -108,22 +108,6 @@ class DeviceVoter extends Voter
         );
 
         return $checkCommon ?? true;
-    }
-
-    private function checkCommon(UserInterface $user, Group $proposedGroupName): ?bool
-    {
-        if (!$user instanceof User) {
-            return false;
-        }
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-            return true;
-        }
-
-        if (!in_array($proposedGroupName->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
-            return false;
-        }
-
-        return null;
     }
 
     public function canGetDevice(UserInterface $user, Devices $devices): bool

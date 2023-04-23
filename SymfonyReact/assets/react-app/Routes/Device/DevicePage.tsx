@@ -27,29 +27,20 @@ export function DevicePage() {
         getDeviceData();
     }, [deviceID]);
 
-    const devicePage = () => {
-        return (
-            <UpdateDevice
-                deviceNameID={deviceData.deviceNameID}
-                deviceName={deviceData.deviceName}
-                groupName={deviceData.groupName}
-                room={deviceData.room}
-                roles={deviceData.roles}
-                
-            />
-            // Add new sensor to device
-            // table showing which ones you do/ do not have cards for
-            // see the cards you have for the device and what state there in
-        );
+
+    if (deviceLoading === true) {
+        return <DotCircleSpinner spinnerSize={5} classes="center-spinner" />
     }
 
     return (
         <>
-            {
-                deviceLoading === true
-                    ? <DotCircleSpinner spinnerSize={5} classes="center-spinner" />
-                    : devicePage()
-            }
+            <UpdateDevice
+                deviceID={deviceData.deviceID}
+                deviceName={deviceData.deviceName}
+                groupName={deviceData.group}
+                room={deviceData.room}
+                roles={deviceData.roles}
+            />
         </>
     );
 }

@@ -83,7 +83,7 @@ class SensorVoter extends Voter
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if ($user->isAdmin()) {
             return true;
         }
 
@@ -129,7 +129,7 @@ class SensorVoter extends Voter
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if ($user->isAdmin()) {
             return true;
         }
 
@@ -146,7 +146,7 @@ class SensorVoter extends Voter
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if ($user->isAdmin()) {
             return true;
         }
 

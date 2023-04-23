@@ -100,6 +100,14 @@
 .padding-bottom {
     padding-bottom: 5%;
 }
+
+.cancel-button {
+    color: #e74a3b;
+}
+
+.accept-button {
+    color: #068a3d;
+}
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
 /*    -moz-transition: 0.5s;*/
@@ -295,6 +303,18 @@
 
 .add-new-submit-button {
     margin-top: 1%;
+}
+
+.font-size-1-5 {
+    font-size: 1.5rem;
+}
+
+.padding-r-1 {
+    padding-right: 1%;
+}
+
+.displayBlockImportant {
+    display: block !important;
 }
 /*@media only screen and (max-width: 700px) {*/
 /*    !*.modal-body {*!*/

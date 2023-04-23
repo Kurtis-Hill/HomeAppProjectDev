@@ -10,7 +10,13 @@ export default function InputWLabel(props: {
     placeHolder?: string; 
     autoComplete?: string; 
     autoFocus?: boolean;
-    onChangeFunction: (event: { target: { name: string; value: string; }; }) => void; 
+    extraClasses?: string;
+    labelExtraClasses?: string;
+    labelDataName?: object;
+    labelDataValue?: object;
+    inputOnClickFn?: (event: Event) => void;
+    labelOnClickFn?: (event: Event) => void;
+    onChangeFunction: (event: Event) => void; 
 }) {
     const labelName = props.labelName ?? ''
     const name: string = props.name ?? ''
@@ -19,17 +25,15 @@ export default function InputWLabel(props: {
     const placeHolder: string = props.placeHolder ?? ''
     const autoComplete: string = props.autoComplete ?? 'true'
     const autoFocus: boolean = props.autoFocus ?? false
+    const labelExtraClasses: string = props.labelExtraClasses ?? ''
+    const extraClasses: string = props.extraClasses ?? ''
+    const inputOnClickFn: (event: Event) => void = props.inputOnClickFn ?? function (){}
 
-    const onChangeFunction: (event: { 
-        target: { 
-            name: string; 
-            value: string; 
-        }; 
-    }) => void = props.onChangeFunction ?? function (){}
+    const onChangeFunction = props.onChangeFunction ?? function (){}
 
     return (
         <>
-            <label className="large font-weight-bold">{ labelName }</label>
+            <label className={`large font-weight-bold ${labelExtraClasses}`}>{ labelName }</label>
             <Input 
                 type={type}
                 name={name}
@@ -38,7 +42,9 @@ export default function InputWLabel(props: {
                 placeHolder={placeHolder}
                 onChangeFunction={onChangeFunction}
                 autoFocus={autoFocus}
-                { ...value }
+                extraClasses={extraClasses}
+                value={value}
+                inputOnClickFn={inputOnClickFn}
             />
         </>
     )
