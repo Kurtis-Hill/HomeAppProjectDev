@@ -9,6 +9,8 @@
     margin: auto;
     display: block;
     text-align: center;
+    /* overflow: auto; */
+    display: table;
 }
 
 .center-spinner-card-row {

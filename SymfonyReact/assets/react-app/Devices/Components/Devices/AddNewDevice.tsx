@@ -81,7 +81,7 @@ export function AddNewDevice(props: {
                 'deviceGroup' :  parseInt(addNewDeviceUserInputs.deviceGroup),
             };
 
-            const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);
+            const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);            
 
             if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
                 const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;

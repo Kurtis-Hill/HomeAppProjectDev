@@ -1,19 +1,24 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import {
-    Outlet,
+    Outlet, useOutletContext
 } from "react-router-dom";
 
 import Navbar from "../../../UserInterface/Navbar/Components/Navbar";
 
 import { AnnouncementFlashModal } from "../Modals/AnnouncementFlashModal";
-import { BuildAnnouncementErrorFlashModal } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
+import { AnnouncementFlashModalBuilder } from "../../Builders/ModalBuilder/AnnouncementFlashModalBuilder";
 import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
 
 import { SensorDataContextProvider } from "../../../Sensors/DataProviders/SensorDataProvider";
 
 import { UserDataContextProvider } from '../../../User/DataProviders/UserDataContextProvider';
 import { ErrorResponseComponent } from "../../Request/Interceptors/ErrorResponseComponent";
+
+type ContextType = {
+     showAnnouncementFlash: (errors: Array<string>, title: string, timer?: number | null) => void | null;
+     setRefreshNavbar: (newValue: boolean) => void | null;
+};
 
 export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
@@ -24,10 +29,11 @@ export function MainPageTop() {
         setRefreshNavbar(newValue);
     }
 
-    const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
+    const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
+        console.log('its coming!!', errors, title, timer);
         setAnnouncementModals([
             ...announcementModals,
-            <BuildAnnouncementErrorFlashModal
+            <AnnouncementFlashModalBuilder
                 announcementModals={announcementModals}
                 setAnnouncementModals={setAnnouncementModals}
                 title={title}
@@ -41,7 +47,7 @@ export function MainPageTop() {
     return (
         <React.Fragment>
             <RequestInterceptor />
-            <ErrorResponseComponent showErrorAnnouncementFlash={showErrorAnnouncementFlash} announcementModals={announcementModals} />
+            <ErrorResponseComponent showErrorAnnouncementFlash={showAnnouncementFlash} announcementModals={announcementModals} />
             <div id="page-top">
                 <div id="wrapper">
                     <UserDataContextProvider children={undefined}>
@@ -49,14 +55,18 @@ export function MainPageTop() {
                             <Navbar
                                 refreshNavbar={refreshNavbar}
                                 setRefreshNavDataFlag={setRefreshNavDataFlag}
-                                showErrorAnnouncementFlash={showErrorAnnouncementFlash}
+                                showErrorAnnouncementFlash={showAnnouncementFlash}
                             />
                             <Outlet
                                 context={
-                                    [
-                                        setRefreshNavDataFlag,
-                                        showErrorAnnouncementFlash
-                                    ]
+                                    {
+                                        showAnnouncementFlash,
+                                        setRefreshNavbar
+                                    }
+                                    // [
+                                    //     setRefreshNavDataFlag,
+                                    //     showAnnouncementFlash
+                                    // ]
                                 }
                             />
                         </SensorDataContextProvider>
@@ -66,3 +76,7 @@ export function MainPageTop() {
         </React.Fragment>
     );
 }
+
+export function useMainIndicators() {
+    return useOutletContext<ContextType>();
+  }

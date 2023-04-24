@@ -12,7 +12,7 @@ export function FormInlineSelectWLabel(
             value: string|number;
             name: string;
         }[];
-        acceptClickEven: (e: Event) => void;
+        acceptClickEvent: (e: Event) => void;
         declineClickEvent: (e: Event) => void;
         selectDefaultValue?: number;
         declineDataName? : string;
@@ -25,9 +25,9 @@ export function FormInlineSelectWLabel(
         selectName,
         selectDefaultValue,
         selectOptions,
-        acceptClickEven,
+        acceptClickEvent: acceptClickEven,
         declineClickEvent,
-        declineDataName,
+        declineDataName: acceptDeclineDataName,
     } = props;
 
     return (
@@ -47,8 +47,8 @@ export function FormInlineSelectWLabel(
                         }
                     </select>
             </div>
-            <AcceptButton clickEvent={(e: Event) => acceptClickEven(e)} />
-            <DeclineButton clickEvent={(e: Event) => declineClickEvent(e)} dataName={declineDataName} />
+            <AcceptButton clickEvent={(e: Event) => acceptClickEven(e)} dataName={acceptDeclineDataName} />
+            <DeclineButton clickEvent={(e: Event) => declineClickEvent(e)} dataName={acceptDeclineDataName} />
         </>
     )
 }

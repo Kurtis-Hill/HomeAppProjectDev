@@ -16,6 +16,8 @@ import { LoginFormUserInputsInterface } from "../../Authentication/Form/LoginFor
 import { handleLogin, handleTokenRefresh } from "../../Authentication/Request/LoginRequest";
 import { handlePingRequest, PingInterface } from "../../Common/Request/Ping";
 import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
+import { TokenRefreshResponseInterface } from '../../Authentication/Response/TokenRefreshResponseInterface';
+import { setUserSession } from '../../Authentication/Session/UserSession';
 
 export default function Login(): void {
     const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
@@ -65,6 +67,8 @@ export default function Login(): void {
                 const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
                 if (refreshTokenResponse !== undefined && "status" in refreshTokenResponse) {
                     if (refreshTokenResponse.status === 200) {
+                        const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
+                        setUserSession(refreshTokenResponseData);
                         navigate(`${indexUrl}`);
                     }
                 }
@@ -75,6 +79,8 @@ export default function Login(): void {
             try {
                 const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
                 if (refreshTokenResponse.status === 200) {
+                    const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
+                    setUserSession(refreshTokenResponseData);
                     navigate(`${indexUrl}`);
                 }
             } catch (err) {

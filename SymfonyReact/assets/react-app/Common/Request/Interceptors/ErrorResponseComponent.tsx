@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { BuildAnnouncementErrorFlashModal } from '../../Builders/ModalBuilder/AnnouncementFlashModalBuilder';
+import { AnnouncementFlashModalBuilder } from '../../Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { AnnouncementFlashModal } from "../../Components/Modals/AnnouncementFlashModal";
 import { ErrorResponseInterceptor } from '../Axios/ErrorResponseInterceptor';
 
@@ -11,7 +11,7 @@ export function ErrorResponseComponent(props) {
     const showErrorAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
         setErrorAnnouncementErrorModals([
             ...errorAnnouncementErrorModals,
-            <BuildAnnouncementErrorFlashModal
+            <AnnouncementFlashModalBuilder
                 announcementModals={errorAnnouncementErrorModals}
                 setAnnouncementModals={setErrorAnnouncementErrorModals}
                 title={title}

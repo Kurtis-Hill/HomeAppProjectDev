@@ -35,7 +35,7 @@ export function FormInlineInputWLabel(props: {
                 extraClasses=''
             />
             <span>
-                <AcceptButton clickEvent={(e: Event) => acceptClickEvent(e)} />
+                <AcceptButton clickEvent={(e: Event) => acceptClickEvent(e)} dataName={dataName} />
                 <DeclineButton clickEvent={(e: Event) => declineClickEvent(e)} dataName={dataName} />
             </span>
         </>

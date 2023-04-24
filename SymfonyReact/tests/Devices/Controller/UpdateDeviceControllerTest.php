@@ -27,7 +27,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/update-device';
+    private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/update';
 
     private ?string $userToken = null;
 

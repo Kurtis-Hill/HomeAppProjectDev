@@ -44,7 +44,7 @@ class UpdateDeviceController extends AbstractController
 
     #[
         Route(
-            path: '{deviceID}/update-device',
+            path: '{deviceID}/update',
             name: 'update-esp-device',
             methods: [Request::METHOD_PUT, Request::METHOD_PATCH]
         )

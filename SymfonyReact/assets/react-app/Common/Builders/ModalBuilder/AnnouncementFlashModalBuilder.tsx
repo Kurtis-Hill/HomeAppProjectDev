@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { AnnouncementFlashModal } from '../../Components/Modals/AnnouncementFlashModal';
 
-export function BuildAnnouncementErrorFlashModal(props: {
+export function AnnouncementFlashModalBuilder(props: {
       announcementModals: Array<typeof AnnouncementFlashModal>;
       setAnnouncementModals: (announcementModals: Array<typeof AnnouncementFlashModal>) => void;
       title: string;

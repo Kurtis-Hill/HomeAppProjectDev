@@ -33,12 +33,6 @@ export async function handleTokenRefresh(): Promise<AxiosResponse> {
             { refreshToken : refreshToken }
         )
 
-        const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
-
-        if (refreshTokenResponse.status === 200) {
-            refreshUserTokens(refreshTokenResponseData);
-        }
-
         return refreshTokenResponse;
     } catch (err) {
         const error = err as Error | AxiosError;

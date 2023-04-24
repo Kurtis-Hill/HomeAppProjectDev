@@ -10,16 +10,20 @@ import { UserDataResponseInterface } from '../../../User/Response/UserDataRespon
 import { FormInlineSpan } from '../../../Common/Components/Elements/FormInlineSpan';
 import { FormInlineSelectWLabel } from '../../../Common/Components/Selects/FormInlineSelectWLabel';
 import { FormInlineInputWLabel } from '../../../Common/Components/Inputs/FormInlineInputWLabel';
+import { deviceUpdatePatchRequest, DeviceUpdatePatchInputInterface } from '../../Request/DeviceUpdatePatchRequest';
+import { AxiosError, AxiosResponse } from 'axios';
 
 export function UpdateDevice(props: {
     deviceID: number;
     deviceName: string;
     group: GroupResponseInterface;
     room: RoomResponseInterface;
-    roles: string[]
+    roles: string[];
+    showErrorAnnouncementFlash?: (errors: Array<string>, title: string, timer?: number | null) => void;
+    setRefreshNavDataFlag?: (newValue: boolean) => void;
 }) {
 
-    const { deviceID, deviceName, group: groupName, room, roles } = props;
+    const { deviceID, deviceName, group: groupName, room, roles, showErrorAnnouncementFlash } = props;
     
     const [activeFormForUpdating, setActiveFormForUpdating] = useState({
             deviceName: false,
@@ -37,6 +41,7 @@ export function UpdateDevice(props: {
     });
 
     const originalDeviceData = useRef<UpdateDeviceFormInputsInterface>({
+        deviceID: deviceID,
         deviceName: deviceName,
         password: '',
         deviceGroup: groupName.groupID,
@@ -50,7 +55,24 @@ export function UpdateDevice(props: {
     });
 
     useEffect(() => {
-        console.log('props', activeFormForUpdating)
+        if (deviceID !== originalDeviceData.current.deviceID) {
+            setDeviceUpdateFormInputs({
+                deviceName: deviceName,
+                password: '',
+                deviceGroup: groupName.groupID,
+                deviceGroupName: groupName.groupName,
+                deviceRoom: room.roomID,
+            });
+            originalDeviceData.current = {
+                deviceID: deviceID,
+                deviceName: deviceName,
+                password: '',
+                deviceGroup: groupName.groupID,
+                deviceGroupName: groupName.groupName,
+                deviceRoom: room.roomID,
+            };
+        }
+
         if (activeFormForUpdating.deviceGroup === true) {
             handleUserGroupDataRequest();
         }
@@ -83,11 +105,11 @@ export function UpdateDevice(props: {
     }
 
     const handleUserGroupDataRequest = async () => {
-        console.log('handleUserDataRequest')
+        // console.log('handleUserDataRequest')
         const groupDataResponse = await getAllUserGroupsRequest();
         if (groupDataResponse.status === 200) {
             const groupDataPayload = groupDataResponse.data.payload as UserDataResponseInterface;
-            console.log('payload UPDATE DEVICE', groupDataPayload)
+            // console.log('payload UPDATE DEVICE', groupDataPayload)
             setUserData({
                 ...userData,
                 userGroups: groupDataPayload,
@@ -97,8 +119,50 @@ export function UpdateDevice(props: {
 
 
 
-    const sendUpdateDeviceRequest = () => {
-        console.log('update devicee');
+    const sendUpdateDeviceRequest = async (e: Event) => {
+
+        const name = (e.target as HTMLElement).dataset.name;
+
+        let dataToSend: DeviceUpdatePatchInputInterface = {};
+
+        switch (name) {
+            case 'deviceName':
+                dataToSend.deviceName = deviceUpdateFormInputs.deviceName;
+                break;
+            case 'deviceGroup':
+                dataToSend.deviceGroup = deviceUpdateFormInputs.deviceGroup;
+                break;
+            case 'deviceRoom':
+                dataToSend.deviceRoom = deviceUpdateFormInputs.deviceRoom;
+                break;
+        }
+        try {
+            const deviceUpdateResponse = await deviceUpdatePatchRequest(deviceID, dataToSend);
+
+            if (deviceUpdateResponse.status === 202) {
+                console.log('device update response', deviceUpdateResponse.data.payload);
+                console.log('me too', showErrorAnnouncementFlash)
+                showErrorAnnouncementFlash(['Device updated successfully'], 'Success', 3000);
+                // props.setRefreshNavDataFlag(true);
+            }
+        } catch(error) {
+            const errorResponse = error.response as Error|AxiosError;
+
+            // if (errorResponse instanceof Error) {
+            //     console.log('error', errorResponse.message);
+            // } else {
+            //     console.log('error', errorResponse.message);
+            // }
+        }
+
+        // console.log('meTOOO', dataToSend);
+
+        // console.log('update devicee');
+        // console.log('deviceUpdateFormInputs', deviceUpdateFormInputs);
+        // console.log('originalDeviceData', originalDeviceData.current);
+        // console.log('device passed in', deviceID, deviceName, groupName, room, roles)
+        // console.log('lol', e.target)
+        // console.log('event data name', (e.target as HTMLElement).dataset.name);
         // send request to update device
     }
 
@@ -122,7 +186,7 @@ export function UpdateDevice(props: {
                 changeEvent={handleUpdateDeviceInput}
                 selectName={'deviceGroup'}
                 selectOptions={optionsForBuilder}
-                acceptClickEven={(e: Event) => sendUpdateDeviceRequest()}
+                acceptClickEvent={(e: Event) => sendUpdateDeviceRequest(e)}
                 declineClickEvent={(e: Event) => toggleFormInput(e)}
                 selectDefaultValue={groupName.groupID}
                 declineDataName={'deviceGroup'}
@@ -147,7 +211,7 @@ export function UpdateDevice(props: {
                                             nameParam='deviceName'
                                             changeEvent={handleUpdateDeviceInput}
                                             value={deviceUpdateFormInputs.deviceName}
-                                            acceptClickEvent={(e: Event) => sendUpdateDeviceRequest()}
+                                            acceptClickEvent={(e: Event) => sendUpdateDeviceRequest(e)}
                                             declineClickEvent={(e: Event) => toggleFormInput(e)}
                                             dataName='deviceName'
                                         />
@@ -166,12 +230,12 @@ export function UpdateDevice(props: {
                                 ? 
                                     buildGroupWithSaveRejectButtons()
                                 :
-                                <FormInlineSpan
-                                    spanOuterTag={'Device Group:'}
-                                    spanInnerTag={deviceUpdateFormInputs.deviceGroupName}
-                                    clickEvent={(e: Event) => toggleFormInput(e)}
-                                    dataName={'deviceGroup'}
-                                />
+                                    <FormInlineSpan
+                                        spanOuterTag={'Device Group:'}
+                                        spanInnerTag={deviceUpdateFormInputs.deviceGroupName}
+                                        clickEvent={(e: Event) => toggleFormInput(e)}
+                                        dataName={'deviceGroup'}
+                                    />
                         } 
                     </div>
                 </form>
