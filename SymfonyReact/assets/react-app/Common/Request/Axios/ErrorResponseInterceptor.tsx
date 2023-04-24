@@ -1,6 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
-import { apiURL } from '../../URLs/CommonURLs';
+import { apiURL, indexUrl } from '../../URLs/CommonURLs';
 import { getRefreshToken } from '../../../Authentication/Tokens/GetAPITokens';
 import { ErrorResponseInterface } from '../../Response/ErrorResponseInterface';
 import { loginUrl } from '../../URLs/CommonURLs';
@@ -8,6 +9,8 @@ import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest
 
 export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (errors: Array<string>, title: string, timer?: number|null) => void}): void {
     const errorAnnouncementFlash = props.showErrorAnnouncementFlash;
+
+    const navigate: NavigateFunction = useNavigate();
 
     axios.interceptors.response.use(function (response) {
         const errors: ErrorResponseInterface = response.data;
@@ -38,6 +41,7 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
             const errorsForModal: Array<string> = errorResponse.errors;
 
             errorAnnouncementFlash(errorsForModal, 'Error' ?? errorResponse.title );
+
         } else {
             if (error.response.status === 401 || error.response.status === 403) {
                 const refreshToken: string|null = getRefreshToken();
@@ -47,6 +51,7 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
                         const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
                     } catch (err) {
                         const error = err as Error | AxiosError;
+                        alert('Your session has expired please log in again');
                     }
                 } else {
                     window.location.replace(`${loginUrl}`)
@@ -55,8 +60,9 @@ export function ErrorResponseInterceptor(props: {showErrorAnnouncementFlash: (er
             if (error.response.status === 500) {
                 errorAnnouncementFlash(['Unrecognized issue please log out and back in again'], 'Error');
             }
+            if (error.response.status === 404) {
+                navigate(`${indexUrl}`)
+            }
         }
-
-        return Promise.reject(error);
     });
 }

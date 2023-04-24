@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect, useRef, useMemo, useReducer } from 'react';
 import { userDataRequest } from '../Request/UserDataRequest';
 
-import GroupNameResponseInterface from '../Response/GroupName/GroupNameResponseInterface';
+import GroupResponseInterface from '../Response/Group/GroupResponseInterface';
 import RoomNavbarResponseInterface from '../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
 import { UserDataResponseInterface } from '../Response/UserDataResponseInterface';
 
@@ -54,6 +54,6 @@ export function UserDataContextProvider({ children }) {
 }
 
 export interface UserDataContextInterface {
-    userGroups: GroupNameResponseInterface[]|[];
+    userGroups: GroupResponseInterface[]|[];
     userRooms: RoomNavbarResponseInterface[]|[];
 }

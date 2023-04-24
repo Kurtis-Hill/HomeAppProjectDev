@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { apiURL } from "../../Common/URLs/CommonURLs";
 import RoomResponseInterface from '../../User/Response/Room/RoomResponseInterface';
-import GroupNameResponseInterface from '../../User/Response/GroupName/GroupNameResponseInterface';
+import GroupResponseInterface from '../../User/Response/Group/GroupResponseInterface';
 
 export async function getDeviceRequest(deviceID: number, type: string|null): Promise<AxiosResponse> {
     const getDeviceResponse: AxiosResponse = await axios.get(
@@ -10,11 +10,11 @@ export async function getDeviceRequest(deviceID: number, type: string|null): Pro
         { params: { responseType: type } }  
     );
 
-    if (getDeviceResponse.status === 200) {
+    // if (getDeviceResponse.status === 200) {
         return getDeviceResponse;
-    } else {
-        throw new Error('Something went wrong');
-    }
+    // } else {
+    //     throw new Error('Something went wrong');
+    // }
 }
 
 export interface DeviceResponseInterface {
@@ -22,7 +22,7 @@ export interface DeviceResponseInterface {
     deviceName: string
     devicePassword: string
     deviceRoom: number
-    deviceGroup: GroupNameResponseInterface
+    deviceGroup: GroupResponseInterface
     roles: string[]
     room: RoomResponseInterface
     ipAddress: string|null

@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import Input from '../Inputs/Input'
+import { Label } from '../Elements/Label';
 
 export default function InputWLabel(props: { 
     labelName: string; 
@@ -33,7 +34,12 @@ export default function InputWLabel(props: {
 
     return (
         <>
-            <label className={`large font-weight-bold ${labelExtraClasses}`}>{ labelName }</label>
+            <Label
+                text={labelName}
+                htmlFor={name}
+                classes={labelExtraClasses}
+            />
+            {/* <label className={`large font-weight-bold ${labelExtraClasses}`}>{ labelName }</label> */}
             <Input 
                 type={type}
                 name={name}
