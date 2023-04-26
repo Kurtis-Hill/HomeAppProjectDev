@@ -27,7 +27,7 @@ export function CardDisplayModal(props: {
     // boundary update form,
     // card view update form,
 
-    console.log('cardVieID', cardViewID)
+    console.log('cardVieID me too', cardViewID)
     return (
         <>
             <BaseModal

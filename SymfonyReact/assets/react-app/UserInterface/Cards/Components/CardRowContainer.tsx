@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState } from 'react';
 
 import { CardReadingHandler } from './Readings/CardReadingHandler';
 import { CardFilterBarInterface } from './Filterbars/CardFilterBarInterface'; 
@@ -23,7 +23,10 @@ export function CardRowContainer(props: {
     const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
 
     const [loadingCardModalView, setLoadingCardModalView] = useState<boolean>(false);
-        
+    
+    const [showCardModal, setShowCardModal] = useState<boolean>(false);
+
+
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
         
@@ -49,35 +52,6 @@ export function CardRowContainer(props: {
             }
         }
     };
-
-    const buildCardContainer = (): React => {
-        if (horizontal === true) {
-            return (
-                <div className={classes ?? 'col-xl-12 col-md-12 mb-12'}>
-                    { buildCardReadingHandler() }
-                </div>                
-            );
-        } else {
-            return (
-                <>
-                    { buildCardReadingHandler() }
-                </>
-            );
-        }
-    };
-
-    const buildCardReadingHandler = (): React => {
-        return (
-            <CardReadingHandler 
-                route={route} 
-                filterParams={sensorFilterParams} 
-                cardRefreshTimer={cardRefreshTimer}
-                setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
-                loadingCardModalView={loadingCardModalView}
-                setLoadingCardModalView={setLoadingCardModalView}
-            />
-        );
-    }
 
     return (
         <>
@@ -110,11 +84,17 @@ export function CardRowContainer(props: {
                             setLoadingCardModalView={setLoadingCardModalView}
                         />
             }
-            <CardDisplayModal
-                cardViewID={selectedCardForQuickUpdate}
-                loadingCardModalView={loadingCardModalView}
-                setLoadingCardModalView={setLoadingCardModalView}
-            />
+            {
+                showCardModal === true
+                    ?
+                        <CardDisplayModal
+                            cardViewID={selectedCardForQuickUpdate}
+                            loadingCardModalView={loadingCardModalView}
+                            setLoadingCardModalView={setLoadingCardModalView}
+                        />
+                    :
+                        null
+            }
         </>
     );
 }

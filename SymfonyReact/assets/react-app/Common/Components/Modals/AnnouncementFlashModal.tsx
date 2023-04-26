@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BaseModal from "./BaseModal";
 
 export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
@@ -7,50 +7,26 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
   const dataToList: Array<string> = props.errors
   const dataNumber: number = props.errorNumber
   const timer: number = props.timer;
-  const announcementModals: Array<typeof AnnouncementFlashModal> = props.announcementModals ?? null;
   const setAnnouncementModals = props.setAnnouncementModals ?? null;
-
-
+  const announcementModals: Array<typeof AnnouncementFlashModal> = props.announcementModals ?? null;
+  const setErrorCount = props.setErrorCount;
+  
   const [modalOpacity, setModalOpacity] = useState<number>(100);
-  const [modalShow, setModalShow] = useState<boolean>(true);
+  const [modalShow, setModalShow] = useState<boolean>(props.modalShow ?? true);
 
   useEffect(() => {
-    // console.log('ann modal', props.announcementModals)
     const interval = setInterval(() => {
       if (modalOpacity !== 0 && modalShow === true) {
         setModalOpacity(modalOpacity - 1);
       } else {
-        // console.log('count', props.announcementModals)
         setModalShow(false);
         clearInterval(interval)
-        // console.log('data number', dataNumber)
-        // if (dataNumber !== null) {
-
-        //   setAnnouncementModals(announcementModals.filter((ann) => {
-        //     // console.log('hi its me', key); 
-        //     return ann.dataNumber !== dataToList;
-        //   }));
-        // }
+        setAnnouncementModals([]);
       }
     }, timer);
 
     return () => clearInterval(interval);
-  }, [modalOpacity]);
-
-
-  const displayErrors = (): string|null => {
-    return dataToList?.length > 0
-        ?
-          <div className="modal-body error-modal">
-            {
-              dataToList.map((error, index) => (
-                  <li className="error-modal-list" key={index}>{error}</li>
-              ))
-            }
-          </div>
-        :
-        null
-  }
+  }, [modalShow, modalOpacity]);
 
   return (
       <React.Fragment>
@@ -63,7 +39,19 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
               label={"Error announcement"}
               indexPosition={1060}
         >
-          { displayErrors() }
+          { 
+            dataToList?.length > 0
+            ?
+              <div className="modal-body error-modal">
+                {
+                  dataToList.map((error, index) => (
+                      <li className="error-modal-list" key={index}>{error}</li>
+                  ))
+                }
+              </div>
+            :
+              null
+          }
         </BaseModal>
       </React.Fragment>
   );
@@ -76,6 +64,6 @@ export interface AnnouncementFlashModalInterface {
   timer: number; 
   announcementModals?: Array<typeof AnnouncementFlashModal>;
   setAnnouncementModals?: (announcementModals: Array<typeof AnnouncementFlashModal>) => void;
+  modalShow?: boolean;
+  setErrorCount: (errorCount: number) => void;
 }
-
-

@@ -34,7 +34,7 @@ export default function NavBar(props: {
 
     useEffect(() => {
         if (refreshNavbarIndicator === true) {
-            requestNavbarData().then(r => {
+            requestNavbarData().then(() => {
                 setRefreshNavDataFlag(false);
             });
         }
@@ -89,7 +89,6 @@ export default function NavBar(props: {
                         : null
                 }
                 <SidebarDividerWithHeading heading="View options for:" />
-
                 {
                     loadingNavbarListItems === true
                         ? <DotCircleSpinner classes="margin-spinner" />

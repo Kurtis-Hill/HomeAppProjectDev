@@ -13,7 +13,7 @@ import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
 import { SensorDataContextProvider } from "../../../Sensors/DataProviders/SensorDataProvider";
 
 import { UserDataContextProvider } from '../../../User/DataProviders/UserDataContextProvider';
-import { ErrorResponseComponent } from "../../Request/Interceptors/ErrorResponseComponent";
+import { ResponseComponent } from "../../Request/Interceptors/ResponseComponent";
 
 type ContextType = {
      showAnnouncementFlash: (errors: Array<string>, title: string, timer?: number | null) => void | null;
@@ -26,11 +26,13 @@ export function MainPageTop() {
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
     const setRefreshNavDataFlag = (newValue: boolean) => {
+        console.log('setRefreshNavDataFlag', newValue);
         setRefreshNavbar(newValue);
     }
 
+    const [announcementCount, setAnnouncementCount] = useState<number>(0);
+
     const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
-        console.log('its coming!!', errors, title, timer);
         setAnnouncementModals([
             ...announcementModals,
             <AnnouncementFlashModalBuilder
@@ -38,7 +40,8 @@ export function MainPageTop() {
                 setAnnouncementModals={setAnnouncementModals}
                 title={title}
                 dataToList={errors}
-                dataNumber={announcementModals.length}
+                dataNumber={announcementCount}
+                setErrorCount={setAnnouncementCount}
                 timer={timer ? timer : 40}
             />
         ])
@@ -47,7 +50,16 @@ export function MainPageTop() {
     return (
         <React.Fragment>
             <RequestInterceptor />
-            <ErrorResponseComponent showErrorAnnouncementFlash={showAnnouncementFlash} announcementModals={announcementModals} />
+            {
+                announcementModals.map((errorAnnouncementErrorModal: typeof AnnouncementFlashModal, index: number) => {
+                    return (
+                        <React.Fragment key={index}>
+                            {errorAnnouncementErrorModal}
+                        </React.Fragment>
+                    );
+                })
+            }
+            <ResponseComponent showAnnouncementFlash={showAnnouncementFlash} announcementModals={announcementModals} />
             <div id="page-top">
                 <div id="wrapper">
                     <UserDataContextProvider children={undefined}>
@@ -63,10 +75,6 @@ export function MainPageTop() {
                                         showAnnouncementFlash,
                                         setRefreshNavbar
                                     }
-                                    // [
-                                    //     setRefreshNavDataFlag,
-                                    //     showAnnouncementFlash
-                                    // ]
                                 }
                             />
                         </SensorDataContextProvider>

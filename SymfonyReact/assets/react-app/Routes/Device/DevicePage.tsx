@@ -11,6 +11,7 @@ import { UpdateDevice } from '../../Devices/Components/UpdateDevice/UpdateDevice
 import { AxiosError } from 'axios';
 import { indexUrl } from '../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
+import { ResponseTypeFull } from '../../Common/API/APIResponseType';
 
 export function DevicePage() {
     // const [setRefreshNavDataFlag, showErrorAnnouncementFlash]: Context<Array<(newValue: boolean) => void>> = useOutletContext();
@@ -20,7 +21,7 @@ export function DevicePage() {
     // console.log('hey', showAnnouncementFlash, setRefreshNavbar);
     const params = useParams();
 
-    const deviceID = parseInt(params.deviceID);
+    const deviceID: number = parseInt(params.deviceID);
 
     const [deviceData, setDeviceData] = useState<DeviceResponseInterface|null>(null);
 
@@ -30,7 +31,8 @@ export function DevicePage() {
 
     const getDeviceData = async () => {
         try {
-            const getDeviceResponse = await getDeviceRequest(parseInt(deviceID), 'full');
+
+            const getDeviceResponse = await getDeviceRequest(deviceID, ResponseTypeFull);
             const deviceData: DeviceResponseInterface = getDeviceResponse.data.payload;
             setDeviceData(deviceData);
         } catch (error) {

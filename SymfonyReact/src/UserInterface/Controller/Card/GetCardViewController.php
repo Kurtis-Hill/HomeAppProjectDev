@@ -144,7 +144,7 @@ class GetCardViewController extends AbstractController
         } catch (WrongUserTypeException) {
 
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Card')]);

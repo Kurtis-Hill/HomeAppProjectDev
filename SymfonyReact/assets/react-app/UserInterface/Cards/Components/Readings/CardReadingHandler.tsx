@@ -12,12 +12,6 @@ import { CardDataResponseInterface } from '../../Response/CardDataResponseInterf
 import { handleSendingCardDataRequest } from '../../../../UserInterface/Cards/Request/CardRequest';
 import CardReadingFactory from '../../Factories/CardReadingFactory';
 import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
-import { CardFormResponseInterface } from '../Response/FormResponse/CardFormResponseInterface';
-
-import { CardUpdateModalBuilder } from '../../Builders/CardUpdateModalBuilder'
-import { CardDisplayModal } from '../Modal/CardDisplayModal';
-
-import { CardCurrentSensorReadings } from '../DisplayCards/CardCurrentSensorReadings';
 
 const cardReducer = (previousCards: CardDataResponseInterface[]|undefined, cardsForDisplayArray: CardDataResponseInterface[]|undefined): React[] => {
     if (previousCards.length <= 0 || previousCards === undefined) {
