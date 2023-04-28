@@ -8,11 +8,7 @@ export async function addNewDeviceRequest(addNewDeviceInputs: AddNewDeviceInputI
         addNewDeviceInputs
     );
 
-    if (addNewDeviceResponse.status === 201) {
-        return addNewDeviceResponse;
-    } else {
-        throw new Error('Something went wrong');
-    }
+    return addNewDeviceResponse;
 }   
 
 export interface AddNewDeviceInputInterface {

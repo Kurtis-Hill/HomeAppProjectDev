@@ -130,6 +130,9 @@ class GetCardViewController extends AbstractController
     #[Route('index', name: 'index-card-data', methods: [Request::METHOD_GET])]
     public function indexCards(Request $request): JsonResponse
     {
+        $this->logger->error('here I am');
+
+        return $this->sendBadRequestJsonResponse();
         try {
             $cardViewRequestDTO = $this->validateRequestDTO($request);
         } catch (CardViewRequestException $e) {

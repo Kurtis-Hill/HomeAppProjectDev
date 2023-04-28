@@ -14,9 +14,7 @@ import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
 import { ResponseTypeFull } from '../../Common/API/APIResponseType';
 
 export function DevicePage() {
-    // const [setRefreshNavDataFlag, showErrorAnnouncementFlash]: Context<Array<(newValue: boolean) => void>> = useOutletContext();
-
-    const { showAnnouncementFlash, setRefreshNavbar } = useMainIndicators();
+    const { setRefreshNavbar } = useMainIndicators();
 
     // console.log('hey', showAnnouncementFlash, setRefreshNavbar);
     const params = useParams();
@@ -60,8 +58,7 @@ export function DevicePage() {
                 group={deviceData.group}
                 room={deviceData.room}
                 roles={deviceData.roles}
-                showErrorAnnouncementFlash={showAnnouncementFlash}
-                // setRefreshNavDataFlag={setRefreshNavDataFlag}
+                getDeviceData={getDeviceData}
             />
         </>
     );

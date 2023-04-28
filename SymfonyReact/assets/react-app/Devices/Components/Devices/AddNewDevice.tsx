@@ -81,18 +81,22 @@ export function AddNewDevice(props: {
                 'deviceGroup' :  parseInt(addNewDeviceUserInputs.deviceGroup),
             };
 
-            const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);            
-
-            if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
-                const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
-                setNewDeviceAddedData(addNewDevicePayload);
-                setDeviceRequestLoading(false);
-                setErrors([]);
-                setRefreshNavDataFlag(true);
-            } else {
-                setDeviceRequestLoading(false);
+            try {
+                const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);            
+                if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
+                    const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
+                    setNewDeviceAddedData(addNewDevicePayload);
+                    // setDeviceRequestLoading(false);
+                    setErrors([]);
+                    setRefreshNavDataFlag(true);
+                } else {
+                    setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
+                }
+            } catch(error: any) {
+                console.log('error', error);
                 setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
             }
+            setDeviceRequestLoading(false);
         } 
     }
 

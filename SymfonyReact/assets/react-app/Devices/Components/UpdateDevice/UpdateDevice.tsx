@@ -12,6 +12,9 @@ import { FormInlineSelectWLabel } from '../../../Common/Components/Selects/FormI
 import { FormInlineInputWLabel } from '../../../Common/Components/Inputs/FormInlineInputWLabel';
 import { deviceUpdatePatchRequest, DeviceUpdatePatchInputInterface } from '../../Request/DeviceUpdatePatchRequest';
 import { AxiosError, AxiosResponse } from 'axios';
+import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
+import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
+import { DeviceResponseInterface } from '../../Request/GetDeviceRequest';
 
 export function UpdateDevice(props: {
     deviceID: number;
@@ -19,11 +22,10 @@ export function UpdateDevice(props: {
     group: GroupResponseInterface;
     room: RoomResponseInterface;
     roles: string[];
-    showErrorAnnouncementFlash?: (errors: Array<string>, title: string, timer?: number | null) => void;
     setRefreshNavDataFlag?: (newValue: boolean) => void;
+    getDeviceData: () => void;
 }) {
-
-    const { deviceID, deviceName, group: groupName, room, roles, showErrorAnnouncementFlash } = props;
+    const { deviceID, deviceName, group: groupName, room, roles, getDeviceData } = props;
     
     const [activeFormForUpdating, setActiveFormForUpdating] = useState({
             deviceName: false,
@@ -54,8 +56,26 @@ export function UpdateDevice(props: {
         userRooms: [] as RoomResponseInterface[],
     });
 
+    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+
+    const [announcementCount, setAnnouncementCount] = useState<number>(0);
+
+    const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
+        setAnnouncementModals([
+            <AnnouncementFlashModalBuilder
+                setAnnouncementModals={setAnnouncementModals}
+                title={title}
+                dataToList={errors}
+                dataNumber={announcementCount}
+                setErrorCount={setAnnouncementCount}
+                timer={timer ? timer : 40}
+            />
+        ])
+    }
+
     useEffect(() => {
         if (deviceID !== originalDeviceData.current.deviceID) {
+            console.log('oops');
             setDeviceUpdateFormInputs({
                 deviceName: deviceName,
                 password: '',
@@ -76,17 +96,12 @@ export function UpdateDevice(props: {
         if (activeFormForUpdating.deviceGroup === true) {
             handleUserGroupDataRequest();
         }
-    }, [activeFormForUpdating, originalDeviceData, deviceID]);
+    }, [activeFormForUpdating, deviceID, announcementModals]);
     
     const toggleFormInput = (event: Event) => {
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined
             ? (event.target as HTMLElement|HTMLInputElement).dataset.name
             : (event.target as HTMLInputElement).name;
-
-        setDeviceUpdateFormInputs({
-            ...deviceUpdateFormInputs,
-            [name]: originalDeviceData.current[name],
-        })
 
         setActiveFormForUpdating({
             ...activeFormForUpdating,
@@ -105,11 +120,9 @@ export function UpdateDevice(props: {
     }
 
     const handleUserGroupDataRequest = async () => {
-        // console.log('handleUserDataRequest')
         const groupDataResponse = await getAllUserGroupsRequest();
         if (groupDataResponse.status === 200) {
             const groupDataPayload = groupDataResponse.data.payload as UserDataResponseInterface;
-            // console.log('payload UPDATE DEVICE', groupDataPayload)
             setUserData({
                 ...userData,
                 userGroups: groupDataPayload,
@@ -120,7 +133,6 @@ export function UpdateDevice(props: {
 
 
     const sendUpdateDeviceRequest = async (e: Event) => {
-
         const name = (e.target as HTMLElement).dataset.name;
 
         let dataToSend: DeviceUpdatePatchInputInterface = {};
@@ -140,19 +152,24 @@ export function UpdateDevice(props: {
             const deviceUpdateResponse = await deviceUpdatePatchRequest(deviceID, dataToSend);
 
             if (deviceUpdateResponse.status === 202) {
+                const deviceResponsePayload = deviceUpdateResponse.data.payload as DeviceResponseInterface;
                 console.log('device update response', deviceUpdateResponse.data.payload);
-                console.log('me too', showErrorAnnouncementFlash)
-                showErrorAnnouncementFlash(['Device updated successfully'], 'Success', 3000);
+                // console.log('me too', showErrorAnnouncementFlash)
+                // showAnnouncementFlash(['Device updated successfully'], 'Success', 3000);
+
+                setDeviceUpdateFormInputs({
+                    ...deviceUpdateFormInputs,
+                    deviceName: deviceResponsePayload.deviceName,
+                    deviceGroup: deviceResponsePayload.group.groupID,
+                    deviceGroupName: deviceResponsePayload.group.groupName,
+                    deviceRoom: deviceResponsePayload.room.roomID,
+                });
+                getDeviceData();
                 // props.setRefreshNavDataFlag(true);
             }
         } catch(error) {
             const errorResponse = error.response as Error|AxiosError;
-
-            // if (errorResponse instanceof Error) {
-            //     console.log('error', errorResponse.message);
-            // } else {
-            //     console.log('error', errorResponse.message);
-            // }
+            
         }
 
         // console.log('meTOOO', dataToSend);

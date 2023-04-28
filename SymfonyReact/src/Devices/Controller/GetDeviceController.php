@@ -40,6 +40,8 @@ class GetDeviceController extends AbstractController
     #[Route('all', name: 'get-user-devices_multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(Request $request, GetDevicesForUserInterface $getDevicesForUser, ValidatorInterface $validator): Response
     {
+        $this->logger->error('here I am');
+
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);

@@ -21,8 +21,7 @@ export interface DeviceResponseInterface {
     deviceID: number
     deviceName: string
     devicePassword: string
-    deviceRoom: number
-    deviceGroup: GroupResponseInterface
+    group: GroupResponseInterface
     roles: string[]
     room: RoomResponseInterface
     ipAddress: string|null

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { checkAdmin } from "../../../Authentication/Session/UserSession";
 
 import { handleNavBarRequest } from "../Request/NavBarRequest";
-import { NavBarResponseInterface, IndividualNavBarResponse } from "../Response/NavBarResponseInterface";
+import { NavBarResponseInterface } from "../Response/NavBarResponseInterface";
 
 import NavbarViewOptionListElements  from "./NavbarViewOptionListElements";
 
@@ -14,22 +14,24 @@ import AdminButton from "../../../Common/Components/Buttons/AdminButton";
 
 import { SidebarDividerWithHeading } from "../../../Common/Components/Dividers/SidebarDividerWithHeading";
 import DotCircleSpinner from "../../../Common/Components/Spinners/DotCircleSpinner";
-import { AddNewDevice } from '../../../Devices/Components/Devices/AddNewDevice';
-import BaseModal from '../../../Common/Components/Modals/BaseModal';
+import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
+import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
     setRefreshNavDataFlag: (newValue: boolean) => void,
-    showErrorAnnouncementFlash: (errors: Array<string>, title: string, timer?: number|null) => void,
 }) {
     const refreshNavbarIndicator = props.refreshNavbar;
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
-    const errorAnnouncementFlash = props.showErrorAnnouncementFlash;
 
     const [navbarResponseData, setNavbarResponseData] = useState<NavBarResponseInterface>([]);
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
 
+    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+
+    const [announcementCount, setAnnouncementCount] = useState<number>(0);
+    
     const admin: boolean = checkAdmin();
 
     useEffect(() => {
@@ -39,6 +41,20 @@ export default function NavBar(props: {
             });
         }
       }, [refreshNavbarIndicator]);
+
+      const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
+        setAnnouncementModals([
+            ...announcementModals,
+            <AnnouncementFlashModalBuilder
+                setAnnouncementModals={setAnnouncementModals}
+                title={title}
+                dataToList={errors}
+                dataNumber={announcementCount}
+                setErrorCount={setAnnouncementCount}
+                timer={timer ? timer : 40}
+            />
+        ])
+    }
 
     const requestNavbarData = async (): Promise<AxiosResponse> => {
         try {
@@ -52,7 +68,7 @@ export default function NavBar(props: {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (!axios.isAxiosError(errors) || !errors.response) {
-                errorAnnouncementFlash(
+                showAnnouncementFlash(
                     [`Something went wrong, please try refresh the browser or log out and back in again`],
                     'Unrecognized Error'
                 );

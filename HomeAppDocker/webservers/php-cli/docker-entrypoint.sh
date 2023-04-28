@@ -36,6 +36,7 @@ if [ ${ELASTIC_ENABLED} = 'true' ]; then
 	bin/console app:elastic-create-const-record-indices
 	bin/console app:elastic-create-out-of-bounds-indices
 	bin/console app:elastic-create-out-of-bounds-indices
+	bin/console app:elastic-create-log-index
 	echo "...Elastic indicie creation"
 fi
 
