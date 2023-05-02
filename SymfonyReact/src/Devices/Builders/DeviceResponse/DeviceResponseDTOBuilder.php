@@ -71,7 +71,7 @@ class DeviceResponseDTOBuilder
         );
     }
 
-    public function buildDeviceResponseDTO(Devices $device, bool $includeSensors = false): DeviceFullDetailsResponseDTO
+    public function buildFullDeviceResponseDTO(Devices $device, bool $includeSensors = false): DeviceFullDetailsResponseDTO
     {
         if ($includeSensors === true) {
             $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());

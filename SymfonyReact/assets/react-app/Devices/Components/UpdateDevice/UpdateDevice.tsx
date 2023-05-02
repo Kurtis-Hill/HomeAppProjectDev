@@ -15,17 +15,14 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
 import { DeviceResponseInterface } from '../../Request/GetDeviceRequest';
+import { Label } from '../../../Common/Components/Elements/Label';
 
 export function UpdateDevice(props: {
-    deviceID: number;
-    deviceName: string;
-    group: GroupResponseInterface;
-    room: RoomResponseInterface;
-    roles: string[];
-    setRefreshNavDataFlag?: (newValue: boolean) => void;
-    getDeviceData: () => void;
+    setDeviceData: (data: DeviceResponseInterface) => void;
+    setRefreshNavbar?: (newValue: boolean) => void;
+    deviceData: DeviceResponseInterface;
 }) {
-    const { deviceID, deviceName, group: groupName, room, roles, getDeviceData } = props;
+    const { deviceData, setDeviceData, setRefreshNavbar } = props;
     
     const [activeFormForUpdating, setActiveFormForUpdating] = useState({
             deviceName: false,
@@ -35,20 +32,20 @@ export function UpdateDevice(props: {
     });
 
     const [deviceUpdateFormInputs, setDeviceUpdateFormInputs] = useState<UpdateDeviceFormInputsInterface|null>({
-            deviceName: deviceName,
+            deviceName: deviceData.deviceName,
             password: '',
-            deviceGroup: groupName.groupID,
-            deviceGroupName: groupName.groupName,
-            deviceRoom: room.roomID,
+            deviceGroup: deviceData.group.groupID,
+            deviceGroupName: deviceData.group.groupName,
+            deviceRoom: deviceData.room.roomName,
     });
 
     const originalDeviceData = useRef<UpdateDeviceFormInputsInterface>({
-        deviceID: deviceID,
-        deviceName: deviceName,
+        deviceID: deviceData.deviceID,
+        deviceName: deviceData.deviceName,
         password: '',
-        deviceGroup: groupName.groupID,
-        deviceGroupName: groupName.groupName,
-        deviceRoom: room.roomID,
+        deviceGroup: deviceData.group.groupID,
+        deviceGroupName: deviceData.group.groupName,
+        deviceRoom: deviceData.room.roomID,
     });
 
     const [userData, setUserData] = useState({
@@ -58,45 +55,44 @@ export function UpdateDevice(props: {
 
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
-    const [announcementCount, setAnnouncementCount] = useState<number>(0);
-
-    const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
+    const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
         setAnnouncementModals([
             <AnnouncementFlashModalBuilder
                 setAnnouncementModals={setAnnouncementModals}
                 title={title}
-                dataToList={errors}
-                dataNumber={announcementCount}
-                setErrorCount={setAnnouncementCount}
+                dataToList={message}
                 timer={timer ? timer : 40}
             />
         ])
     }
 
     useEffect(() => {
-        if (deviceID !== originalDeviceData.current.deviceID) {
+        if (deviceData.deviceID !== originalDeviceData.current.deviceID) {
             console.log('oops');
             setDeviceUpdateFormInputs({
-                deviceName: deviceName,
+                deviceName: deviceData.deviceName,
                 password: '',
-                deviceGroup: groupName.groupID,
-                deviceGroupName: groupName.groupName,
-                deviceRoom: room.roomID,
+                deviceGroup: deviceData.group.groupID,
+                deviceGroupName: deviceData.group.groupName,
+                deviceRoom: deviceData.room.roomID,
             });
             originalDeviceData.current = {
-                deviceID: deviceID,
-                deviceName: deviceName,
+                deviceID: deviceData.deviceID,
+                deviceName: deviceData.deviceName,
                 password: '',
-                deviceGroup: groupName.groupID,
-                deviceGroupName: groupName.groupName,
-                deviceRoom: room.roomID,
+                deviceGroup: deviceData.group.groupID,
+                deviceGroupName: deviceData.group.groupName,
+                deviceRoom: deviceData.room.roomID,
             };
         }
 
         if (activeFormForUpdating.deviceGroup === true) {
             handleUserGroupDataRequest();
         }
-    }, [activeFormForUpdating, deviceID, announcementModals]);
+        if (activeFormForUpdating.deviceRoom === true) {
+            getAllRoomRequest();
+        }
+    }, [activeFormForUpdating, deviceData.deviceID, announcementModals]);
     
     const toggleFormInput = (event: Event) => {
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined
@@ -142,20 +138,19 @@ export function UpdateDevice(props: {
                 dataToSend.deviceName = deviceUpdateFormInputs.deviceName;
                 break;
             case 'deviceGroup':
-                dataToSend.deviceGroup = deviceUpdateFormInputs.deviceGroup;
+                dataToSend.deviceGroup = parseInt(deviceUpdateFormInputs.deviceGroup);
                 break;
             case 'deviceRoom':
-                dataToSend.deviceRoom = deviceUpdateFormInputs.deviceRoom;
+                dataToSend.deviceRoom = parseInt(deviceUpdateFormInputs.deviceRoom);
                 break;
         }
         try {
-            const deviceUpdateResponse = await deviceUpdatePatchRequest(deviceID, dataToSend);
+            const deviceUpdateResponse = await deviceUpdatePatchRequest(deviceData.deviceID, dataToSend, 'full');
 
             if (deviceUpdateResponse.status === 202) {
                 const deviceResponsePayload = deviceUpdateResponse.data.payload as DeviceResponseInterface;
                 console.log('device update response', deviceUpdateResponse.data.payload);
-                // console.log('me too', showErrorAnnouncementFlash)
-                // showAnnouncementFlash(['Device updated successfully'], 'Success', 3000);
+                showAnnouncementFlash([deviceUpdateResponse.data.title], 'Success', 30);
 
                 setDeviceUpdateFormInputs({
                     ...deviceUpdateFormInputs,
@@ -164,23 +159,16 @@ export function UpdateDevice(props: {
                     deviceGroupName: deviceResponsePayload.group.groupName,
                     deviceRoom: deviceResponsePayload.room.roomID,
                 });
-                getDeviceData();
+                
+                setRefreshNavbar(true);
+                setDeviceData(deviceResponsePayload)
+                // getDeviceData();
                 // props.setRefreshNavDataFlag(true);
             }
         } catch(error) {
             const errorResponse = error.response as Error|AxiosError;
             
         }
-
-        // console.log('meTOOO', dataToSend);
-
-        // console.log('update devicee');
-        // console.log('deviceUpdateFormInputs', deviceUpdateFormInputs);
-        // console.log('originalDeviceData', originalDeviceData.current);
-        // console.log('device passed in', deviceID, deviceName, groupName, room, roles)
-        // console.log('lol', e.target)
-        // console.log('event data name', (e.target as HTMLElement).dataset.name);
-        // send request to update device
     }
 
     const buildGroupWithSaveRejectButtons = () => {
@@ -193,7 +181,13 @@ export function UpdateDevice(props: {
 
         if (optionsForBuilder.length === 0) {
             return (
-                <DotCircleSpinner />
+                <>
+                    <Label 
+                        classes='form-inline font-size-1-5 hover padding-r-1 display-block-important'
+                        text={'Device Group:'}
+                    />
+                    <DotCircleSpinner />
+                </>
             )
         }
 
@@ -205,21 +199,67 @@ export function UpdateDevice(props: {
                 selectOptions={optionsForBuilder}
                 acceptClickEvent={(e: Event) => sendUpdateDeviceRequest(e)}
                 declineClickEvent={(e: Event) => toggleFormInput(e)}
-                selectDefaultValue={groupName.groupID}
+                selectDefaultValue={deviceData.group.groupID}
                 declineDataName={'deviceGroup'}
 
             />
         )
     }
 
+    const buildRoomWithSaveRejectButtons = () => {
+        const optionsForBuilder = userData.userRooms.map((room: RoomResponseInterface) => {
+            return {
+                value: room.roomID,
+                name: room.roomName,
+            }
+        });
+        
+        console.log('options for builder', optionsForBuilder)
+        if (optionsForBuilder.length === 0) {
+            return (
+                <>
+                    <Label 
+                        classes='form-inline font-size-1-5 hover padding-r-1 display-block-important'
+                        text={'Device Room:'}
+                    />
+                    <DotCircleSpinner />
+                </>
+            )
+        }
+
+        return (
+            <FormInlineSelectWLabel
+                labelName={'Device Room:'}
+                changeEvent={handleUpdateDeviceInput}
+                selectName={'deviceRoom'}
+                selectOptions={optionsForBuilder}
+                acceptClickEvent={(e: Event) => sendUpdateDeviceRequest(e)}
+                declineClickEvent={(e: Event) => toggleFormInput(e)}
+                selectDefaultValue={deviceData.room.roomID}
+                declineDataName={'deviceRoom'}
+            />
+        )
+    }
+
+
     return (
         <>
-            <div className="container">
+            {
+                announcementModals.map((announcementErrorModal: typeof AnnouncementFlashModal, index: number) => {
+                    return (
+                        <React.Fragment key={index}>
+                            { announcementErrorModal }
+                        </React.Fragment>
+                    );
+                })
+            }
                 <div className="row">
-                    <span className="large font-weight-bold form-inline font-size-1-5 padding-r-1">Device ID: {deviceID}</span>
+                    <span className="large font-weight-bold form-inline font-size-1-5 padding-r-1">Device ID: {deviceData.deviceID}</span>
                 </div>
                 <form>
-                    <div className="row" style={{paddingTop: "2%"}}>
+                    <div className="row" 
+                    style={{paddingTop: "2%"}}
+                    >
                             { 
                                 activeFormForUpdating.deviceName === true 
                                     ?
@@ -235,13 +275,15 @@ export function UpdateDevice(props: {
                                     :
                                         <FormInlineSpan
                                             spanOuterTag={'Device Name:'}
-                                            spanInnerTag={deviceName}
+                                            spanInnerTag={deviceData.deviceName}
                                             clickEvent={(e: Event) => toggleFormInput(e)}
                                             dataName={'deviceName'}
                                         />
                             }
                         </div>
-                        <div className="row" style={{paddingTop: "2%"}}>
+                        <div className="row" 
+                        style={{paddingTop: "2%"}}
+                        >
                         {
                             activeFormForUpdating.deviceGroup === true
                                 ? 
@@ -255,8 +297,28 @@ export function UpdateDevice(props: {
                                     />
                         } 
                     </div>
+                    <div className="row" 
+                    style={{paddingTop: "2%"}}
+                    >
+                        {
+                            activeFormForUpdating.deviceRoom === true
+                                ?
+                                    buildRoomWithSaveRejectButtons()
+                                :
+                                    <FormInlineSpan
+                                        spanOuterTag={'Device Room:'}
+                                        spanInnerTag={deviceUpdateFormInputs.deviceRoom}
+                                        clickEvent={(e: Event) => toggleFormInput(e)}
+                                        dataName={'deviceRoom'}
+                                    />
+                        }
+                    </div>
+                    <button type="button" className="btn btn-danger btn-lg btn-block">Delete</button>
                 </form>
-            </div>
         </>
     )
 }
+function getAllRoomRequest() {
+    throw new Error('Function not implemented.');
+}
+

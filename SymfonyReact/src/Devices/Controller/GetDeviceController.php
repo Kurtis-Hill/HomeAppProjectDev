@@ -37,11 +37,9 @@ class GetDeviceController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('all', name: 'get-user-devices_multiple', methods: [Request::METHOD_GET])]
+    #[Route('all', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(Request $request, GetDevicesForUserInterface $getDevicesForUser, ValidatorInterface $validator): Response
     {
-        $this->logger->error('here I am');
-
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
@@ -116,7 +114,7 @@ class GetDeviceController extends AbstractController
 
         $responseType = $request->query->get('responseType');
         if ($responseType === RequestDTOBuilder::REQUEST_TYPE_FULL) {
-            $requestTypeDTO = RequestDTOBuilder::buildRequestTypeDTO($responseType);
+            $requestTypeDTO = RequestDTOBuilder::buildRequestDTO($responseType);
             try {
                 $validationErrors = $validator->validate($requestTypeDTO);
 
@@ -127,9 +125,9 @@ class GetDeviceController extends AbstractController
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse();
             }
-            $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTO($devices, true);
+            $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($devices, true);
         } else {
-            $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTO($devices);
+            $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($devices);
         }
 
         try {

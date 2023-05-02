@@ -291,7 +291,7 @@ trait HomeAppAPITrait
     public function normalizeResponse(mixed $data, array $groups = []): mixed
     {
         if (!empty($groups)) {
-            $classMetadataFactory = new ClassMetadataFactory(
+            $annotationClassMetadataFactory = new ClassMetadataFactory(
                 new AnnotationLoader(
                     new AnnotationReader()
                 )
@@ -300,7 +300,7 @@ trait HomeAppAPITrait
             $context = ['groups' => $groups];
         }
 
-        $normalizer = [new ObjectNormalizer($classMetadataFactory ?? null)];
+        $normalizer = [new ObjectNormalizer($annotationClassMetadataFactory ?? null)];
         $normalizer = new Serializer($normalizer);
 
         return $normalizer->normalize($data, null, $context ?? []);

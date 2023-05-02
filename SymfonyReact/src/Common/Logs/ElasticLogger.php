@@ -5,8 +5,6 @@ namespace App\Common\Logs;
 use App\Common\Factories\ElasticLogDTOFactory;
 use Elastica\Document;
 use Elastica\Index;
-use Monolog\Handler\HandlerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Stringable;
 

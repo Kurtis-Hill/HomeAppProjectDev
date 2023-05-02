@@ -2,7 +2,7 @@
 
 namespace App\Common\Builders\Request;
 
-use App\Common\DTO\Request\ResponseTypeRequestDTO;
+use App\Common\DTO\Request\RequestDTO;
 
 class RequestDTOBuilder
 {
@@ -12,10 +12,15 @@ class RequestDTOBuilder
 
     public const REQUEST_TYPE_ONLY = 'only';
 
-    public static function buildRequestTypeDTO(mixed $responseType): ResponseTypeRequestDTO
-    {
-        $responseTypeRequestDTO = new ResponseTypeRequestDTO();
+    public static function buildRequestDTO(
+        mixed $responseType,
+        mixed $page = null,
+        mixed $offset = null
+    ): RequestDTO {
+        $responseTypeRequestDTO = new RequestDTO();
         $responseTypeRequestDTO->setResponseType($responseType);
+        $responseTypeRequestDTO->setPage($page);
+        $responseTypeRequestDTO->setOffset($offset);
 
         return $responseTypeRequestDTO;
     }

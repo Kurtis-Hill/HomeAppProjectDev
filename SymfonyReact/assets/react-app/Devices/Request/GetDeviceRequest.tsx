@@ -27,5 +27,5 @@ export interface DeviceResponseInterface {
     ipAddress: string|null
     externalIpAddress: string|null
     secret : string|null
-
+    
 }

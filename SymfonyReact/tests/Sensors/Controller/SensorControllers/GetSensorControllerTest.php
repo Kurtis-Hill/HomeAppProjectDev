@@ -4,7 +4,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\Builders\Request\RequestDTOBuilder;
-use App\Common\DTO\Request\ResponseTypeRequestDTO;
+use App\Common\DTO\Request\RequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;

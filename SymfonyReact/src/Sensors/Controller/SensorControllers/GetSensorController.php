@@ -53,7 +53,7 @@ class GetSensorController extends AbstractController
         $sensorRequestDTO->setDeviceNames($deviceNames);
         $sensorRequestDTO->setGroupIDs($groupIDs);
 
-        $responseTypeDTO = RequestDTOBuilder::buildRequestTypeDTO($responseType);
+        $responseTypeDTO = RequestDTOBuilder::buildRequestDTO($responseType);
 
         $responseTypeValidationErrors = $validator->validate($responseTypeDTO);
         $validationErrors = $validator->validate($sensorRequestDTO);

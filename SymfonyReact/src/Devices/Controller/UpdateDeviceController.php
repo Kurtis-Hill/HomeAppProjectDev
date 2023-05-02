@@ -55,6 +55,7 @@ class UpdateDeviceController extends AbstractController
         ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
         DeviceResponseNormalizer $deviceResponseNormalizer,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -110,9 +111,23 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceResponseDTOBuilder::buildDeviceOnlyResponseDTO(
-            $deviceToUpdate,
-        );
+        $responseType = $request->query->get('responseType');
+        if ($responseType === RequestDTOBuilder::REQUEST_TYPE_FULL) {
+            $requestTypeDTO = RequestDTOBuilder::buildRequestDTO($responseType);
+            try {
+                $validationErrors = $validator->validate($requestTypeDTO);
+
+                if ($this->checkIfErrorsArePresent($validationErrors)) {
+                    return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+                }
+
+            } catch (ExceptionInterface) {
+                return $this->sendInternalServerErrorJsonResponse();
+            }
+            $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($deviceToUpdate, true);
+        } else {
+            $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($deviceToUpdate);
+        }
 
         try {
             $normalizedResponse = $deviceResponseNormalizer->normalize(
