@@ -8,13 +8,13 @@ use JetBrains\PhpStorm\ArrayShape;
 readonly class SensorFullResponseDTO
 {
     public function __construct(
-        private SensorPartialResponseDTO $sensor,
+        private SensorResponseDTO $sensor,
         #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
         private array $sensorReadingTypes
     ) {
     }
 
-    public function getSensor(): SensorPartialResponseDTO
+    public function getSensor(): SensorResponseDTO
     {
         return $this->sensor;
     }

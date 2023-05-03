@@ -2,7 +2,9 @@
 
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
+use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implements StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
 {
@@ -25,6 +27,12 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
         );
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getHumidityID(): int
     {
         return $this->humidityID;

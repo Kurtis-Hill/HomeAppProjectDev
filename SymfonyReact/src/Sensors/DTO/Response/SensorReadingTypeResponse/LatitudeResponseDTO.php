@@ -2,8 +2,10 @@
 
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
+use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
 readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implements StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
@@ -27,6 +29,12 @@ readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implement
         );
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getLatitudeID(): int
     {
         return $this->latitudeID;

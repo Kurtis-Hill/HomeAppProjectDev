@@ -46,7 +46,7 @@ class DeleteSensorController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $sensorResponseData = SensorResponseDTOBuilder::buildOnlyResponseDTO($sensor);
+        $sensorResponseData = SensorResponseDTOBuilder::buildResponseDTO($sensor);
 
         try {
             $normalizedSensorResponseData = $this->normalizeResponse($sensorResponseData);

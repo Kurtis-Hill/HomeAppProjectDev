@@ -163,7 +163,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $sensorID = $responseData['payload']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorID'];
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
@@ -172,11 +172,15 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
-        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
+        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
-        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
+        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
+        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
+        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
+        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
     }
 
     /**
@@ -434,7 +438,7 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $sensorID = $responseData['payload']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorID'];
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
@@ -456,11 +460,16 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
-        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
+        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
-        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
+        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
+        self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
+        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
+        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
+        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
     }
 
     /**
@@ -517,7 +526,7 @@ class AddNewSensorControllerTest extends WebTestCase
         if (empty($payload)) {
             self::fail('Payload is empty');
         }
-        $sensorID = $payload['sensorNameID'];
+        $sensorID = $payload['sensorID'];
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
@@ -540,11 +549,16 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
-        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
+        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
-        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
+        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
+        self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
+        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
+        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
+        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
     }
 
     /**
@@ -579,7 +593,7 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $sensorID = $responseData['payload']['sensorNameID'];
+        $sensorID = $responseData['payload']['sensorID'];
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
@@ -601,11 +615,16 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
-        self::assertEquals($responseData['payload']['sensorNameID'], $sensor->getSensorID());
+        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType'], $sensor->getSensorTypeObject()->getSensorType());
-        self::assertEquals($responseData['payload']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['createdBy'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
+        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
+        self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
+        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
+        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
+        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
+        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
     }
 
     /**

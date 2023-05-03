@@ -88,7 +88,7 @@ class GetSensorController extends AbstractController
         $sensorDTOs = [];
         if ($responseTypeDTO->getResponseType() === RequestDTOBuilder::REQUEST_TYPE_ONLY) {
             foreach ($sensors as $sensor) {
-                $sensorDTOs[] = SensorResponseDTOBuilder::buildOnlyResponseDTO($sensor);
+                $sensorDTOs[] = SensorResponseDTOBuilder::buildResponseDTO($sensor);
             }
         } elseif ($responseTypeDTO->getResponseType() === RequestDTOBuilder::REQUEST_TYPE_FULL) {
             foreach ($sensors as $sensor) {

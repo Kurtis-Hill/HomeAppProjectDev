@@ -2,10 +2,12 @@
 
 namespace App\Sensors\DTO\Response\SensorResponse;
 
+use App\Common\Services\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
-readonly class SensorPartialResponseDTO
+readonly class SensorResponseDTO
 {
     public function __construct(
         private int $sensorNameID,
@@ -16,16 +18,34 @@ readonly class SensorPartialResponseDTO
     ) {
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getSensorNameID(): int
     {
         return $this->sensorNameID;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getSensorName(): string
     {
         return $this->sensorName;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getSensorType(): string
     {
         return $this->sensorType;

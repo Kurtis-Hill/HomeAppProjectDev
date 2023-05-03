@@ -2,7 +2,9 @@
 
 namespace App\UserInterface\DTO\Response\CardState;
 
+use App\Common\Services\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
 class CardStateResponseDTO
@@ -19,11 +21,23 @@ class CardStateResponseDTO
         $this->cardState = $cardState;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getCardStateID(): int
     {
         return $this->cardStateID;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getCardState(): string
     {
         return $this->cardState;
