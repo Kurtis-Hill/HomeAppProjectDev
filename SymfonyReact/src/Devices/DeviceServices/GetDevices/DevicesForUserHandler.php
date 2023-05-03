@@ -10,7 +10,7 @@ use App\User\Entity\User;
 use App\User\Services\GroupServices\UserGroupsFinder;
 use JetBrains\PhpStorm\ArrayShape;
 
-class GetDevicesForUserHandler implements GetDevicesForUserInterface
+class DevicesForUserHandler implements DevicesForUserInterface
 {
     private DeviceRepository $deviceRepository;
 
@@ -43,7 +43,7 @@ class GetDevicesForUserHandler implements GetDevicesForUserInterface
     {
         $deviceResponseDTOs = [];
         foreach ($devices as $device) {
-            $deviceResponseDTOs[] = DeviceResponseDTOBuilder::buildDeviceOnlyResponseDTO($device);
+            $deviceResponseDTOs[] = DeviceResponseDTOBuilder::buildDeviceResponseDTO($device);
         }
 
         return $deviceResponseDTOs;

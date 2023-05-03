@@ -6,8 +6,12 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Builders\Request\RequestDTOBuilder;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
@@ -37,9 +41,12 @@ class UpdateDeviceController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[
@@ -54,8 +61,6 @@ class UpdateDeviceController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
-        DeviceResponseNormalizer $deviceResponseNormalizer,
-        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -76,6 +81,14 @@ class UpdateDeviceController extends AbstractController
                 $this->getValidationErrorAsArray($requestValidationErrors),
                 APIErrorMessages::VALIDATION_ERRORS
             );
+        }
+
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::SENSITIVE_FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $user = $this->getUser();
@@ -111,32 +124,9 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $responseType = $request->query->get('responseType');
-        if ($responseType === RequestDTOBuilder::REQUEST_TYPE_FULL) {
-            $requestTypeDTO = RequestDTOBuilder::buildRequestDTO($responseType);
-            try {
-                $validationErrors = $validator->validate($requestTypeDTO);
-
-                if ($this->checkIfErrorsArePresent($validationErrors)) {
-                    return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-                }
-
-            } catch (ExceptionInterface) {
-                return $this->sendInternalServerErrorJsonResponse();
-            }
-            $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($deviceToUpdate, true);
-        } else {
-            $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($deviceToUpdate);
-        }
-
+        $deviceUpdateSuccessResponseDTO = DeviceResponseDTOBuilder::buildDeviceResponseDTO($deviceToUpdate);
         try {
-            $normalizedResponse = $deviceResponseNormalizer->normalize(
-                $deviceUpdateSuccessResponseDTO,
-                'json',
-                $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword() !== null
-                    ? [RequestDTOBuilder::REQUEST_TYPE_SENSITIVE]
-                    : []
-            );
+            $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }

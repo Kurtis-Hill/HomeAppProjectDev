@@ -3,7 +3,7 @@
 namespace App\Sensors\DTO\Request\GetSensorRequestDTO;
 
 use App\Common\Builders\Request\RequestDTOBuilder;
-use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Sensors\Controller\SensorControllers\GetSensorController;
 use Symfony\Component\Validator\Constraints as Assert;
 

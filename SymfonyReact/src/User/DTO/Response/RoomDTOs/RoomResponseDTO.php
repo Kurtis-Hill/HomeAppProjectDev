@@ -2,7 +2,9 @@
 
 namespace App\User\DTO\Response\RoomDTOs;
 
+use App\Common\Services\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
 class RoomResponseDTO
@@ -19,11 +21,23 @@ class RoomResponseDTO
         $this->roomName = $roomName;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getRoomID(): int
     {
         return $this->roomID;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getRoomName(): string
     {
         return $this->roomName;

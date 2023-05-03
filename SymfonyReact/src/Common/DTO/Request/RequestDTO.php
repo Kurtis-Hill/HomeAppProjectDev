@@ -4,6 +4,7 @@ namespace App\Common\DTO\Request;
 
 use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Services\RequestTypeEnum;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class RequestDTO
@@ -36,17 +37,17 @@ class RequestDTO
 
     #[
         Assert\Range(
-            minMessage: 'offset must be greater than {{ min }}',
-            invalidMessage: 'offset must be an int|null you have provided {{ value }}',
-            min: 0,
+            notInRangeMessage: 'limit must be greater than {{ min }} but less than {{ max }}',
+            invalidMessage: 'limit must be an int|null you have provided {{ value }}',
+            min: 1,
+            max: 100
         ),
     ]
-    private mixed $offset;
+    private mixed $limit;
 
     public function getResponseType(): string
     {
-        return $this->responseType ?? RequestDTOBuilder::REQUEST_TYPE_ONLY;
-//        return $this->responseType ?? RequestTypeEnum::ONLY;
+        return $this->responseType ?? RequestTypeEnum::ONLY->value;
     }
 
     public function setResponseType(mixed $responseType): void
@@ -64,13 +65,13 @@ class RequestDTO
         $this->page = $page;
     }
 
-    public function getOffset(): int
+    public function getLimit(): int
     {
-        return $this->offset ?? 0;
+        return $this->limit;
     }
 
-    public function setOffset(mixed $offset): void
+    public function setLimit(mixed $limit): void
     {
-        $this->offset = $offset;
+        $this->limit = $limit;
     }
 }

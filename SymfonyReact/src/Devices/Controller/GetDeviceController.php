@@ -5,12 +5,14 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Builders\Request\RequestDTOBuilder;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\PaginationCalculator;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceGet\GetDeviceDTOBuilder;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
-use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
-use App\Devices\DTO\Request\GetDeviceRequestDTO;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
@@ -32,37 +34,41 @@ class GetDeviceController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('all', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
-    public function getAllDevices(Request $request, GetDevicesForUserInterface $getDevicesForUser, ValidatorInterface $validator): Response
+    public function getAllDevices(Request $request, DevicesForUserInterface $getDevicesForUser, ValidatorInterface $validator): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-        $limit = $request->get('limit', GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE);
-        $offset = $request->get('offset', 0);
 
-        $getDeviceRequestDTO = new GetDeviceRequestDTO(
-            is_numeric($limit) ? (int) $limit : $limit,
-            is_numeric($offset) ? (int) $offset : $offset,
-        );
-
-        $validationErrors = $validator->validate($getDeviceRequestDTO);
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::ONLY->value),
+                $request->get('page'),
+                $request->get('limit', DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $getDeviceDTO = GetDeviceDTOBuilder::buildGetDeviceDTO(
             min(
-                $getDeviceRequestDTO->getLimit(),
-                GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE
+                $requestDTO->getLimit(),
+                DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE
             ),
-            $getDeviceRequestDTO->getOffset(),
+            PaginationCalculator::calculateOffset(
+                $requestDTO->getLimit(),
+                $requestDTO->getPage()
+            ),
         );
 
         $devices = $getDevicesForUser->getDevicesForUser(
@@ -103,7 +109,6 @@ class GetDeviceController extends AbstractController
     public function getDeviceByID(
         Devices $devices,
         Request $request,
-        ValidatorInterface $validator,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): Response {
         try {
@@ -112,26 +117,27 @@ class GetDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $responseType = $request->query->get('responseType');
-        if ($responseType === RequestDTOBuilder::REQUEST_TYPE_FULL) {
-            $requestTypeDTO = RequestDTOBuilder::buildRequestDTO($responseType);
-            try {
-                $validationErrors = $validator->validate($requestTypeDTO);
-
-                if ($this->checkIfErrorsArePresent($validationErrors)) {
-                    return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-                }
-
-            } catch (ExceptionInterface) {
-                return $this->sendInternalServerErrorJsonResponse();
-            }
-            $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($devices, true);
-        } else {
-            $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO($devices);
+        $responseType = $request->get('responseType', RequestTypeEnum::ONLY->value);
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $responseType
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
+        $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO(
+            $devices,
+            in_array(
+                $responseType,
+                [
+                    RequestTypeEnum::SENSITIVE_FULL->value,
+                    RequestTypeEnum::FULL->value
+                ], true)
+        );
+
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTO);
+            $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Get device'));
 

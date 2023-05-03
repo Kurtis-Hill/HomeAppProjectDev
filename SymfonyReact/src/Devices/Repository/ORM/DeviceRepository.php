@@ -2,7 +2,7 @@
 
 namespace App\Devices\Repository\ORM;
 
-use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Group;
 use App\User\Entity\Room;
@@ -85,7 +85,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
      */
     public function findAllDevicesByGroupNamePaginated(
         array $groupIDs,
-        int $limit = GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE,
+        int $limit = DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE,
         int $offset = 0,
         int $hydration = AbstractQuery::HYDRATE_OBJECT,
     ): array {
@@ -101,7 +101,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->setParameters(['groupID' => $groupIDs])
             ->setMaxResults($limit)
             ->setFirstResult($offset);
-
+//dd($limit, $offset);
         return $qb->getQuery()->getResult($hydration);
     }
 

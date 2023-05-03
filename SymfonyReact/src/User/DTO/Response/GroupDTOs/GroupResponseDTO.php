@@ -2,7 +2,9 @@
 
 namespace App\User\DTO\Response\GroupDTOs;
 
+use App\Common\Services\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
 class GroupResponseDTO
@@ -17,13 +19,23 @@ class GroupResponseDTO
         $this->groupName = $groupName;
     }
 
-//    #[Groups(['full', 'password'])]
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getGroupID(): int
     {
         return $this->groupID;
     }
 
-//    #[Groups(['full', 'password'])]
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getGroupName(): string
     {
         return $this->groupName;

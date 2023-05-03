@@ -5,9 +5,13 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
@@ -34,9 +38,12 @@ class AddNewDeviceController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
@@ -61,6 +68,14 @@ class AddNewDeviceController extends AbstractController
         $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
+        }
+
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::SENSITIVE_ONLY->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $user = $this->getUser();
@@ -95,9 +110,9 @@ class AddNewDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
         }
 
-        $newDeviceResponseDTO = DeviceResponseDTOBuilder::buildDeviceIDResponseDTO($device, true);
+        $newDeviceResponseDTO = DeviceResponseDTOBuilder::buildDeviceResponseDTO($device);
         try {
-            $response = $this->normalizeResponse($newDeviceResponseDTO);
+            $response = $this->normalizeResponse($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $deleteDeviceHandler->deleteDevice($device);
             $this->logger->error($e, $e->getTrace());

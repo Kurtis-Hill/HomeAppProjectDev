@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceGet\GetDeviceDTOBuilder;
-use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\DTO\Request\GetDeviceRequestDTO;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
@@ -38,7 +38,7 @@ class GetRoomsController extends AbstractController
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-        $limit = $request->get('limit', GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE);
+        $limit = $request->get('limit', DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE);
         $offset = $request->get('offset', 0);
 
         $getDeviceRequestDTO = new GetDeviceRequestDTO(

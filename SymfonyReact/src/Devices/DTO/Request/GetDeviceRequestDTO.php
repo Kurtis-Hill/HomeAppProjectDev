@@ -2,7 +2,7 @@
 
 namespace App\Devices\DTO\Request;
 
-use App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class GetDeviceRequestDTO
@@ -12,7 +12,7 @@ class GetDeviceRequestDTO
             notInRangeMessage: 'limit must be greater than {{ min }} but less than {{ max }}',
             invalidMessage: 'limit must be an int|null you have provided {{ value }}',
             min: 1,
-            max: GetDevicesForUserInterface::MAX_DEVICE_RETURN_SIZE
+            max: DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE
         ),
     ]
     private mixed $limit;

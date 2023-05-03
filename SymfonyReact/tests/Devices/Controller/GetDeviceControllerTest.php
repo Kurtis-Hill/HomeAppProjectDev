@@ -4,6 +4,7 @@ namespace App\Tests\Devices\Controller;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
+use App\Common\Services\PaginationCalculator;
 use App\Devices\Controller\GetDeviceController;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
@@ -28,7 +29,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/all';
 
-    private ?string $userToken = null;
+    private ?string $adminToken = null;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -53,7 +54,7 @@ class GetDeviceControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->userToken = $this->setUserToken($this->client);
+        $this->adminToken = $this->setUserToken($this->client);
 
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
@@ -61,6 +62,14 @@ class GetDeviceControllerTest extends WebTestCase
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->regularUserOne = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         $this->adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->entityManager->close();
+        $this->entityManager = null;
+
+        parent::tearDown();
     }
 
     public function test_get_device_of_group_user_is_not_assigned_to_regular_user(): void
@@ -99,7 +108,7 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
     }
 
-    public function test_get_device_of_group_user_is_not_assigned_to_admin(): void
+    public function test_get_device_of_group_user_is_not_assigned_to_admin_only_response(): void
     {
         $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
@@ -115,7 +124,7 @@ class GetDeviceControllerTest extends WebTestCase
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
         );
 
@@ -129,17 +138,90 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
         self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertNull($payload['secret']);
+        self::assertArrayHasKey('ipAddress', $payload);
+        self::assertArrayHasKey('externalIpAddress', $payload);
+    }
+
+    public function test_get_device_of_group_user_is_not_assigned_to_admin_full_response(): void
+    {
+        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
+
+        /** @var Devices[] $devices */
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
+        if (empty($devices)) {
+            self::fail('No devices found for this user');
+        }
+        $device = $devices[0];
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            ['responseType' => 'full'],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
+
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
+        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
         self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
         self::assertArrayHasKey('externalIpAddress', $payload);
-        self::assertEquals($device->getRoles(), $payload['roles']);
     }
 
-    public function test_get_device_of_group_user_is_assigned_to_regular_user(): void
+    public function test_get_device_of_group_user_is_assigned_to_regular_user_full_response(): void
+    {
+
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
+
+        /** @var Devices[] $devices */
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
+        if (empty($devices)) {
+            self::fail('No devices found for this user');
+        }
+        $device = $devices[0];
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            ['responseType' => 'full'],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
+        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
+        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
+        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
+        self::assertArrayHasKey('ipAddress', $payload);
+        self::assertArrayHasKey('externalIpAddress', $payload);
+    }
+
+    public function test_get_device_of_group_user_is_assigned_to_regular_user_response_type_only(): void
     {
 
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
@@ -173,18 +255,47 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
         self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertNull($payload['secret']);
+        self::assertArrayHasKey('ipAddress', $payload);
+        self::assertArrayHasKey('externalIpAddress', $payload);
+    }
+
+    public function test_get_device_of_group_user_is_assigned_to_admin_full_response_type(): void
+    {
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
+
+        /** @var Devices[] $devices */
+        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
+        if (empty($devices)) {
+            self::fail('No devices found for this user');
+        }
+        $device = $devices[0];
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            ['responseType' => 'full'],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        );
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
+
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
+        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
         self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
         self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
         self::assertArrayHasKey('externalIpAddress', $payload);
-        self::assertEquals($device->getRoles(), $payload['roles']);
-
     }
 
-    public function test_get_device_of_group_user_is_assigned_to_admin(): void
+    public function test_get_device_of_group_user_is_assigned_to_admin_only_response_type(): void
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
 
@@ -200,7 +311,7 @@ class GetDeviceControllerTest extends WebTestCase
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
         );
 
@@ -213,14 +324,8 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
         self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertNull($payload['secret']);
-        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
-        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
-        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
-        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
         self::assertArrayHasKey('externalIpAddress', $payload);
-        self::assertEquals($device->getRoles(), $payload['roles']);
     }
 
 
@@ -276,7 +381,7 @@ class GetDeviceControllerTest extends WebTestCase
             self::GET_ALL_DEVICES_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
         );
 
@@ -297,16 +402,16 @@ class GetDeviceControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider limitAndOffsetDataProvider
+     * @dataProvider limitAndPageDataProvider
      */
-    public function test_limit_and_offset_works_admin_user(int $limit, int $offset): void
+    public function test_limit_and_page_works_admin_user(int $limit, int $page): void
     {
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_DEVICES_URL,
-            ['limit' => $limit, 'offset' => $offset],
+            ['limit' => $limit, 'page' => $page],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
         );
 
@@ -315,72 +420,72 @@ class GetDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $responseData['payload'];
         $title = $responseData['title'];
-
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertCount($limit, $payload);
+        if (is_array($payload)) {
+            self::assertCount($limit, $payload ?? []);
+            $deviceIds = array_column($payload, 'deviceID');
 
-        $devices = $this->deviceRepository->findBy(
-            [],
-            ['deviceName' => 'ASC'],
-        );
-
-        $devicesThatShouldBeReturned = array_slice($devices, $offset, $limit);
-        $devicesThatShouldNotBeReturned = array_slice($devices, 0, $limit - 1);
-        $deviceIds = array_column($payload, 'deviceID');
-
-        foreach ($devicesThatShouldBeReturned as $device) {
-            self::assertContains($device->getDeviceID(), $deviceIds);
-        }
-
-        foreach ($devicesThatShouldNotBeReturned as $device) {
-            self::assertNotContains($device->getDeviceID(), $deviceIds);
+            $devices = $this->deviceRepository->findBy(
+                [],
+                ['deviceName' => 'ASC'],
+            );
+            $devicesThatShouldBeReturned = array_slice($devices, PaginationCalculator::calculateOffset($limit, $page), $limit);
+            $devicesThatShouldNotBeReturned = array_slice($devices, $page * 2);
+            foreach ($devicesThatShouldBeReturned as $device) {
+                self::assertContains($device->getDeviceID(), $deviceIds);
+            }
+            foreach ($devicesThatShouldNotBeReturned as $device) {
+                self::assertNotContains($device->getDeviceID(), $deviceIds);
+            }
+        } else {
+            self::assertEquals(GetDeviceController::NO_RESPONSE_MESSAGE, $payload);
         }
     }
 
-    public function limitAndOffsetDataProvider(): Generator
+    public function limitAndPageDataProvider(): Generator
     {
         yield [
             'limit' => 1,
-            'offset' => 1,
+            'page' => 1,
         ];
 
         yield [
             'limit' => 2,
-            'offset' => 1,
+            'page' => 1,
         ];
 
         yield [
             'limit' => 2,
-            'offset' => 1,
+            'page' => 1,
         ];
 
         yield [
             'limit' => 2,
-            'offset' => 2,
+            'page' => 2,
         ];
 
         yield [
             'limit' => 3,
-            'offset' => 4,
+            'page' => 4,
         ];
 
         yield [
             'limit' => 4,
-            'offset' => 3,
+            'page' => 3,
         ];
     }
 
     /**
-     * @dataProvider limitAndOffsetWrongDataProvider
+     * @dataProvider limitAndPageWrongDataProvider
      */
-    public function test_limit_and_offset_incorrect_data_types_admin_user(mixed $limit, mixed $offset, array $message = []): void
+    public function test_limit_and_page_incorrect_data_types_admin_user(mixed $limit, mixed $page, array $message = []): void
     {
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_DEVICES_URL,
-            ['limit' => $limit, 'offset' => $offset],
+            ['limit' => $limit, 'page' => $page],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
         );
 
@@ -397,11 +502,11 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(GetDeviceController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
-    public function limitAndOffsetWrongDataProvider(): Generator
+    public function limitAndPageWrongDataProvider(): Generator
     {
         yield [
             'limit' => [],
-            'offset' => 1,
+            'page' => 1,
             'messages' => [
                 "limit must be an int|null you have provided array",
             ],
@@ -409,15 +514,15 @@ class GetDeviceControllerTest extends WebTestCase
 
         yield [
             'limit' => 2,
-            'offset' => [],
+            'page' => [],
             'messages' => [
-                'offset must be an int|null you have provided array',
+                'page must be an int|null you have provided array',
             ],
         ];
 
         yield [
             'limit' => 'string',
-            'offset' => 1,
+            'page' => 1,
             'messages' => [
                 'limit must be an int|null you have provided "string"',
             ],
@@ -425,15 +530,15 @@ class GetDeviceControllerTest extends WebTestCase
 
         yield [
             'limit' => 2,
-            'offset' => 'string',
+            'page' => 'string',
             'messages' => [
-                'offset must be an int|null you have provided "string"',
+                'page must be an int|null you have provided "string"',
             ],
         ];
 
         yield [
             'limit' => false,
-            'offset' => 4,
+            'page' => 4,
             'messages' => [
                 'limit must be an int|null you have provided ""',
             ],
@@ -442,7 +547,7 @@ class GetDeviceControllerTest extends WebTestCase
         // true counts as 1 which is valid
 //        yield [
 //            'limit' => true,
-//            'offset' => 3,
+//            'page' => 3,
 //            'messages' => [
 //                'limit must be an int|null you have provided "1"',
 //            ],
@@ -450,16 +555,13 @@ class GetDeviceControllerTest extends WebTestCase
 
         yield [
             'limit' => [],
-            'offset' => [],
+            'page' => [],
             'messages' => [
+                'page must be an int|null you have provided array',
                 'limit must be an int|null you have provided array',
-                'offset must be an int|null you have provided array',
             ],
         ];
     }
-
-
-
 
     /**
      * @dataProvider wrongHttpsMethodDataProvider
@@ -471,7 +573,7 @@ class GetDeviceControllerTest extends WebTestCase
             self::GET_SINGLE_DEVICE_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
         );
 
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -487,7 +589,7 @@ class GetDeviceControllerTest extends WebTestCase
             self::GET_SINGLE_DEVICE_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
         );
 
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -501,13 +603,5 @@ class GetDeviceControllerTest extends WebTestCase
             [Request::METHOD_PATCH],
             [Request::METHOD_POST],
         ];
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-
-        parent::tearDown();
     }
 }

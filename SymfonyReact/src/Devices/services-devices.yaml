@@ -31,5 +31,5 @@ services:
   App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface:
     alias: 'App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoder'
 
-  App\Devices\DeviceServices\GetDevices\GetDevicesForUserInterface:
-    alias: 'App\Devices\DeviceServices\GetDevices\GetDevicesForUserHandler'
+  App\Devices\DeviceServices\GetDevices\DevicesForUserInterface:
+    alias: 'App\Devices\DeviceServices\GetDevices\DevicesForUserHandler'

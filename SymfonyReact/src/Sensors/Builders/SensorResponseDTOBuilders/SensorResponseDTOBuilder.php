@@ -29,7 +29,7 @@ class SensorResponseDTOBuilder
             $sensor->getSensorID(),
             UserResponseBuilder::buildFullUserResponseDTO($sensor->getCreatedBy()),
             $sensor->getSensorName(),
-            DeviceResponseDTOBuilder::buildDeviceIDResponseDTO($sensor->getDevice()),
+            DeviceResponseDTOBuilder::buildDeviceResponseDTO($sensor->getDevice()),
             SensorTypeResponseDTOBuilder::buildFullSensorTypeResponseDTO($sensor->getSensorTypeObject()),
         );
     }

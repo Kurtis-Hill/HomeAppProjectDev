@@ -15,12 +15,12 @@ class RequestDTOBuilder
     public static function buildRequestDTO(
         mixed $responseType,
         mixed $page = null,
-        mixed $offset = null
+        mixed $limit = null
     ): RequestDTO {
         $responseTypeRequestDTO = new RequestDTO();
         $responseTypeRequestDTO->setResponseType($responseType);
         $responseTypeRequestDTO->setPage($page);
-        $responseTypeRequestDTO->setOffset($offset);
+        $responseTypeRequestDTO->setLimit($limit);
 
         return $responseTypeRequestDTO;
     }

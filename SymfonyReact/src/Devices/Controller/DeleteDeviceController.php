@@ -5,8 +5,12 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use Psr\Log\LoggerInterface;
@@ -24,9 +28,12 @@ class DeleteDeviceController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[
@@ -38,6 +45,7 @@ class DeleteDeviceController extends AbstractController
     ]
     public function deleteDevice(
         Devices $deviceToDelete,
+        Request $request,
         DeleteDeviceServiceInterface $deleteDeviceBuilder,
     ): JsonResponse {
         try {
@@ -46,16 +54,26 @@ class DeleteDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::ONLY->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+        }
+
         $deviceDeletedID = $deviceToDelete->getDeviceID();
         $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToDelete);
         if ($deviceDeleteSuccess !== true) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device'));
+
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Delete device')]);
         }
 
-        $deviceDTO = DeviceResponseDTOBuilder::buildDeletedDeviceResponseDTO($deviceToDelete);
+        $deviceToDelete->setDeviceID($deviceDeletedID);
+        $deviceDTO = DeviceResponseDTOBuilder::buildDeviceResponseDTO($deviceToDelete);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTO);
+            $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $normalizedResponse = null;
         }
