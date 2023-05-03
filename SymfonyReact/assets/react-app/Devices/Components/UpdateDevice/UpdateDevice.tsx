@@ -133,9 +133,11 @@ export function UpdateDevice(props: {
 
         let dataToSend: DeviceUpdatePatchInputInterface = {};
 
+        let refreshNavData = false;
         switch (name) {
             case 'deviceName':
                 dataToSend.deviceName = deviceUpdateFormInputs.deviceName;
+                refreshNavData = true;
                 break;
             case 'deviceGroup':
                 dataToSend.deviceGroup = parseInt(deviceUpdateFormInputs.deviceGroup);
@@ -160,7 +162,9 @@ export function UpdateDevice(props: {
                     deviceRoom: deviceResponsePayload.room.roomID,
                 });
                 
-                setRefreshNavbar(true);
+                if (refreshNavData === true) {
+                    setRefreshNavbar(true);
+                }
                 setDeviceData(deviceResponsePayload)
                 // getDeviceData();
                 // props.setRefreshNavDataFlag(true);
