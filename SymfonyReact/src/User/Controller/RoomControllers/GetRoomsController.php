@@ -5,65 +5,67 @@ namespace App\User\Controller\RoomControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\PaginationCalculator;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Builders\DeviceGet\GetDeviceDTOBuilder;
-use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
-use App\Devices\DTO\Request\GetDeviceRequestDTO;
+use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\Entity\User;
-use Psr\Log\LoggerInterface;
+use App\User\Repository\ORM\RoomRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/', name: 'get-user-rooms')]
 class GetRoomsController extends AbstractController
 {
     use HomeAppAPITrait;
-
     use ValidatorProcessorTrait;
 
-    private LoggerInterface $logger;
+    private const MAX_ROOM_RETURN_SIZE = 100;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(RequestQueryParameterHandler $requestQueryParameterHandler)
     {
-        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('all', name: 'get-user-rooms_multiple', methods: [Request::METHOD_GET])]
-    public function getAllUserRooms(Request $request, ValidatorInterface $validator): JsonResponse
+    public function getAllUserRooms(Request $request, RoomRepositoryInterface $roomRepository): JsonResponse
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-        $limit = $request->get('limit', DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE);
-        $offset = $request->get('offset', 0);
 
-        $getDeviceRequestDTO = new GetDeviceRequestDTO(
-            is_numeric($limit) ? (int) $limit : $limit,
-            is_numeric($offset) ? (int) $offset : $offset,
-        );
-
-        $validationErrors = $validator->validate($getDeviceRequestDTO);
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::FULL->value),
+                $request->get('page', 1),
+                $request->get('limit', self::MAX_ROOM_RETURN_SIZE),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
-//        $getDeviceDTO = GetDeviceDTOBuilder::buildGetDeviceDTO(
-//            $user,
-//            $getDeviceRequestDTO,
-//            RequestDTOBuilder::buildRequestTypeDTO(RequestDTOBuilder::REQUEST_TYPE_FULL),
-//        );
-
-        $devices = $getDevicesForUser->getDevicesForUser($getDeviceDTO);
-
-        $deviceResponseDTO = DeviceResponseDTOBuilder::buildDeviceResponseDTO(
-            $devices,
-            RequestDTOBuilder::buildRequestTypeDTO(RequestDTOBuilder::REQUEST_TYPE_FULL),
+        $rooms = $roomRepository->findAllRoomsPaginatedResult(
+            PaginationCalculator::calculateOffset($requestDTO->getLimit(), $requestDTO->getPage()),
+            $requestDTO->getLimit(),
         );
+        foreach ($rooms as $room) {
+            $roomResponseDTO[] = RoomResponseDTOBuilder::buildRoomResponseDTO($room);
+        }
 
-        return $this->sendJsonResponse($deviceResponseDTO);
+        try {
+            $normalizedResponse = $this->normalizeResponse($roomResponseDTO ?? [], [$requestDTO->getResponseType()]);
+        } catch (ExceptionInterface) {
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+        }
+
+        return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Devices\Builders\DeviceResponse;
 
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Devices\Entity\Devices;
+use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
@@ -13,14 +15,14 @@ class DeviceResponseDTOBuilder
 {
     private SensorRepositoryInterface $sensorRepository;
 
-    private GetSensorReadingTypeHandler $getSensorReadingTypeHandler;
+    private SensorResponseDTOBuilder $sensorResponseDTOBuilder;
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
-        GetSensorReadingTypeHandler $getSensorReadingTypeHandler,
+        SensorResponseDTOBuilder $getSensorReadingTypeHandler,
     ) {
         $this->sensorRepository = $sensorRepository;
-        $this->getSensorReadingTypeHandler = $getSensorReadingTypeHandler;
+        $this->sensorResponseDTOBuilder = $getSensorReadingTypeHandler;
     }
 
     public static function buildDeviceResponseDTO(
@@ -46,14 +48,14 @@ class DeviceResponseDTOBuilder
             $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());
             if (!empty($deviceSensors)) {
                 foreach ($deviceSensors as $sensor) {
-                    $sensorReadingTypeDTOs[] = $this->getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreating($sensor);
+                    $sensorResponseDTOs[] = $this->sensorResponseDTOBuilder->buildFullSensorResponseDTO($sensor, [RequestTypeEnum::FULL->value]);
                 }
             }
         }
 
         return self::buildDeviceResponseDTO(
             $device,
-            $sensorReadingTypeDTOs ?? [],
+            $sensorResponseDTOs ?? [],
         );
     }
 }

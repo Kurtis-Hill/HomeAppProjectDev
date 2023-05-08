@@ -3,7 +3,7 @@
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -12,7 +12,7 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
 {
     public function __construct(
         private int $analogID,
-        SensorDetailedResponseDTO $sensorID,
+        SensorResponseDTO $sensor,
         float $currentReading,
         float $highReading,
         float $lowReading,
@@ -20,7 +20,7 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
         string $updatedAt
     ) {
         parent::__construct(
-            sensor: $sensorID,
+            sensor: $sensor,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,

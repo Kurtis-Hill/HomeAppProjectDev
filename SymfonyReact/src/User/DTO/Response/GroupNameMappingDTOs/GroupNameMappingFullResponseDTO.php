@@ -4,7 +4,7 @@ namespace App\User\DTO\Response\GroupNameMappingDTOs;
 
 use App\Common\Services\RequestTypeEnum;
 use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
-use App\User\DTO\Response\UserDTOs\UserFullResponseDTO;
+use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -13,7 +13,7 @@ readonly class GroupNameMappingFullResponseDTO
 {
     public function __construct(
         private int $groupMappingID,
-        private UserFullResponseDTO $user,
+        private UserResponseDTO $user,
         private GroupResponseDTO $group,
     ) {
     }
@@ -35,7 +35,7 @@ readonly class GroupNameMappingFullResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getUser(): UserFullResponseDTO
+    public function getUser(): UserResponseDTO
     {
         return $this->user;
     }

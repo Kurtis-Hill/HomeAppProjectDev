@@ -5,11 +5,15 @@ namespace App\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\Sensors\Voters\SensorVoter;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,8 +27,18 @@ class GetSingleSensorsController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
+
     #[Route('/{sensorID}/get', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
-    public function getSingleSensor(Sensor $sensor, GetSensorReadingTypeHandler $getSensorReadingTypeHandler): JsonResponse
+    public function getSingleSensor(Sensor $sensor, Request $request, GetSensorReadingTypeHandler $getSensorReadingTypeHandler): JsonResponse
     {
         try {
             $this->denyAccessUnlessGranted(SensorVoter::GET_SINGLE_SENSOR, $sensor);
@@ -33,7 +47,15 @@ class GetSingleSensorsController extends AbstractController
         }
 
         try {
-            $sensorReadingTypeResponseDTOs = $getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreating($sensor);
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::SENSITIVE_ONLY->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+        }
+
+        try {
+            $sensorReadingTypeResponseDTOs = $getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreation($sensor);
         } catch (ReadingTypeNotExpectedException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
@@ -42,7 +64,7 @@ class GetSingleSensorsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorReadingTypeResponseDTOs);
+            $normalizedResponse = $this->normalizeResponse($sensorReadingTypeResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

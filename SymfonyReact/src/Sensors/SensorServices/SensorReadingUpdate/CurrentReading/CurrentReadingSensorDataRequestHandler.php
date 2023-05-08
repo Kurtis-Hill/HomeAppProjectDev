@@ -79,9 +79,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
     {
         $passedValidation = true;
         $objectValidationErrors = $this->validator->validate($sensorDataCurrentReadingUpdateDTO);
-//        dd($objectValidationErrors);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
-//            dd($objectValidationErrors, 's');
             foreach ($objectValidationErrors as $error) {
                 $this->validationErrors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($this->getValidationErrorsAsStrings($error));
             }
@@ -96,7 +94,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             );
             $passedValidation = false;
         }
-//dd($this->errors, $passedValidation);
+
         return $passedValidation;
     }
 
@@ -209,7 +207,6 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         return $this->successfulRequests;
     }
 
-    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getReadingTypeRequestAttempt(): int
     {
         return $this->readingTypeRequestAttempt;

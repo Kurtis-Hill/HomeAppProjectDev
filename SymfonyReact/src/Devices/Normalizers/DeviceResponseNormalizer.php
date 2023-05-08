@@ -3,6 +3,7 @@
 namespace App\Devices\Normalizers;
 
 use App\Common\Builders\Request\RequestDTOBuilder;
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
@@ -30,7 +31,7 @@ class DeviceResponseNormalizer implements NormalizerInterface
 
         $data = $normalizer->normalize($device, $format, $context);
 
-        if (!in_array(RequestDTOBuilder::REQUEST_TYPE_SENSITIVE, $context, true)) {
+        if (!in_array([RequestTypeEnum::SENSITIVE_FULL->value, RequestTypeEnum::SENSITIVE_ONLY->value], $context, true)) {
             unset($data['secret']);
         }
 

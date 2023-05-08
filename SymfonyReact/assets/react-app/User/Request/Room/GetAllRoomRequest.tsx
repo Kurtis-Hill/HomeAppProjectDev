@@ -9,8 +9,3 @@ export async function getAllRoomRequest(): Promise<AxiosResponse> {
 
     return getAllRoomResponse;
 }
-
-export interface GetAllRoomResponseInterface {
-    'roomID': number;
-    'roomName': string;
-}

@@ -5,8 +5,12 @@ namespace App\Sensors\Controller\SensorTypeControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +22,24 @@ class GetSensorTypesController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('/all', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
-    public function getAllSensorTypes(SensorTypeRepositoryInterface $sensorTypeRepository, SensorTypeResponseDTOBuilder $responseDTOBuilder): Response
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
+
+    #[Route('/all', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
+    public function getAllSensorTypes(Request $request, SensorTypeRepositoryInterface $sensorTypeRepository, SensorTypeResponseDTOBuilder $responseDTOBuilder): Response
+    {
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+        }
         $sensorTypes = $sensorTypeRepository->findAllSensorTypes();
 
         foreach ($sensorTypes as $sensorType) {
@@ -32,7 +51,7 @@ class GetSensorTypesController extends AbstractController
         }
 
         try {
-            $normalisedResponse = $this->normalizeResponse($sensorTypeResponseDTO);
+            $normalisedResponse = $this->normalizeResponse($sensorTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['error preparing data']);
         }

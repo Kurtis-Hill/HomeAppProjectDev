@@ -5,6 +5,9 @@ namespace App\User\Controller\RoomControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\User\Entity\Room;
 use App\User\Services\RoomServices\DeleteRoomHandler;
 use App\User\Voters\RoomVoter;
@@ -24,13 +27,13 @@ class DeleteRoomController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
     }
 
     #[Route('{roomID}/delete', name:'delete-new-room', methods: [Request::METHOD_DELETE])]
-    public function deleteRoom(Room $roomID, DeleteRoomHandler $deleteRoomHandler): JsonResponse
+    public function deleteRoom(Room $roomID, Request $request, DeleteRoomHandler $deleteRoomHandler): JsonResponse
     {
         try {
             $this->denyAccessUnlessGranted(RoomVoter::DELETE_ROOM, $roomID);
@@ -49,6 +52,7 @@ class DeleteRoomController extends AbstractController
             'roomID' => $deletedRoomID,
             'byUser' => $this->getUser()?->getUserIdentifier(),
         ]);
+
         return $this->sendSuccessfulJsonResponse([sprintf(self::DELETED_ROOM_SUCCESSFULLY, $deletedRoomID)]);
     }
 }

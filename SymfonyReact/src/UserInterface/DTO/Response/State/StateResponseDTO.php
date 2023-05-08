@@ -1,13 +1,13 @@
 <?php
 
-namespace App\UserInterface\DTO\Response\CardState;
+namespace App\UserInterface\DTO\Response\State;
 
 use App\Common\Services\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
-class CardStateResponseDTO
+class StateResponseDTO
 {
     private int $cardStateID;
 

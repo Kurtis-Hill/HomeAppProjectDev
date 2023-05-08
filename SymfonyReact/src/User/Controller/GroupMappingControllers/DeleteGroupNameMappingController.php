@@ -35,7 +35,6 @@ class DeleteGroupNameMappingController extends AbstractController
 
         $deletedGroupNameMappingID = $groupMappingID->getGroupMappingID();
         $deviceDeleteSuccess = $deleteGroupNameMappingHandler->deleteGroupNameMapping($groupMappingID);
-
         if ($deviceDeleteSuccess === false) {
             return $this->sendBadRequestJsonResponse();
         }

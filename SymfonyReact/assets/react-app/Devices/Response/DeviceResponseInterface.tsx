@@ -1,11 +1,16 @@
-export interface AddNewDeviceResponse {
+import GroupResponseInterface from "../../User/Response/Group/GroupResponseInterface";
+import RoomResponseInterface from "../../User/Response/Room/RoomResponseInterface";
+import SensorResponseInterface from '../../Sensors/Sensor/Response/SensorResponseInterface';
+
+export interface DeviceResponseInterface {
     deviceNameID?: number,
     deviceName: string,
-    groupID: number,
-    roomID: number,
-    createdBy: string|number,
-    secret: string|null,
     ipAddress: string|null,
     externalIpAddress: string|null,
-    roles: string[]
+    group?: GroupResponseInterface,
+    room?: RoomResponseInterface,
+    createdBy?: string|number,
+    secret?: string|null,
+    roles?: string[],
+    sensorData?: SensorResponseInterface,
 }

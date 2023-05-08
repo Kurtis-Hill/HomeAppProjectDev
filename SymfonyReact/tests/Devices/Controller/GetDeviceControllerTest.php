@@ -5,10 +5,13 @@ namespace App\Tests\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\Services\PaginationCalculator;
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\Controller\GetDeviceController;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
 use App\User\Entity\User;
@@ -41,11 +44,12 @@ class GetDeviceControllerTest extends WebTestCase
 
     private GroupRepository $groupNameRepository;
 
+    private SensorRepository $sensorRepository;
+
     private User $regularUserOne;
 
     private User $adminUser;
 
-    //@TODO add tests for getting full device response
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -60,6 +64,7 @@ class GetDeviceControllerTest extends WebTestCase
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
+        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
         $this->regularUserOne = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         $this->adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
     }
@@ -130,7 +135,6 @@ class GetDeviceControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
-
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $responseData['payload'];
         $title = $responseData['title'];
@@ -156,7 +160,7 @@ class GetDeviceControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            ['responseType' => 'full'],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
@@ -177,6 +181,29 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
         self::assertArrayHasKey('ipAddress', $payload);
         self::assertArrayHasKey('externalIpAddress', $payload);
+
+
+        $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
+
+        self::assertArrayHasKey('sensorData', $payload);
+        $sensorData = $payload['sensorData'];
+
+        $sensorIDs = array_column($sensorData, 'sensorID');
+
+        foreach ($deviceSensors as $sensor) {
+            if (!in_array($sensor->getSensorID(), $sensorIDs, true)) {
+                self::fail('Sensor not found in response');
+            }
+        }
+
+        foreach ($sensorData as $data) {
+            self::assertArrayHasKey('sensorID', $data);
+            self::assertArrayHasKey('sensorName', $data);
+            self::assertArrayHasKey('createdBy', $data);
+            self::assertArrayHasKey('device', $data);
+            self::assertArrayHasKey('sensorType', $data);
+            self::assertArrayHasKey('sensorReadingTypes', $data);
+        }
     }
 
     public function test_get_device_of_group_user_is_assigned_to_regular_user_full_response(): void

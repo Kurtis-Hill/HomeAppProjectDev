@@ -6,6 +6,7 @@ use App\User\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Deprecated;
 
 /**
@@ -86,5 +87,19 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         ]);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    #[ArrayShape([Room::class])]
+    public function findAllRoomsPaginatedResult(int $offset, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('room');
+        $expr = $qb->expr();
+
+        $qb->select('room')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->orderBy('room.room', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

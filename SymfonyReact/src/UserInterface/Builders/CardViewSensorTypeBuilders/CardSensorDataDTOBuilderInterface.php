@@ -10,7 +10,4 @@ interface CardSensorDataDTOBuilderInterface
 {
     #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     public function formatScalarCardSensorData(array $sensorData): array;
-
-//    #[ArrayShape([])]
-//    public function formatSensorTypeObjects(SensorTypeInterface $sensorTypeObject): array;
 }

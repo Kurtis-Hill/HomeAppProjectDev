@@ -5,6 +5,9 @@ namespace App\User\Controller\UserControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\DTO\Request\UserDTOs\NewUserRequestDTO;
@@ -14,6 +17,7 @@ use App\User\Services\User\UserCreationHandler;
 use App\User\Voters\UserVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +32,16 @@ class AddUserController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
 
     #[Route('add', name: 'add_user', methods: [Request::METHOD_POST])]
     public function addNewUser(
@@ -54,6 +68,14 @@ class AddUserController extends AbstractController
         }
 
         try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::SENSITIVE_FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+        }
+
+        try {
             $this->denyAccessUnlessGranted(UserVoter::ADD_NEW_USER);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
@@ -76,14 +98,14 @@ class AddUserController extends AbstractController
 
         try{
             $userCreationHandler->saveUser($newUser);
+            $this->logger->info('New user created', ['user' => $newUser, 'createdBy' => $this->getUser()?->getUserIdentifier()]);
         } catch (ORMException|OptimisticLockException) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN]);
         }
 
-        $userResponseDTO = UserResponseBuilder::buildFullUserResponseDTO($newUser);
-
+        $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($newUser);
         try {
-            $normalizedUserResponseDTO = $this->normalizeResponse($userResponseDTO);
+            $normalizedUserResponseDTO = $this->normalizeResponse($userResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['User created']);
         }

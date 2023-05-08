@@ -5,6 +5,9 @@ namespace App\User\Controller\RoomControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\RoomDTOBuilder\NewRoomInternalDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
@@ -34,9 +37,12 @@ class AddNewRoomController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('add', name:'add-new-room', methods: [Request::METHOD_POST])]
@@ -60,6 +66,14 @@ class AddNewRoomController extends AbstractController
         $validationErrors = $validator->validate($addNewRoomRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors), 'Validation Errors Occurred');
+        }
+
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $addNewRoomDTO = NewRoomInternalDTOBuilder::buildInternalNewRoomDTO(
@@ -98,7 +112,7 @@ class AddNewRoomController extends AbstractController
 
         $newRoomResponseDTO = RoomResponseDTOBuilder::buildRoomResponseDTO($newRoom);
         try {
-            $normalizedResponse = $this->normalizeResponse($newRoomResponseDTO);
+            $normalizedResponse = $this->normalizeResponse($newRoomResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse(['Request successful but failed to normalize response']);
         }

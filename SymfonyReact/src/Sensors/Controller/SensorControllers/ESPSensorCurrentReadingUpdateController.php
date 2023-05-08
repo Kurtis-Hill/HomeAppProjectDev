@@ -8,7 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
-use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingDTOBuilder;
+use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
@@ -30,7 +30,6 @@ use Symfony\Contracts\Service\Attribute\Required;
 class ESPSensorCurrentReadingUpdateController extends AbstractController
 {
     use HomeAppAPITrait;
-
     use ValidatorProcessorTrait;
 
     private ProducerInterface $currentReadingAMQPProducer;
@@ -85,17 +84,17 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         }
 
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
-            $sensorDataCurrentReadingUpdateDTO = SensorDataCurrentReadingDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
-            $sensorDataPassedValidation = $currentReadingSensorDataRequest->processSensorUpdateData($sensorDataCurrentReadingUpdateDTO);
+            $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
+            $sensorDataPassedValidation = $currentReadingSensorDataRequest->processSensorUpdateData($sensorDataCurrentReadingUpdateRequestDTO);
             if ($sensorDataPassedValidation === false) {
                 continue;
             }
 
-            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateDTO);
+            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
 
             $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
-                $sensorDataCurrentReadingUpdateDTO->getSensorType(),
-                $sensorDataCurrentReadingUpdateDTO->getSensorName(),
+                $sensorDataCurrentReadingUpdateRequestDTO->getSensorType(),
+                $sensorDataCurrentReadingUpdateRequestDTO->getSensorName(),
                 $readingTypeCurrentReadingDTOs,
                 $deviceID,
             );
@@ -110,7 +109,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
         // Success return
         if (
-            isset($sensorDataCurrentReadingUpdateDTO)
+            isset($sensorDataCurrentReadingUpdateRequestDTO)
             && empty($currentReadingSensorDataRequest->getErrors())
             && empty($currentReadingSensorDataRequest->getValidationErrors())
             && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())

@@ -1,4 +1,4 @@
-export interface CardStateResponseInterface {
+export interface StateResponseInterface {
     cardStateID: number;
     cardState: string;
 }

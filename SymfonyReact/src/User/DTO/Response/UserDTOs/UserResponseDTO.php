@@ -7,7 +7,7 @@ use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
 use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-readonly class UserFullResponseDTO
+readonly class UserResponseDTO
 {
     public function __construct(
         private int $userID,

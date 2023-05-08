@@ -5,6 +5,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\DTO\Request\RequestDTO;
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
@@ -163,7 +164,7 @@ class GetSensorControllerTest extends WebTestCase
                 'page' => -1
             ],
             'errorMessages' => [
-                'page must be greater than "-1"'
+                'page must be greater than 0'
             ],
         ];
 
@@ -574,7 +575,7 @@ class GetSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             self::GET_SENSOR_URL,
-            ['responseType' => RequestDTOBuilder::REQUEST_TYPE_ONLY],
+            ['responseType' => RequestTypeEnum::ONLY->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
@@ -593,13 +594,10 @@ class GetSensorControllerTest extends WebTestCase
         self::assertEquals(GetSensorController::REQUEST_SUCCESSFUL, $title);
 
         foreach ($payload as $sensorData) {
-            $sensor = $this->sensorRepository->find($sensorData['sensorNameID']);
+            $sensor = $this->sensorRepository->find($sensorData['sensorID']);
 
-            self::assertEquals($sensor->getSensorID(), $sensorData['sensorNameID']);
+            self::assertEquals($sensor->getSensorID(), $sensorData['sensorID']);
             self::assertEquals($sensor->getSensorName(), $sensorData['sensorName']);
-            self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $sensorData['sensorType']);
-            self::assertEquals($sensor->getDevice()->getDeviceName(), $sensorData['deviceName']);
-            self::assertEquals($sensor->getCreatedBy()->getEmail(), $sensorData['createdBy']);
         }
     }
 
@@ -608,7 +606,7 @@ class GetSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             self::GET_SENSOR_URL,
-            ['responseType' => RequestDTOBuilder::REQUEST_TYPE_FULL],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
@@ -627,21 +625,21 @@ class GetSensorControllerTest extends WebTestCase
         self::assertEquals(GetSensorController::REQUEST_SUCCESSFUL, $title);
 
         foreach ($payload as $sensorData) {
-            $sensorObject = $this->sensorRepository->find($sensorData['sensor']['sensorNameID']);
-
+            $sensorObject = $this->sensorRepository->find($sensorData['sensorID']);
             if (
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Dallas::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME
             ) {
                 $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
+                $sensorReadingTypes = $sensorData['sensorReadingTypes'];
                 /** @var Temperature $temperature */
-                $temperature = $temperatureRepository->find($sensorData['sensorReadingTypes'][Temperature::READING_TYPE]['temperatureID']);
-                self::assertEquals($temperature->getSensorID(), $sensorData['sensorReadingTypes'][Temperature::READING_TYPE]['temperatureID']);
-                self::assertEquals($temperature->getCurrentReading(), $sensorData['sensorReadingTypes'][Temperature::READING_TYPE]['currentReading']);
-                self::assertEquals($temperature->getHighReading(), $sensorData['sensorReadingTypes'][Temperature::READING_TYPE]['highReading']);
-                self::assertEquals($temperature->getLowReading(), $sensorData['sensorReadingTypes'][Temperature::READING_TYPE]['lowReading']);
-                self::assertEquals($temperature->getConstRecord(), $sensorData['sensorReadingTypes'][Temperature::READING_TYPE]['constRecorded']);
+                $temperature = $temperatureRepository->find($sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
+                self::assertEquals($temperature->getSensorID(), $sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
+                self::assertEquals($temperature->getCurrentReading(), $sensorReadingTypes[Temperature::READING_TYPE]['currentReading']);
+                self::assertEquals($temperature->getHighReading(), $sensorReadingTypes[Temperature::READING_TYPE]['highReading']);
+                self::assertEquals($temperature->getLowReading(), $sensorReadingTypes[Temperature::READING_TYPE]['lowReading']);
+                self::assertEquals($temperature->getConstRecord(), $sensorReadingTypes[Temperature::READING_TYPE]['constRecorded']);
             }
             if (
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
@@ -679,11 +677,35 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals($analog->getConstRecord(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['constRecorded']);
             }
 
-            self::assertEquals($sensorObject->getSensorID(), $sensorData['sensor']['sensorNameID']);
-            self::assertEquals($sensorObject->getSensorName(), $sensorData['sensor']['sensorName']);
-            self::assertEquals($sensorObject->getSensorTypeObject()->getSensorType(), $sensorData['sensor']['sensorType']);
-            self::assertEquals($sensorObject->getDevice()->getDeviceName(), $sensorData['sensor']['deviceName']);
-            self::assertEquals($sensorObject->getCreatedBy()->getEmail(), $sensorData['sensor']['createdBy']);
+            self::assertEquals($sensorObject->getSensorID(), $sensorData['sensorID']);
+            self::assertEquals($sensorObject->getSensorName(), $sensorData['sensorName']);
+
+            $sensorTypeObject = $sensorObject->getSensorTypeObject();
+//            dd($sensorData);
+            self::assertEquals($sensorTypeObject->getSensorTypeID(), $sensorData['sensorType']['sensorTypeID']);
+            self::assertEquals($sensorTypeObject->getSensorType(), $sensorData['sensorType']['sensorTypeName']);
+            self::assertEquals($sensorTypeObject->getDescription(), $sensorData['sensorType']['sensorTypeDescription']);
+
+            $deviceObject = $sensorObject->getDevice();
+            self::assertEquals($deviceObject->getDeviceName(), $sensorData['device']['deviceName']);
+            self::assertEquals($deviceObject->getDeviceID(), $sensorData['device']['deviceID']);
+
+            $deviceRoom = $deviceObject->getRoomObject();
+            self::assertEquals($deviceRoom->getRoomID(), $sensorData['device']['room']['roomID']);
+            self::assertEquals($deviceRoom->getRoom(), $sensorData['device']['room']['roomName']);
+
+            $deviceGroup = $sensorObject->getDevice()->getGroupObject();
+            self::assertEquals($deviceGroup->getGroupID(), $sensorData['device']['group']['groupID']);
+            self::assertEquals($deviceGroup->getGroupName(), $sensorData['device']['group']['groupName']);
+
+
+            $user = $sensorObject->getCreatedBy();
+            self::assertEquals($user->getEmail(), $sensorData['createdBy']['email']);
+            self::assertEquals($user->getFirstName(), $sensorData['createdBy']['firstName']);
+            self::assertEquals($user->getLastName(), $sensorData['createdBy']['lastName']);
+            self::assertEquals($user->getUserID(), $sensorData['createdBy']['userID']);
+            self::assertArrayNotHasKey('password', $sensorData['createdBy']);
+            self::assertArrayNotHasKey('roles', $sensorData['createdBy']);
         }
     }
 

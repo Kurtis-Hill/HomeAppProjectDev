@@ -5,9 +5,11 @@ namespace App\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
-use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DeviceNotFoundException;
@@ -35,9 +37,12 @@ class UpdateSensorController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('/{sensorID}/update', name: 'update-sensor', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
@@ -64,6 +69,14 @@ class UpdateSensorController extends AbstractController
 
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
+        }
+
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::ONLY->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $sensorUpdateDTO = $updateSensorService->buildSensorUpdateDTO(
@@ -100,9 +113,9 @@ class UpdateSensorController extends AbstractController
             )
         );
 
-        $sensorResponseDTO = SensorResponseDTOBuilder::buildDetailedResponseDTO($sensor);
+        $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorResponseDTO);
+            $normalizedResponse = $this->normalizeResponse($sensorResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

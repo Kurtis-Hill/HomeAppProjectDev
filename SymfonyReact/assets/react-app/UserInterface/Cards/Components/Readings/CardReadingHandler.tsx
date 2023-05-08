@@ -7,23 +7,23 @@ import { CurrentReadingDataDisplayInterface } from './SensorDataOutput/CurrentRe
 
 import { CardCurrentSensorDataInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
 import { CardFilterBarInterface } from '../Filterbars/CardFilterBarInterface';
-import { CardDataResponseInterface } from '../../Response/CardDataResponseInterface';
+import { CardSensorDataResponseInterface } from '../../Response/CurrentReadingCardData/CardDataResponseInterface';
 
 import { handleSendingCardDataRequest } from '../../../../UserInterface/Cards/Request/CardRequest';
 import CardReadingFactory from '../../Factories/CardReadingFactory';
 import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
 
-const cardReducer = (previousCards: CardDataResponseInterface[]|undefined, cardsForDisplayArray: CardDataResponseInterface[]|undefined): React[] => {
+const cardReducer = (previousCards: CardSensorDataResponseInterface[]|undefined, cardsForDisplayArray: CardSensorDataResponseInterface[]|undefined): React[] => {
     if (previousCards.length <= 0 || previousCards === undefined) {
         return cardsForDisplayArray;
     }
 
     for (let i = 0; i < cardsForDisplayArray.length; i++) {
-        const cardForDisplay: CardDataResponseInterface|undefined = cardsForDisplayArray[i];
+        const cardForDisplay: CardSensorDataResponseInterface|undefined = cardsForDisplayArray[i];
         if (previousCards[i] === undefined) {
             continue;
         }
-        const previousCard: CardDataResponseInterface|undefined = previousCards[i];
+        const previousCard: CardSensorDataResponseInterface|undefined = previousCards[i];
         if (cardForDisplay === undefined || previousCard === undefined) {
             continue;
         }
@@ -66,7 +66,7 @@ export function CardReadingHandler(props: {
  }) {
     const [loadingCards, setLoadingCards] = useState<boolean>(true);
 
-    const [cardsForDisplay, setCardsForDisplay] = useReducer<CardDataResponseInterface[]>(cardReducer, []);
+    const [cardsForDisplay, setCardsForDisplay] = useReducer<CardSensorDataResponseInterface[]>(cardReducer, []);
 
     const route:string = props.route ?? 'index';
     
@@ -84,7 +84,7 @@ export function CardReadingHandler(props: {
     
 
     const handleCardRefresh = async () => {
-        const cardData: Array<CardDataResponseInterface> = await handleGettingSensorReadings();
+        const cardData: Array<CardSensorDataResponseInterface> = await handleGettingSensorReadings();
         if (Array.isArray(cardData) && cardData.length > 0) {
             // prepareCardDataForDisplay(cardData);
             console.log('card data request recieved')
@@ -96,10 +96,10 @@ export function CardReadingHandler(props: {
         }
     }
 
-    const handleGettingSensorReadings = async (): Promise<Array<CardDataResponseInterface|undefined>> => {
+    const handleGettingSensorReadings = async (): Promise<Array<CardSensorDataResponseInterface|undefined>> => {
         try {
             const cardDataResponse: AxiosResponse = await handleSendingCardDataRequest({route, filterParams});
-            const cardData: Array<CardDataResponseInterface> = cardDataResponse.data.payload;
+            const cardData: Array<CardSensorDataResponseInterface> = cardDataResponse.data.payload;
 
             return cardData;
         } catch(error) {
@@ -115,7 +115,7 @@ export function CardReadingHandler(props: {
         <React.Fragment>
             {            
                 cardsForDisplay.length > 0 
-                    ? cardsForDisplay.map((card: CardDataResponseInterface|undefined, index: number) => {
+                    ? cardsForDisplay.map((card: CardSensorDataResponseInterface|undefined, index: number) => {
                         if (card !== undefined) {
                                     return (
                                         <React.Fragment key={index}>

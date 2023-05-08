@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { addNewGroupRequest } from '../../Request/Group/AddNewGroupRequest';
 import AddNewGroupUserInputInterface from './AddNewGroupUserInputInterface';
-import AddNewGroupResponseInterface from '../../Request/Group/AddNewGroupResponseInterface';
+import GroupResponseInterface from '../../Request/Group/GroupResponseInterface';
 
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
@@ -25,7 +25,7 @@ export function AddNewGroup(props: {
 
     const [groupRequestLoading, setGroupRequestLoading] = useState<boolean>(false);
 
-    const [newGroupAddData, setNewGroupAddedData] = useState<AddNewGroupResponseInterface|null>(null);
+    const [newGroupAddData, setNewGroupAddedData] = useState<GroupResponseInterface|null>(null);
 
     const handleAddNewGroupInput = (event: Event) => {
         const name = (event.target as HTMLInputElement).name;
@@ -49,7 +49,7 @@ export function AddNewGroup(props: {
         try {
             const addNewGroupResponse = await addNewGroupRequest(jsonFormData);
             if (addNewGroupResponse !== undefined && addNewGroupResponse.status === 201) {
-                const addNewGroupPayload: AddNewGroupResponseInterface = addNewGroupResponse.data.payload;
+                const addNewGroupPayload: GroupResponseInterface = addNewGroupResponse.data.payload;
                 setNewGroupAddedData(addNewGroupPayload);
                 setGroupRequestLoading(false);
                 setErrors([]);

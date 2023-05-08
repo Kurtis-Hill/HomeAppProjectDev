@@ -5,6 +5,9 @@ namespace App\User\Controller\GroupsControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\AddNewGroupNameDTOBuilder;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
@@ -16,6 +19,7 @@ use App\User\Voters\GroupVoter;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +34,16 @@ class AddGroupController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
 
     #[Route('add', name: 'add-group', methods: [Request::METHOD_POST])]
     public function addNewGroupName(
@@ -47,6 +61,14 @@ class AddGroupController extends AbstractController
             );
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        }
+
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $user = $this->getUser();
@@ -78,7 +100,7 @@ class AddGroupController extends AbstractController
 
         $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
         try {
-            $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO);
+            $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Group Saved']);
         }

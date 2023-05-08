@@ -3,7 +3,7 @@
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 readonly class AbstractStandardResponseDTO
 {
     public function __construct(
-        private SensorDetailedResponseDTO $sensor,
+        private SensorResponseDTO $sensor,
         private float $currentReading,
         private float $highReading,
         private float $lowReading,
@@ -26,7 +26,7 @@ readonly class AbstractStandardResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getSensor(): SensorDetailedResponseDTO
+    public function getSensor(): SensorResponseDTO
     {
         return $this->sensor;
     }

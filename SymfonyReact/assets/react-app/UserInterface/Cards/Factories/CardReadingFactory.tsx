@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import CardCurrentReadingBuilder from "../Builders/ReadingBuilders/CardCurrentReadingBuilder"
-import { CardDataResponseInterface } from '../Response/CardDataResponseInterface';
+import { CardSensorDataResponseInterface } from '../Response/CurrentReadingCardData/CardDataResponseInterface';
 
 export default function CardReadingFactory(props:
     CardReadingFactoryInterface 
@@ -31,7 +31,7 @@ export default function CardReadingFactory(props:
 }
 
 export interface CardReadingFactoryInterface {
-    cardData: CardDataResponseInterface;
+    cardData: CardSensorDataResponseInterface;
     setSelectedCardForQuickUpdate: (cardViewID: number) => void;
     loadingCardModalView: boolean;
     setLoadingCardModalView: (loadingCardModalView: boolean) => void;

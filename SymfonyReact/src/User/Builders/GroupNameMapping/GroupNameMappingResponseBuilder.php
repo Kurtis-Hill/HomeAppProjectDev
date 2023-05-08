@@ -13,7 +13,7 @@ class GroupNameMappingResponseBuilder
     {
         return new GroupNameMappingFullResponseDTO(
             $groupNameMapping->getGroupMappingID(),
-            UserResponseBuilder::buildFullUserResponseDTO($groupNameMapping->getUser()),
+            UserResponseBuilder::buildUserResponseDTO($groupNameMapping->getUser()),
             GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupNameMapping->getGroup()),
         );
     }

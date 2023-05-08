@@ -3,7 +3,7 @@
 namespace App\UserInterface\DTO\Response\CardView;
 
 use App\Common\Services\RequestTypeEnum;
-use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
+use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
 use JetBrains\PhpStorm\Immutable;
@@ -18,13 +18,13 @@ class CardViewResponseDTO
 
     private ColourResponseDTO $cardColour;
 
-    private CardStateResponseDTO $cardViewState;
+    private StateResponseDTO $cardViewState;
 
     public function __construct(
         int $cardViewID,
         IconResponseDTO $cardIcon,
         ColourResponseDTO $cardColour,
-        CardStateResponseDTO $cardStateDTO
+        StateResponseDTO $cardStateDTO
     ) {
         $this->cardViewID = $cardViewID;
         $this->cardIcon = $cardIcon;
@@ -71,7 +71,7 @@ class CardViewResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getCardViewState(): CardStateResponseDTO
+    public function getCardViewState(): StateResponseDTO
     {
         return $this->cardViewState;
     }

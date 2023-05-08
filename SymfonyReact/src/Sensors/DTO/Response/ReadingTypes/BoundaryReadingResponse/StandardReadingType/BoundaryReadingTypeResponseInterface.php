@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType;
 
-interface ReadingTypeBoundaryReadingResponseInterface
+interface BoundaryReadingTypeResponseInterface
 {
     public function getSensorReadingTypeID(): int;
 

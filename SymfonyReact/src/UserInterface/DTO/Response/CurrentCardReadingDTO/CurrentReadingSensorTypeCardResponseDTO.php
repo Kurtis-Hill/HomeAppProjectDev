@@ -2,6 +2,7 @@
 
 namespace App\UserInterface\DTO\Response\CurrentCardReadingDTO;
 
+use App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse\SensorTypeCardViewCurrentReadingDTOBuilder;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
@@ -24,7 +25,7 @@ class CurrentReadingSensorTypeCardResponseDTO implements UserViewSensorTypeCardD
     #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     private array $sensorData;
 
-    private string $cardType = 'current-reading';
+    private string $cardType = SensorTypeCardViewCurrentReadingDTOBuilder::CARD_TYPE;
 
     public function __construct(
         string $sensorName,

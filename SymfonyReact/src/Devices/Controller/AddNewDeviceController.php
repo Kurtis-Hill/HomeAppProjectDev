@@ -84,7 +84,7 @@ class AddNewDeviceController extends AbstractController
         }
 
         try {
-            $newDeviceCheckDTO = $newDeviceHandler->findObjectNeededForNewDevice($newDeviceRequestDTO, $user);
+            $newDeviceCheckDTO = $newDeviceHandler->processAddDeviceObjects($newDeviceRequestDTO, $user);
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         } catch (ORMException $e) {

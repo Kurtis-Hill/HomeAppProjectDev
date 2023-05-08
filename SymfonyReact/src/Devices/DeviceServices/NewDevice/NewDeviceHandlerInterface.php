@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 interface NewDeviceHandlerInterface
 {
-    public function findObjectNeededForNewDevice(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO;
+    public function processAddDeviceObjects(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO;
 
     /**
      * @throws DeviceCreationFailureException

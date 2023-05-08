@@ -8,6 +8,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @method Room|null find($id, $lockMode = null, $lockVersion = null)
@@ -50,4 +51,7 @@ interface RoomRepositoryInterface
     public function findOneById(int $id): ?Room;
 
     public function findOneByRoomNameAndGroupId(int $groupID, string $roomName): ?Room;
+
+    #[ArrayShape([Room::class])]
+    public function findAllRoomsPaginatedResult(int $offset, int $limit): array;
 }

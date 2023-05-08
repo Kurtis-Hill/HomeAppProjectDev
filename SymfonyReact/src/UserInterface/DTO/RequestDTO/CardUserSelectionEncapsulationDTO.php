@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\DTO\RequestDTO;
 
-use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
+use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
@@ -17,7 +17,7 @@ class CardUserSelectionEncapsulationDTO
     #[ArrayShape([ColourResponseDTO::class])]
     private array $colours;
 
-    #[ArrayShape([CardStateResponseDTO::class])]
+    #[ArrayShape([StateResponseDTO::class])]
     private array $states;
 
     public function __construct(
@@ -42,7 +42,7 @@ class CardUserSelectionEncapsulationDTO
         return $this->colours;
     }
 
-    #[ArrayShape([CardStateResponseDTO::class])]
+    #[ArrayShape([StateResponseDTO::class])]
     public function getStates(): array
     {
         return $this->states;

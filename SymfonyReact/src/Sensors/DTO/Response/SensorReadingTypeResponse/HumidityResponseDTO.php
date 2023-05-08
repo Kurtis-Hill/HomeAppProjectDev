@@ -3,14 +3,14 @@
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
+use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implements StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
 {
     public function __construct(
         private int $humidityID,
-        SensorDetailedResponseDTO $sensorID,
+        SensorResponseDTO $sensor,
         float $currentReading,
         float $highReading,
         float $lowReading,
@@ -18,7 +18,7 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
         string $updatedAt
     ) {
         parent::__construct(
-            sensor: $sensorID,
+            sensor: $sensor,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,

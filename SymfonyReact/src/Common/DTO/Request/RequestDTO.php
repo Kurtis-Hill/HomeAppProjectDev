@@ -28,7 +28,7 @@ class RequestDTO
 
     #[
         Assert\Range(
-            minMessage: 'page must be greater than {{ min }}',
+            minMessage: 'page must be greater than {{ limit }}',
             invalidMessage: 'page must be an int|null you have provided {{ value }}',
             min: 0,
         ),

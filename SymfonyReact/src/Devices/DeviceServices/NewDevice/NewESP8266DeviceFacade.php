@@ -26,7 +26,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
      * @throws RoomNotFoundException
      * @throws ORMException
      */
-    public function findObjectNeededForNewDevice(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
+    public function processAddDeviceObjects(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {
         $groupObject = $this->groupRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
         if (!$groupObject instanceof Group) {

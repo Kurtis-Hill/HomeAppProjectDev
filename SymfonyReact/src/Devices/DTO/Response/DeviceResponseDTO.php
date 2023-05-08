@@ -6,6 +6,7 @@ use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
+use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
 use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -24,7 +25,7 @@ readonly class DeviceResponseDTO
         private ?string $ipAddress,
         private ?string $externalIpAddress,
         private array $roles,
-        private array $sensorsData,
+        private array $sensorData,
     ) {
     }
 
@@ -112,14 +113,14 @@ readonly class DeviceResponseDTO
     }
 
     #[
-        ArrayShape([StandardReadingTypeResponseInterface::class||[]]),
+        ArrayShape([SensorResponseDTO::class||[]]),
         Groups([
             RequestTypeEnum::FULL->value,
             RequestTypeEnum::SENSITIVE_FULL->value,
         ]),
     ]
-    public function getSensorsData(): array
+    public function getSensorData(): array
     {
-        return $this->sensorsData;
+        return $this->sensorData;
     }
 }

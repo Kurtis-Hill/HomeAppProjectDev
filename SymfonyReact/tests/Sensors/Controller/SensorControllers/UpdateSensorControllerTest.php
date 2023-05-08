@@ -4,6 +4,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
@@ -218,7 +219,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
@@ -233,7 +234,6 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $payload = $responseData['payload'];
-
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($newSensorName, $payload['sensorName']);
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
@@ -293,7 +293,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
@@ -350,7 +350,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId]),
@@ -389,7 +389,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['sensorName' => $newSensorName]),
@@ -460,7 +460,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
@@ -498,7 +498,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['sensorName' => $newSensorName]),
@@ -520,16 +520,16 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getFirstName(), $payload['createdBy']['firstName']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getLastName(), $payload['createdBy']['lastName']);
-        self::assertNull($payload['createdBy']['profilePicture']);
-        self::assertNull($payload['createdBy']['roles']);
+        self::assertEquals($sensorToUpdate->getCreatedBy()->getProfilePic(), $payload['createdBy']['profilePicture']);
+        self::assertArrayNotHasKey('roles', $payload['createdBy']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getGroup()->getGroupID(), $payload['createdBy']['group']['groupID']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getGroup()->getGroupName(), $payload['createdBy']['group']['groupName']);
 
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceID(), $payload['device']['deviceID']);
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensorToUpdate->getDevice()->getGroupObject()->getGroupID(), $payload['device']['groupID']);
-        self::assertEquals($sensorToUpdate->getDevice()->getRoomObject()->getRoomID(), $payload['device']['roomID']);
-        self::assertNull($payload['device']['secret']);
+        self::assertEquals($sensorToUpdate->getDevice()->getGroupObject()->getGroupID(), $payload['device']['group']['groupID']);
+        self::assertEquals($sensorToUpdate->getDevice()->getRoomObject()->getRoomID(), $payload['device']['room']['roomID']);
+        self::assertArrayNotHasKey('secret', $payload['device']);
 
         self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorTypeID(), $payload['sensorType']['sensorTypeID']);
@@ -561,7 +561,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            [],
+            ['responseType' => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode($content),

@@ -7,7 +7,7 @@ import { UserDataContextInterface } from "../../../User/DataProviders/UserDataCo
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 
 import { AddNewDeviceInputInterface, addNewDeviceRequest } from "../../Request/AddNewDeviceRequest"
-import { AddNewDeviceResponse } from '../../Response/DeviceResponseInterface';
+import { DeviceResponseInterface } from '../../Response/DeviceResponseInterface';
 
 import DotCircleSpinner from "../../../Common/Components/Spinners/DotCircleSpinner";
 import { apiURL, webappURL } from '../../../Common/URLs/CommonURLs';
@@ -38,7 +38,7 @@ export function AddNewDevice(props: {
     
     const [deviceRequestLoading, setDeviceRequestLoading] = useState<boolean>(false);
 
-    const [newDeviceAddedData, setNewDeviceAddedData] = useState<AddNewDeviceResponse|null>(null);
+    const [newDeviceAddedData, setNewDeviceAddedData] = useState<DeviceResponseInterface|null>(null);
 
     const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
 
@@ -84,9 +84,8 @@ export function AddNewDevice(props: {
             try {
                 const addNewDeviceResponse = await addNewDeviceRequest(jsonFormData);            
                 if (addNewDeviceResponse !== null && addNewDeviceResponse.status === 201) {
-                    const addNewDevicePayload: AddNewDeviceResponse = addNewDeviceResponse.data.payload;
+                    const addNewDevicePayload: DeviceResponseInterface = addNewDeviceResponse.data.payload;
                     setNewDeviceAddedData(addNewDevicePayload);
-                    // setDeviceRequestLoading(false);
                     setErrors([]);
                     setRefreshNavDataFlag(true);
                 } else {
@@ -97,7 +96,7 @@ export function AddNewDevice(props: {
                 setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
             }
             setDeviceRequestLoading(false);
-        } 
+        }
     }
 
     const validateAddNewDeviceUserInputs = (): boolean => {

@@ -118,9 +118,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
             $jsonData
         );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
         /** @var Devices $device */
         $device = $this->deviceRepository->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
+        self::assertNotNull($device);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
@@ -130,15 +132,13 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertNull($payload['externalIpAddress']);
 
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
+        self::assertEquals(Devices::ROLE, $payload['roles'][0]);
+        self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
 //        self::assertEquals($this->groupName->getGroupID(), $payload['groupID']);
 //        self::assertEquals($this->room->getRoomID(), $payload['roomID']);
 //        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $payload['createdBy']);
-        self::assertEquals(Devices::ROLE, $payload['roles'][0]);
-        self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
 
-        self::assertInstanceOf(Devices::class, $device);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_duplicate_device_name_same_room(): void
@@ -159,6 +159,7 @@ class AddNewDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
             $jsonData
         );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -167,8 +168,6 @@ class AddNewDeviceControllerTest extends WebTestCase
             ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
             $this->room->getRoom(),
         ), $responseData['errors'][0]);
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_sending_malformed_request_missing_name(): void
@@ -190,6 +189,7 @@ class AddNewDeviceControllerTest extends WebTestCase
             $jsonData
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         self::assertStringContainsString('Device name cannot be null', $responseData['errors'][0]);
     }

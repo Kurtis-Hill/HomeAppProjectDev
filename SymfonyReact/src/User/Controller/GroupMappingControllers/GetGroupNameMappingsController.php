@@ -5,9 +5,13 @@ namespace App\User\Controller\GroupMappingControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\User\Builders\GroupNameMapping\GroupNameMappingResponseBuilder;
 use App\User\Entity\User;
 use App\User\Services\GroupMappingServices\GetGroupNameMappingHandler;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +23,30 @@ class GetGroupNameMappingsController extends AbstractController
 {
     use HomeAppAPITrait;
 
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
+
     #[Route('all', name: 'get-all-group-name-mappings', methods: [Request::METHOD_GET])]
-    public function getGroupNameMappings(GetGroupNameMappingHandler $groupNameMappingHandler): JsonResponse
+    public function getGroupNameMappings(Request $request, GetGroupNameMappingHandler $groupNameMappingHandler): JsonResponse
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
+        }
+
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get('responseType', RequestTypeEnum::FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $groupNameMappingsForUser = $groupNameMappingHandler->getGroupNameMappingsForUser($user);
@@ -38,7 +60,7 @@ class GetGroupNameMappingsController extends AbstractController
         }
 
         try {
-            $normalizedGroupNameMappingResponseDTOs = $this->normalizeResponse($groupNameMappingResponseDTOs);
+            $normalizedGroupNameMappingResponseDTOs = $this->normalizeResponse($groupNameMappingResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

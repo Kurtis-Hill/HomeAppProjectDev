@@ -183,6 +183,9 @@ class DeleteDeviceControllerTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
+        $deletedDevice = $this->deviceRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
+        self::assertNull($deletedDevice);
+
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,

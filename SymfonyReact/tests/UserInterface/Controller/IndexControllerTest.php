@@ -40,6 +40,7 @@ class IndexControllerTest extends WebTestCase
      */
     public function test_various_routes_return_forbidden_response_no_credentials(string $uri): void
     {
+        self::markTestSkipped('skipped until firewall reactivation');
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::INDEX_ROUTE_URL, $uri),

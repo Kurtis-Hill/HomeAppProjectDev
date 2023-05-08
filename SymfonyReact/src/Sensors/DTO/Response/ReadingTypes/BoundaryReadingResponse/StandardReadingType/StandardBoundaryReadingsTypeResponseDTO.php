@@ -5,7 +5,7 @@ namespace App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\Standard
 use App\Common\Services\RequestTypeEnum;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class StandardResponseReadingTypeBoundaryReadingsResponseDTO implements ReadingTypeBoundaryReadingResponseInterface
+class StandardBoundaryReadingsTypeResponseDTO implements BoundaryReadingTypeResponseInterface
 {
     private int $sensorReadingTypeID;
 

@@ -54,7 +54,6 @@ class AddNewSensorController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-
     #[Route('/add', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
@@ -141,7 +140,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse($errors);
         }
 
-        $sensorResponseDTO = SensorResponseDTOBuilder::buildDetailedResponseDTO($sensor);
+        $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {
             $normalizedResponse = $this->normalizeResponse($sensorResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {

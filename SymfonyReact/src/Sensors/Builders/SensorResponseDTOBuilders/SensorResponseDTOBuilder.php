@@ -2,43 +2,59 @@
 
 namespace App\Sensors\Builders\SensorResponseDTOBuilders;
 
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
-use App\Sensors\DTO\Response\SensorResponse\SensorDetailedResponseDTO;
-use App\Sensors\DTO\Response\SensorResponse\SensorFullResponseDTO;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\User\Builders\User\UserResponseBuilder;
 
 class SensorResponseDTOBuilder
 {
-    public static function buildResponseDTO(Sensor $sensor): SensorResponseDTO
+    private GetSensorReadingTypeHandler $getSensorReadingTypeHandler;
+
+    public function __construct(GetSensorReadingTypeHandler $getSensorReadingTypeHandler)
+    {
+        $this->getSensorReadingTypeHandler = $getSensorReadingTypeHandler;
+    }
+
+    /**
+     * @param Sensor $sensor
+     * @param SensorReadingTypeResponseDTOInterface[] $sensorReadingTypeDTO
+     * @return SensorResponseDTO
+     */
+    public static function buildSensorResponseDTO(Sensor $sensor, array $sensorReadingTypeDTO = []): SensorResponseDTO
     {
         return new SensorResponseDTO(
             $sensor->getSensorID(),
-            $sensor->getSensorName(),
-            $sensor->getSensorTypeObject()->getSensorType(),
-            $sensor->getDevice()->getDeviceName(),
-            $sensor->getCreatedBy()->getUsername(),
-        );
-    }
-
-    public static function buildDetailedResponseDTO(Sensor $sensor): SensorDetailedResponseDTO
-    {
-        return new SensorDetailedResponseDTO(
-            $sensor->getSensorID(),
-            UserResponseBuilder::buildFullUserResponseDTO($sensor->getCreatedBy()),
+            UserResponseBuilder::buildUserResponseDTO($sensor->getCreatedBy()),
             $sensor->getSensorName(),
             DeviceResponseDTOBuilder::buildDeviceResponseDTO($sensor->getDevice()),
             SensorTypeResponseDTOBuilder::buildFullSensorTypeResponseDTO($sensor->getSensorTypeObject()),
+            $sensorReadingTypeDTO,
         );
     }
 
-    public static function buildFullResponseDTO(Sensor $sensor, array $sensorTypeResponseDTOs = []): SensorFullResponseDTO
+    public function buildFullSensorResponseDTO(Sensor $sensor, array $groups): SensorResponseDTO
     {
-        return new SensorFullResponseDTO(
-            self::buildResponseDTO($sensor),
-            $sensorTypeResponseDTOs
+        if (
+            !empty($groups)
+            && in_array(
+                $groups,
+                [
+                    [RequestTypeEnum::FULL->value],
+                    [RequestTypeEnum::SENSITIVE_FULL->value],
+                ],
+                true
+            )) {
+            $sensorReadingTypeDTO = $this->getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreation($sensor);
+        }
+
+        return self::buildSensorResponseDTO(
+            $sensor,
+            $sensorReadingTypeDTO ?? [],
         );
     }
 }

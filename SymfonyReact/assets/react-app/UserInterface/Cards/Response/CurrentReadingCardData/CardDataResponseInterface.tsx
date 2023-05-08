@@ -1,5 +1,4 @@
-export interface CardDataResponseInterface {
-    // cardData: Array<CardDataResponseObject>;
+export interface CardSensorDataResponseInterface {
     cardType: string;
     cardColour: string,
     cardIcon: string,
