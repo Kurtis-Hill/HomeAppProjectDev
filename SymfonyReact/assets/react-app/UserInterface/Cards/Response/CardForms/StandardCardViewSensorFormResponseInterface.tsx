@@ -1,9 +1,8 @@
 import { IconResponseInterface } from '../../../Response/Icons/IconResponseInterface';
 import { ColourResponseInterface } from '../../../Response/Colour/ColourResponseInterface';
-import { StateResponseInterface } from '../../../Response/State/StateResponseInterface';
 import StandardCardViewReadingResponseInterface from '../CardViewReadings/StandardCardViewReadingResponseInterface';
-import { CardCurrentSensorReadings } from '../../Components/DisplayCards/CardCurrentSensorReadings';
 import { CurrentUserSelections } from '../CardSelection/CurrentUserSelections';
+import StateResponseInterface from '../../../Response/State/StateResponseInterface';
 
 export default interface StandardCardViewSensorFormResponseInterface {
     sensorID: number,

@@ -1,6 +1,6 @@
-import { StateResponseInterface } from "../../../Response/State/StateResponseInterface"
 import { ColourResponseInterface } from "../../../Response/Colour/ColourResponseInterface"
 import { IconResponseInterface } from "../../../Response/Icons/IconResponseInterface"
+import StateResponseInterface from "../../../Response/State/StateResponseInterface"
 
 export interface CurrentUserSelections {
     icons: IconResponseInterface
