@@ -26,7 +26,6 @@ class DeviceResponseDTOBuilder
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         SensorResponseDTOBuilder $getSensorReadingTypeHandler,
-        DeviceVoter $deviceVoter,
         Security $security,
     ) {
         $this->sensorRepository = $sensorRepository;
@@ -34,29 +33,22 @@ class DeviceResponseDTOBuilder
         $this->security = $security;
     }
 
-    public static function buildDeviceResponseDTO(
+    public function buildDeviceResponseDTOWithDevicePermissions(
         Devices $device,
         array $sensorReadingTypeDTOs = [],
     ): DeviceResponseDTO {
-        return new DeviceResponseDTO(
-            $device->getDeviceID(),
-            $device->getDeviceName(),
-            $device->getDeviceSecret(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
-            RoomResponseDTOBuilder::buildRoomResponseDTO($device->getRoomObject()),
-            $device->getIpAddress(),
-            $device->getExternalIpAddress(),
-            $device->getRoles(),
+        return self::buildDeviceResponseDTO(
+            $device,
             $sensorReadingTypeDTOs,
-//            $this->security->isGranted(DeviceVoter::UPDATE_DEVICE,
-//                    DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
-//                        new DeviceUpdateRequestDTO(),
-//                        $device,
-//                        $device->getRoomObject(),
-//                        $device->getGroupObject(),
-//                    )
-//            ),
-//            $this->security->isGranted(DeviceVoter::DELETE_DEVICE, $device),
+            $this->security->isGranted(DeviceVoter::UPDATE_DEVICE,
+                DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
+                    new DeviceUpdateRequestDTO(),
+                    $device,
+                    $device->getRoomObject(),
+                    $device->getGroupObject(),
+                )
+            ),
+            $this->security->isGranted(DeviceVoter::DELETE_DEVICE, $device),
         );
     }
 
@@ -71,9 +63,30 @@ class DeviceResponseDTOBuilder
             }
         }
 
-        return self::buildDeviceResponseDTO(
+        return $this->buildDeviceResponseDTOWithDevicePermissions(
             $device,
             $sensorResponseDTOs ?? [],
+        );
+    }
+
+    public static function buildDeviceResponseDTO(
+        Devices $device,
+        array $sensorReadingTypeDTOs = [],
+        ?bool $canUpdate = null,
+        ?bool $canDelete = null,
+    ): DeviceResponseDTO {
+        return new DeviceResponseDTO(
+            $device->getDeviceID(),
+            $device->getDeviceName(),
+            $device->getDeviceSecret(),
+            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
+            RoomResponseDTOBuilder::buildRoomResponseDTO($device->getRoomObject()),
+            $device->getIpAddress(),
+            $device->getExternalIpAddress(),
+            $device->getRoles(),
+            $sensorReadingTypeDTOs,
+            $canUpdate,
+            $canDelete,
         );
     }
 }

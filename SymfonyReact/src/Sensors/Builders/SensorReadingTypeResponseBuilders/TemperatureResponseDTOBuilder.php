@@ -6,7 +6,6 @@ use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\TemperatureResponseDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Temperature;
 
 class TemperatureResponseDTOBuilder implements StandardSensorResponseDTOBuilderInterface
 {

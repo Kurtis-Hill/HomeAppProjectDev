@@ -81,7 +81,7 @@ class GetDeviceController extends AbstractController
 
         $deviceDTOs = [];
         foreach ($devices as $device) {
-            $deviceDTOs[] = $deviceResponseDTOBuilder::buildDeviceResponseDTO($device);
+            $deviceDTOs[] = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($device);
         }
 
         try {

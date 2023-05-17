@@ -20,7 +20,9 @@ readonly class SensorResponseDTO
         private DeviceResponseDTO $device,
         private SensorTypeResponseDTO $sensorType,
         #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
-        private array $sensorReadingTypes = []
+        private array $sensorReadingTypes = [],
+        private ?bool $canEdit = null,
+        private ?bool $canDelete = null,
     ) {
     }
 
@@ -80,5 +82,27 @@ readonly class SensorResponseDTO
     public function getSensorReadingTypes(): array
     {
         return $this->sensorReadingTypes;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanEdit(): ?bool
+    {
+        return $this->canEdit;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanDelete(): ?bool
+    {
+        return $this->canDelete;
     }
 }

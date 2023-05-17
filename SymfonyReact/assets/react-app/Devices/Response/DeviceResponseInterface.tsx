@@ -13,6 +13,6 @@ export interface DeviceResponseInterface {
     secret?: string|null,
     roles?: string[],
     sensorData?: SensorResponseInterface,
-    canEdit: boolean,
-    canDelete: boolean,
+    canEdit?: boolean,
+    canDelete?: boolean,
 }

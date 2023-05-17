@@ -210,7 +210,7 @@ export function UpdateDevice(props: {
             return (
                 <>
                     <Label 
-                        classes='form-inline font-size-1-5 hover padding-r-1 display-block-important'
+                        classes={`form-inline font-size-1-5 ${deviceData.canEdit ? 'hover' : null }hover padding-r-1 display-block-important`}
                         text={'Device Group:'}
                     />
                     <DotCircleSpinner classes="center-spinner-inline"/>
@@ -245,7 +245,7 @@ export function UpdateDevice(props: {
             return (
                 <>
                     <Label 
-                        classes='form-inline font-size-1-5 hover padding-r-1 display-block-important'
+                        classes={`form-inline font-size-1-5 ${deviceData.canEdit ? 'hover' : null } padding-r-1 display-block-important`}
                         text={'Device Room:'}
                     />
                     <DotCircleSpinner classes="center-spinner-inline" />
@@ -303,6 +303,7 @@ export function UpdateDevice(props: {
                                             spanInnerTag={deviceData.deviceName}
                                             clickEvent={(e: Event) => toggleFormInput(e)}
                                             dataName={'deviceName'}
+                                            canEdit={deviceData.canEdit}
                                         />
                             }
                         </div>
@@ -319,6 +320,7 @@ export function UpdateDevice(props: {
                                         spanInnerTag={deviceUpdateFormInputs.deviceGroupName}
                                         clickEvent={(e: Event) => toggleFormInput(e)}
                                         dataName={'deviceGroup'}
+                                        canEdit={deviceData.canEdit}
                                     />
                         } 
                     </div>
@@ -335,13 +337,20 @@ export function UpdateDevice(props: {
                                         spanInnerTag={deviceUpdateFormInputs.deviceRoomName}
                                         clickEvent={(e: Event) => toggleFormInput(e)}
                                         dataName={'deviceRoom'}
+                                        canEdit={deviceData.canEdit}
                                     />
                         }
                     </div>
-                    <DeleteDevice
-                        deviceID={deviceData.deviceID}
-                        deviceName={deviceData.deviceName}
-                    />
+                    {
+                        deviceData.canDelete === true
+                            ?
+                                <DeleteDevice
+                                    deviceID={deviceData.deviceID}
+                                    deviceName={deviceData.deviceName}
+                                />
+                            :
+                                null
+                    }
                 </form>
         </>
     )

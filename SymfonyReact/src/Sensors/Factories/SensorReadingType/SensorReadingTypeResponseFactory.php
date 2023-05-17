@@ -11,6 +11,7 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 
 class SensorReadingTypeResponseFactory
@@ -27,7 +28,7 @@ class SensorReadingTypeResponseFactory
         AnalogResponseDTOBuilder $analogResponseDTOBuilder,
         HumidityResponseDTOBuilder $humidityResponseBuilder,
         TemperatureResponseDTOBuilder $temperatureResponseBuilder,
-        LatitudeResponseDTOBuilder $latitudeResponseBuilder
+        LatitudeResponseDTOBuilder $latitudeResponseBuilder,
     ) {
         $this->analogResponseDTOBuilder = $analogResponseDTOBuilder;
         $this->humidityResponseBuilder = $humidityResponseBuilder;
@@ -36,7 +37,7 @@ class SensorReadingTypeResponseFactory
     }
 
     /**
-     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorReadingTypeRepositoryFactoryException|SensorReadingTypeObjectNotFoundException
      */
     public function getSensorReadingTypeDTOResponseBuilder(string $readingType): StandardSensorResponseDTOBuilderInterface
     {
@@ -45,7 +46,7 @@ class SensorReadingTypeResponseFactory
             Humidity::getReadingTypeName() => $this->humidityResponseBuilder,
             Temperature::getReadingTypeName() => $this->temperatureResponseBuilder,
             Latitude::READING_TYPE => $this->latitudeResponseBuilder,
-            default => throw new SensorReadingTypeRepositoryFactoryException(
+            default => throw new SensorReadingTypeObjectNotFoundException(
                 sprintf(
                     SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND,
                     $readingType

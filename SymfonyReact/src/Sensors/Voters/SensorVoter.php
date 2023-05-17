@@ -92,13 +92,13 @@ class SensorVoter extends Voter
         return true;
     }
 
-    private function canUpdateSensorBoundaryReading(UserInterface $user, Devices $devices): bool
+    private function canUpdateSensorBoundaryReading(UserInterface $user, Sensor $sensor): bool
     {
         if (!$user instanceof User) {
             return false;
         }
 
-        if (!in_array($devices->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 

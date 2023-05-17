@@ -93,7 +93,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensorObject->getDevice());
+            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensorObject);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }

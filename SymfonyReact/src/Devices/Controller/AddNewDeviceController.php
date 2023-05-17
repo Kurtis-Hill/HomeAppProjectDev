@@ -109,7 +109,7 @@ class AddNewDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
         }
 
-        $newDeviceResponseDTO = DeviceResponseDTOBuilder::buildDeviceResponseDTO($device);
+        $newDeviceResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($device);
         try {
             $response = $this->normalizeResponse($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {

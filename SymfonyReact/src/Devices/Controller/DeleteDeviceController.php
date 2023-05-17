@@ -46,7 +46,7 @@ class DeleteDeviceController extends AbstractController
         Devices $deviceToDelete,
         Request $request,
         DeleteDeviceServiceInterface $deleteDeviceBuilder,
-        //DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);
@@ -71,7 +71,7 @@ class DeleteDeviceController extends AbstractController
         }
 
         $deviceToDelete->setDeviceID($deviceDeletedID);
-        $deviceDTO = DeviceResponseDTOBuilder::buildDeviceResponseDTO($deviceToDelete);
+        $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToDelete);
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
