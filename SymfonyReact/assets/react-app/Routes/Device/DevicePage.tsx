@@ -5,15 +5,20 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Context } from 'react';
 import {  useOutletContext  } from "react-router-dom";
 
-import { getDeviceRequest, DeviceResponseInterface } from '../../Devices/Request/GetDeviceRequest';
+import { getDeviceRequest } from '../../Devices/Request/GetDeviceRequest';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
 import { UpdateDevice } from '../../Devices/Components/UpdateDevice/UpdateDevice';
 import { AxiosError } from 'axios';
 import { indexUrl } from '../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
 import { ResponseTypeFull } from '../../Common/API/APIResponseType';
+import { UpdateSensors } from '../../Sensors/Components/SensorUpdate/UpdateSensors';
+import { DeviceResponseInterface } from '../../Devices/Response/DeviceResponseInterface';
+import { TabSelector } from '../../Common/Components/TabSelector';
 
 export function DevicePage() {
+    const tabOptions = ['Device', 'Sensors', 'Commands'];
+
     const { setRefreshNavbar } = useMainIndicators();
 
     const params = useParams();
@@ -24,13 +29,17 @@ export function DevicePage() {
 
     const [deviceLoading, setDeviceLoading] = useState<boolean>(true);
 
+    const [currentTab, setCurrentTab] = useState<string>(tabOptions[0]);
+
     const navigate: NavigateFunction = useNavigate();
+
 
     const getDeviceData = async () => {
         try {
             const getDeviceResponse = await getDeviceRequest(deviceID, ResponseTypeFull);
             const deviceData: DeviceResponseInterface = getDeviceResponse.data.payload;
             setDeviceData(deviceData);
+            console.log('deviceData', deviceData);
         } catch (error) {
             const err = error as AxiosError
             if (err.response?.status === 404) {
@@ -52,23 +61,36 @@ export function DevicePage() {
     return (
         <>
             <div className="container" style={{ textAlign: "center", margin: "inherit"}}>
-                <div className="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label className="btn btn-secondary active">
-                        <input type="radio" name="options" id="option1" autoComplete="off" defaultChecked /> Device
-                    </label>
-                    <label className="btn btn-secondary">
-                        <input type="radio" name="options" id="option2" autoComplete="off" /> Sensors
-                    </label>
-                    <label className="btn btn-secondary">
-                        <input type="radio" name="options" id="option3" autoComplete="off" /> Commands
-                    </label>
-                </div>
-
-                <UpdateDevice
-                    setDeviceData={setDeviceData}
-                    setRefreshNavbar={setRefreshNavbar}
-                    deviceData={deviceData}
+                <TabSelector
+                    options={tabOptions}
+                    currentTab={currentTab}
+                    setCurrentTab={setCurrentTab}
                 />
+                {
+                    currentTab === tabOptions[0]
+                        ? 
+                            <UpdateDevice
+                                setDeviceData={setDeviceData}
+                                setRefreshNavbar={setRefreshNavbar}
+                                deviceData={deviceData}
+                            />
+                        :
+                            null
+                }
+                {
+                    currentTab === tabOptions[1]
+                        ?
+                            <UpdateSensors sensorData={deviceData.sensorData} />
+                        :
+                            null
+                }
+                {
+                    currentTab === tabOptions[2]
+                        ?
+                            <h1>Commands</h1>
+                        :
+                            null
+                }
             </div>
         </>
     );

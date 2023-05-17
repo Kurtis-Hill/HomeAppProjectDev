@@ -41,7 +41,7 @@ class GetSingleSensorsController extends AbstractController
     public function getSingleSensor(Sensor $sensor, Request $request, GetSensorReadingTypeHandler $getSensorReadingTypeHandler): JsonResponse
     {
         try {
-            $this->denyAccessUnlessGranted(SensorVoter::GET_SINGLE_SENSOR, $sensor);
+            $this->denyAccessUnlessGranted(SensorVoter::GET_SENSOR, $sensor);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }

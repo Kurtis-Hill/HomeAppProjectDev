@@ -10,6 +10,7 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,8 @@ class GetSensorTypesController extends AbstractController
     use HomeAppAPITrait;
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {

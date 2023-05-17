@@ -16,8 +16,3 @@ export async function getAllUserGroupsRequest(responseType?: string) {
         throw new Error('Something went wrong');
     }
 }
-
-export interface GroupResponseInterface {
-    groupID: number
-    groupName: string
-}

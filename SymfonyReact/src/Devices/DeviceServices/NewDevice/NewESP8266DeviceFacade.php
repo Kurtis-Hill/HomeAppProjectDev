@@ -28,12 +28,12 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
      */
     public function processAddDeviceObjects(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {
-        $groupObject = $this->groupRepository->findOneById($newDeviceRequestDTO->getDeviceGroup());
+        $groupObject = $this->groupRepository->find($newDeviceRequestDTO->getDeviceGroup());
         if (!$groupObject instanceof Group) {
             throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
         }
 
-        $roomObject = $this->roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
+        $roomObject = $this->roomRepository->find($newDeviceRequestDTO->getDeviceRoom());
         if (!$roomObject instanceof Room) {
             throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $newDeviceRequestDTO->getDeviceRoom()));
         }
@@ -95,7 +95,6 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         }
 
         if (empty($userErrors)) {
-            // $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
             $newDevice->setDeviceSecret($newDevice->getPassword());
             $newDevice->setRoles([Devices::ROLE]);
         }

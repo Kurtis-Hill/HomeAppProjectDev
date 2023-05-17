@@ -110,7 +110,7 @@ class DeviceVoter extends Voter
         return $checkCommon ?? true;
     }
 
-    public function canGetDevice(UserInterface $user, Devices $devices): bool
+    private function canGetDevice(UserInterface $user, Devices $devices): bool
     {
         $checkCommon = $this->checkCommon(
             $user,

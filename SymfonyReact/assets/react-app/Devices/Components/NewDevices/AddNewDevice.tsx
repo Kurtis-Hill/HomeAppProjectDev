@@ -186,62 +186,62 @@ export function AddNewDevice(props: {
                         <>
                             {/* {userData.refreshAllUserData()} */}
                             {/* {userData.handleUserDataRequest()} */}
-                            <div className="form-group">
-                                <label className="large font-weight-bold" htmlFor="deviceGroup">Device Group</label>
-                                <select
-                                    className="form-control"
-                                    name="deviceGroup"
-                                    id="deviceGroup"
-                                    value={addNewDeviceUserInputs.deviceGroup}
-                                    onChange={handleAddNewDeviceInput}
-                                >
-                                    <option value="0">Select a group</option>
-                                    {
-                                        userData && userData.userGroups.length > 0 
-                                            ? 
-                                                userData.userGroups.map((group: GroupResponseInterface, index: number) => (
-                                                    <option key={index} value={group.groupID}>{group.groupName}</option>
-                                                )) 
-                                            : 
-                                                null
-                                    }
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label className="large font-weight-bold" htmlFor="deviceRoom">Device Room</label>
-                                <select
-                                    className="form-control"
-                                    name="deviceRoom"
-                                    id="deviceRoom"
-                                    value={addNewDeviceUserInputs.deviceRoom}
-                                    onChange={handleAddNewDeviceInput}
-                                >
-                                    <option value="0">Select a room</option>
-                                    {
-                                        userData && userData.userRooms.length > 0
-                                            ?
-                                                userData.userRooms.map((room: RoomNavbarResponseInterface, index: number) => (
-                                                    <option key={index} value={room.roomID}>{room.roomName}</option>
-                                                ))
-                                            :
-                                                null
-                                    }
-                                </select>
-                            </div>
-                            { 
-                                deviceRequestLoading === false && newDeviceAddedData === null
-                                    ?
-                                        <SubmitButton
-                                            type="submit"
-                                            text="Add Device"
-                                            name="Add-Device"
-                                            action="POST"
-                                            classes="add-new-device-submit-button"
-                                        />
-                                    :
-                                        null
-                            }
-                        </>
+                <div className="form-group">
+                    <label className="large font-weight-bold" htmlFor="deviceGroup">Device Group</label>
+                    <select
+                        className="form-control"
+                        name="deviceGroup"
+                        id="deviceGroup"
+                        value={addNewDeviceUserInputs.deviceGroup}
+                        onChange={handleAddNewDeviceInput}
+                    >
+                        <option value="0">Select a group</option>
+                        {
+                            userData && userData.userGroups.length > 0 
+                                ? 
+                                    userData.userGroups.map((group: GroupResponseInterface, index: number) => (
+                                        <option key={index} value={group.groupID}>{group.groupName}</option>
+                                    )) 
+                                : 
+                                    null
+                        }
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label className="large font-weight-bold" htmlFor="deviceRoom">Device Room</label>
+                    <select
+                        className="form-control"
+                        name="deviceRoom"
+                        id="deviceRoom"
+                        value={addNewDeviceUserInputs.deviceRoom}
+                        onChange={handleAddNewDeviceInput}
+                    >
+                        <option value="0">Select a room</option>
+                        {
+                            userData && userData.userRooms.length > 0
+                                ?
+                                    userData.userRooms.map((room: RoomNavbarResponseInterface, index: number) => (
+                                        <option key={index} value={room.roomID}>{room.roomName}</option>
+                                    ))
+                                :
+                                    null
+                        }
+                    </select>
+                </div>
+                { 
+                    deviceRequestLoading === false && newDeviceAddedData === null
+                        ?
+                            <SubmitButton
+                                type="submit"
+                                text="Add Device"
+                                name="Add-Device"
+                                action="submit"
+                                classes="add-new-device-submit-button"
+                            />
+                        :
+                            null
+                }
+            </>
                     {/* )} 
                 </UserDataContext.Consumer> */}
 

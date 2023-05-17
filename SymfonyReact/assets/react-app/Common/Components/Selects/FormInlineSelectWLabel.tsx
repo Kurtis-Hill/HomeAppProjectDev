@@ -35,6 +35,7 @@ export function FormInlineSelectWLabel(
             <Label 
                 classes='form-inline font-size-1-5 hover padding-r-1 display-block-important'
                 text={labelName}
+                
             />
             <div className="form-group">
             <select name={selectName} defaultValue={selectDefaultValue} className="form-control" onChange={(e: Event) => changeEvent(e)}>
@@ -47,6 +48,7 @@ export function FormInlineSelectWLabel(
                         }
                     </select>
             </div>
+            <span style={{ paddingLeft: "2%" }}></span>
             <AcceptButton clickEvent={(e: Event) => acceptClickEven(e)} dataName={acceptDeclineDataName} />
             <DeclineButton clickEvent={(e: Event) => declineClickEvent(e)} dataName={acceptDeclineDataName} />
         </>

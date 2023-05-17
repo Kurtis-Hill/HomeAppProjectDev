@@ -7,9 +7,9 @@ import { CardFilterBarInterface } from './CardFilterBarInterface';
 import SmallWhiteBoxDisplay from '../../../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
 import CardFilterButton from '../Buttons/CardFilterButton';
 import { SensorDataContextDataInterface } from '../../../../Sensors/DataProviders/SensorDataProvider';
-import { SensorReadingTypeResponseInterface } from '../../../../Sensors/ReadingType/Response/SensorReadingTypeResponseInterface';
 import { SensorTypeResponseInterface } from '../../../../Sensors/SensorType/Response/SensorTypeResponseInterface';
 import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
+import ReadingTypeResponseInterface from '../../../../Sensors/ReadingType/Response/ReadingTypeResponseInterface';
 
 export default function CardFilterBar(props: {
     filterParams: CardFilterBarInterface|[]; 
@@ -85,7 +85,7 @@ export default function CardFilterBar(props: {
                                 <div className="col">
                                     <span className="one-line-text">Reading types</span>
                                     {
-                                        sensorData.sensorReadingTypeData.map((sensorReadingType: SensorReadingTypeResponseInterface, index: Number) => (
+                                        sensorData.readingTypes.map((sensorReadingType: ReadingTypeResponseInterface, index: Number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
                                                     <input onChange={handleClick} defaultChecked type="checkbox" name={readingTypesString} value={sensorReadingType.readingTypeName} />

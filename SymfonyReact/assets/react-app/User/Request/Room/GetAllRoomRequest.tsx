@@ -4,7 +4,7 @@ import { apiURL } from '../../../Common/URLs/CommonURLs';
 
 export async function getAllRoomRequest(): Promise<AxiosResponse> {
     const getAllRoomResponse: AxiosResponse = await axios.get(
-        `${apiURL}user-rooms/get-all`,
+        `${apiURL}user-rooms/all`,
     );
 
     return getAllRoomResponse;

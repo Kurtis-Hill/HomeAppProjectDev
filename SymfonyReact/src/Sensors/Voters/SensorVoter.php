@@ -16,13 +16,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SensorVoter extends Voter
 {
-    private DeviceRepositoryInterface $deviceRepository;
-
-    public function __construct(DeviceRepositoryInterface $deviceRepository)
-    {
-        $this->deviceRepository = $deviceRepository;
-    }
-
     public const ADD_NEW_SENSOR = 'add-new-sensor';
 
     public const UPDATE_SENSOR_READING_BOUNDARY = 'update-sensor-boundary-reading';
@@ -33,7 +26,7 @@ class SensorVoter extends Voter
 
     public const UPDATE_SENSOR = 'update-sensor';
 
-    public const GET_SINGLE_SENSOR = 'get-single-sensor';
+    public const GET_SENSOR = 'get-single-sensor';
 
     /**
      * @param string $attribute
@@ -48,7 +41,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR_CURRENT_READING,
             self::DELETE_SENSOR,
             self::UPDATE_SENSOR,
-            self::GET_SINGLE_SENSOR
+            self::GET_SENSOR
         ])) {
             return false;
         }
@@ -72,7 +65,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
-            self::GET_SINGLE_SENSOR => $this->canGetSingleSensor($user, $subject),
+            self::GET_SENSOR => $this->canGetSensor($user, $subject),
             default => false
         };
     }
@@ -167,7 +160,7 @@ class SensorVoter extends Voter
         return true;
     }
 
-    public function canGetSingleSensor(UserInterface $user, Sensor $sensor): bool
+    public function canGetSensor(UserInterface $user, Sensor $sensor): bool
     {
         if (!$user instanceof User) {
             return false;

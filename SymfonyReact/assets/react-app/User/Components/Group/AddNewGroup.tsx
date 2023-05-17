@@ -3,12 +3,11 @@ import { useState } from 'react';
 
 import { addNewGroupRequest } from '../../Request/Group/AddNewGroupRequest';
 import AddNewGroupUserInputInterface from './AddNewGroupUserInputInterface';
-import GroupResponseInterface from '../../Request/Group/GroupResponseInterface';
-
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
+import GroupResponseInterface from '../../Response/Group/GroupResponseInterface';
 
 export function AddNewGroup(props: {
     setAddNewGroupModal: ((show: boolean) => void);
@@ -25,6 +24,7 @@ export function AddNewGroup(props: {
 
     const [groupRequestLoading, setGroupRequestLoading] = useState<boolean>(false);
 
+    // const [newGroupAddData, setNewGroupAddedData] = useState<GroupResponseInterface|null>(null);
     const [newGroupAddData, setNewGroupAddedData] = useState<GroupResponseInterface|null>(null);
 
     const handleAddNewGroupInput = (event: Event) => {

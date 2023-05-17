@@ -9,7 +9,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 
-class AbstractReadingTypeBuilder
+abstract class AbstractReadingTypeBuilder
 {
     protected SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory;
 

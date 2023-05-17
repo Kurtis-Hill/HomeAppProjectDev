@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { AnnouncementFlashModal, AnnouncementFlashModalInterface } from "../../Components/Modals/AnnouncementFlashModal";
-import { ResponseInterceptor } from '../Axios/ErrorResponseInterceptor';
+import { AnnouncementFlashModal, AnnouncementFlashModalInterface } from "../Modals/AnnouncementFlashModal";
+import { ResponseInterceptor } from '../../Request/Axios/ErrorResponseInterceptor';
 import { AnnouncementFlashModalBuilder } from '../../Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { useState, useEffect } from 'react';
 

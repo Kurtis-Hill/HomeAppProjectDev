@@ -74,10 +74,9 @@ class UpdateDeviceControllerTest extends WebTestCase
             sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
             implode(',', $requestData)
         );
-
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -338,7 +337,6 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
             $jsonPayload
         );
-
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,
@@ -402,6 +400,8 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
         self::assertEquals($newPassword, $responseData['payload']['secret']);
+        //self::assertEquals(true, $responseData['payload']['canEdit']);
+        //self::assertEquals(true, $responseData['payload']['canDelete']);
     }
 
     public function test_admin_can_update_device_is_apart_of(): void

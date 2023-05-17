@@ -3,7 +3,7 @@ import RoomResponseInterface from "../../User/Response/Room/RoomResponseInterfac
 import SensorResponseInterface from '../../Sensors/Sensor/Response/SensorResponseInterface';
 
 export interface DeviceResponseInterface {
-    deviceNameID?: number,
+    deviceID?: number,
     deviceName: string,
     ipAddress: string|null,
     externalIpAddress: string|null,
@@ -13,4 +13,6 @@ export interface DeviceResponseInterface {
     secret?: string|null,
     roles?: string[],
     sensorData?: SensorResponseInterface,
+    canEdit: boolean,
+    canDelete: boolean,
 }

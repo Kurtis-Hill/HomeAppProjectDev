@@ -13,7 +13,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AbstractESPDeviceService
+abstract class AbstractESPDeviceService
 {
     use ValidatorProcessorTrait;
 

@@ -7,7 +7,7 @@ import { CardReadingFactoryInterface } from '../../Factories/CardReadingFactory'
 export default function CardCurrentReadingBuilder(
     props: CardReadingFactoryInterface
 ): React.ReactElement {
-    console.log('card current reading builders')
+    // console.log('card current reading builders')
     const cardData: CardSensorDataResponseInterface = props.cardData;
 
     return (

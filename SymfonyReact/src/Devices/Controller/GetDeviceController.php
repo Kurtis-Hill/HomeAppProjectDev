@@ -43,8 +43,11 @@ class GetDeviceController extends AbstractController
     }
 
     #[Route('all', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
-    public function getAllDevices(Request $request, DevicesForUserInterface $getDevicesForUser, ValidatorInterface $validator): Response
-    {
+    public function getAllDevices(
+        Request $request,
+        DevicesForUserInterface $getDevicesForUser,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+    ): Response {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
@@ -76,7 +79,11 @@ class GetDeviceController extends AbstractController
             $getDeviceDTO,
         );
 
-        $deviceDTOs = $getDevicesForUser->handleDeviceResponseDTOCreation($devices);
+        $deviceDTOs = [];
+        foreach ($devices as $device) {
+            $deviceDTOs[] = $deviceResponseDTOBuilder::buildDeviceResponseDTO($device);
+        }
+
         try {
             $normalizedResponse = $this->normalizeResponse($deviceDTOs);
         } catch (ExceptionInterface $e) {
@@ -102,8 +109,8 @@ class GetDeviceController extends AbstractController
     }
 
     #[Route(
-        '{deviceID}',
-        name: 'get-user-devices-single',
+        '{deviceID}/get',
+        name: 'get-user-device-single',
         methods: [Request::METHOD_GET]
     )]
     public function getDeviceByID(

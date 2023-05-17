@@ -5,12 +5,12 @@ import { sensorTypesRequest as sensorTypesRequest } from '../SensorType/Request/
 import { sensorReadingTypesRequest } from '../ReadingType/Request/GetSensorReadingTypeRequest';
 
 import { SensorTypeResponseInterface } from '../SensorType/Response/SensorTypeResponseInterface';
-import { SensorReadingTypeResponseInterface } from '../ReadingType/Response/SensorReadingTypeResponseInterface';
 
 import SensorDataContext from '../Contexts/SensorDataContext';
+import ReadingTypeResponseInterface from '../ReadingType/Response/ReadingTypeResponseInterface';
 
 export function SensorDataContextProvider({ children }) {
-    const [sensorReadingTypeData, setSensorReadingTypeData] = useState<SensorReadingTypeResponseInterface[]|[]>([]);
+    const [readingTypeData, setReadingTypeData] = useState<ReadingTypeResponseInterface[]|[]>([]);
     
     const [sensorTypes, setSensorTypes] = useState<SensorTypeResponseInterface[]|[]>([]);
     
@@ -20,10 +20,11 @@ export function SensorDataContextProvider({ children }) {
 
     const handleSensorDataRequest = async () => {
         console.log('handleSensorDataRequest');
-        if (sensorReadingTypeData.length === 0) {             
-            const sensorReadingTypes = await sensorReadingTypesRequest();
+        if (readingTypeData.length === 0) {             
+            const sensorReadingTypes: ReadingTypeResponseInterface[] = await sensorReadingTypesRequest();
             if (sensorReadingTypes !== null) {
-                setSensorReadingTypeData(sensorReadingTypes);
+                console.log('here we are', sensorReadingTypes);
+                setReadingTypeData(sensorReadingTypes);
             } 
         }
         if (sensorTypes.length === 0) {
@@ -38,7 +39,7 @@ export function SensorDataContextProvider({ children }) {
         <SensorDataContext.Provider value={ 
             {
                 sensorTypes,
-                sensorReadingTypeData
+                readingTypes: readingTypeData
             }
         }
         >
@@ -49,5 +50,5 @@ export function SensorDataContextProvider({ children }) {
 
 export interface SensorDataContextDataInterface {
     sensorTypes: SensorTypeResponseInterface[]|[];
-    sensorReadingTypeData: SensorReadingTypeResponseInterface[]|[];
+    readingTypes: ReadingTypeResponseInterface[]|[];
 }

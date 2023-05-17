@@ -34,7 +34,7 @@ export function FormInlineInputWLabel(props: {
                 labelExtraClasses='form-inline font-size-1-5 padding-r-1 display-block-important'
                 extraClasses=''
             />
-            <span>
+            <span style={{ paddingLeft: "2%" }}>
                 <AcceptButton clickEvent={(e: Event) => acceptClickEvent(e)} dataName={dataName} />
                 <DeclineButton clickEvent={(e: Event) => declineClickEvent(e)} dataName={dataName} />
             </span>

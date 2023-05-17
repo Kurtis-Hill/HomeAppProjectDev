@@ -69,7 +69,6 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                     window.location.replace(`${loginUrl}`)
                 }
                 
-            console.log('its an error', error.response.data)
             if (typeof error.response.data === 'object' &&  "errors" in error.response.data) {
                 const errorResponse: ErrorResponseInterface = error.response.data as ErrorResponseInterface;
                 const errorsForModal: Array<string> = errorResponse.errors;

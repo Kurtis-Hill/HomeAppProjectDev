@@ -4,8 +4,6 @@ import {  useOutletContext  } from "react-router-dom";
 import { CardRowContainer } from '../../UserInterface/Cards/Components/CardRowContainer';
 
 export function CardLandingPage() {
-    const [setRefreshNavDataFlag, showErrorAnnouncementFlash]: Context<Array<(newValue: boolean) => void>> = useOutletContext();
-
     return (
         <React.Fragment>
             <div id="content-wrapper" className="d-flex flex-column">

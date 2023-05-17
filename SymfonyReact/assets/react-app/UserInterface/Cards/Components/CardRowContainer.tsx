@@ -7,7 +7,6 @@ import { sensorType, readingType } from '../../../Common/SensorLanguage'
 import CardFilterBar from './Filterbars/CardFilterBar';
 import { CardDisplayModal } from './Modal/CardDisplayModal';
 
-
 export function CardRowContainer(props: { 
     route?: string;
     filterParams?: CardFilterBarInterface;
@@ -24,9 +23,6 @@ export function CardRowContainer(props: {
 
     const [loadingCardModalView, setLoadingCardModalView] = useState<boolean>(false);
     
-    const [showCardModal, setShowCardModal] = useState<boolean>(false);
-
-
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
         
@@ -42,13 +38,23 @@ export function CardRowContainer(props: {
         if (filterParam.type === readingType) {
             const readingTypes: string[] = sensorFilterParams.readingTypes;
             if (Array.isArray(readingTypes) && readingTypes.includes(filterParam.value, sensorFilterParams)) {
-                setSensorFilterParams({...sensorFilterParams, readingTypes: readingTypes.filter(readingType => readingType !== filterParam.value)});
+                setSensorFilterParams({
+                    ...sensorFilterParams, 
+                    readingTypes: readingTypes.filter((readingType: string) => {
+                        readingType !== filterParam.value
+                    })
+                });
             }
         }
         if (filterParam.type === sensorType) {
             const sensorTypes: string[] = sensorFilterParams.sensorTypes;
             if (Array.isArray(sensorTypes) && sensorTypes.includes(filterParam.value, sensorFilterParams)) {
-                setSensorFilterParams({...sensorFilterParams, sensorTypes: sensorTypes.filter((sensorType: string) => sensorType !== filterParam.value)});
+                setSensorFilterParams({
+                    ...sensorFilterParams, 
+                    sensorTypes: sensorTypes.filter((sensorType: string) => {
+                        sensorType !== filterParam.value
+                    })
+                });
             }
         }
     };
@@ -85,15 +91,11 @@ export function CardRowContainer(props: {
                         />
             }
             {
-                showCardModal === true
-                    ?
-                        <CardDisplayModal
-                            cardViewID={selectedCardForQuickUpdate}
-                            loadingCardModalView={loadingCardModalView}
-                            setLoadingCardModalView={setLoadingCardModalView}
-                        />
-                    :
-                        null
+                <CardDisplayModal
+                    cardViewID={selectedCardForQuickUpdate}
+                    loadingCardModalView={loadingCardModalView}
+                    setLoadingCardModalView={setLoadingCardModalView}
+                />
             }
         </>
     );

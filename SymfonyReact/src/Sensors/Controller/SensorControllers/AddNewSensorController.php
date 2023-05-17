@@ -61,6 +61,7 @@ class AddNewSensorController extends AbstractController
         ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,
         DeleteSensorHandlerInterface $deleteSensorService,
+        //SensorResponseDTOBuilder $sensorResponseDTOBuilder,
     ): JsonResponse {
         $newSensorRequestDTO = new AddNewSensorRequestDTO();
         try {

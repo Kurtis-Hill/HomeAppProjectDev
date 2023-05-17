@@ -10,7 +10,6 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
-use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use Psr\Log\LoggerInterface;
@@ -47,6 +46,7 @@ class DeleteDeviceController extends AbstractController
         Devices $deviceToDelete,
         Request $request,
         DeleteDeviceServiceInterface $deleteDeviceBuilder,
+        //DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);

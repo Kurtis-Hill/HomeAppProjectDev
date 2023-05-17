@@ -26,6 +26,8 @@ readonly class DeviceResponseDTO
         private ?string $externalIpAddress,
         private array $roles,
         private array $sensorData,
+       // private ?bool $canEdit = false,
+        //private ?bool $canDelete = false,
     ) {
     }
 
@@ -123,4 +125,26 @@ readonly class DeviceResponseDTO
     {
         return $this->sensorData;
     }
+
+//    #[Groups([
+//        RequestTypeEnum::FULL->value,
+//        RequestTypeEnum::ONLY->value,
+//        RequestTypeEnum::SENSITIVE_FULL->value,
+//        RequestTypeEnum::SENSITIVE_ONLY->value,
+//    ])]
+//    public function getCanEdit(): bool
+//    {
+//        return $this->canEdit;
+//    }
+//
+//    #[Groups([
+//        RequestTypeEnum::FULL->value,
+//        RequestTypeEnum::ONLY->value,
+//        RequestTypeEnum::SENSITIVE_FULL->value,
+//        RequestTypeEnum::SENSITIVE_ONLY->value,
+//    ])]
+//    public function getCanDelete(): bool
+//    {
+//        return $this->canDelete;
+//    }
 }

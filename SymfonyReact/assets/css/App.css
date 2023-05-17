@@ -13,6 +13,14 @@
     display: table;
 }
 
+.center-spinner-inline {
+    margin: 1%;
+    display: block;
+    text-align: center;
+    /* overflow: auto; */
+    display: table;
+}
+
 .center-spinner-card-row {
     margin: auto;
     display: block;

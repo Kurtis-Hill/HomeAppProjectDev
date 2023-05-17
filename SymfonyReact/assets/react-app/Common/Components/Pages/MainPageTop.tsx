@@ -6,12 +6,11 @@ import {
 
 import Navbar from "../../../UserInterface/Navbar/Components/Navbar";
 
-import { RequestInterceptor } from "../../Request/Axios/RequestInterceptor";
-
 import { SensorDataContextProvider } from "../../../Sensors/DataProviders/SensorDataProvider";
 
 import { UserDataContextProvider } from '../../../User/DataProviders/UserDataContextProvider';
-import { ResponseComponent } from "../../Request/Interceptors/ResponseComponent";
+import { ResponseComponent } from "../Response/ResponseComponent";
+import { RequestInterceptor } from '../../Request/Axios/RequestInterceptor';
 
 type ContextType = {
      setRefreshNavbar: (newValue: boolean) => void | null;
@@ -58,4 +57,4 @@ export function MainPageTop() {
 
 export function useMainIndicators() {
     return useOutletContext<ContextType>();
-  }
+}

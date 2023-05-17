@@ -14,7 +14,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class AbstractNewReadingTypeBuilder
+abstract class AbstractNewReadingTypeBuilder
 {
     private TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder;
 

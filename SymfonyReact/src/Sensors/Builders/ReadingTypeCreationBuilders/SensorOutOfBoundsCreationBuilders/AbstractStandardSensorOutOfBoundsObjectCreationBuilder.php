@@ -5,7 +5,7 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCrea
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 
-class AbstractStandardSensorOutOfBoundsObjectCreationBuilder
+abstract class AbstractStandardSensorOutOfBoundsObjectCreationBuilder
 {
     protected function buildStandardOutOfBoundObject(
         StandardReadingSensorInterface $sensorReadingObject,

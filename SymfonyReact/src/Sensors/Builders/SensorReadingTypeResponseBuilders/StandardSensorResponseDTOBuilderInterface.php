@@ -8,5 +8,4 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 interface StandardSensorResponseDTOBuilderInterface
 {
     public function buildSensorReadingTypeResponseDTO(StandardReadingSensorInterface $analog): StandardReadingTypeResponseInterface;
-
 }

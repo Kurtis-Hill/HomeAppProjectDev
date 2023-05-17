@@ -16,9 +16,4 @@ interface DevicesForUserInterface
         User $user,
         GetDeviceDTO $getDeviceDTO,
     ): array;
-
-    /**
-     * @param Devices[] $devices
-     */
-    public function handleDeviceResponseDTOCreation(array $devices): array;
 }

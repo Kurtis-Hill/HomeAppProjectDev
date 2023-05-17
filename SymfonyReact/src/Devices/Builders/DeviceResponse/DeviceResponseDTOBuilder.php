@@ -3,13 +3,17 @@
 namespace App\Devices\Builders\DeviceResponse;
 
 use App\Common\Services\RequestTypeEnum;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
+use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Devices\Entity\Devices;
+use App\Devices\Voters\DeviceVoter;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class DeviceResponseDTOBuilder
 {
@@ -17,12 +21,17 @@ class DeviceResponseDTOBuilder
 
     private SensorResponseDTOBuilder $sensorResponseDTOBuilder;
 
+    private Security $security;
+
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         SensorResponseDTOBuilder $getSensorReadingTypeHandler,
+        DeviceVoter $deviceVoter,
+        Security $security,
     ) {
         $this->sensorRepository = $sensorRepository;
         $this->sensorResponseDTOBuilder = $getSensorReadingTypeHandler;
+        $this->security = $security;
     }
 
     public static function buildDeviceResponseDTO(
@@ -39,6 +48,15 @@ class DeviceResponseDTOBuilder
             $device->getExternalIpAddress(),
             $device->getRoles(),
             $sensorReadingTypeDTOs,
+//            $this->security->isGranted(DeviceVoter::UPDATE_DEVICE,
+//                    DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
+//                        new DeviceUpdateRequestDTO(),
+//                        $device,
+//                        $device->getRoomObject(),
+//                        $device->getGroupObject(),
+//                    )
+//            ),
+//            $this->security->isGranted(DeviceVoter::DELETE_DEVICE, $device),
         );
     }
 

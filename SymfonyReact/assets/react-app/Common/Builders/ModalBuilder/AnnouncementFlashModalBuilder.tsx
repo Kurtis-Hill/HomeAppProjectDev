@@ -5,14 +5,14 @@ import { AnnouncementFlashModal } from '../../Components/Modals/AnnouncementFlas
 export function AnnouncementFlashModalBuilder(props: {
   setAnnouncementModals: (announcementModals: Array<typeof AnnouncementFlashModal>) => void;
   title: string;
-  dataToList: string[];
+  dataToList?: string[];
   dataNumber?: number;
   timer?: number|null;
   setErrorCount?: (errorCount: number) => void;
 }) {
   const setAnnouncementModals = props.setAnnouncementModals;
   const title: string = props.title
-  const dataToList: Array<string> = props.dataToList
+  const dataToList: Array<string> = props.dataToList ?? [];
   const dataNumber: number = props.dataNumber ?? 0;
   const timer: number = props.timer ?? 80;
   const setErrorCount = props.setErrorCount;

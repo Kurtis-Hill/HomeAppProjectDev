@@ -11,7 +11,6 @@ use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
-use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
@@ -52,6 +51,7 @@ class AddNewDeviceController extends AbstractController
         ValidatorInterface $validator,
         NewDeviceHandlerInterface $newDeviceHandler,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
         try {
@@ -64,7 +64,6 @@ class AddNewDeviceController extends AbstractController
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
         }
-
         $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));

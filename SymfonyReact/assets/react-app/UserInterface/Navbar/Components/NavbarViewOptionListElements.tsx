@@ -5,7 +5,7 @@ import { IndividualNavBarResponse, NavBarResponseInterface } from "../Response/N
 import NavbarListItem from './NavbarListItem'
 import { BuildNavbarItem } from '../Builders/NavbarItemBuilder';
 import BaseModal from '../../../Common/Components/Modals/BaseModal';
-import { AddNewDevice } from '../../../Devices/Components/Devices/AddNewDevice';
+import { AddNewDevice } from '../../../Devices/Components/NewDevices/AddNewDevice';
 import { AddNewRoom } from '../../../User/Components/Room/AddNewRoom';
 import { checkAdmin } from '../../../Authentication/Session/UserSession';
 import { AddNewGroup } from '../../../User/Components/Group/AddNewGroup';

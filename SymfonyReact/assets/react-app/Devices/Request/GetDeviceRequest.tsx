@@ -6,7 +6,7 @@ import GroupResponseInterface from '../../User/Response/Group/GroupResponseInter
 
 export async function getDeviceRequest(deviceID: number, type: string|null): Promise<AxiosResponse> {
     const getDeviceResponse: AxiosResponse = await axios.get(
-        `${apiURL}user-device/${deviceID}`,
+        `${apiURL}user-device/${deviceID}/get`,
         { params: { responseType: type } }  
     );
 
@@ -15,17 +15,4 @@ export async function getDeviceRequest(deviceID: number, type: string|null): Pro
     // } else {
     //     throw new Error('Something went wrong');
     // }
-}
-
-export interface DeviceResponseInterface {
-    deviceID: number
-    deviceName: string
-    devicePassword: string
-    group: GroupResponseInterface
-    roles: string[]
-    room: RoomResponseInterface
-    ipAddress: string|null
-    externalIpAddress: string|null
-    secret : string|null
-    
 }

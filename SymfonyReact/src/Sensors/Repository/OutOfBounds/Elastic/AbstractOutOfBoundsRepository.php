@@ -9,7 +9,7 @@ use Elastica\Document;
 use Elastica\Index;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class AbstractOutOfBoundsRepository
+abstract class AbstractOutOfBoundsRepository
 {
     protected Index $index;
 
