@@ -10,7 +10,7 @@ use Stringable;
 
 class ElasticLogger implements LoggerInterface
 {
-    private LoggerInterface $logger;
+//    private LoggerInterface $logger;
 
     private Index $emergencyIndex;
 
@@ -33,7 +33,7 @@ class ElasticLogger implements LoggerInterface
     private ElasticLogDTOFactory $elasticLogDTOFactory;
 
     public function __construct(
-        LoggerInterface $logger,
+//        LoggerInterface $logger,
         Index $emergencyIndex,
         Index $alertIndex,
         Index $criticalIndex,
@@ -45,7 +45,7 @@ class ElasticLogger implements LoggerInterface
         Index $logIndex,
         ElasticLogDTOFactory $elasticLogDTOFactory
     ) {
-        $this->logger = $logger;
+//        $this->logger = $logger;
         $this->emergencyIndex = $emergencyIndex;
         $this->alertIndex = $alertIndex;
         $this->criticalIndex = $criticalIndex;

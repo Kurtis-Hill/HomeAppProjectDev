@@ -11,6 +11,8 @@ use App\Authentication\Controller\SecurityController;
 use App\Authentication\Entity\GroupMapping;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
 use App\User\Entity\Room;
@@ -41,6 +43,8 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     private DeviceRepositoryInterface $deviceRepository;
 
+    private SensorRepositoryInterface $sensorRepository;
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -52,6 +56,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $this->userToken = $this->setUserToken($this->client);
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
+        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
@@ -364,7 +369,15 @@ class UpdateDeviceControllerTest extends WebTestCase
             self::fail('no device found for test');
         }
 
-        $device = $devices[0];
+        foreach ($devices as $deviceToTest) {
+            $sensors = $this->sensorRepository->findBy(['deviceID' => $deviceToTest->getDeviceID()]);
+            if (!empty($sensors)) {
+                $device = $deviceToTest;
+            }
+        }
+        if (!isset($device)) {
+            self::fail('No device with sensors found');
+        }
 
         $newDeviceName = 'newDeviceName';
         $newPassword = 'NewPassword';
@@ -393,15 +406,31 @@ class UpdateDeviceControllerTest extends WebTestCase
             JSON_THROW_ON_ERROR
         );
 
+        $payload = $responseData['payload'];
+
         self::assertEquals('Device Successfully Updated', $responseData['title']);
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
-        self::assertEquals($this->adminUser->getGroup()->getGroupID(), $responseData['payload']['group']['groupID']);
-        self::assertEquals($this->adminUser->getGroup()->getGroupName(), $responseData['payload']['group']['groupName']);
-        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['room']['roomID']);
-        self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
-        self::assertEquals($newPassword, $responseData['payload']['secret']);
-        //self::assertEquals(true, $responseData['payload']['canEdit']);
-        //self::assertEquals(true, $responseData['payload']['canDelete']);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
+        self::assertEquals($this->adminUser->getGroup()->getGroupName(), $payload['group']['groupName']);
+        self::assertEquals($this->adminUser->getGroup()->getGroupID(), $payload['group']['groupID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
+        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
+        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertTrue($payload['canEdit']);
+        self::assertTrue($payload['canDelete']);
+
+        self::assertArrayHasKey('sensorData', $payload);
+        $sensorData = $payload['sensorData'];
+
+        foreach ($sensorData as $data) {
+            self::assertArrayHasKey('sensorID', $data);
+            self::assertArrayHasKey('sensorName', $data);
+            self::assertArrayHasKey('createdBy', $data);
+            self::assertArrayHasKey('device', $data);
+            self::assertArrayHasKey('sensorType', $data);
+            self::assertArrayHasKey('sensorReadingTypes', $data);
+        }
     }
 
     public function test_admin_can_update_device_is_apart_of(): void

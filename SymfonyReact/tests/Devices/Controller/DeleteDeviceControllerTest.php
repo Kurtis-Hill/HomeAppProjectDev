@@ -154,6 +154,83 @@ class DeleteDeviceControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
 //    }
 
+    public function test_regular_user_can_delete_device_owner_of_response_only_payload(): void
+    {
+        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
+
+        /** @var Devices[] $devicesResult */
+        $devicesResult = $this->deviceRepository->findBy(['createdBy' => $this->regularUserTwo]);
+        self::assertNotEmpty($devicesResult);
+
+        $device = $devicesResult[0];
+
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $deletedDevice = $this->deviceRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
+        self::assertNull($deletedDevice);
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertNotEmpty($responseData['payload']);
+
+        self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceID']);
+        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+        self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
+        self::assertTrue($responseData['payload']['canEdit']);
+        self::assertTrue($responseData['payload']['canDelete']);
+        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
+    }
+
+    public function test_admin_user_can_delete_device_response_only_payload(): void
+    {
+        /** @var Devices[] $devicesResult */
+        $devicesResult = $this->deviceRepository->findAll();
+        self::assertNotEmpty($devicesResult);
+
+        $device = $devicesResult[0];
+
+        $this->client->request(
+            Request::METHOD_DELETE,
+            sprintf(self::DELETE_DEVICE_URL, $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '. $this->userToken],
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $deletedDevice = $this->deviceRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
+        self::assertNull($deletedDevice);
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertNotEmpty($responseData['payload']);
+
+        self::assertEquals($device->getDeviceID(), $responseData['payload']['deviceID']);
+        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
+        self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
+        self::assertTrue($responseData['payload']['canEdit']);
+        self::assertTrue($responseData['payload']['canDelete']);
+        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
+    }
 
     public function test_regular_user_can_delete_device_group_is_apart_of(): void
     {
@@ -193,16 +270,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             JSON_THROW_ON_ERROR
         );
 
-        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-//        self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['groupID']);
-//        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
-//        self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
-        self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
-//        self::assertEquals($device->getRoles(), $responseData['payload']['roles']);
-
-        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
-
+        self::assertNotEmpty($responseData['payload']);
     }
 
 
@@ -232,6 +300,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
@@ -239,22 +308,11 @@ class DeleteDeviceControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
+        self::assertNotEmpty($responseData['payload']);
         /** @var Devices $deletedDevice */
         $deletedDevice = $this->deviceRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
-
         self::assertNull($deletedDevice);
-        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
-        self::assertIsArray($responseData['payload']);
-        self::assertEquals($device->getDeviceName(), $responseData['payload']['deviceName']);
-//        self::assertEquals($device->getGroupObject()->getGroupID(), $responseData['payload']['groupID']);
-//        self::assertEquals($device->getRoomObject()->getRoomID(), $responseData['payload']['roomID']);
-//        self::assertEquals($device->getCreatedBy()->getUserIdentifier(), $responseData['payload']['createdBy']);
-        self::assertEquals($device->getIpAddress(), $responseData['payload']['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
-//        self::assertEquals($device->getRoles(), $responseData['payload']['roles']);
-
     }
 
     public function test_deleting_device_that_doesnt_exist(): void

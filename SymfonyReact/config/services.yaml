@@ -27,7 +27,7 @@ services:
 
     App\Common\Logs\ElasticLogger:
       arguments:
-        $logger: '@logger'
+#        $logger: '@logger'
         $emergencyIndex: '@elastica.log_index'
         $alertIndex: '@elastica.log_index'
         $criticalIndex: '@elastica.log_index'

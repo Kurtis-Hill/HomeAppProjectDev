@@ -10,9 +10,9 @@ use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
+use App\User\Builders\User\UserResponseBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DeviceResponseDTOBuilder
@@ -58,7 +58,7 @@ class DeviceResponseDTOBuilder
             $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());
             if (!empty($deviceSensors)) {
                 foreach ($deviceSensors as $sensor) {
-                    $sensorResponseDTOs[] = $this->sensorResponseDTOBuilder->buildFullSensorResponseDTO($sensor, [RequestTypeEnum::FULL->value]);
+                    $sensorResponseDTOs[] = $this->sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [RequestTypeEnum::FULL->value]);
                 }
             }
         }
@@ -85,6 +85,7 @@ class DeviceResponseDTOBuilder
             $device->getExternalIpAddress(),
             $device->getRoles(),
             $sensorReadingTypeDTOs,
+            UserResponseBuilder::buildUserResponseDTO($device->getCreatedBy()),
             $canUpdate,
             $canDelete,
         );

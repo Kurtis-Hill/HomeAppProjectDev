@@ -1,6 +1,7 @@
 import GroupResponseInterface from "../../User/Response/Group/GroupResponseInterface";
 import RoomResponseInterface from "../../User/Response/Room/RoomResponseInterface";
 import SensorResponseInterface from '../../Sensors/Sensor/Response/SensorResponseInterface';
+import UserResponseInterface from "../../User/Response/UserResponseInterface";
 
 export interface DeviceResponseInterface {
     deviceID?: number,
@@ -9,7 +10,7 @@ export interface DeviceResponseInterface {
     externalIpAddress: string|null,
     group?: GroupResponseInterface,
     room?: RoomResponseInterface,
-    createdBy?: string|number,
+    createdBy?: UserResponseInterface,
     secret?: string|null,
     roles?: string[],
     sensorData?: SensorResponseInterface,

@@ -77,6 +77,112 @@ class GetDeviceControllerTest extends WebTestCase
         parent::tearDown();
     }
 
+    public function test_get_device_admin_only_response(): void
+    {
+        /** @var Devices[] $devices */
+        $devices = $this->deviceRepository->findAll();
+        $device = $devices[0];
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
+
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
+        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
+        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertTrue($payload['canEdit']);
+        self::assertTrue($payload['canDelete']);
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
+
+    }
+
+    public function test_get_device_admin_full_response(): void
+    {
+        /** @var Devices[] $devices */
+        $devices = $this->deviceRepository->findAll();
+
+        foreach ($devices as $deviceToTest) {
+            $sensors = $this->sensorRepository->findBy(['deviceID' => $deviceToTest->getDeviceID()]);
+            if (!empty($sensors)) {
+                $device = $deviceToTest;
+            }
+        }
+        if (!isset($device)) {
+            self::fail('No device with sensors found');
+        }
+
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            ['responseType' => RequestTypeEnum::FULL->value],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+
+        );
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+        $payload = $responseData['payload'];
+        $title = $responseData['title'];
+
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
+        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
+        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
+        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
+        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
+        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
+        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertTrue($payload['canEdit']);
+        self::assertTrue($payload['canDelete']);
+
+        $createdByResponse = $payload['createdBy'];
+        $createdByUser = $device->getCreatedBy();
+
+        self::assertEquals($createdByUser->getUserID(), $createdByResponse['userID']);
+        self::assertEquals($createdByUser->getFirstName(), $createdByResponse['firstName']);
+        self::assertEquals($createdByUser->getLastName(), $createdByResponse['lastName']);
+        self::assertEquals($createdByUser->getEmail(), $createdByResponse['email']);
+        self::assertEquals($createdByUser->getGroup()->getGroupID(), $createdByResponse['group']['groupID']);
+        self::assertEquals($createdByUser->getGroup()->getGroupName(), $createdByResponse['group']['groupName']);
+        self::assertEquals($createdByUser->getProfilePic(), $createdByResponse['profilePicture']);
+
+        $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
+
+        self::assertArrayHasKey('sensorData', $payload);
+        $sensorData = $payload['sensorData'];
+
+        $sensorIDs = array_column($sensorData, 'sensorID');
+
+        foreach ($deviceSensors as $sensor) {
+            if (!in_array($sensor->getSensorID(), $sensorIDs, true)) {
+                self::fail('Sensor not found in response');
+            }
+        }
+
+        foreach ($sensorData as $data) {
+            self::assertArrayHasKey('sensorID', $data);
+            self::assertArrayHasKey('sensorName', $data);
+            self::assertArrayHasKey('createdBy', $data);
+            self::assertArrayHasKey('device', $data);
+            self::assertArrayHasKey('sensorType', $data);
+            self::assertArrayHasKey('sensorReadingTypes', $data);
+        }
+    }
+
     public function test_get_device_of_group_user_is_not_assigned_to_regular_user(): void
     {
         $userToken = $this->setUserToken(
@@ -113,7 +219,7 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
     }
 
-    public function test_get_device_of_group_user_is_not_assigned_to_admin_only_response(): void
+    public function test_get_device_of_group_user_is_not_assigned_to_admin(): void
     {
         $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
@@ -137,78 +243,12 @@ class GetDeviceControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $responseData['payload'];
-        $title = $responseData['title'];
 
-        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertArrayHasKey('ipAddress', $payload);
-        self::assertArrayHasKey('externalIpAddress', $payload);
-    }
-
-    public function test_get_device_of_group_user_is_not_assigned_to_admin_full_response(): void
-    {
-        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
-
-        /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
-        if (empty($devices)) {
-            self::fail('No devices found for this user');
-        }
-        $device = $devices[0];
-
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
-        );
-
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $payload = $responseData['payload'];
-        $title = $responseData['title'];
-
-        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
-        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
-        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
-        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
-        self::assertArrayHasKey('ipAddress', $payload);
-        self::assertArrayHasKey('externalIpAddress', $payload);
-
-
-        $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
-
-        self::assertArrayHasKey('sensorData', $payload);
-        $sensorData = $payload['sensorData'];
-
-        $sensorIDs = array_column($sensorData, 'sensorID');
-
-        foreach ($deviceSensors as $sensor) {
-            if (!in_array($sensor->getSensorID(), $sensorIDs, true)) {
-                self::fail('Sensor not found in response');
-            }
-        }
-
-        foreach ($sensorData as $data) {
-            self::assertArrayHasKey('sensorID', $data);
-            self::assertArrayHasKey('sensorName', $data);
-            self::assertArrayHasKey('createdBy', $data);
-            self::assertArrayHasKey('device', $data);
-            self::assertArrayHasKey('sensorType', $data);
-            self::assertArrayHasKey('sensorReadingTypes', $data);
-        }
+        self::assertNotEmpty($payload);
     }
 
     public function test_get_device_of_group_user_is_assigned_to_regular_user_full_response(): void
     {
-
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
@@ -236,7 +276,6 @@ class GetDeviceControllerTest extends WebTestCase
         $payload = $responseData['payload'];
         $title = $responseData['title'];
 
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
         self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
@@ -244,8 +283,43 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
         self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
         self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
-        self::assertArrayHasKey('ipAddress', $payload);
-        self::assertArrayHasKey('externalIpAddress', $payload);
+        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertTrue($payload['canEdit']);
+        self::assertTrue($payload['canDelete']);
+
+        $createdByResponse = $payload['createdBy'];
+        $createdByUser = $device->getCreatedBy();
+
+        self::assertEquals($createdByUser->getUserID(), $createdByResponse['userID']);
+        self::assertEquals($createdByUser->getFirstName(), $createdByResponse['firstName']);
+        self::assertEquals($createdByUser->getLastName(), $createdByResponse['lastName']);
+        self::assertEquals($createdByUser->getEmail(), $createdByResponse['email']);
+        self::assertEquals($createdByUser->getGroup()->getGroupID(), $createdByResponse['group']['groupID']);
+        self::assertEquals($createdByUser->getGroup()->getGroupName(), $createdByResponse['group']['groupName']);
+        self::assertEquals($createdByUser->getProfilePic(), $createdByResponse['profilePicture']);
+
+        $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
+
+        self::assertArrayHasKey('sensorData', $payload);
+        $sensorData = $payload['sensorData'];
+
+        $sensorIDs = array_column($sensorData, 'sensorID');
+
+        foreach ($deviceSensors as $sensor) {
+            if (!in_array($sensor->getSensorID(), $sensorIDs, true)) {
+                self::fail('Sensor not found in response');
+            }
+        }
+
+        foreach ($sensorData as $data) {
+            self::assertArrayHasKey('sensorID', $data);
+            self::assertArrayHasKey('sensorName', $data);
+            self::assertArrayHasKey('createdBy', $data);
+            self::assertArrayHasKey('device', $data);
+            self::assertArrayHasKey('sensorType', $data);
+            self::assertArrayHasKey('sensorReadingTypes', $data);
+        }
     }
 
     public function test_get_device_of_group_user_is_assigned_to_regular_user_response_type_only(): void
@@ -282,11 +356,11 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
         self::assertEquals($device->getDeviceID(), $payload['deviceID']);
         self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertArrayHasKey('ipAddress', $payload);
-        self::assertArrayHasKey('externalIpAddress', $payload);
+        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
+        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
     }
 
-    public function test_get_device_of_group_user_is_assigned_to_admin_full_response_type(): void
+    public function test_get_device_of_group_user_is_assigned_to_admin(): void
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
 
@@ -309,52 +383,10 @@ class GetDeviceControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $responseData['payload'];
+        self::assertNotEmpty($payload);
         $title = $responseData['title'];
-
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
-        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
-        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
-        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
-        self::assertArrayHasKey('ipAddress', $payload);
-        self::assertArrayHasKey('externalIpAddress', $payload);
     }
-
-    public function test_get_device_of_group_user_is_assigned_to_admin_only_response_type(): void
-    {
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
-
-        /** @var Devices[] $devices */
-        $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
-        if (empty($devices)) {
-            self::fail('No devices found for this user');
-        }
-        $device = $devices[0];
-
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
-        );
-
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $payload = $responseData['payload'];
-        $title = $responseData['title'];
-
-        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertArrayHasKey('ipAddress', $payload);
-        self::assertArrayHasKey('externalIpAddress', $payload);
-    }
-
 
     public function test_get_all_devices_doesnt_return_devices_of_group_user_is_not_assigned_to_regular_user(): void
     {
@@ -593,7 +625,7 @@ class GetDeviceControllerTest extends WebTestCase
     /**
      * @dataProvider wrongHttpsMethodDataProvider
      */
-    public function test_deleting_device_wrong_http_method_single(string $httpVerb): void
+    public function test_getting_device_wrong_http_method_single(string $httpVerb): void
     {
         $this->client->request(
             $httpVerb,
@@ -609,7 +641,7 @@ class GetDeviceControllerTest extends WebTestCase
     /**
      * @dataProvider wrongHttpsMethodDataProvider
      */
-    public function test_deleting_device_wrong_http_method_all(string $httpVerb): void
+    public function test_getting_device_wrong_http_method_all(string $httpVerb): void
     {
         $this->client->request(
             $httpVerb,

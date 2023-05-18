@@ -101,19 +101,9 @@ class GetSensorController extends AbstractController
         $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
 
         $sensorDTOs = [];
-//        if ($requestDTO->getResponseType() === RequestDTOBuilder::REQUEST_TYPE_ONLY) {
         foreach ($sensors as $sensor) {
-            $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTO($sensor, [$requestDTO->getResponseType()]);
-//            dd($sensorDTOs);
+            $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
-//        } elseif ($requestDTO->getResponseType() === RequestDTOBuilder::REQUEST_TYPE_FULL) {
-//            foreach ($sensors as $sensor) {
-//                $sensorDTOs[] =  SensorResponseDTOBuilder::buildSensorResponseDTO(
-//                    $sensor,
-//                    $getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreating($sensor)
-//                );
-//            }
-//        }
 
         if (empty($sensorDTOs)) {
             if (!empty($errors)) {

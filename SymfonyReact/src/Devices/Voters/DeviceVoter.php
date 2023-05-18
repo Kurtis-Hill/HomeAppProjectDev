@@ -74,7 +74,7 @@ class DeviceVoter extends Voter
             $newDeviceCheckDTO->getGroupNameObject(),
         );
 
-        return $checkCommon ?? false;
+        return $checkCommon ?? true;
 
     }
 
@@ -101,7 +101,6 @@ class DeviceVoter extends Voter
 
     private function cadDeleteDevice(UserInterface $user, Devices $devices): bool
     {
-
         $checkCommon = $this->checkCommon(
                 $user,
                 $devices->getGroupObject(),

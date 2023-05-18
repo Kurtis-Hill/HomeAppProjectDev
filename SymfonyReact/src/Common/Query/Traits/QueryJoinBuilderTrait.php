@@ -10,23 +10,23 @@ use JetBrains\PhpStorm\Pure;
 trait QueryJoinBuilderTrait
 {
     /**
-     * @param JoinQueryDTO[] $joinConditionDTO
+     * @param JoinQueryDTO[] $joinConditionDTOs
      * @param QueryBuilder $qb
      * @return string
      */
-    public function prepareSensorJoinsForQuery(array $joinConditionDTO, QueryBuilder $qb): string
+    public function prepareSensorJoinsForQuery(array $joinConditionDTOs, QueryBuilder $qb): string
     {
         $alias = [];
-        foreach ($joinConditionDTO as $cardSensorTypeQueryDTO) {
+        foreach ($joinConditionDTOs as $joinConditionDTO) {
             /** @var  $sensorNameJoinConditionString */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
-                $cardSensorTypeQueryDTO->getJoinConditionId(),
-                $cardSensorTypeQueryDTO->getJoiningConditionId(),
-                $cardSensorTypeQueryDTO->getJoiningConditionColumn()
+                $joinConditionDTO->getJoinConditionId(),
+                $joinConditionDTO->getJoiningConditionId(),
+                $joinConditionDTO->getJoiningConditionColumn()
             );
 
-            $alias[] = $cardSensorTypeQueryDTO->getAlias();
-            $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
+            $alias[] = $joinConditionDTO->getAlias();
+            $qb->leftJoin($joinConditionDTO->getObject(), $joinConditionDTO->getAlias(), Join::WITH, $joinConditionDTO->getAlias().$sensorNameJoinConditionString);
         }
 
         return implode(', ', $alias);

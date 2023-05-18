@@ -9,6 +9,7 @@ use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeRespon
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
 use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
+use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
@@ -26,6 +27,7 @@ readonly class DeviceResponseDTO
         private ?string $externalIpAddress,
         private array $roles,
         private array $sensorData,
+        private UserResponseDTO $createdBy,
         private ?bool $canEdit = null,
         private ?bool $canDelete = null,
     ) {
@@ -124,6 +126,15 @@ readonly class DeviceResponseDTO
     public function getSensorData(): array
     {
         return $this->sensorData;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getCreatedBy(): UserResponseDTO
+    {
+        return $this->createdBy;
     }
 
     #[Groups([

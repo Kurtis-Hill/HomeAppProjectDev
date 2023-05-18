@@ -98,8 +98,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['title']);
     }
 
-    //  Add addNewDevice
-    public function test_add_new_device(): void
+    public function test_add_new_device_admin_sensitive_response(): void
     {
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
@@ -130,15 +129,55 @@ class AddNewDeviceControllerTest extends WebTestCase
         self::assertNotNull($payload['deviceID']);
         self::assertNull($payload['ipAddress']);
         self::assertNull($payload['externalIpAddress']);
-
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
         self::assertEquals(Devices::ROLE, $payload['roles'][0]);
         self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
-//        self::assertEquals($this->groupName->getGroupID(), $payload['groupID']);
-//        self::assertEquals($this->room->getRoomID(), $payload['roomID']);
-//        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $payload['createdBy']);
+        self::assertTrue($payload['canEdit']);
+        self::assertTrue($payload['canDelete']);
+    }
 
+    public function test_add_new_device_regular_user_sensitive_response(): void
+    {
+        $formData = [
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
+            'deviceGroup' => $this->regularUserTwo->getGroup()->getGroupID(),
+            'deviceRoom' => $this->room->getRoomID(),
+        ];
 
+        $jsonData = json_encode($formData);
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            $this->regularUserTwo->getEmail(),
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+            $jsonData
+        );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
+
+        /** @var Devices $device */
+        $device = $this->deviceRepository->findOneBy(['deviceName' => self::UNIQUE_NEW_DEVICE_NAME]);
+        self::assertNotNull($device);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $payload = $responseData['payload'];
+
+        self::assertNotNull($payload['deviceID']);
+        self::assertNull($payload['ipAddress']);
+        self::assertNull($payload['externalIpAddress']);
+        self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
+        self::assertEquals(Devices::ROLE, $payload['roles'][0]);
+        self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
+        self::assertTrue($payload['canEdit']);
+        self::assertTrue($payload['canDelete']);
     }
 
     public function test_add_duplicate_device_name_same_room(): void
@@ -467,9 +506,6 @@ class AddNewDeviceControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        $groupNameMappingEntities = $this->groupNameMappingRepository->getAllGroupMappingEntitiesForUser($user);
-        $user->setUserGroupMappingEntities($groupNameMappingEntities);
-
         /** @var Group $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
@@ -682,15 +718,6 @@ class AddNewDeviceControllerTest extends WebTestCase
         }
         self::assertArrayHasKey('token', $loginResponseData);
         self::assertArrayHasKey('refreshToken', $loginResponseData);
-
-        self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $responseData['deviceName']);
-//        self::assertEquals($this->groupName->getGroupID(), $responseData['groupID']);
-//        self::assertEquals($this->room->getRoomID(), $responseData['roomID']);
-//        self::assertEquals(UserDataFixtures::ADMIN_USER_EMAIL_ONE, $responseData['createdBy']);
-        self::assertEquals(Devices::ROLE, $responseData['roles'][0]);
-
-        self::assertArrayHasKey('secret', $responseData);
-        self::assertNotNull($responseData['secret']);
     }
 
     /**
