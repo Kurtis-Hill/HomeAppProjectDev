@@ -55,7 +55,7 @@ class GetDeviceController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::ONLY->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
                 $request->get('page'),
                 $request->get('limit', DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE),
             );
@@ -124,7 +124,7 @@ class GetDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $responseType = $request->get('responseType', RequestTypeEnum::ONLY->value);
+        $responseType = $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value);
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
                 $responseType

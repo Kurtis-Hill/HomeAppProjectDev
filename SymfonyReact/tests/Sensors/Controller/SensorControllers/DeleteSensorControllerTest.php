@@ -4,6 +4,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
+use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
@@ -152,7 +153,7 @@ class DeleteSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_DELETE,
             sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );
@@ -217,7 +218,7 @@ class DeleteSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_DELETE,
             sprintf(self::DELETE_SENSOR_URL, $sensor->getSensorID()),
-            ['responseType' => RequestTypeEnum::ONLY->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::ONLY->value],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );

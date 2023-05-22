@@ -54,7 +54,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         }
 
         try {
-            $userGroups = $this->getGroupNamesFinder->getGroupNamesForUser($user);
+            $userGroups = $this->getGroupNamesFinder->getUsersGroups($user);
             $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
         } catch (ORMException) {
             $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groups')];
@@ -151,7 +151,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
      */
     private function getRoomData(User $user): array
     {
-        return $this->roomRepository->getAllUserRoomsByGroupId($this->getGroupNamesFinder->getGroupNamesForUser($user), AbstractQuery::HYDRATE_OBJECT);
+        return $this->roomRepository->getAllUserRoomsByGroupId($this->getGroupNamesFinder->getUsersGroups($user), AbstractQuery::HYDRATE_OBJECT);
     }
 
     /**
@@ -160,6 +160,6 @@ class NavBarDataProvider implements NavBarDataProviderInterface
     private function getDeviceData(User $user): array
     {
 //        dd($user);
-        return $this->deviceRepository->findAllUsersDevicesByGroupId($this->getGroupNamesFinder->getGroupNamesForUser($user), AbstractQuery::HYDRATE_OBJECT);
+        return $this->deviceRepository->findAllUsersDevicesByGroupId($this->getGroupNamesFinder->getUsersGroups($user), AbstractQuery::HYDRATE_OBJECT);
     }
 }

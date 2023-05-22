@@ -12,6 +12,8 @@ class RequestQueryParameterHandler
 {
     use ValidatorProcessorTrait;
 
+    public const RESPONSE_TYPE = 'responseType';
+
     private ValidatorInterface $validator;
 
     public function __construct(ValidatorInterface $validator)

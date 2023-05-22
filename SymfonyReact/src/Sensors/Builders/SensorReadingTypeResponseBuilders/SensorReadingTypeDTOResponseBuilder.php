@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\SensorServices;
+namespace App\Sensors\Builders\SensorReadingTypeResponseBuilders;
 
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
@@ -20,7 +20,7 @@ use App\Sensors\Factories\SensorReadingType\SensorReadingTypeResponseFactory;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use JetBrains\PhpStorm\ArrayShape;
 
-class GetSensorReadingTypeHandler
+class SensorReadingTypeDTOResponseBuilder
 {
     private SensorReadingTypeResponseFactory $sensorReadingTypeResponseFactory;
 
@@ -39,7 +39,7 @@ class GetSensorReadingTypeHandler
      * @throws ReadingTypeNotExpectedException
      */
     #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
-    public function handleSensorReadingTypeDTOCreation(Sensor $sensor): array
+    public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array
     {
         $sensorType = $sensor->getSensorTypeObject();
 

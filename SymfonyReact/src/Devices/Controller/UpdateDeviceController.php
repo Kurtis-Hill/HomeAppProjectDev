@@ -84,7 +84,7 @@ class UpdateDeviceController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::SENSITIVE_FULL->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_FULL->value),
             );
         } catch (ValidatorProcessorException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
@@ -127,7 +127,7 @@ class UpdateDeviceController extends AbstractController
         try {
             $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
         $this->logger->info(

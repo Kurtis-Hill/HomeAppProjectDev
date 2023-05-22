@@ -4,6 +4,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
+use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
@@ -219,7 +220,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
@@ -293,7 +294,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
@@ -350,7 +351,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId]),
@@ -389,7 +390,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['sensorName' => $newSensorName]),
@@ -460,7 +461,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceId, 'sensorName' => $newSensorName]),
@@ -498,7 +499,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PATCH,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['sensorName' => $newSensorName]),
@@ -561,7 +562,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_PUT,
             sprintf(self::UPDATE_SENSOR_URL, $sensorToUpdate->getSensorID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode($content),

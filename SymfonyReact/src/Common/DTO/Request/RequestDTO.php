@@ -3,6 +3,7 @@
 namespace App\Common\DTO\Request;
 
 use App\Common\Builders\Request\RequestDTOBuilder;
+use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,7 +13,7 @@ class RequestDTO
     #[
         Assert\Type(
             type: ['string', "null"],
-            message: 'responseType must be an {{ type }} you have provided {{ value }}'
+            message: RequestQueryParameterHandler::RESPONSE_TYPE . ' must be an {{ type }} you have provided {{ value }}'
         ),
         Assert\Choice(
             choices: [
@@ -21,7 +22,7 @@ class RequestDTO
                 RequestTypeEnum::SENSITIVE_FULL->value,
                 RequestTypeEnum::SENSITIVE_ONLY->value,
             ],
-            message: 'responseType must be one of {{ choices }} you have provided {{ value }}'
+            message: RequestQueryParameterHandler::RESPONSE_TYPE .' must be one of {{ choices }} you have provided {{ value }}'
         )
     ]
     private mixed $responseType;

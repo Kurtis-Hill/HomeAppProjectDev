@@ -44,7 +44,7 @@ class GetRoomsController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::FULL->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
                 $request->get('page', 1),
                 $request->get('limit', self::MAX_ROOM_RETURN_SIZE),
             );
@@ -63,7 +63,7 @@ class GetRoomsController extends AbstractController
         try {
             $normalizedResponse = $this->normalizeResponse($roomResponseDTO ?? [], [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);

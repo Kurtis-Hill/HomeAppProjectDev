@@ -9,9 +9,9 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
-use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\Sensors\Voters\SensorVoter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,7 +38,7 @@ class GetSingleSensorsController extends AbstractController
     }
 
     #[Route('/{sensorID}/get', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
-    public function getSingleSensor(Sensor $sensor, Request $request, GetSensorReadingTypeHandler $getSensorReadingTypeHandler): JsonResponse
+    public function getSingleSensor(Sensor $sensor, Request $request, SensorResponseDTOBuilder $sensorResponseDTOBuilder): JsonResponse
     {
         try {
             $this->denyAccessUnlessGranted(SensorVoter::GET_SENSOR, $sensor);
@@ -48,25 +48,22 @@ class GetSingleSensorsController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::SENSITIVE_ONLY->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_ONLY->value),
             );
         } catch (ValidatorProcessorException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         try {
-            $sensorReadingTypeResponseDTOs = $getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreation($sensor);
+            $sensorReadingTypeResponseDTOs = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         } catch (ReadingTypeNotExpectedException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
-        }
-        if (empty($sensorReadingTypeResponseDTOs)) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
 
         try {
             $normalizedResponse = $this->normalizeResponse($sensorReadingTypeResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);

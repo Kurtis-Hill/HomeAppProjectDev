@@ -54,7 +54,7 @@ class DeleteSensorController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::ONLY->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
             );
         } catch (ValidatorProcessorException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());

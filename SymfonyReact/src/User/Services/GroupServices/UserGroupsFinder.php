@@ -17,7 +17,7 @@ class UserGroupsFinder
     }
 
     #[ArrayShape([Group::class])]
-    public function getGroupNamesForUser(User $user): array
+    public function getUsersGroups(User $user): array
     {
         return $user->isAdmin()
             ? $this->groupNameRepository->findAll()

@@ -5,6 +5,7 @@ namespace App\Tests\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\Services\PaginationCalculator;
+use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Controller\GetDeviceController;
 use App\Devices\Entity\Devices;
@@ -126,7 +127,7 @@ class GetDeviceControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            ['responseType' => RequestTypeEnum::FULL->value],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
 
@@ -266,7 +267,7 @@ class GetDeviceControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            ['responseType' => 'full'],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
 
@@ -374,7 +375,7 @@ class GetDeviceControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            ['responseType' => 'full'],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
         );

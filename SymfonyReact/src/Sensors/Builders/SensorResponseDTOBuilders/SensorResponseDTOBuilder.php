@@ -4,27 +4,28 @@ namespace App\Sensors\Builders\SensorResponseDTOBuilders;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
-use App\Devices\DTO\Response\DeviceResponseDTO;
+use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorReadingTypeDTOResponseBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
+use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
+use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Builders\User\UserResponseBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SensorResponseDTOBuilder
 {
-    private GetSensorReadingTypeHandler $getSensorReadingTypeHandler;
+    private SensorReadingTypeDTOResponseBuilder $sensorReadingTypeDTOResponseBuilder;
 
     private Security $security;
 
     public function __construct(
-        GetSensorReadingTypeHandler $getSensorReadingTypeHandler,
+        SensorReadingTypeDTOResponseBuilder $sensorReadingTypeDTOResponseBuilder,
         Security $security,
     ) {
-        $this->getSensorReadingTypeHandler = $getSensorReadingTypeHandler;
+        $this->sensorReadingTypeDTOResponseBuilder = $sensorReadingTypeDTOResponseBuilder;
         $this->security = $security;
     }
 
@@ -40,13 +41,20 @@ class SensorResponseDTOBuilder
                 ],
                 true
             )) {
-            $sensorReadingTypeDTO = $this->getSensorReadingTypeHandler->handleSensorReadingTypeDTOCreation($sensor);
+            $sensorReadingTypeDTO = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTOs($sensor);
         }
 
         return self::buildSensorResponseDTO(
             $sensor,
             $sensorReadingTypeDTO ?? [],
-            $this->security->isGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensor),
+            $this->security->isGranted(
+                SensorVoter::UPDATE_SENSOR,
+                SensorUpdateDTOBuilder::buildSensorUpdateDTO(
+                    $sensor,
+                    $sensor->getSensorName(),
+                    $sensor->getDevice()
+                )
+            ),
             $this->security->isGranted(SensorVoter::DELETE_SENSOR, $sensor),
 
         );

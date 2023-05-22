@@ -2,9 +2,9 @@
 
 namespace App\Sensors\DTO\Internal\Sensor;
 
-use JetBrains\PhpStorm\Immutable;
+use App\Sensors\Entity\Sensor;
+use JetBrains\PhpStorm\ArrayShape;
 
-//#[Immutable]
 class GetSensorQueryDTO
 {
     private ?int $limit;
@@ -18,6 +18,9 @@ class GetSensorQueryDTO
     private ?array  $deviceNames;
 
     private ?array  $groupIDs;
+
+    #[ArrayShape([Sensor::class])]
+    private array $sensorResult = [];
 
     public function __construct(
         ?int $limit = null,

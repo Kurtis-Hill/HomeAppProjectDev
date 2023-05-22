@@ -92,7 +92,7 @@ class UpdateCardViewController extends AbstractController
         try {
             $normalizedResponseData = $this->normalizeResponse($cardViewResponseDTO);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Request Successful']);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Request Successful']);
         }
 
         return $this->sendSuccessfulUpdateJsonResponse($normalizedResponseData);

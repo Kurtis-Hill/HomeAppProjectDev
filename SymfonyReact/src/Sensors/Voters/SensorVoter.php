@@ -142,7 +142,6 @@ class SensorVoter extends Voter
         if ($user->isAdmin()) {
             return true;
         }
-
         $sensor = $updateSensorDTO->getSensor();
 
         if (!in_array(
@@ -160,7 +159,7 @@ class SensorVoter extends Voter
         return true;
     }
 
-    public function canGetSensor(UserInterface $user, Sensor $sensor): bool
+    public function canGetSensor(UserInterface $user, ?Sensor $sensor): bool
     {
         if (!$user instanceof User) {
             return false;
@@ -171,7 +170,7 @@ class SensorVoter extends Voter
         }
 
         if (!in_array(
-            $sensor->getDevice()->getGroupObject()->getGroupID(),
+            $sensor?->getDevice()->getGroupObject()->getGroupID(),
             $user->getAssociatedGroupIDs(),
             true
         )) {

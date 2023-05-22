@@ -45,7 +45,7 @@ class GetGroupsController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::FULL->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
                 $request->get('page', 1),
                 $request->get('limit', self::GROUPS_CONTROLLER_LIMIT),
             );
@@ -54,7 +54,7 @@ class GetGroupsController extends AbstractController
         }
 
         $groupNameDTOs = [];
-        foreach ($userGroupsFinder->getGroupNamesForUser($user) as $groupName) {
+        foreach ($userGroupsFinder->getUsersGroups($user) as $groupName) {
             $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
                 $groupName
             );

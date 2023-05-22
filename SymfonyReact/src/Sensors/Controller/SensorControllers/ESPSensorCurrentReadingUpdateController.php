@@ -118,7 +118,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequest->getSuccessfulRequests());
                 $normalizedResponse = array_map('current', $normalizedResponse);
             } catch (ExceptionInterface) {
-                return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+                return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
 
             return $this->sendSuccessfulJsonResponse($normalizedResponse, 'All sensor readings handled successfully');
@@ -136,7 +136,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                     $normalizedResponse = array_map('current', $normalizedResponse);
                 }
             } catch (ExceptionInterface) {
-                return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+                return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
             return $this->sendBadRequestJsonResponse($normalizedResponse, APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT);
         }
@@ -159,7 +159,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 $normalizedSuccessResponse = array_map('current', $normalizedSuccessResponse);
             }
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         return $this->sendMultiStatusJsonResponse(

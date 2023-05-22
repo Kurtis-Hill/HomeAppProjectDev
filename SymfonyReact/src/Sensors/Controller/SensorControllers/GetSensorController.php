@@ -5,21 +5,21 @@ namespace App\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\PaginationCalculator;
 use App\Common\Services\RequestQueryParameterHandler;
-use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\GetSensorRequestDTO\GetSensorRequestDTO;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\GetSensorHandler;
-use App\Sensors\SensorServices\GetSensorReadingTypeHandler;
+use App\Sensors\SensorServices\UserSensorFilter;
+use App\Sensors\Voters\SensorVoter;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,10 +49,11 @@ class GetSensorController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,
-        GetSensorHandler $getSensorHandler,
-        SensorRepositoryInterface $sensorRepository
+        UserSensorFilter $getSensorHandler,
+        SensorRepositoryInterface $sensorRepository,
+        Security $security,
     ): JsonResponse {
-        $responseType = $request->query->get('responseType');
+        $responseType = $request->query->get(RequestQueryParameterHandler::RESPONSE_TYPE);
         $limit = $request->query->get('limit', self::GET_SENSOR_DEFAULT_LIMIT);
         $page = $request->query->get('page', 1);
         try {
@@ -96,18 +97,21 @@ class GetSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
 
-        $errors = $getSensorHandler->validateUserIsAllowedToGetSensors($getSensorQueryDTO, $user);
-
         $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
 
+        $requestedSensorErrors = array_unique($getSensorHandler->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO));
+
+        $allowedSensors = array_filter($sensors, fn (Sensor $sensor) => $this->isGranted(SensorVoter::GET_SENSOR, $sensor), ARRAY_FILTER_USE_BOTH);
+
+        dd($requestedSensorErrors, $allowedSensors);
         $sensorDTOs = [];
-        foreach ($sensors as $sensor) {
+        foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
 
         if (empty($sensorDTOs)) {
-            if (!empty($errors)) {
-                return $this->sendMultiStatusJsonResponse($errors, [], self::SOME_ISSUES_WITH_REQUEST);
+            if (!empty($requestedSensorErrors)) {
+                return $this->sendBadRequestJsonResponse($requestedSensorErrors);
             }
             return $this->sendSuccessfulJsonResponse([], 'No sensors found');
         }
@@ -115,11 +119,11 @@ class GetSensorController extends AbstractController
         try {
             $normalizedResponse = $this->normalizeResponse($sensorDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
-        if (!empty($errors)) {
-            return $this->sendMultiStatusJsonResponse($errors, $normalizedResponse, 'Some issues were found with your request');
+        if (!empty($requestedSensorErrors)) {
+            return $this->sendMultiStatusJsonResponse($requestedSensorErrors, $normalizedResponse, 'Some issues were found with your request');
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);

@@ -70,7 +70,7 @@ class AddNewRoomController extends AbstractController
 
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get('responseType', RequestTypeEnum::FULL->value),
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
             );
         } catch (ValidatorProcessorException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
@@ -114,7 +114,7 @@ class AddNewRoomController extends AbstractController
         try {
             $normalizedResponse = $this->normalizeResponse($newRoomResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse(['Request successful but failed to normalize response']);
+            return $this->sendInternalServerErrorJsonResponse(['Request successful but failed to normalize response']);
         }
         $this->logger->info('New room added successfully', ['user' => $this->getUser()?->getUserIdentifier()]);
 
