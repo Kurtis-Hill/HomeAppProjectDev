@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Sensors\Voters;
 
-
 use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\Entity\Sensor;
@@ -159,7 +156,7 @@ class SensorVoter extends Voter
         return true;
     }
 
-    public function canGetSensor(UserInterface $user, ?Sensor $sensor): bool
+    public function canGetSensor(UserInterface $user, Sensor $sensor): bool
     {
         if (!$user instanceof User) {
             return false;
@@ -170,7 +167,7 @@ class SensorVoter extends Voter
         }
 
         if (!in_array(
-            $sensor?->getDevice()->getGroupObject()->getGroupID(),
+            $sensor->getDevice()->getGroupObject()->getGroupID(),
             $user->getAssociatedGroupIDs(),
             true
         )) {

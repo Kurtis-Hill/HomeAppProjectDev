@@ -218,12 +218,9 @@ class GetSingleSensorControllerTest extends WebTestCase
         self::assertEquals(GetSingleSensorsController::REQUEST_SUCCESSFUL, $responseData['title']);
 
         $payload = $responseData['payload'];
-//        dd($payload);
         self::assertCount(count($allowedTypes), $payload['sensorReadingTypes']);
 
-        foreach ($allowedTypes as $key => $type) {
-
-//            dd($payload['sensorReadingTypes']);
+        foreach ($allowedTypes as $type) {
             self::assertArrayHasKey($type, $payload['sensorReadingTypes']);
         }
     }
@@ -425,7 +422,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGULAR_SENSOR_URL, $sensor->getSensorID()),
-            [],
+            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
@@ -436,9 +433,9 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         $payload = $responseData['payload'];
 
-        self::assertCount(count($expectedResponseTypes), $payload);
+        self::assertCount(count($expectedResponseTypes), $payload['sensorReadingTypes']);
 
-        foreach ($payload as $responseType) {
+        foreach ($payload['sensorReadingTypes'] as $responseType) {
             foreach ($notExpectedResponseTypes as $notExpectedResponseType) {
                 self::assertArrayNotHasKey($notExpectedResponseType, $responseType);
             }

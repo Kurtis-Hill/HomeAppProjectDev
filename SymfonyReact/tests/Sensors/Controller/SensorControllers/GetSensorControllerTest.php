@@ -297,13 +297,10 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_getting_groupIDs_not_assigned_to(): void
     {
-        /** @var Group[] $groupsNotApartOf */
-        $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
+        /** @var Group[] $groupsUserNotApartOf */
+        $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
-        $groupIDs = array_map(static function (Group $group) {
-            return $group->getGroupID();
-        }, $groupsNotApartOf);
-
+        $groupIDs  = array_map(static fn (Group $group) => $group->getGroupID(), $groupsUserNotApartOf);
         $dataToSend = [
             'groupIDs' => $groupIDs
         ];
@@ -325,7 +322,8 @@ class GetSensorControllerTest extends WebTestCase
         self::assertEquals(GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
 
         $errors = $responseData['errors'];
-        self::assertCount(count($groupIDs), $errors);
+        // -1 for the group that had no sensors
+        self::assertCount(count($groupIDs) - 1, $errors);
     }
 
     public function test_regular_user_can_get_devices_ids_is_assigned_to(): void
@@ -515,7 +513,7 @@ class GetSensorControllerTest extends WebTestCase
         $payload = $responseData['payload'];
         self::assertNotEmpty($payload);
 
-        self::assertEmpty($responseData['errors']);
+        self::assertArrayNotHasKey('errors', $responseData);
 
         $sensors = $this->sensorRepository->findBy(['deviceID' => $devicesUserIsNotApartOf]);
         self::assertCount(count($sensors), $payload);

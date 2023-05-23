@@ -12,14 +12,11 @@ use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\GetSensorRequestDTO\GetSensorRequestDTO;
-use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\UserSensorFilter;
-use App\Sensors\Voters\SensorVoter;
+use App\Sensors\SensorServices\SensorUserFilter;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,9 +46,8 @@ class GetSensorController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,
-        UserSensorFilter $getSensorHandler,
+        SensorUserFilter $sensorUserFilter,
         SensorRepositoryInterface $sensorRepository,
-        Security $security,
     ): JsonResponse {
         $responseType = $request->query->get(RequestQueryParameterHandler::RESPONSE_TYPE);
         $limit = $request->query->get('limit', self::GET_SENSOR_DEFAULT_LIMIT);
@@ -99,19 +95,16 @@ class GetSensorController extends AbstractController
 
         $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
 
-        $requestedSensorErrors = array_unique($getSensorHandler->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO));
+        $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
 
-        $allowedSensors = array_filter($sensors, fn (Sensor $sensor) => $this->isGranted(SensorVoter::GET_SENSOR, $sensor), ARRAY_FILTER_USE_BOTH);
-
-        dd($requestedSensorErrors, $allowedSensors);
         $sensorDTOs = [];
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
 
         if (empty($sensorDTOs)) {
-            if (!empty($requestedSensorErrors)) {
-                return $this->sendBadRequestJsonResponse($requestedSensorErrors);
+            if (!empty($sensorUserFilter->getErrors())) {
+                return $this->sendBadRequestJsonResponse($sensorUserFilter->getErrors());
             }
             return $this->sendSuccessfulJsonResponse([], 'No sensors found');
         }
@@ -122,8 +115,8 @@ class GetSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
-        if (!empty($requestedSensorErrors)) {
-            return $this->sendMultiStatusJsonResponse($requestedSensorErrors, $normalizedResponse, 'Some issues were found with your request');
+        if (!empty($sensorUserFilter->getErrors())) {
+            return $this->sendMultiStatusJsonResponse($sensorUserFilter->getErrors(), $normalizedResponse, 'Some issues were found with your request');
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
