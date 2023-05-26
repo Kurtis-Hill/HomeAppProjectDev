@@ -1,11 +1,12 @@
 import * as React from 'react';
-import SensorResponseInterface from '../../Sensor/Response/SensorResponseInterface';
-import { UpdateSingleSensorInline } from './UpdateSingleSensorInline';
+import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
+import { UpdateSingleSensorCard } from './UpdateSingleSensorCard';
 
 export function UpdateSensors(props: {
-    sensorData: SensorResponseInterface[]
+    sensorData: SensorResponseInterface[],
+    refreshData?: () => void,
 }) {
-    const { sensorData } = props;
+    const { sensorData, refreshData } = props;
 
     if (sensorData.length === 0) {
         return (
@@ -20,7 +21,7 @@ export function UpdateSensors(props: {
                     console.log('sensorData', sensor);
                     return (
                         <React.Fragment key={index}>
-                            <UpdateSingleSensorInline sensor={sensor} />
+                            <UpdateSingleSensorCard sensor={sensor} refreshData={refreshData}  />
                         </React.Fragment>
                     );
                 })

@@ -118,6 +118,14 @@
 .accept-button {
     color: #068a3d;
 }
+
+.center-text {
+    text-align: center;
+}
+
+.delete {
+    color: #e74a3b;
+}
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
 /*    -moz-transition: 0.5s;*/

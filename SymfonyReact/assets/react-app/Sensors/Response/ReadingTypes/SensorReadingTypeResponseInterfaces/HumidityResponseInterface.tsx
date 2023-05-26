@@ -1,7 +1,7 @@
-import SensorResponseInterface from "../../../Sensor/Response/SensorResponseInterface";
+import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
-export default interface AnalogResponseInterface {
-    analogID: number,
+export default interface HumidityResponseInterface {
+    humidityID: number,
     sensor: SensorResponseInterface,
     currentReading: number,
     highReading: number,

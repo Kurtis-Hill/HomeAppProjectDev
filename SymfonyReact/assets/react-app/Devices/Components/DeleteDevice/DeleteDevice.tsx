@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from 'react';
-import { AxiosResponse } from 'axios';
+import { useState } from 'react';
 import BaseModal from '../../../Common/Components/Modals/BaseModal';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
@@ -47,7 +46,7 @@ export function DeleteDevice(props: {
                 navigate(`${indexUrl}`);
             }, 2000);
         }
-    }    
+    }
 
     return (
         <>

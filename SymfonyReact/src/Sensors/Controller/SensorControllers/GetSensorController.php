@@ -61,7 +61,6 @@ class GetSensorController extends AbstractController
         } catch (ValidatorProcessorException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
-
         $deviceIDs = $request->query->all()['deviceIDs'] ?? null;
         $deviceNames = $request->query->all()['deviceNames'] ?? null;
         $groupIDs = $request->query->all()['groupIDs'] ?? null;
@@ -97,7 +96,6 @@ class GetSensorController extends AbstractController
 
         $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
 
-        $sensorDTOs = [];
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
@@ -106,6 +104,7 @@ class GetSensorController extends AbstractController
             if (!empty($sensorUserFilter->getErrors())) {
                 return $this->sendBadRequestJsonResponse($sensorUserFilter->getErrors());
             }
+
             return $this->sendSuccessfulJsonResponse([], 'No sensors found');
         }
 

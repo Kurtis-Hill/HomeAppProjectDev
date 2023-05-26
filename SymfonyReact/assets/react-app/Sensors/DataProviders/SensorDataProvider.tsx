@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-import { sensorTypesRequest as sensorTypesRequest } from '../SensorType/Request/GetSensorTypeRequest';
-import { sensorReadingTypesRequest } from '../ReadingType/Request/GetSensorReadingTypeRequest';
+import { sensorTypesRequest as sensorTypesRequest } from '../Request/SensorType/GetSensorTypeRequest';
+import { sensorReadingTypesRequest } from '../Request/ReadingType/GetSensorReadingTypeRequest';
 
-import { SensorTypeResponseInterface } from '../SensorType/Response/SensorTypeResponseInterface';
+import { SensorTypeResponseInterface } from '../Response/SensorType/SensorTypeResponseInterface';
 
 import SensorDataContext from '../Contexts/SensorDataContext';
-import ReadingTypeResponseInterface from '../ReadingType/Response/ReadingTypeResponseInterface';
+import ReadingTypeResponseInterface from '../Response/ReadingTypes/ReadingTypeResponseInterface';
 
 export function SensorDataContextProvider({ children }) {
     const [readingTypeData, setReadingTypeData] = useState<ReadingTypeResponseInterface[]|[]>([]);

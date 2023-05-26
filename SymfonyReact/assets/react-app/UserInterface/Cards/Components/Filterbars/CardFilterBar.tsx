@@ -7,9 +7,9 @@ import { CardFilterBarInterface } from './CardFilterBarInterface';
 import SmallWhiteBoxDisplay from '../../../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
 import CardFilterButton from '../Buttons/CardFilterButton';
 import { SensorDataContextDataInterface } from '../../../../Sensors/DataProviders/SensorDataProvider';
-import { SensorTypeResponseInterface } from '../../../../Sensors/SensorType/Response/SensorTypeResponseInterface';
+import { SensorTypeResponseInterface } from '../../../../Sensors/Response/SensorType/SensorTypeResponseInterface';
 import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
-import ReadingTypeResponseInterface from '../../../../Sensors/ReadingType/Response/ReadingTypeResponseInterface';
+import ReadingTypeResponseInterface from '../../../../Sensors/Response/ReadingTypes/ReadingTypeResponseInterface';
 
 export default function CardFilterBar(props: {
     filterParams: CardFilterBarInterface|[]; 

@@ -80,7 +80,7 @@ export function DevicePage() {
                 {
                     currentTab === tabOptions[1]
                         ?
-                            <UpdateSensors sensorData={deviceData.sensorData} />
+                            <UpdateSensors sensorData={deviceData.sensorData} refreshData={getDeviceData} />
                         :
                             null
                 }

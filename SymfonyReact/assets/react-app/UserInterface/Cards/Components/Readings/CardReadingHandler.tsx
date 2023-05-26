@@ -86,8 +86,6 @@ export function CardReadingHandler(props: {
     const handleCardRefresh = async () => {
         const cardData: Array<CardSensorDataResponseInterface> = await handleGettingSensorReadings();
         if (Array.isArray(cardData) && cardData.length > 0) {
-            // prepareCardDataForDisplay(cardData);
-            console.log('card data request recieved')
             setCardsForDisplay(cardData);
             setLoadingCards(false);
         } else {
@@ -109,7 +107,9 @@ export function CardReadingHandler(props: {
     }
 
     if (loadingCards === true) {
-        <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
+        return (
+            <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
+        );
     }
     return (   
         <React.Fragment>

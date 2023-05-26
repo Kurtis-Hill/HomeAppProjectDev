@@ -1,4 +1,4 @@
-import SensorResponseInterface from "../../../Sensor/Response/SensorResponseInterface";
+import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
 export default interface LatitudeResponseInterface {
     latitudeID: number,
