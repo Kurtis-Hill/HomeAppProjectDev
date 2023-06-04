@@ -20,6 +20,8 @@ class SensorType
 {
     public const ALIAS = 'sensortype';
 
+    public const STANDARD_READING_SENSOR_TYPE = 'standardReading';
+
     public const ALL_SENSOR_TYPES = [
         Bmp::NAME,
         Soil::NAME,

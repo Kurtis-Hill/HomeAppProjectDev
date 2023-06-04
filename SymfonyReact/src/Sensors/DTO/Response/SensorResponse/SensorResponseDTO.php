@@ -23,6 +23,7 @@ readonly class SensorResponseDTO
         private array $sensorReadingTypes = [],
         private ?bool $canEdit = null,
         private ?bool $canDelete = null,
+        private ?bool $userHasCardView = null,
     ) {
     }
 
@@ -104,5 +105,16 @@ readonly class SensorResponseDTO
     public function getCanDelete(): ?bool
     {
         return $this->canDelete;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getUserHasCardView(): ?bool
+    {
+        return $this->userHasCardView;
     }
 }

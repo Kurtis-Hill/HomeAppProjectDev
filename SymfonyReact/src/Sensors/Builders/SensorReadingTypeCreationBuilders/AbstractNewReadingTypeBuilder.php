@@ -6,6 +6,10 @@ use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\HumidityReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\LatitudeReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\TemperatureReadingTypeObjectBuilder;
+use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
@@ -45,19 +49,19 @@ abstract class AbstractNewReadingTypeBuilder
             throw new SensorTypeException('Sensor type must implement SensorTypeInterface');
         }
         if ($sensorType instanceof TemperatureSensorTypeInterface) {
-            $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading['temperature'] ?? 10);
+            $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Temperature::READING_TYPE] ?? 10);
         }
 
         if ($sensorType instanceof HumiditySensorTypeInterface) {
-            $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading['humidity'] ?? 10);
+            $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Humidity::READING_TYPE] ?? 10);
         }
 
         if ($sensorType instanceof LatitudeSensorTypeInterface) {
-            $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading['latitude'] ?? 10);
+            $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Latitude::READING_TYPE] ?? 10);
         }
 
         if ($sensorType instanceof AnalogSensorTypeInterface) {
-            $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading['analog'] ?? 10);
+            $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Analog::READING_TYPE] ?? 10);
         }
     }
 }

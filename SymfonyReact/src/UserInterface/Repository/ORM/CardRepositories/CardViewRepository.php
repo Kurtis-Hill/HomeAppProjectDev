@@ -195,4 +195,29 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
 
         return $qb->getQuery()->getResult($hydrationMode);
     }
+
+//    public function findCardViewByUserAndSensor(User $user, Sensor $sensor): ?CardView
+//    {
+//        $qb = $this->createQueryBuilder(CardView::ALIAS);
+//        $expr = $qb->expr();
+//
+//        $qb->select(CardView::ALIAS)
+//            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS . $this->createJoinConditionString('sensorID', 'sensorID', CardView::ALIAS))
+//            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceID', 'deviceID', Sensor::ALIAS))
+//            ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', 'roomID', Room::ALIAS))
+//            ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
+//            ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
+//            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('stateID', 'cardStateID', CardView::ALIAS))
+//            ->innerJoin(SensorType::class, SensorType::ALIAS, Join::WITH, SensorType::ALIAS . $this->createJoinConditionString('sensorTypeID', 'sensorTypeID', Sensor::ALIAS))
+//            ->where(
+//                $expr->eq(CardView::ALIAS . '.userID', ':userID'),
+//                $expr->eq(Sensor::ALIAS . '.sensorID', ':sensorID')
+//            )
+//            ->setParameters([
+//                'userID' => $user,
+//                'sensorID' => $sensor
+//            ]);
+//
+//        return $qb->getQuery()->getOneOrNullResult();
+//    }
 }

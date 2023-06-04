@@ -12,4 +12,5 @@ export default interface SensorResponseInterface {
     sensorReadingTypes?: SensorReadingTypeResponseInterface,
     canEdit?: boolean,
     canDelete?: boolean,
+    userHasCardView?: boolean,
 }

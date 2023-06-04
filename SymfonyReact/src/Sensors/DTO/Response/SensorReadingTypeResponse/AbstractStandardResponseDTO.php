@@ -4,6 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
+use App\Sensors\Entity\SensorType;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -84,5 +85,16 @@ readonly class AbstractStandardResponseDTO
     public function getUpdatedAt(): string
     {
         return $this->updated;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getType(): string
+    {
+        return SensorType::STANDARD_READING_SENSOR_TYPE;
     }
 }

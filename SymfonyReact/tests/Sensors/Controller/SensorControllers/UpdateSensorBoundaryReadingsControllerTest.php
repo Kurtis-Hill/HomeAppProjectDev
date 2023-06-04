@@ -134,16 +134,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getTemperature(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getTemperature(), Temperature::READING_TYPE);
         }
         if ($sensorTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getHumidObject(), 'humidity');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getHumidObject(), Humidity::READING_TYPE);
         }
         if ($sensorTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getAnalogObject(), 'analog');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getAnalogObject(), Analog::READING_TYPE);
         }
         if ($sensorTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getLatitudeObject(), 'latitude');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
         }
     }
 
@@ -393,16 +393,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), Temperature::READING_TYPE);
         }
         if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), Humidity::READING_TYPE);
         }
         if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), 'analog');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), Analog::READING_TYPE);
         }
         if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
         }
     }
 

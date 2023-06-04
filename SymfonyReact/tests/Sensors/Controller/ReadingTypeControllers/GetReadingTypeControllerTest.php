@@ -3,7 +3,11 @@
 namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
+use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository;
 use App\Tests\Traits\TestLoginTrait;
@@ -166,19 +170,19 @@ class GetReadingTypeControllerTest extends WebTestCase
     public function singleReadingTypeNamesDataProvider(): Generator
     {
         yield [
-            'temperature',
+            Temperature::READING_TYPE,
         ];
 
         yield [
-            'humidity',
+            Humidity::READING_TYPE,
         ];
 
         yield [
-            'latitude',
+            Latitude::READING_TYPE,
         ];
 
         yield [
-            'analog',
+            Analog::READING_TYPE,
         ];
     }
 

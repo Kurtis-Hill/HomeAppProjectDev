@@ -8,4 +8,5 @@ export default interface AnalogResponseInterface {
     lowReading: number,
     constRecord: boolean,
     updatedAt: string,
+    type: string,
 }

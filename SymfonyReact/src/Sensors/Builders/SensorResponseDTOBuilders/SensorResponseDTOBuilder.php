@@ -7,25 +7,31 @@ use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorReadingTypeDTOResponseBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
-use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Builders\User\UserResponseBuilder;
+use App\User\Entity\User;
+use App\UserInterface\Entity\Card\CardView;
+use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SensorResponseDTOBuilder
 {
     private SensorReadingTypeDTOResponseBuilder $sensorReadingTypeDTOResponseBuilder;
 
+    private CardViewRepository $cardViewRepository;
+
     private Security $security;
 
     public function __construct(
         SensorReadingTypeDTOResponseBuilder $sensorReadingTypeDTOResponseBuilder,
+        CardViewRepository $cardViewRepository,
         Security $security,
     ) {
         $this->sensorReadingTypeDTOResponseBuilder = $sensorReadingTypeDTOResponseBuilder;
+        $this->cardViewRepository = $cardViewRepository;
         $this->security = $security;
     }
 
@@ -42,6 +48,11 @@ class SensorResponseDTOBuilder
                 true
             )) {
             $sensorReadingTypeDTO = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTOs($sensor);
+
+            $user = $this->security->getUser();
+            if ($user instanceof User) {
+                $cardView = $this->cardViewRepository->findOneBy(['userID' => $user, 'sensor' => $sensor]);
+            }
         }
 
         return self::buildSensorResponseDTO(
@@ -56,6 +67,7 @@ class SensorResponseDTOBuilder
                 )
             ),
             $this->security->isGranted(SensorVoter::DELETE_SENSOR, $sensor),
+            $cardView ?? null,
 
         );
     }
@@ -65,6 +77,7 @@ class SensorResponseDTOBuilder
      * @param SensorReadingTypeResponseDTOInterface[] $sensorReadingTypeDTO
      * @param bool|null $canEdit
      * @param bool|null $canDelete
+     * @param CardView|null $cardView
      * @return SensorResponseDTO
      */
     public static function buildSensorResponseDTO(
@@ -72,7 +85,10 @@ class SensorResponseDTOBuilder
         array $sensorReadingTypeDTO = [],
         ?bool $canEdit = null,
         ?bool $canDelete = null,
+        ?CardView $cardView = null,
     ): SensorResponseDTO {
+        $cardViewAdded = !($cardView === null);
+
         return new SensorResponseDTO(
             $sensor->getSensorID(),
             UserResponseBuilder::buildUserResponseDTO($sensor->getCreatedBy()),
@@ -82,6 +98,7 @@ class SensorResponseDTOBuilder
             $sensorReadingTypeDTO,
             $canEdit,
             $canDelete,
+            $cardViewAdded,
         );
     }
 }

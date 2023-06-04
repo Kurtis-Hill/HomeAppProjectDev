@@ -95,6 +95,10 @@ class SensorVoter extends Voter
             return false;
         }
 
+        if ($user->isAdmin()) {
+            return true;
+        }
+
         if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }

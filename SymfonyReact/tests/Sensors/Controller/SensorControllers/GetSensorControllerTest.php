@@ -30,6 +30,7 @@ use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepositoryInterface;
+use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -59,6 +60,8 @@ class GetSensorControllerTest extends WebTestCase
 
     private SensorTypeRepository $sensorTypeRepository;
 
+    private CardViewRepository $cardViewRepository;
+
     private User $adminUser;
 
     private User $regularUserTwo;
@@ -83,6 +86,7 @@ class GetSensorControllerTest extends WebTestCase
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->sensorTypeRepository = $this->entityManager->getRepository(SensorType::class);
+        $this->cardViewRepository = $this->entityManager->getRepository(SensorType::class);
     }
 
     protected function tearDown(): void
@@ -623,13 +627,19 @@ class GetSensorControllerTest extends WebTestCase
 
         foreach ($sensorData as $singleSensorData) {
             $sensorObject = $this->sensorRepository->find($singleSensorData['sensorID']);
+            $userHasCardView = $this->cardViewRepository->findOneBy(
+                [
+                    'userID' => $this->adminUser->getUserID(),
+                    'sensorID' => $sensorObject->getSensorID()
+                ]
+            );
+            $sensorReadingTypes = $singleSensorData['sensorReadingTypes'];
             if (
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Dallas::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME
             ) {
                 $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-                $sensorReadingTypes = $singleSensorData['sensorReadingTypes'];
                 /** @var Temperature $temperature */
                 $temperature = $temperatureRepository->find($sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
                 self::assertEquals($temperature->getSensorID(), $sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
@@ -637,6 +647,7 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals($temperature->getHighReading(), $sensorReadingTypes[Temperature::READING_TYPE]['highReading']);
                 self::assertEquals($temperature->getLowReading(), $sensorReadingTypes[Temperature::READING_TYPE]['lowReading']);
                 self::assertEquals($temperature->getConstRecord(), $sensorReadingTypes[Temperature::READING_TYPE]['constRecorded']);
+                self::assertEquals(SensorType::STANDARD_READING_SENSOR_TYPE, $sensorReadingTypes[Temperature::READING_TYPE]['type']);
             }
             if (
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
@@ -650,6 +661,7 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals($humidity->getHighReading(), $singleSensorData['sensorReadingTypes'][Humidity::READING_TYPE]['highReading']);
                 self::assertEquals($humidity->getLowReading(), $singleSensorData['sensorReadingTypes'][Humidity::READING_TYPE]['lowReading']);
                 self::assertEquals($humidity->getConstRecord(), $singleSensorData['sensorReadingTypes'][Humidity::READING_TYPE]['constRecorded']);
+                self::assertEquals(SensorType::STANDARD_READING_SENSOR_TYPE, $sensorReadingTypes[Humidity::READING_TYPE]['type']);
             }
 
             if ($sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME) {
@@ -661,6 +673,7 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals($latitude->getHighReading(), $singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['highReading']);
                 self::assertEquals($latitude->getLowReading(), $singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['lowReading']);
                 self::assertEquals($latitude->getConstRecord(), $singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['constRecorded']);
+                self::assertEquals(SensorType::STANDARD_READING_SENSOR_TYPE, $sensorReadingTypes[Latitude::READING_TYPE]['type']);
             }
 
             if ($sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME) {
@@ -672,6 +685,7 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals($analog->getHighReading(), $singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['highReading']);
                 self::assertEquals($analog->getLowReading(), $singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['lowReading']);
                 self::assertEquals($analog->getConstRecord(), $singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['constRecorded']);
+                self::assertEquals(SensorType::STANDARD_READING_SENSOR_TYPE, $sensorReadingTypes[Analog::READING_TYPE]['type']);
             }
 
             self::assertEquals($sensorObject->getSensorID(), $singleSensorData['sensorID']);
@@ -705,6 +719,7 @@ class GetSensorControllerTest extends WebTestCase
 
             self::assertTrue($singleSensorData['canEdit']);
             self::assertTrue($singleSensorData['canDelete']);
+            self::assertEquals($userHasCardView !== null, $singleSensorData['userHasCardView']);
         }
     }
 

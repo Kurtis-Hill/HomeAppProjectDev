@@ -9,6 +9,10 @@ import SensorResponseInterface from '../Response/Sensor/SensorResponseInterface'
 import { FormInlineInput } from '../../Common/Components/Inputs/FormInlineUpdate';
 import { SensorPatchRequestInputInterface } from '../Response/Sensor/SensorPatchRequestInputInterface';
 import { DeleteSensor } from './DeleteSensor/DeleteSensor';
+import { updateSensorRequest } from '../Request/Sensor/UpdateSensorRequest';
+import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
+import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
+
 
 export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
     const { sensor, refreshData } = props;
@@ -34,6 +38,8 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         device: sensor.device,
         createdBy: sensor.createdBy,
     });
+
+    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
     const toggleFormInput = (event: Event) => {
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined
@@ -75,19 +81,65 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                 dataToSend.deviceName = sensorUpdateFormInputs.device.deviceName;
                 break;
         }
+
+        const updatedSensorResponse = await updateSensorRequest(sensor.sensorID, dataToSend);
+
+        if (updatedSensorResponse.status === 202) {
+            const updatedSensor: SensorResponseInterface = updatedSensorResponse.data.payload;
+
+            setSensorUpdateFormInputs({
+                ...sensorUpdateFormInputs,
+                [name]: updatedSensor[name],
+            });
+
+            originalSensorData.current = {
+                ...originalSensorData.current,
+                [name]: updatedSensor[name],
+            };
+
+            setActiveFormForUpdating({
+                ...activeFormForUpdating,
+                [name]: !activeFormForUpdating[name],
+            });
+        } else {
+            showAnnouncementFlash(['Unexpected Response'], 'Error Updating Sensor');
+        }
+
+    }
+
+    const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
+        setAnnouncementModals([
+            <AnnouncementFlashModalBuilder
+                setAnnouncementModals={setAnnouncementModals}
+                title={title}
+                dataToList={message}
+                timer={timer ? timer : 40}
+            />
+        ])
     }
     
     const canEdit: boolean = sensor.canEdit ?? false;
     const canDelete: boolean = sensor.canDelete ?? false;
+    const userHadCardView: boolean = sensor.userHasCardView ?? false;
     
     return (
         <>
+            {
+                announcementModals.map((announcementModal: typeof AnnouncementFlashModal, index: number) => {
+                    return (
+                        <React.Fragment key={index}>
+                            { announcementModal }
+                        </React.Fragment>
+                    );
+                })
+            }
             <GeneralTable>
                 <GeneralTableHeaders
                     headers={[
                         'Sensor Name',
                         'Sensor Type',
                         'Created By',
+                        'User Card',
                         canDelete === true ? 'Delete' : '',
                     ]}
                 />
@@ -116,6 +168,9 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     <GeneralTableRow>
                         <span>{sensor?.createdBy?.email}</span>
                     </GeneralTableRow>                            
+                    <GeneralTableRow>
+                        { userHadCardView ? <i className="fas fa-check hover"></i> : <i className="fas fa-times hover"></i> }
+                    </GeneralTableRow>
                     {         
                         canDelete === true
                             ?
@@ -132,7 +187,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     
                 </GeneralTableBody>
             </GeneralTable>       
-
         </>
     );
 }
