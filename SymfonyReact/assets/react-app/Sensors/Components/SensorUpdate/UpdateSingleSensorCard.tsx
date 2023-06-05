@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
 import { SensorDisplayTable } from '../SensorDisplayTable';
 import { ReadingTypeDisplayTable } from '../ReadingTypes/ReadingTypeDisplayTable';

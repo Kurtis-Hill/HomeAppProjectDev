@@ -231,7 +231,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
-            'sensorName' => 'TestingTestingTestingTestingTestingTestingTesting' . $sensorName,
+            'sensorName' => 'TestingTestingTesti' . $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceNameID' => $this->device->getDeviceID(),
         ];
@@ -252,7 +252,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($sensor);
-        self::assertStringContainsString("Sensor name cannot be longer than 50 characters", $responseData['errors'][0]);
+        self::assertStringContainsString("Sensor name cannot be longer than 20 characters", $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 

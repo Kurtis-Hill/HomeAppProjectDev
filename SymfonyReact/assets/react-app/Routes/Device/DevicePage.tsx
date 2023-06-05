@@ -15,6 +15,7 @@ import { ResponseTypeFull } from '../../Common/API/APIResponseType';
 import { UpdateSensors } from '../../Sensors/Components/SensorUpdate/UpdateSensors';
 import { DeviceResponseInterface } from '../../Devices/Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
+import { ViewSensorsPage } from '../../Sensors/Page/ViewSensorsPage';
 
 export function DevicePage() {
     const tabOptions = ['Device', 'Sensors', 'Commands'];
@@ -80,7 +81,7 @@ export function DevicePage() {
                 {
                     currentTab === tabOptions[1]
                         ?
-                            <UpdateSensors sensorData={deviceData.sensorData} refreshData={getDeviceData} />
+                            <ViewSensorsPage sensorData={deviceData.sensorData} refreshData={getDeviceData} />
                         :
                             null
                 }

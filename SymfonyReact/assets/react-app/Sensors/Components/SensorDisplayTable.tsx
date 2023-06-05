@@ -67,6 +67,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         });
     }
 
+
     const sendUpdateSensorRequest = async (event: Event) => {
         const name = (event.target as HTMLElement).dataset.name;
         const value = (event.target as HTMLElement).dataset.value;
@@ -103,8 +104,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
             });
         } else {
             showAnnouncementFlash(['Unexpected Response'], 'Error Updating Sensor');
-        }
-
+        }    
     }
 
     const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
@@ -156,7 +156,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                         acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
                                         declineClickEvent={(e: Event) => toggleFormInput(e)}
                                         extraClasses='center-text'
-                                        />
+                                    />
                                         
                                 :                
                                     <span className={`${canEdit === true ? 'hover' : ''}`} data-name="sensorName" onClick={(e: Event) => toggleFormInput(e)}>{sensor.sensorName}</span>

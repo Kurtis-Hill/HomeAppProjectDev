@@ -148,11 +148,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 continue;
             }
 
-            if (!empty($validationError)) {
-                foreach ($validationError as $error) {
-                    $validationErrors[] =  $error;
-                }
-            } else {
+            if (empty($validationError)) {
                 $this->successfullyProcessedTypes[] = $readingTypeResponseBuilderFactory
                     ->getStandardReadingTypeResponseBuilder($sensorReadingTypeObject)
                     ->buildReadingTypeBoundaryReadingsResponseDTO($sensorReadingTypeObject);

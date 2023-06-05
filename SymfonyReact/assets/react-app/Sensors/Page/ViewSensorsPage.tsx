@@ -1,8 +1,9 @@
 import * as React from 'react';
-import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
-import { UpdateSingleSensorCard } from './UpdateSingleSensorCard';
+import SensorResponseInterface from '../Response/Sensor/SensorResponseInterface';
+import { UpdateSingleSensorCard } from '../Components/SensorUpdate/UpdateSingleSensorCard';
+import { AddNewSensorButton } from '../Components/AddSensor/AddNewSensorButton';
 
-export function UpdateSensors(props: {
+export function ViewSensorsPage(props: {
     sensorData: SensorResponseInterface[],
     refreshData?: () => void,
 }) {
@@ -26,6 +27,7 @@ export function UpdateSensors(props: {
                     );
                 })
             }
+            <AddNewSensorButton deviceID={sensorData[0].device.deviceID }/>
         </>
     )
 }

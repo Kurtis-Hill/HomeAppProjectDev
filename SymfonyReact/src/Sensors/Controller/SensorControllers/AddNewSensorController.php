@@ -61,7 +61,6 @@ class AddNewSensorController extends AbstractController
         ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,
         DeleteSensorHandlerInterface $deleteSensorService,
-        //SensorResponseDTOBuilder $sensorResponseDTOBuilder,
     ): JsonResponse {
         $newSensorRequestDTO = new AddNewSensorRequestDTO();
         try {
@@ -135,19 +134,19 @@ class AddNewSensorController extends AbstractController
 
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }
+        $this->logger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);
 
         $errors = $cardCreationService->createUserCardForSensor($sensor, $this->getUser());
-        if (!empty($errors)) {
-            return $this->sendInternalServerErrorJsonResponse($errors);
-        }
 
         $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {
             $normalizedResponse = $this->normalizeResponse($sensorResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
-        $this->logger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);
+        if (!empty($errors)) {
+            return $this->sendMultiStatusJsonResponse($errors, $normalizedResponse);
+        }
 
         return $this->sendCreatedResourceJsonResponse($normalizedResponse);
     }

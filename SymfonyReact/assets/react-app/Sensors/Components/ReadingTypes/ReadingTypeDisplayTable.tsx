@@ -4,7 +4,7 @@ import { standardReading } from '../../../Common/SensorLanguage';
 import { StandardReadingTypesDisplayTable } from './StandardReadingTypesDisplayTable';
 
 export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadingTypeResponseInterface, canEdit: boolean}) {
-    const { sensorReadingTypes } = props;
+    const { sensorReadingTypes, canEdit } = props;
 
     const sensorReadingTypesArray = Object.values(sensorReadingTypes);
 
@@ -16,7 +16,7 @@ export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadin
         <>  
             {
                 standardReadingTypes.length > 0
-                    ? <StandardReadingTypesDisplayTable standardReadingTypes={standardReadingTypes} />
+                    ? <StandardReadingTypesDisplayTable standardReadingTypes={standardReadingTypes} canEdit={canEdit} />
                     : null
             }
         </>

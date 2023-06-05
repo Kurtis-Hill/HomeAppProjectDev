@@ -47,7 +47,7 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
             );
 
             if (!empty($validationErrors)) {
-                $errors = array_merge($errors, $validationErrors);
+                $errors = $validationErrors;
             }
         }
 
@@ -126,6 +126,7 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
         return $validationErrors;
     }
 
+    #[ArrayShape(['validationErrors'])]
     private function performSensorReadingTypeValidation(
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null

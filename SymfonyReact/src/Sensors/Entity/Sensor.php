@@ -21,7 +21,7 @@ class Sensor
 {
     public const ALIAS  = 'sensors';
 
-    private const SENSOR_NAME_MAX_LENGTH = 50;
+    private const SENSOR_NAME_MAX_LENGTH = 20;
 
     private const SENSOR_NAME_MIN_LENGTH = 2;
 

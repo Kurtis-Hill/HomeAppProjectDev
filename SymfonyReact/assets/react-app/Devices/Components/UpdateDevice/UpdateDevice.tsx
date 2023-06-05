@@ -27,19 +27,19 @@ export function UpdateDevice(props: {
     const { deviceData, setDeviceData, setRefreshNavbar } = props;
     
     const [activeFormForUpdating, setActiveFormForUpdating] = useState({
-            deviceName: false,
-            password: false,
-            deviceGroup: false,
-            deviceRoom: false,
+        deviceName: false,
+        password: false,
+        deviceGroup: false,
+        deviceRoom: false,
     });
 
     const [deviceUpdateFormInputs, setDeviceUpdateFormInputs] = useState<UpdateDeviceFormInputsInterface>({
-            deviceName: deviceData.deviceName,
-            password: '',
-            deviceGroup: deviceData.group.groupID,
-            deviceGroupName: deviceData.group.groupName,
-            deviceRoom: deviceData.room.roomID,
-            deviceRoomName: deviceData.room.roomName,
+        deviceName: deviceData.deviceName,
+        password: '',
+        deviceGroup: deviceData.group.groupID,
+        deviceGroupName: deviceData.group.groupName,
+        deviceRoom: deviceData.room.roomID,
+        deviceRoomName: deviceData.room.roomName,
     });
 
     const originalDeviceData = useRef<UpdateDeviceFormInputsInterface>({

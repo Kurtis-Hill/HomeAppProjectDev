@@ -10,8 +10,8 @@ class SensorUpdateDTOBuilder
 {
     public static function buildSensorUpdateDTO(
         Sensor $sensor,
-        ?string $sensorName,
-        ?Devices $deviceID,
+        ?string $sensorName = null,
+        ?Devices $deviceID = null,
     ): UpdateSensorDTO {
         return new UpdateSensorDTO(
             $sensor,

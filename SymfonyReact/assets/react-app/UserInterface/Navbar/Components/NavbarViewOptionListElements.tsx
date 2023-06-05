@@ -87,17 +87,17 @@ export default function NavbarViewOptionListElements(props: {
             {/* {            
                 showAddNewDeviceModal === true
                     ? */}
-                        <BaseModal 
-                            title={'Add New Device'}
-                            modalShow={showAddNewDeviceModal}
-                            setShowModal={setAddNewDeviceModalFlag}
-                            heightClasses="standard-modal-height"
-                        >
-                            <AddNewDevice
-                                setAddNewDeviceModal={setAddNewDeviceModal}
-                                setRefreshNavDataFlag={props.setRefreshNavDataFlag}
-                            />
-                        </BaseModal>
+            <BaseModal 
+                title={'Add New Device'}
+                modalShow={showAddNewDeviceModal}
+                setShowModal={setAddNewDeviceModalFlag}
+                heightClasses="standard-modal-height"
+            >
+                <AddNewDevice
+                    setAddNewDeviceModal={setAddNewDeviceModal}
+                    setRefreshNavDataFlag={props.setRefreshNavDataFlag}
+                />
+            </BaseModal>
                     {/* :
                         null */}
             {/* } */}

@@ -3,6 +3,7 @@
 namespace App\Sensors\Voters;
 
 use App\Devices\Entity\Devices;
+use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\Entity\Sensor;
@@ -91,19 +92,24 @@ class SensorVoter extends Voter
 
     private function canUpdateSensorBoundaryReading(UserInterface $user, Sensor $sensor): bool
     {
-        if (!$user instanceof User) {
-            return false;
-        }
+        $sensorUpdateDTO = SensorUpdateDTOBuilder::buildSensorUpdateDTO(
+            $sensor
+        );
 
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
-            return false;
-        }
-
-        return true;
+        return $this->canUpdateSensor($user, $sensorUpdateDTO);
+//        if (!$user instanceof User) {
+//            return false;
+//        }
+//
+//        if ($user->isAdmin()) {
+//            return true;
+//        }
+//
+//        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+//            return false;
+//        }
+//
+//        return true;
     }
 
     private function canUpdateSensorCurrentReading(UserInterface $user): bool
@@ -153,7 +159,7 @@ class SensorVoter extends Voter
             return false;
         }
 
-        if (!in_array($updateSensorDTO->getDeviceID()?->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+        if (($updateSensorDTO->getDeviceID() !== null) && !in_array($updateSensorDTO->getDeviceID()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
             return false;
         }
 

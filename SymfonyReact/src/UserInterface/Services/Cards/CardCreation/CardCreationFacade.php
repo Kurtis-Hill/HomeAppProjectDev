@@ -20,6 +20,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -55,6 +56,7 @@ class CardCreationFacade implements CardCreationHandlerInterface
     /**
      * @throws CardStateException
      */
+    #[ArrayShape(['errors'])]
     public function createUserCardForSensor(Sensor $sensorObject, UserInterface $user): array
     {
         try {

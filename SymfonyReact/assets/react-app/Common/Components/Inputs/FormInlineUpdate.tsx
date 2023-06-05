@@ -11,6 +11,7 @@ export function FormInlineInput(props: {
     acceptClickEvent: (e: Event) => void;
     declineClickEvent: (e: Event) => void;
     dataName?: string;
+    dataType?: string;
     extraClasses?: string;
 }) {
 
@@ -21,6 +22,7 @@ export function FormInlineInput(props: {
         acceptClickEvent, 
         declineClickEvent, 
         dataName,
+        dataType,
         extraClasses,
     } = props;
     return (
@@ -34,7 +36,7 @@ export function FormInlineInput(props: {
                 extraClasses={extraClasses}
             />
             <span style={{ paddingLeft: "2%" }}>
-                <AcceptButton clickEvent={(e: Event) => acceptClickEvent(e)} dataName={dataName} />
+                <AcceptButton clickEvent={(e: Event) => acceptClickEvent(e)} dataName={dataName} dataType={dataType} />
                 <DeclineButton clickEvent={(e: Event) => declineClickEvent(e)} dataName={dataName} />
             </span>
         </>
