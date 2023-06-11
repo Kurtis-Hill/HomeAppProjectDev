@@ -3,8 +3,8 @@ import { SensorReadingTypeResponseInterface } from '../../Response/ReadingTypes/
 import { standardReading, sensorType } from '../../../Common/SensorLanguage';
 import { StandardReadingTypesDisplayTable } from './StandardReadingTypesDisplayTable';
 
-export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadingTypeResponseInterface, canEdit: boolean}) {
-    const { sensorReadingTypes, canEdit } = props;
+export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadingTypeResponseInterface, canEdit: boolean, refreshData?: () => void}) {
+    const { sensorReadingTypes, canEdit, refreshData } = props;
 
     const sensorReadingTypesArray = Object.values(sensorReadingTypes);
     
@@ -17,7 +17,7 @@ export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadin
         <>  
             {
                 standardReadingTypes.length > 0
-                    ? <StandardReadingTypesDisplayTable standardReadingTypes={standardReadingTypes} canEdit={canEdit} />
+                    ? <StandardReadingTypesDisplayTable standardReadingTypes={standardReadingTypes} canEdit={canEdit} refreshData={refreshData} />
                     : null
             }
         </>

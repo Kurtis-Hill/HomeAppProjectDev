@@ -38,7 +38,7 @@ export function UpdateSingleSensorCard(props: {sensor: SensorResponseInterface, 
                                 activeFormForUpdating.expandSensor === true
                                     ?
                                         <>  
-                                            <ReadingTypeDisplayTable sensorReadingTypes={sensor.sensorReadingTypes} canEdit={sensor.canEdit} />
+                                            <ReadingTypeDisplayTable sensorReadingTypes={sensor.sensorReadingTypes} canEdit={sensor.canEdit} refreshData={refreshData} />
                                         </>
                                     : 
                                         null
