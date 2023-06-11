@@ -14,7 +14,7 @@ interface StandardReadingTypeResponseInterface
 
     public function getLowReading(): float|int|string;
 
-    public function getConstRecorded(): bool;
+    public function getConstRecord(): bool;
 
     public function getUpdatedAt(): string;
 }

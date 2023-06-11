@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Label } from '../Elements/Label';
 import { AcceptButton } from '../Buttons/AcceptButton';
 import { DeclineButton } from '../Buttons/DeclineButton';
+import { FormSelect } from './FormSelect';
 
 export function FormInlineSelectWLabel(
     props: {
@@ -38,15 +39,21 @@ export function FormInlineSelectWLabel(
                 
             />
             <div className="form-group">
-            <select name={selectName} defaultValue={selectDefaultValue} className="form-control" onChange={(e: Event) => changeEvent(e)}>
-                        {
-                            selectOptions.map((option: {value: any, name:string}, index: number) => {
-                                return (
-                                    <option key={index} value={option.value}>{option.name}</option>
-                                )
-                            })
-                        }
-                    </select>
+                <FormSelect 
+                    selectName={selectName}
+                    changeEvent={changeEvent}
+                    selectDefaultValue={selectDefaultValue}
+                    selectOptions={selectOptions}
+                />
+                {/* <select name={selectName} defaultValue={selectDefaultValue} className="form-control" onChange={(e: Event) => changeEvent(e)}>
+                            {
+                                selectOptions.map((option: {value: any, name:string}, index: number) => {
+                                    return (
+                                        <option key={index} value={option.value}>{option.name}</option>
+                                    )
+                                })
+                            }
+                </select> */}
             </div>
             <span style={{ paddingLeft: "2%" }}></span>
             <AcceptButton clickEvent={(e: Event) => acceptClickEven(e)} dataName={acceptDeclineDataName} />

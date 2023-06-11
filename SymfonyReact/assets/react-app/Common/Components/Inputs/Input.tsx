@@ -1,6 +1,18 @@
 import * as React from 'react';
 
-export default function Input(props: { name: string; value?: object; type?: string; placeHolder?: string; autoComplete?: string; onChangeFunction?: any; extraClasses?: string; required?: boolean; autoFocus?: boolean; inputOnClickFn?: (event: Event) => void; }) {
+export default function Input(props: { 
+    name: string; 
+    value?: object; 
+    type?: string; 
+    placeHolder?: string; 
+    autoComplete?: string; 
+    onChangeFunction?: any; 
+    extraClasses?: string; 
+    required?: boolean; 
+    autoFocus?: boolean; 
+    inputOnClickFn?: (event: Event) => void; 
+    dataName?: string,
+}) {
     const name: string = props.name ?? ''
     const value: object = props.value
     const type: string = props.type ?? 'text'
@@ -10,6 +22,7 @@ export default function Input(props: { name: string; value?: object; type?: stri
     const required: boolean = props.required ?? true
     const autoFocus: boolean = props.autoFocus ?? false
     const inputOnClickFn: (event: Event) => void = props.inputOnClickFn ?? function (){}
+    const dataName: string = props.dataName ?? ''
 
     const onChangeFunction: (event: { target: { name: string; value: string; }; }) => void = props.onChangeFunction ?? function (){}
 
@@ -27,6 +40,7 @@ export default function Input(props: { name: string; value?: object; type?: stri
                     autoFocus={autoFocus}
                     value={value}
                     onClick={(e: Event) => inputOnClickFn(e)}
+                    data-name={dataName}
                 />
             </div>
         </React.Fragment>

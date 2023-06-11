@@ -19,12 +19,12 @@ export function UserDataContextProvider({ children }) {
     }, []);
 
     const handleUserDataRequest = async () => {
-        console.log('handleUserDataRequest');
+        // console.log('handleUserDataRequest');
         const userDataResponse = await userDataRequest();
         if (userDataResponse.status === 200) {
             const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
 
-            console.log('payload', userDataPayload)
+            // console.log('payload', userDataPayload)
             userData.current = {
                 userGroups: userDataPayload.userGroups,
                 userRooms: userDataPayload.userRooms

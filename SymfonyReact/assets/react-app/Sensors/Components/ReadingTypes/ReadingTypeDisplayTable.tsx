@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { SensorReadingTypeResponseInterface } from '../../Response/ReadingTypes/SensorReadingTypeResponseInterfaces/SensorReadingTypeResponseInterface';
-import { standardReading } from '../../../Common/SensorLanguage';
+import { standardReading, sensorType } from '../../../Common/SensorLanguage';
 import { StandardReadingTypesDisplayTable } from './StandardReadingTypesDisplayTable';
 
 export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadingTypeResponseInterface, canEdit: boolean}) {
     const { sensorReadingTypes, canEdit } = props;
 
     const sensorReadingTypesArray = Object.values(sensorReadingTypes);
-
+    
     const standardReadingTypes = sensorReadingTypesArray.filter((readingType) => {
-        return readingType.type === standardReading;
+        return readingType.sensorType === standardReading;
     });
 
+    // console.log('standardReadingTypes', sensorReadingTypes, sensorReadingTypesArray);
     return (
         <>  
             {

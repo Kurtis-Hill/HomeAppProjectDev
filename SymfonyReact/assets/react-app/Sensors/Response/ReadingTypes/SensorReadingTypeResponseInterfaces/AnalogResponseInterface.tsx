@@ -1,5 +1,7 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
+type AnalogString = 'analog';
+
 export default interface AnalogResponseInterface {
     analogID: number,
     sensor: SensorResponseInterface,
@@ -8,5 +10,6 @@ export default interface AnalogResponseInterface {
     lowReading: number,
     constRecord: boolean,
     updatedAt: string,
-    type: string,
+    sensorType: string,
+    readingType: AnalogString,
 }

@@ -1,5 +1,7 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
+type HumidityString = 'humidity';
+
 export default interface HumidityResponseInterface {
     humidityID: number,
     sensor: SensorResponseInterface,
@@ -8,5 +10,6 @@ export default interface HumidityResponseInterface {
     lowReading: number,
     constRecord: boolean,
     updatedAt: string,
-    type: string,
+    readingType: string,
+    sensorType: HumidityString,
 }

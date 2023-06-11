@@ -16,8 +16,9 @@ readonly class AbstractStandardResponseDTO
         private float $currentReading,
         private float $highReading,
         private float $lowReading,
-        private bool $constRecorded,
+        private bool $constRecord,
         private string $updated,
+        private string $readingType,
     ) {
     }
 
@@ -71,9 +72,9 @@ readonly class AbstractStandardResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getConstRecorded(): bool
+    public function getConstRecord(): bool
     {
-        return $this->constRecorded;
+        return $this->constRecord;
     }
 
     #[Groups([
@@ -93,8 +94,19 @@ readonly class AbstractStandardResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getType(): string
+    public function getSensorType(): string
     {
         return SensorType::STANDARD_READING_SENSOR_TYPE;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getReadingType(): string
+    {
+        return $this->readingType;
     }
 }

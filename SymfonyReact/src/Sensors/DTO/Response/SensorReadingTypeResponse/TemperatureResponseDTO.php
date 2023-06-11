@@ -4,6 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
+use App\Sensors\Entity\ReadingTypes\Temperature;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -24,8 +25,9 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,
-            constRecorded: $constRecorded,
-            updated: $updatedAt
+            constRecord: $constRecorded,
+            updated: $updatedAt,
+            readingType: Temperature::READING_TYPE,
         );
     }
 

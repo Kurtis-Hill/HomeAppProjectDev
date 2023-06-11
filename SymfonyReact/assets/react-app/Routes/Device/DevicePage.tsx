@@ -12,7 +12,6 @@ import { AxiosError } from 'axios';
 import { indexUrl } from '../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
 import { ResponseTypeFull } from '../../Common/API/APIResponseType';
-import { UpdateSensors } from '../../Sensors/Components/SensorUpdate/UpdateSensors';
 import { DeviceResponseInterface } from '../../Devices/Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
 import { ViewSensorsPage } from '../../Sensors/Page/ViewSensorsPage';
@@ -40,7 +39,7 @@ export function DevicePage() {
             const getDeviceResponse = await getDeviceRequest(deviceID, ResponseTypeFull);
             const deviceData: DeviceResponseInterface = getDeviceResponse.data.payload;
             setDeviceData(deviceData);
-            console.log('deviceData', deviceData);
+            // console.log('deviceData', deviceData);
         } catch (error) {
             const err = error as AxiosError
             if (err.response?.status === 404) {

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 export function FormInlineSpan(props: {
-    spanOuterTag: string;
-    spanInnerTag: string;
     clickEvent: (e: Event) => void;
+    spanOuterTag?: string;
+    spanInnerTag?: string;
     classesInner?: string;
     classesOuter?: string;
     dataName?: string;

@@ -19,11 +19,11 @@ export function SensorDataContextProvider({ children }) {
     }, []);
 
     const handleSensorDataRequest = async () => {
-        console.log('handleSensorDataRequest');
+        // console.log('handleSensorDataRequest');
         if (readingTypeData.length === 0) {             
             const sensorReadingTypes: ReadingTypeResponseInterface[] = await sensorReadingTypesRequest();
             if (sensorReadingTypes !== null) {
-                console.log('here we are', sensorReadingTypes);
+                // console.log('here we are', sensorReadingTypes);
                 setReadingTypeData(sensorReadingTypes);
             } 
         }

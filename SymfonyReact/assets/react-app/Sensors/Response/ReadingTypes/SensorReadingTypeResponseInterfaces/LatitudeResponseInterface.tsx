@@ -1,5 +1,7 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
+type LatitudeString = 'Latitude';
+
 export default interface LatitudeResponseInterface {
     latitudeID: number,
     sensor: SensorResponseInterface,
@@ -8,5 +10,6 @@ export default interface LatitudeResponseInterface {
     lowReading: number,
     constRecord: boolean,
     updatedAt: string,
-    type: string,
+    readingType: string,
+    sensorType: LatitudeString,
 }

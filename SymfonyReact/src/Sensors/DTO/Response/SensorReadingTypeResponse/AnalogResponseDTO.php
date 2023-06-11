@@ -4,6 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
+use App\Sensors\Entity\ReadingTypes\Analog;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -19,13 +20,15 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
         bool $constRecorded,
         string $updatedAt
     ) {
+        $type = Analog::READING_TYPE;
         parent::__construct(
             sensor: $sensor,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,
-            constRecorded: $constRecorded,
-            updated: $updatedAt
+            constRecord: $constRecorded,
+            updated: $updatedAt,
+            readingType: $type
         );
     }
 

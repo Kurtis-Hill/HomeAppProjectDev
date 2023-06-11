@@ -4,6 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
+use App\Sensors\Entity\ReadingTypes\Humidity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implements StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
@@ -22,8 +23,9 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,
-            constRecorded: $constRecorded,
-            updated: $updatedAt
+            constRecord: $constRecorded,
+            updated: $updatedAt,
+            readingType: Humidity::READING_TYPE,
         );
     }
 
