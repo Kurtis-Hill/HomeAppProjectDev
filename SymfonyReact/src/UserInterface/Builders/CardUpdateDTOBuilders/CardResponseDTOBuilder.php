@@ -9,7 +9,7 @@ use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\DTO\Response\CardView\CardViewResponseDTO;
 use App\UserInterface\Entity\Card\CardView;
 
-class CardUpdateDTOBuilder
+class CardResponseDTOBuilder
 {
     public static function buildCardIDUpdateDTO(
         ?int $cardColour,
@@ -23,7 +23,7 @@ class CardUpdateDTOBuilder
         );
     }
 
-    public static function buildCardUpdateResponseDTO(
+    public static function buildCardResponseDTO(
         CardView $cardView,
     ): CardViewResponseDTO {
         return new CardViewResponseDTO(

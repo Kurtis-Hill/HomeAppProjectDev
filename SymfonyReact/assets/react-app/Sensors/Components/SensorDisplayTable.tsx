@@ -12,6 +12,8 @@ import { DeleteSensor } from './DeleteSensor/DeleteSensor';
 import { updateSensorRequest } from '../Request/Sensor/UpdateSensorRequest';
 import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
+import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
+import CardViewResponseInterface from '../../UserInterface/Cards/Response/CardView/CardViewResponseInterface';
 
 
 export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
@@ -38,6 +40,10 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         device: sensor.device,
         createdBy: sensor.createdBy,
     });
+
+    const [showCardModal, setShowCardModal] = useState<boolean>(false);
+
+    const [cardModalLoading, setCardModalLoading] = useState<boolean>(false);
 
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
@@ -117,13 +123,23 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
             />
         ])
     }
-    
+
     const canEdit: boolean = sensor.canEdit ?? false;
     const canDelete: boolean = sensor.canDelete ?? false;
-    const userHadCardView: boolean = sensor.userHasCardView ?? false;
+    const cardView: CardViewResponseInterface = sensor.cardView;
     
+    const handleCardViewModal = (cardView: CardViewResponseInterface|null): void => {
+        if (cardView === null) {
+        }
+        setShowCardModal(true)
+    }
     return (
         <>
+        {
+            cardModalLoading === true
+                ? <DotCircleSpinner />
+                : null
+        }
             {
                 announcementModals.map((announcementModal: typeof AnnouncementFlashModal, index: number) => {
                     return (
@@ -169,7 +185,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                         <span>{sensor?.createdBy?.email}</span>
                     </GeneralTableRow>                            
                     <GeneralTableRow>
-                        { userHadCardView ? <i className="fas fa-check hover"></i> : <i className="fas fa-times hover"></i> }
+                        <i onClick={() => handleCardViewModal(cardView)} className={`fas fa-${cardView ? 'check' : 'times'} hover`}></i>
                     </GeneralTableRow>
                     {         
                         canDelete === true
@@ -186,7 +202,13 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     }
                     
                 </GeneralTableBody>
-            </GeneralTable>       
+            </GeneralTable>    
+
+            {/* {
+                showCardModal === true
+                    ?
+                        
+            } */}
         </>
     );
 }

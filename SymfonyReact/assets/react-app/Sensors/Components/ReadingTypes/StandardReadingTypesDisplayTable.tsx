@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import HumidityResponseInterface from '../../Response/ReadingTypes/SensorReadingTypeResponseInterfaces/HumidityResponseInterface';
 import AnalogResponseInterface from '../../Response/ReadingTypes/SensorReadingTypeResponseInterfaces/AnalogResponseInterface';
@@ -11,16 +11,9 @@ import { GeneralTableRow } from '../../../Common/Components/Table/General/Genera
 import { GeneralTableBody } from '../../../Common/Components/Table/General/GeneralTableBody';
 import { capitalizeFirstLetter } from '../../../Common/StringFormatter';
 import { FormInlineInput } from '../../../Common/Components/Inputs/FormInlineUpdate';
-import { readingType } from '../../../Common/SensorLanguage';
 import { StandardSensorBoundaryReadingUpdateInputInterface, readingTypeBoundaryReadingUpdateRequest } from '../../Request/ReadingType/ReadingTypeBoundaryReadingUpdateRequest';
-import { FormInlineSpan } from '../../../Common/Components/Elements/FormInlineSpan';
-import { FormInlineSelectWLabel } from '../../../Common/Components/Selects/FormInlineSelectWLabel';
-import { FormSelect } from '../../../Common/Components/Selects/FormSelect';
-import { AcceptButton } from '../../../Common/Components/Buttons/AcceptButton';
-import { DeclineButton } from '../../../Common/Components/Buttons/DeclineButton';
 import { ConstRecordType } from './SensorReadingTypesOptionTypes';
 import { FormSelectWAcceptDecline } from '../../../Common/Components/Selects/FormSelectWAcceptDecline';
-import { AxiosResponse } from 'axios';
 
 const activeFormDefaultValues = {
     temperatureHighReading: false,
@@ -86,7 +79,7 @@ export function StandardReadingTypesDisplayTable(props: {
                 ...sensorReadingTypesUpdateFormInputs,
                 [arrayIndex]: {
                     ...sensorReadingTypesUpdateFormInputs[arrayIndex],
-                    [nameParam]: isNaN(Number(value)) ? 0 : parseInt(value),
+                    [nameParam]: !value ? '' : isNaN(Number(value)) ? value : parseInt(value),
                 }
             });
         }

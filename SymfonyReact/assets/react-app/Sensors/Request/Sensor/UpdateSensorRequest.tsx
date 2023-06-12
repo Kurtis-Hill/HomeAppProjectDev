@@ -1,7 +1,6 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { apiURL } from "../../../Common/URLs/CommonURLs";
-import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
 import { SensorPatchRequestInputInterface } from '../../Response/Sensor/SensorPatchRequestInputInterface';
 
 export async function updateSensorRequest(sensorID: number, sensorUpdateFormInputs: SensorPatchRequestInputInterface, responseType: string = 'only'): Promise<AxiosResponse> {

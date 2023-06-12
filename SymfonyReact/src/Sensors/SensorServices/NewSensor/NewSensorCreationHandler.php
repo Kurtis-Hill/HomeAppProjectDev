@@ -60,12 +60,12 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             throw new SensorRequestException($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-        $deviceObject = $this->deviceRepository->findOneById($newSensorRequestDTO->getDeviceNameID());
+        $deviceObject = $this->deviceRepository->findOneById($newSensorRequestDTO->getDeviceID());
         if (!$deviceObject instanceof Devices) {
             throw new DeviceNotFoundException(
                 sprintf(
                     DeviceNotFoundException::DEVICE_NOT_FOUND_FOR_ID,
-                    $newSensorRequestDTO->getDeviceNameID()
+                    $newSensorRequestDTO->getDeviceID()
                 )
             );
         }

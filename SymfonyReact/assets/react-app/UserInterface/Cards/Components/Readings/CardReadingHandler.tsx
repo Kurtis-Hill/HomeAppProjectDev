@@ -9,7 +9,7 @@ import { CardCurrentSensorDataInterface } from './SensorDataOutput/CurrentReadin
 import { CardFilterBarInterface } from '../Filterbars/CardFilterBarInterface';
 import { CardSensorDataResponseInterface } from '../../Response/CurrentReadingCardData/CardDataResponseInterface';
 
-import { handleSendingCardDataRequest } from '../../../../UserInterface/Cards/Request/CardRequest';
+import { handleSendingCardDataRequest } from '../../Request/CardPageRequest';
 import CardReadingFactory from '../../Factories/CardReadingFactory';
 import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
 

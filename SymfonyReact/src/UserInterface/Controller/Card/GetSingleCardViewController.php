@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\UserInterface\Builders\CardUpdateDTOBuilders\CardUpdateDTOBuilder;
+use App\UserInterface\Builders\CardUpdateDTOBuilders\CardResponseDTOBuilder;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;

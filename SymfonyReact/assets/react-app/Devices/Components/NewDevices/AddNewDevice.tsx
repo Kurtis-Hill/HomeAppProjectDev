@@ -135,7 +135,7 @@ export function AddNewDevice(props: {
     }
 
     const buildNewDeviceUrl = (newDeviceID: number): string => {
-        return `${webappURL}device/{newDeviceID}`;
+        return `${webappURL}device/${newDeviceID}`;
     }
 
     return (
@@ -170,7 +170,7 @@ export function AddNewDevice(props: {
                     value={addNewDeviceUserInputs.devicePassword}
                     onChangeFunction={handleAddNewDeviceInput}
                     type="password"
-                    />
+                />
 
                 <InputWLabel
                     labelName='Retype Device Password'

@@ -13,6 +13,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\Entity\User;
+use App\UserInterface\Builders\CardUpdateDTOBuilders\CardResponseDTOBuilder;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -87,8 +88,6 @@ class SensorResponseDTOBuilder
         ?bool $canDelete = null,
         ?CardView $cardView = null,
     ): SensorResponseDTO {
-        $cardViewAdded = !($cardView === null);
-
         return new SensorResponseDTO(
             $sensor->getSensorID(),
             UserResponseBuilder::buildUserResponseDTO($sensor->getCreatedBy()),
@@ -98,7 +97,7 @@ class SensorResponseDTOBuilder
             $sensorReadingTypeDTO,
             $canEdit,
             $canDelete,
-            $cardViewAdded,
+            CardResponseDTOBuilder::buildCardResponseDTO($cardView),
         );
     }
 }

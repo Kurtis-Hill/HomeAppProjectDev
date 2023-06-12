@@ -45,15 +45,6 @@ export function FormInlineSelectWLabel(
                     selectDefaultValue={selectDefaultValue}
                     selectOptions={selectOptions}
                 />
-                {/* <select name={selectName} defaultValue={selectDefaultValue} className="form-control" onChange={(e: Event) => changeEvent(e)}>
-                            {
-                                selectOptions.map((option: {value: any, name:string}, index: number) => {
-                                    return (
-                                        <option key={index} value={option.value}>{option.name}</option>
-                                    )
-                                })
-                            }
-                </select> */}
             </div>
             <span style={{ paddingLeft: "2%" }}></span>
             <AcceptButton clickEvent={(e: Event) => acceptClickEven(e)} dataName={acceptDeclineDataName} />

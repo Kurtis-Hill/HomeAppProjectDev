@@ -98,7 +98,7 @@ export default function CardFilterBar(props: {
                                 <div className="col">
                                     <span className="one-line-text">Sensor types</span>
                                     {
-                                        sensorData.sensorTypes.map((sensorType: SensorTypeResponseInterface, index:Number) => (
+                                        sensorData.sensorTypes.map((sensorType: SensorTypeResponseInterface, index: number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
                                                     <input onChange={handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeName} />

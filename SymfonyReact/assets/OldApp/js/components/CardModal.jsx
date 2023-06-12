@@ -126,7 +126,7 @@ const cardModal = () => {
                     }
 
                     {
-                      userSelectionData.userCardViewSelections.length >= 1
+                      userSelectionData.cardView !== undefined
                       ?
                       <React.Fragment>
                         <label className="modal-space large font-weight-bold">Card View</label>

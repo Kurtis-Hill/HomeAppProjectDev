@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\UserInterface\Builders\CardUpdateDTOBuilders\CardUpdateDTOBuilder;
+use App\UserInterface\Builders\CardUpdateDTOBuilders\CardResponseDTOBuilder;
 use App\UserInterface\DTO\RequestDTO\CardViewRequestDTO;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
@@ -68,7 +68,7 @@ class UpdateCardViewController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $standardCardUpdateDTO = CardUpdateDTOBuilder::buildCardIDUpdateDTO(
+        $standardCardUpdateDTO = CardResponseDTOBuilder::buildCardIDUpdateDTO(
             $cardViewRequestDTO->getCardColour(),
             $cardViewRequestDTO->getCardIcon(),
             $cardViewRequestDTO->getCardViewState(),
@@ -88,7 +88,7 @@ class UpdateCardViewController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        $cardViewResponseDTO = CardUpdateDTOBuilder::buildCardUpdateResponseDTO($cardViewObject);
+        $cardViewResponseDTO = CardResponseDTOBuilder::buildCardResponseDTO($cardViewObject);
         try {
             $normalizedResponseData = $this->normalizeResponse($cardViewResponseDTO);
         } catch (ExceptionInterface) {

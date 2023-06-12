@@ -6,6 +6,7 @@ use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
+use App\UserInterface\Entity\Card\CardView;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -23,7 +24,7 @@ readonly class SensorResponseDTO
         private array $sensorReadingTypes = [],
         private ?bool $canEdit = null,
         private ?bool $canDelete = null,
-        private ?bool $userHasCardView = null,
+        private ?CardView $cardView = null,
     ) {
     }
 
@@ -113,8 +114,8 @@ readonly class SensorResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getUserHasCardView(): ?bool
+    public function getCardView(): ?CardView
     {
-        return $this->userHasCardView;
+        return $this->cardView;
     }
 }

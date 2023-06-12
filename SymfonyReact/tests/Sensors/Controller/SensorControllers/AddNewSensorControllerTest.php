@@ -148,7 +148,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -196,7 +196,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => '&' . $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -233,7 +233,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => 'TestingTestingTesti' . $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -267,7 +267,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => 'T',
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -305,7 +305,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensor->getSensorName(),
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -352,7 +352,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $randomID,
+            'deviceID' => $randomID,
         ];
 
         $jsonData = json_encode($formData);
@@ -388,7 +388,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => 'testing',
             'sensorTypeID' => $randomID,
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -423,7 +423,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -506,7 +506,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensorName . '1',
             'sensorTypeID' => $sensorTypeMappingObject->getSensorTypeID(),
-            'deviceNameID' => $device->getDeviceID(),
+            'deviceID' => $device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -578,7 +578,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $this->device->getDeviceID(),
+            'deviceID' => $this->device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);
@@ -663,7 +663,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceNameID' => $device->getDeviceID(),
+            'deviceID' => $device->getDeviceID(),
         ];
 
         $jsonData = json_encode($formData);

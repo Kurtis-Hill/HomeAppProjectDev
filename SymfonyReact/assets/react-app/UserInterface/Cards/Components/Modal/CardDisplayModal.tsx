@@ -3,7 +3,7 @@ import { useState } from 'react';
 import BaseModal from '../../../../Common/Components/Modals/BaseModal';
 
 import { CardDisplayForm } from "../Form/CardDisplayForm";
-import { CardFormResponseInterface } from '../Response/FormResponse/CardFormResponseInterface';
+import { CardFormResponseInterface } from '../../Response/CardForms/CardFormResponseInterface';
 
 enum CardDisplayModalTabs {
     cardViewUpdate = 'cardViewUpdate',

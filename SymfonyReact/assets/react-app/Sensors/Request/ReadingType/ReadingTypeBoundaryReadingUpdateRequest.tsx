@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { apiURL } from '../../../Common/URLs/CommonURLs';
 import { readingType } from '../../../Common/SensorLanguage';
+import { StandardSensorConstRecord, StandardSensorReadingValue } from '../../Types/StandardSensor/SensorReadingTypes';
 
 export async function readingTypeBoundaryReadingUpdateRequest(sensorID: number, sensorBoundaryUpdates: StandardSensorBoundaryReadingUpdateInputInterface[]): Promise<AxiosResponse> {
     console.log('data to send', sensorBoundaryUpdates);
@@ -16,7 +17,7 @@ export async function readingTypeBoundaryReadingUpdateRequest(sensorID: number, 
 
 export interface StandardSensorBoundaryReadingUpdateInputInterface {
     readingType: string,
-    highReading: number,
-    lowReading: number,
-    constRecord: boolean,
+    highReading: StandardSensorReadingValue,
+    lowReading: StandardSensorReadingValue,
+    constRecord: StandardSensorConstRecord,
 }

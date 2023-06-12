@@ -27,7 +27,7 @@ export function ViewSensorsPage(props: {
                     );
                 })
             }
-            <AddNewSensorButton deviceID={sensorData[0].device.deviceID }/>
+            <AddNewSensorButton deviceID={sensorData[0].device.deviceID} refreshData={refreshData}/>
         </>
     )
 }
