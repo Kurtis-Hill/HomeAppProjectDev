@@ -2,8 +2,6 @@ import * as React from 'react';
 import { useState } from 'react';
 import BaseModal from '../../../../Common/Components/Modals/BaseModal';
 
-import { CardDisplayForm } from "../Form/CardDisplayForm";
-import { CardFormResponseInterface } from '../../Response/CardForms/CardFormResponseInterface';
 
 enum CardDisplayModalTabs {
     cardViewUpdate = 'cardViewUpdate',
@@ -17,8 +15,6 @@ export function CardDisplayModal(props: {
 }) {
     const { cardViewID, loadingCardModalView, setLoadingCardModalView } = props;
     const [loading, setLoading] = useState<boolean>(false);
-    // const [cardFormData, setCardFormData] = useState<CardFormResponseInterface>();
-    // const [cardViewID, setCardViewID] = useState<number|null>(null);
     const [tabSelection, setTabSelection] = useState<CardDisplayModalTabs>('cardViewUpdate');
     
 
