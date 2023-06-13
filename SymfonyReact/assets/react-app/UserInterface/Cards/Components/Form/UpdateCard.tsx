@@ -12,6 +12,7 @@ import { IconResponseInterface } from '../../../Response/Icons/IconResponseInter
 import { FormInlineSelectWLabel } from '../../../../Common/Components/Selects/FormInlineSelectWLabel';
 import { Label } from '../../../../Common/Components/Elements/Label';
 import { ColourResponseInterface } from '../../../Response/Colour/ColourResponseInterface';
+import StateResponseInterface from '../../../Response/State/StateResponseInterface';
 
 
 export function UpdateCard(props: {cardViewID: number}) {
@@ -98,6 +99,20 @@ export function UpdateCard(props: {cardViewID: number}) {
                     }
                 }
                 break;
+            case 'card-view-state':
+                for (let i = 0; i < cardViewUserForm.cardUserSelectionOptions.states.length; i++) {
+                    if (cardViewUserForm.cardUserSelectionOptions.states[i].cardStateID === parseInt(value)) {
+                        console.log('cardViewUserForm.cardUserSelectionOptions.states[i].cardState', cardViewUserForm.cardUserSelectionOptions.states[i].cardState);
+                        setCardViewUserForm((prevState: StandardCardFormResponseInterface) => ({
+                            ...prevState,
+                            currentViewState: {
+                                cardState: cardViewUserForm.cardUserSelectionOptions.states[i].cardState,
+                                cardStateID: cardViewUserForm.cardUserSelectionOptions.states[i].cardStateID,
+                            }
+                        }))
+                    }
+                }
+                break;
                 default:
                     setCardViewUserForm({
                         ...cardViewUserForm,
@@ -106,8 +121,6 @@ export function UpdateCard(props: {cardViewID: number}) {
                 break;
         } 
         console.log('cardViewUserForm', cardViewUserForm);       
-
-        // console.log('lol', cardViewUserForm);
     }
 
     if (cardViewUserForm === null) {
@@ -148,6 +161,16 @@ export function UpdateCard(props: {cardViewID: number}) {
                 <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control">
                     {cardViewUserForm.cardUserSelectionOptions.colours.map((colour: ColourResponseInterface) => (
                     <option value={colour.colourID} key={colour.colourID}>{capitalizeFirstLetter(colour.colour)}</option>
+                    ))}
+                </select>
+
+                <Label 
+                    text="Card State Selection"
+                    htmlFor='card-view-state'
+                />
+                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control">
+                    {cardViewUserForm.cardUserSelectionOptions.states.map((states: StateResponseInterface) => (
+                    <option value={states.cardStateID} key={states.cardStateID}>{capitalizeFirstLetter(states.cardState)}</option>
                     ))}
                 </select>
 
