@@ -723,7 +723,7 @@ class GetSensorControllerTest extends WebTestCase
 
             self::assertTrue($singleSensorData['canEdit']);
             self::assertTrue($singleSensorData['canDelete']);
-            self::assertEquals($userHasCardView !== null, $singleSensorData['userHasCardView']);
+            self::assertEquals($userHasCardView, $singleSensorData['userHasCardView']);
         }
     }
 

@@ -33,17 +33,17 @@ export function UpdateSingleSensorCard(props: {sensor: SensorResponseInterface, 
                 <div className="card" style={{ margin: "inherit", border: 'solid' }}>
                     <div className="card-body"> 
                         <SensorDisplayTable sensor={sensor} refreshData={refreshData} />
-                        <div style={{paddingTop: "3%"}}>
-                            {
-                                activeFormForUpdating.expandSensor === true
-                                    ?
-                                        <>  
-                                            <ReadingTypeDisplayTable sensorReadingTypes={sensor.sensorReadingTypes} canEdit={sensor.canEdit} refreshData={refreshData} />
-                                        </>
-                                    : 
-                                        null
-                            }
-                        </div>
+                            <div style={{paddingTop: "3%"}}>
+                                {
+                                    activeFormForUpdating.expandSensor === true
+                                        ?
+                                            <>  
+                                                <ReadingTypeDisplayTable sensorReadingTypes={sensor.sensorReadingTypes} canEdit={sensor.canEdit} refreshData={refreshData} />
+                                            </>
+                                        : 
+                                            null
+                                }
+                            </div>
                         <i onClick={(e: Event) => {toggleDisplay(e)}} data-name="expandSensor" className={`fas fa-${activeFormForUpdating.expandSensor === true ? 'minus' : 'plus' } hover edit fa-fw`}></i>
                     </div>
                 </div>

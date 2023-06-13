@@ -97,7 +97,7 @@ class SensorResponseDTOBuilder
             $sensorReadingTypeDTO,
             $canEdit,
             $canDelete,
-            CardResponseDTOBuilder::buildCardResponseDTO($cardView),
+            $cardView !== null ? CardResponseDTOBuilder::buildCardResponseDTO($cardView) : null,
         );
     }
 }

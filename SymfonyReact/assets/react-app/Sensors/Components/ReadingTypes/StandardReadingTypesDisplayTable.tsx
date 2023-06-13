@@ -106,7 +106,7 @@ export function StandardReadingTypesDisplayTable(props: {
 
     return (
         <>
-            <h2>Standard Reading</h2>
+            <h4>Standard Reading</h4>
             <GeneralTable>
                 <GeneralTableHeaders
                     headers={[
@@ -123,97 +123,97 @@ export function StandardReadingTypesDisplayTable(props: {
                                 <GeneralTableRow><span>{capitalizeFirstLetter(readingType.readingType)}</span></GeneralTableRow>
                                 <GeneralTableRow>
                                     {
-                                            activeFormForUpdating[`${readingType.readingType}HighReading`] === true && canEdit === true 
-                                                ? 
-                                                    <>
-                                                        <FormInlineInput
-                                                            changeEvent={handleUpdateSensorReadingTypeInput}
-                                                            nameParam={`highReading`}
-                                                            value={sensorReadingTypesUpdateFormInputs[index].highReading ?? '0'}
-                                                            dataName={`${readingType.readingType}HighReading`}
-                                                            dataType={`${readingType.sensorType}`}
-                                                            acceptClickEvent={() => sendUpdateBoundaryReadingRequest(index)}
-                                                            declineClickEvent={(e:Event) => toggleFormInput(e)}
-                                                            extraClasses='center-text'
-                                                            inputDataName={`${index}`}
-                                                        />
-                                                    </>
-                                                :
-                                                    <>
-                                                        <span 
-                                                            className={canEdit === true ? 'hover': null} 
-                                                            onClick={(e: Event) => toggleFormInput(e)} 
-                                                            data-name={`${readingType.readingType}HighReading`}
-                                                        >
-                                                            {`${readingType.highReading}`}
-                                                        </span>
-                                                    </>
+                                        activeFormForUpdating[`${readingType.readingType}HighReading`] === true && canEdit === true 
+                                            ? 
+                                                <>
+                                                    <FormInlineInput
+                                                        changeEvent={handleUpdateSensorReadingTypeInput}
+                                                        nameParam={`highReading`}
+                                                        value={sensorReadingTypesUpdateFormInputs[index].highReading ?? '0'}
+                                                        dataName={`${readingType.readingType}HighReading`}
+                                                        dataType={`${readingType.sensorType}`}
+                                                        acceptClickEvent={() => sendUpdateBoundaryReadingRequest(index)}
+                                                        declineClickEvent={(e:Event) => toggleFormInput(e)}
+                                                        extraClasses='center-text'
+                                                        inputDataName={`${index}`}
+                                                    />
+                                                </>
+                                            :
+                                                <>
+                                                    <span 
+                                                        className={canEdit === true ? 'hover': null} 
+                                                        onClick={(e: Event) => toggleFormInput(e)} 
+                                                        data-name={`${readingType.readingType}HighReading`}
+                                                    >
+                                                        {`${readingType.highReading}`}
+                                                    </span>
+                                                </>
                                     }
                                 </GeneralTableRow>
                                 <GeneralTableRow>
                                     {
-                                            activeFormForUpdating[`${readingType.readingType}LowReading`] === true && canEdit === true 
-                                                ? 
-                                                    <>
-                                                        <FormInlineInput
-                                                            changeEvent={handleUpdateSensorReadingTypeInput}
-                                                            nameParam={`lowReading`}
-                                                            value={sensorReadingTypesUpdateFormInputs[index].lowReading}
-                                                            dataName={`${readingType.readingType}LowReading`}
-                                                            dataType={`${readingType.sensorType}`}
-                                                            acceptClickEvent={() => sendUpdateBoundaryReadingRequest(index)}
-                                                            declineClickEvent={(e:Event) => toggleFormInput(e)}
-                                                            extraClasses='center-text'
-                                                            inputDataName={`${index}`}
-                                                        />
-                                                    </>
-                                                :
-                                                    <>
-                                                        <span 
-                                                            className={canEdit === true ? 'hover': null} 
-                                                            onClick={(e: Event) => toggleFormInput(e)} 
-                                                            data-name={`${readingType.readingType}LowReading`}
-                                                        >
-                                                            {`${readingType.lowReading}`}
-                                                        </span>
-                                                    </>
+                                        activeFormForUpdating[`${readingType.readingType}LowReading`] === true && canEdit === true 
+                                            ? 
+                                                <>
+                                                    <FormInlineInput
+                                                        changeEvent={handleUpdateSensorReadingTypeInput}
+                                                        nameParam={`lowReading`}
+                                                        value={sensorReadingTypesUpdateFormInputs[index].lowReading}
+                                                        dataName={`${readingType.readingType}LowReading`}
+                                                        dataType={`${readingType.sensorType}`}
+                                                        acceptClickEvent={() => sendUpdateBoundaryReadingRequest(index)}
+                                                        declineClickEvent={(e:Event) => toggleFormInput(e)}
+                                                        extraClasses='center-text'
+                                                        inputDataName={`${index}`}
+                                                    />
+                                                </>
+                                            :
+                                                <>
+                                                    <span 
+                                                        className={canEdit === true ? 'hover': null} 
+                                                        onClick={(e: Event) => toggleFormInput(e)} 
+                                                        data-name={`${readingType.readingType}LowReading`}
+                                                    >
+                                                        {`${readingType.lowReading}`}
+                                                    </span>
+                                                </>
                                     }
                                 </GeneralTableRow>
                                 <GeneralTableRow>
                                     {
-                                            activeFormForUpdating[`${readingType.readingType}ConstRecord`] === true && canEdit === true 
-                                                ? 
-                                                    <>
-                                                        <FormSelectWAcceptDecline
-                                                            selectName={`constRecord`}
-                                                            changeEvent={handleUpdateSensorReadingTypeInput}
-                                                            selectDefaultValue={sensorReadingTypesUpdateFormInputs[index].constRecord === true ? 1 : 0}
-                                                            selectOptions={[
-                                                                {
-                                                                    value: 1,
-                                                                    name: 'Yes',
-                                                                },
-                                                                {
-                                                                    value: 0,
-                                                                    name: 'No',
-                                                                },
-                                                            ]}
-                                                            dataName={`${index}`}                                
-                                                            acceptClickEvent={() => sendUpdateBoundaryReadingRequest(index)}
-                                                            declineClickEvent={(e:Event) => toggleFormInput(e)}
-                                                            declineName={`${readingType.readingType}ConstRecord`}
-                                                        />
-                                                    </>
-                                                :
-                                                    <>
-                                                        <span 
-                                                            className={canEdit === true ? 'hover': null} 
-                                                            onClick={(e: Event) => toggleFormInput(e)} 
-                                                            data-name={`${readingType.readingType}ConstRecord`}
-                                                        >
-                                                            {readingType.constRecord === true ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </>
+                                        activeFormForUpdating[`${readingType.readingType}ConstRecord`] === true && canEdit === true 
+                                            ? 
+                                                <>
+                                                    <FormSelectWAcceptDecline
+                                                        selectName={`constRecord`}
+                                                        changeEvent={handleUpdateSensorReadingTypeInput}
+                                                        selectDefaultValue={sensorReadingTypesUpdateFormInputs[index].constRecord === true ? 1 : 0}
+                                                        selectOptions={[
+                                                            {
+                                                                value: 1,
+                                                                name: 'Yes',
+                                                            },
+                                                            {
+                                                                value: 0,
+                                                                name: 'No',
+                                                            },
+                                                        ]}
+                                                        dataName={`${index}`}                                
+                                                        acceptClickEvent={() => sendUpdateBoundaryReadingRequest(index)}
+                                                        declineClickEvent={(e:Event) => toggleFormInput(e)}
+                                                        declineName={`${readingType.readingType}ConstRecord`}
+                                                    />
+                                                </>
+                                            :
+                                                <>
+                                                    <span 
+                                                        className={canEdit === true ? 'hover': null} 
+                                                        onClick={(e: Event) => toggleFormInput(e)} 
+                                                        data-name={`${readingType.readingType}ConstRecord`}
+                                                    >
+                                                        {readingType.constRecord === true ? 'Yes' : 'No'}
+                                                    </span>
+                                                </>
                                     }
                                 </GeneralTableRow>
                             </GeneralTableBody>     

@@ -21,11 +21,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetSingleCardViewController extends WebTestCase
+class GetCardViewFormController extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card/%d/get';
+    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form/%d/get';
 
     private ?string $userToken = null;
 

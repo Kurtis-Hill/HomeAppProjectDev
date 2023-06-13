@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import { GeneralTable } from '../../Common/Components/Table/General/GeneralTable';
 import { GeneralTableHeaders } from '../../Common/Components/Table/General/GeneralTableHeaders';
@@ -14,17 +14,23 @@ import { AnnouncementFlashModal } from '../../Common/Components/Modals/Announcem
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
 import CardViewResponseInterface from '../../UserInterface/Cards/Response/CardView/CardViewResponseInterface';
+import { UpdateCard } from '../../UserInterface/Cards/Components/Form/UpdateCard';
+import BaseModal from '../../Common/Components/Modals/BaseModal';
+import CloseButton from '../../Common/Components/Buttons/CloseButton';
 
+const defaultFormActiveState = {
+    sensorName: false,
+    sensorType: false,
+    device: false,
+    createdBy: false,
+    expandSensor: false,
+};
 
 export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
     const { sensor, refreshData } = props;
 
     const [activeFormForUpdating, setActiveFormForUpdating] = useState({
-        sensorName: false,
-        sensorType: false,
-        device: false,
-        createdBy: false,
-        expandSensor: false,
+        defaultFormActiveState,
     });
 
     const originalSensorData = useRef<SensorResponseInterface>({
@@ -41,7 +47,11 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         createdBy: sensor.createdBy,
     });
 
-    const [showCardModal, setShowCardModal] = useState<boolean>(false);
+    const [addNewCardModal, setAddNewCardModal] = useState<boolean>(false);
+    
+    const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface|null>(null);
+
+    const [showUpdateCardModal, setShowUpdateCardModal] = useState<boolean>(false);
 
     const [cardModalLoading, setCardModalLoading] = useState<boolean>(false);
 
@@ -104,10 +114,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                 [name]: updatedSensor[name],
             };
 
-            setActiveFormForUpdating({
-                ...activeFormForUpdating,
-                [name]: !activeFormForUpdating[name],
-            });
+            setActiveFormForUpdating(defaultFormActiveState);
         } else {
             showAnnouncementFlash(['Unexpected Response'], 'Error Updating Sensor');
         }    
@@ -130,16 +137,41 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
     
     const handleCardViewModal = (cardView: CardViewResponseInterface|null): void => {
         if (cardView === null) {
+            setAddNewCardModal(true);
+
+            // show add new card modal
+        } else {
+            setUpdateCardView(cardView);
+            setShowUpdateCardModal(true);
+            // show card view modal
         }
-        setShowCardModal(true)
+        setAddNewCardModal(true)
     }
+
     return (
         <>
-        {
-            cardModalLoading === true
-                ? <DotCircleSpinner />
-                : null
-        }
+            {
+                showUpdateCardModal === true
+                    ? 
+                        <BaseModal modalShow={showUpdateCardModal} title='User Card Update' setShowModal={setShowUpdateCardModal}>
+                            <UpdateCard cardViewID={updateCardView.cardViewID} />
+                            <CloseButton 
+                                close={setShowUpdateCardModal} 
+                                classes={"modal-cancel-button"} 
+                            />
+                        </BaseModal>
+                    : null
+            }
+            {/* {
+                addNewCardModal === true
+                    ? <CardDisplayModal />
+                    : null
+            } */}
+            {
+                cardModalLoading === true
+                    ? <DotCircleSpinner spinnerSize={4} classes="spinner-absolute-center" />
+                    : null
+            }
             {
                 announcementModals.map((announcementModal: typeof AnnouncementFlashModal, index: number) => {
                     return (
@@ -175,7 +207,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                     />
                                         
                                 :                
-                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="sensorName" onClick={(e: Event) => toggleFormInput(e)}>{sensor.sensorName}</span>
+                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="sensorName" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorName}</span>
                             }
                     </GeneralTableRow>
                     <GeneralTableRow>
@@ -203,12 +235,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     
                 </GeneralTableBody>
             </GeneralTable>    
-
-            {/* {
-                showCardModal === true
-                    ?
-                        
-            } */}
         </>
     );
 }

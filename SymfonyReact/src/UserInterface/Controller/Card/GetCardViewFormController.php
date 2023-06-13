@@ -29,8 +29,8 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card/')]
-class GetSingleCardViewController extends AbstractController
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card-form/')]
+class GetCardViewFormController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;

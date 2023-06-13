@@ -1,6 +1,3 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-
 import axios, { AxiosResponse } from 'axios';
 
 import { baseCardDataURL } from '../../../Common/URLs/CommonURLs';

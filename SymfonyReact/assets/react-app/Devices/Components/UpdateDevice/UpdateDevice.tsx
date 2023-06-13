@@ -278,80 +278,76 @@ export function UpdateDevice(props: {
                     );
                 })
             }
-                <div className="row" style={{ paddingTop: '5vh' }}>
-                    <span className="large font-weight-bold form-inline font-size-1-5 padding-r-1">Device ID: {deviceData.deviceID}</span>
-                </div>
-                <form>
-                    <div className="row" 
-                    style={{paddingTop: "4%"}}
-                    >
-                            { 
-                                activeFormForUpdating.deviceName === true && deviceData.canEdit === true
-                                    ?
-                                        <FormInlineInputWLabel 
-                                            labelName='Device Name: '
-                                            nameParam='deviceName'
-                                            changeEvent={handleUpdateDeviceInput}
-                                            value={deviceUpdateFormInputs.deviceName}
-                                            acceptClickEvent={(e: Event) => sendUpdateDeviceRequest(e)}
-                                            declineClickEvent={(e: Event) => toggleFormInput(e)}
-                                            dataName='deviceName'
-                                        />
-                                    :
-                                        <FormInlineSpan
-                                            spanOuterTag={'Device Name:'}
-                                            spanInnerTag={deviceData.deviceName}
-                                            clickEvent={(e: Event) => toggleFormInput(e)}
-                                            dataName={'deviceName'}
-                                            canEdit={deviceData.canEdit}
-                                        />
-                            }
-                        </div>
-                        <div className="row" 
-                        style={{paddingTop: "2%"}}
-                        >
-                        {
-                            activeFormForUpdating.deviceGroup === true && deviceData.canEdit === true
-                                ? 
-                                    buildGroupWithSaveRejectButtons()
-                                :
-                                    <FormInlineSpan
-                                        spanOuterTag={'Device Group:'}
-                                        spanInnerTag={deviceUpdateFormInputs.deviceGroupName}
-                                        clickEvent={(e: Event) => toggleFormInput(e)}
-                                        dataName={'deviceGroup'}
-                                        canEdit={deviceData.canEdit}
-                                    />
-                        } 
-                    </div>
-                    <div className="row" 
-                    style={{paddingTop: "2%"}}
-                    >
-                        {
-                            activeFormForUpdating.deviceRoom === true && deviceData.canEdit === true
-                                ?
-                                    buildRoomWithSaveRejectButtons()
-                                :
-                                    <FormInlineSpan
-                                        spanOuterTag={'Device Room:'}
-                                        spanInnerTag={deviceUpdateFormInputs.deviceRoomName}
-                                        clickEvent={(e: Event) => toggleFormInput(e)}
-                                        dataName={'deviceRoom'}
-                                        canEdit={deviceData.canEdit}
-                                    />
-                        }
-                    </div>
-                    {
-                        deviceData.canDelete === true
+            <div className="row" style={{ paddingTop: '5vh' }}>
+                <span className="large font-weight-bold form-inline font-size-1-5 padding-r-1">Device ID: {deviceData.deviceID}</span>
+            </div>
+            <form>
+                <div className="row" 
+                style={{paddingTop: "4%"}}
+                >
+                    { 
+                        activeFormForUpdating.deviceName === true && deviceData.canEdit === true
                             ?
-                                <DeleteDevice
-                                    deviceID={deviceData.deviceID}
-                                    deviceName={deviceData.deviceName}
+                                <FormInlineInputWLabel 
+                                    labelName='Device Name: '
+                                    nameParam='deviceName'
+                                    changeEvent={handleUpdateDeviceInput}
+                                    value={deviceUpdateFormInputs.deviceName}
+                                    acceptClickEvent={(e: Event) => sendUpdateDeviceRequest(e)}
+                                    declineClickEvent={(e: Event) => toggleFormInput(e)}
+                                    dataName='deviceName'
                                 />
                             :
-                                null
+                                <FormInlineSpan
+                                    spanOuterTag={'Device Name:'}
+                                    spanInnerTag={deviceData.deviceName}
+                                    clickEvent={(e: Event) => toggleFormInput(e)}
+                                    dataName={'deviceName'}
+                                    canEdit={deviceData.canEdit}
+                                />
                     }
-                </form>
+                </div>
+                <div className="row" style={{paddingTop: "2%"}}>
+                    {
+                        activeFormForUpdating.deviceGroup === true && deviceData.canEdit === true
+                            ? 
+                                buildGroupWithSaveRejectButtons()
+                            :
+                                <FormInlineSpan
+                                    spanOuterTag={'Device Group:'}
+                                    spanInnerTag={deviceUpdateFormInputs.deviceGroupName}
+                                    clickEvent={(e: Event) => toggleFormInput(e)}
+                                    dataName={'deviceGroup'}
+                                    canEdit={deviceData.canEdit}
+                                />
+                    } 
+                </div>
+                <div className="row" style={{paddingTop: "2%"}}>
+                    {
+                        activeFormForUpdating.deviceRoom === true && deviceData.canEdit === true
+                            ?
+                                buildRoomWithSaveRejectButtons()
+                            :
+                                <FormInlineSpan
+                                    spanOuterTag={'Device Room:'}
+                                    spanInnerTag={deviceUpdateFormInputs.deviceRoomName}
+                                    clickEvent={(e: Event) => toggleFormInput(e)}
+                                    dataName={'deviceRoom'}
+                                    canEdit={deviceData.canEdit}
+                                />
+                    }
+                </div>
+                {
+                    deviceData.canDelete === true
+                        ?
+                            <DeleteDevice
+                                deviceID={deviceData.deviceID}
+                                deviceName={deviceData.deviceName}
+                            />
+                        :
+                            null
+                }
+            </form>
         </>
     )
 }
