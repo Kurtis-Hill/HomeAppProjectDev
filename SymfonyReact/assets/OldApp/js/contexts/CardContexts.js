@@ -258,7 +258,7 @@ class CardContextProvider extends Component {
             const cardRequestResponse = await axios.put(`${apiURL}card-form-data/update/${this.state.modalContent.cardViewID}`, cardFormData, getAPIHeader());
             const sensorReadingUpdateResponse = await axios.put(`${apiURL}sensor/${this.state.modalContent.sensorId}/boundary-update`, sensorBoundaryUpdateData, getAPIHeader());
             
-            if (cardRequestResponse.status === 202 && sensorReadingUpdateResponse.status === 202) {
+            if (cardRequestResponse.status === 200 && sensorReadingUpdateResponse.status === 200) {
                 this.setState({modalStatus:{...this.state.modalStatus, modalSubmit: false, submitSuccess: true, errors:[]}})
                 setTimeout(() =>
                     this.toggleModal(), 1500

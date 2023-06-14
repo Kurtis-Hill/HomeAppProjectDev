@@ -39,11 +39,11 @@ class CardView
     private Sensor $sensor;
 
     #[
-        ORM\ManyToOne(targetEntity: Cardstate::class),
+        ORM\ManyToOne(targetEntity: CardState::class),
         ORM\JoinColumn(name: "stateID", referencedColumnName: "stateID"),
     ]
     #[Assert\NotNull(message: "CardState state cannot be null")]
-    private Cardstate $cardStateID;
+    private CardState $cardStateID;
 
     #[
         ORM\ManyToOne(targetEntity: User::class),
@@ -86,12 +86,12 @@ class CardView
         $this->sensor = $sensor;
     }
 
-    public function getCardStateID(): Cardstate
+    public function getCardStateID(): CardState
     {
         return $this->cardStateID;
     }
 
-    public function setCardStateID(?Cardstate $cardStateID): void
+    public function setCardStateID(?CardState $cardStateID): void
     {
         $this->cardStateID = $cardStateID;
     }

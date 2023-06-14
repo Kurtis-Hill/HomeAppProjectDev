@@ -97,7 +97,7 @@ export function StandardReadingTypesDisplayTable(props: {
 
         const sensorBoundaryReadingResponse = await readingTypeBoundaryReadingUpdateRequest(sensorReadingTypesUpdateFormInputs[index].sensor.sensorID, [requestData]);
 
-        if (sensorBoundaryReadingResponse.status === 202) {
+        if (sensorBoundaryReadingResponse.status === 200) {
             refreshData();
             originalSensorReadingTypesData.current = sensorReadingTypesUpdateFormInputs;
             setActiveFormForUpdating(activeFormDefaultValues);

@@ -140,6 +140,6 @@ class UpdateDeviceController extends AbstractController
             ]
         );
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
+        return $this->sendSuccessfulJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

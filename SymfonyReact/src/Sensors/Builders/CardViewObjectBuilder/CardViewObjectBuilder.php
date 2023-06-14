@@ -5,7 +5,7 @@ namespace App\Sensors\Builders\CardViewObjectBuilder;
 use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 
@@ -16,7 +16,7 @@ class CardViewObjectBuilder
         User $user,
         Icons $icons,
         CardColour $cardColour,
-        Cardstate $cardState,
+        CardState $cardState,
     ): CardView {
         $newCard = new CardView();
         $newCard->setSensor($sensor);

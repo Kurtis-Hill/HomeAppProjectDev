@@ -239,7 +239,7 @@ class UpdateGroupControllerTest extends WebTestCase
             $jsonData
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $response['payload'];
@@ -381,7 +381,7 @@ class UpdateGroupControllerTest extends WebTestCase
             $jsonData
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -421,7 +421,7 @@ class UpdateGroupControllerTest extends WebTestCase
             $jsonData
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -461,7 +461,7 @@ class UpdateGroupControllerTest extends WebTestCase
             $jsonData
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
 

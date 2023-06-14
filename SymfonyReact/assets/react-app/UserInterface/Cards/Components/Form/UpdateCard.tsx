@@ -1,6 +1,6 @@
 import * as React from 'react';
+
 import { useState, useEffect, useRef } from 'react';
-import CardViewResponseInterface from '../../Response/CardView/CardViewResponseInterface';
 import { AnnouncementFlashModalBuilder } from '../../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import SubmitButton from '../../../../Common/Components/Buttons/SubmitButton';
 import { AnnouncementFlashModal } from '../../../../Common/Components/Modals/AnnouncementFlashModal';
@@ -9,11 +9,11 @@ import { StandardCardFormResponseInterface } from '../../Response/CardForms/Stan
 import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
 import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
 import { IconResponseInterface } from '../../../Response/Icons/IconResponseInterface';
-import { FormInlineSelectWLabel } from '../../../../Common/Components/Selects/FormInlineSelectWLabel';
 import { Label } from '../../../../Common/Components/Elements/Label';
 import { ColourResponseInterface } from '../../../Response/Colour/ColourResponseInterface';
 import StateResponseInterface from '../../../Response/State/StateResponseInterface';
-
+import { updateCardRequest, CardUpdateRequestType } from '../../Request/Card/CardUpdateRequest';
+import CardViewResponseInterface from '../../Response/CardView/CardViewResponseInterface';
 
 export function UpdateCard(props: {cardViewID: number}) {
     const { cardViewID } = props;
@@ -22,8 +22,6 @@ export function UpdateCard(props: {cardViewID: number}) {
 
     const [updateCardRequestLoading, setUpdateCardRequestLoading] = useState<boolean>(false);
     
-    const updateCardRequestSuccess = useRef<boolean>(false);
-
     const [cardViewUserForm, setCardViewUserForm] = useState<StandardCardFormResponseInterface|null>(null);
 
     const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
@@ -35,10 +33,6 @@ export function UpdateCard(props: {cardViewID: number}) {
                 timer={timer ? timer : 40}
             />
         ])
-    }
-    
-    const handleUpdateCardRequest = (): void => {
-        setUpdateCardRequestLoading(true);
     }
 
     const handleCardViewFormRequest = async () => {
@@ -123,9 +117,30 @@ export function UpdateCard(props: {cardViewID: number}) {
         console.log('cardViewUserForm', cardViewUserForm);       
     }
 
+    const handleUpdateCardRequest = async (e: Event) => {
+        e.preventDefault();
+        setUpdateCardRequestLoading(true);
+
+        const cardUpdateRequest: CardUpdateRequestType = {
+            cardColour: cardViewUserForm.currentCardColour.colourID,
+            cardIcon: cardViewUserForm.currentCardIcon.iconID,
+            cardViewState: cardViewUserForm.currentViewState.cardStateID,
+        }
+
+        const cardUpdateResponse = await updateCardRequest(cardViewID, cardUpdateRequest);
+        
+        cardUpdateResponse.status !== null ? setUpdateCardRequestLoading(false) : null
+        
+        const updatedCardData: CardViewResponseInterface = cardUpdateResponse.data.payload;
+
+        if (cardUpdateResponse.status === 200) {
+            showAnnouncementFlash([`Card updated`], `${cardUpdateResponse.data.title}`, 15);
+        } 
+    }
+
     if (cardViewUserForm === null) {
         return (
-            <DotCircleSpinner spinnerSize={3} classes="center-absolute-center" />
+            <DotCircleSpinner spinnerSize={3} classes="center-spinner" />
         )
     }
     
@@ -142,23 +157,10 @@ export function UpdateCard(props: {cardViewID: number}) {
             }
             <form>
                 <Label 
-                    text="Icon Selection"
-                    htmlFor='card-icon'
-                />
-                <br />
-                <select name="card-icon" id="icon-select" value={cardViewUserForm.currentCardIcon.iconID} onChange={(e: Event, ) => {updateCardFormInput(e)}} className="form-space">
-                    {cardViewUserForm.cardUserSelectionOptions.icons.map((icon: IconResponseInterface) => (
-                        <option key={icon.iconID} value={icon.iconID}>{capitalizeFirstLetter(icon.iconName)}</option>
-                    ))}
-                </select>
-                <i className={`fas fa-2x text-gray-300 modal-icon fa-${cardViewUserForm.currentCardIcon.iconName}`}></i>
-                <br />
-
-                <Label 
                     text="Colour Selection"
                     htmlFor='card-colour'
                 />
-                <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control">
+                <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.colours.map((colour: ColourResponseInterface) => (
                     <option value={colour.colourID} key={colour.colourID}>{capitalizeFirstLetter(colour.colour)}</option>
                     ))}
@@ -168,20 +170,39 @@ export function UpdateCard(props: {cardViewID: number}) {
                     text="Card State Selection"
                     htmlFor='card-view-state'
                 />
-                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control">
+                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.states.map((states: StateResponseInterface) => (
                     <option value={states.cardStateID} key={states.cardStateID}>{capitalizeFirstLetter(states.cardState)}</option>
                     ))}
                 </select>
 
-                <SubmitButton
-                    type="submit"
-                    text='Update Card'
-                    name='update-card'
-                    action='submit'
-                    classes='update-card'
-                    onClickFunction={() => void(0)}
+                <Label 
+                    text="Icon Selection"
+                    htmlFor='card-icon'
                 />
+                <br />
+                <select name="card-icon" id="icon-select" value={cardViewUserForm.currentCardIcon.iconID} onChange={(e: Event, ) => {updateCardFormInput(e)}} className="form-space-left form-bottom-margin">
+                    {cardViewUserForm.cardUserSelectionOptions.icons.map((icon: IconResponseInterface) => (
+                        <option key={icon.iconID} value={icon.iconID}>{capitalizeFirstLetter(icon.iconName)}</option>
+                    ))}
+                </select>
+                <i className={`fas fa-2x text-gray-300 modal-icon fa-${cardViewUserForm.currentCardIcon.iconName}`}></i>
+                <br />
+
+                {
+                    updateCardRequestLoading === true
+                        ?
+                            <DotCircleSpinner  classes="center-absolute-center" />
+                        :
+                            <SubmitButton
+                                type="submit"
+                                text='Update Card'
+                                name='update-card'
+                                action='submit'
+                                classes='update-card'
+                                onClickFunction={(e) => handleUpdateCardRequest(e)}
+                            />
+                }
             </form>
 
         </>

@@ -8,7 +8,7 @@ use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsControl
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\EntityManagerInterface;
@@ -217,7 +217,7 @@ class UpdateCardViewControllerTest extends WebTestCase
 
         $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
-        $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
+        $cardStateRepository = $this->entityManager->getRepository(CardState::class);
 
         if ($wrongColour === true) {
             while (true) {
@@ -250,15 +250,15 @@ class UpdateCardViewControllerTest extends WebTestCase
         if ($wrongState === true) {
             while (true) {
                 $randomState = random_int(1, 10000);
-                /** @var Cardstate $cardState */
+                /** @var CardState $cardState */
                 $cardState = $cardStateRepository->find($randomState);
-                if (!$cardState instanceof Cardstate) {
+                if (!$cardState instanceof CardState) {
                     $cardState = $randomState;
                     break;
                 }
             }
         } else {
-            /** @var Cardstate[] $cardStates */
+            /** @var CardState[] $cardStates */
             $cardStates = $cardStateRepository->findAll();
             $cardState = $cardStates[0]->getStateID();
         }
@@ -329,7 +329,7 @@ class UpdateCardViewControllerTest extends WebTestCase
     ): void {
         $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
-        $cardStateRepository = $this->entityManager->getRepository(Cardstate::class);
+        $cardStateRepository = $this->entityManager->getRepository(CardState::class);
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
@@ -351,7 +351,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         if ($nullCardState === true) {
             $cardState = null;
         } else {
-            /** @var Cardstate[] $cardStateObject */
+            /** @var CardState[] $cardStateObject */
             $cardStateObject = $cardStateRepository->findAll();
             $cardState = $cardStateObject[0]->getStateID();
         }
@@ -384,7 +384,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         $responseData = json_decode($responseContent, true);
 
         self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
-        self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['payload']['cardViewID']);
 
         if ($cardColour !== null) {

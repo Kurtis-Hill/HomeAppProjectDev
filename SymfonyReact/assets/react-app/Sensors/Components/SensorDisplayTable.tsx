@@ -17,6 +17,7 @@ import CardViewResponseInterface from '../../UserInterface/Cards/Response/CardVi
 import { UpdateCard } from '../../UserInterface/Cards/Components/Form/UpdateCard';
 import BaseModal from '../../Common/Components/Modals/BaseModal';
 import CloseButton from '../../Common/Components/Buttons/CloseButton';
+import { addNewCardRequest, AddNewCardType } from '../../UserInterface/Cards/Request/Card/AddNewCardRequest';
 
 const defaultFormActiveState = {
     sensorName: false,
@@ -47,13 +48,11 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         createdBy: sensor.createdBy,
     });
 
-    const [addNewCardModal, setAddNewCardModal] = useState<boolean>(false);
-    
     const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface|null>(null);
 
     const [showUpdateCardModal, setShowUpdateCardModal] = useState<boolean>(false);
 
-    const [cardModalLoading, setCardModalLoading] = useState<boolean>(false);
+    const [createCardLoading, setCreateCardLoading] = useState<boolean>(false);
 
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
@@ -101,7 +100,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
 
         const updatedSensorResponse = await updateSensorRequest(sensor.sensorID, dataToSend);
 
-        if (updatedSensorResponse.status === 202) {
+        if (updatedSensorResponse.status === 200) {
             const updatedSensor: SensorResponseInterface = updatedSensorResponse.data.payload;
 
             setSensorUpdateFormInputs({
@@ -135,17 +134,26 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
     const canDelete: boolean = sensor.canDelete ?? false;
     const cardView: CardViewResponseInterface = sensor.cardView;
     
-    const handleCardViewModal = (cardView: CardViewResponseInterface|null): void => {
+    const handleCardViewModal = async (cardView: CardViewResponseInterface|null): void => {
         if (cardView === null) {
-            setAddNewCardModal(true);
+            setCreateCardLoading(true);
+            const addNewCardData: AddNewCardType = {
+                sensorID: sensor.sensorID,
+            };
 
-            // show add new card modal
+            const addNewCardResponse = await addNewCardRequest(addNewCardData);
+
+            if (addNewCardResponse.status === 200) {
+                if (refreshData !== undefined) {
+                    setCreateCardLoading(false);
+                    refreshData();
+                }
+            }
         } else {
             setUpdateCardView(cardView);
             setShowUpdateCardModal(true);
             // show card view modal
         }
-        setAddNewCardModal(true)
     }
 
     return (
@@ -167,11 +175,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     ? <CardDisplayModal />
                     : null
             } */}
-            {
-                cardModalLoading === true
-                    ? <DotCircleSpinner spinnerSize={4} classes="spinner-absolute-center" />
-                    : null
-            }
             {
                 announcementModals.map((announcementModal: typeof AnnouncementFlashModal, index: number) => {
                     return (
@@ -217,7 +220,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                         <span>{sensor?.createdBy?.email}</span>
                     </GeneralTableRow>                            
                     <GeneralTableRow>
-                        <i onClick={() => handleCardViewModal(cardView)} className={`fas fa-${cardView ? 'check' : 'times'} hover`}></i>
+                        { createCardLoading === false ? <i onClick={() => handleCardViewModal(cardView)} className={`fas fa-${cardView ? 'check' : 'times'} hover`}></i> : <DotCircleSpinner classes='center-spinner-absolute' spinnerSize={2} />}
                     </GeneralTableRow>
                     {         
                         canDelete === true

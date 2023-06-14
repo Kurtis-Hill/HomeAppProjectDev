@@ -963,7 +963,8 @@ void getExternalIP() {
 
     if (httpCode > 0) {
       Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+      //@TODO REMEMBER TO CHECK THIS RECENTLY CHANGED
+      if (httpCode == HTTP_CODE_ACCEPTED || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
         String payload = https.getString();
         Serial.println("External IP Payload: ");
         Serial.println(payload);

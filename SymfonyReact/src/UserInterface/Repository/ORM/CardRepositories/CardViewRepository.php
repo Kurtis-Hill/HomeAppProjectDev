@@ -12,7 +12,7 @@ use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -62,15 +62,15 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $this->cardViewBuildBasicJoins($qb, $cardDataPostFilterDTO);
         $qb->where(
             $expr->orX(
-                $expr->eq(Cardstate::ALIAS . '.state', ':cardViewOne'),
-                $expr->eq(Cardstate::ALIAS . '.state', ':cardViewTwo')
+                $expr->eq(CardState::ALIAS . '.state', ':cardViewOne'),
+                $expr->eq(CardState::ALIAS . '.state', ':cardViewTwo')
             ),
             $expr->eq(CardView::ALIAS . '.userID', ':userID'),
         );
 
         $parameters = [
             'userID' => $user,
-            'cardViewOne' => Cardstate::ON,
+            'cardViewOne' => CardState::ON,
             'cardViewTwo' => $cardViewTwo
         ];
 
@@ -143,9 +143,9 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $qb->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Sensor::ALIAS. $this->createJoinConditionString('sensorID', 'sensor', CardView::ALIAS));
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO?->getReadingTypesToQuery(), $qb);
 
-        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, Sensor::ALIAS, Cardstate::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS)
+        $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, CardColour::ALIAS, Icons::ALIAS, Sensor::ALIAS, CardState::ALIAS, Devices::ALIAS, SensorType::ALIAS, Sensor::ALIAS)
             ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceID', 'deviceID', Sensor::ALIAS))
-            ->innerJoin(Cardstate::class, Cardstate::ALIAS, Join::WITH, Cardstate::ALIAS . $this->createJoinConditionString('stateID', 'cardStateID', CardView::ALIAS))
+            ->innerJoin(CardState::class, CardState::ALIAS, Join::WITH, CardState::ALIAS . $this->createJoinConditionString('stateID', 'cardStateID', CardView::ALIAS))
             ->innerJoin(CardColour::class, CardColour::ALIAS, Join::WITH, CardColour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
             ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
             ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', 'roomID', Room::ALIAS))

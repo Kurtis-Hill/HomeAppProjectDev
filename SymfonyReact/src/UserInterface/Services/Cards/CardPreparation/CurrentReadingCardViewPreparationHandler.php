@@ -6,7 +6,7 @@ use App\User\Entity\User;
 use App\UserInterface\Controller\Card\GetCardViewController;
 use App\UserInterface\DTO\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 
@@ -29,9 +29,9 @@ class CurrentReadingCardViewPreparationHandler
         string $view = null,
     ): array {
         $cardViewTwo = match ($view) {
-            GetCardViewController::ROOM_VIEW => Cardstate::ROOM_ONLY,
-            GetCardViewController::DEVICE_VIEW => Cardstate::DEVICE_ONLY,
-            default => Cardstate::INDEX_ONLY
+            GetCardViewController::ROOM_VIEW => CardState::ROOM_ONLY,
+            GetCardViewController::DEVICE_VIEW => CardState::DEVICE_ONLY,
+            default => CardState::INDEX_ONLY
         };
 
         return $this->cardViewRepository->getAllCardSensorDataForUser(

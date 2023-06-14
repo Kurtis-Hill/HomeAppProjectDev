@@ -2,11 +2,11 @@
 
 namespace App\UserInterface\DTO\Response\CardForms;
 
-use App\UserInterface\DTO\RequestDTO\CardUserSelectionEncapsulationDTO;
-use App\UserInterface\DTO\Response\State\StateResponseDTO;
+use App\UserInterface\DTO\Response\CardView\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
+use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 

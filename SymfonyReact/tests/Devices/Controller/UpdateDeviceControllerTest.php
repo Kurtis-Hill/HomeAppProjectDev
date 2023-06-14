@@ -397,7 +397,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
             $jsonPayload
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
@@ -487,7 +487,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getRoomObject()->getRoom(), $responseData['payload']['room']['roomName']);
         self::assertEquals($newPassword, $responseData['payload']['secret']);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     /**
@@ -622,7 +622,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
         self::assertEquals($newGroupID ?? $device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
         self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function test_updating_device_correctly_regular_user(): void
@@ -688,7 +688,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
             $jsonPayload
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
@@ -743,7 +743,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             $jsonPayload
         );
 
-        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_ACCEPTED) {
+        if ($this->client->getResponse()->getStatusCode() === Response::HTTP_OK) {
             $this->client->request(
                 Request::METHOD_POST,
                 SecurityController::API_DEVICE_LOGIN,
@@ -835,7 +835,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
             $jsonPayload
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
@@ -947,7 +947,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
             $jsonPayload
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),

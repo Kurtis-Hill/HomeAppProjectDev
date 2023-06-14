@@ -61,7 +61,7 @@ trait HomeAppAPITrait
         );
     }
 
-    public function sendSuccessfulUpdateJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
+    public function sendSuccessfullyAddedToBeProcessedJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
             return $this->returnJsonResponse(

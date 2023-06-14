@@ -11,7 +11,7 @@ use App\Sensors\Entity\SensorType;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\EntityManagerInterface;
@@ -96,8 +96,8 @@ class GetCardViewFormController extends WebTestCase
         $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         /** @var CardColour[] $allCardColours */
         $allCardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
-        /** @var Cardstate[] $allCardState */
-        $allCardState = $this->entityManager->getRepository(Cardstate::class)->findAll();
+        /** @var CardState[] $allCardState */
+        $allCardState = $this->entityManager->getRepository(CardState::class)->findAll();
 
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
 

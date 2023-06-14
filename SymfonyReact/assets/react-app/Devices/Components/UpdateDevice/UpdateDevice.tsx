@@ -166,7 +166,7 @@ export function UpdateDevice(props: {
         try {
             const deviceUpdateResponse = await deviceUpdatePatchRequest(deviceData.deviceID, dataToSend, 'full');
 
-            if (deviceUpdateResponse.status === 202) {
+            if (deviceUpdateResponse.status === 200) {
                 const deviceResponsePayload = deviceUpdateResponse.data.payload as DeviceResponseInterface;
                 console.log('device update response', deviceUpdateResponse.data.payload);
                 showAnnouncementFlash([deviceUpdateResponse.data.title], 'Success', 30);

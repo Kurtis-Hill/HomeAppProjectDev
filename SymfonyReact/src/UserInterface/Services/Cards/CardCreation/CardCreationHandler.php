@@ -5,8 +5,10 @@ namespace App\UserInterface\Services\Cards\CardCreation;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\Sensors\Entity\Sensor;
+use App\User\Entity\User;
+use App\UserInterface\DTO\Internal\NewCard\NewCardOptionsDTO;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use App\UserInterface\Exceptions\CardColourException;
@@ -16,17 +18,19 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterf
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class CardCreationFacade implements CardCreationHandlerInterface
+class CardCreationHandler implements CardCreationHandlerInterface
 {
     use ValidatorProcessorTrait;
+
+    public const SENSOR_ALREADY_EXISTS = 'You Already have a card view for this sensor';
 
     private CardViewRepositoryInterface $cardViewRepository;
 
@@ -57,12 +61,25 @@ class CardCreationFacade implements CardCreationHandlerInterface
      * @throws CardStateException
      */
     #[ArrayShape(['errors'])]
-    public function createUserCardForSensor(Sensor $sensorObject, UserInterface $user): array
+    public function createUserCardForSensor(Sensor $sensorObject, User $user, ?NewCardOptionsDTO $cardOptionsDTO = null): array
     {
         try {
-            $randomIcon = $this->generateRandomIconObject();
-            $randomColour = $this->generateRandomColourObject();
-            $onCardState = $this->generateOnStateCardObject();
+            if ($cardOptionsDTO !== null && $cardOptionsDTO->getIconID() !== null) {
+                $icon = $this->iconsRepository->find($cardOptionsDTO?->getIconID());
+            }
+
+            $icon = $icon ?? $this->generateRandomIconObject();
+
+            if ($cardOptionsDTO !== null && $cardOptionsDTO?->getColourID() !== null) {
+                $colour = $this->cardColourRepository->find($cardOptionsDTO?->getColourID());
+            }
+            $colour = $colour ?? $this->generateRandomColourObject();
+
+            if ($cardOptionsDTO !== null && $cardOptionsDTO?->getStateID() !== null) {
+                $onCardState = $this->cardStateRepository->find($cardOptionsDTO?->getStateID());
+            }
+            $onCardState = $onCardState ?? $this->generateOnStateCardObject();
+
         } catch (IconException | CardColourException | CardStateException $e) {
             return [$e->getMessage()];
         } catch (NonUniqueResultException | NoResultException) {
@@ -72,8 +89,8 @@ class CardCreationFacade implements CardCreationHandlerInterface
         $newCard = CardViewObjectBuilder::buildNewCardViewObject(
             $sensorObject,
             $user,
-            $randomIcon,
-            $randomColour,
+            $icon,
+            $colour,
             $onCardState,
         );
 
@@ -86,6 +103,8 @@ class CardCreationFacade implements CardCreationHandlerInterface
             $this->saveNewCard($newCard);
         } catch (ORMException | OptimisticLockException) {
             return ['Failed to save new card for sensor'];
+        } catch (UniqueConstraintViolationException) {
+            return [self::SENSOR_ALREADY_EXISTS];
         }
 
         return [];
@@ -117,7 +136,7 @@ class CardCreationFacade implements CardCreationHandlerInterface
     private function generateRandomColourObject(): CardColour
     {
         $maxColourNumber = $this->cardColourRepository->countAllColours();
-        $firstColourId = $this->cardColourRepository->getFirstColourId()->getColourID();
+        $firstColourId = $this->cardColourRepository->getFirstColourID()->getColourID();
         $randomColour = $this->cardColourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber + $firstColourId -1)]);
 
         if (!$randomColour instanceof CardColour) {
@@ -132,11 +151,11 @@ class CardCreationFacade implements CardCreationHandlerInterface
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    private function generateOnStateCardObject(): Cardstate
+    private function generateOnStateCardObject(): CardState
     {
-        $onCardState = $this->cardStateRepository->findOneByState(Cardstate::ON);
+        $onCardState = $this->cardStateRepository->findOneByState(CardState::ON);
 
-        if (!$onCardState instanceof Cardstate) {
+        if (!$onCardState instanceof CardState) {
             throw new CardStateException(CardStateException::CARD_STATE_NOT_FOUND);
         }
 

@@ -106,11 +106,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_MULTI_STATUS, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
-
-
-        if ($errorsPayload !== null) {
-            self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
-        }
+        self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
 
         if ($dataPayloads !== null) {
             foreach ($dataPayloads as $dataPayload) {
@@ -378,7 +374,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             }
             ++$count;
         }
-        self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
 
         $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorReadingTypeObject->getSensorTypeID()]);
@@ -774,7 +770,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     /**
      * @dataProvider sendingEntireWrongReadingPayloadDataProvider
      */
-    public function test_sending_wrong_data_entire_reading_payload(
+    public function test_sending_wrong_data_each_payload_reading(
         string $sensorType,
         string $tableId,
         array $sensorReadingsToUpdate,

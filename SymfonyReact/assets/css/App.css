@@ -126,6 +126,8 @@
 .delete {
     color: #e74a3b;
 }
+
+
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
 /*    -moz-transition: 0.5s;*/
@@ -161,7 +163,7 @@
 /*    opacity: 100%;*/
 /*}*/
 
-.form-space {
+.form-space-left {
    padding-top: 1%;
    max-width: 50%;
    display:inline-block;
@@ -176,7 +178,11 @@
    ;border:1px solid #ced4da;
    border-radius:.25rem;
    transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-   margin-bottom: 1%;
+   margin-bottom: 3%;
+}
+
+.form-bottom-margin {
+    margin-bottom: 2%;
 }
 
 /*.form-padding {*/

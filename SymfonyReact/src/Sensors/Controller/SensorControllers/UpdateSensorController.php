@@ -120,6 +120,6 @@ class UpdateSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
+        return $this->sendSuccessfullyAddedToBeProcessedJsonResponse($normalizedResponse);
     }
 }

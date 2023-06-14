@@ -153,9 +153,10 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                     ->getStandardReadingTypeResponseBuilder($sensorReadingTypeObject)
                     ->buildReadingTypeBoundaryReadingsResponseDTO($sensorReadingTypeObject);
             } else {
-                $validationErrors[] = $validationError;
+                $validationErrors = array_merge($validationErrors, $validationError);
             }
         }
+
         $processingErrors = array_merge($sensorProcessingErrors, $validationErrors);
         if (empty($this->successfullyProcessedTypes) && !empty($processingErrors)) {
             return $this->sendBadRequestJsonResponse($processingErrors, 'All sensor boundary update requests failed');
@@ -183,7 +184,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
         $this->logger->info('sensor boundary update successful for id:' . $sensorObject->getSensorID(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
+        return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 
     #[ArrayShape([BoundaryReadingTypeResponseInterface::class])]

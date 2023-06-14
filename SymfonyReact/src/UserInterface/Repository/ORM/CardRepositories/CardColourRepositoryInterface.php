@@ -35,7 +35,7 @@ interface CardColourRepositoryInterface
     /**
      * @throws NonUniqueResultException
      */
-    public function getFirstColourId(): CardColour;
+    public function getFirstColourID(): CardColour;
 
     /**
      * @throws NonUniqueResultException

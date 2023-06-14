@@ -12,7 +12,7 @@ namespace App\UserInterface\Forms\CardViewForms;
 
 use App\Common\API\APIErrorMessages;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -39,7 +39,7 @@ class CardViewForm extends AbstractType
                 ],
             ])
             ->add('stateID', EntityType::class, [
-                'class' => Cardstate::class,
+                'class' => CardState::class,
                 'constraints' => [
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card state')]),
                 ],

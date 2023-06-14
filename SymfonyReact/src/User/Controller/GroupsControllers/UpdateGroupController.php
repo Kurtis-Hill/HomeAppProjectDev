@@ -102,6 +102,6 @@ class UpdateGroupController extends AbstractController
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE . ' Group Saved']);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedGroupResponseDTO);
+        return $this->sendSuccessfulJsonResponse($normalizedGroupResponseDTO);
     }
 }

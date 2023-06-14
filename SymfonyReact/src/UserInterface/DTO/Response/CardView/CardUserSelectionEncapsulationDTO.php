@@ -1,10 +1,10 @@
 <?php
 
-namespace App\UserInterface\DTO\RequestDTO;
+namespace App\UserInterface\DTO\Response\CardView;
 
-use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
+use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 

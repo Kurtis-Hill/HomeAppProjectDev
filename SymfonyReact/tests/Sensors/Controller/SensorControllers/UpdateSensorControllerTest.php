@@ -232,7 +232,7 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
         $payload = $responseData['payload'];
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
@@ -363,7 +363,7 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
         $payload = $responseData['payload'];
 
@@ -402,7 +402,7 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
         $payload = $responseData['payload'];
 
@@ -473,7 +473,7 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
         $payload = $responseData['payload'];
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
@@ -511,7 +511,7 @@ class UpdateSensorControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
         $payload = $responseData['payload'];
 

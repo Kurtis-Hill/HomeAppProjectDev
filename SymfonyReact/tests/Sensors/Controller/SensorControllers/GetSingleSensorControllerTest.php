@@ -527,7 +527,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             self::assertEquals($temperature->getCurrentReading(), $sensorReadingTypes[Temperature::READING_TYPE]['currentReading']);
             self::assertEquals($temperature->getHighReading(), $sensorReadingTypes[Temperature::READING_TYPE]['highReading']);
             self::assertEquals($temperature->getLowReading(), $sensorReadingTypes[Temperature::READING_TYPE]['lowReading']);
-            self::assertEquals($temperature->getConstRecord(), $sensorReadingTypes[Temperature::READING_TYPE]['constRecorded']);
+            self::assertEquals($temperature->getConstRecord(), $sensorReadingTypes[Temperature::READING_TYPE]['constRecord']);
         }
         if (
             $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
@@ -540,7 +540,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             self::assertEquals($humidity->getCurrentReading(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['currentReading']);
             self::assertEquals($humidity->getHighReading(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['highReading']);
             self::assertEquals($humidity->getLowReading(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['lowReading']);
-            self::assertEquals($humidity->getConstRecord(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['constRecorded']);
+            self::assertEquals($humidity->getConstRecord(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['constRecord']);
         }
 
         if ($sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME) {
@@ -551,7 +551,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             self::assertEquals($latitude->getCurrentReading(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['currentReading']);
             self::assertEquals($latitude->getHighReading(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['highReading']);
             self::assertEquals($latitude->getLowReading(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['lowReading']);
-            self::assertEquals($latitude->getConstRecord(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['constRecorded']);
+            self::assertEquals($latitude->getConstRecord(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['constRecord']);
         }
 
         if ($sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME) {
@@ -562,7 +562,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             self::assertEquals($analog->getCurrentReading(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['currentReading']);
             self::assertEquals($analog->getHighReading(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['highReading']);
             self::assertEquals($analog->getLowReading(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['lowReading']);
-            self::assertEquals($analog->getConstRecord(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['constRecorded']);
+            self::assertEquals($analog->getConstRecord(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['constRecord']);
         }
 
         self::assertEquals($sensorObject->getSensorID(), $sensorData['sensorID']);

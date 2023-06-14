@@ -95,6 +95,6 @@ class UpdateCardViewController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Request Successful']);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponseData);
+        return $this->sendSuccessfulJsonResponse($normalizedResponseData);
     }
 }

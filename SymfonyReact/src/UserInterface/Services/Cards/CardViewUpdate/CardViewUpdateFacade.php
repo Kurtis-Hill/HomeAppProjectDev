@@ -5,7 +5,7 @@ namespace App\UserInterface\Services\Cards\CardViewUpdate;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
 use App\UserInterface\Entity\Card\CardColour;
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
@@ -61,7 +61,7 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
 
         if ($cardUpdateDTO->getCardStateID()) {
             $cardState = $this->cardStateRepository->findOneById($cardUpdateDTO->getCardStateID());
-            if (!$cardState instanceof Cardstate) {
+            if (!$cardState instanceof CardState) {
                 $errors[] = 'Card State state not found';
             } else {
                 $cardView->setCardStateID($cardState);

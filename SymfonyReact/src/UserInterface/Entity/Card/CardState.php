@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Table(name: "state"),
     ORM\UniqueConstraint(name: "state", columns: ["state"]),
 ]
-class Cardstate
+class CardState
 {
     public const ON = 'ON';
 

@@ -30,6 +30,7 @@ use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepository;
 use App\User\Repository\ORM\UserRepositoryInterface;
+use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -86,7 +87,7 @@ class GetSensorControllerTest extends WebTestCase
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->sensorTypeRepository = $this->entityManager->getRepository(SensorType::class);
-        $this->cardViewRepository = $this->entityManager->getRepository(SensorType::class);
+        $this->cardViewRepository = $this->entityManager->getRepository(CardView::class);
     }
 
     protected function tearDown(): void
@@ -627,12 +628,7 @@ class GetSensorControllerTest extends WebTestCase
 
         foreach ($sensorData as $singleSensorData) {
             $sensorObject = $this->sensorRepository->find($singleSensorData['sensorID']);
-            $userHasCardView = $this->cardViewRepository->findOneBy(
-                [
-                    'userID' => $this->adminUser->getUserID(),
-                    'sensorID' => $sensorObject->getSensorID()
-                ]
-            );
+
             $sensorReadingTypes = $singleSensorData['sensorReadingTypes'];
             if (
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
@@ -723,7 +719,28 @@ class GetSensorControllerTest extends WebTestCase
 
             self::assertTrue($singleSensorData['canEdit']);
             self::assertTrue($singleSensorData['canDelete']);
-            self::assertEquals($userHasCardView, $singleSensorData['userHasCardView']);
+
+            $userHasCardView = $this->cardViewRepository->findOneBy(
+                [
+                    'userID' => $this->adminUser->getUserID(),
+                    'sensor' => $sensorObject->getSensorID()
+                ]
+            );
+
+            if ($userHasCardView !== null) {
+                $cardViewResponse = $singleSensorData['cardView'];
+                self::assertEquals($userHasCardView->getCardViewID(), $cardViewResponse['cardViewID']);
+                self::assertEquals($userHasCardView->getCardIconID()->getIconID(), $cardViewResponse['cardIcon']['iconID']);
+                self::assertEquals($userHasCardView->getCardIconID()->getIconName(), $cardViewResponse['cardIcon']['iconName']);
+                self::assertEquals($userHasCardView->getCardIconID()->getDescription(), $cardViewResponse['cardIcon']['description']);
+
+                self::assertEquals($userHasCardView->getCardColourID()->getColourID(), $cardViewResponse['cardColour']['colourID']);
+                self::assertEquals($userHasCardView->getCardColourID()->getColour(), $cardViewResponse['cardColour']['colour']);
+                self::assertEquals($userHasCardView->getCardColourID()->getShade(), $cardViewResponse['cardColour']['shade']);
+
+                self::assertEquals($userHasCardView->getCardStateID()->getStateID(), $cardViewResponse['cardViewState']['cardStateID']);
+                self::assertEquals($userHasCardView->getCardStateID()->getState(), $cardViewResponse['cardViewState']['cardState']);
+            }
         }
     }
 
