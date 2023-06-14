@@ -91,11 +91,15 @@ export function CardRowContainer(props: {
                         />
             }
             {
-                <CardDisplayModal
-                    cardViewID={selectedCardForQuickUpdate}
-                    loadingCardModalView={loadingCardModalView}
-                    setLoadingCardModalView={setLoadingCardModalView}
-                />
+                loadingCardModalView === true
+                    ?
+                        <CardDisplayModal
+                            cardViewID={selectedCardForQuickUpdate}
+                            loadingCardModalView={loadingCardModalView}
+                            setLoadingCardModalView={setLoadingCardModalView}
+                        />
+                    :
+                        null
             }
         </>
     );

@@ -42,7 +42,6 @@ export function UpdateCard(props: {cardViewID: number}) {
 
         if (cardViewUserFormResponse.status === 200) {
             setCardViewUserForm(cardViewUserFormResponseData);
-            // setCardViewInitialLoad(false);
 
             console.log('cardViewUserFormResponseData', cardViewUserFormResponseData);
         }
@@ -57,10 +56,6 @@ export function UpdateCard(props: {cardViewID: number}) {
         const target = e.target as HTMLInputElement;
         const name = target.name;
         const value = target.value;
-
-        console.log('name', name);
-        console.log('value', value);
-        // console.log('e', e);
         
         switch (name) {
             case 'card-icon':
@@ -114,7 +109,6 @@ export function UpdateCard(props: {cardViewID: number}) {
                 })
                 break;
         } 
-        console.log('cardViewUserForm', cardViewUserForm);       
     }
 
     const handleUpdateCardRequest = async (e: Event) => {
@@ -131,8 +125,6 @@ export function UpdateCard(props: {cardViewID: number}) {
         
         cardUpdateResponse.status !== null ? setUpdateCardRequestLoading(false) : null
         
-        const updatedCardData: CardViewResponseInterface = cardUpdateResponse.data.payload;
-
         if (cardUpdateResponse.status === 200) {
             showAnnouncementFlash([`Card updated`], `${cardUpdateResponse.data.title}`, 15);
         } 

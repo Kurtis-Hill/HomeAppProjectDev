@@ -7,9 +7,10 @@ export function TabSelector(props: {
     setCurrentTab: (tab: string) => void,
 }) {
     const { options, currentTab, setCurrentTab } = props;
+    
     return (
         <>
-            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+            <div className="btn-group btn-group-toggle" data-toggle="buttons" style={{paddingBottom: '3%'}}>
                 {
                     options.map((option: string, index: number) => {
                         return (

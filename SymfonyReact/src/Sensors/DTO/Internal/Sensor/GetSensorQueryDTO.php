@@ -19,6 +19,8 @@ class GetSensorQueryDTO
 
     private ?array  $groupIDs;
 
+    private ?array  $cardViewIDs;
+
     #[ArrayShape([Sensor::class])]
     private array $sensorResult = [];
 
@@ -29,6 +31,7 @@ class GetSensorQueryDTO
         ?array $deviceIDs = null,
         ?array $deviceNames = null,
         ?array $groupIDs = null,
+        ?array $cardViewIDs = null
     ) {
         $this->limit = $limit;
         $this->offset = $offset;
@@ -81,5 +84,15 @@ class GetSensorQueryDTO
     public function setGroupIDs(array $groupIDs): void
     {
         $this->groupIDs = $groupIDs;
+    }
+
+    public function getCardViewIDs(): ?array
+    {
+        return $this->cardViewIDs;
+    }
+
+    public function setCardViewIDs(array $cardViewIDs): void
+    {
+        $this->cardViewIDs = $cardViewIDs;
     }
 }

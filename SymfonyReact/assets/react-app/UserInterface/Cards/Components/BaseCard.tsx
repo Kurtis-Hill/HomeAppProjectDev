@@ -17,16 +17,13 @@ export function BaseCard(props: {
     const cardClasses = props.cardClasses ?? 'col-xl-3 col-md-6 mb-4 hover'
     const id = props.id ?? 0;
     const loading = props.loading ?? false;
-    // const setCardLoading = props.setCardLoading;
 
-    const [localLoading, setLocalLoading] = useState<boolean>(loading);
+    const { setVariableToUpdate, setCardLoading } = props;
 
     const handleGeneralCardClick = () => {
-        // setCardLoading(true);
-        setLocalLoading(true)
-        props.setVariableToUpdate(id);
+        setCardLoading(true);
+        setVariableToUpdate(id);
     }
-
 
     return (
         <>
@@ -34,11 +31,6 @@ export function BaseCard(props: {
                 <div onClick={() => handleGeneralCardClick()} className={`shadow h-100 py-2 card border-left-${colour}`}>
                     <div className="card-body">
                         { props.children }
-                        {
-                            localLoading === false 
-                                ? null
-                                : <DotCircleSpinner spinnerSize={3} classes="spinner-absolute-center" />
-                        }
                     </div>
                 </div>
             </div>

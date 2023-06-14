@@ -17,6 +17,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -193,38 +194,50 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         if ($getSensorQueryDTO->getDeviceIDs() !== null) {
             $qb->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
-            ->andWhere(
-                $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID')
-            )
-            ->setParameters(
-                [
-                    'deviceID' => $getSensorQueryDTO->getDeviceIDs(),
-                ]
-            );
+                ->andWhere(
+                    $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID')
+                )
+                ->setParameters(
+                    [
+                        'deviceID' => $getSensorQueryDTO->getDeviceIDs(),
+                    ]
+                );
         }
 
         if ($getSensorQueryDTO->getDeviceNames() !== null) {
             $qb->innerJoin(Devices::class, Devices::ALIAS . '2', Join::WITH, Devices::ALIAS . '2.deviceID = ' . Sensor::ALIAS . '.deviceID')
-            ->andWhere(
-                $qb->expr()->in(Devices::ALIAS . '2' . '.deviceName', ':deviceNames')
-            )
-            ->setParameters(
-                [
-                    'deviceNames' => $getSensorQueryDTO->getDeviceNames(),
-                ]
-            );
+                ->andWhere(
+                    $qb->expr()->in(Devices::ALIAS . '2' . '.deviceName', ':deviceNames')
+                )
+                ->setParameters(
+                    [
+                        'deviceNames' => $getSensorQueryDTO->getDeviceNames(),
+                    ]
+                );
         }
 
         if ($getSensorQueryDTO->getGroupIDs() !== null) {
             $qb->innerJoin(Devices::class, Devices::ALIAS . '3', Join::WITH, Devices::ALIAS . '3.deviceID = ' . Sensor::ALIAS . '.deviceID')
-            ->andWhere(
-                $qb->expr()->in(Devices::ALIAS . '3' . '.groupID', ':groupIDs')
-            )
-            ->setParameters(
-                [
-                    'groupIDs' => $getSensorQueryDTO->getGroupIDs(),
-                ]
-            );
+                ->andWhere(
+                    $qb->expr()->in(Devices::ALIAS . '3' . '.groupID', ':groupIDs')
+                )
+                ->setParameters(
+                    [
+                        'groupIDs' => $getSensorQueryDTO->getGroupIDs(),
+                    ]
+                );
+        }
+
+        if ($getSensorQueryDTO->getCardViewIDs() !== null) {
+            $qb->innerJoin(CardView::class, CardView::ALIAS, Join::WITH, CardView::ALIAS . '.sensor = ' . Sensor::ALIAS . '.sensorID')
+                ->andWhere(
+                    $qb->expr()->in(CardView::ALIAS . '.cardViewID', ':cardViewIDs')
+                )
+                ->setParameters(
+                    [
+                        'cardViewIDs' => $getSensorQueryDTO->getCardViewIDs(),
+                    ]
+                );
         }
 
         $qb->setFirstResult($getSensorQueryDTO->getOffset())

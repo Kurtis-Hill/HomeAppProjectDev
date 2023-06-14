@@ -37,6 +37,7 @@ class SensorUserFilter
         $requestedDeviceNames = $getSensorQueryDTO->getDeviceNames();
         $requestedDeviceIDs = $getSensorQueryDTO->getDeviceIDs();
         $requestedGroupsIDs = $getSensorQueryDTO->getGroupIDs();
+        $requestedCardViewIDs = $getSensorQueryDTO->getCardViewIDs();
 
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -89,6 +90,16 @@ class SensorUserFilter
                         APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
                         'groupID',
                         $notAllowedSensor['groupID']
+                    );
+                }
+                if (
+                    !empty($requestedCardViewIDs)
+                    && in_array($notAllowedDeviceID, $requestedCardViewIDs, false)
+                ) {
+                    $errors[] = sprintf(
+                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+                        'cardViewID',
+                        $notAllowedDeviceID
                     );
                 }
             }

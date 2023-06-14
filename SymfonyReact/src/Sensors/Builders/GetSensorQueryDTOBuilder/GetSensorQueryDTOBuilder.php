@@ -13,6 +13,7 @@ class GetSensorQueryDTOBuilder
         ?array $deviceIDs = null,
         ?array $deviceNames = null,
         ?array $groupIDs = null,
+        ?array $cardViewIDs = null
     ): GetSensorQueryDTO {
         return new GetSensorQueryDTO(
             $limit,
@@ -20,7 +21,8 @@ class GetSensorQueryDTOBuilder
             $page,
             $deviceIDs,
             $deviceNames,
-            $groupIDs
+            $groupIDs,
+            $cardViewIDs
         );
     }
 }

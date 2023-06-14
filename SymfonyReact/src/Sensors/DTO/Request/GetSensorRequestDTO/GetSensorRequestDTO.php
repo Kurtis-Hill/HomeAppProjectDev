@@ -43,6 +43,11 @@ class GetSensorRequestDTO
     ]
     private mixed $groupIDs;
 
+    #[
+        Assert\Type(type: ['array', "null"], message: 'responseType must be a {{ type }} you have provided {{ value }}'),
+    ]
+    private mixed $cardViewIDs;
+
     public function getLimit(): mixed
     {
         return $this->limit;
@@ -93,8 +98,13 @@ class GetSensorRequestDTO
         $this->page = $page;
     }
 
-//    public function setResponseType(mixed $responseType): void
-//    {
-//        $this->responseType = $responseType;
-//    }
+    public function getCardViewIDs(): mixed
+    {
+        return $this->cardViewIDs;
+    }
+
+    public function setCardViewIDs(mixed $cardViewIDs): void
+    {
+        $this->cardViewIDs = $cardViewIDs;
+    }
 }

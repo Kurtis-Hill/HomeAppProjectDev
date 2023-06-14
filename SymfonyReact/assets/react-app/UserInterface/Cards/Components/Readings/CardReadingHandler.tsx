@@ -13,6 +13,8 @@ import { handleSendingCardDataRequest } from '../../Request/CardPageRequest';
 import CardReadingFactory from '../../Factories/CardReadingFactory';
 import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
 
+const initialCardDisplay = [];
+
 const cardReducer = (previousCards: CardSensorDataResponseInterface[]|undefined, cardsForDisplayArray: CardSensorDataResponseInterface[]|undefined): React[] => {
     if (previousCards.length <= 0 || previousCards === undefined) {
         return cardsForDisplayArray;
@@ -54,7 +56,7 @@ const cardReducer = (previousCards: CardSensorDataResponseInterface[]|undefined,
     return cardsForDisplayArray;
 }
 
-const initialCardDisplay = [];
+
 
 export function CardReadingHandler(props: { 
     route: string; 
@@ -130,7 +132,7 @@ export function CardReadingHandler(props: {
                                 }
                             })
                     : <div className="no-data-message">No data to display</div>
-            }
+            }            
         </React.Fragment>
     );
 }

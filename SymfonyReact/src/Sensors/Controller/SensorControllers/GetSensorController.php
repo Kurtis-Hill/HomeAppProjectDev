@@ -64,6 +64,7 @@ class GetSensorController extends AbstractController
         $deviceIDs = $request->query->all()['deviceIDs'] ?? null;
         $deviceNames = $request->query->all()['deviceNames'] ?? null;
         $groupIDs = $request->query->all()['groupIDs'] ?? null;
+        $cardViewIDs = $request->query->all()['cardViewIDs'] ?? null;
 
         $sensorRequestDTO = new GetSensorRequestDTO();
         $sensorRequestDTO->setLimit($requestDTO->getLimit());
@@ -71,6 +72,7 @@ class GetSensorController extends AbstractController
         $sensorRequestDTO->setDeviceIDs($deviceIDs);
         $sensorRequestDTO->setDeviceNames($deviceNames);
         $sensorRequestDTO->setGroupIDs($groupIDs);
+        $sensorRequestDTO->setCardViewIDs($cardViewIDs);
 
         $validationErrors = $validator->validate($sensorRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
@@ -85,6 +87,7 @@ class GetSensorController extends AbstractController
             $sensorRequestDTO->getDeviceIDs(),
             $sensorRequestDTO->getDeviceNames(),
             $sensorRequestDTO->getGroupIDs(),
+            $sensorRequestDTO->getCardViewIDs(),
         );
 
         $user = $this->getUser();
