@@ -39,6 +39,7 @@ class GetSensorQueryDTO
         $this->deviceIDs = $deviceIDs;
         $this->deviceNames = $deviceNames;
         $this->groupIDs = $groupIDs;
+        $this->cardViewIDs = $cardViewIDs;
     }
 
     public function getLimit(): ?int

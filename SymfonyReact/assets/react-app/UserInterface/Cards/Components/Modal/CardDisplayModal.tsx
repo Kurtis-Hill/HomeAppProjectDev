@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import BaseModal from '../../../../Common/Components/Modals/BaseModal';
 import { TabSelector } from '../../../../Common/Components/TabSelector';
 import { UpdateCard } from '../Form/UpdateCard';
+import { ReadingTypeDisplayTable } from '../../../../Sensors/Components/ReadingTypes/ReadingTypeDisplayTable';
+import { getSensorsRequest, GetSensorsRequestType } from '../../../../Sensors/Request/Sensor/GetSensorsRequest';
+import SensorResponseInterface from '../../../../Sensors/Response/Sensor/SensorResponseInterface';
+import { RequestTypeEnum } from '../../../../Common/API/RequestTypeEnum';
 
 const cardViewUpdate: string = 'Card View Update';
 const boundaryUpdate: string = 'Boundary Update';
@@ -13,36 +17,43 @@ export function CardDisplayModal(props: {
     setLoadingCardModalView: (loadingCardModalView: boolean) => void;
 }) {
     const { cardViewID, loadingCardModalView, setLoadingCardModalView } = props;
-    const [loading, setLoading] = useState<boolean>(false);
-    const [tabSelection, setTabSelection] = useState<string[]>('Card View Update');
-    
+    const [tabSelection, setTabSelection] = useState<string>('Card View Update');
+    const [sensorResponse, setSensorResponse] = useState<SensorResponseInterface|null>(null);
+
     const tabOptions = [
         cardViewUpdate,
         boundaryUpdate,
     ];
 
-    useEffect(() => {
+    const sensorRequestParameters = {
+        cardViewIDs: [cardViewID],
+        deviceIDs: [],
+        deviceNames: [],
+        limit: 1,
+        page: 1,
+        responseType: RequestTypeEnum.FULL,
+    }
+
+    const tabSelectionWrapper = async (tabSelection: string) => {
         if (tabSelection === 'Boundary Update') {
-            // const sensorResponse = sensorRequest
-            //do sensor request by cardview ID
-
+            setTabSelection(tabSelection);
+            const sensorResponse = await handleGetSensorRequest(sensorRequestParameters);
+            if (sensorResponse) {
+                console.log('sensorResponse', sensorResponse)
+                setSensorResponse(sensorResponse[0]);
+            }
+        } else {
+            setTabSelection(tabSelection);
         }
-    }, [tabSelection])
-    // type CardModalDisplayTabOptions = {
-    //     cardViewUpdate: string,
-    //     boundaryUpdate: string,
-    // }
+    }
 
-    // const cardModalDisplayTabOptions: CardModalDisplayTabOptions = {
-    //     cardViewUpdate: 'Card View Update',
-    //     boundaryUpdate: 'Boundary Update',
-    // }
+    const handleGetSensorRequest = async (getSensorParameters: GetSensorsRequestType): Promise<SensorResponseInterface> => {
+        const getSensorsResponse = await getSensorsRequest(getSensorParameters);
+        if (getSensorsResponse.status === 200) {
+            return getSensorsResponse.data.payload;
+        }
+    }
 
-    // have different componenets for base modal children,
-    // boundary update form,
-    // card view update form,
-
-    console.log('cardVieID me too', cardViewID, setLoadingCardModalView, loadingCardModalView)
     return (
         <>
             <BaseModal
@@ -53,7 +64,7 @@ export function CardDisplayModal(props: {
                 <div className="container" style={{ textAlign: "center", margin: "inherit"}}>
                     <TabSelector
                         currentTab={tabSelection}
-                        setCurrentTab={setTabSelection}
+                        setCurrentTab={tabSelectionWrapper}
                         options={tabOptions}
                     />
 
@@ -61,12 +72,20 @@ export function CardDisplayModal(props: {
                         tabSelection === tabOptions[0]
                             ? <UpdateCard
                                 cardViewID={cardViewID}
-                                />
+                              />
                             : null
                     }            
 
                     {
-                        tabSelection === tabOptions[1]
+                        tabSelection === tabOptions[1] && sensorResponse !== null
+                            ?
+                                <ReadingTypeDisplayTable
+                                    canEdit={sensorResponse.canEdit}
+                                    sensorReadingTypes={sensorResponse.sensorReadingTypes}
+                                    refreshData={() => tabSelectionWrapper(tabSelection)}
+                                />
+                            : 
+                                null
 
                     }    
                 </div>

@@ -57,6 +57,7 @@ export function DevicePage() {
     if (deviceLoading === true || deviceData === null) {
         return <DotCircleSpinner spinnerSize={5} classes="center-spinner" />
     }
+    console.log('deviceData', deviceData);
 
     return (
         <>

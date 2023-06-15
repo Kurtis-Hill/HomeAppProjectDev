@@ -42,13 +42,10 @@ export function UpdateCard(props: {cardViewID: number}) {
 
         if (cardViewUserFormResponse.status === 200) {
             setCardViewUserForm(cardViewUserFormResponseData);
-
-            console.log('cardViewUserFormResponseData', cardViewUserFormResponseData);
         }
     }
 
     useEffect(() => {
-        console.log('useEffect Ran');
         handleCardViewFormRequest();
     }, [cardViewID])
 

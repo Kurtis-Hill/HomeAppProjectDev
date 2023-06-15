@@ -134,7 +134,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
     const canDelete: boolean = sensor.canDelete ?? false;
     const cardView: CardViewResponseInterface = sensor.cardView;
     
-    const handleCardViewModal = async (cardView: CardViewResponseInterface|null): void => {
+    const handleCardViewModal = async (cardView: CardViewResponseInterface|null) => {
         if (cardView === null) {
             setCreateCardLoading(true);
             const addNewCardData: AddNewCardType = {
@@ -144,10 +144,12 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
             const addNewCardResponse = await addNewCardRequest(addNewCardData);
 
             if (addNewCardResponse.status === 200) {
+                setCreateCardLoading(false);
                 if (refreshData !== undefined) {
-                    setCreateCardLoading(false);
                     refreshData();
                 }
+            } else {
+                setCreateCardLoading(false);
             }
         } else {
             setUpdateCardView(cardView);

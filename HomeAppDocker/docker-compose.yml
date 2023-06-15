@@ -77,6 +77,7 @@ services:
       MYSQL_USER : ${MARIADB_USER}
       MYSQL_PASSWORD: ${MARIADB_PASSWORD}
       MYSQL_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_INTERNAL_PORT: ${MARIADB_INTERNAL_PORT}
     volumes:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
       - ../SSL:/etc/mysql/ssl:ro
