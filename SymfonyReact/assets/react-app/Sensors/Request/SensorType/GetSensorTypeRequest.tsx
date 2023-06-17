@@ -10,7 +10,6 @@ export async function sensorTypesRequest(): Promise<SensorTypeResponseInterface[
         );
 
         if (sensorDataResponse.status === 200) {    
-            // console.log('sensordata Response', sensorDataResponse)
             const sensorTypes: SensorTypeResponseInterface[] = sensorDataResponse.data.payload;
             
             return sensorTypes;

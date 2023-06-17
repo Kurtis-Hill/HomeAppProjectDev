@@ -67,140 +67,140 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
         'AdminUserOneDeviceAdminGroupOneDht' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'AdminDevice1Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
         'AdminUserOneDeviceRegularGroupTwoDht' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'AdminDevice2Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
         'AdminUserTwoDeviceAdminGroupTwoDht' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserTwoDeviceAdminGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
             'sensorName' => 'AdminDevice3Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
         'RegularUserOneDeviceRegularGroupOneDht' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserOneDeviceRegularGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
             'sensorName' => 'UserDevice1Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
         'RegularUserTwoDeviceRegularGroupTwoDht' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'UserDevice2Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
         'RegularUserTwoDeviceAdminGroupOneDht' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'UserDevice3Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
 
         'AdminUserOneDeviceAdminGroupOneDallas' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'AdminDevice1Dallas',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME]
         ],
 
         'AdminUserOneDeviceRegularGroupTwoDallas' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'AdminDevice2Dallas',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME]
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoDallas' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserTwoDeviceAdminGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
             'sensorName' => 'AdminDevice3Dallas',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME]
         ],
 
         'RegularUserOneDeviceRegularGroupOneDallas' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserOneDeviceRegularGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
             'sensorName' => 'UserDev1DS180',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME]
         ],
 
         'RegularUserTwoDeviceRegularGroupTwoDallas' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'UserDev2DS180',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME]
         ],
 
         'RegularUserTwoDeviceAdminGroupOneDallas' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'UserDev3DS180',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME]
         ],
 
         'AdminUserOneDeviceAdminGroupOneSoil' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'AdminDev1Soil',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME]
         ],
 
         'AdminUserOneDeviceRegularGroupTwoSoil' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'AdminDev2Soil',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME]
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoSoil' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserTwoDeviceAdminGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
             'sensorName' => 'AdminDev3Soil',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME]
         ],
 
         'RegularUserOneDeviceRegularGroupOneSoil' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserOneDeviceRegularGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
             'sensorName' => 'UsrDev1Soil',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME]
         ],
 
         'RegularUserTwoDeviceRegularGroupTwoSoil' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'UsrDev2Soil',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME]
         ],
 
         'RegularUserTwoDeviceAdminGroupOneSoil' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'UsrDev3Soil',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME]
         ],
 
         'AdminUserOneDeviceAdminGroupOneBmp' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'AdDev1Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],
 
         'AdminUserOneDeviceRegularGroupTwoBmp' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'AdDev2Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoBmp' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserTwoDeviceAdminGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
             'sensorName' => 'AdDev3Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],
 
         'RegularUserOneDeviceRegularGroupOneBmp' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserOneDeviceRegularGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
             'sensorName' => 'UsDev1Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],
 
         'RegularUserTwoDeviceRegularGroupTwoBmp' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceRegularGroupTwo'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'UsDev2Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],
 
         'RegularUserTwoDeviceAdminGroupOneBmp' => [
-            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['RegularUserTwoDeviceAdminGroupOne'],
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'UsDev3Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],

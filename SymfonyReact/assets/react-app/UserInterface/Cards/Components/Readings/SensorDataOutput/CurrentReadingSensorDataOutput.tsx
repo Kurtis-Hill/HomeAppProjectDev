@@ -14,7 +14,6 @@ export function CurrentReadingSensorDataOutput(props: { sensorData: CardCurrentS
             : 'text-gray-800';
       }
 
-    //   console.log('sensorData', sensorData)
     if (sensorData !== undefined && sensorData.length > 0) {
         return (
             <React.Fragment>

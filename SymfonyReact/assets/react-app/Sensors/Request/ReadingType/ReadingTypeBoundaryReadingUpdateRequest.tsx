@@ -6,7 +6,6 @@ import { readingType } from '../../../Common/SensorLanguage';
 import { StandardSensorConstRecord, StandardSensorReadingValue } from '../../Types/StandardSensor/SensorReadingTypes';
 
 export async function readingTypeBoundaryReadingUpdateRequest(sensorID: number, sensorBoundaryUpdates: StandardSensorBoundaryReadingUpdateInputInterface[]): Promise<AxiosResponse> {
-    console.log('data to send', sensorBoundaryUpdates);
     const sensorReadingUpdateRequestResponse: AxiosResponse = await axios.put(
         `${apiURL}sensor/${sensorID}/boundary-update`,
         {'sensorData' : sensorBoundaryUpdates},

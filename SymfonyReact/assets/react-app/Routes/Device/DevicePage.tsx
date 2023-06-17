@@ -39,7 +39,6 @@ export function DevicePage() {
             const getDeviceResponse = await getDeviceRequest(deviceID, ResponseTypeFull);
             const deviceData: DeviceResponseInterface = getDeviceResponse.data.payload;
             setDeviceData(deviceData);
-            // console.log('deviceData', deviceData);
         } catch (error) {
             const err = error as AxiosError
             if (err.response?.status === 404) {
@@ -57,7 +56,6 @@ export function DevicePage() {
     if (deviceLoading === true || deviceData === null) {
         return <DotCircleSpinner spinnerSize={5} classes="center-spinner" />
     }
-    console.log('deviceData', deviceData);
 
     return (
         <>

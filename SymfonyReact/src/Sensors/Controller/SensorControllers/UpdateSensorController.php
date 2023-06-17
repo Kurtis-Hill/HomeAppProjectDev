@@ -117,7 +117,7 @@ class UpdateSensorController extends AbstractController
         try {
             $normalizedResponse = $this->normalizeResponse($sensorResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Sensor Updated']);
         }
 
         return $this->sendSuccessfullyAddedToBeProcessedJsonResponse($normalizedResponse);

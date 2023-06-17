@@ -37,6 +37,7 @@ class RegistrationController extends AbstractController
         Request $request,
         UserCreationHandler $userCreationHandler,
     ): Response {
+        return $this->json('not implemented');
         $user = new User();
 
         $form = $this->createForm(RegistrationForm::class, $user);

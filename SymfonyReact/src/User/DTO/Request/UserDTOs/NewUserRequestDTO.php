@@ -4,7 +4,6 @@ namespace App\User\DTO\Request\UserDTOs;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 class NewUserRequestDTO
 {
     #[

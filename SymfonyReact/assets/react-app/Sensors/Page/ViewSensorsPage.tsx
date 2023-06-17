@@ -19,7 +19,6 @@ export function ViewSensorsPage(props: {
         <>
             {
                 sensorData.map((sensor: SensorResponseInterface, index: number) => {
-                    // console.log('sensorData', sensor);
                     return (
                         <React.Fragment key={index}>
                             <UpdateSingleSensorCard sensor={sensor} refreshData={refreshData}  />

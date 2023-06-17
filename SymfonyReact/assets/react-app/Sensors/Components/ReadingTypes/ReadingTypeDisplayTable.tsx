@@ -6,14 +6,12 @@ import { StandardReadingTypesDisplayTable } from './StandardReadingTypesDisplayT
 export function ReadingTypeDisplayTable(props: {sensorReadingTypes: SensorReadingTypeResponseInterface, canEdit: boolean, refreshData?: () => void}) {
     const { sensorReadingTypes, canEdit, refreshData } = props;
 
-    console.log('here', sensorReadingTypes)
     const sensorReadingTypesArray = Object.values(sensorReadingTypes);
     
     const standardReadingTypes = sensorReadingTypesArray.filter((readingType) => {
         return readingType.sensorType === standardReading;
     });
 
-    // console.log('standardReadingTypes', sensorReadingTypes, sensorReadingTypesArray);
     return (
         <>  
             {

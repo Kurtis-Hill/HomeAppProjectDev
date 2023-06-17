@@ -12,7 +12,6 @@ export async function sensorReadingTypesRequest(): Promise<ReadingTypeResponseIn
         if (sensorDataResponse.status === 200) {
             const sensorReadingTypes: ReadingTypeResponseInterface[] = sensorDataResponse.data.payload;
             
-            // console.log('loling', sensorDataResponse);
             return sensorReadingTypes;
         } else {
             throw Error('Error in handleSensorReadingTypesRequest');

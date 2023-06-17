@@ -29,7 +29,7 @@ class AddUserControllerTest extends WebTestCase
 
     private UserRepository $userRepository;
 
-    private ?string $userToken;
+    private ?string $adminUserToken;
 
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ class AddUserControllerTest extends WebTestCase
             ->getManager();
 
         $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-        $this->userToken = $this->setUserToken($this->client);
+        $this->adminUserToken = $this->setUserToken($this->client);
         $this->userRepository = $this->entityManager->getRepository(User::class);
     }
 
@@ -62,7 +62,7 @@ class AddUserControllerTest extends WebTestCase
             self::ADD_USER_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminUserToken],
         );
 
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -90,7 +90,7 @@ class AddUserControllerTest extends WebTestCase
             self::ADD_USER_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminUserToken],
             $jsonData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -338,7 +338,7 @@ class AddUserControllerTest extends WebTestCase
             self::ADD_USER_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminUserToken],
             $jsonData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -498,7 +498,7 @@ class AddUserControllerTest extends WebTestCase
             self::ADD_USER_URL,
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminUserToken],
             $jsonData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_CREATED);

@@ -47,12 +47,10 @@ export function AddNewDevice(props: {
     }, []);
 
     const handleUserDataRequest = async () => {
-        console.log('handleUserDataRequest ADD DEVICE');
         const userDataResponse = await userDataRequest();
         if (userDataResponse.status === 200) {
             const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
 
-            console.log('payload ADD DEVICE', userDataPayload)
             setUserData({ 
                 userGroups: userDataPayload.userGroups, 
                 userRooms: userDataPayload.userRooms 
@@ -92,7 +90,6 @@ export function AddNewDevice(props: {
                     setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
                 }
             } catch(error: any) {
-                console.log('error', error);
                 setErrors((errors: string[]) => ['Error adding new device, unexpected response']);
             }
             setDeviceRequestLoading(false);

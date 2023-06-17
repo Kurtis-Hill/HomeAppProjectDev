@@ -13,7 +13,6 @@ export async function addNewGroupRequest(addNewGroupInputs: AddNewGroupUserInput
         return addNewGroupResponse;
     } catch (err) {
         const error = err as Error | AxiosError;
-        // console.log('mee twoo22', error)
         Promise.reject();
         
         return err;

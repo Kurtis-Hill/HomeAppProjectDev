@@ -58,7 +58,6 @@ export function UpdateCard(props: {cardViewID: number}) {
             case 'card-icon':
                 for (let i = 0; i < cardViewUserForm.cardUserSelectionOptions.icons.length; i++) {
                     if (cardViewUserForm.cardUserSelectionOptions.icons[i].iconID === parseInt(value)) {
-                        console.log('cardViewUserForm.cardUserSelectionOptions.icons[i].iconName', cardViewUserForm.cardUserSelectionOptions.icons[i].iconName);
                         setCardViewUserForm((prevState: StandardCardFormResponseInterface) => ({
                             ...prevState,
                             currentCardIcon: {
@@ -73,7 +72,6 @@ export function UpdateCard(props: {cardViewID: number}) {
             case 'card-colour':
                 for (let i = 0; i < cardViewUserForm.cardUserSelectionOptions.colours.length; i++) {
                     if (cardViewUserForm.cardUserSelectionOptions.colours[i].colourID === parseInt(value)) {
-                        console.log('cardViewUserForm.cardUserSelectionOptions.colours[i].colour', cardViewUserForm.cardUserSelectionOptions.colours[i].colour);
                         setCardViewUserForm((prevState: StandardCardFormResponseInterface) => ({
                             ...prevState,
                             currentCardColour: {
@@ -88,7 +86,6 @@ export function UpdateCard(props: {cardViewID: number}) {
             case 'card-view-state':
                 for (let i = 0; i < cardViewUserForm.cardUserSelectionOptions.states.length; i++) {
                     if (cardViewUserForm.cardUserSelectionOptions.states[i].cardStateID === parseInt(value)) {
-                        console.log('cardViewUserForm.cardUserSelectionOptions.states[i].cardState', cardViewUserForm.cardUserSelectionOptions.states[i].cardState);
                         setCardViewUserForm((prevState: StandardCardFormResponseInterface) => ({
                             ...prevState,
                             currentViewState: {

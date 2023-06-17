@@ -16,18 +16,9 @@ export default function NavbarListItem(props: {
 }) {
     const heading: string = props.header;
     const icon: string = props.icon;
-    // const createNewLink: string|null = props.createNewLink;
     const createNewText: string|null = props.createNewText;
     const dropdownItems: Array<ListLinkItem>|[] = props.listLinks;
     const flagAddNewModal: (show: boolean) => void|null = props.flagAddNewModal ?? null; 
-
-    // console.log('shw add', addNewText)
-    // useEffect(() => {
-
-    // }, [showAddNewElement])
-    // const showAddNewFlag:(show: boolean) => void|undefined = props.showAddNewFlag;
-    // const showAddNewFlagText: string|null = props.showAddNewFlagText ?? null;
-    // const addNewModal: React|null = props.newItemModal;
 
     const [navbarItemToggleDropdown, setNavbarItemToggleDropdown] = useState<boolean>(false)
     

@@ -30,6 +30,7 @@ root.render(
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
                     <Route path="devices/:deviceID" element={<DevicePage />} />
+                    <Route path="user-settings" element={<DevicePage />} />
                     {/*<Route path="cards/device/{id}" element={<CardLandingPage />} />*/}
                 </Route>
         </Routes>

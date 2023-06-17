@@ -39,7 +39,6 @@ export function CardDisplayModal(props: {
             setTabSelection(tabSelection);
             const sensorResponse = await handleGetSensorRequest(sensorRequestParameters);
             if (sensorResponse) {
-                console.log('sensorResponse', sensorResponse)
                 setSensorResponse(sensorResponse[0]);
             }
         } else {

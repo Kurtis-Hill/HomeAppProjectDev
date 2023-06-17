@@ -42,8 +42,6 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
         }
         
         setNewSensorFormInputs((values: NewSensorType) => ({...values, [name]: value}))
-
-        console.log(newSensorFormInputs);
     }
 
     const validateInputs = (): boolean => {
