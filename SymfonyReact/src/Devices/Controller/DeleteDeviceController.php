@@ -5,8 +5,10 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateResponseDTOBuilder;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
@@ -18,28 +20,33 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'delete-user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'delete-user-devices')]
 class DeleteDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[
         Route(
-            path: '/delete-device/{deviceNameID}',
+            path: '{deviceID}/delete',
             name: 'delete-esp-device',
-            methods: [Request::METHOD_POST]
+            methods: [Request::METHOD_DELETE]
         )
     ]
     public function deleteDevice(
         Devices $deviceToDelete,
+        Request $request,
         DeleteDeviceServiceInterface $deleteDeviceBuilder,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);
@@ -47,21 +54,32 @@ class DeleteDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceDeletedID = $deviceToDelete->getDeviceNameID();
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+        }
+
+        $deviceDeletedID = $deviceToDelete->getDeviceID();
         $deviceDeleteSuccess = $deleteDeviceBuilder->deleteDevice($deviceToDelete);
         if ($deviceDeleteSuccess !== true) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Delete device'));
+
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Delete device')]);
         }
 
-        $deviceDTO = DeviceUpdateResponseDTOBuilder::buildDeletedDeviceResponseDTO($deviceToDelete);
+        $deviceToDelete->setDeviceID($deviceDeletedID);
+        $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToDelete);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTO);
+            $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $normalizedResponse = null;
         }
 
         $this->logger->info('device deleted successfully id: ' . $deviceDeletedID, ['user' => $this->getUser()?->getUserIdentifier()]);
+
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 }

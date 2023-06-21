@@ -5,14 +5,17 @@ imports:
     - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
     - { resource: ../src/Authentication/services-authentication.yaml }
+    - { resource: ../src/ORM/services-orm.yaml }
     - { resource: elasticsearch.yaml }
 
 parameters:
 services:
-    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+          string $projectDir: '%kernel.project_dir%'
+    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
 
   ################### Core ############################
     App\Common\:
@@ -24,7 +27,7 @@ services:
 
     App\Common\Logs\ElasticLogger:
       arguments:
-        $logger: '@logger'
+#        $logger: '@logger'
         $emergencyIndex: '@elastica.log_index'
         $alertIndex: '@elastica.log_index'
         $criticalIndex: '@elastica.log_index'
@@ -49,7 +52,7 @@ services:
             index: '@elastica.log_index',
             mapping: {
               message: 'text',
-              level: "bucket",
+              level: 'bucket',
               context: 'array',
             }
           }

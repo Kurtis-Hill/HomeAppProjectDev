@@ -36,7 +36,8 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             Bmp::ALIAS,
             Bmp::class,
-            'sensorNameID',
+            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

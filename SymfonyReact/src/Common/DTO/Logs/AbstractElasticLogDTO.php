@@ -4,7 +4,7 @@ namespace App\Common\DTO\Logs;
 
 use Stringable;
 
-class AbstractElasticLogDTO
+abstract class AbstractElasticLogDTO
 {
     protected string|Stringable $message;
 

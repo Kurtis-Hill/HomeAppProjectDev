@@ -3,55 +3,109 @@
 namespace App\UserInterface\DTO\Response\NavBar;
 
 use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\User\DTO\ResponseDTOs\GroupDTOs\GroupNameResponseDTO;
-use App\User\DTO\ResponseDTOs\RoomDTOs\RoomResponseDTO;
+use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
+use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[Immutable]
 class NavBarResponseDTO
 {
-    #[ArrayShape([RoomResponseDTO::class || 'No Rooms Available'])]
-    private array $userRooms;
+    private string $header;
 
-    #[ArrayShape([DeviceResponseDTO::class || 'No Devices Available'])]
-    private array $devices;
+    #[ArrayShape([NavBarListLinkDTO::class])]
+    private array $listItemLinks;
 
-    #[ArrayShape([GroupNameResponseDTO::class || 'No GroupNames Available'])]
-    private array $groupNames;
+    private string $icon;
 
-    #[ArrayShape(['errors'])]
+    private string $itemName;
+
+    #[ArrayShape(['string'])]
     private array $errors;
 
-    public function __construct(
-        array $userRooms,
-        array $devices,
-        array $groupNames,
-        array $errors,
-    ) {
-        $this->userRooms = $userRooms;
-        $this->devices = $devices;
-        $this->groupNames = $groupNames;
+    public function __construct(string $header, string $icon, string $itemName, array $listItemLinks = [], array $errors = [])
+    {
+        $this->header = $header;
+        $this->icon = $icon;
+        $this->itemName = $itemName;
+        $this->listItemLinks = $listItemLinks;
         $this->errors = $errors;
     }
 
-    public function getUserRooms(): array
+    /**
+     * @return string
+     */
+    public function getHeader(): string
     {
-        return $this->userRooms;
+        return $this->header;
     }
 
-    public function getDevices(): array
+    /**
+     * @return array
+     */
+    public function getListItemLinks(): array
     {
-        return $this->devices;
+        return $this->listItemLinks;
     }
 
-    public function getGroupNames(): array
+    /**
+     * @return string
+     */
+    public function getIcon(): string
     {
-        return $this->groupNames;
+        return $this->icon;
     }
 
     public function getErrors(): array
     {
         return $this->errors;
     }
+
+    public function getItemName(): string
+    {
+        return $this->itemName;
+    }
+
+
+//    #[ArrayShape([RoomResponseDTO::class || 'No Rooms Available'])]
+//    private array $userRooms;
+//
+//    #[ArrayShape([DeviceResponseDTO::class || 'No Devices Available'])]
+//    private array $devices;
+//
+//    #[ArrayShape([GroupNameResponseDTO::class || 'No GroupNames Available'])]
+//    private array $groupNames;
+//
+//    #[Ignore]
+//    #[ArrayShape(['errors'])]
+//    private array $errors;
+//
+//    public function __construct(
+//        array $userRooms,
+//        array $devices,
+//        array $groupNames,
+//        array $errors = [],
+//    ) {
+//        $this->userRooms = $userRooms;
+//        $this->devices = $devices;
+//        $this->groupNames = $groupNames;
+//        $this->errors = $errors;
+//    }
+//
+//    public function getUserRooms(): array
+//    {
+//        return $this->userRooms;
+//    }
+//
+//    public function getDevices(): array
+//    {
+//        return $this->devices;
+//    }
+//
+//    public function getGroupNames(): array
+//    {
+//        return $this->groupNames;
+//    }
+//
 }

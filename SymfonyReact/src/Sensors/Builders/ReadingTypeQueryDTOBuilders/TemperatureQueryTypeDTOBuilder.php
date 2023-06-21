@@ -18,7 +18,8 @@ class TemperatureQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterf
         return new JoinQueryDTO(
             $tempData['alias'],
             $tempData['object'],
-            'sensorNameID',
+            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

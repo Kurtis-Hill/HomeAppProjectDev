@@ -21,7 +21,7 @@ class LatitudeReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implem
         $latitudeSensor->setHighReading($sensorTypeObject->getMaxLatitude());
         $latitudeSensor->setLowReading($sensorTypeObject->getMinLatitude());
         $latitudeSensor->setUpdatedAt();
-        $latitudeSensor->setSensorObject($sensorTypeObject->getSensorObject());
+        $latitudeSensor->setSensor($sensorTypeObject->getSensor());
 
         $sensorTypeObject->setLatitudeObject($latitudeSensor);
 

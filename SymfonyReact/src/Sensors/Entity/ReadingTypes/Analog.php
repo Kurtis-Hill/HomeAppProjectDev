@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[
     ORM\Entity(repositoryClass: AnalogRepository::class),
     ORM\Table(name: "analog"),
-    ORM\UniqueConstraint(name: "analog_ibfk_3", columns: ["sensorNameID"]),
+    ORM\UniqueConstraint(name: "analog_ibfk_3", columns: ["sensorID"]),
 ]
 class Analog extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
@@ -36,11 +36,11 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
 
     #[ORM\Column(name: "highAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[SoilConstraint(groups: [Soil::NAME])]
-    private float $highAnalog = 9999;
+    private float $highAnalog = 1000;
 
     #[ORM\Column(name: "lowAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[SoilConstraint(groups: [Soil::NAME])]
-    private float $lowAnalog = 1111;
+    private float $lowAnalog = 1000;
 
     #[ORM\Column(name: "constRecord", type: "boolean", nullable: true)]
     #[Assert\Type("bool")]
@@ -52,9 +52,9 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     public function getSensorID(): int
     {
@@ -66,17 +66,17 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         $this->analogID = $analogid;
     }
 
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
     /**
-     * @param Sensor $sensorNameID
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensor $sensorNameID): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensorNameID;
+        $this->sensor = $sensor;
     }
 
     /**
@@ -102,9 +102,9 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $currentReading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
-        $this->analogReading = $currentReading;
+        $this->analogReading = $reading;
     }
 
     public function setHighReading(int|float|string $reading): void

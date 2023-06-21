@@ -47,4 +47,12 @@ class APIErrorMessages
     public const FAILED_TO_NORMALIZE_RESPONSE = 'Failed to normalize response';
 
     public const FORBIDDEN_ACTION = 'You are not supposed to be here';
+
+    public const OBJECT_ALREADY_EXISTS = '%s already exists';
+
+    public const USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED = 'User does not have access to requested %s: %s';
+
+    public const SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN = 'Something went wrong, please try again';
+
+    public const FAILED_TO_PROCESS_REQUEST = 'Failed to process request';
 }

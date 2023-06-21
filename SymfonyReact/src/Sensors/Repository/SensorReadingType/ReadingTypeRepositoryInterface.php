@@ -3,6 +3,7 @@
 namespace App\Sensors\Repository\SensorReadingType;
 
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @method ReadingTypes|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,4 +13,6 @@ use App\Sensors\Entity\ReadingTypes\ReadingTypes;
  */
 interface ReadingTypeRepositoryInterface
 {
+    #[ArrayShape([ReadingTypes::class])]
+    public function findAllPaginatedResults(int $limit, int $offset): array;
 }

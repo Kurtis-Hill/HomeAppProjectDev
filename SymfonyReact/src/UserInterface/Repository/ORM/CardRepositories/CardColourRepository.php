@@ -37,7 +37,7 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
         $this->getEntityManager()->flush();
     }
 
-    public function getFirstColourId(): CardColour
+    public function getFirstColourID(): CardColour
     {
         return $this->createQueryBuilder('cardColour')
             ->select()

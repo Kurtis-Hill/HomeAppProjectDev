@@ -1,9 +1,7 @@
-FROM node:18-alpine3.15
+FROM node:18-alpine
 
 COPY docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
-
-RUN apk add python3
 
 WORKDIR /home/node/app/src
 

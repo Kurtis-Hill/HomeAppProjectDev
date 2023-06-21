@@ -2,54 +2,120 @@
 
 namespace App\Sensors\DTO\Response\SensorResponse;
 
-class SensorResponseDTO
+use App\Common\Services\RequestTypeEnum;
+use App\Devices\DTO\Response\DeviceResponseDTO;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
+use App\User\DTO\Response\UserDTOs\UserResponseDTO;
+use App\UserInterface\DTO\Response\CardView\CardViewResponseDTO;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+#[Immutable]
+readonly class SensorResponseDTO
 {
-    private int $sensorNameID;
-
-    private string $sensorName;
-
-    private string $sensorType;
-
-    private string $deviceName;
-
-    private string $createdBy;
-
     public function __construct(
-        int $sensorNameID,
-        string $sensorName,
-        string $sensorType,
-        string $deviceName,
-        string $createdBy
+        private int $sensorID,
+        private UserResponseDTO $createdBy,
+        private string $sensorName,
+        private DeviceResponseDTO $device,
+        private SensorTypeResponseDTO $sensorType,
+        #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
+        private array $sensorReadingTypes = [],
+        private ?bool $canEdit = null,
+        private ?bool $canDelete = null,
+        private ?CardViewResponseDTO $cardView = null,
     ) {
-        $this->sensorNameID = $sensorNameID;
-        $this->sensorName = $sensorName;
-        $this->sensorType = $sensorType;
-        $this->deviceName = $deviceName;
-        $this->createdBy = $createdBy;
     }
 
-    public function getSensorNameID(): int
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getSensorID(): int
     {
-        return $this->sensorNameID;
+        return $this->sensorID;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getCreatedBy(): UserResponseDTO
+    {
+        return $this->createdBy;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getSensorName(): string
     {
         return $this->sensorName;
     }
 
-    public function getSensorType(): string
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getDevice(): DeviceResponseDTO
+    {
+        return $this->device;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getSensorType(): SensorTypeResponseDTO
     {
         return $this->sensorType;
     }
 
-    public function getDeviceName(): string
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getSensorReadingTypes(): array
     {
-        return $this->deviceName;
+        return $this->sensorReadingTypes;
     }
 
-    public function getCreatedBy(): string
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanEdit(): ?bool
     {
-        return $this->createdBy;
+        return $this->canEdit;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanDelete(): ?bool
+    {
+        return $this->canDelete;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCardView(): ?CardViewResponseDTO
+    {
+        return $this->cardView;
     }
 }

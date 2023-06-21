@@ -6,7 +6,7 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\SoilRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,9 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Entity(repositoryClass: SoilRepository::class),
     ORM\Table(name: "soil"),
     ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
-    ORM\UniqueConstraint(name: "cardViewID", columns: ["sensorNameID"]),
+    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]
-class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
+class Soil implements SensorTypeInterface, StandardSensorReadingTypeInterface, AnalogSensorTypeInterface
 {
     public const NAME = 'Soil';
 
@@ -45,9 +45,9 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID", nullable: true),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID", nullable: true),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     public function getSensorTypeID(): int
     {
@@ -69,14 +69,14 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
         $this->analogID = $analogID;
     }
 
-    public function getSensorObject(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensor;
+        $this->sensor = $sensor;
     }
 
     public function getMaxAnalog(): float|int

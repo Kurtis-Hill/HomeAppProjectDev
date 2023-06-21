@@ -1,0 +1,10 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure:
+
+    App\Common\:
+      resource: './*'
+#      exclude: './{Entity}'
+
+####################### Loggers ######################################################:

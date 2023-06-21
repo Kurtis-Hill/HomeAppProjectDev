@@ -18,7 +18,8 @@ class AnalogQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             $latitudeData['alias'],
             $latitudeData['object'],
-            'sensorNameID',
+            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

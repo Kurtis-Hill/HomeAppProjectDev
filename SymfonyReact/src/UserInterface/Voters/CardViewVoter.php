@@ -3,6 +3,7 @@
 namespace App\UserInterface\Voters;
 
 use App\Devices\Entity\Devices;
+use App\Sensors\Entity\Sensor;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardView;
@@ -20,6 +21,8 @@ class CardViewVoter extends Voter
 
     public const VIEW_ROOM_CARD_DATA = 'view-room-card-data';
 
+    public const CAN_ADD_NEW_CARD = 'can-add-new-card';
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         if (!in_array($attribute, [
@@ -27,6 +30,7 @@ class CardViewVoter extends Voter
             self::CAN_VIEW_CARD_VIEW_FORM,
             self::VIEW_DEVICE_CARD_DATA,
             self::VIEW_ROOM_CARD_DATA,
+            self::CAN_ADD_NEW_CARD
         ])) {
             return false;
         }
@@ -43,8 +47,28 @@ class CardViewVoter extends Voter
             self::CAN_EDIT_CARD_VIEW_FORM => $this->canUserEditCardViewObject($user, $subject),
             self::VIEW_DEVICE_CARD_DATA => $this->viewDeviceCardData($user, $subject),
             self::VIEW_ROOM_CARD_DATA => $this->viewRoomCardData($user, $subject),
+            self::CAN_ADD_NEW_CARD => $this->canAddNewCardView($user, $subject),
             default => false
         };
+    }
+
+    private function canAddNewCardView(UserInterface $user, Sensor $sensor): bool
+    {
+        $checkCommon = $this->checkCommon($user);
+        if ($checkCommon !== null) {
+            return $checkCommon;
+        }
+
+        $devices = $sensor->getDevice();
+        if (!in_array(
+            $devices->getGroupObject()->getGroupID(),
+            $user->getAssociatedGroupIDs(),
+            true
+        )) {
+            return false;
+        }
+
+        return true;
     }
 
     private function canUserViewCardViewObject(UserInterface $user, CardView $cardView): bool
@@ -54,9 +78,12 @@ class CardViewVoter extends Voter
 
     private function canUserEditCardViewObject(UserInterface $user, CardView $cardView): bool
     {
-        if (!$user instanceof User) {
-            return false;
+        $checkCommon = $this->checkCommon($user);
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
         }
+
         if ($cardView->getUserID()->getUserID() !== $user->getUserID()) {
             return false;
         }
@@ -66,16 +93,10 @@ class CardViewVoter extends Voter
 
     private function viewRoomCardData(UserInterface $user, Room $room): bool
     {
-        if (!$user instanceof User) {
-            return false;
-        }
+        $checkCommon = $this->checkCommon($user);
 
-        if (!in_array(
-            $room->getGroupNameID()->getGroupNameID(),
-            $user->getGroupNameIds(), true
-        )
-        ) {
-            return false;
+        if ($checkCommon !== null) {
+            return $checkCommon;
         }
 
         return true;
@@ -83,20 +104,34 @@ class CardViewVoter extends Voter
 
     private function viewDeviceCardData(UserInterface $user, Devices $devices): bool
     {
-        if (!$user instanceof User) {
-            return false;
+        $checkCommon = $this->checkCommon($user);
+
+        if ($checkCommon !== null) {
+            return $checkCommon;
         }
 
+        /** @var $user User */
         if (!in_array(
-            $devices->getGroupNameObject()->getGroupNameID(),
-            $user->getGroupNameIds(),
+            $devices->getGroupObject()->getGroupID(),
+            $user->getAssociatedGroupIDs(),
             true
-        )
-        ) {
+        )) {
             return false;
         }
 
         return true;
     }
 
+    private function checkCommon(UserInterface $user): ?bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return null;
+    }
 }

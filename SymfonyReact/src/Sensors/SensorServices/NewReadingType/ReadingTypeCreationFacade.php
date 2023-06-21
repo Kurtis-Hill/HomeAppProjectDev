@@ -10,6 +10,7 @@ use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Factories\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\Sensors\SensorServices\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use Doctrine\ORM\Exception\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
 {
@@ -29,6 +30,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
         $this->sensorReadingTypesValidatorService = $sensorReadingTypesValidator;
     }
 
+    #[ArrayShape(['string'])]
     public function handleSensorReadingTypeCreation(Sensor $sensor): array
     {
         try {

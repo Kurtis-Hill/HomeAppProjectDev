@@ -5,7 +5,7 @@ namespace App\UserInterface\Builders\UsersCardSelectionBuilders;
 use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
 use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
-use App\UserInterface\DTO\RequestDTO\CardUserSelectionEncapsulationDTO;
+use App\UserInterface\DTO\Response\CardView\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface;
 use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface;
 use App\UserInterface\Repository\ORM\IconsRepositoryInterface;

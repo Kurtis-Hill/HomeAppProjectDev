@@ -67,7 +67,7 @@ class AuthenticationSuccessListener
             try {
                 $responseMessage = $this->normalizeResponse($userAuthenticationDTO);
             } catch (ExceptionInterface) {
-                $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'User authentication ');
+                $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'UserExceptions authentication ');
             }
 
             $authenticationSuccessEvent->setData($responseMessage);
@@ -83,7 +83,7 @@ class AuthenticationSuccessListener
                 );
 
                 $validationErrors = $this->validator->validate($deviceIpRequestDTO);
-                if (empty($this->getValidationErrorAsArray($validationErrors))) {
+                if (!$this->checkIfErrorsArePresent($validationErrors)) {
                     if ($deviceIpRequestDTO->getIpAddress() !== null) {
                         $user->setIpAddress($deviceIpRequestDTO->getIpAddress());
                     }

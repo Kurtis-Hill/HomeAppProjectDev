@@ -9,7 +9,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 
-class AbstractReadingTypeBuilder
+abstract class AbstractReadingTypeBuilder
 {
     protected SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory;
 
@@ -33,13 +33,13 @@ class AbstractReadingTypeBuilder
         $analogSensor->setHighReading($analogSensorType->getMaxAnalog());
         $analogSensor->setLowReading($analogSensorType->getMinAnalog());
         $analogSensor->setUpdatedAt();
-        $analogSensor->setSensorObject($analogSensorType->getSensorObject());
+        $analogSensor->setSensor($analogSensorType->getSensor());
 
         $analogSensorType->setAnalogObject($analogSensor);
     }
 
     protected function setSensorObject(SensorTypeInterface $sensorType, Sensor $sensor): void
     {
-        $sensorType->setSensorObject($sensor);
+        $sensorType->setSensor($sensor);
     }
 }

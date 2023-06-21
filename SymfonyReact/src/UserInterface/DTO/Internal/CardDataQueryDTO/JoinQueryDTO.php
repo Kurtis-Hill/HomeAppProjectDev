@@ -10,14 +10,22 @@ class JoinQueryDTO
 
     private string $joinConditionId;
 
+    private string $joiningConditionId;
+
     private string $joinConditionColumn;
 
-    public function __construct(string $alias, string $object, string $joinConditionId, string $joinConditionColumn)
-    {
+    public function __construct(
+        string $alias,
+        string $object,
+        string $joinConditionId,
+        string $joiningConditionId,
+        string $joiningConditionColumn
+    ) {
         $this->alias = $alias;
         $this->object = $object;
         $this->joinConditionId = $joinConditionId;
-        $this->joinConditionColumn = $joinConditionColumn;
+        $this->joiningConditionId = $joiningConditionId;
+        $this->joinConditionColumn = $joiningConditionColumn;
     }
 
     public function getAlias(): string
@@ -35,7 +43,12 @@ class JoinQueryDTO
         return $this->joinConditionId;
     }
 
-    public function getJoinConditionColumn(): string
+    public function getJoiningConditionId(): string
+    {
+        return $this->joiningConditionId;
+    }
+
+    public function getJoiningConditionColumn(): string
     {
         return $this->joinConditionColumn;
     }

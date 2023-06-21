@@ -5,14 +5,12 @@ namespace App\Common\Logs;
 use App\Common\Factories\ElasticLogDTOFactory;
 use Elastica\Document;
 use Elastica\Index;
-use Monolog\Handler\HandlerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Stringable;
 
-class ElasticLogger implements LoggerInterface, LoggerAwareInterface
+class ElasticLogger implements LoggerInterface
 {
-    private LoggerInterface $logger;
+//    private LoggerInterface $logger;
 
     private Index $emergencyIndex;
 
@@ -35,7 +33,7 @@ class ElasticLogger implements LoggerInterface, LoggerAwareInterface
     private ElasticLogDTOFactory $elasticLogDTOFactory;
 
     public function __construct(
-        LoggerInterface $logger,
+//        LoggerInterface $logger,
         Index $emergencyIndex,
         Index $alertIndex,
         Index $criticalIndex,
@@ -47,7 +45,7 @@ class ElasticLogger implements LoggerInterface, LoggerAwareInterface
         Index $logIndex,
         ElasticLogDTOFactory $elasticLogDTOFactory
     ) {
-//        dd($logger);
+//        $this->logger = $logger;
         $this->emergencyIndex = $emergencyIndex;
         $this->alertIndex = $alertIndex;
         $this->criticalIndex = $criticalIndex;
@@ -130,7 +128,6 @@ class ElasticLogger implements LoggerInterface, LoggerAwareInterface
 
     public function info(Stringable|string $message, array $context = []): void
     {
-//        dd('hih');
         $elasticDTO = $this->elasticLogDTOFactory
             ->getElasticDTOBuilder('info')
             ->buildLogDTO($message, $context);

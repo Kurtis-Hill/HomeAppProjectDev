@@ -69,7 +69,7 @@ services:
 
 ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface:
-    alias: 'App\Sensors\SensorServices\NewSensor\NewSensorCreationFacade'
+    alias: 'App\Sensors\SensorServices\NewSensor\NewSensorCreationHandler'
 
   App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationInterface:
     alias: 'App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationFacade'
@@ -80,14 +80,19 @@ services:
 ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface:
     alias: 'App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandler'
+
+######################## Update Sensor Services ########################################################
+  App\Sensors\SensorServices\UpdateSensor\UpdateSensorInterface:
+    alias: 'App\Sensors\SensorServices\UpdateSensor\UpdateSensorHandler'
+
 ######################## Builders ########################################################################
 
 ######################## Repositories ########################################################################
   App\Sensors\Repository\Sensors\SensorRepositoryInterface:
     alias: 'App\Sensors\Repository\Sensors\ORM\SensorRepository'
 
-  App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface:
-    alias: 'App\Sensors\Repository\Sensors\ORM\SensorTypeRepository'
+  App\Sensors\Repository\Sensors\ORM\SensorTypeRepositoryInterface:
+    alias: 'App\Sensors\Repository\Sensors\SensorTypeRepository'
 
   App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface:
     alias: 'App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository'

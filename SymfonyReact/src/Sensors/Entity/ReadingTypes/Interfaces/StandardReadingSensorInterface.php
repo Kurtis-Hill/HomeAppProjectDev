@@ -10,9 +10,9 @@ interface StandardReadingSensorInterface
     /**
      * Sensor relational Objects
      */
-    public function getSensorNameID(): Sensor;
+    public function getSensor(): Sensor;
 
-    public function setSensorObject(Sensor $id);
+    public function setSensor(Sensor $id);
 
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
@@ -11,13 +11,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: SensorRepository::class),
-    ORM\Table(name: "sensornames"),
-    ORM\UniqueConstraint(name: "sensornames_ibfk_2", columns: ["createdBy"]),
-    ORM\UniqueConstraint(name: "SensorType", columns: ["sensorTypeID"]),
-    ORM\UniqueConstraint(name: "sensornames_ibfk_1", columns: ["deviceNameID"]),
-    ORM\Index(columns: ["deviceNameID"], name: "sensornames_ibfk_3"),
-    ORM\Index(columns: ["sensorTypeID"], name: "sensornames_ibfk_4"),
-    ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_5"),
+    ORM\Table(name: "sensors"),
+    ORM\UniqueConstraint(name: "sensor_device", columns: ["sensorName", "deviceID"]),
+    ORM\Index(columns: ["ddeviceID"], name: "sensornames_ibfk_1"),
+    ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
+    ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
 ]
 class Sensor
 {
@@ -28,15 +26,15 @@ class Sensor
     private const SENSOR_NAME_MIN_LENGTH = 2;
 
     #[
-        ORM\Column(name: "sensorNameID", type: "integer", nullable: false),
+        ORM\Column(name: "sensorID", type: "integer", nullable: false),
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
     ]
-    private int $sensorNameID;
+    private int $sensorID;
 
     #[ORM\Column(name: "sensorName", type: "string", length: 20, nullable: false)]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::SENSOR_NAME_MIN_LENGTH,
             max: self::SENSOR_NAME_MAX_LENGTH,
@@ -55,9 +53,9 @@ class Sensor
 
     #[
         ORM\ManyToOne(targetEntity: Devices::class),
-        ORM\JoinColumn(name: "deviceNameID", referencedColumnName: "deviceNameID"),
+        ORM\JoinColumn(name: "deviceID", referencedColumnName: "deviceID"),
     ]
-    private Devices $deviceNameID;
+    private Devices $deviceID;
 
     #[
         ORM\ManyToOne(targetEntity: User::class),
@@ -65,14 +63,14 @@ class Sensor
     ]
     private User $createdBy;
 
-    public function getSensorNameID(): int
+    public function getSensorID(): int
     {
-        return $this->sensorNameID;
+        return $this->sensorID;
     }
 
-    public function setSensorNameID(int $sensorNameID): void
+    public function setSensorID(int $sensorID): void
     {
-        $this->sensorNameID = $sensorNameID;
+        $this->sensorID = $sensorID;
     }
 
     public function getSensorName(): string
@@ -95,14 +93,14 @@ class Sensor
         $this->sensorTypeID = $sensorTypeID;
     }
 
-    public function getDeviceObject(): Devices
+    public function getDevice(): Devices
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
-    public function setDeviceObject(Devices $deviceNameID): void
+    public function setDevice(Devices $deviceID): void
     {
-        $this->deviceNameID = $deviceNameID;
+        $this->deviceID = $deviceID;
     }
 
     public function getCreatedBy(): User

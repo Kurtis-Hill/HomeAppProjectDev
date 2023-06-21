@@ -2,7 +2,7 @@
 
 namespace App\User\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\User\Repository\ORM\RoomRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: RoomRepository::class),
     ORM\Table(name: "room"),
-    ORM\Index(columns: ["groupNameID"], name: "GroupName"),
+    ORM\UniqueConstraint(name: "room", columns: ["room"]),
 ]
 class Room
 {
@@ -27,7 +27,7 @@ class Room
         ORM\Column(name: "room", type: "string", length: 255, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: 2,
             max: 20,
@@ -37,12 +37,6 @@ class Room
         Assert\NotBlank,
     ]
     private string $room;
-
-    #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
-    ]
-    private GroupNames $groupNameID;
 
     public function getRoomID(): int
     {
@@ -63,16 +57,4 @@ class Room
     {
         $this->room = $room;
     }
-
-    public function getGroupNameID(): GroupNames
-    {
-        return $this->groupNameID;
-    }
-
-    public function setGroupNameID(GroupNames $groupNameID): void
-    {
-        $this->groupNameID = $groupNameID;
-    }
-
-
 }

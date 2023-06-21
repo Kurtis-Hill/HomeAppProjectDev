@@ -71,6 +71,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool
     {
+//        dd('d');
         return $this->validateSensorData($sensorDataCurrentReadingUpdateDTO);
     }
 
@@ -206,7 +207,6 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         return $this->successfulRequests;
     }
 
-    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getReadingTypeRequestAttempt(): int
     {
         return $this->readingTypeRequestAttempt;

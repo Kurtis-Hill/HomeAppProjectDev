@@ -51,14 +51,14 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         $expr = $qb->expr();
 
         $qb->select(Analog::READING_TYPE)
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Analog::READING_TYPE.'.sensorNameID = '.Sensor::ALIAS.'.sensorNameID')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Analog::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
-                    Sensor::ALIAS.'.sensorNameID',
-                    ':sensorNameID'
+                    Sensor::ALIAS.'.sensorID',
+                    ':sensor'
                 )
             )
-            ->setParameters(['sensorNameID' => $sensorNameID]);
+            ->setParameters(['sensor' => $sensorNameID]);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

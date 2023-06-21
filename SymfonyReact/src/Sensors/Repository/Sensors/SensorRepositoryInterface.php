@@ -3,10 +3,12 @@
 namespace App\Sensors\Repository\Sensors;
 
 use App\Devices\Entity\Devices;
+use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
 use App\Sensors\Entity\Sensor;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 interface SensorRepositoryInterface
 {
@@ -31,10 +33,14 @@ interface SensorRepositoryInterface
 
     public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor;
 
-    public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array;
-
     /**
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findSensorObjectByDeviceIdAndSensorName(int $deviceId, string $sensorName): ?Sensor;
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorObjectsByDeviceID(int $deviceId): array;
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO): array;
 }

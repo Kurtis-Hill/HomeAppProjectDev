@@ -5,7 +5,7 @@ namespace App\Sensors\Entity\SensorTypes;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DallasRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,10 +14,10 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Entity(repositoryClass: DallasRepository::class),
     ORM\Table(name: "dallas"),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
-    ORM\UniqueConstraint(name: "sensorNameID", columns: ["sensorNameID"]),
-    ORM\Index(columns: ["sensorNameID"], name: "sensorNameID"),
+    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
+//    ORM\Index(columns: ["sensor"], name: "sensor"),
 ]
-class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface
+class Dallas implements SensorTypeInterface, StandardSensorReadingTypeInterface, TemperatureSensorTypeInterface
 {
     public const NAME = 'Dallas';
 
@@ -46,9 +46,9 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorNameID", referencedColumnName: "sensorNameID"),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    private Sensor $sensorNameID;
+    private Sensor $sensor;
 
     public function getSensorTypeID(): int
     {
@@ -60,22 +60,22 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         $this->dallasID = $dallasID;
     }
 
-    public function getSensorObject(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $sensor): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensor;
+        $this->sensor = $sensor;
     }
 
-    public function getTempObject(): Temperature
+    public function getTemperature(): Temperature
     {
         return $this->tempID;
     }
 
-    public function setTempObject(Temperature $tempID): void
+    public function setTemperature(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }

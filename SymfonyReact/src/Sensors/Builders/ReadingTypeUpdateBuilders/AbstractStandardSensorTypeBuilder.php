@@ -30,8 +30,8 @@ abstract class AbstractStandardSensorTypeBuilder
         string $newSensorReading,
     ): ReadingTypeUpdateCurrentReadingDTO {
         return new ReadingTypeUpdateCurrentReadingDTO(
-            $standardReadingSensor->getCurrentReading(),
             $newSensorReading,
+            $standardReadingSensor->getCurrentReading(),
             $standardReadingSensor
         );
     }

@@ -2,13 +2,17 @@
 
 namespace App\Devices\Repository\ORM;
 
+use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
+use App\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<Devices>
@@ -61,16 +65,60 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function getAllUsersDevicesByGroupId(array $groupNameIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array
+    public function findAllUsersDevicesByGroupId(array $groupIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array
     {
         $qb = $this->createQueryBuilder('dv');
         $qb->select('dv')
             ->leftJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
-            ->leftJoin(GroupNames::class, 'gn', Join::WITH, 'dv.groupNameID = gn.groupNameID');
+            ->leftJoin(Group::class, 'gn', Join::WITH, 'dv.groupID = gn.groupID');
         $qb->where(
-            $qb->expr()->in('dv.groupNameID', ':groupNameID')
+            $qb->expr()->in('dv.groupID', ':groupID')
         )
-            ->setParameters(['groupNameID' => $groupNameIDs]);
+            ->orderBy('dv.deviceName', 'ASC')
+            ->setParameters(['groupID' => $groupIDs]);
+
+        return $qb->getQuery()->getResult($hydration);
+    }
+
+    /**
+     * @throws ORMException
+     */
+    public function findAllDevicesByGroupNamePaginated(
+        array $groupIDs,
+        int $limit = DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE,
+        int $offset = 0,
+        int $hydration = AbstractQuery::HYDRATE_OBJECT,
+    ): array {
+        $qb = $this->createQueryBuilder('dv');
+        $qb->select('dv')
+            ->innerJoin(Group::class, 'gn', Join::WITH, 'dv.groupID = gn.groupID')
+            ->innerJoin(Room::class, 'r', Join::WITH, 'dv.roomID = r.roomID')
+            ->innerJoin(User::class, 'u', Join::WITH, 'dv.createdBy = u.userID');
+        $qb->where(
+            $qb->expr()->in('dv.groupID', ':groupID')
+        )
+            ->orderBy('dv.deviceName', 'ASC')
+            ->setParameters(['groupID' => $groupIDs])
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+//dd($limit, $offset);
+        return $qb->getQuery()->getResult($hydration);
+    }
+
+    #[ArrayShape([Devices::class])]
+    public function findAllDevicesByGroupIDs(
+        array $groupIDs,
+        int $hydration = AbstractQuery::HYDRATE_OBJECT,
+    ): array {
+        $qb = $this->createQueryBuilder('dv');
+        $expr = $qb->expr();
+
+        $qb->select('dv');
+        $qb->where(
+            $expr->in('dv.groupID', ':groupID')
+        )
+            ->orderBy('dv.deviceName', 'ASC')
+            ->setParameters(['groupID' => $groupIDs]);
 
         return $qb->getQuery()->getResult($hydration);
     }

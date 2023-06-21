@@ -2,37 +2,44 @@
 
 namespace App\Common\Query\Traits;
 
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use JetBrains\PhpStorm\Pure;
 
 trait QueryJoinBuilderTrait
 {
-    public function prepareSensorJoinsForQuery(array $joinConditionDTO, QueryBuilder $qb): string
+    /**
+     * @param JoinQueryDTO[] $joinConditionDTOs
+     * @param QueryBuilder $qb
+     * @return string
+     */
+    public function prepareSensorJoinsForQuery(array $joinConditionDTOs, QueryBuilder $qb): string
     {
         $alias = [];
-        foreach ($joinConditionDTO as $cardSensorTypeQueryDTO) {
+        foreach ($joinConditionDTOs as $joinConditionDTO) {
             /** @var  $sensorNameJoinConditionString */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
-                $cardSensorTypeQueryDTO->getJoinConditionId(),
-                $cardSensorTypeQueryDTO->getJoinConditionColumn()
+                $joinConditionDTO->getJoinConditionId(),
+                $joinConditionDTO->getJoiningConditionId(),
+                $joinConditionDTO->getJoiningConditionColumn()
             );
 
-            $alias[] = $cardSensorTypeQueryDTO->getAlias();
-            $qb->leftJoin($cardSensorTypeQueryDTO->getObject(), $cardSensorTypeQueryDTO->getAlias(), Join::WITH, $cardSensorTypeQueryDTO->getAlias().$sensorNameJoinConditionString);
+            $alias[] = $joinConditionDTO->getAlias();
+            $qb->leftJoin($joinConditionDTO->getObject(), $joinConditionDTO->getAlias(), Join::WITH, $joinConditionDTO->getAlias().$sensorNameJoinConditionString);
         }
 
         return implode(', ', $alias);
     }
 
     #[Pure]
-    public function createJoinConditionString(string $joinConditionId, string $joinConditionColumn): string
+    public function createJoinConditionString(string $joinConditionId, string $joiningConditionId, string $joinConditionColumn): string
     {
         return sprintf(
             '.%s = %s.%s',
             $joinConditionId,
             $joinConditionColumn,
-            $joinConditionId
+            $joiningConditionId
         );
     }
 }

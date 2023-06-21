@@ -34,17 +34,11 @@ interface CardViewRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllCardSensorData(
+    public function getAllCardSensorDataForUser(
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
         CardViewUriFilterDTO $cardViewTypeFilterDTO = null,
         int $hydrationMode = AbstractQuery::HYDRATE_SCALAR,
     ): array;
-
-    /**
-     * @throws ORMException
-     */
-    public function findOneById(int $cardViewID): ?CardView;
-
 }

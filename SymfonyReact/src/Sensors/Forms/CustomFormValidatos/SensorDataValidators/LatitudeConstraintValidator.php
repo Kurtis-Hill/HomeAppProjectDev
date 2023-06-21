@@ -15,7 +15,8 @@ class LatitudeConstraintValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof LatitudeConstraint) {
-            throw new UnexpectedTypeException($constraint, LatitudeConstraint::class);        }
+            throw new UnexpectedTypeException($constraint, LatitudeConstraint::class);
+        }
 
         if ($value === null || $value === '') {
             return;

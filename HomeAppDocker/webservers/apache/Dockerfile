@@ -1,15 +1,6 @@
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 WORKDIR /var/www/html
-
-RUN mkdir /etc/logs
-
-RUN apt-get update -y && apt-get install -y \
-git \
-unzip \
-zip \
-nano \
-iputils-ping 
 
 RUN apt-get install apt-transport-https ca-certificates -y 
 
@@ -28,7 +19,10 @@ COPY ./apache/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 COPY ./auth/auth.json /root/.composer/auth.json
 
-COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# if no network connection and compose is installed locally, use this instead:
+# COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
 COPY ./apache/sites-enabled/site.conf /etc/apache2/sites-available/000-default.conf
 
@@ -36,5 +30,11 @@ COPY ./apache/php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
 
 COPY ./apache/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
+
+RUN mkdir -p /var/www/html/assets/images/profile-pics
+RUN chown www-data /var/www/html/assets/images/profile-pics
+
+RUN mkdir -p /var/www/html/tests/test-files
+RUN chown www-data /var/www/html/tests/test-files
 
 ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]

@@ -25,9 +25,9 @@ class SensorReadingUpdateFactory
     public function getSensorUpdateBuilder(string $readingType): SensorReadingUpdateBuilderInterface
     {
         return match ($readingType) {
-            Temperature::READING_TYPE => $this->standardSensorUpdateBuilder,
-            Humidity::READING_TYPE => $this->standardSensorUpdateBuilder,
-            Analog::READING_TYPE => $this->standardSensorUpdateBuilder,
+            Temperature::READING_TYPE,
+            Humidity::READING_TYPE,
+            Analog::READING_TYPE,
             Latitude::getReadingTypeName() => $this->standardSensorUpdateBuilder,
             default => throw new SensorUpdateFactoryException(sprintf(SensorUpdateFactoryException::SENSOR_BUILDER_NOT_FOUND_SPECIFIC, $readingType))
         };

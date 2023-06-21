@@ -2,8 +2,8 @@ parameters:
 
 services:
   _defaults:
-    autowire: true      # Automatically injects dependencies in your services.
-    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    autowire: true
+    autoconfigure: true
 
 ################### Core ############################
   App\Devices\:
@@ -30,3 +30,6 @@ services:
 
   App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface:
     alias: 'App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoder'
+
+  App\Devices\DeviceServices\GetDevices\DevicesForUserInterface:
+    alias: 'App\Devices\DeviceServices\GetDevices\DevicesForUserHandler'

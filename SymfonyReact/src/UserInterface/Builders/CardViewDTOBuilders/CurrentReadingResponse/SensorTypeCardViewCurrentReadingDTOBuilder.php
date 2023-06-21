@@ -7,6 +7,8 @@ use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardD
 
 class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
+    public const CARD_TYPE = 'current-reading';
+
     public function buildTrimmedDownSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
     {
         $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($cardData['sensortype_sensorType']);

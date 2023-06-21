@@ -4,6 +4,7 @@ namespace App\Sensors\Repository\Sensors\ORM;
 
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
+use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Latitude;
@@ -16,6 +17,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -66,15 +68,15 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $expr = $qb->expr();
 
         $qb->select('sensor')
-            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                $expr->eq('device.groupNameID', ':groupName'),
+                $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
                     'sensorName' => $sensorData->getSensorName(),
-                    'groupName' => $sensorData->getDeviceObject()->getGroupNameObject(),
+                    'groupName' => $sensorData->getDevice()->getGroupObject(),
                 ]
             );
 
@@ -91,7 +93,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
         $qb->select($sensorAlias)
             ->where(
-                $qb->expr()->eq(Sensor::ALIAS. '.sensorNameID', ':id')
+                $qb->expr()->eq(Sensor::ALIAS. '.sensorID', ':id')
             )
             ->setParameters(['id' => $sensors]);
 
@@ -127,11 +129,11 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             Devices::class,
             'device',
             Join::WITH,
-            'sensors.deviceNameID = device.deviceNameID'
+            'sensors.deviceID = device.deviceID'
         )
             ->where(
                 $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+                $qb->expr()->eq('sensors.deviceID', ':deviceID')
             )
             ->setParameters([
                 'sensorName' => $sensorsName,
@@ -149,10 +151,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $qb = $this->createQueryBuilder('sensor');
 
         $qb->select('sensor')
-            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceNameID = sensor.deviceNameID')
+            ->innerJoin(Devices::class, 'device', Join::WITH, 'device.deviceID = sensor.deviceID')
             ->where(
                 $qb->expr()->eq('sensor.sensorName', ':sensorName'),
-                $qb->expr()->eq('device.deviceNameID', ':deviceID')
+                $qb->expr()->eq('device.deviceID', ':deviceID')
             )
             ->setParameters(
                 [
@@ -164,42 +166,82 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    #[Deprecated]
-    public function getSelectedSensorReadingTypeObjectsBySensorNameAndDevice(Devices $device, string $sensors, array $sensorData): array
+    #[ArrayShape([Sensor::class])]
+    public function findSensorObjectsByDeviceID(int $deviceId): array
     {
-        $qb = $this->createQueryBuilder('sensors');
-        $sensorAlias = $this->prepareSensorTypeDataObjectsForQuery($sensorData, $qb, ['sensors', 'sensorNameID']);
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
-        $qb->select($sensorAlias)
-            ->innerJoin(
-                Devices::class,
-                'device',
-                Join::WITH,
-                'sensors.deviceNameID = device.deviceNameID'
-            )
+        $qb->select(Sensor::ALIAS)
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
             ->where(
-                $qb->expr()->eq('sensors.sensorName', ':sensorName'),
-                $qb->expr()->eq('sensors.deviceNameID', ':deviceID')
+                $qb->expr()->eq(Devices::ALIAS . '.deviceID', ':deviceID')
             )
-            ->setParameters(['sensorName' => $sensors, 'deviceID' => $device]);
+            ->setParameters(
+                [
+                    'deviceID' => $deviceId,
+                ]
+            );
 
-        $result = array_filter($qb->getQuery()->getResult());
-        $result = array_values($result);
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
-    #[Deprecated]
-    private function prepareSensorTypeDataObjectsForQuery(array $sensors, QueryBuilder $qb, array $joinCondition): string
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO): array
     {
-        $joinConditionString = '.' .$joinCondition[1]. ' = ' .$joinCondition[0]. '.' .$joinCondition[1];
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
-        $sensorAlias = [];
-        foreach ($sensors as $sensorNames => $sensorData) {
-            $sensorAlias[] = $sensorData['alias'];
-            $qb->leftJoin($sensorData['object'], $sensorData['alias'], Join::WITH, $sensorData['alias'].$joinConditionString);
+        $qb->select(Sensor::ALIAS);
+
+        if ($getSensorQueryDTO->getDeviceIDs() !== null) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+                ->andWhere(
+                    $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID')
+                )
+                ->setParameters(
+                    [
+                        'deviceID' => $getSensorQueryDTO->getDeviceIDs(),
+                    ]
+                );
         }
 
-        return implode(', ', $sensorAlias);
+        if ($getSensorQueryDTO->getDeviceNames() !== null) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS . '2', Join::WITH, Devices::ALIAS . '2.deviceID = ' . Sensor::ALIAS . '.deviceID')
+                ->andWhere(
+                    $qb->expr()->in(Devices::ALIAS . '2' . '.deviceName', ':deviceNames')
+                )
+                ->setParameters(
+                    [
+                        'deviceNames' => $getSensorQueryDTO->getDeviceNames(),
+                    ]
+                );
+        }
+
+        if ($getSensorQueryDTO->getGroupIDs() !== null) {
+            $qb->innerJoin(Devices::class, Devices::ALIAS . '3', Join::WITH, Devices::ALIAS . '3.deviceID = ' . Sensor::ALIAS . '.deviceID')
+                ->andWhere(
+                    $qb->expr()->in(Devices::ALIAS . '3' . '.groupID', ':groupIDs')
+                )
+                ->setParameters(
+                    [
+                        'groupIDs' => $getSensorQueryDTO->getGroupIDs(),
+                    ]
+                );
+        }
+
+        if ($getSensorQueryDTO->getCardViewIDs() !== null) {
+            $qb->innerJoin(CardView::class, CardView::ALIAS, Join::WITH, CardView::ALIAS . '.sensor = ' . Sensor::ALIAS . '.sensorID')
+                ->andWhere(
+                    $qb->expr()->in(CardView::ALIAS . '.cardViewID', ':cardViewIDs')
+                )
+                ->setParameters(
+                    [
+                        'cardViewIDs' => $getSensorQueryDTO->getCardViewIDs(),
+                    ]
+                );
+        }
+
+        $qb->setFirstResult($getSensorQueryDTO->getOffset())
+            ->setMaxResults($getSensorQueryDTO->getLimit());
+        return $qb->getQuery()->getResult();
     }
 }

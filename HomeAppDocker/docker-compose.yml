@@ -19,8 +19,9 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
@@ -34,11 +35,11 @@ services:
     networks:
       - HomeAppProjectNetwork
 
-  lighttpd:
+  php-cli:
     build:
       context: ./webservers
-      dockerfile: ./lighttpd/Dockerfile
-    container_name: '${APP_NAME}-lighttpd-queue-proccessor'
+      dockerfile: ./php-cli/Dockerfile
+    container_name: '${APP_NAME}-php-cli-queue-proccessor'
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
@@ -49,12 +50,11 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       ELASTIC_ENABLED: ${ELASTIC_ENABLED}
     volumes:
-      - ../SymfonyReact:/var/www/html
+      - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
-    tty: true
     depends_on:
       maria-db:
         condition: service_healthy
@@ -77,6 +77,7 @@ services:
       MYSQL_USER : ${MARIADB_USER}
       MYSQL_PASSWORD: ${MARIADB_PASSWORD}
       MYSQL_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_INTERNAL_PORT: ${MARIADB_INTERNAL_PORT}
     volumes:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
       - ../SSL:/etc/mysql/ssl:ro
@@ -148,21 +149,21 @@ services:
       - cluster.initial_master_nodes=es01,es02
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
       - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=trial 
+      - xpack.license.self_generated.type=basic 
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
       - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.http.ssl.certificate=$CERTS_DIR/es01/es01.crt
       - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate 
+      - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
       - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
     volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
     healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
-      interval: 10s
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200/_cluster/health?wait_for_status=green&timeout=50s >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 15s
       timeout: 10s
       retries: 5
     restart: unless-stopped
@@ -178,14 +179,14 @@ services:
       - cluster.initial_master_nodes=es01,es02
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
       - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=trial
+      - xpack.license.self_generated.type=basic
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key
       - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.http.ssl.certificate=$CERTS_DIR/es02/es02.crt
       - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate 
+      - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
       - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key

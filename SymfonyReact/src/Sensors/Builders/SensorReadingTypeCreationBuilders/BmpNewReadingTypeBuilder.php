@@ -9,31 +9,13 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-class BmpNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
+class BmpNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    private TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder;
-
-    private HumidityReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder;
-
-    private LatitudeReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder;
-
-    public function __construct(
-        TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder,
-        HumidityReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder,
-        LatitudeReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder,
-    ) {
-        $this->temperatureReadingTypeObjectBuilder = $temperatureReadingTypeObjectBuilder;
-        $this->humidityReadingTypeObjectBuilder = $humidityReadingTypeObjectBuilder;
-        $this->latitudeReadingTypeObjectBuilder = $latitudeReadingTypeObjectBuilder;
-    }
-
     public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
         $bmp = new Bmp();
-        $bmp->setSensorObject($sensor);
-        $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($bmp);
-        $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($bmp);
-        $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($bmp);
+        $bmp->setSensor($sensor);
+        $this->buildStandardSensorReadingTypeObjects($bmp);
 
         return $bmp;
     }

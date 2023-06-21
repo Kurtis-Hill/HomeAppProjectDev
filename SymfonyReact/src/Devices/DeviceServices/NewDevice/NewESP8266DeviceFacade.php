@@ -2,17 +2,51 @@
 
 namespace App\Devices\DeviceServices\NewDevice;
 
+use App\Common\API\APIErrorMessages;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\AbstractESPDeviceService;
+use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
+use App\User\Entity\Group;
+use App\User\Entity\Room;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ORMException
+     */
+    public function processAddDeviceObjects(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
+    {
+        $groupObject = $this->groupRepository->find($newDeviceRequestDTO->getDeviceGroup());
+        if (!$groupObject instanceof Group) {
+            throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
+        }
+
+        $roomObject = $this->roomRepository->find($newDeviceRequestDTO->getDeviceRoom());
+        if (!$roomObject instanceof Room) {
+            throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $newDeviceRequestDTO->getDeviceRoom()));
+        }
+
+        return DeviceDTOBuilder::buildNewDeviceDTO(
+            $createdByUser,
+            $groupObject,
+            $roomObject,
+            $newDeviceRequestDTO->getDeviceName(),
+            $newDeviceRequestDTO->getDevicePassword(),
+        );
+    }
+
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {
@@ -27,7 +61,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         $newDevice = $newDeviceDTO->getNewDevice();
         $newDevice->setDeviceName($newDeviceDTO->getDeviceName());
         $newDevice->setCreatedBy($deviceUser);
-        $newDevice->setGroupNameObject($newDeviceDTO->getGroupNameObject());
+        $newDevice->setGroupObject($newDeviceDTO->getGroupNameObject());
         $newDevice->setRoomObject($newDeviceDTO->getRoomObject());
         $newDevice->setDeviceSecret($newDeviceDTO->getDevicePassword());
         $newDevice->setPassword($newDeviceDTO->getDevicePassword());
@@ -61,7 +95,6 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         }
 
         if (empty($userErrors)) {
-            // $devicePasswordHash = $this->createDevicePasswordHash($newDevice);
             $newDevice->setDeviceSecret($newDevice->getPassword());
             $newDevice->setRoles([Devices::ROLE]);
         }

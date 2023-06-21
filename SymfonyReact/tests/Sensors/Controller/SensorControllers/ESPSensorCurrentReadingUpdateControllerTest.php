@@ -2,9 +2,8 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
-use App\Authentication\Controller\SecurityController;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Sensors\Entity\ReadingTypes\Analog;
@@ -755,6 +754,31 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
                 'Reading for ' . Soil::NAME . ' sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 1,
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            self::ESP_SENSOR_UPDATE,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_GET],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
         ];
     }
 }

@@ -2,96 +2,160 @@
 
 namespace App\Devices\DTO\Response;
 
+use App\Common\Builders\Request\RequestDTOBuilder;
+use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
+use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
+use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
+use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
+use App\User\DTO\Response\UserDTOs\UserResponseDTO;
+use Symfony\Component\Serializer\Annotation\Groups;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class DeviceResponseDTO
+readonly class DeviceResponseDTO
 {
-    private ?int $deviceNameID;
-
-    private string $deviceName;
-
-    private ?string $secret;
-
-    private int $groupNameID;
-
-    private int $roomID;
-
-    private string|int $createdBy;
-
-    private ?string $ipAddress;
-
-    private ?string $externalIpAddress;
-
-    private ?array $roles;
-
     public function __construct(
-        ?int $deviceNameID,
-        string $deviceName,
-        int $groupNameID,
-        int $roomID,
-        string|int $createdBy,
-        ?string $secret = null,
-        ?string $ipAddress = null,
-        ?string $externalIpAddress = null,
-        ?array $roles = null
+        private int $deviceID,
+        private string $deviceName,
+        private ?string $secret,
+        private GroupResponseDTO $group,
+        private RoomResponseDTO $room,
+        private ?string $ipAddress,
+        private ?string $externalIpAddress,
+        private array $roles,
+        private array $sensorData,
+        private UserResponseDTO $createdBy,
+        private ?bool $canEdit = null,
+        private ?bool $canDelete = null,
     ) {
-        $this->deviceNameID = $deviceNameID;
-        $this->deviceName = $deviceName;
-        $this->secret = $secret;
-        $this->groupNameID = $groupNameID;
-        $this->roomID = $roomID;
-        $this->createdBy = $createdBy;
-        $this->ipAddress = $ipAddress;
-        $this->externalIpAddress = $externalIpAddress;
-        $this->roles = $roles;
     }
 
-    public function getDeviceNameID(): int
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getDeviceID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getDeviceName(): string
     {
         return $this->deviceName;
     }
 
-    public function getGroupNameID(): int
-    {
-        return $this->groupNameID;
-    }
-
-    public function getRoomID(): int
-    {
-        return $this->roomID;
-    }
-
-    public function getCreatedBy(): int|string
-    {
-        return $this->createdBy;
-    }
-
+    #[Groups([
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getSecret(): ?string
     {
         return $this->secret;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getGroup(): GroupResponseDTO
+    {
+        return $this->group;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getRoom(): RoomResponseDTO
+    {
+        return $this->room;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getIpAddress(): ?string
     {
         return $this->ipAddress;
     }
 
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getExternalIpAddress(): ?string
     {
         return $this->externalIpAddress;
     }
 
-    #[ArrayShape([Devices::ROLE])]
-    public function getRoles(): ?array
+    #[
+        ArrayShape([Devices::ROLE]),
+        Groups([
+            RequestTypeEnum::SENSITIVE_FULL->value,
+            RequestTypeEnum::SENSITIVE_ONLY->value,
+        ])
+    ]
+    public function getRoles(): array
     {
         return $this->roles;
+    }
+
+    #[
+        ArrayShape([SensorResponseDTO::class||[]]),
+        Groups([
+            RequestTypeEnum::FULL->value,
+            RequestTypeEnum::SENSITIVE_FULL->value,
+        ]),
+    ]
+    public function getSensorData(): array
+    {
+        return $this->sensorData;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+    ])]
+    public function getCreatedBy(): UserResponseDTO
+    {
+        return $this->createdBy;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanEdit(): bool
+    {
+        return $this->canEdit;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanDelete(): bool
+    {
+        return $this->canDelete;
     }
 }

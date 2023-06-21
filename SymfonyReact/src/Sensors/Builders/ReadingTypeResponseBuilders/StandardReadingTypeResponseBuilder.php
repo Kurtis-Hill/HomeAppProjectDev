@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Builders\ReadingTypeResponseBuilders;
 
-use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\ReadingTypeBoundaryReadingResponseInterface;
-use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\StandardResponseReadingTypeBoundaryReadingsResponseDTO;
+use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\BoundaryReadingTypeResponseInterface;
+use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\StandardBoundaryReadingsTypeResponseDTO;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
@@ -15,7 +15,7 @@ class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderIn
      */
     public function buildReadingTypeBoundaryReadingsResponseDTO(
         AllSensorReadingTypeInterface $readingTypeObject
-    ): ReadingTypeBoundaryReadingResponseInterface {
+    ): BoundaryReadingTypeResponseInterface {
         if (!$readingTypeObject instanceof StandardReadingSensorInterface) {
             throw new ReadingTypeNotSupportedException(
                 sprintf(
@@ -25,7 +25,7 @@ class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderIn
             );
         }
 
-        return new StandardResponseReadingTypeBoundaryReadingsResponseDTO(
+        return new StandardBoundaryReadingsTypeResponseDTO(
             $readingTypeObject->getSensorID(),
             $readingTypeObject->getReadingType(),
             $readingTypeObject->getHighReading(),

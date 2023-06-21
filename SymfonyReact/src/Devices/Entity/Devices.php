@@ -2,29 +2,31 @@
 
 namespace App\Devices\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Repository\ORM\DeviceRepository;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: DeviceRepository::class),
-    ORM\Table(name: "devicenames"),
+    ORM\Table(name: "devices"),
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
-    ORM\Index(columns: ["groupNameID"], name: "groupNameID"),
+    ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["roomID"], name: "roomID"),
+    ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
 ]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    private const DEVICE_MIN_LENGTH = 2;
+    private const DEVICE_NAME_MIN_LENGTH = 2;
 
-    private const DEVICE_MAX_LENGTH = 20;
+    private const DEVICE_NAME_MAX_LENGTH = 50;
 
     public const ROLE = 'ROLE_DEVICE';
 
@@ -33,19 +35,19 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
-        ORM\Column(name: 'deviceNameID', type: "integer", nullable: false)
+        ORM\Column(name: 'deviceID', type: "integer", nullable: false)
     ]
-    private int $deviceNameID;
+    private int $deviceID;
 
     #[ORM\Column(name: "deviceName", type: "string", length: 20, nullable: false)]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\NotBlank(
             message: 'Device name should not be blank'
         ),
         Assert\Length(
-            min: self::DEVICE_MIN_LENGTH,
-            max: self::DEVICE_MAX_LENGTH,
+            min: self::DEVICE_NAME_MIN_LENGTH,
+            max: self::DEVICE_NAME_MAX_LENGTH,
             minMessage: "Device name must be at least {{ limit }} characters long",
             maxMessage: "Device name cannot be longer than {{ limit }} characters"
         )
@@ -58,8 +60,8 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(
             min: 5,
             max: 100,
-            minMessage: "Device name must be at least {{ limit }} characters long",
-            maxMessage: "Device name cannot be longer than {{ limit }} characters"
+            minMessage: "Device password must be at least {{ limit }} characters long",
+            maxMessage: "Device password cannot be longer than {{ limit }} characters"
         )
     ]
     private string $password;
@@ -68,15 +70,15 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         ORM\ManyToOne(targetEntity: User::class),
         ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
     ]
-    #[Assert\NotBlank(message: 'User object should not be blank')]
+    #[Assert\NotBlank(message: 'UserExceptions object should not be blank')]
     private User $createdBy;
 
     #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+        ORM\ManyToOne(targetEntity: Group::class),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
     #[Assert\NotBlank(message: 'Group name should not be blank')]
-    private GroupNames $groupNameID;
+    private Group $groupID;
 
     #[
         ORM\ManyToOne(targetEntity: Room::class),
@@ -94,21 +96,21 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: "externalIpAddress", type: "string", length: 13, nullable: true, options: ["default" => "NULL"])]
     private ?string $externalIpAddress = null;
 
-    private string $secret;
+    private ?string $secret = null;
 
-    public function getDeviceNameID(): int
+    public function getDeviceID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
     public function getUserID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
-    public function setDeviceNameID(int $deviceNameID): void
+    public function setDeviceID(int $deviceID): void
     {
-        $this->deviceNameID = $deviceNameID;
+        $this->deviceID = $deviceID;
     }
 
     public function getDeviceName(): ?string
@@ -121,7 +123,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->deviceName = $deviceName;
     }
 
-    public function getDeviceSecret(): string
+    public function getDeviceSecret(): ?string
     {
         return $this->secret;
     }
@@ -158,14 +160,14 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdBy = $createdBy;
     }
 
-    public function getGroupNameObject(): GroupNames
+    public function getGroupObject(): Group
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
-    public function setGroupNameObject(GroupNames $groupNameID): void
+    public function setGroupObject(Group $groupID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupID = $groupID;
     }
 
     public function getRoomObject(): Room

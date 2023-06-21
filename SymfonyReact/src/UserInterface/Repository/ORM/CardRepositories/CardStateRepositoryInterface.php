@@ -2,17 +2,17 @@
 
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @method Cardstate|null find($id, $lockMode = null, $lockVersion = null)
- * @method Cardstate|null findOneBy(array $criteria, array $orderBy = null)
- * @method Cardstate[]    findAll()
- * @method Cardstate[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CardState|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardState|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardState[]    findAll()
+ * @method CardState[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 interface CardStateRepositoryInterface
 {
@@ -22,7 +22,7 @@ interface CardStateRepositoryInterface
      * @throws ORMInvalidArgumentException
      * @throws ORMException
      */
-    public function persist(Cardstate $cardState): void;
+    public function persist(CardState $cardState): void;
 
     /**
      * @throws OptimisticLockException
@@ -33,11 +33,11 @@ interface CardStateRepositoryInterface
     /**
      * @throws ORMException
      */
-    #[ArrayShape(['cardStateID' => 'int', 'state' => 'string'])]
+    #[ArrayShape(['stateID' => 'int', 'state' => 'string'])]
     public function getAllStatesAsArray(): array;
 
-    #[ArrayShape([Cardstate::class])]
+    #[ArrayShape([CardState::class])]
     public function getAllStateAsObjects(): array;
 
-    public function findOneByState(string $state): ?Cardstate;
+    public function findOneByState(string $state): ?CardState;
 }

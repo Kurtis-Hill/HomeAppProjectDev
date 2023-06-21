@@ -2,10 +2,10 @@
 
 namespace App\User\Services\RoomServices;
 
-use App\User\DTO\InternalDTOs\RoomDTOs\AddNewRoomDTO;
-use App\User\Entity\GroupNames;
+use App\User\DTO\Internal\RoomDTOs\AddNewRoomDTO;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\DuplicateRoomException;
 use JetBrains\PhpStorm\ArrayShape;
 use Doctrine\ORM\Exception\ORMException;
@@ -18,7 +18,7 @@ interface AddNewRoomServiceInterface
     public function preProcessNewRoomValues(AddNewRoomDTO $addNewRoomDTO): void;
 
     #[ArrayShape(['validationErrors'])]
-    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO, GroupNames $groupName): array;
+    public function createNewRoom(AddNewRoomDTO $addNewRoomDTO): array;
 
     /**
      * @throws ORMException

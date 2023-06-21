@@ -3,40 +3,22 @@
 namespace App\Devices\DTO\Internal;
 
 use App\Devices\Entity\Devices;
-use App\User\Entity\GroupNames;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Immutable]
-class NewDeviceDTO
+readonly class NewDeviceDTO
 {
-    private UserInterface $createdBy;
-
-    private GroupNames  $groupNameId;
-
-    private Room  $roomId;
-
-    private ?string $deviceName;
-
-    private Devices $devices;
-
-    private string $devicePassword;
-
     public function __construct(
-        UserInterface $createdBy,
-        GroupNames $groupNameId,
-        Room $roomId,
-        ?string $deviceName,
-        string $devicePassword,
-        Devices $devices,
+        private UserInterface $createdBy,
+        private Group $groupID,
+        private Room $roomId,
+        private ?string $deviceName,
+        private string $devicePassword,
+        private Devices $devices,
     ) {
-        $this->createdBy = $createdBy;
-        $this->groupNameId = $groupNameId;
-        $this->roomId = $roomId;
-        $this->deviceName = $deviceName;
-        $this->devicePassword = $devicePassword;
-        $this->devices = $devices;
     }
 
     public function getDeviceName(): ?string
@@ -49,9 +31,9 @@ class NewDeviceDTO
         return $this->devicePassword;
     }
 
-    public function getGroupNameObject(): GroupNames
+    public function getGroupNameObject(): Group
     {
-        return $this->groupNameId;
+        return $this->groupID;
     }
 
     public function getRoomObject(): Room

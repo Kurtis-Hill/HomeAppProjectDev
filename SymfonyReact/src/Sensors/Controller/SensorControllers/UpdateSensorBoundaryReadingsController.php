@@ -5,9 +5,12 @@ namespace App\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\DTO\Request\UpdateSensorReadingBoundaryRequestDTO;
-use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\ReadingTypeBoundaryReadingResponseInterface;
+use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\BoundaryReadingTypeResponseInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
@@ -43,12 +46,15 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
     private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $elasticLogger)
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[ArrayShape([ReadingTypeBoundaryReadingResponseInterface::class])]
+    #[ArrayShape([BoundaryReadingTypeResponseInterface::class])]
     private array $successfullyProcessedTypes = [];
 
     #[Route('{id}/boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
@@ -79,7 +85,15 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensorObject->getDeviceObject());
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+        }
+
+        try {
+            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_READING_BOUNDARY, $sensorObject);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
@@ -104,7 +118,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
             try {
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject(
-                    $sensorObject->getSensorNameID(),
+                    $sensorObject->getSensorID(),
                     $updateBoundaryDataDTO->getReadingType()
                 );
             } catch (SensorReadingTypeRepositoryFactoryException|SensorReadingTypeObjectNotFoundException $exception) {
@@ -118,7 +132,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 );
                 $sensorProcessingErrors[] = sprintf(
                     APIErrorMessages::CONTACT_SYSTEM_ADMIN,
-                    'None unique result found for sensor reading type query',
+                    'None unique result found for sensor reading type',
                 );
                 continue;
             }
@@ -134,17 +148,16 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 continue;
             }
 
-            if (!empty($validationError)) {
-                foreach ($validationError as $error) {
-                    $validationErrors[] =  $error;
-                }
-            } else {
+            if (empty($validationError)) {
                 $this->successfullyProcessedTypes[] = $readingTypeResponseBuilderFactory
                     ->getStandardReadingTypeResponseBuilder($sensorReadingTypeObject)
                     ->buildReadingTypeBoundaryReadingsResponseDTO($sensorReadingTypeObject);
+            } else {
+                $validationErrors = array_merge($validationErrors, $validationError);
             }
         }
-        $processingErrors = array_merge($sensorProcessingErrors, $validationErrors ?? []);
+
+        $processingErrors = array_merge($sensorProcessingErrors, $validationErrors);
         if (empty($this->successfullyProcessedTypes) && !empty($processingErrors)) {
             return $this->sendBadRequestJsonResponse($processingErrors, 'All sensor boundary update requests failed');
         }
@@ -157,9 +170,9 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($this->getSuccessFullyProcessedResponseDTOs());
+            $normalizedResponse = $this->normalizeResponse($this->getSuccessFullyProcessedResponseDTOs(), [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
 
         if (count($this->getSuccessFullyProcessedResponseDTOs()) !== count($updateBoundaryReadingRequestDTO->getSensorData())) {
@@ -169,12 +182,12 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 'Some sensor boundary update requests failed'
             );
         }
-        $this->logger->info('sensor boundary update successful for id:' . $sensorObject->getSensorNameID(), ['user' => $this->getUser()?->getUserIdentifier()]);
+        $this->logger->info('sensor boundary update successful for id:' . $sensorObject->getSensorID(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse);
+        return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 
-    #[ArrayShape([ReadingTypeBoundaryReadingResponseInterface::class])]
+    #[ArrayShape([BoundaryReadingTypeResponseInterface::class])]
     private function getSuccessFullyProcessedResponseDTOs(): array
     {
         return $this->successfullyProcessedTypes;

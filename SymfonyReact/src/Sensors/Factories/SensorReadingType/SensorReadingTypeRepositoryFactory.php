@@ -35,6 +35,9 @@ class SensorReadingTypeRepositoryFactory
         $this->latitudeRepository = $latitudeRepository;
     }
 
+    /**
+     * @throws SensorReadingTypeRepositoryFactoryException
+     */
     public function getSensorReadingTypeRepository(string $sensorType): ReadingTypeRepositoryInterface
     {
         return match ($sensorType) {

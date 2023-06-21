@@ -38,8 +38,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
     public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         AbstractCurrentReadingUpdateRequestDTO $sensorData,
-    ): ReadingTypeUpdateCurrentReadingDTO
-    {
+    ): ReadingTypeUpdateCurrentReadingDTO {
         if (!$allSensorReadingType instanceof Humidity) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(

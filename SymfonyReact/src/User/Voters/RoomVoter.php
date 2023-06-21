@@ -14,9 +14,11 @@ class RoomVoter extends Voter
 
     public const VIEW_USER_ROOMS = 'view-users-rooms';
 
+    public const DELETE_ROOM = 'delete-room';
+
     protected function supports(string $attribute, $subject): bool
     {
-        if (!in_array($attribute, [self::ADD_NEW_ROOM, self::VIEW_USER_ROOMS], true)) {
+        if (!in_array($attribute, [self::ADD_NEW_ROOM, self::VIEW_USER_ROOMS, self::DELETE_ROOM], true)) {
             return false;
         }
 
@@ -26,29 +28,36 @@ class RoomVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
-        return match($attribute) {
-            self::ADD_NEW_ROOM => $this->canAddNewRoom($user, $subject),
-            self::VIEW_USER_ROOMS => $this->canViewRooms($user, $subject),
-            default => false,
-        };
-    }
 
-    private function canAddNewRoom(UserInterface $user, Room $room): bool
-    {
         if (!$user instanceof User) {
             return false;
         }
 
-        if (!in_array($room->getGroupNameID()->getGroupNameID(), $user->getGroupNameIds(), true)) {
-            return false;
+        return match($attribute) {
+            self::ADD_NEW_ROOM => $this->canAddNewRoom($user, $subject),
+            self::VIEW_USER_ROOMS => $this->canViewRooms($user, $subject),
+            self::DELETE_ROOM => $this->canDeleteRoom($user, $subject),
+            default => false,
+        };
+    }
+
+    private function canAddNewRoom(User $user, Room $room): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
         }
 
+        return false;
+    }
+
+    private function canViewRooms(User $user, Room $room): bool
+    {
         return true;
     }
 
-    private function canViewRooms(UserInterface $user, Room $room): bool
+    private function canDeleteRoom(User $user, Room $room): bool
     {
-        if (in_array($user->getRoles(), ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'])) {
+        if ($user->isAdmin()) {
             return true;
         }
 

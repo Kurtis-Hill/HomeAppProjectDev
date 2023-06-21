@@ -10,6 +10,9 @@ when@dev:
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
                 channels: ["!event", "!doctrine"]
+#            elasticsearch:
+#              type: service
+#              id: App\Common\Logs\ElasticLogger
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
@@ -22,6 +25,21 @@ when@dev:
                 type: console
                 process_psr_3_messages: false
                 channels: ["!event", "!doctrine", "!console"]
+#            elasticsearch:
+#                type: "elasticsearch"
+#                elasticsearch:
+#                    host: "%env(ELASTIC_SEARCH_HOST)%"
+#                    port: "%env(ELASTIC_SEARCH_PORT)%"
+#                    transport: "%env(ELASTIC_TRANSPORT)"
+#                    user: "%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%"
+#                    password: "%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%"
+#                    # curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION)%'}
+##              index: "%env(ELASTIC_SEARCH_INDEX)%"
+#                level: "error"
+#                tags: ["monolog", "monolog.logger"]
+#                channels: ["!event", "!doctrine"]
+
+
 #            elastic:
 #                type: service
 #                id: Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler

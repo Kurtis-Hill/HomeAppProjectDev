@@ -2,25 +2,40 @@
 
 namespace App\User\Entity;
 
-use App\Authentication\Entity\GroupNameMapping;
+use App\Authentication\Entity\GroupMapping;
 use App\User\Repository\ORM\UserRepository;
 use DateTime;
+use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: UserRepository::class),
     ORM\Table(name: "user"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
-    ORM\Index(columns: ["groupNameID"], name: "GroupName"),
+    ORM\Index(columns: ["groupID"], name: "GroupName"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
+    ORM\Index(columns: ["profilePic"], name: "profilePic"),
 ]
-#[UniqueEntity('email')]
+#[UniqueEntity(fields: ['email'], message: 'Email already exists')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
+    public const ROLE_USER = 'ROLE_USER';
+
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
+    public const USER_ROLES = [
+        self::ROLE_USER,
+        self::ROLE_ADMIN,
+    ];
+    public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';
+
     #[
         ORM\Column(name: "userID", type: "integer", nullable: false),
         ORM\Id,
@@ -30,50 +45,94 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[
         ORM\Column(name: "firstName", type: "string", length: 20, nullable: false),
+        Assert\Length(
+            min: 2,
+            max: 20,
+            minMessage: 'First name must be at least {{ limit }} characters long',
+            maxMessage: 'First name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
     ]
     private string $firstName;
 
     #[
         ORM\Column(name: "lastName", type: "string", length: 20, nullable: false),
+        Assert\Length(
+            min: 2,
+            max: 20,
+            minMessage: 'Last name must be at least {{ limit }} characters long',
+            maxMessage: 'Last name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
     ]
     private string $lastName;
 
     #[
         ORM\Column(name: "email", type: "string", length: 180, nullable: false),
+        Assert\Length(
+            min: 5,
+            max: 180,
+            minMessage: 'First name must be at least {{ limit }} characters long',
+            maxMessage: 'First name cannot be longer than {{ limit }} characters',
+        ),
+        Assert\NotBlank,
+        Assert\Email,
+
     ]
     private string $email;
 
     #[
         ORM\Column(name: "roles", type: "json", nullable: false),
+        Assert\Choice(
+            choices: self::USER_ROLES,
+            multiple: true,
+            message: 'Choose a valid role.',
+            multipleMessage: 'Choose at least one valid role.'
+        ),
     ]
     private array $roles;
 
     #[
         ORM\Column(name: "profilePic", type: "string", length: 100, nullable: true, options: ["default" => "/assets/pictures/guest.jpg"]),
     ]
-    private string $profilePic = '/assets/pictures/guest.jpg';
+    private string $profilePic = self::DEFAULT_PROFILE_PICTURE;
 
     #[
         ORM\Column(name: "password", type: "text", length: 0, nullable: false),
+        Assert\NotCompromisedPassword,
+        Assert\Length(
+            min: 8,
+            max: 255,
+            minMessage: 'Password must be at least {{ limit }} characters long',
+            maxMessage: 'Password cannot be longer than {{ limit }} characters',
+        ),
     ]
     private string $password;
 
     #[
-        ORM\ManyToOne(targetEntity: GroupNames::class),
-        ORM\JoinColumn(name: "groupNameID", referencedColumnName: "groupNameID"),
+        ORM\ManyToOne(targetEntity: Group::class),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
     ]
-    private GroupNames|int $groupNameID;
+    private Group|int $groupID;
 
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
     ]
-    private DateTime $createdAt;
+    private DateTimeInterface $createdAt;
 
-    #[ArrayShape([GroupNameMapping::class])]
-    private array $userGroupMappingEntities = [];
+    #[
+        ArrayShape([GroupMapping::class]),
+        ORM\OneToMany(mappedBy: "user", targetEntity: GroupMapping::class),
+    ]
+    private Selectable|array $userGroupMappingEntities;
 
-    #[ArrayShape([GroupNameMapping::class])]
-    public function getUserGroupMappingEntities(): array
+    public function __construct()
+    {
+        $this->userGroupMappingEntities = new ArrayCollection();
+    }
+
+    #[ArrayShape([GroupMapping::class])]
+    public function getUserGroupMappingEntities(): ArrayCollection|Selectable
     {
         return $this->userGroupMappingEntities;
     }
@@ -83,36 +142,59 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
-    #[ArrayShape([GroupNames::class])]
-    public function getGroupNameObjects(): array
+    public function getUsersGroupName(): Group
     {
+        return $this->groupID;
+    }
+
+    #[ArrayShape([Group::class])]
+    public function getGroupMappings(): array
+    {
+        /** @var GroupMapping $groupName */
         foreach ($this->userGroupMappingEntities as $groupName) {
-            $groupNameArray[] = $groupName->getGroupNameID();
+            $groupNameArray[] = $groupName->getGroup();
         }
 
         return $groupNameArray ?? [];
     }
 
     #[ArrayShape(['int'])]
-    public function getGroupNameIds(): array
+    public function getAssociatedGroupIDs(): array
     {
-        $groupNames = [];
-
+        $groupNames[] = $this->getGroup()->getGroupID();
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
+            $groupNames[] = $entity->getGroup()->getGroupID();
+        }
+        return $groupNames;
+    }
+
+    #[ArrayShape(['groupID' => 'int', 'groupName' => 'string'])]
+    public function getAssociatedGroupNameAndIds(): array
+    {
+        $groupNames[] = [
+            'groupID' => $this->getGroup()->getGroupID(),
+            'groupName' => $this->getGroup()->getGroupName()
+        ];
+        /** @var GroupMapping $entity */
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = [
+                'groupID' => $entity->getGroup()->getGroupID(),
+                'groupName' => $entity->getGroup()->getGroupName()
+            ];
         }
 
         return $groupNames;
     }
 
-    #[ArrayShape(['groupNameID' => 'int'])]
-    public function getGroupNameAndIds(): array
+    #[ArrayShape([Group::class])]
+    public function getAssociatedGroups(): array
     {
-        $groupNames = [];
+        $groupNames[] = $this->getGroup();
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = ['groupNameID' => $entity->getGroupNameID()->getGroupNameID(), 'groupName' => $entity->getGroupNameID()->getGroupName()];
+            $groupNames[] = $entity->getGroup();
         }
-
         return $groupNames;
     }
 
@@ -127,9 +209,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return array_unique($this->roles);
     }
 
-    public function setRoles(?array $roles): self
+    public function setRoles(array $roles = []): self
     {
-        $this->roles = $roles ?? ['ROLE_USER'];
+        $this->roles = $roles ?? [self::ROLE_USER];
 
         return $this;
     }
@@ -215,30 +297,35 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getGroupNameID(): GroupNames
+    public function getGroup(): Group
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
-    public function setGroupNameID(int|GroupNames $groupNameID): void
+    public function setGroup(int|Group $groupID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupID = $groupID;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?DateTime $createdAt = null): self
+    public function setCreatedAt(?DateTimeInterface $createdAt = null): self
     {
         $this->createdAt = $createdAt ?? new DateTime('now');
 
         return $this;
     }
 
-    public function getUserIdentifier(): ?string
+    public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array(self::ROLE_ADMIN, $this->getRoles(), true);
     }
 }

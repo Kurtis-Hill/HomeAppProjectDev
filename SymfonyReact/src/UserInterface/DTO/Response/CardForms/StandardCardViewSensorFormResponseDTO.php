@@ -2,24 +2,24 @@
 
 namespace App\UserInterface\DTO\Response\CardForms;
 
-use App\UserInterface\DTO\RequestDTO\CardUserSelectionEncapsulationDTO;
-use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
+use App\UserInterface\DTO\Response\CardView\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
+use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
 class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterface
 {
-    private int $sensorId;
+    private int $sensorID;
 
     private IconResponseDTO $currentCardIcon;
 
     private ColourResponseDTO $currentCardColour;
 
-    private CardStateResponseDTO $currentViewState;
+    private StateResponseDTO $currentViewState;
 
     private CardUserSelectionEncapsulationDTO $cardUserSelectionOptions;
 
@@ -29,15 +29,15 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
     private array $sensorData;
 
     public function __construct(
-        int $sensorId,
+        int $sensorID,
         IconResponseDTO $currentCardIcon,
         ColourResponseDTO $currentCardColour,
-        CardStateResponseDTO $currentViewState,
+        StateResponseDTO $currentViewState,
         string $cardViewID,
         CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
         array $sensorData,
     ) {
-        $this->sensorId = $sensorId;
+        $this->sensorID = $sensorID;
         $this->currentCardIcon = $currentCardIcon;
         $this->currentCardColour = $currentCardColour;
         $this->currentViewState = $currentViewState;
@@ -46,9 +46,9 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         $this->sensorData = $sensorData;
     }
 
-    public function getSensorId(): int
+    public function getSensorID(): int
     {
-        return $this->sensorId;
+        return $this->sensorID;
     }
 
     public function getSensorData(): array
@@ -71,7 +71,7 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         return $this->currentCardColour;
     }
 
-    public function getCurrentViewState(): CardStateResponseDTO
+    public function getCurrentViewState(): StateResponseDTO
     {
         return $this->currentViewState;
     }

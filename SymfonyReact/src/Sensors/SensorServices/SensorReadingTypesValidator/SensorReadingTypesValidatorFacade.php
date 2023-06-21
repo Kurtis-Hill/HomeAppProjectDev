@@ -42,12 +42,12 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
         $errors = [];
         if ($sensorTypeObject instanceof TemperatureSensorTypeInterface) {
             $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
-                $sensorTypeObject->getTempObject(),
+                $sensorTypeObject->getTemperature(),
                 $sensorType
             );
 
             if (!empty($validationErrors)) {
-                $errors = array_merge($errors, $validationErrors);
+                $errors = $validationErrors;
             }
         }
 
@@ -115,7 +115,6 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
             $sensorReadingTypeObject,
             $sensorType
         );
-
         if (empty($validationErrors)) {
             try {
                 $this->saveReadingType($sensorReadingTypeObject);
@@ -127,6 +126,7 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
         return $validationErrors;
     }
 
+    #[ArrayShape(['validationErrors'])]
     private function performSensorReadingTypeValidation(
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null

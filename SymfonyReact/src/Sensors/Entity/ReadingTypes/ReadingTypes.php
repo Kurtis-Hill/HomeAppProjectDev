@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: ReadingTypeRepository::class),
     ORM\Table(name: "readingtypes"),
+    ORM\UniqueConstraint(name: "readingType", columns: ["readingType"]),
+
 ]
 class ReadingTypes
 {
@@ -29,6 +31,13 @@ class ReadingTypes
             'alias' => 'lat',
             'object' => Latitude::class,
         ],
+    ];
+
+    public const ALL_READING_TYPES = [
+        Temperature::READING_TYPE,
+        Humidity::READING_TYPE,
+        Analog::READING_TYPE,
+        Latitude::READING_TYPE,
     ];
 
     #[

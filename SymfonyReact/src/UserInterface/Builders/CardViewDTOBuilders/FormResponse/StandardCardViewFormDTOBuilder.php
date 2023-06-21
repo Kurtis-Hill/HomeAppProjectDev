@@ -7,9 +7,9 @@ use App\UserInterface\Builders\CardStateDTOBuilders\CardStateDTOBuilder;
 use App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse\AbstractSensorTypeViewDTOBuilder;
 use App\UserInterface\Builders\ColoursDTOBuilders\ColourDTOBuilder;
 use App\UserInterface\Builders\IconDTOBuilder\IconDTOBuilder;
-use App\UserInterface\DTO\RequestDTO\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\DTO\Response\CardForms\CardViewSensorFormInterface;
 use App\UserInterface\DTO\Response\CardForms\StandardCardViewSensorFormResponseDTO;
+use App\UserInterface\DTO\Response\CardView\CardUserSelectionEncapsulationDTO;
 use App\UserInterface\Entity\Card\CardView;
 
 class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder implements CardViewFormDTOBuilderInterface
@@ -23,7 +23,7 @@ class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder im
         $formattedSensorTypeObjects = $cardBuilder->formatSensorTypeObjectsByReadingType($sensorTypeObject);
 
         return new StandardCardViewSensorFormResponseDTO(
-            $sensorTypeObject->getSensorObject()->getSensorNameID(),
+            $sensorTypeObject->getSensor()->getSensorID(),
             IconDTOBuilder::buildIconResponseDTO($cardViewObject->getCardIconID()),
             ColourDTOBuilder::buildColourResponseDTO($cardViewObject->getCardColourID()),
             CardStateDTOBuilder::buildCardStateResponseDTO($cardViewObject->getCardStateID()),

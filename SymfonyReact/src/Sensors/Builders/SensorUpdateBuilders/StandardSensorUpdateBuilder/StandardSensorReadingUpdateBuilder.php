@@ -14,7 +14,7 @@ class StandardSensorReadingUpdateBuilder implements SensorReadingUpdateBuilderIn
             $sensorData['readingType'],
             $sensorData['highReading'] ?? null,
             $sensorData['lowReading'] ?? null,
-            $sensorData['constRecord'] ?? null
+            $sensorData['constRecord'] ?? null,
         );
     }
 }

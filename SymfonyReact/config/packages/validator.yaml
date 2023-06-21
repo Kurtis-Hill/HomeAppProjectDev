@@ -2,13 +2,13 @@ framework:
     validation:
         email_validation_mode: html5
 
-#App\User\Entity\User:
+#App\UserExceptions\Entity\UserExceptions:
 #    properties:
 #        email:
 #            - Email:
 #                  message: The email "{{ value }}" is not a valid email.
 
         # Enables validator auto-mapping support.
-        # For instance, basic validation constraints will be inferred from Doctrine's metadata.
+        # For instance, basic validation constraints will be inferred from ORM's metadata.
         #auto_mapping:
         #    App\Entity\: []

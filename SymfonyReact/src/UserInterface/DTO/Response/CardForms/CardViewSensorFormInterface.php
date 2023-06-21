@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\DTO\Response\CardForms;
 
-use App\UserInterface\DTO\Response\CardState\CardStateResponseDTO;
+use App\UserInterface\DTO\Response\State\StateResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
 
@@ -16,7 +16,7 @@ interface CardViewSensorFormInterface
 
     public function getCurrentCardColour(): ColourResponseDTO;
 
-    public function getCurrentViewState(): CardStateResponseDTO;
+    public function getCurrentViewState(): StateResponseDTO;
 
 //    public function getIconSelection(): array;
 //

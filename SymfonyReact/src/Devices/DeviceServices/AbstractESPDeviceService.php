@@ -7,11 +7,13 @@ use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterf
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\User\Repository\ORM\GroupRepositoryInterface;
+use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AbstractESPDeviceService
+abstract class AbstractESPDeviceService
 {
     use ValidatorProcessorTrait;
 
@@ -21,17 +23,25 @@ class AbstractESPDeviceService
 
     protected DevicePasswordEncoderInterface $devicePasswordEncoder;
 
+    protected GroupRepositoryInterface $groupRepository;
+
+    protected RoomRepositoryInterface $roomRepository;
+
     protected LoggerInterface $logger;
 
     public function __construct(
         DeviceRepositoryInterface $deviceRepository,
         ValidatorInterface $validator,
         DevicePasswordEncoderInterface $devicePasswordEncoder,
-        LoggerInterface $elasticLogger
+        GroupRepositoryInterface $groupNameRepository,
+        RoomRepositoryInterface $roomRepository,
+        LoggerInterface $elasticLogger,
     ) {
         $this->validator = $validator;
         $this->deviceRepository = $deviceRepository;
         $this->devicePasswordEncoder = $devicePasswordEncoder;
+        $this->groupRepository = $groupNameRepository;
+        $this->roomRepository = $roomRepository;
         $this->logger = $elasticLogger;
     }
 

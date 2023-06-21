@@ -17,4 +17,6 @@ interface UserViewSensorTypeCardDataResponseDTOInterface
     public function getCardColour(): string;
 
     public function getCardViewID(): int;
+
+    public function getCardType(): string;
 }

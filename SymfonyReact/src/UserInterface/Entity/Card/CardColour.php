@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Entity\Card;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,8 +10,9 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository;
 
 #[
     ORM\Entity(repositoryClass: CardColourRepository::class),
-    ORM\Table(name: "cardcolour"),
-    ORM\UniqueConstraint(name: "Colour", columns: ["colour"]),
+    ORM\Table(name: "colours"),
+    ORM\UniqueConstraint(name: "colour", columns: ["colour"]),
+    ORM\UniqueConstraint(name: "shade", columns: ["shade"]),
 ]
 #[UniqueEntity('colour')]
 class CardColour
@@ -37,7 +38,7 @@ class CardColour
         ORM\Column(name: "colour", type: "string", length: 20, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::COLOUR_MIN_LENGTH,
             max: self::COLOUR_MAX_LENGTH,
@@ -52,7 +53,7 @@ class CardColour
         ORM\Column(name: "shade", type: "string", length: 20, nullable: false),
     ]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::SHADE_MIN_LENGTH,
             max: self::SHADE_MAX_LENGTH,

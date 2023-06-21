@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Entity;
 
-use App\Common\CustomValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SensorType
 {
     public const ALIAS = 'sensortype';
+
+    public const STANDARD_READING_SENSOR_TYPE = 'standardReading';
 
     public const ALL_SENSOR_TYPES = [
         Bmp::NAME,
@@ -39,12 +41,12 @@ class SensorType
     private int $sensorTypeID;
 
     #[ORM\Column(name: "sensorType", type: "string", length: 20, nullable: false)]
-    #[NoSpecialCharactersConstraint]
+    #[NoSpecialCharactersNameConstraint]
     private string $sensorType;
 
     #[ORM\Column(name: "description", type: "string", length: 50, nullable: false)]
     #[
-        NoSpecialCharactersConstraint,
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::SENSOR_TYPE_DESCRIPTION_MIN_LENGTH,
             max: self::SENSOR_TYPE_DESCRIPTION_MAX_LENGTH,
