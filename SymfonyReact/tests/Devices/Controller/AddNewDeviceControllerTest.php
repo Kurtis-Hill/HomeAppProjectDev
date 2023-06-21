@@ -614,7 +614,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         self::assertEquals('Nothing Found', $responseData['title']);
         self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Group name not found for id ' . $noneExistentGroupID, $responseData['errors'][0]);
+        self::assertEquals('Group not found for id ' . $noneExistentGroupID, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }

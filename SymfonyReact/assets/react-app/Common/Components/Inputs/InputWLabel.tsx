@@ -6,15 +6,13 @@ import { Label } from '../Elements/Label';
 export default function InputWLabel(props: { 
     labelName: string; 
     name: string; 
-    value: object;
+    value?: object;
     type?: string; 
     placeHolder?: string; 
     autoComplete?: string; 
     autoFocus?: boolean;
     extraClasses?: string;
     labelExtraClasses?: string;
-    labelDataName?: object;
-    labelDataValue?: object;
     inputOnClickFn?: (event: Event) => void;
     labelOnClickFn?: (event: Event) => void;
     onChangeFunction: (event: Event) => void; 
@@ -39,12 +37,10 @@ export default function InputWLabel(props: {
                 htmlFor={name}
                 classes={labelExtraClasses}
             />
-            {/* <label className={`large font-weight-bold ${labelExtraClasses}`}>{ labelName }</label> */}
             <Input 
                 type={type}
                 name={name}
                 autoComplete={autoComplete}
-                // className={"form-control form-control-user login-form-field"}
                 placeHolder={placeHolder}
                 onChangeFunction={onChangeFunction}
                 autoFocus={autoFocus}

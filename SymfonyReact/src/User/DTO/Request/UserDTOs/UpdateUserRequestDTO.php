@@ -18,6 +18,9 @@ class UpdateUserRequestDTO
 
     #[
         Assert\Type(type: ['string', 'null'], message: 'email must be a {{ type }} you have provided {{ value }}'),
+//        Assert\Email(
+//            message: "email must be a valid email address"
+//        ),
     ]
     private mixed $email = null;
 

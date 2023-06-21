@@ -18,6 +18,10 @@ class UserVoter extends Voter
 
     public const CAN_UPDATE_USER_GROUPS = 'can_update_user_groups';
 
+    public const CAN_UPDATE_USER_PASSWORD = 'can_update_user_password';
+
+    public const CAN_GET_USER = 'can_get_user';
+
     protected function supports(string $attribute, $subject): bool
     {
         if (!in_array($attribute, [
@@ -26,6 +30,8 @@ class UserVoter extends Voter
             self::UPDATE_USER,
             self::CAN_UPDATE_USER_ROLES,
             self::CAN_UPDATE_USER_GROUPS,
+            self::CAN_UPDATE_USER_PASSWORD,
+            self::CAN_GET_USER,
             ])) {
             return false;
         }
@@ -47,8 +53,20 @@ class UserVoter extends Voter
             self::UPDATE_USER => $this->canUpdateUser($user, $subject),
             self::CAN_UPDATE_USER_ROLES => $this->canUpdateUserRoles($user),
             self::CAN_UPDATE_USER_GROUPS => $this->canUpdateUserGroups($user),
+            self::CAN_UPDATE_USER_PASSWORD => $this->canUpdateUserPassword($user, $subject),
+            self::CAN_GET_USER => $this->canGetUser($user, $subject),
             default => false,
         };
+    }
+
+    private function canGetUser(User $currentUser, User $requestedToView): bool
+    {
+        return $currentUser->isAdmin() || $currentUser->getUserID() === $requestedToView->getUserID();
+    }
+
+    private function canUpdateUserPassword(User $user, $userToUpdate): bool
+    {
+        return $user->isAdmin() || $user->getUserID() === $userToUpdate->getUserID();
     }
 
     private function canUpdateUserGroups(User $user): bool

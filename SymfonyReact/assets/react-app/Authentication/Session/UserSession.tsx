@@ -3,10 +3,7 @@ import { LoginResponseInterface } from "../Response/LoginResponseInterface";
 import { TokenRefreshResponseInterface } from "../Response/TokenRefreshResponseInterface";
 
 export const setUserSession = (loginResponse: LoginResponseInterface): void => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userID');
-    localStorage.removeItem('roles');
+    removeUserSession();
 
     localStorage.setItem('token' , loginResponse.token);
     localStorage.setItem('refreshToken' , loginResponse.refreshToken);
@@ -33,9 +30,9 @@ export const refreshUserTokens = (refreshTokenResponseData: TokenRefreshResponse
     }
 }
 
-// export const getRefreshToken = (): string|null => {
-//     return localStorage.getItem('refreshToken');
-// }
+export const getUserSessionValue = (key: string): string => {
+    return localStorage.getItem(key);
+}
 
 export const getRoles = (): Array<string>|null => {
     return JSON.parse(localStorage.getItem('roles')) || null;
@@ -45,13 +42,14 @@ export const checkAdmin = (): boolean => {
     const roles: Array<string>|null = getRoles();
 
     if (roles !== null) {
-        for(let i = 0; i < roles.length; ++i) {
-            if (roles[i].match('ROLE_ADMIN')) {
-                return true;
-            }
-            if (i === roles.length) {
-                return false;
-            }
-        }
+        return roles.includes('ROLE_ADMIN');
+        // for(let i = 0; i < roles.length; ++i) {
+        //     if (roles[i].match('ROLE_ADMIN')) {
+        //         return true;
+        //     }
+        //     if (i === roles.length) {
+        //         return false;
+        //     }
+        // }
     }
 }

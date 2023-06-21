@@ -4,7 +4,7 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { registerAccountUrl, indexUrl, loginUrl, cardIndex } from "../../Common/URLs/CommonURLs";
+import { registerAccountUrl, indexUrl } from "../../Common/URLs/CommonURLs";
 import { getRefreshToken, getToken } from "../../Authentication/Tokens/GetAPITokens";
 
 import Input from "../../Common/Components/Inputs/Input";

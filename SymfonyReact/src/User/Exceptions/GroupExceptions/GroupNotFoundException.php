@@ -6,5 +6,5 @@ use Exception;
 
 class GroupNotFoundException extends Exception
 {
-    public const MESSAGE = 'Group name not found for id %d';
+    public const MESSAGE = 'Group not found for id %d';
 }

@@ -18,6 +18,8 @@ readonly class UserResponseDTO
         private DateTimeInterface $createdAt,
         private ?string $profilePicture = null,
         private ?array $roles = [],
+        private ?bool $canEdit,
+        private ?bool $canDelete,
     ) {
     }
 
@@ -103,5 +105,23 @@ readonly class UserResponseDTO
     public function getRoles(): ?array
     {
         return $this->roles;
+    }
+
+    #[Groups([
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanEdit(): ?bool
+    {
+        return $this->canEdit;
+    }
+
+    #[Groups([
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCanDelete(): ?bool
+    {
+        return $this->canDelete;
     }
 }

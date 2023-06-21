@@ -19,7 +19,7 @@ class AddUserControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_USER_URL = CommonURL::USER_HOMEAPP_API_URL . 'user/add';
+    private const ADD_USER_URL = CommonURL::USER_HOMEAPP_API_URL . 'add';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -448,7 +448,7 @@ class AddUserControllerTest extends WebTestCase
                 'roles' => ['ROLE_SELECTED'],
             ],
             'errorMessages' => [
-                'One or more of the given values is invalid.',
+                'Choose at least one valid role.',
             ]
         ];
 

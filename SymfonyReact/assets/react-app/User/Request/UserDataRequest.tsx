@@ -1,11 +1,11 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
-import { apiURL } from "../../Common/URLs/CommonURLs";
+import { baseApiURL } from "../../Common/URLs/CommonURLs";
 
 export async function userDataRequest(): Promise<AxiosResponse> {
     try {
         const userDataResponse: AxiosResponse = await axios.get(
-            `${apiURL}user-data/get`
+            `${baseApiURL}user-data/get`
         )
 
         return userDataResponse;

@@ -17,7 +17,7 @@ import GroupResponseInterface from '../../../User/Response/Group/GroupResponseIn
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import RoomNavbarResponseInterface from '../../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
 import { userDataRequest } from '../../../User/Request/UserDataRequest';
-import { UserDataResponseInterface } from '../../../User/Response/UserDataResponseInterface';
+import { UserDataResponseInterface } from '../../../UserInterface/Navbar/Response/UserDataResponseInterface';
 
 export function AddNewDevice(props: {
     setAddNewDeviceModal: ((show: boolean) => void);

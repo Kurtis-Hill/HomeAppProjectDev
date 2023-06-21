@@ -16,6 +16,7 @@ import { SidebarDividerWithHeading } from "../../../Common/Components/Dividers/S
 import DotCircleSpinner from "../../../Common/Components/Spinners/DotCircleSpinner";
 import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
+import UserSettingsButton from '../../../Common/Components/Buttons/UserSettingsButton';
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
@@ -100,7 +101,7 @@ export default function NavBar(props: {
                     admin === true
                         ? 
                             <li className="nav-item">
-                                <AdminButton />
+                                <UserSettingsButton />
                             </li>
                         : null
                 }

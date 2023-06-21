@@ -11,13 +11,13 @@ use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\Builders\User\UserUpdateDTOBuilder;
-use App\User\DTO\Request\UserDTOs\NewUserRequestDTO;
 use App\User\DTO\Request\UserDTOs\UpdateUserRequestDTO;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\UserExceptions\CannotUpdateUsersGroupException;
 use App\User\Exceptions\UserExceptions\IncorrectUserPasswordException;
 use App\User\Exceptions\UserExceptions\NotAllowedToChangeUserRoleException;
+use App\User\Services\User\NotAllowedToUpdatePasswordException;
 use App\User\Services\User\UpdateUserHandler;
 use App\User\Voters\UserVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -33,7 +33,8 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user/')]class UpdateUserController extends AbstractController
+#[Route(CommonURL::USER_HOMEAPP_API_URL)]
+class UpdateUserController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
@@ -48,9 +49,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('{user}/update', name: 'update_user', methods: ['PUT', 'PATCH'])]
+    #[Route('{userToUpdate}/update', name: 'update_user', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateUser(
-        User $user,
+        User $userToUpdate,
         Request $request,
         ValidatorInterface $validator,
         UpdateUserHandler $updateUserHandler,
@@ -81,13 +82,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
         }
 
         try {
-            $this->denyAccessUnlessGranted(UserVoter::ADD_NEW_USER, $user);
+            $this->denyAccessUnlessGranted(UserVoter::UPDATE_USER, $userToUpdate);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
         $userUpdateDTO = UserUpdateDTOBuilder::buildUserUpdateDTO(
-            $user,
+            $userToUpdate,
             $updateUserRequestDTO->getFirstName(),
             $updateUserRequestDTO->getLastName(),
             $updateUserRequestDTO->getEmail(),
@@ -99,11 +100,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
         try {
             $validationErrors = $updateUserHandler->handleUserUpdate($userUpdateDTO);
-        } catch (IncorrectUserPasswordException|NotAllowedToChangeUserRoleException|CannotUpdateUsersGroupException|GroupNotFoundException $e) {
+        } catch (IncorrectUserPasswordException|NotAllowedToChangeUserRoleException|CannotUpdateUsersGroupException|NotAllowedToUpdatePasswordException|GroupNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
         if (!empty($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($validationErrors);
+            return $this->sendBadRequestJsonResponse($validationErrors,);
         }
 
         try {
@@ -112,12 +113,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Save User')]);
         }
         $this->logger->info('User update request', [
-            'user' => $user->getUserID(),
+            'user' => $userToUpdate->getUserID(),
             'updateUserRequestDTO' => $updateUserRequestDTO,
             'requestDTO' => $requestDTO,
         ]);
 
-        $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($user);
+        $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($userToUpdate);
 
         try {
             $normalizedUser = $this->normalizeResponse($userResponseDTO, [$requestDTO->getResponseType()]);

@@ -299,7 +299,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         );
 
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(['Group name not found for id ' . $nonExistentGroupID], $responseData['errors']);
+        self::assertEquals(['Group not found for id ' . $nonExistentGroupID], $responseData['errors']);
         self::assertEquals(UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
     }
 

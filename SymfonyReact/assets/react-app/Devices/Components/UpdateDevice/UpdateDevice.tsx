@@ -6,7 +6,7 @@ import { UpdateDeviceFormInputsInterface } from './UpdateDeviceFormInputsInterfa
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import { getAllUserGroupsRequest } from '../../../User/Request/Group/GetAllUserGroupsRequest'
 import { getAllRoomRequest } from '../../../User/Request/Room/GetAllRoomRequest'
-import { UserDataResponseInterface } from '../../../User/Response/UserDataResponseInterface';
+import { UserDataResponseInterface } from '../../../UserInterface/Navbar/Response/UserDataResponseInterface';
 import { FormInlineSpan } from '../../../Common/Components/Elements/FormInlineSpan';
 import { FormInlineSelectWLabel } from '../../../Common/Components/Selects/FormInlineSelectWLabel';
 import { FormInlineInputWLabel } from '../../../Common/Components/Inputs/FormInlineInputWLabel';

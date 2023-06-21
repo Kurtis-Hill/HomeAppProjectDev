@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL)]
 class DeleteUserController extends AbstractController
 {
     use HomeAppAPITrait;

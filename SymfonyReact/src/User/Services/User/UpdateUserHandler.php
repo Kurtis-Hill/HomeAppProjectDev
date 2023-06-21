@@ -3,6 +3,7 @@
 namespace App\User\Services\User;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Sensors\Exceptions\UserNotAllowedException;
 use App\User\DTO\Internal\User\UserUpdateDTO;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
@@ -36,6 +37,8 @@ class UpdateUserHandler
      * @throws NotAllowedToChangeUserRoleException
      * @throws CannotUpdateUsersGroupException
      * @throws GroupNotFoundException
+     * @throws NotAllowedToUpdatePasswordException
+     * @throws UserNotAllowedException
      */
     #[ArrayShape(['validationErrors'])]
     public function handleUserUpdate(UserUpdateDTO $userUpdateDTO): array
@@ -57,11 +60,25 @@ class UpdateUserHandler
             $userToUpdate->setRoles($userUpdateDTO->getRoles());
         }
         if ($userUpdateDTO->getNewPassword() !== null) {
-            $passwordVerified = $this->userPasswordHasher->isPasswordValid($userToUpdate, $userUpdateDTO->getOldPassword());
-            if (!$passwordVerified) {
-                throw new IncorrectUserPasswordException(IncorrectUserPasswordException::MESSAGE);
+            if (!$this->security->isGranted(UserVoter::CAN_UPDATE_USER_PASSWORD, $userToUpdate)) {
+                throw new NotAllowedToUpdatePasswordException(NotAllowedToUpdatePasswordException::NOT_ALLOWED_TO_UPDATE_PASSWORD);
             }
-            $userToUpdate->setPassword($userUpdateDTO->getNewPassword());
+            $user = $this->security->getUser();
+            if (!$user instanceof User) {
+                throw new UserNotAllowedException();
+            }
+            if (!$this->security->getUser()?->isAdmin()) {
+                $passwordVerified = $this->userPasswordHasher->isPasswordValid($userToUpdate, $userUpdateDTO->getOldPassword() ?? '');
+                if (!$passwordVerified) {
+                    throw new IncorrectUserPasswordException(IncorrectUserPasswordException::MESSAGE);
+                }
+            }
+            $hashedPassword = $this->userPasswordHasher->hashPassword(
+                $userToUpdate,
+                $userUpdateDTO->getNewPassword()
+            );
+
+            $userToUpdate->setPassword($hashedPassword);
         }
         if ($userUpdateDTO->getGroupID() !== null) {
             if (!$this->security->isGranted(UserVoter::CAN_UPDATE_USER_GROUPS)) {
@@ -69,7 +86,7 @@ class UpdateUserHandler
             }
             $groupName = $this->groupRepository->find($userUpdateDTO->getGroupID());
             if ($groupName === null) {
-                throw new GroupNotFoundException(GroupNotFoundException::MESSAGE);
+                throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $userUpdateDTO->getGroupID()));
             }
             $userToUpdate->setGroup($groupName);
         }

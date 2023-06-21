@@ -87,6 +87,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             choices: self::USER_ROLES,
             multiple: true,
             message: 'Choose a valid role.',
+            multipleMessage: 'Choose at least one valid role.'
         ),
     ]
     private array $roles;

@@ -127,7 +127,11 @@
     color: #e74a3b;
 }
 
-
+.update-password-container {
+    margin: auto;
+    width: 100%;
+    text-align: initial;
+}
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
 /*    -moz-transition: 0.5s;*/

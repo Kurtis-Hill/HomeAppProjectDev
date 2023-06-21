@@ -2,17 +2,14 @@ import * as React from 'react';
 import { useState, useMemo } from 'react';
 import { useParams } from "react-router-dom";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { Context } from 'react';
-import {  useOutletContext  } from "react-router-dom";
-
-import { getDeviceRequest } from '../../Devices/Request/GetDeviceRequest';
+import { getDeviceRequest } from '../Request/GetDeviceRequest';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
-import { UpdateDevice } from '../../Devices/Components/UpdateDevice/UpdateDevice';
+import { UpdateDevice } from '../Components/UpdateDevice/UpdateDevice';
 import { AxiosError } from 'axios';
 import { indexUrl } from '../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
 import { ResponseTypeFull } from '../../Common/API/APIResponseType';
-import { DeviceResponseInterface } from '../../Devices/Response/DeviceResponseInterface';
+import { DeviceResponseInterface } from '../Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
 import { ViewSensorsPage } from '../../Sensors/Page/ViewSensorsPage';
 

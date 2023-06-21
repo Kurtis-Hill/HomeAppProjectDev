@@ -9,4 +9,6 @@ export default interface UserResponseInterface {
     group?: GroupResponseInterface,
     profilePicture?: string,
     roles?: string[],
+    canEdit?: boolean,
+    canDelete?: boolean,
 }

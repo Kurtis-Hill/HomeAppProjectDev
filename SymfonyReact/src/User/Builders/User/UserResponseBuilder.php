@@ -5,11 +5,25 @@ namespace App\User\Builders\User;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use App\User\Entity\User;
+use App\User\Voters\UserVoter;
+use Symfony\Bundle\SecurityBundle\Security;
 
-class UserResponseBuilder
+readonly class UserResponseBuilder
 {
+    public function __construct(private Security $security) {}
+
+    public function buildFullUserResponseDTO(User $user): UserResponseDTO
+    {
+        $canEditUser = $this->security->isGranted(UserVoter::UPDATE_USER, $user);
+        $canDeleteUser = $this->security->isGranted(UserVoter::DELETE_USER, $user);
+
+        return self::buildUserResponseDTO($user, $canEditUser, $canDeleteUser);
+    }
+
     public static function buildUserResponseDTO(
         User $user,
+        ?bool $canUpdate = null,
+        ?bool $canDelete = null,
     ): UserResponseDTO {
         return new UserResponseDTO(
             $user->getUserID(),
@@ -20,6 +34,8 @@ class UserResponseBuilder
             $user->getCreatedAt(),
             $user->getProfilePic(),
             $user->getRoles(),
+            $canUpdate,
+            $canDelete,
         );
     }
 }
