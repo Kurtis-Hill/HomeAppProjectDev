@@ -3,25 +3,34 @@
 namespace App\ORM\DataFixtures\ESP8266;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 
 class SensorFixtures extends Fixture implements OrderedFixtureInterface
 {
@@ -60,6 +69,22 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 Temperature::READING_TYPE =>  Temperature::class,
                 Humidity::READING_TYPE => Humidity::class,
                 Latitude::READING_TYPE => Latitude::class,
+            ],
+        ],
+
+        GenericRelay::NAME => [
+            'alias' => GenericRelay::NAME,
+            'object' => GenericRelay::class,
+            'readingTypes' => [
+                Relay::READING_TYPE =>  Relay::class,
+            ],
+        ],
+
+        GenericMotion::NAME => [
+            'alias' => GenericMotion::NAME,
+            'object' => GenericMotion::class,
+            'readingTypes' => [
+                Motion::READING_TYPE =>  Motion::class,
             ],
         ],
     ];
@@ -204,6 +229,72 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'sensorName' => 'UsDev3Bmp280',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME]
         ],
+
+        'AdminUserOneDeviceAdminGroupOneRelay' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => 'AdDev1Relay',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME]
+        ],
+
+        'AdminUserOneDeviceRegularGroupTwoRelay' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => 'AdDev2Relay',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME]
+        ],
+
+        'AdminUserTwoDeviceAdminGroupTwoRelay' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
+            'sensorName' => 'AdDev3Relay',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME]
+        ],
+
+        'RegularUserOneDeviceRegularGroupOneRelay' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
+            'sensorName' => 'UsDev1Relay',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME]
+        ],
+
+        'RegularUserTwoDeviceRegularGroupTwoRelay' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => 'UsDev2Relay',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME]
+        ],
+
+        'RegularUserTwoDeviceAdminGroupOneRelay' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => 'UsDev3Relay',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME]
+        ],
+
+        'AdminUserOneDeviceAdminGroupOneMotion' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => 'AdDev1Motion',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME]
+        ],
+
+        'AdminUserOneDeviceRegularGroupTwoMotion' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => 'AdDev2Motion',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME]
+        ],
+
+        'AdminUserTwoDeviceAdminGroupTwoMotion' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
+            'sensorName' => 'AdDev3Motion',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME]
+        ],
+
+        'RegularUserOneDeviceRegularGroupOneMotion' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
+            'sensorName' => 'UsDev1Motion',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME]
+        ],
+
+        'RegularUserTwoDeviceRegularGroupTwoMotion' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => 'UsDev2Motion',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME]
+        ],
     ];
 
     public const ADMIN_USER_ONE_OWNED_SENSORS = [
@@ -307,6 +398,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @throws Exception
+     */
     private function setSensorObjects(
         string $readingTypeObjects,
         Sensor $newSensor,
@@ -315,30 +409,50 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
     ): void {
         $newObject = new $readingTypeObjects();
         if ($newObject instanceof StandardReadingSensorInterface) {
+//            dd($newObject);
             $newObject->setSensor($newSensor);
             $newObject->setUpdatedAt();
 
-            if ($newSensorType instanceof StandardSensorReadingTypeInterface) {
+            if ($newSensorType instanceof StandardSensorTypeInterface) {
                 $newSensorType->setSensor($newSensor);
-                if ($newSensorType instanceof TemperatureSensorTypeInterface && $newObject instanceof Temperature) {
+                if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
                     $newObject->setCurrentReading(10);
                     $newSensorType->setTemperature($newObject);
                 }
-                if ($newSensorType instanceof HumiditySensorTypeInterface && $newObject instanceof Humidity) {
+                if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
                     $newObject->setCurrentReading(10);
                     $newSensorType->setHumidObject($newObject);
                 }
-                if ($newSensorType instanceof LatitudeSensorTypeInterface && $newObject instanceof Latitude) {
+                if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
                     $newObject->setCurrentReading(10);
                     $newSensorType->setLatitudeObject($newObject);
                 }
-                if ($newSensorType instanceof AnalogSensorTypeInterface && $newObject instanceof Analog) {
+                if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
                     $newObject->setCurrentReading(1001);
                     $newSensorType->setAnalogObject($newObject);
                 }
             }
-            $manager->persist($newSensorType);
-            $manager->persist($newObject);
         }
+        elseif ($newObject instanceof BoolReadingTypeInterface) {
+            $newSensorType->setSensor($newSensor);
+
+            $newObject->setSensor($newSensor);
+            $newObject->setCurrentReading(true);
+            $newObject->setExpectedReading(true);
+            $newObject->setCurrentReading(true);
+            $newObject->setRequestedReading(true);
+            $newObject->setCreatedAt(new DateTimeImmutable('now'));
+            $newObject->setUpdatedAt(new DateTimeImmutable('now'));
+            if ($newSensorType instanceof MotionSensorReadingInterface) {
+                $newSensorType->setMotion($newObject);
+            }
+            if ($newSensorType instanceof RelayReadingTypeInterface) {
+                $newSensorType->setRelay($newObject);
+            }
+        } else {
+            throw new Exception('Sensor type not found');
+        }
+        $manager->persist($newSensorType);
+        $manager->persist($newObject);
     }
 }

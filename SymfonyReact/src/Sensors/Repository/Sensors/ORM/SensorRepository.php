@@ -5,10 +5,10 @@ namespace App\Sensors\Repository\Sensors\ORM;
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -20,10 +20,8 @@ use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Deprecated;
 
 /**
  * @extends ServiceEntityRepository<SensorRepository>

@@ -2,16 +2,16 @@
 
 namespace App\Tests\Sensors\AMQP\Consumers;
 
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Devices\Entity\Devices;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;

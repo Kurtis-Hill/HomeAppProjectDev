@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 
-interface TemperatureSensorTypeInterface
+interface TemperatureReadingTypeInterface
 {
     public function getTemperature(): Temperature;
 

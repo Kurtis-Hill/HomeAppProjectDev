@@ -5,7 +5,7 @@ namespace App\Sensors\Builders\SensorReadingTypeResponseBuilders;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\AnalogResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 
 class AnalogResponseDTOBuilder implements StandardSensorResponseDTOBuilderInterface
 {

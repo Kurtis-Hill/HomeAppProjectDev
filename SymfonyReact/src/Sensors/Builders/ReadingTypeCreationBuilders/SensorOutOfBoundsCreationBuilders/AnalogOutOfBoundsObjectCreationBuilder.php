@@ -4,8 +4,8 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCrea
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 class AnalogOutOfBoundsObjectCreationBuilder extends AbstractStandardSensorOutOfBoundsObjectCreationBuilder implements OutOfBoundsObjectCreationBuilderInterface

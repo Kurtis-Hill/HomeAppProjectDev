@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Entity\OutOfRangeRecordings;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsHumidityRepository;
 use DateTime;

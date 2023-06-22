@@ -4,8 +4,8 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCrea
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 class HumidityOutOfBoundsObjectCreationBuilder extends AbstractStandardSensorOutOfBoundsObjectCreationBuilder implements OutOfBoundsObjectCreationBuilderInterface

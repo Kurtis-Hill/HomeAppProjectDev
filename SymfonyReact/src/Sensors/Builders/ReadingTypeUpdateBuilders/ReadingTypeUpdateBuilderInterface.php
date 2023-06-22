@@ -6,7 +6,7 @@ use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryR
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 

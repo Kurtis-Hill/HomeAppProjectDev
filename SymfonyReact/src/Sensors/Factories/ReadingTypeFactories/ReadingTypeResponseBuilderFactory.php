@@ -4,8 +4,8 @@ namespace App\Sensors\Factories\ReadingTypeFactories;
 
 use App\Sensors\Builders\ReadingTypeResponseBuilders\ReadingTypeResponseBuilderInterface;
 use App\Sensors\Builders\ReadingTypeResponseBuilders\StandardReadingTypeResponseBuilder;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 
 class ReadingTypeResponseBuilderFactory

@@ -3,9 +3,9 @@
 
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
-use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 
-interface AnalogSensorTypeInterface
+interface AnalogReadingTypeInterface
 {
     public function getAnalogObject(): Analog;
 

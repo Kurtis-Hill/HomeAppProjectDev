@@ -2,7 +2,6 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -29,6 +28,6 @@ class TemperatureCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUp
 
     public function getReadingType(): string
     {
-        return Temperature::getReadingTypeName();
+        return \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature::getReadingTypeName();
     }
 }

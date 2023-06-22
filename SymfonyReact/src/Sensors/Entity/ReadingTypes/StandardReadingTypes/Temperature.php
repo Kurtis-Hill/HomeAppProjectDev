@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Sensors\Entity\ReadingTypes;
+namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
@@ -25,7 +24,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
     ORM\Table(name: "temperature"),
     ORM\UniqueConstraint(name: "temp_ibfk_1", columns: ["sensorID"]),
 ]
-class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
+class Temperature extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'temperature';
 
@@ -138,7 +137,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $reading): void
+    public function setCurrentReading(int|float|string|bool $reading): void
     {
         $this->currentReading = $reading;
     }

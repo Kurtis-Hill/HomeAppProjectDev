@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\Entity\ReadingTypes\Interfaces;
+namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
 interface ReadingSymbolInterface
 {

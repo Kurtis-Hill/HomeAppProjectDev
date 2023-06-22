@@ -2,14 +2,14 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;

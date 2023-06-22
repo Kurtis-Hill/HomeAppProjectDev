@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders;
 
-use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 
 class AnalogSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBuilder

@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders;
 
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 
 class LatitudeSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBuilder

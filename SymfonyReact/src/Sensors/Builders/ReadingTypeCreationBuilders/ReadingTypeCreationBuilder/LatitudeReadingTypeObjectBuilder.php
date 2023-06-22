@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
@@ -11,7 +11,7 @@ class LatitudeReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implem
 {
     public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, float|int $currentReading = 10): void
     {
-        if (!$sensorTypeObject instanceof LatitudeSensorTypeInterface) {
+        if (!$sensorTypeObject instanceof LatitudeReadingTypeInterface) {
             throw new SensorTypeException(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
             );

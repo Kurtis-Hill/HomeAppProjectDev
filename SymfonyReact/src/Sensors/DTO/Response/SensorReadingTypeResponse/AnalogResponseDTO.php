@@ -4,7 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
-use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 

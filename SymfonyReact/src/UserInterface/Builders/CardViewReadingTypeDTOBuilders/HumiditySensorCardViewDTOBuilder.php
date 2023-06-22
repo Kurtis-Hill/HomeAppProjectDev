@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 
 class HumiditySensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBuilder

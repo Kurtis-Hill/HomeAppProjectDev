@@ -3,7 +3,6 @@
 namespace App\Tests\Sensors\SensorDataServices\SensorReadingUpdate\OutOfBounds;
 
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
@@ -13,8 +12,6 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,7 +40,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var AnalogSensorTypeInterface $soilSensor */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface $soilSensor */
         $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();
@@ -71,7 +68,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var AnalogSensorTypeInterface $soilSensor */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface $soilSensor */
         $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();
@@ -107,7 +104,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var TemperatureSensorTypeInterface $temperatureSensorType */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface $temperatureSensorType */
         $temperatureSensorType = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $tempObject = $temperatureSensorType->getTemperature();
@@ -134,7 +131,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var TemperatureSensorTypeInterface $soilSensor */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface $soilSensor */
         $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getTemperature();

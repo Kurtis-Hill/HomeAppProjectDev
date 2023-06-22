@@ -3,15 +3,15 @@
 namespace App\Sensors\Factories\ReadingTypeQueryBuilderFactory;
 
 
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\AnalogQueryTypeDTOBuilder;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\HumidityQueryTypeDTOBuilder;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\LatitudeQueryTypeDTOBuilder;
+use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\UserInterface\Exceptions\ReadingTypeBuilderFailureException;
 
 class ReadingTypeQueryFactory

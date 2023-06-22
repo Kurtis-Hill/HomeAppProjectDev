@@ -4,9 +4,8 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCrea
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 class LatitudeOutOfBoundsObjectCreationBuilder extends AbstractStandardSensorOutOfBoundsObjectCreationBuilder implements OutOfBoundsObjectCreationBuilderInterface

@@ -8,9 +8,6 @@ use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20220303160823 extends AbstractMigration
 {
     public function getDescription(): string

@@ -4,8 +4,8 @@ namespace App\Sensors\Builders\ReadingTypeResponseBuilders;
 
 use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\BoundaryReadingTypeResponseInterface;
 use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\StandardBoundaryReadingsTypeResponseDTO;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 
 class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderInterface

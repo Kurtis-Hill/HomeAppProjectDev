@@ -2,28 +2,26 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -75,9 +73,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
-        /** @var SensorTypeInterface $sensorTypeObject */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -129,16 +127,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ];
         }
 
-        if ($sensorTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
+        if ($sensorTypeAfterUpdate instanceof TemperatureReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getTemperature(), Temperature::READING_TYPE);
         }
-        if ($sensorTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
+        if ($sensorTypeAfterUpdate instanceof HumidityReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getHumidObject(), Humidity::READING_TYPE);
         }
-        if ($sensorTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
+        if ($sensorTypeAfterUpdate instanceof AnalogReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getAnalogObject(), Analog::READING_TYPE);
         }
-        if ($sensorTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
+        if ($sensorTypeAfterUpdate instanceof LatitudeReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
         }
     }
@@ -334,7 +332,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var StandardReadingSensorInterface $sensorReadingTypeObject */
         $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorReadingTypeObject instanceof StandardSensorReadingTypeInterface) {
+        if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -367,7 +365,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         foreach ($dataPayloads as $dataPayload) {
             self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
 
-            if ($sensorReadingTypeObject instanceof StandardSensorReadingTypeInterface) {
+            if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
                 self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
                 self::assertEquals($expectedDataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
                 self::assertEquals($expectedDataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
@@ -388,16 +386,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ];
         }
 
-        if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof TemperatureReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), Temperature::READING_TYPE);
         }
-        if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof HumidityReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), Humidity::READING_TYPE);
         }
-        if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof AnalogReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), Analog::READING_TYPE);
         }
-        if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof LatitudeReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
         }
     }
@@ -779,9 +777,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
-        /** @var AllSensorReadingTypeInterface $sensorTypeObject */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -824,16 +822,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ];
         }
 
-        if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof TemperatureReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), 'temperature');
         }
-        if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof HumidityReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
         }
-        if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof AnalogReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), 'analog');
         }
-        if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
+        if ($sensorReadingTypeAfterUpdate instanceof LatitudeReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
         }
     }
@@ -981,7 +979,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
 
-        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
                 $sensorDataToSend
             ];
@@ -1030,7 +1028,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             $wrongSensorId = random_int(1, 10000);
             $sensorTypeObject = $sensorRepository->findOneBy(['sensorID' => $wrongSensorId]);
 
-            if (!$sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
+            if (!$sensorTypeObject instanceof StandardSensorTypeInterface) {
                 break;
             }
         }

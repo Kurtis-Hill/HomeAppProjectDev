@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Sensors\Entity\ReadingTypes;
+namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use App\Sensors\Repository\ReadingType\ORM\HumidityRepository;
 use DateTimeImmutable;
@@ -18,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Table(name: "humidity"),
     ORM\UniqueConstraint(name: "humid_ibfk_1", columns: ["sensorID"]),
 ]
-class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
+class Humidity extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'humidity';
 
@@ -102,7 +101,7 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $reading): void
+    public function setCurrentReading(int|float|string|bool $reading): void
     {
         $this->currentReading = $reading;
     }

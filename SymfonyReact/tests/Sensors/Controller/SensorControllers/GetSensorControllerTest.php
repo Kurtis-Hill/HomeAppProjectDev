@@ -2,9 +2,6 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\Common\Builders\Request\RequestDTOBuilder;
-use App\Common\DTO\Request\RequestDTO;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
@@ -13,10 +10,10 @@ use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\GetSensorController;
 use App\Sensors\Controller\SensorControllers\GetSingleSensorsController;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
@@ -664,7 +661,7 @@ class GetSensorControllerTest extends WebTestCase
 
             if ($sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME) {
                 $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-                /** @var Latitude $latitude */
+                /** @var \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude $latitude */
                 $latitude = $latitudeRepository->find($singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
                 self::assertEquals($latitude->getSensorID(), $singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
                 self::assertEquals($latitude->getCurrentReading(), $singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['currentReading']);

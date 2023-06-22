@@ -2,24 +2,22 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\AddNewSensorController;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Tests\Traits\TestLoginTrait;
@@ -442,7 +440,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var SensorTypeInterface $sensorTypeObject */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
@@ -530,13 +528,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var SensorTypeInterface $sensorTypeObject */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
-            /** @var SensorTypeInterface $sensorType */
+            /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
@@ -597,13 +595,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var SensorTypeInterface $sensorTypeObject */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
-            /** @var AllSensorReadingTypeInterface $sensorType */
+            /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }

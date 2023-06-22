@@ -2,10 +2,7 @@
 
 namespace App\Sensors\Entity\ConstantRecording;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use DateTime;
-use DateTimeImmutable;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use DateTimeInterface;
 
 interface ConstantlyRecordEntityInterface

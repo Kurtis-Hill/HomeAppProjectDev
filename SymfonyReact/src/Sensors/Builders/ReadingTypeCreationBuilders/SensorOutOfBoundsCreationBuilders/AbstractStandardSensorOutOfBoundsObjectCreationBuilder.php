@@ -3,7 +3,7 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders;
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 
 abstract class AbstractStandardSensorOutOfBoundsObjectCreationBuilder
 {

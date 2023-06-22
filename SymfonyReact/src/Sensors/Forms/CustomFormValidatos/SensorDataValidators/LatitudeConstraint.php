@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use Attribute;
 use Symfony\Component\Validator\Constraint;
 

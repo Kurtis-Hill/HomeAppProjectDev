@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
-use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
@@ -21,7 +21,7 @@ abstract class AbstractReadingTypeBuilder
     /**
      * @throws SensorTypeException
      */
-    public function buildAnalogSensor(AnalogSensorTypeInterface $analogSensorType, int|float $currentReading = 1000): void
+    public function buildAnalogSensor(AnalogReadingTypeInterface $analogSensorType, int|float $currentReading = 1000): void
     {
         if (!$analogSensorType instanceof SensorTypeInterface) {
             throw new SensorTypeException(

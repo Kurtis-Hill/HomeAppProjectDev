@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Entity\OutOfRangeRecordings;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;

@@ -7,10 +7,10 @@ use App\Sensors\Builders\ReadingTypeUpdateBuilders\HumiditySensorUpdateBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\LatitudeSensorUpdateBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\TemperatureSensorUpdateBuilder;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 
 class SensorReadingUpdateFactory

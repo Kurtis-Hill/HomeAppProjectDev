@@ -3,7 +3,6 @@
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
 use App\Sensors\Entity\Sensor;
-use App\UserInterface\Entity\Card\CardView;
 
 interface SensorTypeInterface
 {

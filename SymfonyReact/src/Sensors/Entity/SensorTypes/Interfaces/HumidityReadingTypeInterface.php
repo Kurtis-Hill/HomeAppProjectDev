@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 
-interface HumiditySensorTypeInterface
+interface HumidityReadingTypeInterface
 {
     public function getHumidObject(): Humidity;
 

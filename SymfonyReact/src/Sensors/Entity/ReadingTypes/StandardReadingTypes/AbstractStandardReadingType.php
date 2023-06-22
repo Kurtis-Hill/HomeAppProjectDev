@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Sensors\Entity\ReadingTypes;
+namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-abstract class AbstractReadingType
+abstract class AbstractStandardReadingType
 {
     protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
 

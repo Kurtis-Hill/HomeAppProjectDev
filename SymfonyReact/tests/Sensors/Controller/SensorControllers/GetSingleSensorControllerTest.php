@@ -10,16 +10,15 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\GetSingleSensorsController;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -199,7 +198,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var GenericSensorTypeRepositoryInterface $sensorTypeRepository */
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
 
-        /** @var SensorTypeInterface[] $sensorTypes */
+        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface[] $sensorTypes */
         $sensorTypes = $sensorTypeRepository->findAll();
 
         $sensorType = $sensorTypes[0];
@@ -521,7 +520,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ) {
             $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
             $sensorReadingTypes = $sensorData['sensorReadingTypes'];
-            /** @var Temperature $temperature */
+            /** @var \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature $temperature */
             $temperature = $temperatureRepository->find($sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
             self::assertEquals($temperature->getSensorID(), $sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
             self::assertEquals($temperature->getCurrentReading(), $sensorReadingTypes[Temperature::READING_TYPE]['currentReading']);
@@ -545,7 +544,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         if ($sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME) {
             $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-            /** @var Latitude $latitude */
+            /** @var \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude $latitude */
             $latitude = $latitudeRepository->find($sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
             self::assertEquals($latitude->getSensorID(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
             self::assertEquals($latitude->getCurrentReading(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['currentReading']);
@@ -556,7 +555,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         if ($sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME) {
             $analogRepository = $this->entityManager->getRepository(Analog::class);
-            /** @var Analog $analog */
+            /** @var \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog $analog */
             $analog = $analogRepository->find($sensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);
             self::assertEquals($analog->getSensorID(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);
             self::assertEquals($analog->getCurrentReading(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['currentReading']);

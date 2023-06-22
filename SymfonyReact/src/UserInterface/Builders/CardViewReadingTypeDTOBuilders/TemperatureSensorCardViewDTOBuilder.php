@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders;
 
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 
 class TemperatureSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBuilder

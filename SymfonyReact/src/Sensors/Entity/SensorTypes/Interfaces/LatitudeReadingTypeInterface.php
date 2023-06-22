@@ -3,9 +3,9 @@
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
 
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 
-interface LatitudeSensorTypeInterface
+interface LatitudeReadingTypeInterface
 {
     public function getLatitudeObject(): Latitude;
 

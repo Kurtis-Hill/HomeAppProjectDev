@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
@@ -11,7 +11,7 @@ class HumidityReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implem
 {
     public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float $currentReading = 10): void
     {
-        if (!$sensorTypeObject instanceof HumiditySensorTypeInterface) {
+        if (!$sensorTypeObject instanceof HumidityReadingTypeInterface) {
             throw new SensorTypeException(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
             );

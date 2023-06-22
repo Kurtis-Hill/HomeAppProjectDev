@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use Symfony\Component\Validator\Constraint;
 

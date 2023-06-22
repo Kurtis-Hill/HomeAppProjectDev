@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Entity\OutOfRangeRecordings;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
 use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsLatitudeRepository;
 use DateTimeImmutable;

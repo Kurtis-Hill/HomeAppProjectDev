@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Sensors\Entity\ReadingTypes;
+namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use App\Sensors\Repository\ReadingType\ORM\AnalogRepository;
@@ -19,7 +18,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
     ORM\Table(name: "analog"),
     ORM\UniqueConstraint(name: "analog_ibfk_3", columns: ["sensorID"]),
 ]
-class Analog extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Analog extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'analog';
 
@@ -102,7 +101,7 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $reading): void
+    public function setCurrentReading(int|float|string|bool $reading): void
     {
         $this->analogReading = $reading;
     }
