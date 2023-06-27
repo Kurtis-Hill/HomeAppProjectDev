@@ -9,7 +9,7 @@ use App\Sensors\Exceptions\SensorTypeException;
 
 class HumidityReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
-    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float $currentReading = 10): void
+    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float|bool $currentReading = 10): void
     {
         if (!$sensorTypeObject instanceof HumidityReadingTypeInterface) {
             throw new SensorTypeException(

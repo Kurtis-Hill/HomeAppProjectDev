@@ -3,7 +3,7 @@
 namespace App\ORM\DataFixtures\ESP8266;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
@@ -17,10 +17,11 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
@@ -395,7 +396,11 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             }
         }
 
-        $manager->flush();
+        try {
+            $manager->flush();
+        } catch (Exception $e) {
+            dd($e);
+        }
     }
 
     /**
@@ -408,13 +413,14 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         ObjectManager $manager
     ): void {
         $newObject = new $readingTypeObjects();
-        if ($newObject instanceof StandardReadingSensorInterface) {
-//            dd($newObject);
-            $newObject->setSensor($newSensor);
-            $newObject->setUpdatedAt();
 
+        if ($newObject instanceof AllSensorReadingTypeInterface) {
+            $newObject->setSensor($newSensor);
+            $newSensorType->setSensor($newSensor);
+            $newObject->setUpdatedAt();
+        }
+        if ($newObject instanceof StandardReadingSensorInterface) {
             if ($newSensorType instanceof StandardSensorTypeInterface) {
-                $newSensorType->setSensor($newSensor);
                 if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
                     $newObject->setCurrentReading(10);
                     $newSensorType->setTemperature($newObject);
@@ -432,19 +438,16 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                     $newSensorType->setAnalogObject($newObject);
                 }
             }
-        }
-        elseif ($newObject instanceof BoolReadingTypeInterface) {
-            $newSensorType->setSensor($newSensor);
-
-            $newObject->setSensor($newSensor);
+        } elseif ($newObject instanceof BoolReadingSensorInterface) {
             $newObject->setCurrentReading(true);
             $newObject->setExpectedReading(true);
             $newObject->setCurrentReading(true);
             $newObject->setRequestedReading(true);
             $newObject->setCreatedAt(new DateTimeImmutable('now'));
             $newObject->setUpdatedAt(new DateTimeImmutable('now'));
-            if ($newSensorType instanceof MotionSensorReadingInterface) {
+            if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
                 $newSensorType->setMotion($newObject);
+                $manager->persist($newSensorType);
             }
             if ($newSensorType instanceof RelayReadingTypeInterface) {
                 $newSensorType->setRelay($newObject);

@@ -2,17 +2,15 @@
 
 namespace App\Devices\DTO\Response;
 
-use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Entity\Devices;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\StandardReadingTypeResponseInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
 use App\User\DTO\Response\RoomDTOs\RoomResponseDTO;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
-use Symfony\Component\Serializer\Annotation\Groups;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
 readonly class DeviceResponseDTO

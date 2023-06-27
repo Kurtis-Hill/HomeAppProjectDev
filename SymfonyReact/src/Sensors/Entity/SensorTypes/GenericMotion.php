@@ -4,7 +4,7 @@ namespace App\Sensors\Entity\SensorTypes;
 
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\GenericMotionRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 //    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
 //    ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
 ]
-class GenericMotion implements SensorTypeInterface, MotionSensorReadingInterface
+class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInterface
 {
     public const NAME = 'GenericMotion';
 
@@ -35,7 +35,7 @@ class GenericMotion implements SensorTypeInterface, MotionSensorReadingInterface
 
     #[
         ORM\ManyToOne(targetEntity: Motion::class),
-        ORM\JoinColumn(name: "motionID", referencedColumnName: "sensorID"),
+        ORM\JoinColumn(name: "motionID", referencedColumnName: "boolID"),
     ]
     private Motion $motion;
 

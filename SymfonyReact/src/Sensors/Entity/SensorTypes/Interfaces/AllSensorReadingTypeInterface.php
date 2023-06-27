@@ -22,4 +22,8 @@ interface AllSensorReadingTypeInterface
     public function getCurrentReading(): int|float|string|bool;
 
     public function setCurrentReading(int|float|string|bool $currentReading);
+
+    public static function getReadingTypeName(): string;
+
+    public function getReadingType(): string;
 }

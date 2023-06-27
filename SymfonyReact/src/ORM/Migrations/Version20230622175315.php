@@ -63,12 +63,12 @@ final class Version20230622175315 extends AbstractMigration
 
         $this->addSql(
             'CREATE TABLE genericrelay(
-                genericrrelayID INT AUTO_INCREMENT NOT NULL,
+                genericrelayID INT AUTO_INCREMENT NOT NULL,
                 relayID INT NOT NULL,
                 sensorID INT NOT NULL,
                 UNIQUE INDEX UNIQ_GENERIC_RELAY_SENSOR (sensorID),
                 UNIQUE INDEX UNIQ_GENERIC_RELAY (relayID),
-                PRIMARY KEY (genericrrelayID)
+                PRIMARY KEY (genericrelayID)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
         );
 

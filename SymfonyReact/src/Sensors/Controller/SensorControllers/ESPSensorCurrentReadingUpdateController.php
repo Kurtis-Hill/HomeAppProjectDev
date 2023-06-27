@@ -26,7 +26,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
-#[Route(CommonURL::DEVICE_HOMEAPP_API_URL, name: 'device')]
+#[Route(CommonURL::DEVICE_HOMEAPP_API_URL, name: 'sensor-current-reading-update')]
 class ESPSensorCurrentReadingUpdateController extends AbstractController
 {
     use HomeAppAPITrait;

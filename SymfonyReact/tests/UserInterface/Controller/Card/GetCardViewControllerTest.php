@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
+use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
@@ -86,7 +86,7 @@ class GetCardViewControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
@@ -191,7 +191,7 @@ class GetCardViewControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
@@ -306,7 +306,7 @@ class GetCardViewControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $title = $responseData['title'];
-        self::assertEquals(UpdateSensorBoundaryReadingsController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(UpdateSensorReadingTypeController::NOT_AUTHORIZED_TO_BE_HERE, $title);
 
         $errors = $responseData['errors'];
         self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errors);
@@ -328,7 +328,7 @@ class GetCardViewControllerTest extends WebTestCase
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 

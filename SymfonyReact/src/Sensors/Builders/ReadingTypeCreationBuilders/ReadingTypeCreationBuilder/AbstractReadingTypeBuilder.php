@@ -17,29 +17,4 @@ abstract class AbstractReadingTypeBuilder
     {
         $this->sensorReadingTypeRepositoryFactory = $readingTypeFactory;
     }
-
-    /**
-     * @throws SensorTypeException
-     */
-    public function buildAnalogSensor(AnalogReadingTypeInterface $analogSensorType, int|float $currentReading = 1000): void
-    {
-        if (!$analogSensorType instanceof SensorTypeInterface) {
-            throw new SensorTypeException(
-                SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
-            );
-        }
-        $analogSensor = new Analog();
-        $analogSensor->setCurrentReading($currentReading);
-        $analogSensor->setHighReading($analogSensorType->getMaxAnalog());
-        $analogSensor->setLowReading($analogSensorType->getMinAnalog());
-        $analogSensor->setUpdatedAt();
-        $analogSensor->setSensor($analogSensorType->getSensor());
-
-        $analogSensorType->setAnalogObject($analogSensor);
-    }
-
-    protected function setSensorObject(SensorTypeInterface $sensorType, Sensor $sensor): void
-    {
-        $sensorType->setSensor($sensor);
-    }
 }

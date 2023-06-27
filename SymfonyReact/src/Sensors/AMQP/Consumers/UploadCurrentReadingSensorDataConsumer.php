@@ -62,7 +62,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
             return true;
         }
         try {
-            $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
+            $device = $this->deviceRepository->find($sensorData->getDeviceId());
         } catch (NonUniqueResultException | ORMException $exception) {
             $this->logger->error('expection message: ' . $exception->getMessage());
 

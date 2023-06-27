@@ -4,7 +4,7 @@ namespace App\Sensors\Builders\SensorResponseDTOBuilders;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorReadingTypeDTOResponseBuilder;
+use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\SensorReadingTypeDTOResponseBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;

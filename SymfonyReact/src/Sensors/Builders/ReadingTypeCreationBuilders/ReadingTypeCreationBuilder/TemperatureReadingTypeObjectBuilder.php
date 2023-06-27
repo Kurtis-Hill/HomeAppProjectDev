@@ -14,7 +14,7 @@ class TemperatureReadingTypeObjectBuilder extends AbstractReadingTypeBuilder imp
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
-    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float $currentReading = 10): void
+    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float|bool $currentReading = 10): void
     {
         if (!$sensorTypeObject instanceof TemperatureReadingTypeInterface) {
             throw new SensorTypeException(

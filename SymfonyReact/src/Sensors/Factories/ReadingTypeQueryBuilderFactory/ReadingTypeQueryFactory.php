@@ -6,8 +6,12 @@ namespace App\Sensors\Factories\ReadingTypeQueryBuilderFactory;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\AnalogQueryTypeDTOBuilder;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\HumidityQueryTypeDTOBuilder;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\LatitudeQueryTypeDTOBuilder;
+use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\MotionQueryTypeDTOBuilder;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
+use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\RelayQueryTypeDTOBuilder;
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -24,16 +28,24 @@ class ReadingTypeQueryFactory
 
     private LatitudeQueryTypeDTOBuilder $latitudeQueryTypeDTOBuilder;
 
+    private MotionQueryTypeDTOBuilder $motionQueryTypeDTOBuilder;
+
+    private RelayQueryTypeDTOBuilder $relayQueryTypeDTOBuilder;
+
     public function __construct(
         TemperatureQueryTypeDTOBuilder $temperatureQueryTypeDTOBuilder,
         HumidityQueryTypeDTOBuilder $humidityQueryTypeDTOBuilder,
         LatitudeQueryTypeDTOBuilder $latitudeQueryTypeDTOBuilder,
         AnalogQueryTypeDTOBuilder $analogQueryTypeDTOBuilder,
+        MotionQueryTypeDTOBuilder $motionQueryTypeDTOBuilder,
+        RelayQueryTypeDTOBuilder $relayQueryTypeDTOBuilder,
     ) {
         $this->temperatureQueryTypeDTOBuilder = $temperatureQueryTypeDTOBuilder;
         $this->humidityQueryTypeDTOBuilder = $humidityQueryTypeDTOBuilder;
         $this->latitudeQueryTypeDTOBuilder = $latitudeQueryTypeDTOBuilder;
         $this->analogQueryTypeDTOBuilder = $analogQueryTypeDTOBuilder;
+        $this->motionQueryTypeDTOBuilder = $motionQueryTypeDTOBuilder;
+        $this->relayQueryTypeDTOBuilder = $relayQueryTypeDTOBuilder;
     }
 
     /**
@@ -46,6 +58,8 @@ class ReadingTypeQueryFactory
             Humidity::getReadingTypeName() => $this->humidityQueryTypeDTOBuilder,
             Latitude::getReadingTypeName() => $this->latitudeQueryTypeDTOBuilder,
             Analog::getReadingTypeName() => $this->analogQueryTypeDTOBuilder,
+            Motion::getReadingTypeName() => $this->motionQueryTypeDTOBuilder,
+            Relay::getReadingTypeName() => $this->relayQueryTypeDTOBuilder,
             default => throw new ReadingTypeBuilderFailureException('Unknown reading type'),
         };
     }

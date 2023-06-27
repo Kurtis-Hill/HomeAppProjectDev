@@ -38,10 +38,9 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
             $validationErrors = $this->validateSensorReadingTypeData($sensorTypeObject);
         } catch (SensorTypeException | SensorReadingTypeRepositoryFactoryException $e) {
             return [$e->getMessage()];
-        } catch (ORMException $e) {
+        } catch (ORMException) {
            return ['Failed to create sensor reading types'];
         }
-
         if (empty($validationErrors)) {
             try {
                 $this->persistSensorTypeObjects($sensorTypeObject);

@@ -16,5 +16,5 @@ interface ReadingTypeObjectBuilderInterface
      * @throws ORMException
      * @throws ORMInvalidArgumentException
      */
-    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float $currentReading = 10): void;
+    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float|bool $currentReading = 10): void;
 }

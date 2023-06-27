@@ -2,11 +2,11 @@
 
 namespace App\Sensors\Factories\SensorReadingType;
 
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\AnalogSensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\HumiditySensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\LatitudeSensorUpdateBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\TemperatureSensorUpdateBuilder;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\AnalogSensorUpdateBuilder;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\HumiditySensorUpdateBuilder;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\LatitudeSensorUpdateBuilder;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\TemperatureSensorUpdateBuilder;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;

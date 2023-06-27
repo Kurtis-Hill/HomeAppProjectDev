@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping\Entity;
     Entity(),
 //    ORM\Table(name: 'motion'),
 ]
-class Motion extends AbstractBoolReadingType implements AllSensorReadingTypeInterface //, AllSensorReadingTypeInterface
+class Motion extends AbstractBoolReadingSensor implements AllSensorReadingTypeInterface //, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'motion';
 
@@ -24,4 +24,13 @@ class Motion extends AbstractBoolReadingType implements AllSensorReadingTypeInte
         return $this->boolID = $id;
     }
 
+    public static function getReadingTypeName(): string
+    {
+        return self::READING_TYPE;
+    }
+
+    public function getReadingType(): string
+    {
+        return self::READING_TYPE;
+    }
 }

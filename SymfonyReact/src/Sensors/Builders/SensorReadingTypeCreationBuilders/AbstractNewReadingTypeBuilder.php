@@ -5,6 +5,8 @@ namespace App\Sensors\Builders\SensorReadingTypeCreationBuilders;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\AnalogReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\HumidityReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\LatitudeReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\MotionReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\RelayReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\TemperatureReadingTypeObjectBuilder;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
@@ -13,6 +15,8 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
@@ -28,16 +32,24 @@ abstract class AbstractNewReadingTypeBuilder
 
     private AnalogReadingTypeObjectBuilder $analogReadingTypeObjectBuilder;
 
+    private RelayReadingTypeObjectBuilder $relayReadingTypeObjectBuilder;
+
+    private MotionReadingTypeObjectBuilder $motionReadingTypeObjectBuilder;
+
     public function __construct(
         TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder,
         HumidityReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder,
         LatitudeReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder,
         AnalogReadingTypeObjectBuilder $analogReadingTypeObjectBuilder,
+        RelayReadingTypeObjectBuilder $relayReadingTypeObjectBuilder,
+        MotionReadingTypeObjectBuilder $motionReadingTypeObjectBuilder,
     ) {
         $this->temperatureReadingTypeObjectBuilder = $temperatureReadingTypeObjectBuilder;
         $this->humidityReadingTypeObjectBuilder = $humidityReadingTypeObjectBuilder;
         $this->latitudeReadingTypeObjectBuilder = $latitudeReadingTypeObjectBuilder;
         $this->analogReadingTypeObjectBuilder = $analogReadingTypeObjectBuilder;
+        $this->relayReadingTypeObjectBuilder = $relayReadingTypeObjectBuilder;
+        $this->motionReadingTypeObjectBuilder = $motionReadingTypeObjectBuilder;
     }
 
     /**
@@ -62,6 +74,14 @@ abstract class AbstractNewReadingTypeBuilder
 
         if ($sensorType instanceof AnalogReadingTypeInterface) {
             $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Analog::READING_TYPE] ?? 10);
+        }
+
+        if ($sensorType instanceof RelayReadingTypeInterface) {
+            $this->relayReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Relay::READING_TYPE] ?? 10);
+        }
+
+        if ($sensorType instanceof MotionSensorReadingTypeInterface) {
+            $this->motionReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Motion::READING_TYPE] ?? 10);
         }
     }
 }

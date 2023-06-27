@@ -8,6 +8,8 @@ use App\Devices\Entity\Devices;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\AddNewSensorController;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -17,7 +19,10 @@ use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Tests\Traits\TestLoginTrait;
@@ -91,6 +96,16 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensor' => Dallas::NAME,
             'sensorName' => 'dallasTest'
         ];
+
+        yield [
+            'sensor' => GenericMotion::NAME,
+            'sensorName' => 'genericMotionTest'
+        ];
+
+        yield [
+            'sensor' => GenericRelay::NAME,
+            'sensorName' => 'genericRelayTest'
+        ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
@@ -131,6 +146,24 @@ class AddNewSensorControllerTest extends WebTestCase
             'class' => Dallas::class,
             [
                 'temperature' => Temperature::class,
+            ]
+        ];
+
+        yield [
+            'sensor' => GenericMotion::NAME,
+            'sensorName' => 'genericMotionTest',
+            'class' => GenericMotion::class,
+            [
+                'motion' => Motion::class
+            ]
+        ];
+
+        yield [
+            'sensor' => GenericRelay::NAME,
+            'sensorName' => 'genericRelayTest',
+            'class' => GenericRelay::class,
+            [
+                'relay' => Relay::class
             ]
         ];
     }
@@ -294,7 +327,7 @@ class AddNewSensorControllerTest extends WebTestCase
     public function test_cannot_add_new_sensor_with_identical_name(string $sensorType): void
     {
         /** @var Devices $device */
-        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES['AdminUserOneDeviceAdminGroupOne']['referenceName']]);
+        $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]['referenceName']]);
         /** @var SensorType $sensorType */
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
         /** @var Sensor $sensor */
@@ -440,7 +473,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
@@ -528,13 +561,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
-            /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorType */
+            /** @var SensorTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
@@ -595,13 +628,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
-            /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface $sensorType */
+            /** @var AllSensorReadingTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }

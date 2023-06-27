@@ -22,6 +22,8 @@ class SensorType
 
     public const STANDARD_READING_SENSOR_TYPE = 'standardReading';
 
+    public const BOOL_READING_SENSOR_TYPE = 'boolReading';
+
     public const ALL_SENSOR_TYPES = [
         Bmp::NAME,
         Soil::NAME,

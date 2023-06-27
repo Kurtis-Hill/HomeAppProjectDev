@@ -60,7 +60,7 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             throw new SensorRequestException($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-        $deviceObject = $this->deviceRepository->findOneById($newSensorRequestDTO->getDeviceID());
+        $deviceObject = $this->deviceRepository->find($newSensorRequestDTO->getDeviceID());
         if (!$deviceObject instanceof Devices) {
             throw new DeviceNotFoundException(
                 sprintf(
@@ -70,7 +70,7 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             );
         }
 
-        $sensorTypeObject = $this->sensorTypeRepository->findOneById($newSensorRequestDTO->getSensorTypeID());
+        $sensorTypeObject = $this->sensorTypeRepository->find($newSensorRequestDTO->getSensorTypeID());
         if (!$sensorTypeObject instanceof SensorType) {
             throw new SensorTypeNotFoundException(
                 sprintf(

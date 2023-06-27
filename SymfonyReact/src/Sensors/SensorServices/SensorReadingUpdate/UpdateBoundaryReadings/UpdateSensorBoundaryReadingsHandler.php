@@ -4,7 +4,9 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Request\SensorUpdateDTO\BoolSensorUpdateBoundaryDataDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
@@ -49,6 +51,7 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
         if ($sensorReadingTypeObject === null) {
             throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND);
         }
+
         return $repository->getOneBySensorNameID($sensorID);
     }
 
@@ -67,6 +70,12 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
 
         if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
             $this->updateStandardSensorBoundaryReading(
+                $sensorReadingTypeObject,
+                $updateSensorBoundaryReadingsDTO
+            );
+        }
+        if ($sensorReadingTypeObject instanceof BoolReadingSensorInterface) {
+            $this->updateBoolSensorBoundaryReading(
                 $sensorReadingTypeObject,
                 $updateSensorBoundaryReadingsDTO
             );
@@ -98,6 +107,18 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
         }
         if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
             $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        }
+    }
+
+    private function updateBoolSensorBoundaryReading(
+        BoolReadingSensorInterface $boolReadingSensor,
+        BoolSensorUpdateBoundaryDataDTO $updateSensorBoundaryReadingsDTO,
+    ): void {
+        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
+            $boolReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        }
+        if ($updateSensorBoundaryReadingsDTO->getExpectedReading() !== null) {
+            $boolReadingSensor->setExpectedReading($updateSensorBoundaryReadingsDTO->getExpectedReading());
         }
     }
 

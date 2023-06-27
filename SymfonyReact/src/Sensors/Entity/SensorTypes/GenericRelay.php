@@ -24,7 +24,7 @@ class GenericRelay implements SensorTypeInterface, RelayReadingTypeInterface
     ];
 
     #[
-        ORM\Column(name: "genericRelayID", type: "integer", nullable: false),
+        ORM\Column(name: "genericrelayID", type: "integer", nullable: false),
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
     ]
@@ -32,7 +32,7 @@ class GenericRelay implements SensorTypeInterface, RelayReadingTypeInterface
 
     #[
         ORM\ManyToOne(targetEntity: Relay::class),
-        ORM\JoinColumn(name: "relayID", referencedColumnName: "sensorID"),
+        ORM\JoinColumn(name: "relayID", referencedColumnName: "boolID"),
     ]
     private Relay $relay;
 

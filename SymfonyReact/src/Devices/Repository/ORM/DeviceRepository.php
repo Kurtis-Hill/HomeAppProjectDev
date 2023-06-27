@@ -101,7 +101,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->setParameters(['groupID' => $groupIDs])
             ->setMaxResults($limit)
             ->setFirstResult($offset);
-//dd($limit, $offset);
+
         return $qb->getQuery()->getResult($hydration);
     }
 

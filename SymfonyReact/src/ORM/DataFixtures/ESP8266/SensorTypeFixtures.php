@@ -60,7 +60,7 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 
         $relaySensorType = new SensorType();
 
-        $relaySensorType->setSensorType(Relay::READING_TYPE);
+        $relaySensorType->setSensorType(GenericRelay::NAME);
         $relaySensorType->setDescription('Relay Sensor');
 
         $this->addReference(GenericRelay::NAME, $relaySensorType);
@@ -68,7 +68,7 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 
         $motionSensorType = new SensorType();
 
-        $motionSensorType->setSensorType(Motion::READING_TYPE);
+        $motionSensorType->setSensorType(GenericMotion::NAME);
         $motionSensorType->setDescription('Motion Sensor');
 
         $this->addReference(GenericMotion::NAME, $motionSensorType);

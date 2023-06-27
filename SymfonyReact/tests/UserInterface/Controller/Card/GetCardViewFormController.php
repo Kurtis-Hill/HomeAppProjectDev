@@ -2,10 +2,8 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
-use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Tests\Traits\TestLoginTrait;

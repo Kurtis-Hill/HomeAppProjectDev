@@ -9,7 +9,7 @@ use App\Sensors\Exceptions\SensorTypeException;
 
 class LatitudeReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
-    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, float|int $currentReading = 10): void
+    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, float|int|bool $currentReading = 10): void
     {
         if (!$sensorTypeObject instanceof LatitudeReadingTypeInterface) {
             throw new SensorTypeException(

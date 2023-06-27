@@ -5,7 +5,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
+use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -432,7 +432,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -464,7 +464,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -498,7 +498,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         //Dallas
@@ -521,7 +521,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -542,7 +542,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -563,7 +563,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         //Bmp
@@ -610,7 +610,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -653,7 +653,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -696,7 +696,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         // Soil
@@ -719,7 +719,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -740,7 +740,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -761,7 +761,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
     }
 

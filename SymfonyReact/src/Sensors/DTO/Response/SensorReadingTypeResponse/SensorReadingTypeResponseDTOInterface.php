@@ -4,5 +4,5 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse;
 
 interface SensorReadingTypeResponseDTOInterface
 {
-    public function getCurrentReading(): float|int|string;
+    public function getCurrentReading(): float|int|string|bool;
 }

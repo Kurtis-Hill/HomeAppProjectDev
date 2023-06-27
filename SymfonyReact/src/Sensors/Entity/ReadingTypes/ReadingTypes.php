@@ -51,6 +51,8 @@ class ReadingTypes
         Humidity::READING_TYPE,
         Analog::READING_TYPE,
         Latitude::READING_TYPE,
+        Relay::READING_TYPE,
+        Motion::READING_TYPE,
     ];
 
     #[
