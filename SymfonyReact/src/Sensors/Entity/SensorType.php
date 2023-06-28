@@ -3,6 +3,8 @@
 namespace App\Sensors\Entity;
 
 use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -29,6 +31,8 @@ class SensorType
         Soil::NAME,
         Dallas::NAME,
         Dht::NAME,
+        Motion::READING_TYPE,
+        Relay::READING_TYPE
     ];
 
     private const SENSOR_TYPE_DESCRIPTION_MIN_LENGTH = 5;

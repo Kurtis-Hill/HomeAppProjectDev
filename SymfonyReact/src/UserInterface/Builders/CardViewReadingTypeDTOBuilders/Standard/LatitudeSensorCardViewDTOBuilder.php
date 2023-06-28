@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders;
+namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\Standard;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -78,6 +80,13 @@ final class Version20230622175315 extends AbstractMigration
                 ADD CONSTRAINT FK_GENERIC_RELAY_RELAY FOREIGN KEY (relayID) REFERENCES boolsensor (boolID) ON DELETE CASCADE'
         );
 
+        $this->addSql("
+            INSERT INTO `sensortype` 
+                (`sensorType`, `description`)   
+            VALUES
+                ('" . GenericMotion::NAME . "', 'Generic Motion Sensor'),
+                ('" . GenericRelay::NAME . "', 'Generic Relay Sensor')
+        ");
 //        $this->addSql(
 //            'CREATE TABLE relay (
 //                relayID INT AUTO_INCREMENT NOT NULL,
@@ -110,6 +119,9 @@ final class Version20230622175315 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql("SET FOREIGN_KEY_CHECKS=0");
+        $this->addSql(
+            "DELETE FROM `sensortype` WHERE sensorType = '" . GenericMotion::NAME . "' OR sensorType = '" . GenericRelay::NAME . "'"
+        );
         $this->addSql(
             "DROP TABLE boolsensor"
         );

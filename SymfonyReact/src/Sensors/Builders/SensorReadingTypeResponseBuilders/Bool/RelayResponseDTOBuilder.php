@@ -21,13 +21,13 @@ class RelayResponseDTOBuilder implements SensorResponseDTOBuilderInterface
         }
 
         return new RelayResponseDTO(
-            SensorResponseDTOBuilder::buildSensorResponseDTO($relay->getSensor()),
-            $relay->getBoolID(),
-            $relay->getCurrentReading(),
-            $relay->getRequestedReading(),
-            $relay->getExpectedReading(),
-            $relay->getConstRecord(),
-            $relay->getUpdatedAt()->format('d/m/y H:i:s'),
+            sensorResponseDTO: SensorResponseDTOBuilder::buildSensorResponseDTO($relay->getSensor()),
+            boolID: $relay->getBoolID(),
+            currentReading: $relay->getCurrentReading(),
+            requestedReading: $relay->getRequestedReading(),
+            constRecord: $relay->getConstRecord(),
+            updatedAt: $relay->getUpdatedAt()->format('d/m/y H:i:s'),
+            expectedReading: $relay->getExpectedReading(),
         );
     }
 

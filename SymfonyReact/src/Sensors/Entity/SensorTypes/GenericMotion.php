@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 //    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
 //    ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
 ]
-class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInterface
+class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInterface, BoolSensorTypeInterface
 {
     public const NAME = 'GenericMotion';
 

@@ -3,6 +3,9 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
+use App\Sensors\DTO\Internal\BoundaryReadings\UpdateBoolReadingTypeBoundaryReadingsDTO;
+use App\Sensors\DTO\Internal\BoundaryReadings\UpdateBoundaryReadingDTOInterface;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\BoolSensorUpdateBoundaryDataDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
@@ -12,6 +15,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
+use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Factories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -55,6 +59,7 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
         return $repository->getOneBySensorNameID($sensorID);
     }
 
+
     #[ArrayShape(["errors"])]
     public function processBoundaryDataDTO(
         SensorUpdateBoundaryDataDTOInterface $updateBoundaryDataDTO,
@@ -63,6 +68,9 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
     ): array {
         $readingTypeUpdateBuilder = $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($updateBoundaryDataDTO->getReadingType());
 
+        if (!$readingTypeUpdateBuilder instanceof ReadingTypeUpdateBoundaryReadingBuilderInterface) {
+            throw new SensorTypeNotFoundException(sprintf(SensorTypeNotFoundException::SENSOR_TYPE_NOT_RECOGNISED, $updateBoundaryDataDTO->getReadingType()));
+        }
         $updateSensorBoundaryReadingsDTO = $readingTypeUpdateBuilder->buildUpdateSensorBoundaryReadingsDTO(
             $updateBoundaryDataDTO,
             $sensorReadingTypeObject
@@ -105,20 +113,20 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
         if ($updateSensorBoundaryReadingsDTO->getLowReading() !== null) {
             $standardReadingSensor->setLowReading($updateSensorBoundaryReadingsDTO->getLowReading());
         }
-        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
-            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        if ($updateSensorBoundaryReadingsDTO->getNewConstRecord() !== null) {
+            $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getNewConstRecord());
         }
     }
 
     private function updateBoolSensorBoundaryReading(
         BoolReadingSensorInterface $boolReadingSensor,
-        BoolSensorUpdateBoundaryDataDTO $updateSensorBoundaryReadingsDTO,
+        UpdateBoolReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO,
     ): void {
-        if ($updateSensorBoundaryReadingsDTO->getConstRecord() !== null) {
-            $boolReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getConstRecord());
+        if ($updateSensorBoundaryReadingsDTO->getNewExpectedReading() !== null) {
+            $boolReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getNewConstRecord());
         }
-        if ($updateSensorBoundaryReadingsDTO->getExpectedReading() !== null) {
-            $boolReadingSensor->setExpectedReading($updateSensorBoundaryReadingsDTO->getExpectedReading());
+        if ($updateSensorBoundaryReadingsDTO->getNewConstRecord() !== null) {
+            $boolReadingSensor->setExpectedReading($updateSensorBoundaryReadingsDTO->getNewExpectedReading());
         }
     }
 
@@ -127,11 +135,15 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
      */
     private function resetEntityBackToOriginalState(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-        UpdateStandardReadingTypeBoundaryReadingsDTO $updateSensorBoundaryReadingsDTO
+        UpdateBoundaryReadingDTOInterface $updateSensorBoundaryReadingsDTO
     ): void {
-        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface && $updateSensorBoundaryReadingsDTO instanceof UpdateStandardReadingTypeBoundaryReadingsDTO) {
             $sensorReadingTypeObject->setHighReading($updateSensorBoundaryReadingsDTO->getCurrentHighReading());
             $sensorReadingTypeObject->setLowReading($updateSensorBoundaryReadingsDTO->getCurrentLowReading());
+            $sensorReadingTypeObject->setConstRecord($updateSensorBoundaryReadingsDTO->getCurrentConstRecord());
+        } elseif ($sensorReadingTypeObject instanceof BoolReadingSensorInterface && $updateSensorBoundaryReadingsDTO instanceof UpdateBoolReadingTypeBoundaryReadingsDTO) {
+            $sensorReadingTypeObject->setExpectedReading($updateSensorBoundaryReadingsDTO->getCurrentExpectedReading());
+            $sensorReadingTypeObject->setConstRecord($updateSensorBoundaryReadingsDTO->getCurrentConstRecord());
         } else {
             throw new ReadingTypeNotSupportedException(
                 sprintf(

@@ -14,6 +14,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\UserInterface\DTO\Response\CardForms\StandardSensorTypeBoundaryViewFormDTO;
+use App\UserInterface\DTO\Response\CardViewReadingDTO\CardViewReadingResponseDTOInterface;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -22,7 +23,7 @@ abstract class AbstractCardDTOBuilder
     /**
      * @throws SensorTypeNotFoundException
      */
-    #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
+    #[ArrayShape([CardViewReadingResponseDTOInterface::class])]
     public function formatSensorTypeObjectsByReadingType(SensorTypeInterface $cardDTOData): array
     {
         if ($cardDTOData instanceof TemperatureReadingTypeInterface) {

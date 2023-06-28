@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType;
+namespace App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse;
 
 interface BoundaryReadingTypeResponseInterface
 {

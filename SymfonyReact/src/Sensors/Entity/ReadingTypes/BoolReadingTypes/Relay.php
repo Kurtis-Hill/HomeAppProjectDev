@@ -17,9 +17,9 @@ class Relay extends AbstractBoolReadingSensor implements AllSensorReadingTypeInt
         return $this->getSensor()->getSensorID();
     }
 
-    public function setSensorID(int $id)
+    public function setSensorID(int $id): void
     {
-        return $this->boolID = $id;
+        $this->boolID = $id;
     }
 
     public static function getReadingTypeName(): string

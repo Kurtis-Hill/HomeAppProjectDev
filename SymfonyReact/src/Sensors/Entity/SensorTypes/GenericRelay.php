@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Entity(repositoryClass: GenericRelayRepository::class),
     ORM\Table(name: "genericrelay"),
 ]
-class GenericRelay implements SensorTypeInterface, RelayReadingTypeInterface
+class GenericRelay implements SensorTypeInterface, RelayReadingTypeInterface, BoolSensorTypeInterface
 {
     public const NAME = 'GenericRelay';
 

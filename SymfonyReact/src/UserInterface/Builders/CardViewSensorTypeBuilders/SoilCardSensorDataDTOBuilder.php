@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\AnalogSensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\Standard\AnalogSensorCardViewDTOBuilder;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
 

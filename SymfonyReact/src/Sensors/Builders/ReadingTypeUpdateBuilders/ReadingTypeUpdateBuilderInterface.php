@@ -13,14 +13,6 @@ use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 interface ReadingTypeUpdateBuilderInterface
 {
     /**
-     * @throws ReadingTypeNotExpectedException
-     */
-    public function buildUpdateSensorBoundaryReadingsDTO(
-        SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO,
-        AllSensorReadingTypeInterface $sensorReadingTypeObject
-    ): UpdateStandardReadingTypeBoundaryReadingsDTO;
-
-    /**
      * @throws ReadingTypeObjectBuilderException
      * @throws ReadingTypeNotExpectedException
      */
@@ -28,6 +20,4 @@ interface ReadingTypeUpdateBuilderInterface
         AllSensorReadingTypeInterface $allSensorReadingType,
         AbstractCurrentReadingUpdateRequestDTO $sensorData
     ): ReadingTypeUpdateCurrentReadingDTO;
-
-    public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading): AbstractCurrentReadingUpdateRequestDTO;
 }

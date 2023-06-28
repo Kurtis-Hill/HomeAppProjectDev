@@ -16,7 +16,7 @@ class BoolSensorUpdateBoundaryDataDTO implements SensorUpdateBoundaryDataDTOInte
     private mixed $readingType;
 
     #[
-        Assert\Type(type: ['integer', 'null'], message: 'expectedReading must be a {{ type }} you have provided {{ value }}'),
+        Assert\Type(type: ['bool', 'null'], message: 'expectedReading must be a {{ type }} you have provided {{ value }}'),
     ]
     private mixed $expectedReading;
 

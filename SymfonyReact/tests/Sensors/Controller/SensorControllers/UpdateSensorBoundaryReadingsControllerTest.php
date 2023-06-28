@@ -6,6 +6,9 @@ use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -13,12 +16,17 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorIn
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\BoolSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
@@ -138,6 +146,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
         if ($sensorTypeAfterUpdate instanceof LatitudeReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
+        }
+        if ($sensorTypeAfterUpdate instanceof MotionSensorReadingTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getMotion(), Motion::READING_TYPE);
+        }
+        if ($sensorTypeAfterUpdate instanceof RelayReadingTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getRelay(), Relay::READING_TYPE);
         }
     }
 
@@ -332,11 +346,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var StandardReadingSensorInterface $sensorReadingTypeObject */
         $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
-            $sensorData = [
-                'sensorData' => $sensorReadingsToUpdate,
-            ];
-        }
+        $sensorData = [
+            'sensorData' => $sensorReadingsToUpdate,
+        ];
         $jsonData = json_encode($sensorData);
 
         $this->client->request(
@@ -347,7 +359,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData,
         );
-
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,
@@ -370,6 +381,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 self::assertEquals($expectedDataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
                 self::assertEquals($expectedDataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
             }
+            if ($sensorReadingTypeObject instanceof BoolSensorTypeInterface) {
+                self::assertEquals($expectedDataPayloadMessage[$count]['expectedReading'], $dataPayload['expectedReading']);
+
+            }
             ++$count;
         }
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
@@ -379,11 +394,20 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $readingUpdates = [];
         foreach ($sensorReadingsToUpdate as $sensorReading) {
-            $readingUpdates[$sensorReading['readingType']] = [
-                'highReading' => $sensorReading['highReading'] ?? null,
-                'lowReading' => $sensorReading['lowReading'] ?? null,
-                'outOfBounds' => $sensorReading['outOfBounds'],
-            ];
+            if ($sensorReadingTypeAfterUpdate instanceof BoolSensorTypeInterface) {
+                $readingUpdates[$sensorReading['readingType']] = [
+                    'expectedReading' => $sensorReading['expectedReading'],
+                    'constRecord' => $sensorReading['constRecord'],
+                ];
+
+            }
+            if ($sensorReadingTypeAfterUpdate instanceof StandardSensorTypeInterface) {
+                $readingUpdates[$sensorReading['readingType']] = [
+                    'highReading' => $sensorReading['highReading'] ?? null,
+                    'lowReading' => $sensorReading['lowReading'] ?? null,
+//                    'constRecord' => $sensorReading['constRecord'],
+                ];
+            }
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureReadingTypeInterface) {
@@ -397,6 +421,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
         if ($sensorReadingTypeAfterUpdate instanceof LatitudeReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof MotionSensorReadingTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getMotion(), Motion::READING_TYPE);
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof RelayReadingTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getRelay(), Relay::READING_TYPE);
         }
     }
 
@@ -432,7 +462,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -464,7 +494,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -498,7 +528,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         //Dallas
@@ -521,7 +551,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -563,7 +593,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         //Bmp
@@ -719,7 +749,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -740,7 +770,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => \App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -763,6 +793,127 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
         ];
+
+        yield [
+            'sensorType' => GenericMotion::class,
+            'tableId' => 'genericMotionID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Motion::READING_TYPE,
+                    'expectedReading' => true,
+                    'constRecord' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Motion::READING_TYPE,
+                    "expectedReading" => true,
+                    "constRecord" => false,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+        ];
+
+        yield [
+            'sensorType' => GenericMotion::class,
+            'tableId' => 'genericMotionID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Motion::READING_TYPE,
+                    'expectedReading' => false,
+                    'constRecord' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Motion::READING_TYPE,
+                    "expectedReading" => false,
+                    "constRecord" => false,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+        ];
+
+        yield [
+            'sensorType' => GenericMotion::class,
+            'tableId' => 'genericMotionID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Motion::READING_TYPE,
+                    'expectedReading' => true,
+                    'constRecord' => true,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Motion::READING_TYPE,
+                    "expectedReading" => true,
+                    "constRecord" => true,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+        ];
+
+        // Generic Relay
+        yield [
+            'sensorType' => GenericRelay::class,
+            'tableId' => 'genericRelayID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Relay::READING_TYPE,
+                    'expectedReading' => true,
+                    'constRecord' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Relay::READING_TYPE,
+                    "expectedReading" => true,
+                    "constRecord" => false,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+        ];
+
+        yield [
+            'sensorType' => GenericRelay::class,
+            'tableId' => 'genericRelayID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Relay::READING_TYPE,
+                    'expectedReading' => false,
+                    'constRecord' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Relay::READING_TYPE,
+                    "expectedReading" => false,
+                    "constRecord" => false,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+        ];
+
+        yield [
+            'sensorType' => GenericRelay::class,
+            'tableId' => 'genericRelayID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Relay::READING_TYPE,
+                    'expectedReading' => true,
+                    'constRecord' => true,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Relay::READING_TYPE,
+                    "expectedReading" => true,
+                    "constRecord" => true,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+        ];
     }
 
     /**
@@ -777,13 +928,11 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface $sensorTypeObject */
+        /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
-            $sensorData = [
-                'sensorData' => $sensorReadingsToUpdate,
-            ];
-        }
+        $sensorData = [
+            'sensorData' => $sensorReadingsToUpdate,
+        ];
         $jsonData = json_encode($sensorData);
 
         $this->client->request(
@@ -813,13 +962,24 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
 
-        $readingUpdates = [];
-        foreach ($sensorReadingsToUpdate as $sensorReading) {
-            $readingUpdates[$sensorReading['readingType']] = [
-                'highReading' => $sensorReading['highReading'] ?? null,
-                'lowReading' => $sensorReading['lowReading'] ?? null,
-                'outOfBounds' => $sensorReading['outOfBounds'],
-            ];
+        if (new $sensorType instanceof BoolSensorTypeInterface) {
+            $readingUpdates = [];
+            foreach ($sensorReadingsToUpdate as $sensorReading) {
+                $readingUpdates[$sensorReading['readingType']] = [
+                    'expectedReading' => $sensorReading['expectedReading'],
+                    'constRecord' => $sensorReading['constRecord'],
+                ];
+            }
+        }
+        if (new $sensorType instanceof StandardSensorTypeInterface) {
+            $readingUpdates = [];
+            foreach ($sensorReadingsToUpdate as $sensorReading) {
+                $readingUpdates[$sensorReading['readingType']] = [
+                    'highReading' => $sensorReading['highReading'] ?? null,
+                    'lowReading' => $sensorReading['lowReading'] ?? null,
+                    'outOfBounds' => $sensorReading['outOfBounds'],
+                ];
+            }
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureReadingTypeInterface) {
@@ -833,6 +993,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
         if ($sensorReadingTypeAfterUpdate instanceof LatitudeReadingTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof MotionSensorReadingTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getMotion(), Motion::READING_TYPE);
+        }
+        if ($sensorReadingTypeAfterUpdate instanceof RelayReadingTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getRelay(), Relay::READING_TYPE);
         }
     }
 
@@ -942,6 +1108,50 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
         ];
+
+        // Generic Motion
+
+        yield [
+            'sensorType' => GenericMotion::class,
+            'tableId' => 'genericMotionID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Motion::READING_TYPE,
+                    'expectedReading' => 4,
+                    'constRecord' => 4,
+                ],
+            ],
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                [
+                    'expectedReading must be a bool|null you have provided 4',
+                    'constRecord must be a bool|null you have provided 4',
+                ]
+            ],
+            'expectedTitle' => 'All sensor boundary update requests failed',
+        ];
+
+        // Generic Relay
+
+        yield [
+            'sensorType' => GenericRelay::class,
+            'tableId' => 'genericRelayID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Relay::READING_TYPE,
+                    'expectedReading' => 4,
+                    'constRecord' => 4,
+                ],
+            ],
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                [
+                    'expectedReading must be a bool|null you have provided 4',
+                    'constRecord must be a bool|null you have provided 4',
+                ]
+            ],
+            'expectedTitle' => 'All sensor boundary update requests failed',
+        ];
     }
 
     public function test_sending_malformed_request(): void
@@ -979,11 +1189,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
 
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
-            $sensorData = [
-                $sensorDataToSend
-            ];
-        }
+        $sensorData = [
+            $sensorDataToSend
+        ];
         $jsonData = json_encode($sensorData);
 
         $this->client->request(
@@ -1016,6 +1224,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
                     'outOfBounds' => false,
+                ]
+            ]
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'readingType' => Motion::READING_TYPE,
+                    'expectedReading' => false,
+                    'constRecord' => false,
                 ]
             ]
         ];
@@ -1158,7 +1376,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     private function checkOutOfBoundResult(array $readingUpdates, AllSensorReadingTypeInterface $object, string $sensorReadingType): void
     {
         if ($object instanceof StandardReadingSensorInterface) {
-            if ($readingUpdates[$sensorReadingType]['outOfBounds'] === true) {
+            if (!empty($readingUpdates[$sensorReadingType]['outOfBounds']) && $readingUpdates[$sensorReadingType]['outOfBounds'] === true) {
                 if (!empty($readingUpdates[$sensorReadingType]['highReading'])) {
                     self::assertNotEquals(
                         $readingUpdates[$sensorReadingType]['highReading'],
@@ -1185,6 +1403,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     );
                 }
             }
+        }
+        if ($object instanceof BoolReadingSensorInterface) {
+            self::assertEquals(
+                $readingUpdates[$sensorReadingType]['expectedReading'],
+                $object->getExpectedReading()
+            );
+//            self::assertEquals(
+//                $readingUpdates[$sensorReadingType]['constRecord'],
+//                $object->getConstRecord()
+//            );
         }
     }
 

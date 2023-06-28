@@ -37,4 +37,6 @@ interface BoolReadingSensorInterface
 
     public function setUpdatedAt();
 
+    public function getConstRecord(): bool;
+
 }

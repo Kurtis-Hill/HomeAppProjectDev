@@ -708,6 +708,9 @@ class AddNewSensorControllerTest extends WebTestCase
             $jsonData,
         );
 
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $sensorName]);
+        self::assertNull($sensor);
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertStringContainsString('You Are Not Authorised To Be Here', $responseData['title']);

@@ -8,6 +8,7 @@ use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
+use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use Doctrine\ORM\NonUniqueResultException;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -16,6 +17,7 @@ interface UpdateSensorBoundaryReadingsHandlerInterface
     /**
      * @throws SensorReadingUpdateFactoryException
      * @throws ReadingTypeNotExpectedException
+     * @throws SensorTypeNotFoundException
      */
     #[ArrayShape(["errors"])]
     public function processBoundaryDataDTO(

@@ -2,13 +2,13 @@
 
 namespace App\Sensors\Builders\ReadingTypeResponseBuilders;
 
+use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\BoolReadingType\BoolBoundaryReadingsTypeResponseDTO;
 use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\BoundaryReadingTypeResponseInterface;
-use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType\StandardBoundaryReadingsTypeResponseDTO;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 
-class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderInterface
+class BoolReadingTypeResponseBuilder implements ReadingTypeResponseBuilderInterface
 {
     /**
      * @throws ReadingTypeNotSupportedException
@@ -16,7 +16,7 @@ class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderIn
     public function buildReadingTypeBoundaryReadingsResponseDTO(
         AllSensorReadingTypeInterface $readingTypeObject
     ): BoundaryReadingTypeResponseInterface {
-        if (!$readingTypeObject instanceof StandardReadingSensorInterface) {
+        if (!$readingTypeObject instanceof BoolReadingSensorInterface) {
             throw new ReadingTypeNotSupportedException(
                 sprintf(
                     ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_FOR_THIS_SENSOR_MESSAGE,
@@ -25,12 +25,11 @@ class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderIn
             );
         }
 
-        return new StandardBoundaryReadingsTypeResponseDTO(
+        return new BoolBoundaryReadingsTypeResponseDTO(
             $readingTypeObject->getSensorID(),
             $readingTypeObject->getReadingType(),
-            $readingTypeObject->getHighReading(),
-            $readingTypeObject->getLowReading(),
             $readingTypeObject->getConstRecord(),
+            $readingTypeObject->getExpectedReading(),
         );
     }
 }

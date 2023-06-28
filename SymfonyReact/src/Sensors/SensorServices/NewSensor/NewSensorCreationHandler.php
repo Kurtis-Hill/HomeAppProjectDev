@@ -118,7 +118,7 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             );
             $this->duplicateSensorOnSameDeviceCheck($sensor);
         } catch (DuplicateSensorException $e) {
-            $errors[] = $e->getMessage();
+            return [$e->getMessage()];
         }
 
         return $errors ?? [];

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders;
+namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\Standard;
 
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use DateTime;

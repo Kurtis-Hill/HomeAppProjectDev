@@ -2,7 +2,10 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard;
 
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBuilderInterface;
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
+use App\Sensors\DTO\Internal\BoundaryReadings\UpdateBoundaryReadingDTOInterface;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
@@ -14,12 +17,12 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 
-class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements ReadingTypeUpdateBuilderInterface
+class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements ReadingTypeUpdateBuilderInterface, ReadingTypeUpdateBoundaryReadingBuilderInterface, CurrentReadingUpdateRequestBuilderInterface
 {
     public function buildUpdateSensorBoundaryReadingsDTO(
         SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO,
         AllSensorReadingTypeInterface $sensorReadingTypeObject
-    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
+    ): UpdateBoundaryReadingDTOInterface {
         if (!$sensorReadingTypeObject instanceof Analog || !$updateDataSensorBoundaryDTO instanceof StandardSensorUpdateBoundaryDataDTO) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
@@ -30,7 +33,10 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($updateDataSensorBoundaryDTO, $sensorReadingTypeObject);
+        return $this->buildStandardSensorUpdateReadingDTO(
+            $updateDataSensorBoundaryDTO,
+            $sensorReadingTypeObject
+        );
     }
 
     public function buildReadingTypeCurrentReadingUpdateDTO(

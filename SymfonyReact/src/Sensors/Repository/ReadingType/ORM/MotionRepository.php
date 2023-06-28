@@ -3,8 +3,6 @@
 namespace App\Sensors\Repository\ReadingType\ORM;
 
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Repository\ReadingType\ReadingTypeRepositoryInterface;
@@ -37,13 +35,13 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
         $this->getEntityManager()->flush();
     }
 
-    public function findOneById(int $id): ?Relay
+    public function findOneById(int $id): ?Motion
     {
         return $this->find($id);
     }
 
 
-    public function getOneBySensorNameID(int $sensorNameID): ?Relay
+    public function getOneBySensorNameID(int $sensorNameID): ?Motion
     {
         $qb = $this->createQueryBuilder(Motion::READING_TYPE);
         $expr = $qb->expr();

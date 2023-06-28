@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Soil;
+use App\User\Entity\Group;
+use App\UserInterface\Entity\Card\CardState;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -407,20 +417,20 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO `readingtypes` 
                 (`readingTypeID`, `readingType`) 
             VALUES
-                (1, 'temperature'),
-                (2, 'humidity'),
-                (3, 'analog'),
-                (4, 'latitude');
+                (1, '". Temperature::READING_TYPE ."'),
+                (2, '" . Humidity::READING_TYPE . "'),
+                (3, '". Analog::READING_TYPE . "'),
+                (4, '". Latitude::READING_TYPE . "');
         ");
 
         $this->addSql("
             INSERT INTO `sensortype` 
                 (`sensorTypeID`, `sensorType`, `description`)   
             VALUES
-                (1, 'Dht', 'Temperature and Humidity Sensor'),
-                (2, 'Dallas', 'Water Proof Temperature Sensor'),
-                (3, 'Soil', 'Soil Moisture Sensor'),
-                (4, 'Bmp', 'Weather Station Sensor');
+                (1, '". Dht::NAME ."', 'Temperature and Humidity Sensor'),
+                (2, '" . Dallas::NAME . "', 'Water Proof Temperature Sensor'),
+                (3, '". Soil::NAME . "', 'Soil Moisture Sensor'),
+                (4, '" . Bmp::NAME . "', 'Weather Station Sensor');
         ");
 
         $this->addSql("
@@ -441,10 +451,10 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO `state` 
                 (`stateID`, `state`) 
             VALUES
-                (3, 'DEVICE_ONLY'),
-                (2, 'OFF'),
-                (1, 'ON'),
-                (4, 'ROOM_ONLY');
+                (3, '" . CardState::DEVICE_ONLY . "'),
+                (2, '" . CardState::OFF . "'),
+                (1, '" . CardState::ON . "'),
+                (4, '" . CardState::ROOM_ONLY . "');
         ");
 
         $this->addSql("
@@ -458,8 +468,8 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO groups
                 (`groupID`, `groupName`) 
             VALUES
-                (1, 'home-app-group'),
-                (2, 'admin-group');
+                (1, '" . Group::HOME_APP_GROUP_NAME . "'),
+                (2, '" . Group::ADMIN_GROUP_NAME ."');
         ");
 
         $this->addSql("

@@ -16,9 +16,9 @@ readonly class MotionResponseDTO extends AbstractBoolResponseDTO implements AllS
         int $boolID,
         bool $currentReading,
         bool $requestedReading,
-        bool $expectedReading,
         bool $constRecord,
         string $updatedAt,
+        ?bool $expectedReading = null,
     ) {
         $type = Motion::READING_TYPE;
 

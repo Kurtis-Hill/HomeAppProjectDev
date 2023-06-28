@@ -16,9 +16,9 @@ readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSe
         int $boolID,
         bool $currentReading,
         bool $requestedReading,
-        bool $expectedReading,
         bool $constRecord,
         string $updatedAt,
+        ?bool $expectedReading = null,
     ) {
         $type = Relay::READING_TYPE;
 
@@ -27,10 +27,10 @@ readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSe
             boolID: $boolID,
             currentReading: $currentReading,
             requestedReading: $requestedReading,
-            expectedReading: $expectedReading,
             constRecord: $constRecord,
             updatedAt: $updatedAt,
-            readingType: $type
+            readingType: $type,
+            expectedReading: $expectedReading
         );
     }
 }

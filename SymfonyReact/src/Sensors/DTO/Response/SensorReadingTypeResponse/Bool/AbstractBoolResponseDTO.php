@@ -16,10 +16,10 @@ readonly abstract class AbstractBoolResponseDTO
         protected int $boolID,
         protected bool $currentReading,
         protected bool $requestedReading,
-        protected bool $expectedReading,
         protected bool $constRecord,
         protected string $updatedAt,
         protected string $readingType,
+        protected ?bool $expectedReading = null,
     ) {
     }
 
@@ -73,7 +73,7 @@ readonly abstract class AbstractBoolResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getExpectedReading(): bool
+    public function getExpectedReading(): ?bool
     {
         return $this->expectedReading;
     }
