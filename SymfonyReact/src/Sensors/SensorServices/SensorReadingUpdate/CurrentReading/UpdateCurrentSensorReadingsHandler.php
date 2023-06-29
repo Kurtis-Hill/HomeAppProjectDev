@@ -74,7 +74,6 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
             null,
             $sensorReadingTypeQueryDTOs,
         );
-
         if (empty($sensorReadingObjects)) {
             throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION);
         }
@@ -98,7 +97,6 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                         $sensorReadingObject,
                         $currentReadingDTO,
                     );
-
                     $updateReadingTypeCurrentReadingDTO->getSensorReadingObject()->setCurrentReading(
                         $updateReadingTypeCurrentReadingDTO->getNewCurrentReading()
                     );

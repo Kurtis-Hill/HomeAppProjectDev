@@ -6,7 +6,6 @@ use App\Sensors\Builders\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBu
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateBoundaryReadingDTOInterface;
-use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
@@ -61,7 +60,7 @@ class AnalogSensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implem
             );
         }
 
-        return $this->buildStandardSensorUpdateCurrentReadingDTO(
+        return $this->buildSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

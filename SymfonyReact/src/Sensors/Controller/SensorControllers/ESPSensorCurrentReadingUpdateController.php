@@ -91,7 +91,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             }
 
             $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
-
+//dd($readingTypeCurrentReadingDTOs);
             $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
                 $sensorDataCurrentReadingUpdateRequestDTO->getSensorType(),
                 $sensorDataCurrentReadingUpdateRequestDTO->getSensorName(),
@@ -112,6 +112,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             isset($sensorDataCurrentReadingUpdateRequestDTO)
             && empty($currentReadingSensorDataRequest->getErrors())
             && empty($currentReadingSensorDataRequest->getValidationErrors())
+            && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() > 0
             && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())
         ) {
             try {
@@ -120,7 +121,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
-
+//dd($normalizedResponse);
             return $this->sendSuccessfulJsonResponse($normalizedResponse, 'All sensor readings handled successfully');
         }
 

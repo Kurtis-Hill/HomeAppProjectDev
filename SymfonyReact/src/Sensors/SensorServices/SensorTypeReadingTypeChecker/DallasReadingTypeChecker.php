@@ -8,6 +8,6 @@ class DallasReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker impl
 {
     public function checkReadingTypeIsValid(string $readingType): bool
     {
-        return $this->standardCheckReadingTypeIsValid($readingType, Dallas::getAllowedReadingTypes());
+        return $this->checkAllReadingTypeIsValid($readingType, Dallas::getAllowedReadingTypes());
     }
 }

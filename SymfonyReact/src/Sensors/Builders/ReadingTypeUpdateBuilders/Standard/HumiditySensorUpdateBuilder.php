@@ -60,7 +60,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             );
         }
 
-        return $this->buildStandardSensorUpdateCurrentReadingDTO(
+        return $this->buildSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

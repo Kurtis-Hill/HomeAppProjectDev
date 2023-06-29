@@ -307,6 +307,10 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserOneDeviceRegularGroupTwoSoil',
         'AdminUserOneDeviceAdminGroupOneBmp',
         'AdminUserOneDeviceRegularGroupTwoBmp',
+        'AdminUserOneDeviceAdminGroupOneRelay',
+        'AdminUserOneDeviceRegularGroupTwoRelay',
+        'AdminUserOneDeviceAdminGroupOneMotion',
+        'AdminUserOneDeviceRegularGroupTwoMotion',
     ];
 
     public const ADMIN_USER_TWO_OWNED_SENSORS = [
@@ -314,6 +318,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserTwoDeviceAdminGroupTwoDallas',
         'AdminUserTwoDeviceAdminGroupTwoSoil',
         'AdminUserTwoDeviceAdminGroupTwoBmp',
+        'AdminUserTwoDeviceAdminGroupTwoRelay',
+        'AdminUserTwoDeviceAdminGroupTwoMotion',
     ];
 
     public const REGULAR_USER_ONE_OWNED_SENSORS = [
@@ -321,6 +327,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserOneDeviceRegularGroupOneDallas',
         'RegularUserOneDeviceRegularGroupOneSoil',
         'RegularUserOneDeviceRegularGroupOneBmp',
+        'RegularUserOneDeviceRegularGroupOneRelay',
+        'RegularUserOneDeviceRegularGroupOneMotion',
     ];
 
     public const REGULAR_USER_TWO_OWNED_SENSORS = [
@@ -332,6 +340,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserTwoDeviceAdminGroupOneDallas',
         'RegularUserTwoDeviceAdminGroupOneSoil',
         'RegularUserTwoDeviceAdminGroupOneBmp',
+        'RegularUserTwoDeviceRegularGroupTwoRelay',
+        'RegularUserTwoDeviceRegularGroupTwoMotion',
     ];
 
     public const GROUP_ONE_SENSORS = [
@@ -343,6 +353,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserTwoDeviceAdminGroupOneDallas',
         'RegularUserTwoDeviceAdminGroupOneSoil',
         'RegularUserTwoDeviceAdminGroupOneBmp',
+        'AdminUserOneDeviceAdminGroupOneRelay',
+        'RegularUserTwoDeviceAdminGroupOneRelay',
+        'AdminUserOneDeviceAdminGroupOneMotion',
     ];
 
     public const GROUP_TWO_SENSORS = [
@@ -358,13 +371,20 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserTwoDeviceRegularGroupTwoDallas',
         'RegularUserTwoDeviceRegularGroupTwoSoil',
         'RegularUserTwoDeviceRegularGroupTwoBmp',
+        'AdminUserOneDeviceRegularGroupTwoRelay',
+        'RegularUserTwoDeviceRegularGroupTwoRelay',
+        'AdminUserOneDeviceRegularGroupTwoMotion',
+        'RegularUserTwoDeviceRegularGroupTwoMotion',
+        'AdminUserTwoDeviceAdminGroupTwoMotion',
     ];
 
     public const SENSORS = [
         Dht::NAME => 'AdminDHTSensor',
         Dallas::NAME => 'AdminDallasSensor',
         Soil::NAME => 'AdminSoilSensor',
-        Bmp::NAME => 'AdminBmpSensor'
+        Bmp::NAME => 'AdminBmpSensor',
+        GenericRelay::NAME => 'AdminRelaySensor',
+        GenericMotion::NAME => 'AdminMotionSensor',
     ];
 
     public function getOrder(): int
@@ -444,7 +464,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $newObject->setCurrentReading(true);
             $newObject->setRequestedReading(true);
             $newObject->setCreatedAt(new DateTimeImmutable('now'));
-            $newObject->setUpdatedAt(new DateTimeImmutable('now'));
+            $newObject->setUpdatedAt();
             if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
                 $newSensorType->setMotion($newObject);
                 $manager->persist($newSensorType);

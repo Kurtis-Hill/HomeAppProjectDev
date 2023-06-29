@@ -6,6 +6,8 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -13,6 +15,8 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
 use App\Tests\Traits\TestLoginTrait;
@@ -233,6 +237,38 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Bmp::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+            ]
+        ];
+
+        // Motion
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'currentReadings' => [
+                        'motion' => true,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Motion::READING_TYPE, SensorFixtures::SENSORS[GenericMotion::NAME]),
+            ]
+        ];
+
+        // Generic Relay
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
             ]
         ];
     }
@@ -519,6 +555,33 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                     'sensorName' => SensorFixtures::SENSORS[Soil::NAME] .'2',
                     'currentReadings' => [
                         'latitude' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'The submitted value is not a number string',
+                'The submitted value is not a number array',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        // Generic Motion
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'currentReadings' => [
+                        'motionDetected' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME] .'2',
+                    'currentReadings' => [
+                        'motionDetected' => [],
                     ],
                 ]
             ],

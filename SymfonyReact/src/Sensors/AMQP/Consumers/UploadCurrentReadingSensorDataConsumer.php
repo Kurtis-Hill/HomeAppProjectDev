@@ -5,9 +5,9 @@ namespace App\Sensors\AMQP\Consumers;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
@@ -53,6 +53,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                         HumidityCurrentReadingUpdateRequestDTO::class,
                         LatitudeCurrentReadingUpdateRequestDTO::class,
                         TemperatureCurrentReadingUpdateRequestDTO::class,
+                        BoolCurrentReadingUpdateRequestDTO::class,
                     ]
                 ]
             );

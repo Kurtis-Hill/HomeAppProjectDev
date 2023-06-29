@@ -2,13 +2,13 @@
 
 namespace App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard;
 
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\AbstractCurrentReadingUpdateBuilder;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\StandardSensorUpdateBoundaryDataDTO;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 
-abstract class AbstractStandardSensorTypeBuilder
+abstract class AbstractStandardSensorTypeBuilder extends AbstractCurrentReadingUpdateBuilder
 {
     protected function buildStandardSensorUpdateReadingDTO(
         StandardSensorUpdateBoundaryDataDTO $sensorData,
@@ -22,17 +22,6 @@ abstract class AbstractStandardSensorTypeBuilder
             $sensorData->getHighReading(),
             $sensorData->getLowReading(),
             $sensorData->getConstRecord()
-        );
-    }
-
-    protected function buildStandardSensorUpdateCurrentReadingDTO(
-        AllSensorReadingTypeInterface $standardReadingSensor,
-        string $newSensorReading,
-    ): ReadingTypeUpdateCurrentReadingDTO {
-        return new ReadingTypeUpdateCurrentReadingDTO(
-            $newSensorReading,
-            $standardReadingSensor->getCurrentReading(),
-            $standardReadingSensor
         );
     }
 }

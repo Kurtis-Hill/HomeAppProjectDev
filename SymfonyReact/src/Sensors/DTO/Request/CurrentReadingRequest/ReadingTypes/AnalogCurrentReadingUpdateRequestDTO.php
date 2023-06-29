@@ -2,6 +2,7 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use JetBrains\PhpStorm\Immutable;
@@ -14,6 +15,6 @@ class AnalogCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateR
 
     public function getReadingType(): string
     {
-        return \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog::READING_TYPE;
+        return Analog::READING_TYPE;
     }
 }

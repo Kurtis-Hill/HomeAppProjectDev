@@ -11,22 +11,41 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentRe
 use App\Sensors\DTO\Request\SensorUpdateDTO\BoolSensorUpdateBoundaryDataDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
+use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 
 class MotionSensorUpdateBuilder extends AbstractBoolSensorUpdateBuilder implements ReadingTypeUpdateBuilderInterface, ReadingTypeUpdateBoundaryReadingBuilderInterface, CurrentReadingUpdateRequestBuilderInterface
 {
-    public function buildReadingTypeCurrentReadingUpdateDTO(AllSensorReadingTypeInterface $allSensorReadingType,AbstractCurrentReadingUpdateRequestDTO $sensorData) : ReadingTypeUpdateCurrentReadingDTO
-    {
-        throw new NotImplementedException('MotionSensorUpdateBuilder::buildReadingTypeCurrentReadingUpdateDTO');
-    }
+    public function buildReadingTypeCurrentReadingUpdateDTO(
+        AllSensorReadingTypeInterface $allSensorReadingType,
+        AbstractCurrentReadingUpdateRequestDTO $sensorData,
+    ): ReadingTypeUpdateCurrentReadingDTO {
+        if (!$allSensorReadingType instanceof Motion) {
+            throw new ReadingTypeNotExpectedException(
+                sprintf(
+                    ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
+                    Motion::READING_TYPE,
+                    $allSensorReadingType->getReadingType(),
+                )
+            );
+        }
+        if ($sensorData->getCurrentReading()) {
+            throw new ReadingTypeObjectBuilderException(
+                sprintf(
+                    ReadingTypeObjectBuilderException::CURRENT_READING_FAILED_TO_BUILD_FOR_TYPE,
+                    Motion::READING_TYPE,
+                )
+            );
+        }
 
-    public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading) : AbstractCurrentReadingUpdateRequestDTO
-    {
-         throw new NotImplementedException('MotionSensorUpdateBuilder::buildRequestCurrentReadingUpdateDTO');
+        return $this->buildSensorUpdateCurrentReadingDTO(
+            $allSensorReadingType,
+            $sensorData->getCurrentReading()
+        );
     }
-
 
     public function buildUpdateSensorBoundaryReadingsDTO(SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO, AllSensorReadingTypeInterface $sensorReadingTypeObject): UpdateBoundaryReadingDTOInterface
     {
@@ -44,5 +63,10 @@ class MotionSensorUpdateBuilder extends AbstractBoolSensorUpdateBuilder implemen
             $updateDataSensorBoundaryDTO,
             $sensorReadingTypeObject
         );
+    }
+
+    public function buildRequestCurrentReadingUpdateDTO(mixed $currentReading): AbstractCurrentReadingUpdateRequestDTO
+    {
+        return $this->buildBoolRequestCurrentReadingUpdateDTO($currentReading, Motion::READING_TYPE);
     }
 }

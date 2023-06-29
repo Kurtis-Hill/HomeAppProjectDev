@@ -2,6 +2,7 @@
 
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
@@ -28,7 +29,7 @@ interface CurrentReadingSensorDataRequestHandlerInterface
     )]
     public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array;
 
-    public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBuilderInterface;
+    public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBoundaryReadingBuilderInterface;
 
     public function getReadingTypeRequestAttempt(): int;
 

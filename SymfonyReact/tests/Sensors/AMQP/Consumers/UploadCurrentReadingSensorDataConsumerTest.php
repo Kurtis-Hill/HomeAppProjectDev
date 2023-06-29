@@ -7,15 +7,20 @@ use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -35,6 +40,10 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
     private const BMP_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserOneDeviceAdminGroupOneBmp"]['sensorName'];
 
     private const DALLAS_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserOneDeviceAdminGroupOneDallas"]['sensorName'];
+
+    private const GENERIC_MOTION_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserTwoDeviceAdminGroupTwoMotion"]['sensorName'];
+
+    private const GENERIC_RELAY_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserTwoDeviceAdminGroupTwoRelay"]['sensorName'];
 
     protected function setUp(): void
     {
@@ -374,4 +383,102 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
             $analogCurrentReadingUpdateMessage->getCurrentReading()
         );
     }
+
+    public function test_generic_motion_current_reading_message_consumers_correctly_all_readings(): void
+    {
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_MOTION_SENSOR_TO_UPDATE]);
+
+        $motionCurrentReadingUpdateMessage = new BoolCurrentReadingUpdateRequestDTO(false, Motion::READING_TYPE);
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            GenericMotion::NAME,
+            self::GENERIC_MOTION_SENSOR_TO_UPDATE,
+            [$motionCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+        $result = $this->sut->execute($amqpMessage);
+
+        $motion = $this->entityManager->getRepository(Motion::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertEquals(
+            $motion->getCurrentReading(),
+            $motionCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
+    public function test_generic_motion_current_reading_message_consumers_wrong_current_reading_dto(): void
+    {
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_MOTION_SENSOR_TO_UPDATE]);
+
+        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 22);
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            GenericMotion::NAME,
+            self::GENERIC_MOTION_SENSOR_TO_UPDATE,
+            [$analogCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+        $result = $this->sut->execute($amqpMessage);
+
+        $motion = $this->entityManager->getRepository(Motion::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertNotSame(
+            $motion->getCurrentReading(),
+            $analogCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
+
+    public function test_generic_relay_current_reading_message_consumers_correctly_all_readings(): void
+    {
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_RELAY_SENSOR_TO_UPDATE]);
+
+        $relayCurrentReadingUpdateMessage = new BoolCurrentReadingUpdateRequestDTO(false, Relay::READING_TYPE);
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            GenericRelay::NAME,
+            self::GENERIC_RELAY_SENSOR_TO_UPDATE,
+            [$relayCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+        $result = $this->sut->execute($amqpMessage);
+
+        $relay = $this->entityManager->getRepository(Relay::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertEquals(
+            $relay->getCurrentReading(),
+            $relayCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
+    public function test_generic_relay_current_reading_message_consumers_wrong_current_reading_dto(): void
+    {
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_RELAY_SENSOR_TO_UPDATE]);
+
+        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 22);
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            GenericRelay::NAME,
+            self::GENERIC_RELAY_SENSOR_TO_UPDATE,
+            [$analogCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+        $result = $this->sut->execute($amqpMessage);
+
+        $relay = $this->entityManager->getRepository(Relay::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertNotSame(
+            $relay->getCurrentReading(),
+            $analogCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
 }
