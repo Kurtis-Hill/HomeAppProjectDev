@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { BaseCard } from '../BaseCard';
-import { CardCurrentSensorDataInterface } from '../Readings/SensorDataOutput/CurrentReadingDataDisplayInterface';
-import { CurrentReadingSensorDataOutput } from '../Readings/SensorDataOutput/CurrentReadingSensorDataOutput';
+import { StandardCardCurrentSensorDataInterface } from '../Readings/SensorDataOutput/CurrentReadingDataDisplayInterface';
+import { StandardCurrentReadingSensorDataOutput } from '../Readings/SensorDataOutput/StandardCurrentReadingSensorDataOutput';
 
 import { DisplayCardRequestContainer } from './DisplayCardRequestContainer';
+import { SensorTypesEnum } from '../../../../Enum/SensorTypesEnum';
 // import { CardCurrentReadingResponse } from '../../Response/CardDataResponseInterface';
 
-export function CardCurrentSensorReadings(props: {
+export function StandardCardCurrentSensorReadings(props: {
     cardViewID: number;
-    sensorType: string;
+    sensorType: SensorTypesEnum;
     sensorName: string; 
     room: string; 
-    sensorData: CardCurrentSensorDataInterface[];
+    sensorData: StandardCardCurrentSensorDataInterface[];
     cardIcon: string; 
     loadingCardModalView: boolean;
     setLoadingCardModalView: (loadingCardModalView: boolean) => void;
@@ -19,12 +20,12 @@ export function CardCurrentSensorReadings(props: {
     cardColour?: string|undefined;
 }): React {
     const cardViewID: number = props.cardViewID;
-    const sensorType: string = props.sensorType;
+    const sensorType: SensorTypesEnum = props.sensorType;
     const sensorName: string = props.sensorName;
     const sensorRoom: string = props.room;
     const cardIcon: string = props.cardIcon ?? 'dog';
     const cardColour: string|undefined = props.cardColour;
-    const sensorData: CardCurrentSensorDataInterface[] = props.sensorData;
+    const sensorData: StandardCardCurrentSensorDataInterface[] = props.sensorData;
     const setSelectedCardForQuickUpdate: (cardViewID: number) => void = props.setSelectedCardForQuickUpdate;
 
     return (
@@ -41,7 +42,7 @@ export function CardCurrentSensorReadings(props: {
                     <div className="col mr-2">
                         <div className="d-flex font-weight-bold text text-uppercase mb-1">Name: {sensorName}</div>
                         <div className="d-flex text text-uppercase mb-1 card-room-text-display">Area: {sensorRoom}</div>
-                            <CurrentReadingSensorDataOutput
+                            <StandardCurrentReadingSensorDataOutput
                                 sensorData={sensorData}
                             />
                     </div>

@@ -1,7 +1,7 @@
 import { IconResponseInterface } from '../../../Response/Icons/IconResponseInterface';
 import { ColourResponseInterface } from '../../../Response/Colour/ColourResponseInterface';
 import { CurrentUserSelections } from '../CardSelection/CurrentUserSelections';
-import { CardCurrentReadingResponse as StandardSensorCardCurrentReadingResponse } from '../CurrentReadingCardData/CardDataResponseInterface';
+import { CurrentCardCurrentReadingResponse as StandardSensorCardCurrentReadingResponse } from '../CurrentReadingCardData/CardDataResponseInterface';
 import StateResponseInterface from '../../../Response/State/StateResponseInterface';
 
 export interface StandardCardFormResponseInterface {

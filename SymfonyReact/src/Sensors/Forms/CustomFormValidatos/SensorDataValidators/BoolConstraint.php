@@ -8,5 +8,5 @@ use Symfony\Component\Validator\Constraint;
 #[Attribute]
 class BoolConstraint extends Constraint
 {
-    public string $message = 'Motion readings can only be true or false';
+    public string $message = 'Bool readings can only be true or false';
 }

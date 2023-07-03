@@ -574,25 +574,53 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                     'sensorType' => GenericMotion::NAME,
                     'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
                     'currentReadings' => [
-                        'motionDetected' => 'string bing',
+                        'motion' => 'string bing',
                     ],
                 ],
                 [
                     'sensorType' => GenericMotion::NAME,
                     'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME] .'2',
                     'currentReadings' => [
-                        'motionDetected' => [],
+                        'motion' => [],
                     ],
                 ]
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
             'errors' => [
-                'The submitted value is not a number string',
-                'The submitted value is not a number array',
+                'Bool readings can only be true or false',
+                'Bool readings can only be true or false',
             ],
             'payload' => [],
             'responseCode' => Response::HTTP_BAD_REQUEST
         ];
+
+        // Generic Relay
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'currentReadings' => [
+                        'relay' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME] .'2',
+                    'currentReadings' => [
+                        'relay' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'Bool readings can only be true or false',
+                'Bool readings can only be true or false',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
     }
 
     /**

@@ -11,39 +11,18 @@ use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterface
+readonly class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterface
 {
-    private int $sensorID;
-
-    private IconResponseDTO $currentCardIcon;
-
-    private ColourResponseDTO $currentCardColour;
-
-    private StateResponseDTO $currentViewState;
-
-    private CardUserSelectionEncapsulationDTO $cardUserSelectionOptions;
-
-    private string $cardViewID;
-
-    #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
-    private array $sensorData;
-
     public function __construct(
-        int $sensorID,
-        IconResponseDTO $currentCardIcon,
-        ColourResponseDTO $currentCardColour,
-        StateResponseDTO $currentViewState,
-        string $cardViewID,
-        CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
-        array $sensorData,
+        private int $sensorID,
+        private IconResponseDTO $currentCardIcon,
+        private ColourResponseDTO $currentCardColour,
+        private StateResponseDTO $currentViewState,
+        private string $cardViewID,
+        private CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
+        #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
+        private array $sensorData,
     ) {
-        $this->sensorID = $sensorID;
-        $this->currentCardIcon = $currentCardIcon;
-        $this->currentCardColour = $currentCardColour;
-        $this->currentViewState = $currentViewState;
-        $this->cardViewID = $cardViewID;
-        $this->cardUserSelectionOptions = $cardUserSelectionOptions;
-        $this->sensorData = $sensorData;
     }
 
     public function getSensorID(): int
@@ -51,6 +30,7 @@ class StandardCardViewSensorFormResponseDTO implements CardViewSensorFormInterfa
         return $this->sensorID;
     }
 
+    #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     public function getSensorData(): array
     {
         return $this->sensorData;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UserInterface\DTO\Response\CardForms;
+namespace App\UserInterface\DTO\Response\CardForms\Boundary;
 
 use JetBrains\PhpStorm\Immutable;
 

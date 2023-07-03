@@ -1,17 +1,17 @@
 import * as React from 'react';
 
-import CardCurrentReadingBuilder from "../Builders/ReadingBuilders/CardCurrentReadingBuilder"
 import { CardSensorDataResponseInterface } from '../Response/CurrentReadingCardData/CardDataResponseInterface';
+import { CurrentReadingDataDisplayFactory } from '../Components/Readings/SensorDataOutput/CurrentReadingDataDisplayFactory';
 
 export default function CardReadingFactory(props:
     CardReadingFactoryInterface 
 ): React {
     const cardType: string = props.cardData.cardType;
-
+console.log(cardType);
     switch (cardType) {
         case 'current-reading':
             return (
-                <CardCurrentReadingBuilder
+                <CurrentReadingDataDisplayFactory 
                     cardData={props.cardData}
                     setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
                     loadingCardModalView={props.loadingCardModalView}
@@ -20,7 +20,7 @@ export default function CardReadingFactory(props:
             )
         default:
             return ( 
-                <CardCurrentReadingBuilder 
+                <CurrentReadingDataDisplayFactory 
                     cardData={props.cardData}
                     setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
                     loadingCardModalView={props.loadingCardModalView}

@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { CardCurrentSensorDataInterface } from './CurrentReadingDataDisplayInterface';
+import { StandardCardCurrentSensorDataInterface } from './CurrentReadingDataDisplayInterface';
 import { capitalizeFirstLetter } from '../../../../../Common/StringFormatter';
 
-export function CurrentReadingSensorDataOutput(props: { sensorData: CardCurrentSensorDataInterface[]|undefined; }) {
-    const sensorData: Array<CardCurrentSensorDataInterface> = props.sensorData ?? undefined;
+export function StandardCurrentReadingSensorDataOutput(props: { sensorData: StandardCardCurrentSensorDataInterface[]|undefined; }) {
+    const sensorData: Array<StandardCardCurrentSensorDataInterface> = props.sensorData ?? undefined;
 
     const sensorReadingAgainstLowHighBoundary = (highReading: number, lowReading: number, currentReading: number) => {
         return (currentReading >= highReading) 
@@ -18,7 +18,7 @@ export function CurrentReadingSensorDataOutput(props: { sensorData: CardCurrentS
         return (
             <React.Fragment>
                 {
-                    sensorData.map((data: CardCurrentSensorDataInterface, index: number) => {
+                    sensorData.map((data: StandardCardCurrentSensorDataInterface, index: number) => {
                         const lastStateIcon: string = (data.lastState !== 'same') ? `chevron-${data.lastState}` : 'horizontal-rule';   
                         const iconColour: string = (data.lastState === 'up') ? 'red' : (data.lastState === 'down') ? 'blue' : 'gray';
     

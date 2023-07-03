@@ -2,10 +2,10 @@
 
 namespace App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\Standard;
 
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\AbstractReadingTypeDTOBuilder;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
-use DateTime;
 
-abstract class AbstractStandardReadingTypeDTOBuilder
+abstract class AbstractStandardReadingTypeDTOBuilder extends AbstractReadingTypeDTOBuilder
 {
     protected function getStandardCardViewDTO(
         string $readingType,
@@ -23,10 +23,5 @@ abstract class AbstractStandardReadingTypeDTOBuilder
             $formattedDateTime,
             $readingSymbol,
         );
-    }
-
-    protected function formatDateTime(DateTime $dateTime): string
-    {
-        return $dateTime->format('d-m-Y H:i:s');
     }
 }
