@@ -5,4 +5,6 @@ export enum ReadingTypesEnum {
     latitude = 'latitude',
     longitude = 'longitude',
     analog = 'analog',
+    relay = 'relay',
+    motion = 'motion',
 }

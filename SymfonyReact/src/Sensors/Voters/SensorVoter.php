@@ -18,7 +18,9 @@ class SensorVoter extends Voter
 
     public const UPDATE_SENSOR_READING_BOUNDARY = 'update-sensor-boundary-reading';
 
-    public const UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
+    public const DEVICE_UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
+
+    public const USER_UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading-user';
 
     public const DELETE_SENSOR = 'delete-sensor';
 
@@ -36,10 +38,11 @@ class SensorVoter extends Voter
         if (!in_array($attribute, [
             self::ADD_NEW_SENSOR,
             self::UPDATE_SENSOR_READING_BOUNDARY,
-            self::UPDATE_SENSOR_CURRENT_READING,
+            self::DEVICE_UPDATE_SENSOR_CURRENT_READING,
             self::DELETE_SENSOR,
             self::UPDATE_SENSOR,
-            self::GET_SENSOR
+            self::GET_SENSOR,
+            self::USER_UPDATE_SENSOR_CURRENT_READING,
         ])) {
             return false;
         }
@@ -60,12 +63,31 @@ class SensorVoter extends Voter
         return match ($attribute) {
             self::ADD_NEW_SENSOR => $this->canAddNewSensor($user, $subject),
             self::UPDATE_SENSOR_READING_BOUNDARY => $this->canUpdateSensorBoundaryReading($user, $subject),
-            self::UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
+            self::DEVICE_UPDATE_SENSOR_CURRENT_READING => $this->canUpdateSensorCurrentReading($user),
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
             self::GET_SENSOR => $this->canGetSensor($user, $subject),
+//            self::USER_UPDATE_SENSOR_CURRENT_READING => $this->userCanUpdateSensor($user, $sensorReadingType),
+
             default => false
         };
+    }
+
+    private function userCanUpdateSensor(UserInterface $user, Sensor $sensor): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function canAddNewSensor(UserInterface $user, NewSensorDTO $newSensorDTO): bool
@@ -117,8 +139,6 @@ class SensorVoter extends Voter
          if (!$user instanceof Devices) {
             return false;
         }
-
-         $user->getDeviceID();
 
          return true;
     }

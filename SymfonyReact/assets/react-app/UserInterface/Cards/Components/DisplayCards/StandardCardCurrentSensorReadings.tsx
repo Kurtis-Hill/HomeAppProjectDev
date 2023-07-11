@@ -2,10 +2,8 @@ import * as React from 'react';
 import { BaseCard } from '../BaseCard';
 import { StandardCardCurrentSensorDataInterface } from '../Readings/SensorDataOutput/CurrentReadingDataDisplayInterface';
 import { StandardCurrentReadingSensorDataOutput } from '../Readings/SensorDataOutput/StandardCurrentReadingSensorDataOutput';
-
-import { DisplayCardRequestContainer } from './DisplayCardRequestContainer';
 import { SensorTypesEnum } from '../../../../Enum/SensorTypesEnum';
-// import { CardCurrentReadingResponse } from '../../Response/CardDataResponseInterface';
+import { CurrentReadingSensorDataOutputFactory } from '../Readings/SensorDataOutput/CurrentReadingSensorDataOutputFactory';
 
 export function StandardCardCurrentSensorReadings(props: {
     cardViewID: number;
@@ -42,8 +40,9 @@ export function StandardCardCurrentSensorReadings(props: {
                     <div className="col mr-2">
                         <div className="d-flex font-weight-bold text text-uppercase mb-1">Name: {sensorName}</div>
                         <div className="d-flex text text-uppercase mb-1 card-room-text-display">Area: {sensorRoom}</div>
-                            <StandardCurrentReadingSensorDataOutput
+                            <CurrentReadingSensorDataOutputFactory 
                                 sensorData={sensorData}
+                                sensorType={sensorType}
                             />
                     </div>
                     <div className="col-auto">

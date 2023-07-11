@@ -14,9 +14,10 @@ security:
             entity:
                 class: App\Devices\Entity\Devices
                 property: deviceName
-#        user_and_device:
-#            chain:
-#                providers: [ 'app_user_provider', 'api_device_provider' ]
+        user_and_device:
+            chain:
+                providers: [ 'app_user_provider', 'api_device_provider' ]
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -36,7 +37,7 @@ security:
         device_api:
             pattern: ^/HomeApp/api/device
             stateless: true
-            provider: 'api_device_provider'
+            provider: 'user_and_device'
             jwt: ~
             entry_point: jwt
             refresh_jwt:
@@ -62,12 +63,13 @@ security:
             refresh_jwt:
                 check_path: /HomeApp/api/user/token/refresh
 
-        webapp:
-            pattern: ^/HomeApp/WebApp
-            stateless: true
-            provider: 'app_user_provider'
-            entry_point: jwt
-            jwt: ~
+
+#        webapp:
+#            pattern: ^/HomeApp/WebApp
+#            stateless: true
+#            provider: 'app_user_provider'
+#            entry_point: jwt
+#            jwt: ~
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
@@ -86,7 +88,7 @@ security:
         # - { path: ^/HomeApp/WebApp/, roles: IS_AUTHENTICATED_FULLY }
 
         # api endpoints pending on user
-        - { path: ^/HomeApp/api/device, roles: ROLE_DEVICE }
+        - { path: ^/HomeApp/api/device, roles: [ROLE_DEVICE, ROLE_USER, ROLE_ADMIN] }
         - { path: ^/HomeApp/api/user, roles: ROLE_USER }
 
 #        DEV

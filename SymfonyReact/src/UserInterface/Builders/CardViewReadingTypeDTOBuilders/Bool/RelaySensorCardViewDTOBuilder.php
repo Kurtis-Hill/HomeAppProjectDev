@@ -9,7 +9,7 @@ class RelaySensorCardViewDTOBuilder extends AbstractBoolReadingTypeDTOBuilder
 {
     public function buildGenericRelaySensorDataFromScalarArray(array $cardData): ?BoolCardViewReadingResponseDTO
     {
-        if (empty($cardData['genericRelay_genericRelayID'])) {
+        if (empty($cardData['relay_boolID'])) {
             return null;
         }
         $dateTime = $this->formatDateTime($cardData['relay_updatedAt']);

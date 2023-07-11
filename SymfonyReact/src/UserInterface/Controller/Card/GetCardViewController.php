@@ -219,7 +219,7 @@ class GetCardViewController extends AbstractController
         try {
             $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
         } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
-            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()->getUserIdentifier()]);
+            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }

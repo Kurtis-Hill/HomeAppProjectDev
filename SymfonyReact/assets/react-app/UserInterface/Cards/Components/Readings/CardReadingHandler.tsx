@@ -110,7 +110,7 @@ export function CardReadingHandler(props: {
 
     if (loadingCards === true) {
         return (
-            <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
+            <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
         );
     }
     return (   

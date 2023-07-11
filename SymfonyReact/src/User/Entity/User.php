@@ -34,7 +34,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         self::ROLE_USER,
         self::ROLE_ADMIN,
     ];
+
     public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';
+
+    public const USER_TYPE = 'user';
 
     #[
         ORM\Column(name: "userID", type: "integer", nullable: false),

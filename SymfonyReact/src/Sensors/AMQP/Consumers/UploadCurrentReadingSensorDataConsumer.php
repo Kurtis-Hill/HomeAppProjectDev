@@ -2,7 +2,6 @@
 
 namespace App\Sensors\AMQP\Consumers;
 
-use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
@@ -22,8 +21,6 @@ use Psr\Log\LoggerInterface;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
-    use HomeAppAPITrait;
-
     private UpdateCurrentSensorReadingInterface $sensorCurrentReadingUpdateService;
 
     private DeviceRepositoryInterface $deviceRepository;
@@ -44,6 +41,7 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
+            /** @var UpdateSensorCurrentReadingMessageDTO $sensorData */
             $sensorData = unserialize(
                 $msg->getBody(),
                 [

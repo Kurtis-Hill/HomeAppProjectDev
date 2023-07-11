@@ -19,6 +19,10 @@ services:
       calls:
           - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
 
+  App\Sensors\Controller\SensorControllers\SwitchSensorController:
+      calls:
+          - setESPSendCurrentReadingProducer: [ '@send_current_sensor_reading_producer' ]
+
 ####################### Producers ######################################################
   App\Sensors\AMQP\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
 

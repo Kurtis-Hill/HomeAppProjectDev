@@ -18,7 +18,6 @@ class CardViewDTOCreationHandler
         $cardViewDTOBuilder = $this->cardViewDTOFactory->getCardViewBuilderService(CardViewDTOFactory::SENSOR_TYPE_CURRENT_READING_SENSOR_CARD);
 
         $cardDTOs = [];
-
         foreach ($sensorData as $sensor) {
             $cardDTO = $cardViewDTOBuilder->buildTrimmedDownSensorTypeCardViewDTO($sensor);
             if ($cardDTO !== null) {

@@ -1,5 +1,7 @@
+import { SensorTypesEnum } from "../../../Enum/SensorTypesEnum";
+
 export interface SensorTypeResponseInterface {
     sensorTypeID: number;
-    sensorTypeName: string
+    sensorTypeName: SensorTypesEnum
     sensorTypeDescription: string
 }

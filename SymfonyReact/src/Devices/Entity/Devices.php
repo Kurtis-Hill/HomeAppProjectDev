@@ -32,6 +32,8 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     public const ALIAS = 'device';
 
+    public const USER_TYPE = 'user';
+
     #[
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),

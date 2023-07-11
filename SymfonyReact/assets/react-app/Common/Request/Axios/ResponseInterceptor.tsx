@@ -96,11 +96,12 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                 }
                 else if (error.response.status === 404) {
                     navigate(`${indexUrl}`)
-                } else {
+                } else if (error.response.status !== 401) {
                     errorAnnouncementFlash([error.message], 'Error');
-                }
+                }                 
             }
         } else {
+            console.log('lol');
             errorAnnouncementFlash([error.message], 'Error');
         }
     });

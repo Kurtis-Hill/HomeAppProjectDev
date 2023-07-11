@@ -17,7 +17,7 @@ use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\GenericRelayReadingT
 use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeInterface;
 use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\SoilReadingTypeChecker;
 
-class SensorTypeReadingTypeCheckerFactory
+class SensorTypeCheckerFactory
 {
     private DhtReadingTypeChecker $dhtReadingTypeChecker;
 

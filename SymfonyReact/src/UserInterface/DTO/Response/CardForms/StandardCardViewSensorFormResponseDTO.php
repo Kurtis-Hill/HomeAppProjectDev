@@ -3,6 +3,7 @@
 namespace App\UserInterface\DTO\Response\CardForms;
 
 use App\UserInterface\DTO\Response\CardView\CardUserSelectionEncapsulationDTO;
+use App\UserInterface\DTO\Response\CardViewReadingDTO\BoolCardViewReadingResponseDTO;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
 use App\UserInterface\DTO\Response\Icons\IconResponseDTO;
@@ -20,7 +21,7 @@ readonly class StandardCardViewSensorFormResponseDTO implements CardViewSensorFo
         private StateResponseDTO $currentViewState,
         private string $cardViewID,
         private CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
-        #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
+        #[ArrayShape([StandardCardViewReadingResponseDTO::class||BoolCardViewReadingResponseDTO::class])]
         private array $sensorData,
     ) {
     }
@@ -30,7 +31,7 @@ readonly class StandardCardViewSensorFormResponseDTO implements CardViewSensorFo
         return $this->sensorID;
     }
 
-    #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
+    #[ArrayShape([StandardCardViewReadingResponseDTO::class|BoolCardViewReadingResponseDTO::class])]
     public function getSensorData(): array
     {
         return $this->sensorData;

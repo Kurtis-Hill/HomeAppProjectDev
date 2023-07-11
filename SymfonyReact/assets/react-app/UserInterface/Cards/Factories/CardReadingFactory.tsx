@@ -7,7 +7,7 @@ export default function CardReadingFactory(props:
     CardReadingFactoryInterface 
 ): React {
     const cardType: string = props.cardData.cardType;
-console.log(cardType);
+
     switch (cardType) {
         case 'current-reading':
             return (

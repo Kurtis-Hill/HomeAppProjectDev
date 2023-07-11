@@ -166,6 +166,13 @@
 /*.announcement-fade {*/
 /*    opacity: 100%;*/
 /*}*/
+.hidden-scroll {
+    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /* height: 100vh; */
+    /* position: absolute; */
+}
 
 .form-space-left {
    padding-top: 1%;

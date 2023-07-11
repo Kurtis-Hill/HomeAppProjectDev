@@ -315,7 +315,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-            'errors' => ['Sensor type ' . Dht::NAME . '1' . ' not recognised'],
+            'errors' => ['sensorType must be one of "Bmp", "Soil", "Dallas", "Dht", "GenericRelay", "GenericMotion"'],
         ];
 
         yield [
@@ -588,7 +588,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
             'errors' => [
                 'Bool readings can only be true or false',
-                'Bool readings can only be true or false',
             ],
             'payload' => [],
             'responseCode' => Response::HTTP_BAD_REQUEST
@@ -614,7 +613,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
             'errors' => [
-                'Bool readings can only be true or false',
                 'Bool readings can only be true or false',
             ],
             'payload' => [],

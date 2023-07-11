@@ -20,9 +20,9 @@ export interface StandardCardCurrentSensorDataInterface {
 }
 
 export interface BoolCardCurrentSensorDataInterface {
-    currentReading: number;
-    expectedReading: number;
-    requestedReading: number;
+    currentReading: boolean;
+    expectedReading: boolean;
+    requestedReading: boolean;
     readingType: string;
     updatedAt: Date;
     readingSymbol?: string|null;

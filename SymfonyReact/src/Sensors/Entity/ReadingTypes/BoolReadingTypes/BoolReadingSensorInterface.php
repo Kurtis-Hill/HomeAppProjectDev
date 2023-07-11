@@ -39,4 +39,5 @@ interface BoolReadingSensorInterface
 
     public function getConstRecord(): bool;
 
+    public static function getReadingTypeName(): string;
 }

@@ -78,7 +78,7 @@ abstract class AbstractCardDTOBuilder
         string $type,
         string $symbol = null,
     ): BoolSensorTypeBoundaryViewFormDTO {
-        $b = new BoolSensorTypeBoundaryViewFormDTO(
+        return new BoolSensorTypeBoundaryViewFormDTO(
             $type,
 //            $sensorTyeObject->getCurrentReading(),
             $sensorTyeObject->getExpectedReading(),
@@ -86,7 +86,5 @@ abstract class AbstractCardDTOBuilder
             $sensorTyeObject->getConstRecord(),
             $symbol
         );
-//dd($b);
-return $b;
     }
 }
