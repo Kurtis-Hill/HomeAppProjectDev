@@ -92,11 +92,13 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public const RELAY_SENSOR_NAME = 'AdDev1Relay';
 
+    public const DHT_SENSOR_NAME = 'AdminDevice1Dht';
+
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
         'AdminUserOneDeviceAdminGroupOneDht' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdminDevice1Dht',
+            'sensorName' => self::DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME]
         ],
         'AdminUserOneDeviceRegularGroupTwoDht' => [

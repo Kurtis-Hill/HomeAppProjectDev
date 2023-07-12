@@ -10,13 +10,12 @@ use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder
 use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
-use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Exceptions\SensorDataCurrentReadingUpdateBuilderException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
+use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
-use App\Sensors\Voters\SensorVoter;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Psr\Log\LoggerInterface;
@@ -24,7 +23,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -54,6 +52,7 @@ class SwitchSensorController extends AbstractController
         SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
+        RelayRepository $relayRepository,
     ): JsonResponse {
         $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {
@@ -97,11 +96,19 @@ class SwitchSensorController extends AbstractController
             if ($sensorDataPassedValidation === false) {
                 continue;
             }
+            if ($sensor === null) {
+                $individualSensorRequestValidationErrors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Sensor')];
+                continue;
+            }
 
-            $sensorReadingRepository = $sensorTypeRepositoryFactory->getSensorTypeRepository($sensorDataCurrentReadingUpdateRequestDTO->getSensorType());
+            $sensorReadingRepository = $sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
             $sensorReadingType = $sensorReadingRepository->findOneBy(['sensor' => $sensor]);
 
             $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
+
+            if (empty($readingTypeCurrentReadingDTOs)) {
+                continue;
+            }
 
             // just need one as the relay sensor only has one reading type unlike a dht where it has temp and humidity
             $readingTypeCurrentReadingDTO = array_pop($readingTypeCurrentReadingDTOs);
@@ -125,6 +132,7 @@ class SwitchSensorController extends AbstractController
                 return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
         }
+        $relayRepository->flush();
 
         // Success return
         if (
@@ -143,7 +151,7 @@ class SwitchSensorController extends AbstractController
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
 
-            return $this->sendSuccessfulJsonResponse($normalizedResponse, 'All sensor readings handled successfully');
+            return $this->sendSuccessfullyAddedToBeProcessedJsonResponse($normalizedResponse, 'All sensor readings handled successfully');
         }
 
         $errors = array_merge(
