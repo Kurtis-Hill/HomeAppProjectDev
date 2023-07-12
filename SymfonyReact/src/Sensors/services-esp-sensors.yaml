@@ -33,6 +33,9 @@ services:
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
 
+  App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\RequestSensorCurrentReadingHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\RequestSensorCurrentReadingHandler'
+
   out.of.bounds.factory.elastic:
     alias: 'App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory'
     public: true

@@ -25,7 +25,7 @@ class AbstractBoolSensorUpdateBuilder extends AbstractCurrentReadingUpdateBuilde
         );
     }
 
-    public function buildBoolRequestCurrentReadingUpdateDTO(mixed $currentReading, $readingType): AbstractCurrentReadingUpdateRequestDTO
+    public function buildBoolRequestCurrentReadingUpdateDTO(mixed $currentReading, string $readingType): AbstractCurrentReadingUpdateRequestDTO
     {
         return new BoolCurrentReadingUpdateRequestDTO($currentReading, $readingType);
     }

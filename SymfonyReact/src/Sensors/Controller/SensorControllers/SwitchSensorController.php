@@ -48,7 +48,7 @@ class SwitchSensorController extends AbstractController
     public function switchSensorAction(
         Request $request,
         ValidatorInterface $validator,
-        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
+        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
         SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
@@ -92,7 +92,7 @@ class SwitchSensorController extends AbstractController
                 currentReadings: $sensorUpdateData['currentReadings'] ?? null,
             );
 
-            $sensorDataPassedValidation = $currentReadingSensorDataRequest->processSensorUpdateData($sensorDataCurrentReadingUpdateRequestDTO, [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]);
+            $sensorDataPassedValidation = $currentReadingSensorDataRequestHandler->processSensorUpdateData($sensorDataCurrentReadingUpdateRequestDTO, [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]);
             if ($sensorDataPassedValidation === false) {
                 continue;
             }
@@ -104,7 +104,7 @@ class SwitchSensorController extends AbstractController
             $sensorReadingRepository = $sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
             $sensorReadingType = $sensorReadingRepository->findOneBy(['sensor' => $sensor]);
 
-            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
+            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequestHandler->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
 
             if (empty($readingTypeCurrentReadingDTOs)) {
                 continue;
@@ -127,7 +127,7 @@ class SwitchSensorController extends AbstractController
             try {
                 $this->sendCurrentReadingAMQPProducer->publish(serialize($updateReadingDTO));
             } catch (Exception) {
-                $this->logger->emergency('failed to publish UPDATE SENSOR CURRENT READING message to queue', ['user' => $this->getUser()?->getUserIdentifier()]);
+                $this->logger->emergency('failed to publish REQUEST UPDATE SENSOR CURRENT READING message to queue', ['user' => $this->getUser()?->getUserIdentifier()]);
 
                 return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
@@ -140,12 +140,12 @@ class SwitchSensorController extends AbstractController
             && empty($individualSensorRequestValidationErrors)
             && empty($accessErrors)
             && empty($validationErrors)
-            && empty($currentReadingSensorDataRequest->getErrors())
-            && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() > 0
-            && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())
+            && empty($currentReadingSensorDataRequestHandler->getErrors())
+            && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() > 0
+            && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequestHandler->getSuccessfulRequests())
         ) {
             try {
-                $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequest->getSuccessfulRequests());
+                $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequestHandler->getSuccessfulRequests());
                 $normalizedResponse = array_map('current', $normalizedResponse);
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
@@ -156,14 +156,14 @@ class SwitchSensorController extends AbstractController
 
         $errors = array_merge(
             $validationErrors,
-            $currentReadingSensorDataRequest->getErrors(),
-            $currentReadingSensorDataRequest->getValidationErrors(),
+            $currentReadingSensorDataRequestHandler->getErrors(),
+            $currentReadingSensorDataRequestHandler->getValidationErrors(),
             $accessErrors,
             $individualSensorRequestValidationErrors,
         );
 
         // Complete Failed return
-        if (empty($currentReadingSensorDataRequest->getSuccessfulRequests())) {
+        if (empty($currentReadingSensorDataRequestHandler->getSuccessfulRequests())) {
             try {
                 $normalizedResponse = $this->normalizeResponse($errors);
                 if (count($normalizedResponse) > 0) {
@@ -183,7 +183,7 @@ class SwitchSensorController extends AbstractController
                 $normalizedErrorResponse = array_map('current', $normalizedErrorResponse);
             }
             $normalizedSuccessResponse = $this->normalizeResponse(
-                $currentReadingSensorDataRequest->getSuccessfulRequests(),
+                $currentReadingSensorDataRequestHandler->getSuccessfulRequests(),
             );
             if (count($normalizedSuccessResponse) > 0) {
                 $normalizedSuccessResponse = array_map('current', $normalizedSuccessResponse);

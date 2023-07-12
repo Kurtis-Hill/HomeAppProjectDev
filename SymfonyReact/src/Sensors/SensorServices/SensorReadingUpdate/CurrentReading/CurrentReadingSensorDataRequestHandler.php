@@ -136,7 +136,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
                 $readingTypeCurrentReadingDTO,
                 $sensorDataCurrentReadingUpdateDTO->getSensorType()
             );
-//            dd($readingTypeCurrentReadingDTO, $sensorTypeReadingValidationPassed);
+
             if ($sensorTypeReadingValidationPassed === false) {
                 continue;
             }

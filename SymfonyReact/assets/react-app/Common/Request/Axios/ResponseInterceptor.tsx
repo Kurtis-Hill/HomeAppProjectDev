@@ -14,6 +14,8 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
 
     const navigate: NavigateFunction = useNavigate();
 
+    let responseTokenRequestInProgress: boolean = false;
+
     axios.interceptors.response.use(function (response) {
         // if (response?.data !== undefined) {
         //     const errors: ErrorResponseInterface = response.data;
@@ -74,7 +76,8 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                 const errorsForModal: Array<string> = errorResponse.errors;
                 errorAnnouncementFlash(errorsForModal, 'Error' ?? errorResponse.title );
             } else {
-                if (error.response.status === 401 || error.response.status === 403) {
+                if (error.response.status === 401 || error.response.status === 403 && responseTokenRequestInProgress === false) {
+                    responseTokenRequestInProgress = true;
                     const refreshToken: string|null = getRefreshToken();
                     if (refreshToken !== null) {
                         try {
@@ -82,12 +85,15 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                             if (refreshTokenResponse.status === 200) {
                                 const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
                                 refreshUserTokens(refreshTokenResponseData);
+                                responseTokenRequestInProgress = false;
                             }
                         } catch (err) {
                             const error = err as Error | AxiosError;
                             alert('Your session has expired please log in again');
+                            responseTokenRequestInProgress = false;
                         }
                     } else {
+                        responseTokenRequestInProgress = false;
                         window.location.replace(`${loginUrl}`)
                     }
                 } 
