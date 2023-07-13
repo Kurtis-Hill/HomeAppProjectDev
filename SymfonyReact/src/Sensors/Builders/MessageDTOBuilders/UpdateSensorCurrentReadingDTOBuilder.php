@@ -11,8 +11,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class UpdateSensorCurrentReadingDTOBuilder
 {
-    public function __construct(private readonly Security $security) {}
-
     public static function buildUpdateSensorCurrentReadingConsumerMessageDTO(
         string $sensorType,
         string $sensorName,
@@ -31,21 +29,9 @@ class UpdateSensorCurrentReadingDTOBuilder
         int $sensorID,
         BoolCurrentReadingUpdateRequestDTO $readingTypeCurrentReadingDTO,
     ): RequestSensorCurrentReadingUpdateMessageDTO {
-        $user = $this->security->getUser();
-
-        if ($user instanceof User) {
-            $userType = User::USER_TYPE;
-        } elseif ($user instanceof Devices) {
-            $userType = Devices::USER_TYPE;
-        } else {
-            throw new \Exception('User type not found');
-        }
-
         return new RequestSensorCurrentReadingUpdateMessageDTO(
             $sensorID,
             $readingTypeCurrentReadingDTO,
-            $userType,
-            $user->getUserID()
         );
     }
 }

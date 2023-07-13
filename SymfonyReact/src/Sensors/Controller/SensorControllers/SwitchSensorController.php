@@ -13,7 +13,6 @@ use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Exceptions\SensorDataCurrentReadingUpdateBuilderException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use Exception;
@@ -52,7 +51,6 @@ class SwitchSensorController extends AbstractController
         SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
-        RelayRepository $relayRepository,
     ): JsonResponse {
         $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {
@@ -132,7 +130,7 @@ class SwitchSensorController extends AbstractController
                 return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
         }
-        $relayRepository->flush();
+        $sensorReadingRepository->flush();
 
         // Success return
         if (

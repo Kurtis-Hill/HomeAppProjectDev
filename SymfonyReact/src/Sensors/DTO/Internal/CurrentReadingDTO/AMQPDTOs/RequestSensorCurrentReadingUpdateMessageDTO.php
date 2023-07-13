@@ -11,11 +11,9 @@ readonly class RequestSensorCurrentReadingUpdateMessageDTO
     public function __construct(
         private  int $sensorID,
         private BoolCurrentReadingUpdateRequestDTO $readingTypeCurrentReadingDTO,
-        private string $userType,
-        private int $usersID,
     ) {}
 
-    public function getSensorID()
+    public function getSensorID(): int
     {
         return $this->sensorID;
     }
@@ -23,15 +21,5 @@ readonly class RequestSensorCurrentReadingUpdateMessageDTO
     public function getReadingTypeCurrentReadingDTO(): BoolCurrentReadingUpdateRequestDTO
     {
         return $this->readingTypeCurrentReadingDTO;
-    }
-
-    public function getUserType(): string
-    {
-        return $this->userType;
-    }
-
-    public function getUsersID(): int
-    {
-        return $this->usersID;
     }
 }

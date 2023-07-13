@@ -6,7 +6,7 @@ use App\Devices\Builders\DeviceRequestsArgumentBuilders\DeviceRequestArgumentBui
 use App\Devices\Builders\DeviceRequestsArgumentBuilders\RequestSensorCurrentReadingUpdateArgumentBuilder;
 use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
 
-readonly class DeviceRequestArgumentBuilderFactory
+readonly class DeviceSensorRequestArgumentBuilderFactory
 {
     public const UPDATE_SENSOR_CURRENT_READING = 'update-sensor';
 
