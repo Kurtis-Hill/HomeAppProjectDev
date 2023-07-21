@@ -76,7 +76,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
     {
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface $soilSensor */
+        /** @var AnalogReadingTypeInterface $soilSensor */
         $soilSensor = $this->entityManager->getRepository($sensorClass)->findOneBy(['sensor' => $sensor->getSensorID()]);
 
         $analogSensor = $soilSensor->getAnalogObject();

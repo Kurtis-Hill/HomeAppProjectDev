@@ -4,6 +4,7 @@ namespace App\Devices\AMQP\Consumers;
 
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface;
@@ -29,24 +30,28 @@ readonly class DeviceRequestConsumer implements ConsumerInterface
                 [
                     'allowed_classes' => [
                         RequestSensorCurrentReadingUpdateMessageDTO::class,
+                        BoolCurrentReadingUpdateDTO::class,
                     ]
                 ]
             );
 
+//            dd($sensorData);
         } catch (Exception $exception) {
+            dd('expection 1', $exception->getMessage());
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return true;
         }
 
         try {
-            $requestSensorCurrentReadingHandler = $this->requestSensorCurrentReadingHandler->handleUpdateSensor($sensorData);
+            $requestSensorCurrentReadingHandler = $this->requestSensorCurrentReadingHandler->handleUpdateSensorReadingRequest($sensorData);
         } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface $exception) {
+            dd('expection 2', $exception->getMessage());
             $this->elasticLogger->error('Sensor update request failed, exception message: ' . $exception->getMessage());
 
             return true;
         }
 
-        return $requestSensorCurrentReadingHandler;
+        return true;
     }
 }

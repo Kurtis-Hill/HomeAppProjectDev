@@ -16,5 +16,5 @@ interface SensorUpdateCurrentReadingRequestHandlerInterface
      * @throws SensorTypeException
      * @throws ExceptionInterface
      */
-    public function handleUpdateSensor(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool;
+    public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool;
 }

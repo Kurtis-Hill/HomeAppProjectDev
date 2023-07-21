@@ -6,6 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
 use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
@@ -15,6 +16,7 @@ use App\Sensors\Exceptions\SensorDataCurrentReadingUpdateBuilderException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Psr\Log\LoggerInterface;
@@ -51,6 +53,7 @@ class SwitchSensorController extends AbstractController
         SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {
@@ -108,7 +111,7 @@ class SwitchSensorController extends AbstractController
                 continue;
             }
 
-            // just need one as the relay sensor only has one reading type unlike a dht where it has temp and humidity
+            // just need one as the relay sensor only has one reading type unlike a dht for instance where it has temp and humidity
             $readingTypeCurrentReadingDTO = array_pop($readingTypeCurrentReadingDTOs);
             if (
                 ($readingTypeCurrentReadingDTO instanceof BoolCurrentReadingUpdateRequestDTO)
@@ -118,8 +121,11 @@ class SwitchSensorController extends AbstractController
             }
 
             $updateReadingDTO = $updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(
-                $sensor?->getSensorID(),
-                $readingTypeCurrentReadingDTO,
+                $sensor->getSensorID(),
+                BoolCurrentReadingUpdateDTOBuilder::buildCurrentReadingUpdateDTO(
+                    $readingTypeCurrentReadingDTO->getReadingType(),
+                    $readingTypeCurrentReadingDTO->getCurrentReading(),
+                ),
             );
 
             try {
@@ -130,7 +136,7 @@ class SwitchSensorController extends AbstractController
                 return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
         }
-        $sensorReadingRepository->flush();
+        $entityManager->flush();
 
         // Success return
         if (

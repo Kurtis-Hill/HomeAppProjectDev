@@ -33,3 +33,12 @@ services:
 
   App\Devices\DeviceServices\GetDevices\DevicesForUserInterface:
     alias: 'App\Devices\DeviceServices\GetDevices\DevicesForUserHandler'
+
+#when@test:
+#  services:
+#    _defaults:
+#        autowire: true
+#        public: true
+
+#    Symfony\Contracts\HttpClient\HttpClientInterface: ~
+#    getSensorUpdateCurrentReadingRequestHandlerServicetest.Symfony\Contracts\HttpClient\HttpClientInterface: '@Symfony\Contracts\HttpClient\HttpClientInterface'

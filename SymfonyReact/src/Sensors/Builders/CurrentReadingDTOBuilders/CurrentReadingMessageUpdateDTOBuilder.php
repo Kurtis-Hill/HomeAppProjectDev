@@ -4,7 +4,7 @@ namespace App\Sensors\Builders\CurrentReadingDTOBuilders;
 
 use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
 
-class CurrentReadingUpdateDTOBuilder
+class CurrentReadingMessageUpdateDTOBuilder
 {
     private const SENSOR_UPDATE_SUCCESS_MESSAGE = '%s data accepted for sensor %s';
 
@@ -15,7 +15,7 @@ class CurrentReadingUpdateDTOBuilder
         );
     }
 
-    public static function buildCurrentReadingErrorResponseDTO(string $message): CurrentReadingUpdateResponseDTO
+    public static function buildCurrentReadingResponseDTO(string $message): CurrentReadingUpdateResponseDTO
     {
         return new CurrentReadingUpdateResponseDTO($message);
     }

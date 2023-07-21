@@ -5,6 +5,7 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\RequestReading;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Exceptions\DeviceIPNotSetException;
+use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
@@ -15,7 +16,6 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateCurrentReadingRequestHandlerInterface
@@ -29,7 +29,6 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         private DeviceSensorRequestArgumentBuilderFactory $deviceSensorRequestArgumentBuilderFactory,
         private HttpClientInterface $httpClient,
-        private SerializerInterface $serializer,
     ) {}
 
     /**
@@ -37,8 +36,9 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
      * @throws DeviceIPNotSetException
      * @throws SensorTypeException
      * @throws ExceptionInterface
+     * @throws DeviceRequestArgumentBuilderTypeNotFoundException
      */
-    public function handleUpdateSensor(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
+    public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
     {
         $sensor = $this->sensorRepository->find($currentReadingUpdateMessageDTO->getSensorID());
         if ($sensor === null) {
@@ -48,8 +48,9 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $device = $sensor->getDevice();
         $deviceLocalIP = $device->getIpAddress();
         if ($deviceLocalIP === null) {
-            throw new DeviceIPNotSetException();
+            throw new DeviceIPNotSetException('Device IP address is not set');
         }
+
         $readingTypeCurrentReadingDTO = $currentReadingUpdateMessageDTO->getReadingTypeCurrentReadingDTO();
 
         $requestArgumentBuilder = $this->deviceSensorRequestArgumentBuilderFactory->fetchDeviceRequestArgumentBuilder(DeviceSensorRequestArgumentBuilderFactory::UPDATE_SENSOR_CURRENT_READING);
@@ -61,22 +62,17 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
             endpoint: self::SENSOR_SWITCH_ENDPOINT
         );
 
-        // on success return true and set current reading of the sensorreading type to requested value
+        // on success return true and set current reading of the sensor reading type to requested value
         $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
 
         $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
-
-        if ($sensorType instanceof GenericRelay) {
-            $sensorType->getRelay()->setCurrentReading($readingTypeCurrentReadingDTO->getCurrentReading());
-        } else {
+        if (!$sensorType instanceof GenericRelay) {
             throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_ALLOWED, $sensorType->getSensorTypeName()));
         }
 
         $normalizedResponse = $this->normalizeResponse(
             $deviceEncapsulationRequestDTO->getDeviceRequestDTO()
         );
-        $jsonDataToSend = $this->serializer->serialize($normalizedResponse, 'json');
-
 
         $deviceResponse = $this->httpClient->request(
             Request::METHOD_POST,
@@ -87,7 +83,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
-                'json' => $jsonDataToSend,
+                'json' => $normalizedResponse,
 
             ]
         );
@@ -101,9 +97,11 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
                 $relay->setUpdatedAt();
             }
 
-        }
-        $sensorTypeRepository->flush();
+            $sensorTypeRepository->flush();
 
-        return true;
+            return true;
+        }
+
+        return false;
     }
 }

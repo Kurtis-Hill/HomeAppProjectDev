@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs;
 
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -10,7 +10,7 @@ readonly class RequestSensorCurrentReadingUpdateMessageDTO
 {
     public function __construct(
         private  int $sensorID,
-        private BoolCurrentReadingUpdateRequestDTO $readingTypeCurrentReadingDTO,
+        private BoolCurrentReadingUpdateDTO $readingTypeCurrentReadingDTO,
     ) {}
 
     public function getSensorID(): int
@@ -18,7 +18,7 @@ readonly class RequestSensorCurrentReadingUpdateMessageDTO
         return $this->sensorID;
     }
 
-    public function getReadingTypeCurrentReadingDTO(): BoolCurrentReadingUpdateRequestDTO
+    public function getReadingTypeCurrentReadingDTO(): BoolCurrentReadingUpdateDTO
     {
         return $this->readingTypeCurrentReadingDTO;
     }

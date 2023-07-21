@@ -13,12 +13,13 @@ class BoolCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateReq
 
     private string $readingType;
 
-    public function __construct(mixed $readingTypeCurrentReading, string $readingType)
+    public function __construct(mixed $readingTypeCurrentReading, mixed $readingType)
     {
         $this->readingType = $readingType;
         parent::__construct($readingTypeCurrentReading);
     }
-    public function getReadingType(): string
+
+    public function getReadingType(): mixed
     {
         return $this->readingType;
     }
