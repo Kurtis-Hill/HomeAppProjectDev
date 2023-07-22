@@ -9,10 +9,8 @@ readonly class BoolSensorTypeBoundaryViewFormDTO
 {
     public function __construct(
         private string $readingType,
-//        private bool $currentReading,
-        private bool $expectedReading,
-//        private bool $requestedReading,
         private bool $constRecord,
+        private ?bool $expectedReading = null,
         private ?string $symbol = null,
     ) {}
 
@@ -21,20 +19,10 @@ readonly class BoolSensorTypeBoundaryViewFormDTO
         return $this->readingType;
     }
 
-//    public function getCurrentReading(): bool
-//    {
-//        return $this->currentReading;
-//    }
-
     public function getExpectedReading(): bool
     {
         return $this->expectedReading;
     }
-
-//    public function getRequestedReading(): bool
-//    {
-//        return $this->requestedReading;
-//    }
 
     public function getConstRecord(): bool
     {

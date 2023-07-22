@@ -76,7 +76,7 @@ export function DevicePage() {
                 {
                     currentTab === tabOptions[1]
                         ?
-                            <ViewSensorsPage sensorData={deviceData.sensorData} refreshData={getDeviceData} />
+                            <ViewSensorsPage deviceID={deviceID} sensorData={deviceData.sensorData} refreshData={getDeviceData} />
                         :
                             null
                 }

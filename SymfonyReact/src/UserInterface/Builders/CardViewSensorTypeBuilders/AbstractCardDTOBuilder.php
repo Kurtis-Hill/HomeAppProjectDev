@@ -49,9 +49,7 @@ abstract class AbstractCardDTOBuilder
         if ($cardDTOData instanceof MotionSensorReadingTypeInterface) {
             $sensorData[] = $this->setBoolSensorData($cardDTOData->getMotion(), Motion::READING_TYPE);
         }
-//        if ($cardDTOData instanceof OnOffSensorTypeInterface) {
-//            $sensorData[] = $this->setOnOffSensordata($cardDTOData->getPIRObject(), 'PIR');
-//        }
+
         if (empty($sensorData)) {
             throw new SensorTypeNotFoundException('Sensor Type Not Found');
         }
@@ -80,10 +78,8 @@ abstract class AbstractCardDTOBuilder
     ): BoolSensorTypeBoundaryViewFormDTO {
         return new BoolSensorTypeBoundaryViewFormDTO(
             $type,
-//            $sensorTyeObject->getCurrentReading(),
-            $sensorTyeObject->getExpectedReading(),
-//            $sensorTyeObject->getRequestedReading(),
             $sensorTyeObject->getConstRecord(),
+            $sensorTyeObject->getExpectedReading(),
             $symbol
         );
     }

@@ -37,7 +37,7 @@ readonly class DeviceRequestConsumer implements ConsumerInterface
 
 //            dd($sensorData);
         } catch (Exception $exception) {
-            dd('expection 1', $exception->getMessage());
+//            dd('expection 1', $exception->getMessage());
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return true;
@@ -46,9 +46,12 @@ readonly class DeviceRequestConsumer implements ConsumerInterface
         try {
             $requestSensorCurrentReadingHandler = $this->requestSensorCurrentReadingHandler->handleUpdateSensorReadingRequest($sensorData);
         } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface $exception) {
-            dd('expection 2', $exception->getMessage());
+//            dd('expection 2', $exception->getMessage());
             $this->elasticLogger->error('Sensor update request failed, exception message: ' . $exception->getMessage());
 
+            return true;
+        } catch (Exception $exception) {
+            $this->elasticLogger->error('Sensor update request failed, exception message: ' . $exception->getMessage());
             return true;
         }
 

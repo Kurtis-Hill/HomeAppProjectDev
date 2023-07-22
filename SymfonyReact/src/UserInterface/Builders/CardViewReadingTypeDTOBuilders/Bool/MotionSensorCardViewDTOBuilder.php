@@ -16,10 +16,10 @@ class MotionSensorCardViewDTOBuilder extends AbstractBoolReadingTypeDTOBuilder
 
         return $this->getBoolCardViewDTO(
             Motion::READING_TYPE,
+            $dateTime,
             $cardData['motion_currentReading'],
             $cardData['motion_expectedReading'],
             $cardData['motion_requestedReading'],
-            $dateTime,
         );
     }
 }

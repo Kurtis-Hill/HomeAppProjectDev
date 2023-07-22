@@ -9,10 +9,10 @@ readonly class BoolCardViewReadingResponseDTO implements CardViewReadingResponse
 {
     public function __construct(
         private string $readingType,
-        private bool $currentReading,
-        private bool $expectedReading,
-        private bool $requestedReading,
         private string $updatedAt,
+        private ?bool $currentReading = null,
+        private ?bool $expectedReading = null,
+        private ?bool $requestedReading = null,
         private ?string $readingSymbol = null,
     ) {}
 
@@ -26,17 +26,17 @@ readonly class BoolCardViewReadingResponseDTO implements CardViewReadingResponse
         return $this->updatedAt;
     }
 
-    public function getCurrentReading(): bool
+    public function getCurrentReading(): ?bool
     {
         return $this->currentReading;
     }
 
-    public function getExpectedReading(): bool
+    public function getExpectedReading(): ?bool
     {
         return $this->expectedReading;
     }
 
-    public function getRequestedReading(): bool
+    public function getRequestedReading(): ?bool
     {
         return $this->requestedReading;
     }

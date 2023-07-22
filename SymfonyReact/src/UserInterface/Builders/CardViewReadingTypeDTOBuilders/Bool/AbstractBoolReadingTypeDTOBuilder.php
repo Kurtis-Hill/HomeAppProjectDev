@@ -9,17 +9,17 @@ abstract class AbstractBoolReadingTypeDTOBuilder extends AbstractReadingTypeDTOB
 {
     protected function getBoolCardViewDTO(
         string $readingType,
-        bool $currentReading,
-        bool $expectedReading,
-        bool $requestedReading,
         string $formattedDateTime,
+        ?bool $currentReading = null,
+        ?bool $expectedReading = null,
+        ?bool $requestedReading = null,
     ): BoolCardViewReadingResponseDTO {
         return new BoolCardViewReadingResponseDTO(
             $readingType,
+            $formattedDateTime,
             $currentReading,
             $expectedReading,
             $requestedReading,
-            $formattedDateTime,
         );
     }
 }
