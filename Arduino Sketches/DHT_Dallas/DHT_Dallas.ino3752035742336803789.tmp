@@ -77,7 +77,7 @@ IPAddress netmask(255,255,255,0);
 
 
 // DHT
-#define DHTPIN 2
+#define DHTPIN 9
 #define DHTTYPE DHT22 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -90,8 +90,8 @@ struct DhtSensor {
 DhtSensor dhtSensor;
 
 // Dallas
-#define ACTIVE_START_PIN 2
-#define LAST_ACTIVE_PIN 2
+#define ACTIVE_START_PIN 9
+#define LAST_ACTIVE_PIN 9
 OneWire oneWire(0);
 DallasTemperature sensors(&oneWire);
 
@@ -710,7 +710,7 @@ bool connectToNetwork() {
   Serial.println("Getting wifi SPIFF");
   String wifiCredentials = getSerializedSpiff("/wifi.json");
   if (!wifiCredentials) {
-    Serial.println("Wifi failed, no spiff data");
+    Serial.println("Wifi failed");
 
     return false;
   }
@@ -772,10 +772,9 @@ void handleWifiReconnectionAttempt() {
     }
   }
 
-//  if (wifiRetryAttemptNumber == 3) {
-//    wifiRetryAttemptNumber = 0;
-//    setupNetworkConnection();
-//  }
+  if (wifiRetryAttemptNumber == 3) {
+    setupNetworkConnection();
+  }
 }
 
 // Need to decode this json string (data) and place different parts in different spiffs, wifi and sensor data
@@ -1527,7 +1526,7 @@ void handleSwitchSensor() {
   String sensorSwitchRequest = server.arg("plain");
 
   Serial.println("Deserialzing Request");
-  DynamicJsonDocument sensorSwitchJson = getDeserializedJson(sensorSwitchRequest, 512);
+  DynamicJsonDocument sensorSwitchJson = getDeserializedJson(sensorSwitchRequest, 128);
 
   if (sensorSwitchJson != NULL) {
     String sensorName = sensorSwitchJson["sensorName"].as<String>();
@@ -1536,16 +1535,15 @@ void handleSwitchSensor() {
 
     Serial.print("Sensor Name: ");
     Serial.println(sensorName);
-    Serial.print("pinNumber: ");
-    Serial.println(pinNumber);
+    Serial.printf(pinNumber: %d\n", pinNumber);
     Serial.print("requested reading: ");
     Serial.println(requestedReading);
-    if (requestedReading == 0) {
-      Serial.println("Going Low");
-      digitalWrite(pinNumber, LOW);        
-    } else {
+    if (requestedReading == true) {
       Serial.println("Going High");
       digitalWrite(pinNumber, HIGH);  
+    } else {
+      Serial.println("Going Low");
+      digitalWrite(pinNumber, LOW);  
     }
     
     server.send(200, "application/json", "{\"status\":\"completed\"}"); 
