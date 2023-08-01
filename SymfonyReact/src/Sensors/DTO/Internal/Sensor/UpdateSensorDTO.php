@@ -15,14 +15,18 @@ readonly class UpdateSensorDTO
 
     private ?Devices $deviceID;
 
+    private ?int $pinNumber;
+
     public function __construct(
         Sensor $sensor,
         ?string $sensorName = null,
         ?Devices $deviceID = null,
+        ?int $pinNumber = null,
     ) {
         $this->sensor = $sensor;
         $this->sensorName = $sensorName;
         $this->deviceID = $deviceID;
+        $this->pinNumber = $pinNumber;
     }
 
     public function getSensor(): Sensor
@@ -38,5 +42,10 @@ readonly class UpdateSensorDTO
     public function getDeviceID(): ?Devices
     {
         return $this->deviceID;
+    }
+
+    public function getPinNumber(): ?int
+    {
+        return $this->pinNumber;
     }
 }

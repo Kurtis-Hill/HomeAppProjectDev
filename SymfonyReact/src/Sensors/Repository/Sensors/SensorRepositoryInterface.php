@@ -31,7 +31,7 @@ interface SensorRepositoryInterface
      */
     public function remove(Sensor $sensors): void;
 
-    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor;
+    public function findDuplicateSensorOnDeviceByGroup(Sensor $sensorData): ?Sensor;
 
     /**
      * @throws \Doctrine\ORM\NonUniqueResultException
@@ -43,4 +43,6 @@ interface SensorRepositoryInterface
 
     #[ArrayShape([Sensor::class])]
     public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO): array;
+
+    public function findSensorObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): ?Sensor;
 }

@@ -64,7 +64,6 @@ class UpdateSensorController extends AbstractController
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
-
         $requestValidationErrors = $validator->validate($updateSensorRequestDTO);
 
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
@@ -83,6 +82,7 @@ class UpdateSensorController extends AbstractController
             $updateSensorRequestDTO,
             $sensor
         );
+
         try {
             $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR, $sensorUpdateDTO);
         } catch (AccessDeniedException) {

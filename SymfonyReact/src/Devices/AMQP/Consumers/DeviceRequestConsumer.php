@@ -6,6 +6,7 @@ use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Exceptions\SensorNotFoundException;
+use App\Sensors\Exceptions\SensorPinNumberNotSetException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface;
 use Exception;
@@ -34,8 +35,6 @@ readonly class DeviceRequestConsumer implements ConsumerInterface
                     ]
                 ]
             );
-
-//            dd($sensorData);
         } catch (Exception $exception) {
 //            dd('expection 1', $exception->getMessage());
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
@@ -45,13 +44,12 @@ readonly class DeviceRequestConsumer implements ConsumerInterface
 
         try {
             $requestSensorCurrentReadingHandler = $this->requestSensorCurrentReadingHandler->handleUpdateSensorReadingRequest($sensorData);
-        } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface $exception) {
-//            dd('expection 2', $exception->getMessage());
+        } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface | SensorPinNumberNotSetException $exception) {
             $this->elasticLogger->error('Sensor update request failed, exception message: ' . $exception->getMessage());
 
             return true;
         } catch (Exception $exception) {
-            $this->elasticLogger->error('Sensor update request failed, exception message: ' . $exception->getMessage());
+            $this->elasticLogger->error('Sensor update request failed with unexpected error, exception message: ' . $exception->getMessage());
             return true;
         }
 

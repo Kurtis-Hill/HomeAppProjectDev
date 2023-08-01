@@ -53,16 +53,17 @@ class UpdateSensorHandler implements UpdateSensorInterface
             $sensor,
             $sensorUpdateRequestDTO->getSensorName(),
             $proposedDevice ?? null,
+            $sensorUpdateRequestDTO->getPinNumber(),
         );
     }
 
     public function handleSensorUpdate(UpdateSensorDTO $updateSensorDTO): array
     {
         $this->duplicateSensorCheckService->checkSensorForDuplicates(
-            $updateSensorDTO->getSensor(),
-            $updateSensorDTO->getDeviceID()?->getDeviceID() ?? $updateSensorDTO->getSensor()->getDevice()->getDeviceID(),
-            $updateSensorDTO->getSensorName(),
-
+            sensor: $updateSensorDTO->getSensor(),
+            deviceID: $updateSensorDTO->getDeviceID()?->getDeviceID() ?? $updateSensorDTO->getSensor()->getDevice()->getDeviceID(),
+            sensorNameToUpdateTo: $updateSensorDTO->getSensorName(),
+            pinToUpdateTo: $updateSensorDTO->getPinNumber()
         );
 
         $sensorToUpdate = $updateSensorDTO->getSensor();
@@ -72,6 +73,10 @@ class UpdateSensorHandler implements UpdateSensorInterface
 
         if ($updateSensorDTO->getSensorName() !== null) {
             $sensorToUpdate->setSensorName($updateSensorDTO->getSensorName());
+        }
+
+        if ($updateSensorDTO->getPinNumber() !== null) {
+            $sensorToUpdate->setPinNumber($updateSensorDTO->getPinNumber());
         }
 
         $validationErrors = $this->validator->validate($sensorToUpdate);

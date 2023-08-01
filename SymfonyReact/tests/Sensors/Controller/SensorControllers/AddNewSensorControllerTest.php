@@ -5,6 +5,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Devices\Entity\Devices;
+use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\AddNewSensorController;
@@ -25,6 +26,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
 use App\User\Entity\User;
@@ -50,6 +52,10 @@ class AddNewSensorControllerTest extends WebTestCase
 
     private ?Devices $device;
 
+    private DeviceRepository $deviceRepository;
+
+    private SensorRepositoryInterface $sensorRepository;
+
     private ?string $userToken = null;
 
     protected function setUp(): void
@@ -59,6 +65,9 @@ class AddNewSensorControllerTest extends WebTestCase
         $this->entityManager = static::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
+        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
+        $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
 
         try {
             $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
@@ -176,10 +185,20 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var SensorType $sensorType */
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
+        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($this->device->getDeviceID());
+
+        while (true) {
+            $randomPin = random_int(0, 10);
+            if (!in_array($randomPin, $devicePinsInUse)) {
+                break;
+            }
+        }
+
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => $randomPin,
         ];
 
         $jsonData = json_encode($formData);
@@ -228,6 +247,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => '&' . $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -265,6 +285,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => 'TestingTestingTesti' . $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -299,6 +320,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => 'T',
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -337,6 +359,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => $sensor->getSensorName(),
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -367,7 +390,7 @@ class AddNewSensorControllerTest extends WebTestCase
      * @param string $sensorType
      * @param string $sensorName
      */
-    public function test_cannot_add_new_sensor_with_none_existant_device_id(string $sensorType, string $sensorName): void
+    public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorType, string $sensorName): void
     {
         /** @var SensorType $sensorType */
         $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
@@ -384,6 +407,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $randomID,
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -406,7 +430,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function test_adding_new_sensor_with_none_existant_sensor_type(): void
+    public function test_adding_new_sensor_with_none_existent_sensor_type(): void
     {
         while (true) {
             $randomID = random_int(0, 1000000);
@@ -420,6 +444,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => 'testing',
             'sensorTypeID' => $randomID,
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -455,6 +480,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -521,7 +547,6 @@ class AddNewSensorControllerTest extends WebTestCase
         );
 
         $counter = 0;
-
         while (true) {
             $group = $groupsNotApartOf[$counter];
             $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $group->getGroupID()]);
@@ -531,13 +556,22 @@ class AddNewSensorControllerTest extends WebTestCase
             }
         }
         /** @var Devices[] $devices */
-
-
         $device = $devices[0];
+
+        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($device->getDeviceID());
+
+        while (true) {
+            $randomPin = random_int(0, 10);
+            if (!in_array($randomPin, $devicePinsInUse)) {
+                break;
+            }
+        }
+
         $formData = [
             'sensorName' => $sensorName . '1',
             'sensorTypeID' => $sensorTypeMappingObject->getSensorTypeID(),
             'deviceID' => $device->getDeviceID(),
+            'pinNumber' => $randomPin,
         ];
 
         $jsonData = json_encode($formData);
@@ -610,6 +644,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
+            'pinNumber' => 1,
         ];
 
         $jsonData = json_encode($formData);
@@ -658,6 +693,71 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
     }
 
+    public function test_adding_sensor_to_occupied_pin(): void
+    {
+        /** @var SensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+
+        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
+
+        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($deviceToAddSensorToo->getDeviceID());
+
+        $formData = [
+            'sensorName' => 'testing',
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
+            'pinNumber' => $devicePinsInUse[0],
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_URL,
+            $formData,
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString(sprintf('Sensor with pin %d already exists', $devicePinsInUse[0]), $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_adding_sensor_with_negative_pin(): void
+    {
+        /** @var SensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+
+        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
+
+        $pinNumber = -1;
+        $formData = [
+            'sensorName' => 'testing',
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
+            'pinNumber' => $pinNumber,
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_URL,
+            $formData,
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString('pinNumber must be greater than ' . $pinNumber, $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
@@ -695,6 +795,7 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $device->getDeviceID(),
+            'pinNumber' => random_int(0, 10),
         ];
 
         $jsonData = json_encode($formData);

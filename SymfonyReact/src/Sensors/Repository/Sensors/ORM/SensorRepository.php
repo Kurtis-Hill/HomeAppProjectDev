@@ -60,7 +60,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $this->getEntityManager()->remove($sensors);
     }
 
-    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor
+    public function findDuplicateSensorOnDeviceByGroup(Sensor $sensorData): ?Sensor
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -69,7 +69,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                $expr->eq('device.groupID', ':groupName'),
+                    $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
@@ -78,7 +78,27 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 ]
             );
 
-        return $qb->getQuery()->getResult()[0] ?? null;
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findSensorObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): ?Sensor
+    {
+        $qb = $this->createQueryBuilder('sensor');
+
+        $qb->select('sensor')
+            ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
+            ->where(
+                $qb->expr()->eq('sensor.pinNumber', ':pinNumber'),
+                $qb->expr()->eq('device.deviceID', ':deviceID')
+            )
+            ->setParameters(
+                [
+                    'pinNumber' => $pinNumber,
+                    'deviceID' => $deviceID,
+                ]
+            );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function getSensorReadingTypeDataBySensor(

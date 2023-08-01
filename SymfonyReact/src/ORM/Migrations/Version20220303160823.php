@@ -249,14 +249,15 @@ final class Version20220303160823 extends AbstractMigration
             CREATE TABLE dallas (
                 dallasID INT AUTO_INCREMENT NOT NULL, 
                 tempID INT NOT NULL, 
-                sensorID INT NOT NULL, 
+                sensorID INT NOT NULL,
+
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(dallasID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
-
+//                takeReadingInterval MEDIUMINT DEFAULT 60 NOT NULL,
         $this->addSql('
             CREATE TABLE dht (
                 dhtID INT AUTO_INCREMENT NOT NULL, 
@@ -382,11 +383,13 @@ final class Version20220303160823 extends AbstractMigration
                 createdBy INT NOT NULL, 
                 sensorName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 deviceID INT NOT NULL, 
-                sensorTypeID INT NOT NULL, 
+                sensorTypeID INT NOT NULL,
+                pinNumber TINYINT NOT NULL,
                 INDEX sensornames_ibfk_1 (deviceID), 
                 INDEX sensornames_ibfk_2 (createdBy), 
                 INDEX sensortype (sensorTypeID), 
                 UNIQUE INDEX sensor_device (sensorName, deviceID),
+                UNIQUE INDEX sensor_pin (pinNumber, deviceID),
                 PRIMARY KEY(sensorID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'

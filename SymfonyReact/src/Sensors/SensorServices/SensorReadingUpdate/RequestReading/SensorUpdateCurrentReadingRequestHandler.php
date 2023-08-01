@@ -10,6 +10,7 @@ use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Exceptions\SensorNotFoundException;
+use App\Sensors\Exceptions\SensorPinNumberNotSetException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -37,6 +38,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
      * @throws SensorTypeException
      * @throws ExceptionInterface
      * @throws DeviceRequestArgumentBuilderTypeNotFoundException
+     * @throws SensorPinNumberNotSetException
      */
     public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
     {
@@ -54,6 +56,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $readingTypeCurrentReadingDTO = $currentReadingUpdateMessageDTO->getReadingTypeCurrentReadingDTO();
 
         $requestArgumentBuilder = $this->deviceSensorRequestArgumentBuilderFactory->fetchDeviceRequestArgumentBuilder(DeviceSensorRequestArgumentBuilderFactory::UPDATE_SENSOR_CURRENT_READING);
+
         $requestArguments = $requestArgumentBuilder->buildSensorRequestArguments($sensor, $readingTypeCurrentReadingDTO);
 
         $deviceEncapsulationRequestDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(

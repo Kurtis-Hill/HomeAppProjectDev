@@ -94,6 +94,7 @@ class SensorResponseDTOBuilder
             $sensor->getSensorName(),
             DeviceResponseDTOBuilder::buildDeviceResponseDTO($sensor->getDevice()),
             SensorTypeResponseDTOBuilder::buildFullSensorTypeResponseDTO($sensor->getSensorTypeObject()),
+            $sensor->getPinNumber(),
             $sensorReadingTypeDTO,
             $canEdit,
             $canDelete,

@@ -84,7 +84,8 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             $newSensorRequestDTO->getSensorName(),
             $sensorTypeObject,
             $deviceObject,
-            $user
+            $user,
+            $newSensorRequestDTO->getPinNumber(),
         );
     }
 
@@ -100,6 +101,7 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
         $sensor->setSensorName($newSensorDTO->getSensorName());
         $sensor->setSensorTypeID($newSensorDTO->getSensorType());
         $sensor->setDevice($newSensorDTO->getDevice());
+        $sensor->setPinNumber($newSensorDTO->getPinNumber());
 
         return $this->validateSensor($sensor);
     }
@@ -115,8 +117,8 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             $this->duplicateSensorCheckService->checkSensorForDuplicates(
                 $sensor,
                 $sensor->getDevice()->getDeviceID(),
+                true,
             );
-            $this->duplicateSensorOnSameDeviceCheck($sensor);
         } catch (DuplicateSensorException $e) {
             return [$e->getMessage()];
         }
@@ -124,22 +126,22 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
         return $errors ?? [];
     }
 
-    /**
-     * @throws DuplicateSensorException
-     */
-    private function duplicateSensorOnSameDeviceCheck(Sensor $sensor): void
-    {
-        $currentUserSensorNameCheck = $this->sensorRepository->checkForDuplicateSensorOnDevice($sensor);
-
-        if ($currentUserSensorNameCheck instanceof Sensor) {
-            throw new DuplicateSensorException(
-                sprintf(
-                    DuplicateSensorException::MESSAGE,
-                    $sensor->getSensorName()
-                )
-            );
-        }
-    }
+//    /**
+//     * @throws DuplicateSensorException
+//     */
+//    private function duplicateSensorOnSameDeviceCheck(Sensor $sensor): void
+//    {
+//        $currentUserSensorNameCheck = $this->sensorRepository->checkForDuplicateSensorOnDevice($sensor);
+//
+//        if ($currentUserSensorNameCheck instanceof Sensor) {
+//            throw new DuplicateSensorException(
+//                sprintf(
+//                    DuplicateSensorException::MESSAGE,
+//                    $sensor->getSensorName()
+//                )
+//            );
+//        }
+//    }
 
     public function saveSensor(Sensor $sensor): bool
     {

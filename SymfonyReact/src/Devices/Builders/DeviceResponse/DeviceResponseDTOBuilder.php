@@ -9,6 +9,7 @@ use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
@@ -57,6 +58,7 @@ class DeviceResponseDTOBuilder
         if ($includeSensors === true) {
             $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());
             if (!empty($deviceSensors)) {
+                /** @var Sensor $sensor */
                 foreach ($deviceSensors as $sensor) {
                     $sensorResponseDTOs[] = $this->sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [RequestTypeEnum::FULL->value]);
                 }

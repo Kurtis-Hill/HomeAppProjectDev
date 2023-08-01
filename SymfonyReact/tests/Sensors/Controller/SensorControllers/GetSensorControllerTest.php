@@ -748,6 +748,8 @@ class GetSensorControllerTest extends WebTestCase
             self::assertTrue($singleSensorData['canEdit']);
             self::assertTrue($singleSensorData['canDelete']);
 
+            self::assertEquals($sensorObject->getPinNumber(), $singleSensorData['pinNumber']);
+
             $userHasCardView = $this->cardViewRepository->findOneBy(
                 [
                     'userID' => $this->adminUser->getUserID(),

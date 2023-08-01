@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Entity(repositoryClass: SensorRepository::class),
     ORM\Table(name: "sensors"),
     ORM\UniqueConstraint(name: "sensor_device", columns: ["sensorName", "deviceID"]),
-    ORM\Index(columns: ["ddeviceID"], name: "sensornames_ibfk_1"),
+    ORM\UniqueConstraint(name: "sensor_pin", columns: ["pinNumber", "deviceID"]),
+    ORM\Index(columns: ["deviceID"], name: "sensornames_ibfk_1"),
     ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
     ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
 ]
@@ -63,6 +64,17 @@ class Sensor
     ]
     private User $createdBy;
 
+    #[ORM\Column(name: "pinNumber", type: "smallint", nullable: false)]
+    #[
+        Assert\Range(
+            notInRangeMessage: 'pinNumber must be greater than {{ min }}',
+            minMessage: 'pinNumber must be greater than {{ value }}',
+            invalidMessage: 'pinNumber must be an int you have provided {{ value }}',
+            min: 0,
+        ),
+    ]
+    private int $pinNumber;
+
     public function getSensorID(): int
     {
         return $this->sensorID;
@@ -111,5 +123,15 @@ class Sensor
     public function setCreatedBy(User $createdBy): void
     {
         $this->createdBy = $createdBy;
+    }
+
+    public function getPinNumber(): ?int
+    {
+        return $this->pinNumber;
+    }
+
+    public function setPinNumber(?int $pinNumber): void
+    {
+        $this->pinNumber = $pinNumber;
     }
 }

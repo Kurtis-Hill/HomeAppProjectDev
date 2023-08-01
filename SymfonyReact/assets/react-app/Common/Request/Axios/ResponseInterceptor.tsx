@@ -1,3 +1,5 @@
+import { useState, useRef } from 'react';
+
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
@@ -14,7 +16,7 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
 
     const navigate: NavigateFunction = useNavigate();
 
-    let responseTokenRequestInProgress: boolean = false;
+    const [responseTokenRequestInProgress, setResponseTokenRequestInProgress] = useState<boolean>(false);
 
     axios.interceptors.response.use(function (response) {
         // if (response?.data !== undefined) {
@@ -77,7 +79,7 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                 errorAnnouncementFlash(errorsForModal, 'Error' ?? errorResponse.title );
             } else {
                 if (error.response.status === 401 || error.response.status === 403 && responseTokenRequestInProgress === false) {
-                    responseTokenRequestInProgress = true;
+                    setResponseTokenRequestInProgress(true);
                     const refreshToken: string|null = getRefreshToken();
                     if (refreshToken !== null) {
                         try {
@@ -85,15 +87,15 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                             if (refreshTokenResponse.status === 200) {
                                 const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
                                 refreshUserTokens(refreshTokenResponseData);
-                                responseTokenRequestInProgress = false;
+                                setResponseTokenRequestInProgress(false);
                             }
                         } catch (err) {
                             const error = err as Error | AxiosError;
                             alert('Your session has expired please log in again');
-                            responseTokenRequestInProgress = false;
+                            setResponseTokenRequestInProgress(false);
                         }
                     } else {
-                        responseTokenRequestInProgress = false;
+                        setResponseTokenRequestInProgress(false);
                         window.location.replace(`${loginUrl}`)
                     }
                 } 
@@ -106,8 +108,7 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                     errorAnnouncementFlash([error.message], 'Error');
                 }                 
             }
-        } else {
-            console.log('lol');
+        } else {            
             errorAnnouncementFlash([error.message], 'Error');
         }
     });

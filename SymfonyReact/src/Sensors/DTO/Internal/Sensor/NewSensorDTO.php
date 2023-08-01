@@ -17,6 +17,7 @@ readonly class NewSensorDTO
         private Devices $device,
         private UserInterface $user,
         private Sensor $sensor,
+        private int $pinNumber,
     ) {
     }
 
@@ -43,5 +44,10 @@ readonly class NewSensorDTO
     public function getSensor(): Sensor
     {
         return $this->sensor;
+    }
+
+    public function getPinNumber(): int
+    {
+        return $this->pinNumber;
     }
 }

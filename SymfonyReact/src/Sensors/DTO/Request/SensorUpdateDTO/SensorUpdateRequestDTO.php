@@ -22,6 +22,16 @@ class SensorUpdateRequestDTO
     ]
     private mixed $deviceID = null;
 
+    #[
+        Assert\Range(
+            notInRangeMessage: 'pinNumber must be greater than {{ min }}',
+            minMessage: 'pinNumber must be greater than {{ value }}',
+            invalidMessage: 'pinNumber must be an int you have provided {{ value }}',
+            min: 0,
+        ),
+    ]
+    private mixed $pinNumber = null;
+
     public function setSensorName(mixed $sensorName): void
     {
         $this->sensorName = $sensorName;
@@ -40,5 +50,15 @@ class SensorUpdateRequestDTO
     public function getDeviceID(): mixed
     {
         return $this->deviceID;
+    }
+
+    public function setPinNumber(mixed $pinNumber): void
+    {
+        $this->pinNumber = $pinNumber;
+    }
+
+    public function getPinNumber(): mixed
+    {
+        return $this->pinNumber;
     }
 }

@@ -15,6 +15,7 @@ class NewSensorDTOBuilder
         SensorType $sensorType,
         Devices $device,
         UserInterface $user,
+        int $pinNumber,
     ): NewSensorDTO {
         $newSensor = new Sensor();
 
@@ -24,6 +25,7 @@ class NewSensorDTOBuilder
             $device,
             $user,
             $newSensor,
+            $pinNumber,
         );
     }
 }

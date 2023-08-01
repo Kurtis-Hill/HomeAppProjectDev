@@ -25,6 +25,7 @@ class RequestSensorCurrentReadingUpdateArgumentBuilderTest extends TestCase
         $sensor = new Sensor();
         $sensorName = 'test-sensorname';
         $sensor->setSensorName($sensorName);
+        $sensor->setPinNumber(50);
 
         $boolCurrentReadingUpdateDTO = new BoolCurrentReadingUpdateDTO(
             Relay::READING_TYPE,
@@ -51,6 +52,7 @@ class RequestSensorCurrentReadingUpdateArgumentBuilderTest extends TestCase
         $sensor = new Sensor();
         $sensorName = 'test-sensorname';
         $sensor->setSensorName($sensorName);
+        $sensor->setPinNumber(1);
 
         $boolCurrentReadingUpdateDTO = new BoolCurrentReadingUpdateDTO(
             Relay::READING_TYPE,

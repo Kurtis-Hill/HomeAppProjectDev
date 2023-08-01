@@ -558,6 +558,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         $sensorData = $responseData['payload'];
         $sensorReadingTypes = $sensorData['sensorReadingTypes'];
 
+        self::assertEquals($sensorObject->getPinNumber(), $sensorData['pinNumber']);
         if (
             $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
             || $sensorObject->getSensorTypeObject()->getSensorType() === Dallas::NAME
@@ -635,6 +636,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         self::assertEquals($sensorObject->getSensorID(), $sensorData['sensorID']);
         self::assertEquals($sensorObject->getSensorName(), $sensorData['sensorName']);
+        self::assertEquals($sensorObject->getPinNumber(), $sensorData['pinNumber']);
 
         $sensorTypeObject = $sensorObject->getSensorTypeObject();
         self::assertEquals($sensorTypeObject->getSensorTypeID(), $sensorData['sensorType']['sensorTypeID']);

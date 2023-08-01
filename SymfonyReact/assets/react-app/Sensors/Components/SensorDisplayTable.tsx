@@ -25,6 +25,7 @@ const defaultFormActiveState = {
     device: false,
     createdBy: false,
     expandSensor: false,
+    pinNumber: false,
 };
 
 export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
@@ -36,6 +37,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
 
     const originalSensorData = useRef<SensorResponseInterface>({
         sensorName: sensor.sensorName,
+        pinNumber: sensor.pinNumber,
         sensorType: sensor.sensorType,
         device: sensor.device,
         createdBy: sensor.createdBy,
@@ -43,6 +45,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
 
     const [sensorUpdateFormInputs, setSensorUpdateFormInputs] = useState<SensorResponseInterface>({
         sensorName: sensor.sensorName,
+        pinNumber: sensor.pinNumber,
         sensorType: sensor.sensorType,
         device: sensor.device,
         createdBy: sensor.createdBy,
@@ -80,6 +83,8 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
             ...sensorUpdateFormInputs,
             [name]: value,
         });
+
+        console.log('sensorUpdateFormInputs', name, value)
     }
 
 
@@ -96,11 +101,15 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
             case 'deviceName':
                 dataToSend.deviceName = sensorUpdateFormInputs.device.deviceName;
                 break;
+            case 'pinNumber':
+                dataToSend.pinNumber = parseInt(sensorUpdateFormInputs.pinNumber);
+                break;
         }
 
         const updatedSensorResponse = await updateSensorRequest(sensor.sensorID, dataToSend);
 
-        if (updatedSensorResponse.status === 200) {
+        if (updatedSensorResponse.status === 200 || updatedSensorResponse.status === 202) {
+            console.log('updated sensor', dataToSend);
             const updatedSensor: SensorResponseInterface = updatedSensorResponse.data.payload;
 
             setSensorUpdateFormInputs({
@@ -190,6 +199,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                 <GeneralTableHeaders
                     headers={[
                         'Sensor Name',
+                        'Pin Number',
                         'Sensor Type',
                         'Created By',
                         'User Card',
@@ -214,6 +224,23 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                 :                
                                     <span className={`${canEdit === true ? 'hover' : ''}`} data-name="sensorName" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorName}</span>
                             }
+                    </GeneralTableRow>
+                    <GeneralTableRow>
+                        {
+                            activeFormForUpdating.pinNumber === true && canEdit === true
+                                ?
+                                    <FormInlineInput
+                                        changeEvent={handleUpdateSensorInput}
+                                        nameParam='pinNumber'
+                                        value={sensorUpdateFormInputs.pinNumber}
+                                        dataName='pinNumber'
+                                        acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
+                                        declineClickEvent={(e: Event) => toggleFormInput(e)}
+                                        extraClasses='center-text'
+                                    />
+                                :
+                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="pinNumber" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.pinNumber}</span>
+                        }                            
                     </GeneralTableRow>
                     <GeneralTableRow>
                         <span>{sensor?.sensorType?.sensorTypeName}</span>

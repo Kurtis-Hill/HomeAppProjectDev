@@ -4,6 +4,7 @@ namespace App\Sensors\Entity\SensorTypes;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DallasRepository;
@@ -17,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 //    ORM\Index(columns: ["sensor"], name: "sensor"),
 ]
 class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface
+//    ReadingIntervalInterface
 {
     public const NAME = 'Dallas';
 
@@ -48,6 +50,11 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
         ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
     private Sensor $sensor;
+
+//    #[
+//        ORM\Column(name: "takeReadingInterval", type: "integer", nullable: false),
+//    ]
+//    private int $readingInterval = 60;
 
     public function getSensorTypeID(): int
     {

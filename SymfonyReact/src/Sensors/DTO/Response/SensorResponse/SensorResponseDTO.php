@@ -20,6 +20,7 @@ readonly class SensorResponseDTO
         private string $sensorName,
         private DeviceResponseDTO $device,
         private SensorTypeResponseDTO $sensorType,
+        private int $pinNumber,
         #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
         private array $sensorReadingTypes = [],
         private ?bool $canEdit = null,
@@ -117,5 +118,16 @@ readonly class SensorResponseDTO
     public function getCardView(): ?CardViewResponseDTO
     {
         return $this->cardView;
+    }
+
+    #[Groups([
+    RequestTypeEnum::FULL->value,
+    RequestTypeEnum::ONLY->value,
+    RequestTypeEnum::SENSITIVE_FULL->value,
+    RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getPinNumber(): ?int
+    {
+        return $this->pinNumber;
     }
 }
