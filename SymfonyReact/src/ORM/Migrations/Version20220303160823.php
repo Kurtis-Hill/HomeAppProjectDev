@@ -11,6 +11,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\User\Entity\Group;
 use App\UserInterface\Entity\Card\CardState;
@@ -236,6 +237,7 @@ final class Version20220303160823 extends AbstractMigration
                 humidID INT NOT NULL, 
                 latitudeID INT NOT NULL, 
                 sensorID INT DEFAULT NULL, 
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX sensorID (sensorID), 
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX humidID (humidID), 
@@ -250,20 +252,21 @@ final class Version20220303160823 extends AbstractMigration
                 dallasID INT AUTO_INCREMENT NOT NULL, 
                 tempID INT NOT NULL, 
                 sensorID INT NOT NULL,
-
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(dallasID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
-//                takeReadingInterval MEDIUMINT DEFAULT 60 NOT NULL,
+
         $this->addSql('
             CREATE TABLE dht (
                 dhtID INT AUTO_INCREMENT NOT NULL, 
                 tempID INT NOT NULL, 
                 humidID INT NOT NULL, 
-                sensorID INT NOT NULL, 
+                sensorID INT NOT NULL,
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX sensorID (sensorID), 
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX humidID (humidID), 
@@ -277,6 +280,7 @@ final class Version20220303160823 extends AbstractMigration
                 soilID INT AUTO_INCREMENT NOT NULL, 
                 analogID INT NOT NULL, 
                 sensorID INT NOT NULL, 
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX analogID (analogID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(soilID)

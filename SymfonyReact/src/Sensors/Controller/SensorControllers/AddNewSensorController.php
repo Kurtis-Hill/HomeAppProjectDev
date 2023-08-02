@@ -18,6 +18,7 @@ use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface;
 use App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationInterface;
 use App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface;
+use App\Sensors\SensorServices\SensorDeletion\SensorDeletionInterface;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Entity\User;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationHandlerInterface;
@@ -54,7 +55,7 @@ class AddNewSensorController extends AbstractController
         NewSensorCreationInterface $newSensorCreationService,
         ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,
-        DeleteSensorHandlerInterface $deleteSensorService,
+        SensorDeletionInterface $deleteSensorService,
     ): JsonResponse {
         $newSensorRequestDTO = new AddNewSensorRequestDTO();
         try {
@@ -119,11 +120,8 @@ class AddNewSensorController extends AbstractController
 
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
         if (!empty($sensorReadingTypeCreationErrors)) {
-            try {
-                $deleteSensorService->deleteSensor($sensor);
-            } catch (ORMException $e) {
-                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
-            }
+            $deleteSensorService->deleteSensor($sensor);
+            $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
 
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }

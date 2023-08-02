@@ -76,13 +76,13 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
             $sensorReadingTypeObject
         );
 
-        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+        if ($sensorReadingTypeObject instanceof StandardReadingSensorInterface && $updateSensorBoundaryReadingsDTO instanceof UpdateStandardReadingTypeBoundaryReadingsDTO) {
             $this->updateStandardSensorBoundaryReading(
                 $sensorReadingTypeObject,
                 $updateSensorBoundaryReadingsDTO
             );
         }
-        if ($sensorReadingTypeObject instanceof BoolReadingSensorInterface) {
+        if ($sensorReadingTypeObject instanceof BoolReadingSensorInterface && $updateSensorBoundaryReadingsDTO instanceof UpdateBoolReadingTypeBoundaryReadingsDTO) {
             $this->updateBoolSensorBoundaryReading(
                 $sensorReadingTypeObject,
                 $updateSensorBoundaryReadingsDTO
@@ -90,7 +90,7 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
         }
         $validationError = $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObject(
             $sensorReadingTypeObject,
-            $sensorType
+            $sensorType,
         );
 
         if (!empty($validationError)) {

@@ -17,7 +17,7 @@ use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use App\Sensors\SensorServices\Sensor\DuplicateSensorCheckService;
+use App\Sensors\SensorServices\UpdateSensor\DuplicateSensorCheckService;
 use App\User\Entity\User;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;

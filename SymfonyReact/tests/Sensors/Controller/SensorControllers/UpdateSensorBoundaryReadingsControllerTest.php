@@ -5,7 +5,7 @@ namespace App\Tests\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController;
+use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
@@ -462,7 +462,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -494,7 +494,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -528,7 +528,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         //Dallas
@@ -551,7 +551,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -572,7 +572,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -593,7 +593,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         //Bmp
@@ -640,7 +640,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -683,7 +683,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -726,7 +726,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         // Soil
@@ -749,7 +749,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -770,7 +770,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -791,7 +791,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => 0,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -811,7 +811,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => false,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -831,7 +831,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => false,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -851,7 +851,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => true,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         // Generic Relay
@@ -872,7 +872,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => false,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -892,7 +892,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => false,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -912,7 +912,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "constRecord" => true,
                 ]
             ],
-            'expectedTitle' => UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL,
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
     }
 
@@ -923,6 +923,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $sensorType,
         string $tableId,
         array $sensorReadingsToUpdate,
+        mixed $interval,
         array|string $expectedDataPayloadMessage,
         array $expectedErrorPayloadMessage,
         string $expectedTitle,
@@ -932,6 +933,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         $sensorData = [
             'sensorData' => $sensorReadingsToUpdate,
+            'readingInterval' => $interval,
         ];
         $jsonData = json_encode($sensorData);
 
@@ -960,8 +962,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
         }
 
+        /** @var Dht|Dallas|Soil|Bmp|GenericRelay|GenericMotion $sensorReadingTypeAfterUpdate */
         $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
 
+        if (!is_int($interval)) {
+            self::assertNotEquals($interval, $sensorReadingTypeAfterUpdate->getReadingInterval());
+        }
         if (new $sensorType instanceof BoolSensorTypeInterface) {
             $readingUpdates = [];
             foreach ($sensorReadingsToUpdate as $sensorReading) {
@@ -1022,6 +1028,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
+            'interval' => 500,
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
@@ -1031,6 +1038,32 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
         ];
+
+        yield [
+            'sensorType' => Dht::class,
+            'tableId' => 'dhtID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY,
+                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY,
+                    'outOfBounds' => true,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'highReading' => Humidity::HIGH_READING,
+                    'lowReading' => Humidity::LOW_READING,
+                    'outOfBounds' => true,
+                ]
+            ],
+            'interval' => [10],
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                'readingInterval must be a number'
+            ],
+            'expectedTitle' => 'Bad Request No Data Returned',
+        ];
+
 
         //Dallas
         yield [
@@ -1044,12 +1077,33 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ],
             ],
+            'interval' => 1500,
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
                 "Temperature settings for Dallas sensor cannot exceed 125°C you entered 130°C",
                 "Temperature settings for Dallas sensor cannot be below -55°C you entered -60°C",
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
+        ];
+
+//        //Dallas
+        yield [
+            'sensorType' => Dallas::class,
+            'tableId' => 'dallasID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
+                    'lowReading' => Dallas::LOW_TEMPERATURE_READING_BOUNDARY - 5,
+                    'outOfBounds' => true,
+                ],
+            ],
+            'interval' => 200,
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                "readingInterval must be between 500 and 100000",
+            ],
+            'expectedTitle' => 'Bad Request No Data Returned',
         ];
 
         // BMP
@@ -1076,6 +1130,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
+            'interval' => 1000,
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot exceed ' . Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
@@ -1087,6 +1142,38 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
         ];
+
+        yield [
+            'sensorType' => Bmp::class,
+            'tableId' => 'bmpID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
+                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5,
+                    'outOfBounds' => true,
+                ],
+                [
+                    'readingType' => Humidity::READING_TYPE,
+                    'highReading' => Humidity::HIGH_READING + 5,
+                    'lowReading' => Humidity::LOW_READING - 5,
+                    'outOfBounds' => true,
+                ],
+                [
+                    'readingType' => Latitude::READING_TYPE,
+                    'highReading' => Latitude::HIGH_READING + 5,
+                    'lowReading' => Latitude::LOW_READING - 5,
+                    'outOfBounds' => true,
+                ]
+            ],
+            'interval' => 100250,
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                "readingInterval must be between 500 and 100000"
+            ],
+            'expectedTitle' => 'Bad Request No Data Returned',
+        ];
+
 
         // Soil
 
@@ -1101,6 +1188,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ],
             ],
+            'interval' => 1000,
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
                 'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY .' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 5,
@@ -1121,12 +1209,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'constRecord' => 4,
                 ],
             ],
+            'interval' => 1000,
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                [
-                    'expectedReading must be a bool|null you have provided 4',
-                    'constRecord must be a bool|null you have provided 4',
-                ]
+                'expectedReading must be a bool|null you have provided 4',
+                'constRecord must be a bool|null you have provided 4',
+                'Failed to update sensor reading interval',
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
         ];
@@ -1143,12 +1231,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'constRecord' => 4,
                 ],
             ],
+            'interval' => 1000,
             'dataPayloadMessage' => [],
             'errorsPayloadMessage' => [
-                [
-                    'expectedReading must be a bool|null you have provided 4',
-                    'constRecord must be a bool|null you have provided 4',
-                ]
+                'expectedReading must be a bool|null you have provided 4',
+                'constRecord must be a bool|null you have provided 4',
+                'Failed to update sensor reading interval',
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
         ];

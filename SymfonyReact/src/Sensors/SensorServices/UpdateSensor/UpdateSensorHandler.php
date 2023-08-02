@@ -9,7 +9,6 @@ use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DeviceNotFoundException;
-use App\Sensors\SensorServices\Sensor\DuplicateSensorCheckService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateSensorHandler implements UpdateSensorInterface

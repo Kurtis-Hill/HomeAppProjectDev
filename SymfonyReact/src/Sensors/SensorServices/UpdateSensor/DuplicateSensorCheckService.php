@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Sensors\SensorServices\Sensor;
+namespace App\Sensors\SensorServices\UpdateSensor;
 
 use App\Devices\Repository\ORM\DeviceRepository;
-use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -12,12 +11,9 @@ class DuplicateSensorCheckService
 {
     private SensorRepositoryInterface $sensorRepository;
 
-    private DeviceRepository $deviceRepository;
-
     public function __construct(SensorRepositoryInterface $sensorRepository, DeviceRepository $deviceRepository)
     {
         $this->sensorRepository = $sensorRepository;
-        $this->deviceRepository = $deviceRepository;
     }
 
     /**

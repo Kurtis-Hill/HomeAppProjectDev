@@ -6,6 +6,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DhtRepository;
@@ -18,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
 ]
-class Dht implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface
+class Dht implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface, ReadingIntervalInterface
 {
     public const NAME = 'Dht';
 
@@ -58,6 +59,11 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     ]
     private Sensor $sensor;
 
+    #[
+        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
+    ]
+    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
+
     public function getSensorTypeID(): int
     {
         return $this->dhtID;
@@ -96,6 +102,16 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function setHumidObject(Humidity $humidID): void
     {
         $this->humidID = $humidID;
+    }
+
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
+    }
+
+    public function setReadingInterval(int $readingInterval): void
+    {
+        $this->readingInterval = $readingInterval;
     }
 
     public function getMaxTemperature(): float|int

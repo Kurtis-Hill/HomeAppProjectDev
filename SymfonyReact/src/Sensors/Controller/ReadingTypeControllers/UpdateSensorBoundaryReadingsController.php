@@ -21,6 +21,7 @@ use App\Sensors\Exceptions\SensorUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeFactories\ReadingTypeResponseBuilderFactory;
 use App\Sensors\Factories\SensorUpdateFactory\SensorReadingUpdateFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Sensors\SensorServices\SensorReadingTypes\SensorReadingTypeUpdateHandler;
 use App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -39,7 +40,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor/', name: 'boundary-controller')]
-class UpdateSensorReadingTypeController extends AbstractController
+class UpdateSensorBoundaryReadingsController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
@@ -66,6 +67,7 @@ class UpdateSensorReadingTypeController extends AbstractController
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
+        SensorReadingTypeUpdateHandler $sensorReadingTypeUpdateHandler,
     ): Response {
         $updateBoundaryReadingRequestDTO = new UpdateSensorReadingBoundaryRequestDTO();
         try {
@@ -80,6 +82,7 @@ class UpdateSensorReadingTypeController extends AbstractController
         }
 
         $requestDTOValidationErrors = $validator->validate($updateBoundaryReadingRequestDTO);
+//        dd($requestDTOValidationErrors, $updateBoundaryReadingRequestDTO);
         if ($this->checkIfErrorsArePresent($requestDTOValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestDTOValidationErrors));
         }
@@ -111,7 +114,9 @@ class UpdateSensorReadingTypeController extends AbstractController
 
             $updateDataValidationErrors = $validator->validate($updateBoundaryDataDTO);
             if ($this->checkIfErrorsArePresent($updateDataValidationErrors)) {
-                $sensorProcessingErrors[] = $this->getValidationErrorAsArray($updateDataValidationErrors);
+                foreach ($this->getValidationErrorAsArray($updateDataValidationErrors) as $error) {
+                    $sensorProcessingErrors[] = $error;
+                }
                 continue;
             }
 
@@ -151,14 +156,24 @@ class UpdateSensorReadingTypeController extends AbstractController
                 $this->successfullyProcessedTypes[] = $readingTypeResponseBuilderFactory
                     ->getStandardReadingTypeResponseBuilder($sensorReadingTypeObject)
                     ->buildReadingTypeBoundaryReadingsResponseDTO($sensorReadingTypeObject);
-
             } else {
                 $validationErrors = array_merge($validationErrors, $validationError);
             }
         }
 
-//                dd($this->successfullyProcessedTypes);
+        if ($updateBoundaryReadingRequestDTO->getReadingInterval() !== null) {
+            $intervalUpdateSuccess = $sensorReadingTypeUpdateHandler->updateSensorReadingTypeInterval(
+                $sensorObject->getSensorID(),
+                $sensorObject->getSensorTypeObject()->getSensorType(),
+                $updateBoundaryReadingRequestDTO->getReadingInterval(),
+            );
+        }
+
         $processingErrors = array_merge($sensorProcessingErrors, $validationErrors);
+        if (isset($intervalUpdateSuccess) && !$intervalUpdateSuccess) {
+            $processingErrors[] = 'Failed to update sensor reading interval';
+        }
+
         if (empty($this->successfullyProcessedTypes) && !empty($processingErrors)) {
             return $this->sendBadRequestJsonResponse($processingErrors, 'All sensor boundary update requests failed');
         }

@@ -163,7 +163,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         } else {
             setUpdateCardView(cardView);
             setShowUpdateCardModal(true);
-            // show card view modal
         }
     }
 
@@ -181,11 +180,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                         </BaseModal>
                     : null
             }
-            {/* {
-                addNewCardModal === true
-                    ? <CardDisplayModal />
-                    : null
-            } */}
             {
                 announcementModals.map((announcementModal: typeof AnnouncementFlashModal, index: number) => {
                     return (

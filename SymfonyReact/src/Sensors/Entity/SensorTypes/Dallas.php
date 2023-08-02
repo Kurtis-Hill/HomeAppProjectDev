@@ -15,10 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Table(name: "dallas"),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
-//    ORM\Index(columns: ["sensor"], name: "sensor"),
 ]
-class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface
-//    ReadingIntervalInterface
+class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, ReadingIntervalInterface
 {
     public const NAME = 'Dallas';
 
@@ -51,10 +49,10 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     ]
     private Sensor $sensor;
 
-//    #[
-//        ORM\Column(name: "takeReadingInterval", type: "integer", nullable: false),
-//    ]
-//    private int $readingInterval = 60;
+    #[
+        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
+    ]
+    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
 
     public function getSensorTypeID(): int
     {
@@ -84,6 +82,16 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public function setTemperature(Temperature $tempID): void
     {
         $this->tempID = $tempID;
+    }
+
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
+    }
+
+    public function setReadingInterval(int $readingInterval): void
+    {
+        $this->readingInterval = $readingInterval;
     }
 
     public function getMaxTemperature(): float|int
