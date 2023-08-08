@@ -4,6 +4,7 @@ namespace App\Sensors\Entity;
 
 use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 ]
 class Sensor
 {
+    public const DEFAULT_READING_INTERVAL = 6000;
+
     public const ALIAS  = 'sensors';
 
     private const SENSOR_NAME_MAX_LENGTH = 20;
@@ -74,6 +77,11 @@ class Sensor
         ),
     ]
     private int $pinNumber;
+
+    #[
+        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
+    ]
+    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
 
     public function getSensorID(): int
     {
@@ -133,5 +141,15 @@ class Sensor
     public function setPinNumber(?int $pinNumber): void
     {
         $this->pinNumber = $pinNumber;
+    }
+
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
+    }
+
+    public function setReadingInterval(int $readingInterval): void
+    {
+        $this->readingInterval = $readingInterval;
     }
 }

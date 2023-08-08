@@ -9,6 +9,7 @@ use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\AddNewSensorController;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
@@ -18,13 +19,22 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\BoolSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
@@ -606,6 +616,40 @@ class AddNewSensorControllerTest extends WebTestCase
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
 
+        if ($sensorTypeObject instanceof SensorTypeInterface) {
+            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
+            self::assertEquals($sensorTypeObject->getSensorTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+        }
+        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeObject->getTemperature()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeObject->getHumidObject()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeObject->getHumidObject()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorTypeObject->getAnalogObject()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorTypeObject->getAnalogObject()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorTypeObject->getLatitudeObject()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorTypeObject->getLatitudeObject()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
+            self::assertNull($sensorTypeObject->getMotion()->getExpectedReading());
+            self::assertFalse($sensorTypeObject->getMotion()->getRequestedReading());
+            self::assertFalse($sensorTypeObject->getMotion()->getCurrentReading());
+        }
+        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
+            self::assertNull($sensorTypeObject->getRelay()->getExpectedReading());
+            self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
+            self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
+        }
+        if ($sensorTypeObject instanceof ReadingIntervalInterface) {
+            self::assertEquals(ReadingIntervalInterface::DEFAULT_READING_INTERVAL, $sensorTypeObject->getReadingInterval());
+        }
+
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertInstanceOf($class, $sensorTypeObject);
         self::assertInstanceOf(CardView::class, $cardView);
@@ -672,6 +716,40 @@ class AddNewSensorControllerTest extends WebTestCase
             /** @var AllSensorReadingTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
+        }
+
+        if ($sensorTypeObject instanceof SensorTypeInterface) {
+            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
+            self::assertEquals($sensorTypeObject->getSensorTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+        }
+        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeObject->getTemperature()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeObject->getHumidObject()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeObject->getHumidObject()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorTypeObject->getAnalogObject()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorTypeObject->getAnalogObject()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
+            self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorTypeObject->getLatitudeObject()->getHighReading());
+            self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorTypeObject->getLatitudeObject()->getLowReading());
+        }
+        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
+            self::assertNull($sensorTypeObject->getMotion()->getExpectedReading());
+            self::assertFalse($sensorTypeObject->getMotion()->getRequestedReading());
+            self::assertFalse($sensorTypeObject->getMotion()->getCurrentReading());
+        }
+        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
+            self::assertNull($sensorTypeObject->getRelay()->getExpectedReading());
+            self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
+            self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
+        }
+        if ($sensorTypeObject instanceof ReadingIntervalInterface) {
+            self::assertEquals(ReadingIntervalInterface::DEFAULT_READING_INTERVAL, $sensorTypeObject->getReadingInterval());
         }
 
         self::assertInstanceOf(Sensor::class, $sensor);

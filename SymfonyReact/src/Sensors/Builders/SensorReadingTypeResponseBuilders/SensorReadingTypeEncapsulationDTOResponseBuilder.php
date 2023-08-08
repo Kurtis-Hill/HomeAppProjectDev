@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Sensors\Builders\SensorReadingTypeResponseBuilders;
+
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
+use JetBrains\PhpStorm\ArrayShape;
+
+class SensorReadingTypeEncapsulationDTOResponseBuilder
+{
+    public static function buildSensorReadingTypeEncapsulationDTOs(
+        #[ArrayShape([AllSensorReadingTypeResponseDTOInterface::class])]
+        array $sensorReadingTypeResponseDTOs,
+        string $sensorType,
+        ?int $interval = null
+    ): SensorReadingTypeEncapsulationResponseDTO {
+        return new SensorReadingTypeEncapsulationResponseDTO(
+            $sensorReadingTypeResponseDTOs,
+            $sensorType,
+            $interval
+        );
+    }
+}

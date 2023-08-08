@@ -4,6 +4,7 @@ namespace App\Sensors\DTO\Response\SensorResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use App\UserInterface\DTO\Response\CardView\CardViewResponseDTO;
@@ -21,8 +22,7 @@ readonly class SensorResponseDTO
         private DeviceResponseDTO $device,
         private SensorTypeResponseDTO $sensorType,
         private int $pinNumber,
-        #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
-        private array $sensorReadingTypes = [],
+        private ?SensorReadingTypeEncapsulationResponseDTO $sensorReadingTypes = null,
         private ?bool $canEdit = null,
         private ?bool $canDelete = null,
         private ?CardViewResponseDTO $cardView = null,
@@ -82,7 +82,7 @@ readonly class SensorResponseDTO
         RequestTypeEnum::FULL->value,
         RequestTypeEnum::SENSITIVE_FULL->value,
     ])]
-    public function getSensorReadingTypes(): array
+    public function getSensorReadingTypes(): SensorReadingTypeEncapsulationResponseDTO
     {
         return $this->sensorReadingTypes;
     }

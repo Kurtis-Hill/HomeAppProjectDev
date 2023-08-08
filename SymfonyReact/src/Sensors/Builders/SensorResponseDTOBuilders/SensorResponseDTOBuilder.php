@@ -7,6 +7,7 @@ use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\SensorReadingTypeDTOResponseBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\Sensor;
@@ -48,7 +49,7 @@ class SensorResponseDTOBuilder
                 ],
                 true
             )) {
-            $sensorReadingTypeDTO = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTOs($sensor);
+            $sensorReadingTypeEncapsulationDTO = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTOs($sensor);
 
             $user = $this->security->getUser();
             if ($user instanceof User) {
@@ -56,9 +57,10 @@ class SensorResponseDTOBuilder
             }
         }
 
+//            dd($sensorReadingTypeEncapsulationDTO, '2');
         return self::buildSensorResponseDTO(
             $sensor,
-            $sensorReadingTypeDTO ?? [],
+            $sensorReadingTypeEncapsulationDTO ?? null,
             $this->security->isGranted(
                 SensorVoter::UPDATE_SENSOR,
                 SensorUpdateDTOBuilder::buildSensorUpdateDTO(
@@ -75,7 +77,7 @@ class SensorResponseDTOBuilder
 
     /**
      * @param Sensor $sensor
-     * @param SensorReadingTypeResponseDTOInterface[] $sensorReadingTypeDTO
+     * @param SensorReadingTypeEncapsulationResponseDTO|null $sensorReadingTypeEncapsulationResponseDTO
      * @param bool|null $canEdit
      * @param bool|null $canDelete
      * @param CardView|null $cardView
@@ -83,11 +85,12 @@ class SensorResponseDTOBuilder
      */
     public static function buildSensorResponseDTO(
         Sensor $sensor,
-        array $sensorReadingTypeDTO = [],
+        ?SensorReadingTypeEncapsulationResponseDTO $sensorReadingTypeEncapsulationResponseDTO = null,
         ?bool $canEdit = null,
         ?bool $canDelete = null,
         ?CardView $cardView = null,
     ): SensorResponseDTO {
+//        dd($sensorReadingTypeEncapsulationResponseDTO, '3');
         return new SensorResponseDTO(
             $sensor->getSensorID(),
             UserResponseBuilder::buildUserResponseDTO($sensor->getCreatedBy()),
@@ -95,7 +98,7 @@ class SensorResponseDTOBuilder
             DeviceResponseDTOBuilder::buildDeviceResponseDTO($sensor->getDevice()),
             SensorTypeResponseDTOBuilder::buildFullSensorTypeResponseDTO($sensor->getSensorTypeObject()),
             $sensor->getPinNumber(),
-            $sensorReadingTypeDTO,
+            $sensorReadingTypeEncapsulationResponseDTO,
             $canEdit,
             $canDelete,
             $cardView !== null ? CardResponseDTOBuilder::buildCardResponseDTO($cardView) : null,

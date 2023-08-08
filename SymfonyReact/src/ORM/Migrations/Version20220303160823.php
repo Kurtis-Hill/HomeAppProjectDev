@@ -8,6 +8,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -237,7 +238,6 @@ final class Version20220303160823 extends AbstractMigration
                 humidID INT NOT NULL, 
                 latitudeID INT NOT NULL, 
                 sensorID INT DEFAULT NULL, 
-                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX sensorID (sensorID), 
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX humidID (humidID), 
@@ -252,7 +252,6 @@ final class Version20220303160823 extends AbstractMigration
                 dallasID INT AUTO_INCREMENT NOT NULL, 
                 tempID INT NOT NULL, 
                 sensorID INT NOT NULL,
-                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(dallasID)
@@ -266,7 +265,6 @@ final class Version20220303160823 extends AbstractMigration
                 tempID INT NOT NULL, 
                 humidID INT NOT NULL, 
                 sensorID INT NOT NULL,
-                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 UNIQUE INDEX sensorID (sensorID), 
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX humidID (humidID), 
@@ -279,8 +277,7 @@ final class Version20220303160823 extends AbstractMigration
             CREATE TABLE soil (
                 soilID INT AUTO_INCREMENT NOT NULL, 
                 analogID INT NOT NULL, 
-                sensorID INT NOT NULL, 
-                takeReadingIntervalMilli MEDIUMINT DEFAULT '. ReadingIntervalInterface::DEFAULT_READING_INTERVAL . ' NOT NULL,
+                sensorID INT NOT NULL,                 
                 UNIQUE INDEX analogID (analogID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(soilID)
@@ -389,6 +386,7 @@ final class Version20220303160823 extends AbstractMigration
                 deviceID INT NOT NULL, 
                 sensorTypeID INT NOT NULL,
                 pinNumber TINYINT NOT NULL,
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. Sensor::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 INDEX sensornames_ibfk_1 (deviceID), 
                 INDEX sensornames_ibfk_2 (createdBy), 
                 INDEX sensortype (sensorTypeID), 

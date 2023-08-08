@@ -630,6 +630,12 @@ class GetSensorControllerTest extends WebTestCase
         self::assertNotNull($sensorData);
 
         foreach ($sensorData as $singleSensorData) {
+            if (empty($singleSensorData['sensorReadingTypes'])) {
+                continue;
+            } else {
+
+            dd($singleSensorData);
+            }
             $sensorObject = $this->sensorRepository->find($singleSensorData['sensorID']);
 
             $sensorReadingTypes = $singleSensorData['sensorReadingTypes'];
