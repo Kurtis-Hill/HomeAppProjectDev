@@ -119,7 +119,8 @@ class UpdateDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate);
+        $sendUpdateRequestToDevice = ($updateDeviceDTO->getDeviceUpdateRequestDTO()->getDeviceName() || $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword());
+        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate, $sendUpdateRequestToDevice);
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }

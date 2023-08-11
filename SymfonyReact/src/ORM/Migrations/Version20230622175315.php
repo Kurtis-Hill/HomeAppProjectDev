@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -87,33 +91,14 @@ final class Version20230622175315 extends AbstractMigration
                 ('" . GenericMotion::NAME . "', 'Generic Motion Sensor'),
                 ('" . GenericRelay::NAME . "', 'Generic Relay Sensor')
         ");
-//        $this->addSql(
-//            'CREATE TABLE relay (
-//                relayID INT AUTO_INCREMENT NOT NULL,
-//                boolID INT(1) NOT NULL,
-//                UNIQUE INDEX UNIQ_RELAY_BOOL (boolID),
-//                PRIMARY KEY (relayID)
-//            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
-//        );
-//
-//        $this->addSql(
-//            'ALTER TABLE relay
-//                ADD CONSTRAINT KF_RELAY_BOOL FOREIGN KEY (boolID) REFERENCES boolsensor (boolID) ON DELETE CASCADE'
-//        );
-//
-//        $this->addSql(
-//            'CREATE TABLE motion (
-//                motionID INT AUTO_INCREMENT NOT NULL,
-//                boolID INT(1) NOT NULL,
-//                PRIMARY KEY (motionID),
-//                UNIQUE INDEX UNIQ_BOOL_MOTION (boolID)
-//            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
-//        );
-//
-//        $this->addSql(
-//            'ALTER TABLE motion
-//                ADD CONSTRAINT FK_MOTION_BOOL FOREIGN KEY (boolID) REFERENCES boolsensor (boolID) ON DELETE CASCADE'
-//        );
+
+        $this->addSql("
+            INSERT INTO `sensortype` 
+                (`sensorTypeID`, `sensorType`, `description`)   
+            VALUES
+                (5, '" . GenericRelay::NAME . "', 'Generic relay'),
+                (6, '" . GenericMotion::NAME . "', 'Generic motion sensor');
+        ");
     }
 
     public function down(Schema $schema): void
@@ -133,6 +118,11 @@ final class Version20230622175315 extends AbstractMigration
         $this->addSql(
             "DROP TABLE genericrelay"
         );
+
+        $this->addSql(
+            "DELETE FROM `sensortype` WHERE sensorTypeID = 5 OR sensorTypeID = 6"
+        );
+
         $this->addSql("SET FOREIGN_KEY_CHECKS=1");
     }
 }

@@ -76,12 +76,15 @@ abstract class AbstractESPDeviceService
         }
     }
 
-    public function saveDevice(Devices $device): bool
+    public function saveDevice(Devices $device, bool $sendUpdateToDevice = false): bool
     {
         try {
             $this->deviceRepository->persist($device);
             $this->deviceRepository->flush();
 
+            if ($sendUpdateToDevice) {
+                $this->sendDeviceSettingsUpdateEvent($device);
+            }
             return true;
         } catch (ORMException) {
             return false;

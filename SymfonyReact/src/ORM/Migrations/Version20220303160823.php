@@ -435,9 +435,7 @@ final class Version20220303160823 extends AbstractMigration
                 (1, '". Dht::NAME ."', 'Temperature and Humidity Sensor'),
                 (2, '" . Dallas::NAME . "', 'Water Proof Temperature Sensor'),
                 (3, '". Soil::NAME . "', 'Soil Moisture Sensor'),
-                (4, '" . Bmp::NAME . "', 'Weather Station Sensor'),
-                (5, '" . GenericRelay::NAME . "', 'Generic relay'),
-                (6, '" . GenericMotion::NAME . "', 'Generic motion sensor');
+                (4, '" . Bmp::NAME . "', 'Weather Station Sensor');
         ");
 
         $this->addSql("
