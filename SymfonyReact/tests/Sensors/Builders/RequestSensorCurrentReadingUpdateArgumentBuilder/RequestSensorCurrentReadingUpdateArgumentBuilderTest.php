@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Devices\Builders\DeviceRequestsArgumentBuilders;
+namespace App\Tests\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder;
 
-use App\Devices\Builders\DeviceRequestsArgumentBuilders\RequestSensorCurrentReadingUpdateArgumentBuilder;
+use App\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\Sensor;

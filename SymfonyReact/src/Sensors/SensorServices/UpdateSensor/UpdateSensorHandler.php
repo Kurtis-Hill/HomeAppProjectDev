@@ -53,6 +53,7 @@ class UpdateSensorHandler implements UpdateSensorInterface
             $sensorUpdateRequestDTO->getSensorName(),
             $proposedDevice ?? null,
             $sensorUpdateRequestDTO->getPinNumber(),
+            $sensorUpdateRequestDTO->getReadingInterval(),
         );
     }
 
@@ -76,6 +77,10 @@ class UpdateSensorHandler implements UpdateSensorInterface
 
         if ($updateSensorDTO->getPinNumber() !== null) {
             $sensorToUpdate->setPinNumber($updateSensorDTO->getPinNumber());
+        }
+
+        if ($updateSensorDTO->getReadingInterval() !== null) {
+            $sensorToUpdate->setReadingInterval($updateSensorDTO->getReadingInterval());
         }
 
         $validationErrors = $this->validator->validate($sensorToUpdate);

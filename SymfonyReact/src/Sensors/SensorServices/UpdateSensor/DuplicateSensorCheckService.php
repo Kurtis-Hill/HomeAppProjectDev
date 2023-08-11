@@ -60,14 +60,14 @@ class DuplicateSensorCheckService
             );
         }
 
-        $pinCheck = $this->sensorRepository->findSensorObjectByDeviceIDAndPinNumber($deviceID, $pinToUpdateTo ?? $sensor->getPinNumber());
-        if ($pinCheck instanceof Sensor && $pinCheck->getSensorID() !== $sensorID) {
-            throw new DuplicateSensorException(
-                sprintf(
-                    DuplicateSensorException::MESSAGE_PIN,
-                    $pinToUpdateTo ?? $sensor->getPinNumber()
-                )
-            );
-        }
+//        $pinCheck = $this->sensorRepository->findSensorsObjectByDeviceIDAndPinNumber($deviceID, $pinToUpdateTo ?? $sensor->getPinNumber());
+//        if ($pinCheck instanceof Sensor && $pinCheck->getSensorID() !== $sensorID) {
+//            throw new DuplicateSensorException(
+//                sprintf(
+//                    DuplicateSensorException::MESSAGE_PIN,
+//                    $pinToUpdateTo ?? $sensor->getPinNumber()
+//                )
+//            );
+//        }
     }
 }

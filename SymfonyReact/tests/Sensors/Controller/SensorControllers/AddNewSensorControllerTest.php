@@ -29,12 +29,10 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
@@ -204,11 +202,13 @@ class AddNewSensorControllerTest extends WebTestCase
             }
         }
 
+        $readingInterval = 1000;
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
             'pinNumber' => $randomPin,
+            'readingInterval' => $readingInterval,
         ];
 
         $jsonData = json_encode($formData);
@@ -220,6 +220,7 @@ class AddNewSensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
@@ -228,12 +229,17 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
-        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
+        self::assertEquals($sensorName, $sensor->getSensorName());
+        self::assertEquals($randomPin, $sensor->getPinNumber());
+        self::assertEquals($readingInterval, $sensor->getReadingInterval());
+
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
+        self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
+        self::assertEquals($responseData['payload']['readingInterval'], $sensor->getReadingInterval());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
@@ -594,6 +600,7 @@ class AddNewSensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $responseData['payload'] ?? [];
@@ -646,18 +653,14 @@ class AddNewSensorControllerTest extends WebTestCase
             self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
             self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
         }
-        if ($sensorTypeObject instanceof ReadingIntervalInterface) {
-            self::assertEquals(ReadingIntervalInterface::DEFAULT_READING_INTERVAL, $sensorTypeObject->getReadingInterval());
-        }
 
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertInstanceOf($class, $sensorTypeObject);
         self::assertInstanceOf(CardView::class, $cardView);
 
-        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
-        self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
+        self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
@@ -684,11 +687,14 @@ class AddNewSensorControllerTest extends WebTestCase
             UserDataFixtures::REGULAR_PASSWORD
         );
 
+        $pinNumber = 1;
+
         $formData = [
             'sensorName' => $sensorName,
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
-            'pinNumber' => 1,
+            'pinNumber' => $pinNumber,
+            'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
         ];
 
         $jsonData = json_encode($formData);
@@ -701,6 +707,7 @@ class AddNewSensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
+        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $sensorID = $responseData['payload']['sensorID'];
@@ -748,19 +755,20 @@ class AddNewSensorControllerTest extends WebTestCase
             self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
             self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
         }
-        if ($sensorTypeObject instanceof ReadingIntervalInterface) {
-            self::assertEquals(ReadingIntervalInterface::DEFAULT_READING_INTERVAL, $sensorTypeObject->getReadingInterval());
-        }
 
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertInstanceOf($class, $sensorTypeObject);
         self::assertInstanceOf(CardView::class, $cardView);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
+        self::assertEquals($sensorName, $responseData['payload']['sensorName']);
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
+        self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
+        self::assertEquals($pinNumber, $sensor->getPinNumber());
+        self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $responseData['payload']['readingInterval']);
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
@@ -771,38 +779,39 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
     }
 
-    public function test_adding_sensor_to_occupied_pin(): void
-    {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
-
-        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
-
-        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($deviceToAddSensorToo->getDeviceID());
-
-        $formData = [
-            'sensorName' => 'testing',
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
-            'pinNumber' => $devicePinsInUse[0],
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertStringContainsString(sprintf('Sensor with pin %d already exists', $devicePinsInUse[0]), $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+    //disabled to allow for bus sensors, needs adjusting so that only bus sensors can be on same pin
+//    public function test_adding_sensor_to_occupied_pin(): void
+//    {
+//        /** @var SensorType $sensorType */
+//        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+//
+//        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
+//
+//        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($deviceToAddSensorToo->getDeviceID());
+//
+//        $formData = [
+//            'sensorName' => 'testing',
+//            'sensorTypeID' => $sensorType->getSensorTypeID(),
+//            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
+//            'pinNumber' => $devicePinsInUse[0],
+//        ];
+//
+//        $jsonData = json_encode($formData);
+//
+//        $this->client->request(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData,
+//            [],
+//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+//            $jsonData
+//        );
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertStringContainsString(sprintf('Sensor with pin %d already exists', $devicePinsInUse[0]), $responseData['errors'][0]);
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function test_adding_sensor_with_negative_pin(): void
     {
@@ -834,6 +843,72 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertStringContainsString('pinNumber must be greater than ' . $pinNumber, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_adding_reading_interval_wrong_data_type(): void
+    {
+        /** @var SensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+
+        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
+
+        $pinNumber = 10;
+        $formData = [
+            'sensorName' => 'testing',
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
+            'pinNumber' => $pinNumber,
+            'readingInterval' => 'string',
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_URL,
+            $formData,
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString('readingInterval must be a number', $responseData['errors'][0]);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function test_adding_reading_interval_with_interval_too_low(): void
+    {
+        /** @var SensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+
+        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
+
+        $pinNumber = 10;
+        $formData = [
+            'sensorName' => 'testing',
+            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
+            'pinNumber' => $pinNumber,
+            'readingInterval' => Sensor::MIN_READING_INTERVAL - 5,
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_URL,
+            $formData,
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData
+        );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
+
+        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertStringContainsString('readingInterval must be greater than ' . Sensor::MIN_READING_INTERVAL, $responseData['errors'][0]);
     }
 
     /**

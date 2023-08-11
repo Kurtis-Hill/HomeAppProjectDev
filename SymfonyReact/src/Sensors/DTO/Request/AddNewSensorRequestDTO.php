@@ -3,6 +3,7 @@
 namespace App\Sensors\DTO\Request;
 
 use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
+use App\Sensors\Entity\Sensor;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AddNewSensorRequestDTO
@@ -44,6 +45,16 @@ class AddNewSensorRequestDTO
     ]
     private mixed $pinNumber = null;
 
+    #[
+        Assert\Range(
+            notInRangeMessage: "readingInterval must be greater than {{ min }}",
+            minMessage: "readingInterval must be greater than " . Sensor::MIN_READING_INTERVAL,
+            invalidMessage: "readingInterval must be a number",
+            min: Sensor::MIN_READING_INTERVAL,
+        ),
+    ]
+    private mixed $readingInterval = null;
+
     public function getSensorTypeID(): mixed
     {
         return $this->sensorTypeID;
@@ -82,5 +93,15 @@ class AddNewSensorRequestDTO
     public function setPinNumber(mixed $pinNumber): void
     {
         $this->pinNumber = $pinNumber;
+    }
+
+    public function getReadingInterval(): mixed
+    {
+        return $this->readingInterval;
+    }
+
+    public function setReadingInterval(mixed $readingInterval): void
+    {
+        $this->readingInterval = $readingInterval;
     }
 }

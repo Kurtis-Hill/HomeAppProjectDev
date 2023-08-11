@@ -8,7 +8,6 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\BmpRepository;
@@ -23,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 
 ]
-class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface, LatitudeReadingTypeInterface, ReadingIntervalInterface
+class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface, LatitudeReadingTypeInterface
 {
     public const NAME = 'Bmp';
 
@@ -69,11 +68,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
     ]
     private Latitude $latitudeID;
-
-    #[
-        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
-    ]
-    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
 
     public function getSensorTypeID(): int
     {
@@ -124,16 +118,6 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function setLatitudeObject(Latitude $latitudeID): void
     {
         $this->latitudeID = $latitudeID;
-    }
-
-    public function getReadingInterval(): int
-    {
-        return $this->readingInterval;
-    }
-
-    public function setReadingInterval(int $readingInterval): void
-    {
-        $this->readingInterval = $readingInterval;
     }
 
     public function getMaxTemperature(): float|int

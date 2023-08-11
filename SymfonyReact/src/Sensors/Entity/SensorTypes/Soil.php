@@ -5,7 +5,6 @@ namespace App\Sensors\Entity\SensorTypes;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\SoilRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]
-class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogReadingTypeInterface, ReadingIntervalInterface
+class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogReadingTypeInterface
 {
     public const NAME = 'Soil';
 
@@ -49,11 +48,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRe
     ]
     private Sensor $sensor;
 
-    #[
-        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
-    ]
-    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
-
     public function getSensorTypeID(): int
     {
         return $this->soilID;
@@ -82,16 +76,6 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRe
     public function setSensor(Sensor $sensor): void
     {
         $this->sensor = $sensor;
-    }
-
-    public function getReadingInterval(): int
-    {
-        return $this->readingInterval;
-    }
-
-    public function setReadingInterval(int $readingInterval): void
-    {
-        $this->readingInterval = $readingInterval;
     }
 
     public function getMaxAnalog(): float|int

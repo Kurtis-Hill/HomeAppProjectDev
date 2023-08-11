@@ -26,6 +26,7 @@ const defaultFormActiveState = {
     createdBy: false,
     expandSensor: false,
     pinNumber: false,
+    readingInterval: false,
 };
 
 export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
@@ -41,6 +42,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         sensorType: sensor.sensorType,
         device: sensor.device,
         createdBy: sensor.createdBy,
+        readingInterval: sensor.readingInterval,
     });
 
     const [sensorUpdateFormInputs, setSensorUpdateFormInputs] = useState<SensorResponseInterface>({
@@ -49,6 +51,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         sensorType: sensor.sensorType,
         device: sensor.device,
         createdBy: sensor.createdBy,
+        readingInterval: sensor.readingInterval,
     });
 
     const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface|null>(null);
@@ -103,6 +106,9 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                 break;
             case 'pinNumber':
                 dataToSend.pinNumber = parseInt(sensorUpdateFormInputs.pinNumber);
+                break;
+            case 'readingInterval':
+                dataToSend.readingInterval = parseInt(sensorUpdateFormInputs.readingInterval);
                 break;
         }
 
@@ -194,6 +200,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     headers={[
                         'Sensor Name',
                         'Pin Number',
+                        'Reading Interval (ms)',
                         'Sensor Type',
                         'Created By',
                         'User Card',
@@ -235,6 +242,23 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                 :
                                     <span className={`${canEdit === true ? 'hover' : ''}`} data-name="pinNumber" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.pinNumber}</span>
                         }                            
+                    </GeneralTableRow>
+                    <GeneralTableRow>
+                        {
+                            activeFormForUpdating.readingInterval === true && canEdit === true
+                                ?
+                                    <FormInlineInput
+                                            changeEvent={handleUpdateSensorInput}
+                                            nameParam='readingInterval'
+                                            value={sensorUpdateFormInputs.readingInterval}
+                                            dataName='readingInterval'
+                                            acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
+                                            declineClickEvent={(e: Event) => toggleFormInput(e)}
+                                            extraClasses='center-text'
+                                        />
+                                    :
+                                        <span className={`${canEdit === true ? 'hover' : ''}`} data-name="readingInterval" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.readingInterval}</span>
+                        }
                     </GeneralTableRow>
                     <GeneralTableRow>
                         <span>{sensor?.sensorType?.sensorTypeName}</span>

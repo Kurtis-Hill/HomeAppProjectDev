@@ -22,7 +22,8 @@ readonly class SensorResponseDTO
         private DeviceResponseDTO $device,
         private SensorTypeResponseDTO $sensorType,
         private int $pinNumber,
-        private ?SensorReadingTypeEncapsulationResponseDTO $sensorReadingTypes = null,
+        private int $readingInterval,
+        private array $sensorReadingTypes = [],
         private ?bool $canEdit = null,
         private ?bool $canDelete = null,
         private ?CardViewResponseDTO $cardView = null,
@@ -82,9 +83,20 @@ readonly class SensorResponseDTO
         RequestTypeEnum::FULL->value,
         RequestTypeEnum::SENSITIVE_FULL->value,
     ])]
-    public function getSensorReadingTypes(): SensorReadingTypeEncapsulationResponseDTO
+    public function getSensorReadingTypes(): array
     {
         return $this->sensorReadingTypes;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
     }
 
     #[Groups([

@@ -4,7 +4,6 @@ namespace App\Sensors\Entity;
 
 use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Entity(repositoryClass: SensorRepository::class),
     ORM\Table(name: "sensors"),
     ORM\UniqueConstraint(name: "sensor_device", columns: ["sensorName", "deviceID"]),
-    ORM\UniqueConstraint(name: "sensor_pin", columns: ["pinNumber", "deviceID"]),
     ORM\Index(columns: ["deviceID"], name: "sensornames_ibfk_1"),
     ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
     ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
@@ -28,6 +26,8 @@ class Sensor
     private const SENSOR_NAME_MAX_LENGTH = 20;
 
     private const SENSOR_NAME_MIN_LENGTH = 2;
+
+    public const MIN_READING_INTERVAL = 500;
 
     #[
         ORM\Column(name: "sensorID", type: "integer", nullable: false),
@@ -80,8 +80,16 @@ class Sensor
 
     #[
         ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
+        Assert\Range(
+//            notInRangeMessage: "readingInterval must be between {{ min }} and {{ max }}",
+            notInRangeMessage: "readingInterval must be greater than {{ min }}",
+            minMessage: "readingInterval must be greater than " . self::MIN_READING_INTERVAL,
+            invalidMessage: "readingInterval must be a number",
+            min: self::MIN_READING_INTERVAL,
+//            max: 100000
+        ),
     ]
-    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
+    private int $readingInterval = self::DEFAULT_READING_INTERVAL;
 
     public function getSensorID(): int
     {

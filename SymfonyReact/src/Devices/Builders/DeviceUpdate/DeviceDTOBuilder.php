@@ -12,6 +12,7 @@ use App\User\Entity\User;
 
 class DeviceDTOBuilder
 {
+    public function __construct() {}
     public static function buildUpdateDeviceInternalDTO(
         DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
         Devices $device,
@@ -22,7 +23,7 @@ class DeviceDTOBuilder
             $deviceUpdateRequestDTO,
             $device,
             $room ?? null,
-            $groupName ?? null
+            $groupName ?? null,
         );
     }
 

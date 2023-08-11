@@ -67,7 +67,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
-//        SensorReadingTypeUpdateHandler $sensorReadingTypeUpdateHandler,
     ): Response {
         $updateBoundaryReadingRequestDTO = new UpdateSensorReadingBoundaryRequestDTO();
         try {
@@ -161,17 +160,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
             }
         }
 
-//        if ($updateBoundaryReadingRequestDTO->getReadingInterval() !== null) {
-//            $intervalUpdateSuccess = $sensorReadingTypeUpdateHandler->updateSensorReadingTypeInterval(
-//                $sensorObject,
-//                $updateBoundaryReadingRequestDTO->getReadingInterval(),
-//            );
-//        }
-
         $processingErrors = array_merge($sensorProcessingErrors, $validationErrors);
-//        if (isset($intervalUpdateSuccess) && !$intervalUpdateSuccess) {
-//            $processingErrors[] = 'Failed to update sensor reading interval';
-//        }
 
         if (empty($this->successfullyProcessedTypes) && !empty($processingErrors)) {
             return $this->sendBadRequestJsonResponse($processingErrors, 'All sensor boundary update requests failed');

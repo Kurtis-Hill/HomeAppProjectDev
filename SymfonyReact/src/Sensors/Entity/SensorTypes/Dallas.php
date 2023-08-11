@@ -4,7 +4,6 @@ namespace App\Sensors\Entity\SensorTypes;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DallasRepository;
@@ -16,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]
-class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, ReadingIntervalInterface
+class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface
 {
     public const NAME = 'Dallas';
 
@@ -49,11 +48,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     ]
     private Sensor $sensor;
 
-    #[
-        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
-    ]
-    private int $readingInterval = ReadingIntervalInterface::DEFAULT_READING_INTERVAL;
-
     public function getSensorTypeID(): int
     {
         return $this->dallasID;
@@ -82,16 +76,6 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public function setTemperature(Temperature $tempID): void
     {
         $this->tempID = $tempID;
-    }
-
-    public function getReadingInterval(): int
-    {
-        return $this->readingInterval;
-    }
-
-    public function setReadingInterval(int $readingInterval): void
-    {
-        $this->readingInterval = $readingInterval;
     }
 
     public function getMaxTemperature(): float|int

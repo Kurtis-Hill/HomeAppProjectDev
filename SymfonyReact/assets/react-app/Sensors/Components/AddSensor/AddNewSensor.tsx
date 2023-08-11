@@ -25,7 +25,8 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
         sensorName: '',
         pinNumber: 0,
         deviceID,
-        sensorTypeID: 0
+        sensorTypeID: 0,
+        readingInterval: 500,
     });
 
     const [responseLoading, setResponseLoading] = useState<boolean>(false);
@@ -114,6 +115,13 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
                     labelName='Pin Number'
                     name="pinNumber"
                     value={newSensorFormInputs.pinNumber}
+                    onChangeFunction={handleAddNewSensorInput}
+                    type='number'
+                />
+                <InputWLabel
+                    labelName='Reading Interval (ms)'
+                    name="readingInterval"
+                    value={newSensorFormInputs.readingInterval}
                     onChangeFunction={handleAddNewSensorInput}
                     type='number'
                 />

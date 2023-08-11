@@ -13,8 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Entity(repositoryClass: GenericMotionRepository::class),
     ORM\Table(name: "genericmotion"),
     ORM\UniqueConstraint(name: "UNIQ_GENERIC_MOTION", columns: ["sensorID"]),
-//    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
-//    ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
 ]
 class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInterface, BoolSensorTypeInterface
 {

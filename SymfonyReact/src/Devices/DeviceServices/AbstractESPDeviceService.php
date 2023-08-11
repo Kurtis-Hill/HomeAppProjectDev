@@ -3,14 +3,17 @@
 namespace App\Devices\DeviceServices;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Devices\Builders\Request\DeviceSettingsUpdateEventDTOBuilder;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\Entity\Devices;
+use App\Devices\Events\DeviceUpdateEvent;
 use App\Devices\Exceptions\DuplicateDeviceException;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class AbstractESPDeviceService
@@ -27,6 +30,10 @@ abstract class AbstractESPDeviceService
 
     protected RoomRepositoryInterface $roomRepository;
 
+    private DeviceSettingsUpdateEventDTOBuilder $deviceSettingsUpdateEventDTOBuilder;
+
+    protected EventDispatcher $eventDispatcher;
+
     protected LoggerInterface $logger;
 
     public function __construct(
@@ -35,6 +42,7 @@ abstract class AbstractESPDeviceService
         DevicePasswordEncoderInterface $devicePasswordEncoder,
         GroupRepositoryInterface $groupNameRepository,
         RoomRepositoryInterface $roomRepository,
+        DeviceSettingsUpdateEventDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
         LoggerInterface $elasticLogger,
     ) {
         $this->validator = $validator;
@@ -42,6 +50,7 @@ abstract class AbstractESPDeviceService
         $this->devicePasswordEncoder = $devicePasswordEncoder;
         $this->groupRepository = $groupNameRepository;
         $this->roomRepository = $roomRepository;
+        $this->deviceSettingsUpdateEventDTOBuilder = $deviceSettingsUpdateEventDTOBuilder;
         $this->logger = $elasticLogger;
     }
 
@@ -77,5 +86,15 @@ abstract class AbstractESPDeviceService
         } catch (ORMException) {
             return false;
         }
+    }
+
+    protected function sendDeviceSettingsUpdateEvent(Devices $device, ?string $plainPassword = null): void
+    {
+        $updateDeviceSettingsEventDTO = $this->deviceSettingsUpdateEventDTOBuilder->buildDeviceSettingUpdateEventDTO(
+            $device->getDeviceName(),
+            $plainPassword ?? $device->getDeviceSecret(),
+        );
+
+        $this->eventDispatcher->dispatch($updateDeviceSettingsEventDTO, DeviceUpdateEvent::NAME);
     }
 }

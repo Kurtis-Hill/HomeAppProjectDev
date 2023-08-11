@@ -2,7 +2,7 @@
 
 namespace App\Sensors\SensorServices\SensorReadingUpdate\RequestReading;
 
-use App\Common\API\Traits\HomeAppAPITrait;
+use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
@@ -21,15 +21,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateCurrentReadingRequestHandlerInterface
 {
-    use HomeAppAPITrait;
-
     public const SENSOR_SWITCH_ENDPOINT = 'switch';
 
     public function __construct(
         private SensorRepositoryInterface $sensorRepository,
         private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         private DeviceSensorRequestArgumentBuilderFactory $deviceSensorRequestArgumentBuilderFactory,
-        private HttpClientInterface $httpClient,
+        private DeviceRequestHandlerInterface $deviceRequestHandler,
     ) {}
 
     /**
@@ -73,23 +71,26 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
             throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_ALLOWED, $sensorType->getSensorTypeName()));
         }
 
-        $normalizedResponse = $this->normalizeResponse(
-            $deviceEncapsulationRequestDTO->getDeviceRequestDTO()
+        $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
+            $deviceEncapsulationRequestDTO
         );
-
-        $deviceResponse = $this->httpClient->request(
-            Request::METHOD_POST,
-            $deviceEncapsulationRequestDTO->getFullSensorUrl(),
-            [
-                'headers' =>
-                    [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                    ],
-                'json' => $normalizedResponse,
-
-            ]
-        );
+//        $normalizedResponse = $this->normalizeResponse(
+//            $deviceEncapsulationRequestDTO->getDeviceRequestDTO()
+//        );
+//
+//        $deviceResponse = $this->httpClient->request(
+//            Request::METHOD_POST,
+//            $deviceEncapsulationRequestDTO->getFullSensorUrl(),
+//            [
+//                'headers' =>
+//                    [
+//                        'Content-Type' => 'application/json',
+//                        'Accept' => 'application/json',
+//                    ],
+//                'json' => $normalizedResponse,
+//
+//            ]
+//        );
 
         if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
             if ($sensorType instanceof GenericRelay) {

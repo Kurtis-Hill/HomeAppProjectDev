@@ -6,7 +6,7 @@ readonly class DeviceRequestEncapsulationDTO
 {
     public function __construct(
         private string $fullSensorUrl,
-        private RequestSensorCurrentReadingUpdateRequestDTO $requestSensorCurrentReadingUpdateRequestDTO,
+        private DeviceRequestDTOInterface $deviceRequestDTO,
     ) {}
 
     public function getFullSensorUrl(): string
@@ -16,6 +16,6 @@ readonly class DeviceRequestEncapsulationDTO
 
     public function getDeviceRequestDTO(): DeviceRequestDTOInterface
     {
-        return $this->requestSensorCurrentReadingUpdateRequestDTO;
+        return $this->deviceRequestDTO;
     }
 }

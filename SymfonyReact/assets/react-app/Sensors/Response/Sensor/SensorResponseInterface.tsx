@@ -15,4 +15,5 @@ export default interface SensorResponseInterface {
     canDelete?: boolean,
     cardView?: CardViewResponseInterface,
     pinNumber?: number,
+    readingInterval?: number,
 }

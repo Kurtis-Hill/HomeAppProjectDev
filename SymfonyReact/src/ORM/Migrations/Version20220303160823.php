@@ -12,7 +12,8 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\User\Entity\Group;
 use App\UserInterface\Entity\Card\CardState;
@@ -391,7 +392,6 @@ final class Version20220303160823 extends AbstractMigration
                 INDEX sensornames_ibfk_2 (createdBy), 
                 INDEX sensortype (sensorTypeID), 
                 UNIQUE INDEX sensor_device (sensorName, deviceID),
-                UNIQUE INDEX sensor_pin (pinNumber, deviceID),
                 PRIMARY KEY(sensorID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'
@@ -435,7 +435,9 @@ final class Version20220303160823 extends AbstractMigration
                 (1, '". Dht::NAME ."', 'Temperature and Humidity Sensor'),
                 (2, '" . Dallas::NAME . "', 'Water Proof Temperature Sensor'),
                 (3, '". Soil::NAME . "', 'Soil Moisture Sensor'),
-                (4, '" . Bmp::NAME . "', 'Weather Station Sensor');
+                (4, '" . Bmp::NAME . "', 'Weather Station Sensor'),
+                (5, '" . GenericRelay::NAME . "', 'Generic relay'),
+                (6, '" . GenericMotion::NAME . "', 'Generic motion sensor');
         ");
 
         $this->addSql("

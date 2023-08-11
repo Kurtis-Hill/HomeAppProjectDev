@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Devices\Builders\DeviceRequestsArgumentBuilders;
+namespace App\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder;
 
-use App\Devices\DTO\Request\DeviceRequest\RequestSensorCurrentReadingUpdateRequestDTO;
+use App\Devices\Builders\DeviceRequestsArgumentBuilders\DeviceRequestArgumentBuilderInterface;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\SendRequests\RequestSensorCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\SensorPinNumberNotSetException;
 

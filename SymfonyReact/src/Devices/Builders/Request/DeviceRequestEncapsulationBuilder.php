@@ -7,7 +7,7 @@ use App\Devices\DTO\Request\DeviceRequest\DeviceRequestEncapsulationDTO;
 
 class DeviceRequestEncapsulationBuilder
 {
-    private const FULLSENSOR_URL = '%s://%s/%s';
+    private const FULL_SENSOR_URL = '%s://%s/%s';
 
     public static function buildDeviceRequestEncapsulation(
         string $ipAddress,
@@ -16,7 +16,7 @@ class DeviceRequestEncapsulationBuilder
         string $httpProtocol = 'http',
     ): DeviceRequestEncapsulationDTO {
         $fullSensorURL = sprintf(
-            self::FULLSENSOR_URL,
+            self::FULL_SENSOR_URL,
             $httpProtocol,
             $ipAddress,
             $endpoint

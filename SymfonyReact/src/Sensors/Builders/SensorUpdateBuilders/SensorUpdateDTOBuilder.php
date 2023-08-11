@@ -13,12 +13,14 @@ class SensorUpdateDTOBuilder
         ?string $sensorName = null,
         ?Devices $deviceID = null,
         ?int $pinNumber = null,
+        ?int $readingInterval = null,
     ): UpdateSensorDTO {
         return new UpdateSensorDTO(
             $sensor,
             $sensorName,
             $deviceID,
             $pinNumber,
+            $readingInterval,
         );
     }
 }

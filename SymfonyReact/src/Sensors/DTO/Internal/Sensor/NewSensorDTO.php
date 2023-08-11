@@ -18,6 +18,7 @@ readonly class NewSensorDTO
         private UserInterface $user,
         private Sensor $sensor,
         private int $pinNumber,
+        private int $readingInterval,
     ) {
     }
 
@@ -49,5 +50,10 @@ readonly class NewSensorDTO
     public function getPinNumber(): int
     {
         return $this->pinNumber;
+    }
+
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
     }
 }

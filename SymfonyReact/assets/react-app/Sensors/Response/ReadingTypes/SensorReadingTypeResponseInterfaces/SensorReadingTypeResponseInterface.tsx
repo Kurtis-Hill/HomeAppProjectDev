@@ -8,8 +8,6 @@ import MotionResponseInterface from './MotionResponseInterface';
 export interface SensorReadingTypeResponseInterface {
     readingTypes: IndividualSensorReadingTypeResponseInterface,
     sensorType: string,
-    interval?: number,
-
 }
 
 export interface IndividualSensorReadingTypeResponseInterface {

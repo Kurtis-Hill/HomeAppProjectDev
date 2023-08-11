@@ -12,12 +12,10 @@ class SensorReadingTypeEncapsulationDTOResponseBuilder
         #[ArrayShape([AllSensorReadingTypeResponseDTOInterface::class])]
         array $sensorReadingTypeResponseDTOs,
         string $sensorType,
-        ?int $interval = null
     ): SensorReadingTypeEncapsulationResponseDTO {
         return new SensorReadingTypeEncapsulationResponseDTO(
             $sensorReadingTypeResponseDTOs,
             $sensorType,
-            $interval
         );
     }
 }

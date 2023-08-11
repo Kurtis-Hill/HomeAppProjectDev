@@ -14,7 +14,7 @@ use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\DuplicateSensorException;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Sensors\SensorServices\NewSensor\NewSensorSavingHandler;
 use App\Sensors\SensorServices\UpdateSensor\UpdateSensorInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -51,7 +51,7 @@ class UpdateSensorController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         UpdateSensorInterface $updateSensorService,
-        SensorRepositoryInterface $sensorRepository,
+        NewSensorSavingHandler $newSensorSavingHandler,
     ): JsonResponse {
         $updateSensorRequestDTO = new SensorUpdateRequestDTO();
         try {
@@ -100,7 +100,7 @@ class UpdateSensorController extends AbstractController
         }
 
         try {
-            $sensorRepository->flush();
+            $newSensorSavingHandler->saveSensor($sensor);
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
         }

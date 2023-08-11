@@ -81,7 +81,8 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findSensorObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): ?Sensor
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): array
     {
         $qb = $this->createQueryBuilder('sensor');
 
@@ -98,7 +99,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 ]
             );
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getResult();
     }
 
     public function getSensorReadingTypeDataBySensor(
@@ -262,4 +263,29 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->setMaxResults($getSensorQueryDTO->getLimit());
         return $qb->getQuery()->getResult();
     }
+
+    #[ArrayShape([Sensor::class])]
+    public function findAllBusSensors(int $deviceID, int $sensorTypeID, int $pinNumber): array
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+
+        $qb->select(Sensor::ALIAS)
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->where(
+                $qb->expr()->eq(Devices::ALIAS . '.deviceID', ':deviceID'),
+                $qb->expr()->eq(Sensor::ALIAS . '.sensorTypeID', ':sensorTypeID'),
+                $qb->expr()->eq(Sensor::ALIAS . '.pinNumber', ':pinNumber')
+            )
+            ->setParameters(
+                [
+                    'deviceID' => $deviceID,
+                    'sensorTypeID' => $sensorTypeID,
+                    'pinNumber' => $pinNumber,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
+    }
+
+//    public function find
 }

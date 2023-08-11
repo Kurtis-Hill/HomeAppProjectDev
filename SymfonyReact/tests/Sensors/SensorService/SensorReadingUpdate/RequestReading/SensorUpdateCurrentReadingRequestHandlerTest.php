@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Sensors\SensorService;
+namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\RequestReading;
 
+use App\Common\Services\DeviceRequestHandler;
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Exceptions\SensorNotFoundException;
@@ -59,12 +59,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceRequestHandler = new DeviceRequestHandler(
+          $httpClient,
+        );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
-            $httpClient,
+            $deviceRequestHandler,
         );
 
         $relay = $this->relayRepository->findAll()[0];
@@ -100,12 +103,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
-            $httpClient,
+            $deviceRequestHandler,
         );
 
 
@@ -142,11 +148,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
+
         $sut = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
-            $httpClient,
+            $deviceRequestHandler,
         );
 
         $relay = $this->relayRepository->findAll()[0];
@@ -181,11 +191,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
+
         $sut = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
-            $httpClient,
+            $deviceRequestHandler,
         );
         $motionRepository = $this->diContainer->get(MotionRepository::class);
         $motion = $motionRepository->findAll()[0];
@@ -221,12 +235,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
-            $httpClient,
+            $deviceRequestHandler,
         );
 
         $relay = $this->relayRepository->findAll()[0];

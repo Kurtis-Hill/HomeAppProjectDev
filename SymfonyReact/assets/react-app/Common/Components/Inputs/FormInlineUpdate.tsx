@@ -13,6 +13,7 @@ export function FormInlineInput(props: {
     dataType?: string;
     inputDataName?: string
     extraClasses?: string;
+    inputType?: string;
 }) {
 
     const { 
@@ -25,12 +26,13 @@ export function FormInlineInput(props: {
         dataType,
         inputDataName,
         extraClasses,
+        inputType,
     } = props;
     return (
         <>
             <Input
                 name={nameParam}
-                type="text"
+                type={inputType ? inputType : "text"}
                 onChangeFunction={(e: Event) => changeEvent(e)}
                 autoFocus={true}
                 value={value}

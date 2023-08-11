@@ -17,7 +17,6 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\ReadingIntervalInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
@@ -44,27 +43,17 @@ class SensorReadingTypeDTOResponseBuilder
     /**
      * @throws ReadingTypeNotExpectedException
      */
-    public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): ?SensorReadingTypeEncapsulationResponseDTO
+    public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array
     {
         $sensorType = $sensor->getSensorTypeObject();
 
         $sensorReadingTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensorType->getSensorType());
         $sensorTypeObject = $sensorReadingTypeRepository->findOneBy(['sensor' => $sensor]);
         if ($sensorTypeObject === null) {
-            return null;
+            return [];
         }
 
-        if ($sensorTypeObject instanceof ReadingIntervalInterface) {
-            $interval = $sensorTypeObject->getReadingInterval();
-        }
-
-        $sensorReadingTypeResponseDTOs =  $this->handleSensorReadingTypeDTOCreation($sensorTypeObject);
-
-        return SensorReadingTypeEncapsulationDTOResponseBuilder::buildSensorReadingTypeEncapsulationDTOs(
-            $sensorReadingTypeResponseDTOs,
-            $sensorType->getSensorType(),
-            $interval ?? null
-        );
+        return  $this->handleSensorReadingTypeDTOCreation($sensorTypeObject);
     }
 
     /**

@@ -629,13 +629,12 @@ class GetSensorControllerTest extends WebTestCase
 
         self::assertNotNull($sensorData);
 
+        $sensorReadingTypePass = 0;
         foreach ($sensorData as $singleSensorData) {
             if (empty($singleSensorData['sensorReadingTypes'])) {
                 continue;
-            } else {
-
-            dd($singleSensorData);
             }
+            ++$sensorReadingTypePass;
             $sensorObject = $this->sensorRepository->find($singleSensorData['sensorID']);
 
             $sensorReadingTypes = $singleSensorData['sensorReadingTypes'];
@@ -755,7 +754,7 @@ class GetSensorControllerTest extends WebTestCase
             self::assertTrue($singleSensorData['canDelete']);
 
             self::assertEquals($sensorObject->getPinNumber(), $singleSensorData['pinNumber']);
-
+            self::assertEquals($sensorObject->getReadingInterval(), $singleSensorData['readingInterval']);
             $userHasCardView = $this->cardViewRepository->findOneBy(
                 [
                     'userID' => $this->adminUser->getUserID(),
@@ -778,6 +777,7 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals($userHasCardView->getCardStateID()->getState(), $cardViewResponse['cardViewState']['cardState']);
             }
         }
+        self::assertGreaterThan(0, $sensorReadingTypePass);
     }
 
     /**

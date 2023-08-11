@@ -10,7 +10,6 @@ readonly class SensorReadingTypeEncapsulationResponseDTO
         #[ArrayShape([AllSensorReadingTypeResponseDTOInterface::class])]
         private array $sensorReadingTypeData,
         private string $sensorType,
-        private ?int $interval = null,
     ) {}
 
     #[ArrayShape([AllSensorReadingTypeResponseDTOInterface::class])]
@@ -22,10 +21,5 @@ readonly class SensorReadingTypeEncapsulationResponseDTO
     public function getSensorType(): string
     {
         return $this->sensorType;
-    }
-
-    public function getInterval(): ?int
-    {
-        return $this->interval;
     }
 }

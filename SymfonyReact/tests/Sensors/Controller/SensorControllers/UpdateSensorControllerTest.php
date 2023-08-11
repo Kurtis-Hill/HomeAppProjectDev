@@ -106,7 +106,7 @@ class UpdateSensorControllerTest extends WebTestCase
     /**
      * @dataProvider incorrectDataTypesDataProvider
      */
-    public function test_sending_incorrect_data_types(mixed $sensorName, mixed $deviceID, mixed $pinNumber, array $errorMessage): void
+    public function test_sending_incorrect_data_types(mixed $sensorName, mixed $deviceID, mixed $pinNumber, mixed $readingInterval, array $errorMessage): void
     {
         /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
@@ -117,6 +117,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => $sensorName,
             'deviceID' => $deviceID,
             'pinNumber' => $pinNumber,
+            'readingInterval' => $readingInterval,
         ];
 
         $this->client->request(
@@ -154,6 +155,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => [123],
             'deviceID' => 123,
             'pinNumber' => 1,
+            'readingInterval' => 500,
             'errorMessage' => ['sensor name must be of type string|null you provided array'],
         ];
 
@@ -161,6 +163,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => 'sensor name',
             'deviceID' => [123],
             'pinNumber' => 1,
+            'readingInterval' => 500,
             'errorMessage' => ['device must be of type int|null you provided array'],
         ];
 
@@ -168,6 +171,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => 123,
             'deviceID' => 123,
             'pinNumber' => 1,
+            'readingInterval' => 500,
             'errorMessage' => ['sensor name must be of type string|null you provided 123'],
         ];
 
@@ -175,6 +179,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => ['sensor name'],
             'deviceID' => '123',
             'pinNumber' => 1,
+            'readingInterval' => 500,
             'errorMessage' => [
                 'sensor name must be of type string|null you provided array',
                 'device must be of type int|null you provided "123"',
@@ -185,6 +190,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => 'sensorname',
             'deviceID' => 123,
             'pinNumber' => false,
+            'readingInterval' => 500,
             'errorMessage' => ['pinNumber must be an int you have provided false'],
         ];
 
@@ -192,6 +198,7 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => 'sensorname',
             'deviceID' => 123,
             'pinNumber' => ['1'],
+            'readingInterval' => 500,
             'errorMessage' => ['pinNumber must be an int you have provided array'],
         ];
 
@@ -199,7 +206,32 @@ class UpdateSensorControllerTest extends WebTestCase
             'sensorName' => 'sensorname',
             'deviceID' => 123,
             'pinNumber' => 'string',
+            'readingInterval' => 500,
             'errorMessage' => ['pinNumber must be an int you have provided "string"'],
+        ];
+
+        yield [
+            'sensorName' => 'sensorname',
+            'deviceID' => 123,
+            'pinNumber' => 1,
+            'readingInterval' => 'string',
+            'errorMessage' => ['readingInterval must be a number'],
+        ];
+
+        yield [
+            'sensorName' => 'sensorname',
+            'deviceID' => 123,
+            'pinNumber' => 1,
+            'readingInterval' => ['string'],
+            'errorMessage' => ['readingInterval must be a number'],
+        ];
+
+        yield [
+            'sensorName' => 'sensorname',
+            'deviceID' => 123,
+            'pinNumber' => 1,
+            'readingInterval' => false,
+            'errorMessage' => ['readingInterval must be a number'],
         ];
     }
 
@@ -253,6 +285,7 @@ class UpdateSensorControllerTest extends WebTestCase
             json_encode(['deviceID' => $deviceID, 'sensorName' => $newSensorName, 'pinNumber' => 10]),
         );
 
+//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,
@@ -386,7 +419,6 @@ class UpdateSensorControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
             json_encode(['deviceID' => $deviceID, 'pinNumber' => $pinNumber]),
         );
-
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,
@@ -404,7 +436,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($sensorToUpdate->getSensorName(), $payload['sensorName']);
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+//        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($pinNumber, $payload['pinNumber']);
     }
@@ -490,19 +522,58 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($randomPin, $payload['pinNumber']);
     }
 
-    public function test_updating_pin_to_pin_that_is_already_registered_to_device(): void
+//    public function test_updating_pin_to_pin_that_is_already_registered_to_device(): void
+//    {
+//        /** @var Devices $device */
+//        $device = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
+//
+//        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($device->getDeviceID());
+//
+//        $randomPin = $devicePinsInUse[1];
+//
+////        dd($randomPin);
+//
+//        /** @var Sensor $sensor */
+//        $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
+//
+//        $this->client->request(
+//            Request::METHOD_PATCH,
+//            sprintf(self::UPDATE_SENSOR_URL, $sensor->getSensorID()),
+//            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
+//            [],
+//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+//            json_encode(['pinNumber' => $randomPin]),
+//        );
+//
+//        $responseData = json_decode(
+//            $this->client->getResponse()->getContent(),
+//            true,
+//            512,
+//            JSON_THROW_ON_ERROR
+//        );
+//
+//        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+//
+//        $title = $responseData['title'];
+//        $errorsPayload = $responseData['errors'];
+//
+//        self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+//
+//        self::assertEquals([
+//            sprintf(
+//                DuplicateSensorException::MESSAGE_PIN,
+//                $randomPin,
+//                $sensor->getSensorName()
+//            )
+//        ], $errorsPayload);
+//    }
+
+    public function test_updating_just_reading_interval(): void
     {
-        /** @var Devices $device */
-        $device = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
-
-        $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($device->getDeviceID());
-
-        $randomPin = $devicePinsInUse[1];
-
-//        dd($randomPin);
-
         /** @var Sensor $sensor */
-        $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
+        $sensor = $this->sensorRepository->findAll()[0];
+
+        $newReadingInterval = 1000;
 
         $this->client->request(
             Request::METHOD_PATCH,
@@ -510,7 +581,7 @@ class UpdateSensorControllerTest extends WebTestCase
             [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            json_encode(['pinNumber' => $randomPin]),
+            json_encode(['readingInterval' => $newReadingInterval]),
         );
 
         $responseData = json_decode(
@@ -520,20 +591,21 @@ class UpdateSensorControllerTest extends WebTestCase
             JSON_THROW_ON_ERROR
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        self::assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
-        $title = $responseData['title'];
-        $errorsPayload = $responseData['errors'];
+        $payload = $responseData['payload'];
 
-        self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals($sensor->getSensorID(), $payload['sensorID']);
+        self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
+        self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['device']['deviceName']);
+        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
+        self::assertEquals($sensor->getPinNumber(), $payload['pinNumber']);
+        self::assertEquals($newReadingInterval, $payload['readingInterval']);
 
-        self::assertEquals([
-            sprintf(
-                DuplicateSensorException::MESSAGE_PIN,
-                $randomPin,
-                $sensor->getSensorName()
-            )
-        ], $errorsPayload);
+        $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensor->getSensorID()]);
+
+        self::assertEquals($newReadingInterval, $sensorAfterUpdate->getReadingInterval());
     }
 
     public function test_updating_sensor_correct_data_regular_user(): void

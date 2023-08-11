@@ -11,6 +11,7 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
@@ -60,6 +61,7 @@ class UpdateDeviceController extends AbstractController
         ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        DeviceDTOBuilder $deviceDTOBuilder,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -96,9 +98,8 @@ class UpdateDeviceController extends AbstractController
         }
 
         try {
-            $updateDeviceDTO = $updateDeviceHandler->buildUpdateDeviceDTO(
+            $updateDeviceDTO = $deviceDTOBuilder->buildUpdateDeviceInternalDTO(
                 $deviceUpdateRequestDTO,
-                $user,
                 $deviceToUpdate,
             );
         } catch (NonUniqueResultException | ORMException) {
