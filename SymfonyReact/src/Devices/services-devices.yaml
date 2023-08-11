@@ -17,7 +17,7 @@ services:
 
   App\Devices\Events\Subscribers\DeviceUpdateEventSubscriber:
     calls:
-      - setDeviceUpdateProducer: ['@send_device_settings_update']
+      - setDeviceUpdateProducer: ['@old_sound_rabbit_mq.send_device_settings_update_producer']
 
   App\Devices\AMQP\Producers\DeviceSettingsUpdateProducer: '@old_sound_rabbit_mq.send_device_settings_update_producer'
 

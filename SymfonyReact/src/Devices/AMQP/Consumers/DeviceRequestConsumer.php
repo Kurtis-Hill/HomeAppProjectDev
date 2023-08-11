@@ -51,7 +51,5 @@ readonly class DeviceRequestConsumer implements ConsumerInterface
             $this->elasticLogger->error('Sensor update request failed with unexpected error, exception message: ' . $exception->getMessage());
             return true;
         }
-
-        return true;
     }
 }

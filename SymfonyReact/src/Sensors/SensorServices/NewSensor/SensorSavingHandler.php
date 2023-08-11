@@ -10,7 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class NewSensorSavingHandler
+class SensorSavingHandler
 {
     public function __construct(
         private SensorRepositoryInterface $sensorRepository,

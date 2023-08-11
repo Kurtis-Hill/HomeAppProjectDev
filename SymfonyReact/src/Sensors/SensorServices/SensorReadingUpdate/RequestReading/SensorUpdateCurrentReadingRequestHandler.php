@@ -74,23 +74,8 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
             $deviceEncapsulationRequestDTO
         );
-//        $normalizedResponse = $this->normalizeResponse(
-//            $deviceEncapsulationRequestDTO->getDeviceRequestDTO()
-//        );
-//
-//        $deviceResponse = $this->httpClient->request(
-//            Request::METHOD_POST,
-//            $deviceEncapsulationRequestDTO->getFullSensorUrl(),
-//            [
-//                'headers' =>
-//                    [
-//                        'Content-Type' => 'application/json',
-//                        'Accept' => 'application/json',
-//                    ],
-//                'json' => $normalizedResponse,
-//
-//            ]
-//        );
+
+
 
         if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
             if ($sensorType instanceof GenericRelay) {

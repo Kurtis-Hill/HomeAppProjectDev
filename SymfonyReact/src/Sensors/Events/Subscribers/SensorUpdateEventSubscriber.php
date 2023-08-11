@@ -18,9 +18,9 @@ class SensorUpdateEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onSensorUpdate(SensorUpdateEvent $sensorUpdateEventDTO): void
+    public function onSensorUpdate(SensorUpdateEvent $sensorUpdateEvent): void
     {
-        $this->sensorDataUpdateProducer->publish(serialize($sensorUpdateEventDTO));
+        $this->sensorDataUpdateProducer->publish(serialize($sensorUpdateEvent->getSensorUpdateEventDTO()));
     }
 
     #[Required]

@@ -24,13 +24,13 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
 
     private DuplicateSensorCheckService $duplicateSensorCheckService;
 
-    private NewSensorSavingHandler $newSensorSavingHandler;
+    private SensorSavingHandler $newSensorSavingHandler;
 
     private ValidatorInterface $validator;
 
     public function __construct(
         DuplicateSensorCheckService $duplicateSensorCheckService,
-        NewSensorSavingHandler $newSensorSavingHandler,
+        SensorSavingHandler $newSensorSavingHandler,
         ValidatorInterface $validator,
     ) {
         $this->duplicateSensorCheckService = $duplicateSensorCheckService;
