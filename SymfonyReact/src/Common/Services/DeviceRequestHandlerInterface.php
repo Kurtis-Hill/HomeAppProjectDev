@@ -7,5 +7,5 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 interface DeviceRequestHandlerInterface
 {
-    public function handleDeviceRequest(DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO): ResponseInterface;
+    public function handleDeviceRequest(DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO, array $groups = []): ResponseInterface;
 }

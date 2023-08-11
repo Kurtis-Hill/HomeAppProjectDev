@@ -17,6 +17,7 @@ class SensorSavingHandler
         private SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder,
         private EventDispatcherInterface $eventDispatcher,
     ) {}
+
     public function saveSensor(Sensor $sensor): bool
     {
         try {

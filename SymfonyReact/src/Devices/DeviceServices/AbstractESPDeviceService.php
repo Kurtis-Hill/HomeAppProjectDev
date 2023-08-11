@@ -3,7 +3,7 @@
 namespace App\Devices\DeviceServices;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Builders\Request\DeviceSettingsUpdateEventDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceSettingsUpdateDTOBuilder;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Events\DeviceUpdateEvent;
@@ -13,7 +13,6 @@ use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -31,7 +30,7 @@ abstract class AbstractESPDeviceService
 
     protected RoomRepositoryInterface $roomRepository;
 
-    private DeviceSettingsUpdateEventDTOBuilder $deviceSettingsUpdateEventDTOBuilder;
+    private DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder;
 
     protected EventDispatcherInterface $eventDispatcher;
 
@@ -43,7 +42,7 @@ abstract class AbstractESPDeviceService
         DevicePasswordEncoderInterface $devicePasswordEncoder,
         GroupRepositoryInterface $groupNameRepository,
         RoomRepositoryInterface $roomRepository,
-        DeviceSettingsUpdateEventDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
+        DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $elasticLogger,
     ) {
@@ -97,6 +96,7 @@ abstract class AbstractESPDeviceService
     protected function sendDeviceSettingsUpdateEvent(Devices $device, ?string $plainPassword = null): void
     {
         $updateDeviceSettingsEventDTO = $this->deviceSettingsUpdateEventDTOBuilder->buildDeviceSettingUpdateEventDTO(
+            $device->getDeviceID(),
             $device->getDeviceName(),
             $plainPassword ?? $device->getDeviceSecret(),
         );

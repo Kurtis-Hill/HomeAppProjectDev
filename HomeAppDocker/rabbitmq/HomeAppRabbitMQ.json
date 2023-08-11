@@ -1,1 +1,120 @@
-{"rabbit_version":"3.11.1","rabbitmq_version":"3.11.1","product_name":"RabbitMQ","product_version":"3.11.1","users":[{"name":"kurt","password_hash":"PRXqKxgtHxDAGGvdHcUMJKJsD8tNbcy5sRc1YMXnnO9Id3DT","hashing_algorithm":"rabbit_password_hashing_sha256","tags":["administrator"],"limits":{}}],"vhosts":[{"name":"/"}],"permissions":[{"user":"kurt","vhost":"/","configure":".*","write":".*","read":".*"}],"topic_permissions":[],"parameters":[],"global_parameters":[{"name":"internal_cluster_id","value":"rabbitmq-cluster-id-s2Q-nz6a_ZDUANa7Zn3CyA"}],"policies":[],"queues":[{"name":"current-reading-sensor-data","vhost":"/","durable":true,"auto_delete":false,"arguments":{}},{"name":"send-sensor-data-update","vhost":"/","durable":true,"auto_delete":false,"arguments":{"x-queue-type":"classic"}},{"name":"send-sensor-update","vhost":"/","durable":true,"auto_delete":false,"arguments":{}}],"exchanges":[{"name":"send-sensor-data-update-exchange","vhost":"/","type":"direct","durable":true,"auto_delete":false,"internal":false,"arguments":{}},{"name":"update-sensor-exchange","vhost":"/","type":"direct","durable":true,"auto_delete":false,"internal":false,"arguments":{}},{"name":"send-sensor-update-exchange","vhost":"/","type":"direct","durable":true,"auto_delete":false,"internal":false,"arguments":{}}],"bindings":[{"source":"send-sensor-data-update-exchange","vhost":"/","destination":"send-sensor-data-update","destination_type":"queue","routing_key":"","arguments":{}},{"source":"send-sensor-update-exchange","vhost":"/","destination":"send-sensor-update","destination_type":"queue","routing_key":"","arguments":{}},{"source":"update-sensor-exchange","vhost":"/","destination":"current-reading-sensor-data","destination_type":"queue","routing_key":"","arguments":{}}]}
+{
+    "rabbit_version": "3.11.1",
+    "rabbitmq_version": "3.11.1",
+    "product_name": "RabbitMQ",
+    "product_version": "3.11.1",
+    "users": [
+        {
+            "name": "kurt",
+            "password_hash": "PRXqKxgtHxDAGGvdHcUMJKJsD8tNbcy5sRc1YMXnnO9Id3DT",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": [
+                "administrator"
+            ],
+            "limits": {}
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "kurt",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "topic_permissions": [],
+    "parameters": [],
+    "global_parameters": [
+        {
+            "name": "internal_cluster_id",
+            "value": "rabbitmq-cluster-id-s2Q-nz6a_ZDUANa7Zn3CyA"
+        }
+    ],
+    "policies": [],
+    "queues": [
+        {
+            "name": "current-reading-sensor-data",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "send-sensor-data-update",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "send-sensor-update",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "send-sensor-data-update-exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "update-sensor-exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "send-sensor-update-exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
+    "bindings": [
+        {
+            "source": "send-sensor-data-update-exchange",
+            "vhost": "/",
+            "destination": "send-sensor-data-update",
+            "destination_type": "queue",
+            "routing_key": "",
+            "arguments": {}
+        },
+        {
+            "source": "send-sensor-update-exchange",
+            "vhost": "/",
+            "destination": "send-sensor-update",
+            "destination_type": "queue",
+            "routing_key": "",
+            "arguments": {}
+        },
+        {
+            "source": "update-sensor-exchange",
+            "vhost": "/",
+            "destination": "current-reading-sensor-data",
+            "destination_type": "queue",
+            "routing_key": "",
+            "arguments": {}
+        }
+    ]
+}

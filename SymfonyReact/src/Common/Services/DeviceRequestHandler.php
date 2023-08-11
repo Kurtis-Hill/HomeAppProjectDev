@@ -16,10 +16,11 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
         private readonly HttpClientInterface $httpClient,
     ) {}
 
-    public function handleDeviceRequest(DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO): ResponseInterface
+    public function handleDeviceRequest(DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO, array $groups = []): ResponseInterface
     {
         $normalizedResponse = $this->normalizeResponse(
-            $deviceRequestEncapsulationDTO->getDeviceRequestDTO()
+            $deviceRequestEncapsulationDTO->getDeviceRequestDTO(),
+            $groups,
         );
 
         return $this->httpClient->request(

@@ -2,7 +2,7 @@
 
 namespace App\Devices\Events;
 
-use App\Devices\DTO\Request\DeviceRequest\DeviceSettingsUpdateEventDTO;
+use App\Devices\DTO\Internal\DeviceSettingsUpdateDTO;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class DeviceUpdateEvent extends Event
@@ -10,10 +10,10 @@ class DeviceUpdateEvent extends Event
     public const NAME = 'device.update';
 
     public function __construct(
-        protected DeviceSettingsUpdateEventDTO $deviceUpdateEventDTO
+        protected DeviceSettingsUpdateDTO $deviceUpdateEventDTO
     ) {}
 
-    public function getDeviceUpdateEventDTO(): DeviceSettingsUpdateEventDTO
+    public function getDeviceUpdateEventDTO(): DeviceSettingsUpdateDTO
     {
         return $this->deviceUpdateEventDTO;
     }
