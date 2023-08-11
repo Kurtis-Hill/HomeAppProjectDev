@@ -22,15 +22,19 @@ class DeviceResponseDTOBuilder
 
     private SensorResponseDTOBuilder $sensorResponseDTOBuilder;
 
+    private DeviceDTOBuilder $deviceDTOBuilder;
+
     private Security $security;
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         SensorResponseDTOBuilder $getSensorReadingTypeHandler,
+        DeviceDTOBuilder $deviceDTOBuilder,
         Security $security,
     ) {
         $this->sensorRepository = $sensorRepository;
         $this->sensorResponseDTOBuilder = $getSensorReadingTypeHandler;
+        $this->deviceDTOBuilder = $deviceDTOBuilder;
         $this->security = $security;
     }
 
@@ -42,11 +46,9 @@ class DeviceResponseDTOBuilder
             $device,
             $sensorReadingTypeDTOs,
             $this->security->isGranted(DeviceVoter::UPDATE_DEVICE,
-                DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
-                    new DeviceUpdateRequestDTO(),
+                $this->deviceDTOBuilder->buildUpdateDeviceInternalDTO(
+                    (new DeviceUpdateRequestDTO()),
                     $device,
-                    $device->getRoomObject(),
-                    $device->getGroupObject(),
                 )
             ),
             $this->security->isGranted(DeviceVoter::DELETE_DEVICE, $device),
