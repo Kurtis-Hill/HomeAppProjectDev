@@ -33,7 +33,6 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                         'Accept' => 'application/json',
                     ],
                 'json' => $normalizedResponse,
-
             ]
         );
     }

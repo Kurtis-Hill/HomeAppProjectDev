@@ -51,6 +51,6 @@ old_sound_rabbit_mq:
             callback: App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer
         send_device_settings_update:
           connection: default
-            exchange_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_EXCHANGE_NAME)%', type: direct }
-            queue_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_QUEUE_NAME)%' }
-            callback: App\Devices\AMQP\Consumers\DeviceSettingsUpdateProducer
+          exchange_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_EXCHANGE_NAME)%', type: direct }
+          queue_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_QUEUE_NAME)%' }
+          callback: App\Devices\AMQP\Consumers\DeviceSettingsUpdateConsumer
