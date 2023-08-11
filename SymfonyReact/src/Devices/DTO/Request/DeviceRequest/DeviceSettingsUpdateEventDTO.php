@@ -5,8 +5,8 @@ namespace App\Devices\DTO\Request\DeviceRequest;
 readonly class DeviceSettingsUpdateEventDTO
 {
     public function __construct(
-        private string $userName,
-        private string $password,
+        private ?string $userName,
+        private ?string $password,
     ) {}
 
     public function getUserName(): string

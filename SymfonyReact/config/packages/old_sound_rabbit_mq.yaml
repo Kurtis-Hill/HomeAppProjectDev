@@ -38,14 +38,14 @@ old_sound_rabbit_mq:
             connection: default
             exchange_options: { name: '%env(UPDATE_SENSOR_EXCHANGE_NAME)%', type: direct }
             queue_options: { name: '%env(UPDATE_SENSOR_QUEUE_NAME)%' }
-            callback: App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer
+            callback: App\Sensors\AMQP\Consumers\ProcessCurrentReadingRequestConsumer
         send_current_reading_sensor_data:
             connection: default
             exchange_options: { name: '%env(SEND_SENSOR_UPDATE_EXCHANGE_NAME)%', type: direct }
             queue_options: { name: '%env(SEND_SENSOR_UPDATE_QUEUE_NAME)%' }
-            callback: App\Devices\AMQP\Consumers\DeviceRequestConsumer
+            callback: App\Devices\AMQP\Consumers\SensorSendUpdateReadingRequestConsumer
         send_current_sensor_data_update:
             connection: default
             exchange_options: { name: '%env(SEND_SENSOR_DATA_UPDATE_EXCHANGE_NAME)%', type: direct }
             queue_options: { name: '%env(SEND_SENSOR_DATA_UPDATE_QUEUE_NAME)%' }
-            callback: App\Sensors\AMQP\Consumers\UploadSensorDataToDeviceConsumer
+            callback: App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer

@@ -12,7 +12,7 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 
-readonly class UploadSensorDataToDeviceConsumer implements ConsumerInterface
+readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
 {
     public function __construct(
         private LoggerInterface $logger,

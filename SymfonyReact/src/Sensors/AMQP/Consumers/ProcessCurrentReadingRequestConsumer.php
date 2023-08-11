@@ -19,22 +19,13 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 
-class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
+readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
 {
-    private UpdateCurrentSensorReadingInterface $sensorCurrentReadingUpdateService;
-
-    private DeviceRepositoryInterface $deviceRepository;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
-        DeviceRepositoryInterface $deviceRepository,
-        LoggerInterface $elasticLogger,
+        private UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
+        private DeviceRepositoryInterface $deviceRepository,
+        private LoggerInterface $elasticLogger,
     ) {
-        $this->sensorCurrentReadingUpdateService = $sensorDeviceDataQueueConsumerService;
-        $this->deviceRepository = $deviceRepository;
-        $this->logger = $elasticLogger;
     }
 
     // @ADD new current reading type dtos to allowed_classes array
@@ -56,30 +47,30 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                 ]
             );
         } catch (Exception $exception) {
-            $this->logger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
+            $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return true;
         }
         try {
             $device = $this->deviceRepository->find($sensorData->getDeviceId());
         } catch (NonUniqueResultException | ORMException $exception) {
-            $this->logger->error('expection message: ' . $exception->getMessage());
+            $this->elasticLogger->error('expection message: ' . $exception->getMessage());
 
             return true;
         }
 
         if ($device instanceof Devices) {
             try {
-                return $this->sensorCurrentReadingUpdateService->handleUpdateSensorCurrentReading(
+                return $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
                     $sensorData,
                     $device
                 );
             } catch (ORMException | OptimisticLockException $e) {
-                $this->logger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
+                $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
                 return false;
             } catch (Exception $e) {
-                $this->logger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
+                $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
                 return true;
             }

@@ -14,6 +14,7 @@ use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class AbstractESPDeviceService
@@ -32,7 +33,7 @@ abstract class AbstractESPDeviceService
 
     private DeviceSettingsUpdateEventDTOBuilder $deviceSettingsUpdateEventDTOBuilder;
 
-    protected EventDispatcher $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
     protected LoggerInterface $logger;
 
@@ -43,6 +44,7 @@ abstract class AbstractESPDeviceService
         GroupRepositoryInterface $groupNameRepository,
         RoomRepositoryInterface $roomRepository,
         DeviceSettingsUpdateEventDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
+        EventDispatcherInterface $eventDispatcher,
         LoggerInterface $elasticLogger,
     ) {
         $this->validator = $validator;
@@ -51,6 +53,7 @@ abstract class AbstractESPDeviceService
         $this->groupRepository = $groupNameRepository;
         $this->roomRepository = $roomRepository;
         $this->deviceSettingsUpdateEventDTOBuilder = $deviceSettingsUpdateEventDTOBuilder;
+        $this->eventDispatcher = $eventDispatcher;
         $this->logger = $elasticLogger;
     }
 
@@ -98,6 +101,8 @@ abstract class AbstractESPDeviceService
             $plainPassword ?? $device->getDeviceSecret(),
         );
 
-        $this->eventDispatcher->dispatch($updateDeviceSettingsEventDTO, DeviceUpdateEvent::NAME);
+        $deviceSettingsUpdateEvent = new DeviceUpdateEvent($updateDeviceSettingsEventDTO);
+
+        $this->eventDispatcher->dispatch($deviceSettingsUpdateEvent, DeviceUpdateEvent::NAME);
     }
 }

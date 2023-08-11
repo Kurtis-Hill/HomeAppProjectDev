@@ -2,6 +2,8 @@
 
 namespace App\Devices\AMQP\Producers;
 
-class DeviceSettingsUpdateProducer
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
+
+class DeviceSettingsUpdateProducer extends Producer
 {
 }

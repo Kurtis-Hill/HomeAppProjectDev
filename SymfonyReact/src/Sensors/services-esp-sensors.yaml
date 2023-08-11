@@ -32,8 +32,8 @@ services:
   App\Sensors\AMQP\Producers\UploadSwitchSensorProducer: '@old_sound_rabbit_mq.send_current_sensor_reading_producer'
 
   ######################## Consumers ######################################################
-  App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer:
-  App\Sensors\AMQP\Consumers\UploadSensorDataToDeviceConsumer:
+  App\Sensors\AMQP\Consumers\ProcessCurrentReadingSensorDataRequestConsumer:
+  App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer:
 
 ######################## Update Sensor Reading Services ######################################################
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:

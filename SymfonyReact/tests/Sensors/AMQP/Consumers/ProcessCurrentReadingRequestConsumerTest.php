@@ -4,7 +4,7 @@ namespace App\Tests\Sensors\AMQP\Consumers;
 
 use App\Devices\Entity\Devices;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer;
+use App\Sensors\AMQP\Consumers\ProcessCurrentReadingRequestConsumer;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
@@ -27,9 +27,9 @@ use Exception;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
+class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 {
-    private UploadCurrentReadingSensorDataConsumer $sut;
+    private ProcessCurrentReadingRequestConsumer $sut;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -50,7 +50,7 @@ class UploadCurrentReadingSensorDataConsumerTest extends KernelTestCase
         self::bootKernel();
 
         $container = static::getContainer();
-        $this->sut = $container->get(UploadCurrentReadingSensorDataConsumer::class);
+        $this->sut = $container->get(ProcessCurrentReadingRequestConsumer::class);
         $this->entityManager = $container->get('doctrine.orm.default_entity_manager');
     }
 

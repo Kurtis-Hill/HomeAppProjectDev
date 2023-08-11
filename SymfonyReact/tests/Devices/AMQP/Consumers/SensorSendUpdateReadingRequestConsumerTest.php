@@ -2,27 +2,16 @@
 
 namespace App\Tests\Devices\AMQP\Consumers;
 
-use App\Devices\AMQP\Consumers\DeviceRequestConsumer;
-use App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Devices\AMQP\Consumers\SensorSendUpdateReadingRequestConsumer;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpClient\MockHttpClient;
-use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Component\HttpClient\TraceableHttpClient;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class DeviceRequestConsumerTest extends KernelTestCase
+class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 {
-    private DeviceRequestConsumer $sut;
+    private SensorSendUpdateReadingRequestConsumer $sut;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -35,7 +24,7 @@ class DeviceRequestConsumerTest extends KernelTestCase
         self::bootKernel();
 
         $this->diContainer = static::getContainer();
-        $this->sut = $this->diContainer->get(DeviceRequestConsumer  ::class);
+        $this->sut = $this->diContainer->get(SensorSendUpdateReadingRequestConsumer  ::class);
         $this->relayRepository = $this->diContainer->get(RelayRepository::class);
 
         $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');

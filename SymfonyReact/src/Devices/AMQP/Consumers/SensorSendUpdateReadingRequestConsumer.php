@@ -15,7 +15,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-readonly class DeviceRequestConsumer implements ConsumerInterface
+readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterface
 {
     public function __construct(
         private LoggerInterface $elasticLogger,
