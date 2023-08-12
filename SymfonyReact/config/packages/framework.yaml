@@ -2,6 +2,15 @@ framework:
     secret: '%env(APP_SECRET)%'
     http_method_override: false
     csrf_protection: true
+    http_client:
+      max_host_connections: '%env(int:HTTP_MAX_CONNECTIONS)%'
+      scoped_clients:
+        elastica.client:
+          base_uri: 'https://%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
+          auth_basic: "%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%:%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%"
+          verify_host: false
+          verify_peer: false
+
     #http_method_override: true
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.

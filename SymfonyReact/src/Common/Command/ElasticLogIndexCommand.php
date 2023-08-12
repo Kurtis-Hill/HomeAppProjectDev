@@ -49,7 +49,7 @@ class ElasticLogIndexCommand extends Command
             'Creating index...'
         ]);
 
-        $force = $input->getArgument('force') === '-f' || $input->getArgument('force') === '-y';
+        $force = $input->getArgument('force') === 'f' || $input->getArgument('force') === 'y';
         foreach ($this->indexMappings as $mappingProperties) {
             /** @var Index $index */
             $index = $mappingProperties['index'];

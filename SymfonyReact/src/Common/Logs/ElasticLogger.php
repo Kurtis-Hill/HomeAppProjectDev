@@ -2,6 +2,7 @@
 
 namespace App\Common\Logs;
 
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Factories\ElasticLogDTOFactory;
 use Elastica\Document;
 use Elastica\Index;
@@ -10,7 +11,7 @@ use Stringable;
 
 class ElasticLogger implements LoggerInterface
 {
-//    private LoggerInterface $logger;
+    use HomeAppAPITrait;
 
     private Index $emergencyIndex;
 
@@ -33,7 +34,6 @@ class ElasticLogger implements LoggerInterface
     private ElasticLogDTOFactory $elasticLogDTOFactory;
 
     public function __construct(
-//        LoggerInterface $logger,
         Index $emergencyIndex,
         Index $alertIndex,
         Index $criticalIndex,
@@ -45,7 +45,6 @@ class ElasticLogger implements LoggerInterface
         Index $logIndex,
         ElasticLogDTOFactory $elasticLogDTOFactory
     ) {
-//        $this->logger = $logger;
         $this->emergencyIndex = $emergencyIndex;
         $this->alertIndex = $alertIndex;
         $this->criticalIndex = $criticalIndex;
@@ -56,8 +55,6 @@ class ElasticLogger implements LoggerInterface
         $this->debugIndex = $debugIndex;
         $this->logIndex = $logIndex;
         $this->elasticLogDTOFactory = $elasticLogDTOFactory;
-
-        $this->setLogger($this);
     }
 
     public function emergency(Stringable|string $message, array $context = []): void
@@ -67,7 +64,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->emergencyIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -78,7 +75,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->alertIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -89,7 +86,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->criticalIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -97,11 +94,11 @@ class ElasticLogger implements LoggerInterface
     {
         $elasticDTO = $this->elasticLogDTOFactory
             ->getElasticDTOBuilder('error')
-            ->buildLogDTO($message, $context);
+            ->buildLogDTO('MEMEMEMEME', $context);
 
-        $this->errorIndex->addDocument(
-            new Document(null, $elasticDTO)
-        );
+            $this->errorIndex->addDocument(
+                new Document(null, $this->normalizeResponse($elasticDTO))
+            );
     }
 
     public function warning(Stringable|string $message, array $context = []): void
@@ -111,7 +108,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->warningIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -122,7 +119,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->noticeIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -133,7 +130,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->infoIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -144,7 +141,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->debugIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
     }
 
@@ -155,12 +152,7 @@ class ElasticLogger implements LoggerInterface
             ->buildLogDTO($message, $context);
 
         $this->logIndex->addDocument(
-            new Document(null, $elasticDTO)
+            new Document(null, $this->normalizeResponse($elasticDTO))
         );
-    }
-
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 }
