@@ -9,6 +9,9 @@ use Elastica\Index;
 use Psr\Log\LoggerInterface;
 use Stringable;
 
+/**
+* Just need to add ElasticLogStash handler to finish this off and use these rather than the build in logger
+ */
 class ElasticLogger implements LoggerInterface
 {
     use HomeAppAPITrait;

@@ -14,12 +14,16 @@ readonly class DeviceSettingsUpdateRequestDTO implements DeviceRequestDTOInterfa
         private ?string $password,
     ) {}
 
+    #[Groups([
+        DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT,
+        DeviceSettingsUpdateRequestHandler::PASSWORD_NOT_PRESENT])
+    ]
     public function getUserName(): string
     {
         return $this->userName;
     }
 
-    #[Groups([DeviceSettingsUpdateRequestHandler::WIFI_PASSWORD_GROUP])]
+    #[Groups([DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT])]
     public function getPassword(): ?string
     {
         return $this->password;

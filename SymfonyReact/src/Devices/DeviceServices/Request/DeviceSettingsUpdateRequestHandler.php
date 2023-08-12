@@ -2,6 +2,7 @@
 
 namespace App\Devices\DeviceServices\Request;
 
+use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Services\DeviceRequestHandler;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Builders\Request\DeviceSettingsUpdateRequestBuilder;
@@ -14,9 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 readonly class DeviceSettingsUpdateRequestHandler
 {
+    use HomeAppAPITrait;
     private const SETTINGS_ENDPOINT = '/settings';
 
-    public const WIFI_PASSWORD_GROUP = 'wifi_password';
+    public const PASSWORD_PRESENT = 'password_present';
+
+    public const PASSWORD_NOT_PRESENT = 'password_not_present';
 
     public function __construct(
         private DeviceRequestHandler $deviceRequestHandler,
@@ -48,7 +52,9 @@ readonly class DeviceSettingsUpdateRequestHandler
 
         $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
             $deviceEncapsulationRequestDTO,
-            $deviceSettingsUpdateDTO->getPassword() !== null ? [self::WIFI_PASSWORD_GROUP] : []
+            $deviceSettingsUpdateDTO->getPassword() !== null
+                ? [self::PASSWORD_PRESENT]
+                : [self::PASSWORD_NOT_PRESENT]
         );
 
         return $deviceResponse->getStatusCode() === Response::HTTP_OK;
