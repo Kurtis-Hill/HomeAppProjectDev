@@ -2,6 +2,7 @@
 
 namespace App\Sensors\AMQP\Consumers;
 
+use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SensorUpdateDataEncapsulationDTOBuilder;
 use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
 use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
@@ -46,6 +47,15 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
         }
         try {
             $sensorDataRequestDTO = $this->updateDeviceSensorDataHandler->prepareSensorDataRequestDTO($sensor);
+
+            $sensorRequestShape = SensorUpdateDataEncapsulationDTOBuilder::buildSingleSensorUpdateDataDTORequestShape(
+                $sensor,
+                $sensorDataRequestDTO
+            );
+
+            $sensorRequestEncapsulationDTO = SensorUpdateDataEncapsulationDTOBuilder::buildSensorUpdateDataEncapsulationDTO(
+                $sensorRequestShape
+            );
         } catch (SensorTypeNotFoundException $e) {
             $this->logger->error('Sensor type not found, exception message: ' . $e->getMessage());
 
@@ -55,7 +65,7 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
         try {
             return $this->updateDeviceSensorDataHandler->sendSensorDataRequestToDevice(
                 $sensor,
-                $sensorDataRequestDTO
+                $sensorRequestEncapsulationDTO
             );
         } catch (SensorRequestException $e) {
             $this->logger->error('Sensor request exception, exception message: ' . $e->getMessage());

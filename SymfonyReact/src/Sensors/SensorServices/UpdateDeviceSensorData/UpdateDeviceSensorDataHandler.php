@@ -5,6 +5,7 @@ namespace App\Sensors\SensorServices\UpdateDeviceSensorData;
 use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\DTO\Request\DeviceRequest\DeviceRequestDTOInterface;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateEncapsulationInterface;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\SensorRequestException;
@@ -37,7 +38,7 @@ readonly class UpdateDeviceSensorDataHandler
     /**
      * @throws SensorRequestException
      */
-    public function sendSensorDataRequestToDevice(Sensor $sensor, SensorUpdateRequestDTOInterface $sensorUpdateRequestDTO): bool
+    public function sendSensorDataRequestToDevice(Sensor $sensor, SensorUpdateEncapsulationInterface $sensorUpdateRequestDTO): bool
     {
         if (!$sensorUpdateRequestDTO instanceof DeviceRequestDTOInterface) {
             throw new SensorRequestException(['DTO is not ready to be sent to device, check the DTO is an instance of DeviceRequestDTOInterface']);
