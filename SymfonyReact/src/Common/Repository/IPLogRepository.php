@@ -20,4 +20,14 @@ class IPLogRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, IPLog::class);
     }
+
+    public function persist(IPLog $ipLog): void
+    {
+        $this->_em->persist($ipLog);
+    }
+
+    public function flush(): void
+    {
+        $this->_em->flush();
+    }
 }
