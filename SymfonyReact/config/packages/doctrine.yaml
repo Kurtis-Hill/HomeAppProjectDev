@@ -53,3 +53,8 @@ doctrine:
         dir: '%kernel.project_dir%/src/Authentication/Entity'
         alias: Authentication
         prefix: App\Authentication\Entity
+      Common:
+        type: attribute
+        dir: '%kernel.project_dir%/src/Common/Entity'
+        alias: Common
+        prefix: App\Common\Entity

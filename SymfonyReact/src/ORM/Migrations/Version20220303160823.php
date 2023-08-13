@@ -418,6 +418,18 @@ final class Version20220303160823 extends AbstractMigration
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
+        // create table to log ip addresses
+        $this->addSql('
+            CREATE TABLE iplog (
+                iplogID INT AUTO_INCREMENT NOT NULL, 
+                ipAddress VARCHAR(13) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
+                UNIQUE INDEX ipAddress (ipAddress), 
+                PRIMARY KEY(iplogID)
+            ) 
+            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'
+        ');
+
         $this->addSql("
             INSERT INTO `readingtypes` 
                 (`readingTypeID`, `readingType`) 
@@ -696,6 +708,8 @@ final class Version20220303160823 extends AbstractMigration
         $this->addSql('DROP TABLE IF EXISTS groupmapping');
 
         $this->addSql('DROP TABLE IF EXISTS user');
+
+        $this->addSql('DROP TABLE IF EXISTS iplog');
 
         $this->addSql("SET FOREIGN_KEY_CHECKS = 1;");
     }

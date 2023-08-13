@@ -20,7 +20,6 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            throw new Exception('lol');
             /** @var \App\Devices\DTO\Internal\DeviceSettingsUpdateDTO $deviceUpdateRequestDTO */
             $deviceUpdateRequestDTO = unserialize(
                 $msg->getBody(),
