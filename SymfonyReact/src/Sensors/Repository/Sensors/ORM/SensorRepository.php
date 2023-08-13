@@ -60,7 +60,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $this->getEntityManager()->remove($sensors);
     }
 
-    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor
+    public function findDuplicateSensorOnDeviceByGroup(Sensor $sensorData): ?Sensor
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -69,7 +69,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                $expr->eq('device.groupID', ':groupName'),
+                    $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
@@ -78,7 +78,28 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 ]
             );
 
-        return $qb->getQuery()->getResult()[0] ?? null;
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): array
+    {
+        $qb = $this->createQueryBuilder('sensor');
+
+        $qb->select('sensor')
+            ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
+            ->where(
+                $qb->expr()->eq('sensor.pinNumber', ':pinNumber'),
+                $qb->expr()->eq('device.deviceID', ':deviceID')
+            )
+            ->setParameters(
+                [
+                    'pinNumber' => $pinNumber,
+                    'deviceID' => $deviceID,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getSensorReadingTypeDataBySensor(
@@ -242,4 +263,29 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->setMaxResults($getSensorQueryDTO->getLimit());
         return $qb->getQuery()->getResult();
     }
+
+    #[ArrayShape([Sensor::class])]
+    public function findAllBusSensors(int $deviceID, int $sensorTypeID, int $pinNumber): array
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+
+        $qb->select(Sensor::ALIAS)
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->where(
+                $qb->expr()->eq(Devices::ALIAS . '.deviceID', ':deviceID'),
+                $qb->expr()->eq(Sensor::ALIAS . '.sensorTypeID', ':sensorTypeID'),
+                $qb->expr()->eq(Sensor::ALIAS . '.pinNumber', ':pinNumber')
+            )
+            ->setParameters(
+                [
+                    'deviceID' => $deviceID,
+                    'sensorTypeID' => $sensorTypeID,
+                    'pinNumber' => $pinNumber,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
+    }
+
+//    public function find
 }

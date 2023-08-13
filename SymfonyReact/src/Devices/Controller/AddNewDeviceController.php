@@ -104,7 +104,7 @@ class AddNewDeviceController extends AbstractController
         }
 
         $device = $newDeviceCheckDTO->getNewDevice();
-        $deviceSaved = $newDeviceHandler->saveDevice($device);
+        $deviceSaved = $newDeviceHandler->saveDevice($device, true);
         if ($deviceSaved === false) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
         }

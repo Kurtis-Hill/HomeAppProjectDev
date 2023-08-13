@@ -37,7 +37,7 @@ class StandardSensorUpdateBoundaryDataDTO implements SensorUpdateBoundaryDataDTO
         mixed $readingType,
         mixed $highReading,
         mixed $lowReading,
-        mixed $constRecord
+        mixed $constRecord,
     ) {
         $this->readingType = $readingType;
         $this->highReading = $highReading;

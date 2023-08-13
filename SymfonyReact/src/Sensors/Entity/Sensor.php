@@ -13,17 +13,21 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Entity(repositoryClass: SensorRepository::class),
     ORM\Table(name: "sensors"),
     ORM\UniqueConstraint(name: "sensor_device", columns: ["sensorName", "deviceID"]),
-    ORM\Index(columns: ["ddeviceID"], name: "sensornames_ibfk_1"),
+    ORM\Index(columns: ["deviceID"], name: "sensornames_ibfk_1"),
     ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
     ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
 ]
 class Sensor
 {
+    public const DEFAULT_READING_INTERVAL = 6000;
+
     public const ALIAS  = 'sensors';
 
     private const SENSOR_NAME_MAX_LENGTH = 20;
 
     private const SENSOR_NAME_MIN_LENGTH = 2;
+
+    public const MIN_READING_INTERVAL = 500;
 
     #[
         ORM\Column(name: "sensorID", type: "integer", nullable: false),
@@ -62,6 +66,30 @@ class Sensor
         ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
     ]
     private User $createdBy;
+
+    #[ORM\Column(name: "pinNumber", type: "smallint", nullable: false)]
+    #[
+        Assert\Range(
+            notInRangeMessage: 'pinNumber must be greater than {{ min }}',
+            minMessage: 'pinNumber must be greater than {{ value }}',
+            invalidMessage: 'pinNumber must be an int you have provided {{ value }}',
+            min: 0,
+        ),
+    ]
+    private int $pinNumber;
+
+    #[
+        ORM\Column(name: "takeReadingIntervalMilli", type: "integer", nullable: false),
+        Assert\Range(
+//            notInRangeMessage: "readingInterval must be between {{ min }} and {{ max }}",
+            notInRangeMessage: "readingInterval must be greater than {{ min }}",
+            minMessage: "readingInterval must be greater than " . self::MIN_READING_INTERVAL,
+            invalidMessage: "readingInterval must be a number",
+            min: self::MIN_READING_INTERVAL,
+//            max: 100000
+        ),
+    ]
+    private int $readingInterval = self::DEFAULT_READING_INTERVAL;
 
     public function getSensorID(): int
     {
@@ -111,5 +139,25 @@ class Sensor
     public function setCreatedBy(User $createdBy): void
     {
         $this->createdBy = $createdBy;
+    }
+
+    public function getPinNumber(): ?int
+    {
+        return $this->pinNumber;
+    }
+
+    public function setPinNumber(?int $pinNumber): void
+    {
+        $this->pinNumber = $pinNumber;
+    }
+
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
+    }
+
+    public function setReadingInterval(int $readingInterval): void
+    {
+        $this->readingInterval = $readingInterval;
     }
 }

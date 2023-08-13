@@ -82,6 +82,7 @@ security:
         # WebApp no auth access areas
         - { path: ^/HomeApp/WebApp/login, roles: PUBLIC_ACCESS }
         - { path: ^/HomeApp/WebApp/register, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/device/register, roles: PUBLIC_ACCESS }
 
         # WebApp auth access areas
         # - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }

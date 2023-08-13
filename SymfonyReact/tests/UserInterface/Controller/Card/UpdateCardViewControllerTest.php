@@ -4,7 +4,7 @@ namespace App\Tests\UserInterface\Controller\Card;
 
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorReadingTypeController;
+use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
@@ -382,7 +382,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         $responseContent = $this->client->getResponse()->getContent();
         $responseData = json_decode($responseContent, true);
 
-        self::assertEquals(UpdateSensorReadingTypeController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['payload']['cardViewID']);
 

@@ -17,10 +17,10 @@ use JetBrains\PhpStorm\ArrayShape;
 /**
  * @extends ServiceEntityRepository<SensorTypeRepository>
  *
- * @method SensorRepository|null find($id, $lockMode = null, $lockVersion = null)
- * @method SensorRepository|null findOneBy(array $criteria, array $orderBy = null)
- * @method SensorRepository[]    findAll()
- * @method SensorRepository[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SensorType|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SensorType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SensorType[]    findAll()
+ * @method SensorType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class SensorTypeRepository extends ServiceEntityRepository implements SensorTypeRepositoryInterface
 {

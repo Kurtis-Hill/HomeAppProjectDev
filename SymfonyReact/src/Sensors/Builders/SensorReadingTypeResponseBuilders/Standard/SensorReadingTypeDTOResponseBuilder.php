@@ -2,6 +2,8 @@
 
 namespace App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard;
 
+use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorReadingTypeEncapsulationDTOResponseBuilder;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard\StandardReadingTypeResponseInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
@@ -11,7 +13,6 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
@@ -19,7 +20,6 @@ use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeResponseFactory;
@@ -41,23 +41,19 @@ class SensorReadingTypeDTOResponseBuilder
     }
 
     /**
-     * @return SensorReadingTypeResponseDTOInterface[]
      * @throws ReadingTypeNotExpectedException
      */
-    #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
     public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array
     {
         $sensorType = $sensor->getSensorTypeObject();
 
         $sensorReadingTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensorType->getSensorType());
         $sensorTypeObject = $sensorReadingTypeRepository->findOneBy(['sensor' => $sensor]);
-        if ($sensorTypeObject !== null) {
-            return $this->handleSensorReadingTypeDTOCreation($sensorTypeObject);
+        if ($sensorTypeObject === null) {
+            return [];
         }
-//        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
-//        }
 
-        return [];
+        return  $this->handleSensorReadingTypeDTOCreation($sensorTypeObject);
     }
 
     /**

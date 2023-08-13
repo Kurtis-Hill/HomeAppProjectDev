@@ -9,7 +9,6 @@ use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DeviceNotFoundException;
-use App\Sensors\SensorServices\Sensor\DuplicateSensorCheckService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UpdateSensorHandler implements UpdateSensorInterface
@@ -53,16 +52,18 @@ class UpdateSensorHandler implements UpdateSensorInterface
             $sensor,
             $sensorUpdateRequestDTO->getSensorName(),
             $proposedDevice ?? null,
+            $sensorUpdateRequestDTO->getPinNumber(),
+            $sensorUpdateRequestDTO->getReadingInterval(),
         );
     }
 
     public function handleSensorUpdate(UpdateSensorDTO $updateSensorDTO): array
     {
         $this->duplicateSensorCheckService->checkSensorForDuplicates(
-            $updateSensorDTO->getSensor(),
-            $updateSensorDTO->getDeviceID()?->getDeviceID() ?? $updateSensorDTO->getSensor()->getDevice()->getDeviceID(),
-            $updateSensorDTO->getSensorName(),
-
+            sensor: $updateSensorDTO->getSensor(),
+            deviceID: $updateSensorDTO->getDeviceID()?->getDeviceID() ?? $updateSensorDTO->getSensor()->getDevice()->getDeviceID(),
+            sensorNameToUpdateTo: $updateSensorDTO->getSensorName(),
+            pinToUpdateTo: $updateSensorDTO->getPinNumber()
         );
 
         $sensorToUpdate = $updateSensorDTO->getSensor();
@@ -72,6 +73,14 @@ class UpdateSensorHandler implements UpdateSensorInterface
 
         if ($updateSensorDTO->getSensorName() !== null) {
             $sensorToUpdate->setSensorName($updateSensorDTO->getSensorName());
+        }
+
+        if ($updateSensorDTO->getPinNumber() !== null) {
+            $sensorToUpdate->setPinNumber($updateSensorDTO->getPinNumber());
+        }
+
+        if ($updateSensorDTO->getReadingInterval() !== null) {
+            $sensorToUpdate->setReadingInterval($updateSensorDTO->getReadingInterval());
         }
 
         $validationErrors = $this->validator->validate($sensorToUpdate);

@@ -558,6 +558,8 @@ class GetSingleSensorControllerTest extends WebTestCase
         $sensorData = $responseData['payload'];
         $sensorReadingTypes = $sensorData['sensorReadingTypes'];
 
+        self::assertEquals($sensorObject->getPinNumber(), $sensorData['pinNumber']);
+        self::assertEquals($sensorObject->getReadingInterval(), $sensorData['readingInterval']);
         if (
             $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
             || $sensorObject->getSensorTypeObject()->getSensorType() === Dallas::NAME
@@ -588,7 +590,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         if ($sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME) {
             $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-            /** @var \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude $latitude */
+            /** @var Latitude $latitude */
             $latitude = $latitudeRepository->find($sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
             self::assertEquals($latitude->getSensorID(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
             self::assertEquals($latitude->getCurrentReading(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['currentReading']);
@@ -599,7 +601,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         if ($sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME) {
             $analogRepository = $this->entityManager->getRepository(Analog::class);
-            /** @var \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog $analog */
+            /** @var Analog $analog */
             $analog = $analogRepository->find($sensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);
             self::assertEquals($analog->getSensorID(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);
             self::assertEquals($analog->getCurrentReading(), $sensorData['sensorReadingTypes'][Analog::READING_TYPE]['currentReading']);
@@ -635,6 +637,8 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         self::assertEquals($sensorObject->getSensorID(), $sensorData['sensorID']);
         self::assertEquals($sensorObject->getSensorName(), $sensorData['sensorName']);
+        self::assertEquals($sensorObject->getPinNumber(), $sensorData['pinNumber']);
+        self::assertEquals($sensorObject->getReadingInterval(), $sensorData['readingInterval']);
 
         $sensorTypeObject = $sensorObject->getSensorTypeObject();
         self::assertEquals($sensorTypeObject->getSensorTypeID(), $sensorData['sensorType']['sensorTypeID']);

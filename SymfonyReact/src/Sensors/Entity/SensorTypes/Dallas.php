@@ -14,7 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Table(name: "dallas"),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
-//    ORM\Index(columns: ["sensor"], name: "sensor"),
 ]
 class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface
 {

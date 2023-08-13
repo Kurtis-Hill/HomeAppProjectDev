@@ -9,34 +9,30 @@ import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinn
 export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
     const { sensor } = props;
     
-    const [relayState, setRelayState] = useState<boolean>(sensor.sensorReadingTypes.relay.requestedReading);
+    const [relayState, setRelayState] = useState<boolean>(false);
 
 
-    const handleRelayUpdate = async () => {
+    const handleRelayUpdate = () => {
+        setRelayState((currentState: boolean) => !currentState)
         
-        setRelayState((currentState: boolean) => !currentState);
-        const switchSensorResponse = await switchSensorRequest({
+        const switchSensorResponse = switchSensorRequest({
             'sensorData': [
                 {
                     'sensorName': sensor.sensorName,
                     'currentReadings': 
-                    {
-                        'relay': !relayState,
-                    }
+                        {
+                            'relay': relayState,
+                        }
                     
                 }
             ]
         })
-
-        if (switchSensorResponse.status !== 202) {
-            setRelayState((currentState: boolean) => !currentState);
-        }
     }
 
 
     if (sensor.sensorType.sensorTypeName === SensorTypesEnum.GenericRelay) {         
-        // const shouldBeChecked = sensor.sensorReadingTypes.relay.currentReading === true || sensor.sensorReadingTypes.relay.requestedReading === true || relayState === true;               
-        const disabled = (sensor.sensorReadingTypes.relay.currentReading !== sensor.sensorReadingTypes.relay.requestedReading) || (sensor.sensorReadingTypes.relay.requestedReading !== relayState);
+        const shouldBeChecked = sensor.sensorReadingTypes.readingTypes.relay.currentReading === true || sensor.sensorReadingTypes.readingTypes.relay.requestedReading === true || relayState === true;
+        const disabled = sensor.sensorReadingTypes.readingTypes.relay.currentReading === true || sensor.sensorReadingTypes.readingTypes.relay.requestedReading === true;
 
         return (
             <>                       
@@ -46,7 +42,7 @@ export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
                     <input 
                         type="checkbox"
                         onChange={() => handleRelayUpdate()}
-                        checked={relayState}
+                        checked={shouldBeChecked}
                         disabled={disabled}
                     />
                     <span className="slider round"></span>

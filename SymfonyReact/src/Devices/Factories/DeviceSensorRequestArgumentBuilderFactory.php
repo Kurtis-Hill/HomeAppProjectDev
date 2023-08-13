@@ -3,8 +3,8 @@
 namespace App\Devices\Factories;
 
 use App\Devices\Builders\DeviceRequestsArgumentBuilders\DeviceRequestArgumentBuilderInterface;
-use App\Devices\Builders\DeviceRequestsArgumentBuilders\RequestSensorCurrentReadingUpdateArgumentBuilder;
 use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
+use App\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
 
 readonly class DeviceSensorRequestArgumentBuilderFactory
 {

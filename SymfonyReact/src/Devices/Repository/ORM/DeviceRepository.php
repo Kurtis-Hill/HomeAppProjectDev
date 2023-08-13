@@ -4,6 +4,7 @@ namespace App\Devices\Repository\ORM;
 
 use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
+use App\Sensors\Entity\Sensor;
 use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -121,6 +122,22 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->setParameters(['groupID' => $groupIDs]);
 
         return $qb->getQuery()->getResult($hydration);
+    }
+
+    #[ArrayShape([1,2,3])]
+    public function findAllDevicePinsInUse(int $deviceID): array
+    {
+        $qb = $this->createQueryBuilder('dv');
+        $expr = $qb->expr();
+
+        $qb->select('s.pinNumber')
+            ->innerJoin(Sensor::class, 's', Join::WITH, 'dv.deviceID = s.deviceID')
+            ->where(
+                $expr->eq('dv.deviceID', ':deviceID')
+            )
+            ->setParameters(['deviceID' => $deviceID]);
+
+        return $qb->getQuery()->getSingleColumnResult();
     }
 
     public function remove(Devices $device): void
