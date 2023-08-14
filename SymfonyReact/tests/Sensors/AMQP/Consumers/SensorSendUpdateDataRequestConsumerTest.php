@@ -4,14 +4,11 @@ namespace App\Tests\Sensors\AMQP\Consumers;
 
 use App\Common\Services\DeviceRequestHandler;
 use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Factories\SensorUpdateRequestFactory\SensorUpdateRequestBuilderFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,8 +27,6 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
 
     private ?EntityManagerInterface $entityManager;
 
-    private DeviceRepositoryInterface $deviceRepository;
-
     private SensorRepositoryInterface $sensorRepository;
 
     private ContainerAwareInterface|Container $diContainer;
@@ -43,7 +38,6 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $this->diContainer = static::getContainer();
 
         $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');
-        $this->deviceRepository = $this->diContainer->get(DeviceRepositoryInterface::class);
         $this->sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
     }
 

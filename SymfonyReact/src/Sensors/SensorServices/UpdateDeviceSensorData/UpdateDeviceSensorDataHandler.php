@@ -7,6 +7,7 @@ use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
+use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
@@ -77,6 +78,7 @@ readonly class UpdateDeviceSensorDataHandler
             $sensorData[Dallas::NAME] ?? [],
             $sensorData[Soil::NAME] ?? [],
             $sensorData[GenericMotion::NAME] ?? [],
+            $sensorData[Bmp::NAME] ?? [],
         );
 
         $groups = array_keys($sensorData);

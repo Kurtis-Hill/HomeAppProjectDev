@@ -47,8 +47,9 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
     public function test_http_code_not_200_returns_false(): void
     {
+        $device = $this->deviceRepository->findAll()[0];
         $requestDTO = new DeviceSettingsUpdateDTO(
-            1,
+            $device->getDeviceID(),
             'username',
             'password',
         );
@@ -85,8 +86,9 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
     public function test_http_code_200_returns_true(): void
     {
+        $device = $this->deviceRepository->findAll()[0];
         $requestDTO = new DeviceSettingsUpdateDTO(
-            1,
+            $device->getDeviceID(),
             'username',
             'password',
         );

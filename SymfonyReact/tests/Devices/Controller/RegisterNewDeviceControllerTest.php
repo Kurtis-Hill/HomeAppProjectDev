@@ -5,6 +5,7 @@ namespace App\Tests\Devices\Controller;
 use App\Common\Entity\IPLog;
 use App\Common\Repository\IPLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +38,6 @@ class RegisterNewDeviceControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-
-
     public function test_correct_request_returns_success(): void
     {
         $ipAddress = '192.168.115';
@@ -60,5 +59,39 @@ class RegisterNewDeviceControllerTest extends WebTestCase
         self::assertEquals($ipAddress, $ipLog->getIpAddress());
     }
 
+    /**
+     * @dataProvider wrongDataTypesDataProvider
+     */
+    public function test_wrong_data_types_returns_error(mixed $ipaddress): void
+    {
+        $this->client->request(
+            Request::METHOD_POST,
+            self::REGISTER_NEW_DEVICE_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['ipAddress' => $ipaddress])
+        );
 
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+    }
+
+    public function wrongDataTypesDataProvider(): Generator
+    {
+        yield [
+            'ipAddress' => 123,
+        ];
+
+        yield [
+            'ipAddress' => true,
+        ];
+
+        yield [
+            'ipAddress' => [],
+        ];
+
+        yield [
+            'ipAddress' => null,
+        ];
+    }
 }

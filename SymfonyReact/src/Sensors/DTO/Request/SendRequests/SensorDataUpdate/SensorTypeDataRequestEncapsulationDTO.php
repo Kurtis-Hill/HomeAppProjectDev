@@ -3,6 +3,7 @@
 namespace App\Sensors\DTO\Request\SendRequests\SensorDataUpdate;
 
 use App\Devices\DTO\Request\DeviceRequest\DeviceRequestDTOInterface;
+use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
@@ -24,6 +25,8 @@ readonly class SensorTypeDataRequestEncapsulationDTO implements DeviceRequestDTO
         private ?array $soil = null,
         #[ArrayShape([SingleSensorUpdateRequestDTO::class])]
         private ?array $motion = null,
+        #[ArrayShape([SingleSensorUpdateRequestDTO::class])]
+        private ?array $bmp = null,
     ) {}
 
     #[
@@ -69,5 +72,14 @@ readonly class SensorTypeDataRequestEncapsulationDTO implements DeviceRequestDTO
     public function getMotion(): ?array
     {
         return $this->motion;
+    }
+
+    #[
+        ArrayShape([SingleSensorUpdateRequestDTO::class]),
+        Groups([Bmp::NAME]),
+    ]
+    public function getBmp(): ?array
+    {
+        return $this->bmp;
     }
 }

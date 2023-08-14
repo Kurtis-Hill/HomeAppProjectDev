@@ -19,6 +19,8 @@ class SensorTypeDataRequestEncapsulationDTOBuilder
         ?array $soil = null,
         #[ArrayShape([SingleSensorUpdateRequestDTO::class])]
         ?array $motion = null,
+        #[ArrayShape([SingleSensorUpdateRequestDTO::class])]
+        ?array $bmp = null,
     ): SensorTypeDataRequestEncapsulationDTO {
         return new SensorTypeDataRequestEncapsulationDTO(
             relay: $relay,
@@ -26,6 +28,7 @@ class SensorTypeDataRequestEncapsulationDTOBuilder
             dallas: $dallas,
             soil: $soil,
             motion: $motion,
+            bmp: $bmp,
         );
     }
 }

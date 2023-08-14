@@ -30,7 +30,6 @@ class RegisterNewDeviceController extends AbstractController
         IPLogRepository $ipLogRepository,
     ): JsonResponse {
         $ipRequestDTO = new IPLogRequestDTO();
-
         try {
             $this->deserializeRequest(
                 $request->getContent(),
