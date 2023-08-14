@@ -109,7 +109,6 @@ abstract class AbstractESPDeviceService
             $device->getDeviceName(),
             $plainPassword ?? $device->getDeviceSecret(),
         );
-
         $deviceSettingsUpdateEvent = new DeviceUpdateEvent($updateDeviceSettingsEventDTO);
 
         $this->eventDispatcher->dispatch($deviceSettingsUpdateEvent, DeviceUpdateEvent::NAME);

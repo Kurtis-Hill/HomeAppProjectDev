@@ -12,7 +12,7 @@ use App\Sensors\Entity\SensorTypes\Soil;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-readonly class SensorTypeDataRequestEncapsulationDTO implements DeviceRequestDTOInterface
+readonly class SensorTypeDataRequestEncapsulationDTO
 {
     public function __construct(
         #[ArrayShape([SingleSensorUpdateRequestDTO::class])]

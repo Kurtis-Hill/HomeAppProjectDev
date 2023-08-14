@@ -10,7 +10,8 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
-use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateRequestDTO;
+use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
+use App\Sensors\DTO\Request\SensorUpdateDTO\UpdateSensorDetailsRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\DuplicateSensorException;
@@ -52,12 +53,13 @@ class UpdateSensorController extends AbstractController
         ValidatorInterface $validator,
         UpdateSensorInterface $updateSensorService,
         SensorSavingHandler $sensorSavingHandler,
+        SensorUpdateDTOBuilder $sensorUpdateDTOBuilder,
     ): JsonResponse {
-        $updateSensorRequestDTO = new SensorUpdateRequestDTO();
+        $updateSensorRequestDTO = new UpdateSensorDetailsRequestDTO();
         try {
             $this->deserializeRequest(
                 $request->getContent(),
-                SensorUpdateRequestDTO::class,
+                UpdateSensorDetailsRequestDTO::class,
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $updateSensorRequestDTO]
             );
@@ -78,7 +80,7 @@ class UpdateSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
-        $sensorUpdateDTO = $updateSensorService->buildSensorUpdateDTO(
+        $sensorUpdateDTO = $sensorUpdateDTOBuilder->buildSensorUpdateDTOFromRequestDTO(
             $updateSensorRequestDTO,
             $sensor
         );

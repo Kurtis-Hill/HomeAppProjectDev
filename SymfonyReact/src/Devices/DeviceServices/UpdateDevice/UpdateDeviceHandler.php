@@ -3,17 +3,10 @@
 namespace App\Devices\DeviceServices\UpdateDevice;
 
 use App\Common\API\APIErrorMessages;
-use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\AbstractESPDeviceService;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
-use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
-use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 

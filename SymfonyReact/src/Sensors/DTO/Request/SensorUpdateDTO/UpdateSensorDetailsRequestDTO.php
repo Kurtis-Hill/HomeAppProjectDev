@@ -5,7 +5,7 @@ namespace App\Sensors\DTO\Request\SensorUpdateDTO;
 use App\Sensors\Entity\Sensor;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SensorUpdateRequestDTO
+class UpdateSensorDetailsRequestDTO
 {
     #[
         Assert\Type(

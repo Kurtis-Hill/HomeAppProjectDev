@@ -71,7 +71,7 @@ class SwitchSensorController extends AbstractController
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
-        $accessErrors = [];
+
         $individualSensorRequestValidationErrors = [];
         $validationErrors = [];
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
@@ -142,7 +142,6 @@ class SwitchSensorController extends AbstractController
         if (
             isset($sensorDataCurrentReadingUpdateRequestDTO)
             && empty($individualSensorRequestValidationErrors)
-            && empty($accessErrors)
             && empty($validationErrors)
             && empty($currentReadingSensorDataRequestHandler->getErrors())
             && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() > 0
@@ -162,7 +161,6 @@ class SwitchSensorController extends AbstractController
             $validationErrors,
             $currentReadingSensorDataRequestHandler->getErrors(),
             $currentReadingSensorDataRequestHandler->getValidationErrors(),
-            $accessErrors,
             $individualSensorRequestValidationErrors,
         );
 

@@ -118,4 +118,5 @@ class DeviceVoter extends Voter
 
         return $checkCommon ?? true;
     }
+
 }

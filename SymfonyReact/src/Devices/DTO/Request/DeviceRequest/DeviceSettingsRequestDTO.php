@@ -3,6 +3,7 @@
 namespace App\Devices\DTO\Request\DeviceRequest;
 
 use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorTypeDataRequestEncapsulationDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 readonly class DeviceSettingsRequestDTO implements DeviceRequestDTOInterface
@@ -10,7 +11,7 @@ readonly class DeviceSettingsRequestDTO implements DeviceRequestDTOInterface
     public function __construct(
         private ?DeviceLoginCredentialsUpdateRequestDTO $deviceCredentials = null,
         private ?DeviceWifiSettingsDTO $wifi = null,
-        private ?array $sensorData = null,
+        private ?SensorTypeDataRequestEncapsulationDTO $sensorData = null,
     ) {}
 
     #[Groups([DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS])]
@@ -26,7 +27,7 @@ readonly class DeviceSettingsRequestDTO implements DeviceRequestDTOInterface
     }
 
     #[Groups([DeviceSettingsRequestDTOBuilder::SENSOR_DATA])]
-    public function getSensorData(): ?array
+    public function getSensorData(): ?SensorTypeDataRequestEncapsulationDTO
     {
         return $this->sensorData;
     }

@@ -4,6 +4,8 @@ namespace App\Sensors\SensorServices\UpdateDeviceSensorData;
 
 use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
+use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
+use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
 use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
@@ -32,6 +34,7 @@ readonly class UpdateDeviceSensorDataHandler
         private SensorRepositoryInterface $sensorRepository,
         private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
+        private DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
         private LoggerInterface $logger,
     ) {}
 
@@ -81,12 +84,17 @@ readonly class UpdateDeviceSensorDataHandler
             $sensorData[Bmp::NAME] ?? [],
         );
 
+        $deviceSettingsRequestDTO = $this->deviceSettingsRequestDTOBuilder->buildDeviceSettingsRequestDTO(
+            sensorData: $sensorTypeDataRequestEncapsulationDTO,
+        );
         $groups = array_keys($sensorData);
+        $groups[] = DeviceSettingsRequestDTOBuilder::SENSOR_DATA;
+
         $device = $sensors[0]->getDevice();
 
         $deviceEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,
-            $sensorTypeDataRequestEncapsulationDTO,
+            $deviceSettingsRequestDTO,
             self::SENSOR_UPDATE_SETTING_ENDPOINT
         );
 

@@ -8,15 +8,12 @@ use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
 
-class DeleteDeviceService implements DeleteDeviceServiceInterface
+readonly class DeleteDeviceService implements DeleteDeviceServiceInterface
 {
-    private DeviceRepositoryInterface $deviceRepository;
-
-    private LoggerInterface $logger;
-
-    public function __construct(DeviceRepositoryInterface $deviceRepository, LoggerInterface $elasticLogger)
-    {
-        $this->deviceRepository = $deviceRepository;
+    public function __construct(
+        private DeviceRepositoryInterface $deviceRepository,
+        private LoggerInterface $logger
+    ) {
     }
 
     public function deleteDevice(Devices $devices): bool

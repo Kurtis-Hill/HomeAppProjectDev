@@ -10,6 +10,7 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
@@ -52,6 +53,7 @@ class AddNewDeviceController extends AbstractController
         NewDeviceHandlerInterface $newDeviceHandler,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        DeviceDTOBuilder $deviceDTOBuilder,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
         try {
@@ -83,7 +85,10 @@ class AddNewDeviceController extends AbstractController
         }
 
         try {
-            $newDeviceCheckDTO = $newDeviceHandler->processAddDeviceObjects($newDeviceRequestDTO, $user);
+            $newDeviceCheckDTO = $deviceDTOBuilder->buildNewDeviceDTOFromNewDeviceRequest(
+                $newDeviceRequestDTO,
+                $user
+            );
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         } catch (ORMException $e) {

@@ -5,6 +5,7 @@ namespace App\Devices\Builders\Request;
 use App\Devices\DTO\Request\DeviceRequest\DeviceSettingsRequestDTO;
 use App\Devices\DTO\Request\DeviceRequest\DeviceLoginCredentialsUpdateRequestDTO;
 use App\Devices\DTO\Request\DeviceRequest\DeviceWifiSettingsDTO;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorTypeDataRequestEncapsulationDTO;
 
 class DeviceSettingsRequestDTOBuilder
 {
@@ -17,7 +18,7 @@ class DeviceSettingsRequestDTOBuilder
     public function buildDeviceSettingsRequestDTO(
         ?DeviceLoginCredentialsUpdateRequestDTO $deviceCredentials = null,
         ?DeviceWifiSettingsDTO $wifi = null,
-        ?array $sensorData = null,
+        ?SensorTypeDataRequestEncapsulationDTO $sensorData = null,
     ): DeviceSettingsRequestDTO {
         return new DeviceSettingsRequestDTO(
             $deviceCredentials,

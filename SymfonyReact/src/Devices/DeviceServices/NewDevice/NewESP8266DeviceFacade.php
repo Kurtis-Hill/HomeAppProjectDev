@@ -21,33 +21,6 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
-    /**
-     * @throws GroupNotFoundException
-     * @throws RoomNotFoundException
-     * @throws ORMException
-     */
-    public function processAddDeviceObjects(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
-    {
-        $groupObject = $this->groupRepository->find($newDeviceRequestDTO->getDeviceGroup());
-        if (!$groupObject instanceof Group) {
-            throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
-        }
-
-        $roomObject = $this->roomRepository->find($newDeviceRequestDTO->getDeviceRoom());
-        if (!$roomObject instanceof Room) {
-            throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $newDeviceRequestDTO->getDeviceRoom()));
-        }
-
-        return DeviceDTOBuilder::buildNewDeviceDTO(
-            $createdByUser,
-            $groupObject,
-            $roomObject,
-            $newDeviceRequestDTO->getDeviceName(),
-            $newDeviceRequestDTO->getDevicePassword(),
-            $newDeviceRequestDTO->getDeviceIPAddress(),
-        );
-    }
-
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {
