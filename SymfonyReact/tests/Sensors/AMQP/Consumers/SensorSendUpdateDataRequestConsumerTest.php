@@ -56,24 +56,14 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
             $httpClient,
         );
 
-        $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
-
-        $deviceSettingsUpdateRequestHandler = new DeviceSettingsUpdateRequestHandler(
-            $deviceRequestHandler,
-            $this->deviceRepository,
-            $deviceSettingsRequestDTOBuilder,
-        );
-
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::once())->method('info');
         $mockLogger->expects(self::never())->method('error');
 
-        $sensorUpdateRequestBuilderFactory = $this->diContainer->get(SensorUpdateRequestBuilderFactory::class);
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
         $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
 
         $updateDeviceSensorDataHandler = new UpdateDeviceSensorDataHandler(
-            $sensorUpdateRequestBuilderFactory,
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
@@ -107,22 +97,14 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
-        $deviceSettingsUpdateRequestHandler = new DeviceSettingsUpdateRequestHandler(
-            $deviceRequestHandler,
-            $this->deviceRepository,
-            $deviceSettingsRequestDTOBuilder,
-        );
-
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::once())->method('error');
         $mockLogger->expects(self::never())->method('info');
 
-        $sensorUpdateRequestBuilderFactory = $this->diContainer->get(SensorUpdateRequestBuilderFactory::class);
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
         $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
 
         $updateDeviceSensorDataHandler = new UpdateDeviceSensorDataHandler(
-            $sensorUpdateRequestBuilderFactory,
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
@@ -143,5 +125,53 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $result = $this->sut->execute($amqpMess);
 
         self::assertFalse($result);
+    }
+
+    public function test_sending_sensor_id_that_doesnt_exist_returns_true(): void
+    {
+        $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
+        $httpClient = new MockHttpClient($response);
+
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
+
+        $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
+
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::never())->method('info');
+        $mockLogger->expects(self::once())->method('error');
+
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
+
+        $updateDeviceSensorDataHandler = new UpdateDeviceSensorDataHandler(
+            $deviceRequestHandler,
+            $this->sensorRepository,
+            $sensorTypeRepositoryFactory,
+            $singleSensorUpdateRequestDTOBuilder,
+            $mockLogger,
+        );
+        $this->sut = new SensorSendUpdateDataRequestConsumer(
+            $updateDeviceSensorDataHandler,
+            $mockLogger
+        );
+
+        while (true) {
+            $sensorID = random_int(0, 99999);
+            $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorID]);
+            if ($sensorToUpdate === null) {
+                break;
+            }
+        }
+        $sensorUpdateEventDTO = new SensorUpdateEventDTO(
+            [$sensorID],
+        );
+
+        $amqpMess = new AMQPMessage(serialize($sensorUpdateEventDTO));
+
+        $result = $this->sut->execute($amqpMess);
+
+        self::assertTrue($result);
     }
 }

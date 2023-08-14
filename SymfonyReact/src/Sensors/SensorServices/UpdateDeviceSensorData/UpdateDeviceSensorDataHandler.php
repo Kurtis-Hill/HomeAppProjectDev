@@ -4,13 +4,9 @@ namespace App\Sensors\SensorServices\UpdateDeviceSensorData;
 
 use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
-use App\Devices\DTO\Request\DeviceRequest\DeviceRequestDTOInterface;
 use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
-use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SensorUpdateDataEncapsulationDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateEncapsulationInterface;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
-use App\Sensors\Entity\Sensor;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
@@ -19,11 +15,10 @@ use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Factories\SensorUpdateRequestFactory\SensorUpdateRequestBuilderFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,7 +27,6 @@ readonly class UpdateDeviceSensorDataHandler
     private const SENSOR_UPDATE_SETTING_ENDPOINT = 'settings';
 
     public function __construct(
-        private SensorUpdateRequestBuilderFactory $sensorUpdateRequestBuilderFactory,
         private DeviceRequestHandlerInterface $deviceRequestHandler,
         private SensorRepositoryInterface $sensorRepository,
         private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,

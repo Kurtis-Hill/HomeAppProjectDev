@@ -101,12 +101,4 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
 
         return $userErrors ?? [];
     }
-
-    private function createDevicePasswordHash(Devices $device): string
-    {
-        $secret = $device->getDeviceName();
-        $secret .= time();
-
-        return hash("md5", $secret);
-    }
 }
