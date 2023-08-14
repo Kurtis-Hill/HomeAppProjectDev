@@ -7,14 +7,20 @@ use App\Sensors\Entity\Sensor;
 
 class SensorEventUpdateDTOBuilder
 {
-    public function buildSensorEventUpdateDTO(Sensor|int $sensor): SensorUpdateEventDTO
+    public function buildSensorEventUpdateDTO(array $sensors): SensorUpdateEventDTO
     {
-        $sensorID = $sensor instanceof Sensor
-            ? $sensor->getSensorID()
-            : $sensor;
+        $sensorIDs = [];
+        foreach ($sensors as $sensor) {
+            if ($sensor instanceof Sensor) {
+                $sensorIDs[] = $sensor->getSensorID();
+            }
+            if (is_int($sensor)) {
+                $sensorIDs[] = $sensor;
+            }
+        }
 
         return new SensorUpdateEventDTO(
-            $sensorID,
+            $sensorIDs,
         );
     }
 }

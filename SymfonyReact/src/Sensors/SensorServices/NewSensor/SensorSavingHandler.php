@@ -24,10 +24,33 @@ class SensorSavingHandler
             $this->sensorRepository->persist($sensor);
             $this->sensorRepository->flush();
 
-            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensor);
+            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO([$sensor]);
             $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
 
             $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
+            return true;
+        } catch (ORMException|OptimisticLockException) {
+            return false;
+        }
+    }
+
+    public function saveBulkSensor(array $sensors): bool
+    {
+        try {
+            $sensorIDs = [];
+            foreach ($sensors as $sensor) {
+                if (!$sensor instanceof Sensor) {
+                    continue;
+                }
+                $sensorIDs[] = $sensor->getSensorID();
+                $this->sensorRepository->persist($sensor);
+            }
+            $this->sensorRepository->flush();
+
+            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorIDs);
+            $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
+            $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
+
             return true;
         } catch (ORMException|OptimisticLockException) {
             return false;

@@ -7,7 +7,7 @@ use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
-readonly class DeviceSettingsUpdateRequestDTO implements DeviceRequestDTOInterface
+readonly class DeviceLoginCredentialsUpdateRequestDTO
 {
     public function __construct(
         private string $userName,
@@ -16,8 +16,8 @@ readonly class DeviceSettingsUpdateRequestDTO implements DeviceRequestDTOInterfa
 
     #[Groups([
         DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT,
-        DeviceSettingsUpdateRequestHandler::PASSWORD_NOT_PRESENT])
-    ]
+        DeviceSettingsUpdateRequestHandler::PASSWORD_NOT_PRESENT
+    ])]
     public function getUserName(): string
     {
         return $this->userName;

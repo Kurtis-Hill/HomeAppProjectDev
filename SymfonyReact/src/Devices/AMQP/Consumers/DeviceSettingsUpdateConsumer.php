@@ -13,14 +13,14 @@ use Psr\Log\LoggerInterface;
 readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
 {
     public function __construct(
-        private LoggerInterface $elasticLogger,
         private DeviceSettingsUpdateRequestHandler $deviceSettingsUpdateRequestHandler,
+        private LoggerInterface $elasticLogger,
     ) {}
 
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            /** @var \App\Devices\DTO\Internal\DeviceSettingsUpdateDTO $deviceUpdateRequestDTO */
+            /** @var DeviceSettingsUpdateDTO $deviceUpdateRequestDTO */
             $deviceUpdateRequestDTO = unserialize(
                 $msg->getBody(),
                 [
@@ -34,9 +34,14 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
 
             return true;
         }
-
         try {
-            return $this->deviceSettingsUpdateRequestHandler->handleDeviceSettingsUpdateRequest($deviceUpdateRequestDTO);
+            $result = $this->deviceSettingsUpdateRequestHandler->handleDeviceSettingsUpdateRequest($deviceUpdateRequestDTO);
+            if ($result === true) {
+                $this->elasticLogger->info(sprintf('Device settings update request successful for device %s', $deviceUpdateRequestDTO->getDeviceId()));
+            } else {
+                $this->elasticLogger->error(sprintf('Device settings update request failed for device %s', $deviceUpdateRequestDTO->getDeviceId()));
+            }
+            return $result;
         } catch (DeviceNotFoundException) {
             $this->elasticLogger->error('Device settings update request failed, device not found');
 

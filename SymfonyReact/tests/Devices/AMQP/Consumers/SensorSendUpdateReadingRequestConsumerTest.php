@@ -2,12 +2,29 @@
 
 namespace App\Tests\Devices\AMQP\Consumers;
 
+use App\Common\Services\DeviceRequestHandler;
 use App\Devices\AMQP\Consumers\SensorSendUpdateReadingRequestConsumer;
+use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
+use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
+use App\Sensors\Repository\Sensors\ORM\SensorRepository;
+use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 {
@@ -37,42 +54,156 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         parent::tearDown();
     }
 
-    public function test_successful_request_returns_correctly(): void
+    public function test_successful_http_request_returns_true(): void
     {
-//        dd('as');
-//        $httpClient = new TraceableHttpClient();
-//        $response = new MockResponse([], ['http_code' => 200]);
-//        $httpClient = new MockHttpClient($response);
-//
-////        $httpClient->expects($this->once())
-////            ->method('getStatusCode')
-////            ->willReturn(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
-//
-////        $this->diContainer->set('test.Symfony\Contracts\HttpClient\HttpClientInterface', $httpClient);
-////        $this->diContainer->set(TraceableHttpClient::class, $httpClient);
-//        $this->diContainer->set(TraceableHttpClient::class, new TraceableHttpClient($httpClient));
-////        $this->diContainer->set(HttpClientInterface::class, new TraceableHttpClient($httpClient));
-//
-//        /** @var Relay $relay */
-//        $relay = $this->relayRepository->findAll()[0];
-//
-//        $boolCurrentReadingUpdateRequestDTO = new BoolCurrentReadingUpdateDTO(
-//            GenericRelay::NAME,
-//            !$relay->getCurrentReading(),
-//        );
-//
-//        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-//            $relay->getSensorID(),
-//            $boolCurrentReadingUpdateRequestDTO,
-//        );
-//
-//        $amqpMessage = $this->createMock(AMQPMessage::class);
-//        $amqpMessage->expects($this->once())
-//            ->method('getBody')
-//            ->willReturn(serialize($requestSensorCurrentReadingUpdateMessageDTO));
-//
-////        dd('s');
-//
-//        $this->sut->execute($amqpMessage);
+        $boolCurrentReadingUpdateDTO = new BoolCurrentReadingUpdateDTO(
+            GenericRelay::NAME,
+            1,
+        );
+        /** @var SensorRepository $sensorRepository */
+        $sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
+        /** @var SensorTypeRepository $sensorTypeRepository */
+        $sensorTypeRepository = $this->diContainer->get(SensorTypeRepository::class);
+        /** @var GenericRelay $genericSensorType */
+        $genericSensorType = $sensorTypeRepository->findOneBy(['sensorType' => GenericRelay::NAME]);
+        $sensorID = $sensorRepository->findBy(['sensorTypeID' => $genericSensorType])[0]->getSensorID();
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+            $sensorID,
+            $boolCurrentReadingUpdateDTO,
+        );
+
+        $amqpMess = new AMQPMessage(serialize($requestSensorCurrentReadingUpdateMessageDTO));
+
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
+
+        $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
+        $httpClient = new MockHttpClient($response);
+
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
+        $sensorUpdateCurrentReadingRequestHandler = new SensorUpdateCurrentReadingRequestHandler(
+            $sensorRepository,
+            $sensorTypeRepositoryFactory,
+            $deviceSensorRequestArgumentBuilderFactory,
+            $deviceRequestHandler,
+        );
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $logger->expects(self::never())->method('error');
+        $logger->expects(self::once())->method('info');
+
+        $this->sut = new SensorSendUpdateReadingRequestConsumer(
+            $logger,
+            $sensorUpdateCurrentReadingRequestHandler,
+        );
+
+        $result = $this->sut->execute($amqpMess);
+
+        self::assertTrue($result);
+    }
+
+    public function test_unsuccessful_http_response_returns_false(): void
+    {
+        $boolCurrentReadingUpdateDTO = new BoolCurrentReadingUpdateDTO(
+            GenericRelay::NAME,
+            1,
+        );
+        /** @var SensorRepository $sensorRepository */
+        $sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
+        /** @var SensorTypeRepository $sensorTypeRepository */
+        $sensorTypeRepository = $this->diContainer->get(SensorTypeRepository::class);
+        /** @var GenericRelay $genericSensorType */
+        $genericSensorType = $sensorTypeRepository->findOneBy(['sensorType' => GenericRelay::NAME]);
+        $sensorID = $sensorRepository->findBy(['sensorTypeID' => $genericSensorType])[0]->getSensorID();
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+            $sensorID,
+            $boolCurrentReadingUpdateDTO,
+        );
+
+        $amqpMess = new AMQPMessage(serialize($requestSensorCurrentReadingUpdateMessageDTO));
+
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
+
+        $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
+        $httpClient = new MockHttpClient($response);
+
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
+        $sensorUpdateCurrentReadingRequestHandler = new SensorUpdateCurrentReadingRequestHandler(
+            $sensorRepository,
+            $sensorTypeRepositoryFactory,
+            $deviceSensorRequestArgumentBuilderFactory,
+            $deviceRequestHandler,
+        );
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $logger->expects(self::once())->method('error');
+        $logger->expects(self::never())->method('info');
+
+        $this->sut = new SensorSendUpdateReadingRequestConsumer(
+            $logger,
+            $sensorUpdateCurrentReadingRequestHandler,
+        );
+
+        $result = $this->sut->execute($amqpMess);
+
+        self::assertFalse($result);
+    }
+
+    public function test_sending_sensor_type_not_allowed_returns_true(): void
+    {
+        $boolCurrentReadingUpdateDTO = new BoolCurrentReadingUpdateDTO(
+            GenericRelay::NAME,
+            1,
+        );
+        /** @var SensorRepository $sensorRepository */
+        $sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
+        /** @var SensorTypeRepository $sensorTypeRepository */
+        $sensorTypeRepository = $this->diContainer->get(SensorTypeRepository::class);
+        /** @var GenericRelay $genericSensorType */
+        $genericSensorType = $sensorTypeRepository->findOneBy(['sensorType' => GenericMotion::NAME]);
+        $sensorID = $sensorRepository->findBy(['sensorTypeID' => $genericSensorType])[0]->getSensorID();
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+            $sensorID,
+            $boolCurrentReadingUpdateDTO,
+        );
+
+        $amqpMess = new AMQPMessage(serialize($requestSensorCurrentReadingUpdateMessageDTO));
+
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
+
+        $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
+        $httpClient = new MockHttpClient($response);
+
+        $deviceRequestHandler = new DeviceRequestHandler(
+            $httpClient,
+        );
+        $sensorUpdateCurrentReadingRequestHandler = new SensorUpdateCurrentReadingRequestHandler(
+            $sensorRepository,
+            $sensorTypeRepositoryFactory,
+            $deviceSensorRequestArgumentBuilderFactory,
+            $deviceRequestHandler,
+        );
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $logger->expects(self::once())->method('error');
+        $logger->expects(self::never())->method('info');
+
+        $this->sut = new SensorSendUpdateReadingRequestConsumer(
+            $logger,
+            $sensorUpdateCurrentReadingRequestHandler,
+        );
+
+        $result = $this->sut->execute($amqpMess);
+
+        self::assertTrue($result);
     }
 }

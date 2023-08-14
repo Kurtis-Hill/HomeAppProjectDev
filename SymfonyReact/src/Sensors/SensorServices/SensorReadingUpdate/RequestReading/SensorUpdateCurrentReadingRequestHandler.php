@@ -45,12 +45,6 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
             throw new SensorNotFoundException();
         }
 
-        $device = $sensor->getDevice();
-        $deviceLocalIP = $device->getIpAddress();
-        if ($deviceLocalIP === null) {
-            throw new DeviceIPNotSetException('Device IP address is not set');
-        }
-
         $readingTypeCurrentReadingDTO = $currentReadingUpdateMessageDTO->getReadingTypeCurrentReadingDTO();
 
         $requestArgumentBuilder = $this->deviceSensorRequestArgumentBuilderFactory->fetchDeviceRequestArgumentBuilder(DeviceSensorRequestArgumentBuilderFactory::UPDATE_SENSOR_CURRENT_READING);
@@ -58,14 +52,13 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $requestArguments = $requestArgumentBuilder->buildSensorRequestArguments($sensor, $readingTypeCurrentReadingDTO);
 
         $deviceEncapsulationRequestDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
-            ipAddress: $deviceLocalIP,
+            device: $sensor->getDevice(),
             deviceRequestDTO: $requestArguments,
             endpoint: self::SENSOR_SWITCH_ENDPOINT
         );
 
         // on success return true and set current reading of the sensor reading type to requested value
         $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
-
         $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
         if (!$sensorType instanceof GenericRelay) {
             throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_ALLOWED, $sensorType->getSensorTypeName()));
@@ -74,8 +67,6 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
             $deviceEncapsulationRequestDTO
         );
-
-
 
         if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
             if ($sensorType instanceof GenericRelay) {

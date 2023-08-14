@@ -56,7 +56,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
 
         $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
 
-        $response = new MockResponse([], ['http_code' => 200]);
+        $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
         $deviceRequestHandler = new DeviceRequestHandler(

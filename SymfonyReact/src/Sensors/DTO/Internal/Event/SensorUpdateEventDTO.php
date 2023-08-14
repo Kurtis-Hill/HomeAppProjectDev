@@ -3,16 +3,18 @@
 namespace App\Sensors\DTO\Internal\Event;
 
 use App\Sensors\Entity\Sensor;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
 readonly class SensorUpdateEventDTO
 {
     public function __construct(
-        private int $sensor,
+        private array $sensor,
     ) {}
 
-    public function getSensorID(): int
+    #[ArrayShape(['int'])]
+    public function getSensorID(): array
     {
         return $this->sensor;
     }

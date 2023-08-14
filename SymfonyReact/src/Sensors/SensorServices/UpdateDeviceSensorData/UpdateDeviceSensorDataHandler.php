@@ -45,7 +45,7 @@ readonly class UpdateDeviceSensorDataHandler
         }
 
         $deviceEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
-            $sensor->getDevice()->getIpAddress(),
+            $sensor->getDevice(),
             $sensorUpdateRequestDTO,
             self::SENSOR_UPDATE_SETTING_ENDPOINT
         );

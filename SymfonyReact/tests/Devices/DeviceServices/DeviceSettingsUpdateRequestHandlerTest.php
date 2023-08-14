@@ -3,6 +3,7 @@
 namespace App\Tests\Devices\DeviceServices;
 
 use App\Common\Services\DeviceRequestHandler;
+use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
 use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
 use App\Devices\DTO\Internal\DeviceSettingsUpdateDTO;
 use App\Devices\Entity\Devices;
@@ -79,9 +80,13 @@ class DeviceSettingsUpdateRequestHandlerTest extends KernelTestCase
         $deviceRequestHandler = new DeviceRequestHandler(
             $mockHttpClient,
         );
+
+        $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
+
         $sut = new DeviceSettingsUpdateRequestHandler(
             $deviceRequestHandler,
             $this->deviceRepository,
+            $deviceSettingsRequestDTOBuilder
         );
 
         self::assertFalse($sut->handleDeviceSettingsUpdateRequest($deviceSettingsUpdateDTO));
@@ -104,9 +109,13 @@ class DeviceSettingsUpdateRequestHandlerTest extends KernelTestCase
         $deviceRequestHandler = new DeviceRequestHandler(
             $mockHttpClient,
         );
+
+        $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
+
         $sut = new DeviceSettingsUpdateRequestHandler(
             $deviceRequestHandler,
             $this->deviceRepository,
+            $deviceSettingsRequestDTOBuilder,
         );
 
         self::assertTrue($sut->handleDeviceSettingsUpdateRequest($deviceSettingsUpdateDTO));
