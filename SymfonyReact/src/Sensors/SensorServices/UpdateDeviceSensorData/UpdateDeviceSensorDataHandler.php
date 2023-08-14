@@ -5,13 +5,26 @@ namespace App\Sensors\SensorServices\UpdateDeviceSensorData;
 use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\DTO\Request\DeviceRequest\DeviceRequestDTOInterface;
+use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
+use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SensorUpdateDataEncapsulationDTOBuilder;
+use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateEncapsulationInterface;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
+use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
+use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Factories\SensorUpdateRequestFactory\SensorUpdateRequestBuilderFactory;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 readonly class UpdateDeviceSensorDataHandler
@@ -21,39 +34,70 @@ readonly class UpdateDeviceSensorDataHandler
     public function __construct(
         private SensorUpdateRequestBuilderFactory $sensorUpdateRequestBuilderFactory,
         private DeviceRequestHandlerInterface $deviceRequestHandler,
+        private SensorRepositoryInterface $sensorRepository,
+        private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
+        private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
+        private LoggerInterface $logger,
     ) {}
 
     /**
-     * @throws SensorTypeNotFoundException
-     */
-    public function prepareSensorDataRequestDTO(Sensor $sensor): SensorUpdateRequestDTOInterface
-    {
-        $sensorUpdateRequestBuilder = $this->sensorUpdateRequestBuilderFactory->getSensorUpdateRequestBuilder($sensor->getSensorTypeObject()->getSensorType());
-
-        return $sensorUpdateRequestBuilder->buildSensorUpdateRequestDTO(
-            $sensor,
-        );
-    }
-
-    /**
      * @throws SensorRequestException
+     * @throws SensorNotFoundException
+     * @throws SensorTypeException
      */
-    public function sendSensorDataRequestToDevice(Sensor $sensor, SensorUpdateEncapsulationInterface $sensorUpdateRequestDTO): bool
+    public function handleSensorsUpdateRequest(array $sensorIDs): bool
     {
-        if (!$sensorUpdateRequestDTO instanceof DeviceRequestDTOInterface) {
-            throw new SensorRequestException(['DTO is not ready to be sent to device, check the DTO is an instance of DeviceRequestDTOInterface']);
+        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs]);
+        if (empty($sensors)) {
+            throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
         }
 
+        $sensorData = [];
+        foreach ($sensors as $sensor) {
+            try {
+                $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
+            } catch (SensorTypeException $e) {
+                $this->logger->error($e->getMessage());
+                continue;
+            }
+            $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+            if ($sensorType === null) {
+                $this->logger->error(sprintf('Error processing sensor data to upload sensor type not found, sensor id: %s, sensor type id: %s', $sensor->getSensorID(), $sensor->getSensorTypeObject()->getSensorTypeID()));
+
+                return true;
+            }
+            $sensorTypeName = $sensorType->getSensorTypeName();
+
+            $sensorData[$sensorTypeName][] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO(
+                $sensor,
+            );
+        }
+
+        if (empty($sensorData)) {
+            throw new SensorNotFoundException('No sensor data to send to device');
+        }
+
+        $sensorTypeDataRequestEncapsulationDTO = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
+            $sensorData[GenericRelay::NAME] ?? [],
+            $sensorData[Dht::NAME] ?? [],
+            $sensorData[Dallas::NAME] ?? [],
+            $sensorData[Soil::NAME] ?? [],
+            $sensorData[GenericMotion::NAME] ?? [],
+        );
+
+        $groups = array_keys($sensorData);
+        $device = $sensors[0]->getDevice();
+
         $deviceEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
-            $sensor->getDevice(),
-            $sensorUpdateRequestDTO,
+            $device,
+            $sensorTypeDataRequestEncapsulationDTO,
             self::SENSOR_UPDATE_SETTING_ENDPOINT
         );
 
         try {
             $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
                 $deviceEncapsulationDTO,
-
+                $groups,
             );
             if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
                 return true;

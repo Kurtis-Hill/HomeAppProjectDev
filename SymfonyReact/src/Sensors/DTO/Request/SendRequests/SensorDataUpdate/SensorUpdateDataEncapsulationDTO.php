@@ -15,10 +15,10 @@ readonly class SensorUpdateDataEncapsulationDTO implements SensorUpdateEncapsula
     public function __construct(
         #[ArrayShape(
             [
-                Dht::NAME => RegularSensorUpdateRequestDTO::class,
-                Bmp::NAME => RegularSensorUpdateRequestDTO::class,
-                GenericMotion::NAME => RegularSensorUpdateRequestDTO::class,
-                GenericRelay::NAME => RegularSensorUpdateRequestDTO::class,
+                Dht::NAME => SingleSensorUpdateRequestDTO::class,
+                Bmp::NAME => SingleSensorUpdateRequestDTO::class,
+                GenericMotion::NAME => SingleSensorUpdateRequestDTO::class,
+                GenericRelay::NAME => SingleSensorUpdateRequestDTO::class,
                 Dallas::NAME => BusSensorUpdateRequestDTO::class,
                 Soil::NAME => BusSensorUpdateRequestDTO::class,
             ]

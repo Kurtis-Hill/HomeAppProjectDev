@@ -3,7 +3,7 @@
 namespace App\Sensors\Factories\SensorUpdateRequestFactory;
 
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\BusSensorUpdateRequestDTOBuilder;
-use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\RegularSensorUpdateRequestDTOBuilder;
+use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SensorUpdateRequestDTOBuilderInterface;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -16,7 +16,7 @@ use App\Sensors\Exceptions\SensorTypeNotFoundException;
 readonly class SensorUpdateRequestBuilderFactory
 {
     public function __construct(
-        private RegularSensorUpdateRequestDTOBuilder $regularSensorUpdateRequestDTOBuilder,
+        private SingleSensorUpdateRequestDTOBuilder $regularSensorUpdateRequestDTOBuilder,
         private BusSensorUpdateRequestDTOBuilder $busSensorUpdateRequestDTOBuilder,
     ) {}
 

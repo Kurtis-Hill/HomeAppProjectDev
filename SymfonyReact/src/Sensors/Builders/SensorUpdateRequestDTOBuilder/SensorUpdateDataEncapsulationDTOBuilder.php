@@ -3,7 +3,7 @@
 namespace App\Sensors\Builders\SensorUpdateRequestDTOBuilder;
 
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\BusSensorUpdateRequestDTO;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\RegularSensorUpdateRequestDTO;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateDataEncapsulationDTO;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
 use App\Sensors\Entity\Sensor;
@@ -19,10 +19,10 @@ class SensorUpdateDataEncapsulationDTOBuilder
 {
     #[ArrayShape(
         [
-            Dht::NAME => RegularSensorUpdateRequestDTO::class,
-            Bmp::NAME => RegularSensorUpdateRequestDTO::class,
-            GenericMotion::NAME => RegularSensorUpdateRequestDTO::class,
-            GenericRelay::NAME => RegularSensorUpdateRequestDTO::class,
+            Dht::NAME => SingleSensorUpdateRequestDTO::class,
+            Bmp::NAME => SingleSensorUpdateRequestDTO::class,
+            GenericMotion::NAME => SingleSensorUpdateRequestDTO::class,
+            GenericRelay::NAME => SingleSensorUpdateRequestDTO::class,
             Dallas::NAME => BusSensorUpdateRequestDTO::class,
             Soil::NAME => BusSensorUpdateRequestDTO::class,
         ]

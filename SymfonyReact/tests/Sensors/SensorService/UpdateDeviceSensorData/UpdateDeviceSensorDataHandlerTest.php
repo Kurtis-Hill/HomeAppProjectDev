@@ -4,7 +4,7 @@ namespace App\Tests\Sensors\SensorService\UpdateDeviceSensorData;
 
 use App\Common\Services\DeviceRequestHandler;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\BusSensorUpdateRequestDTO;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\RegularSensorUpdateRequestDTO;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
@@ -73,7 +73,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
 
         $result = $sut->prepareSensorDataRequestDTO($sensorToUpdate);
 
-        self::assertInstanceOf(RegularSensorUpdateRequestDTO::class, $result);
+        self::assertInstanceOf(SingleSensorUpdateRequestDTO::class, $result);
         self::assertEquals($sensorToUpdate->getSensorName(), $result->getSensorName());
         self::assertEquals($sensorToUpdate->getPinNumber(), $result->getPinNumber());
         self::assertEquals($sensorToUpdate->getReadingInterval(), $result->getReadingInterval());
@@ -185,13 +185,13 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         /** @var Sensor $relayRepository */
         $sensorToUpdate = $this->sensorRepository->findAll()[0];
 
-        $sensorUpdateRequestDTO = new RegularSensorUpdateRequestDTO(
+        $sensorUpdateRequestDTO = new SingleSensorUpdateRequestDTO(
             $sensorToUpdate->getSensorName(),
             $sensorToUpdate->getPinNumber(),
             $sensorToUpdate->getReadingInterval(),
         );
 
-        $result = $sut->sendSensorDataRequestToDevice($sensorToUpdate, $sensorUpdateRequestDTO);
+        $result = $sut->handleSensorsUpdateRequest($sensorToUpdate, $sensorUpdateRequestDTO);
 
         self::assertTrue($result);
     }
@@ -223,7 +223,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
 
         );
 
-        $result = $sut->sendSensorDataRequestToDevice($sensorToUpdate, $sensorUpdateRequestDTO);
+        $result = $sut->handleSensorsUpdateRequest($sensorToUpdate, $sensorUpdateRequestDTO);
 
         self::assertTrue($result);
     }
@@ -255,7 +255,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
 
         );
 
-        $result = $sut->sendSensorDataRequestToDevice($sensorToUpdate, $sensorUpdateRequestDTO);
+        $result = $sut->handleSensorsUpdateRequest($sensorToUpdate, $sensorUpdateRequestDTO);
 
         self::assertFalse($result);
     }

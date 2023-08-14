@@ -10,7 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SensorSavingHandler
+readonly class SensorSavingHandler
 {
     public function __construct(
         private SensorRepositoryInterface $sensorRepository,
@@ -24,10 +24,7 @@ class SensorSavingHandler
             $this->sensorRepository->persist($sensor);
             $this->sensorRepository->flush();
 
-            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO([$sensor]);
-            $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
-
-            $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
+            $this->handleSensorUpdateEvent([$sensor->getSensorID()]);
             return true;
         } catch (ORMException|OptimisticLockException) {
             return false;
@@ -47,13 +44,22 @@ class SensorSavingHandler
             }
             $this->sensorRepository->flush();
 
-            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorIDs);
-            $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
-            $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
+            $this->handleSensorUpdateEvent($sensorIDs);
 
             return true;
         } catch (ORMException|OptimisticLockException) {
             return false;
+        }
+    }
+
+    private function handleSensorUpdateEvent(array $sensorIDs): void
+    {
+        $batchedSensorIDs = array_chunk($sensorIDs, 100);
+
+        foreach ($batchedSensorIDs as $batchedSensors) {
+            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($batchedSensors);
+            $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
+            $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
         }
     }
 }

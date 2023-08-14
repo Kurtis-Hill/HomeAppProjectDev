@@ -4,7 +4,7 @@ namespace App\Devices\DTO\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class NewDeviceRequestDTO implements DeviceRequestDTOInterface
+class NewDeviceRequestDTO
 {
     #[
         Assert\NotNull(
