@@ -2,6 +2,7 @@
 
 namespace App\Devices\DeviceServices;
 
+use App\Common\Repository\IPLogRepository;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceUpdate\DeviceSettingsUpdateDTOBuilder;
 use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
@@ -32,6 +33,8 @@ abstract class AbstractESPDeviceService
 
     private DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder;
 
+    private IPLogRepository $ipLogRepository;
+
     protected EventDispatcherInterface $eventDispatcher;
 
     protected LoggerInterface $logger;
@@ -43,6 +46,7 @@ abstract class AbstractESPDeviceService
         GroupRepositoryInterface $groupNameRepository,
         RoomRepositoryInterface $roomRepository,
         DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
+        IPLogRepository $ipLogRepository,
         EventDispatcherInterface $eventDispatcher,
         LoggerInterface $elasticLogger,
     ) {
@@ -52,6 +56,7 @@ abstract class AbstractESPDeviceService
         $this->groupRepository = $groupNameRepository;
         $this->roomRepository = $roomRepository;
         $this->deviceSettingsUpdateEventDTOBuilder = $deviceSettingsUpdateEventDTOBuilder;
+        $this->ipLogRepository = $ipLogRepository;
         $this->eventDispatcher = $eventDispatcher;
         $this->logger = $elasticLogger;
     }
@@ -83,6 +88,10 @@ abstract class AbstractESPDeviceService
         try {
             $this->deviceRepository->persist($device);
             $this->deviceRepository->flush();
+
+            if ($device->getIpAddress()) {
+                $this->ipLogRepository->removeIPLogByIPAddress($device->getIpAddress());
+            }
 
             if ($sendUpdateToDevice) {
                 $this->sendDeviceSettingsUpdateEvent($device);

@@ -72,6 +72,7 @@ readonly class DeviceDTOBuilder
         Room $roomObject,
         string $deviceName,
         string $devicePassword,
+        ?string $deviceIP = null,
     ): NewDeviceDTO {
         $device = new Devices();
 
@@ -82,6 +83,7 @@ readonly class DeviceDTOBuilder
             $deviceName,
             $devicePassword,
             $device,
+            $deviceIP,
         );
     }
 }

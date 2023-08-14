@@ -18,6 +18,8 @@ import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import RoomNavbarResponseInterface from '../../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
 import { userDataRequest } from '../../../User/Request/UserDataRequest';
 import { UserDataResponseInterface } from '../../../UserInterface/Navbar/Response/UserDataResponseInterface';
+import { registeredDeviceIPsRequest } from '../../Request/RegisteredDeviceIPsRequest';
+import { IPLogResponseInterface } from '../../../Common/Response/IPLogResponseInterface';
 
 export function AddNewDevice(props: {
     setAddNewDeviceModal: ((show: boolean) => void);
@@ -31,7 +33,8 @@ export function AddNewDevice(props: {
         devicePassword: '',
         devicePasswordConfirm: '',
         deviceGroup: 0,
-        deviceRoom: 0
+        deviceRoom: 0,
+        deviceIPAddress: null,
     });
 
     const [errors, setErrors] = useState<string[]>([]);
@@ -42,19 +45,25 @@ export function AddNewDevice(props: {
 
     const [userData, setUserData] = useState<UserDataContextInterface>({ userGroups: [], userRooms: [] })
 
+    const [deviceIPs, setDeviceIPs] = useState<IPLogResponseInterface[]>([]);
+
     useEffect(() => {
         handleUserDataRequest();
     }, []);
 
     const handleUserDataRequest = async () => {
         const userDataResponse = await userDataRequest();
+        const registeredDeviceIPs = await registeredDeviceIPsRequest();
         if (userDataResponse.status === 200) {
             const userDataPayload = userDataResponse.data.payload as UserDataResponseInterface;
-
             setUserData({ 
                 userGroups: userDataPayload.userGroups, 
-                userRooms: userDataPayload.userRooms 
+                userRooms: userDataPayload.userRooms ,
             });
+        }
+        if (registeredDeviceIPs.status === 200) {
+            const registeredDeviceIPsPayload = registeredDeviceIPs.data.payload as IPLogResponseInterface[];
+            setDeviceIPs(registeredDeviceIPsPayload);
         }
     }
 
@@ -68,8 +77,8 @@ export function AddNewDevice(props: {
     const handleNewDeviceFormSubmission = async (e: Event) => {
         e.preventDefault();
         setErrors([]);
-        const validationFailed: boolean = validateAddNewDeviceUserInputs();
-        if (validationFailed === false) {
+        const validationPassed: boolean = validateAddNewDeviceUserInputs();
+        if (validationPassed === false) {
             setDeviceRequestLoading(true);
             const jsonFormData: AddNewDeviceInputInterface = {
                 'deviceName' : addNewDeviceUserInputs.deviceName,
@@ -77,6 +86,7 @@ export function AddNewDevice(props: {
                 'devicePasswordCheck' : addNewDeviceUserInputs.devicePasswordConfirm,
                 'deviceRoom' :  parseInt(addNewDeviceUserInputs.deviceRoom),
                 'deviceGroup' :  parseInt(addNewDeviceUserInputs.deviceGroup),
+                'deviceIPAddress' : addNewDeviceUserInputs.deviceIPAddress ?? null,
             };
 
             try {
@@ -221,6 +231,29 @@ export function AddNewDevice(props: {
                             }
                         </select>
                     </div>
+
+                    <div className="form-group">
+                        <label className="large font-weight-bold" htmlFor="deviceIPAddress">Registered Device IP's</label>
+                        <select
+                            className="form-control"
+                            name="deviceIPAddress"
+                            id="deviceIPAddress"
+                            value={addNewDeviceUserInputs.deviceIPAddress}
+                            onChange={handleAddNewDeviceInput}
+                        >
+                            <option value="0">No IP Selected</option>
+                            {
+                                deviceIPs && deviceIPs.length > 0
+                                    ?
+                                        deviceIPs.map((deviceIP: IPLogResponseInterface, index: number) => (
+                                            <option key={index} value={deviceIP.ipAddress}>{deviceIP.ipAddress}</option>
+                                        ))
+                                    :
+                                        null
+                            }
+                        </select>
+                    </div>
+
                     { 
                         deviceRequestLoading === false && newDeviceAddedData === null
                             ?

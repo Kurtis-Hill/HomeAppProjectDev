@@ -25,7 +25,6 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
             $groups,
         );
 
-//        dd($normalizedResponse);
         return $this->httpClient->request(
             Request::METHOD_POST,
             $deviceRequestEncapsulationDTO->getFullSensorUrl(),

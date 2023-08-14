@@ -100,7 +100,7 @@ final class Version20220303160823 extends AbstractMigration
                 humidReading DOUBLE PRECISION NOT NULL, 
                 highHumid DOUBLE PRECISION DEFAULT \'70\' NOT NULL, 
                 lowHumid DOUBLE PRECISION DEFAULT \'15\' NOT NULL, 
-                constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, 
+                constRecord TINYINT(1) DFuniEFAULT \'0\' NOT NULL, 
                 updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, 
                 UNIQUE INDEX humid_ibfk_1 (sensorID), 
                 PRIMARY KEY(humidID)
@@ -320,7 +320,8 @@ final class Version20220303160823 extends AbstractMigration
                 INDEX createdBy (createdBy), 
                 INDEX groupID (groupID), 
                 INDEX roomID (roomID),
-                UNIQUE INDEX device_room_un (deviceName, roomID), 
+                UNIQUE INDEX device_room_un (deviceName, roomID),
+                UNIQUE INDEX deviceIP (ipAddress, externalIpAddress),  
                 PRIMARY KEY(deviceID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 

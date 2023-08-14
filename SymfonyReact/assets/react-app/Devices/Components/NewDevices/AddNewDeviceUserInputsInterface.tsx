@@ -4,4 +4,5 @@ export default interface AddNewDeviceUserInputsInterface {
     devicePasswordConfirm: string;
     deviceGroup: number
     deviceRoom: number;
+    deviceIPAddress?: string;
 }

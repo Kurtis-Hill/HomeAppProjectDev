@@ -17,7 +17,7 @@ class GetRegisteredDeviceIPsController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route(CommonURL::DEVICE_HOMEAPP_API_URL . 'registered-devices', name: 'get-new-device', methods: [Request::METHOD_GET])]
+    #[Route(CommonURL::USER_HOMEAPP_API_URL . 'registered-devices', name: 'get-new-device', methods: [Request::METHOD_GET])]
     public function getRegisteredDeviceIPs(IPLogRepository $IPLogRepository, DeviceIPResponseDTOBuilder $deviceIPResponseDTOBuilder): JsonResponse
     {
         $allDeviceIPs = $IPLogRepository->findAll();

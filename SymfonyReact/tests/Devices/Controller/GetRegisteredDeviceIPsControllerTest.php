@@ -4,12 +4,7 @@ namespace App\Tests\Devices\Controller;
 
 use App\Common\Entity\IPLog;
 use App\Common\Repository\IPLogRepository;
-use App\Devices\Entity\Devices;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\Sensor;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,7 +15,7 @@ class GetRegisteredDeviceIPsControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_REGISTERED_DEVICE_IPS_URL = '/HomeApp/api/device/registered-devices';
+    private const GET_REGISTERED_DEVICE_IPS_URL = '/HomeApp/api/user/registered-devices';
 
     private ?string $adminToken = null;
 

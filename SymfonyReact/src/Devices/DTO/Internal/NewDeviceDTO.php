@@ -18,6 +18,7 @@ readonly class NewDeviceDTO
         private ?string $deviceName,
         private string $devicePassword,
         private Devices $devices,
+        private ?string $deviceIP,
     ) {
     }
 
@@ -49,5 +50,10 @@ readonly class NewDeviceDTO
     public function getNewDevice(): Devices
     {
         return $this->devices;
+    }
+
+    public function getDeviceIP(): ?string
+    {
+        return $this->deviceIP;
     }
 }

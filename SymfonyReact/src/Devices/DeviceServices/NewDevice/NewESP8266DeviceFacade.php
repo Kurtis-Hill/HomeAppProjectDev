@@ -44,6 +44,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
             $roomObject,
             $newDeviceRequestDTO->getDeviceName(),
             $newDeviceRequestDTO->getDevicePassword(),
+            $newDeviceRequestDTO->getDeviceIPAddress(),
         );
     }
 
@@ -65,6 +66,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         $newDevice->setRoomObject($newDeviceDTO->getRoomObject());
         $newDevice->setDeviceSecret($newDeviceDTO->getDevicePassword());
         $newDevice->setPassword($newDeviceDTO->getDevicePassword());
+        $newDevice->setIpAddress($newDeviceDTO->getDeviceIP());
 
         $validationResult = $this->validateNewDevice($newDevice);
         if (empty($validationResult)) {

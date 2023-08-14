@@ -30,4 +30,13 @@ class IPLogRepository extends ServiceEntityRepository
     {
         $this->_em->flush();
     }
+
+    public function removeIPLogByIPAddress(string $ipAddress): void
+    {
+        $ipLog = $this->findOneBy(['ipAddress' => $ipAddress]);
+        if ($ipLog !== null) {
+            $this->_em->remove($ipLog);
+            $this->_em->flush();
+        }
+    }
 }
