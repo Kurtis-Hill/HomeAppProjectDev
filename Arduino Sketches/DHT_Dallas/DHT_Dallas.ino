@@ -1,4 +1,4 @@
-#include <Wire.h>
+ #include <Wire.h>
 #include <Adafruit_Sensor.h>
 
 #include <SPIFFSReadServer.h>
@@ -61,7 +61,6 @@ String token;
 String refreshToken;
 
 int wifiRetryTimer = 0;
-int wifiRetryAttemptNumber = 0;
 
 bool deviceLoggedIn;
 
@@ -77,6 +76,7 @@ IPAddress netmask(255,255,255,0);
 
 
 // DHT
+#define DHTS_ASSINGED_TO_DEVICE 1
 #define DHTPIN 2
 #define DHTTYPE DHT22 
 DHT dht(DHTPIN, DHTTYPE);
@@ -86,6 +86,7 @@ struct DhtSensor {
   float tempReading;
   float humidReading;
   int interval;
+  int pinNumber;
   bool activeSensor = false;
   bool valuesAreSet = false;
 };
@@ -270,12 +271,12 @@ char webpage[] PROGMEM = R"=====(
     function hiddenDisplay(name) {
         var displayItem = document.getElementById(name);
         if (displayItem.style.display === "none") {
-            displayItem.style.display = "block";
+          displayItem.style.display = "block";
         } else {
           displayItem.style.display = "none";
         }
     }
-
+    
     function saveDataToSpiff() {
       console.log("save button was clicked");
         //Vital Info
@@ -283,81 +284,132 @@ char webpage[] PROGMEM = R"=====(
       var password = document.getElementById("password").value;
       var deviceName = document.getElementById("deviceName").value;
       var deviceSecret = document.getElementById("deviceSecret").value;
+      var jsonData = {};
+      
+      if (ssid) {
+        jsonData.wifi = {'ssid': ssid, 'password': password};
+      }
+      // var wifi = {
+      //   'ssid':ssid,
+      //   'password':password
+      // };
 
-      var wifi = {
-        'ssid':ssid,
-        'password':password
-      };
+      if (deviceName) {
+        jsonData.deviceCredentials = {'username':deviceName, 'password':deviceSecret};
+      }
+      // var deviceCredentials = {
+      //   'username':deviceName, 
+      //   'password':deviceSecret
+      // };
 
-      var deviceCredentials = {
-        'username':deviceName, 
-        'password':deviceSecret
-      };
+      var sensorData = {};
+      function buildBusSensorObject(sensorCount, sensorNames, pinNumber, readingInterval) {
+        return {
+          'sensorCount': sensorCount,
+          'sensorNames': sensorNames,
+          'pinNumber': pinNumber,
+          'readingInterval': readingInterval
+        };
+      }
 
-      //Dallas Bus Sensor Names
-      var busTemp1 =  document.getElementById("busTemp1").value;
-      var busTemp2 =  document.getElementById("busTemp2").value;
-      var busTemp3 =  document.getElementById("busTemp3").value;
-      var busTemp4 =  document.getElementById("busTemp4").value;
-      var busTemp5 =  document.getElementById("busTemp5").value;
-      var busTemp6 =  document.getElementById("busTemp6").value;
-      var busTemp7 =  document.getElementById("busTemp7").value;
-      var busTemp8 =  document.getElementById("busTemp8").value;
+      function buildRegularSensorObject(sensorName, readingInterval) {
+        return {
+          'sensorName': sensorName,
+          'readingInterval': readingInterval
+        };
+      }
+
+      function prepareMultiSensorObject(sensorNames, pinNumbers) {
+        return {
+          'sensorNames': sensorNames,
+          'pinNumbers': pinNumbers
+        };
+      }
+      
       var busTempPinNumber = parseInt(document.getElementById("busTempPinNumber").value);
 
-      var busTempNames = [busTemp1, busTemp2, busTemp3, busTemp4, busTemp5, busTemp6, busTemp7, busTemp8],        
-      busTempNameArray = busTempNames.filter(Boolean);
+      if (busTempPinNumber) {
+          //Dallas Bus Sensor Names
+          var busTemp1 =  document.getElementById("busTemp1").value;
+          var busTemp2 =  document.getElementById("busTemp2").value;
+          var busTemp3 =  document.getElementById("busTemp3").value;
+          var busTemp4 =  document.getElementById("busTemp4").value;
+          var busTemp5 =  document.getElementById("busTemp5").value;
+          var busTemp6 =  document.getElementById("busTemp6").value;
+          var busTemp7 =  document.getElementById("busTemp7").value;
+          var busTemp8 =  document.getElementById("busTemp8").value;
+    
+          var busTempNames = [busTemp1, busTemp2, busTemp3, busTemp4, busTemp5, busTemp6, busTemp7, busTemp8],        
+          busTempNameArray = busTempNames.filter(Boolean);
+    
+          var busTempCount = busTempNameArray.length;
+    
+          var busTempInterval = document.getElementById("busTempInterval").value ? parseInt(document.getElementById("busTempInterval").value) : 60;
+          busTempInterval = busTempInterval * 1000;
 
-      var busTempCount = busTempNameArray.length;
+          sensorData.dallas = buildBusSensorObject(busTempCount, busTempNameArray, busTempPinNumber, busTempInterval);
+      }
 
-      var busTempInterval = document.getElementById("busTempInterval").value ? parseInt(document.getElementById("busTempInterval").value) : 60;
-      busTempInterval = busTempInterval * 1000;
+      // var data = {'dallas': {sensorCount: busTempCount, sensorNames: busTempNameArray, pinNumber: busTempPinNumber, readingInterval: busTempInterval}};
 
-      var data = {'dallas': {busTempCount: busTempCount, busTempNameArray: busTempNameArray, busTempPinNumber: busTempPinNumber, busTempInterval: busTempInterval}};
-
-      // ADC Sensor Names
-      var analogName1 =  document.getElementById("AnalogName1").value;
-      var analogName2 =  document.getElementById("AnalogName2").value;
-      var analogName3 =  document.getElementById("AnalogName3").value;
-      var analogName4 =  document.getElementById("AnalogName4").value;
-      var analogNames = [analogName1, analogName2, analogName3, analogName4];
       var analogPinNumber = parseInt(document.getElementById("analogPinNumber").value);
+      if (analogPinNumber) {
+        // ADC Sensor Names
+        var analogName1 =  document.getElementById("AnalogName1").value;
+        var analogName2 =  document.getElementById("AnalogName2").value;
+        var analogName3 =  document.getElementById("AnalogName3").value;
+        var analogName4 =  document.getElementById("AnalogName4").value;
+        var analogNames = [analogName1, analogName2, analogName3, analogName4];
+  
+        analogNamesArray = analogNames.filter(Boolean);
+        var analogCount = analogNamesArray.length;
+  
+        var analogInterval = document.getElementById("analogInterval").value ? parseInt(document.getElementById("analogInterval").value) : 60;
+        analogInterval = analogInterval * 1000;
+  
+        // sensorData.analog = {'analogNames': analogNamesArray, 'analogCount': analogCount, 'analogPinNumber': analogPinNumber, 'analogInterval': analogInterval};
+        sensorData.soil = buildBusSensorObject(analogCount, analogNamesArray, analogPinNumber, analogInterval);
+      }
 
-      analogNamesArray = analogNames.filter(Boolean);
-      var analogCount = analogNamesArray.length;
-
-      var analogInterval = document.getElementById("analogInterval").value ? parseInt(document.getElementById("analogInterval").value) : 60;
-      analogInterval = analogInterval * 1000;
-
-      data.analog = {'analogNames': analogNamesArray, 'analogCount': analogCount, 'analogPinNumber': analogPinNumber, 'analogInterval': analogInterval};
       
 
       // DHT Sensor
       var dhtSensor = document.getElementById("dhtSensor").value;
-      var dhtSensorInterval = document.getElementById("dhtSensorInterval").value ? parseInt(document.getElementById("dhtSensorInterval").value) : 60;
-      dhtSensorInterval = dhtSensorInterval * 1000;
-      data.dhtSensor = {'sensorName' : dhtSensor, 'interval': dhtSensorInterval};
+      if (dhtSensor) {
+        var dhtSensorInterval = document.getElementById("dhtSensorInterval").value ? parseInt(document.getElementById("dhtSensorInterval").value) : 60;
+        dhtSensorInterval = dhtSensorInterval * 1000;
+        // data.dhtSensor = {'sensorName' : dhtSensor, 'interval': dhtSensorInterval};
+        sensorData.dht = buildRegularSensorObject(dhtSensor, dhtSensorInterval);
+      }
 
-      var relaySensorName1 = document.getElementById("RelayName1").value;
-      var relaySensorName2 = document.getElementById("RelayName2").value;
-      var relaySensorName3 = document.getElementById("RelayName3").value;
-      var relaySensorName4 = document.getElementById("RelayName4").value;
-      var relaySensorNames = [relaySensorName1, relaySensorName2, relaySensorName3, relaySensorName4];
-      
       var relaySensorPinNumber1 = parseInt(document.getElementById("RelayName1PinNumber").value);
-      var relaySensorPinNumber2 = parseInt(document.getElementById("RelayName2PinNumber").value);
-      var relaySensorPinNumber3 = parseInt(document.getElementById("RelayName3PinNumber").value);
-      var relaySensorPinNumber4 = parseInt(document.getElementById("RelayName4PinNumber").value);
-      var relaySensorPinNumbers = [relaySensorPinNumber1, relaySensorPinNumber2, relaySensorPinNumber3, relaySensorPinNumber4],
+      if (relaySensorPinNumber1) {    
+        var relaySensorName1 = document.getElementById("RelayName1").value;
+        var relaySensorName2 = document.getElementById("RelayName2").value;
+        var relaySensorName3 = document.getElementById("RelayName3").value;
+        var relaySensorName4 = document.getElementById("RelayName4").value;
+        var relaySensorNames = [relaySensorName1, relaySensorName2, relaySensorName3, relaySensorName4];
+        
+        var relaySensorPinNumber2 = parseInt(document.getElementById("RelayName2PinNumber").value);
+        var relaySensorPinNumber3 = parseInt(document.getElementById("RelayName3PinNumber").value);
+        var relaySensorPinNumber4 = parseInt(document.getElementById("RelayName4PinNumber").value);
+        var relaySensorPinNumbers = [relaySensorPinNumber1, relaySensorPinNumber2, relaySensorPinNumber3, relaySensorPinNumber4],
+        
+        relaySensorNamesArray = relaySensorNames.filter(Boolean);
+        relaySensorPinNumbersArray = relaySensorPinNumbers.filter(Boolean);
+        var relayCount = relaySensorNamesArray.length;
 
+        sensorData.relay = [];
+        for (var i = 0; i < relayCount; i++) {
+          sensorData.relay.push(buildRegularSensorObject(relaySensorNamesArray[i], relaySensorPinNumbersArray[i]));
+        }
+      }
 
-      relaySensorNamesArray = relaySensorNames.filter(Boolean);
-      relaySensorPinNumbersArray = relaySensorPinNumbers.filter(Boolean);
-      var relayCount = relaySensorNamesArray.length;
+      if (sensorData.soil || sensorData.dallas || sensorData.dht || sensorData.relay) {
+        jsonData.sensorData = sensorData;
+      }
 
-      data.relay = {'relayNames': relaySensorNamesArray, 'relayPinNumbers': relaySensorPinNumbersArray, 'relayCount': relayCount};
-
-      var jsonData = {'wifi': wifi, 'sensorData':data, 'deviceCredentials': deviceCredentials};
+      // var jsonData = {'wifi': wifi, 'sensorData': sensorData, 'deviceCredentials': deviceCredentials};
 
       var xhr = new XMLHttpRequest();
       var url = "/settings";
@@ -752,9 +804,11 @@ char webpage[] PROGMEM = R"=====(
   }
   </style>
 </html>
+
+
 )=====";
 
-bool setupNetworkConnection(){
+bool setupNetworkConnection() {
   Serial.println("Wifi connecting");
   WiFi.softAPdisconnect(true);
   WiFi.disconnect();
@@ -773,7 +827,7 @@ void createAccessPoint() {
   WiFi.softAPConfig(local_ip, gateway, netmask);
   WiFi.softAP(ACCESSPOINT_SSID, ACCESSPOINT_PASSWORD);
   Serial.println("AP MODE Activated");
-  delay(2000);
+  //delay(2000);
   WiFi.printDiag(Serial);
 }
 
@@ -814,7 +868,6 @@ bool connectToNetwork() {
   int timeout = millis() + 35000;
   Serial.printf("Connecting to wifi with a %d millisecond timeout\n", timeout);
   while(WiFi.status() != WL_CONNECTED){
-//    Serial.print(".");
     int currentTime = millis();
     if (timeout - currentTime < 0) {
       Serial.println("Failed to connect to wifi network");
@@ -846,17 +899,13 @@ void handleWifiReconnectionAttempt() {
 
     if (connectionSuccess == false) {
       wifiRetryTimer = 0;
-      ++wifiRetryAttemptNumber;
+      //@dev can remove? ++wifiRetryAttemptNumber;
     }
   }
-
-//  if (wifiRetryAttemptNumber == 3) {
-//    wifiRetryAttemptNumber = 0;
-//    setupNetworkConnection();
-//  }
 }
 
-// Need to decode this json string (data) and place different parts in different spiffs, wifi and sensor data
+
+// decode this json string (data) and place different parts in different spiffs, wifi and sensor data
 void handleSettingsUpdate(){
   delay(500);
   Serial.println("Handling settings update");
@@ -882,14 +931,16 @@ void handleSettingsUpdate(){
     }      
   }
 
-  if (!saveSensorDataToSpiff(doc["sensorData"])) {
-    delay(500);
-    Serial.println("failed to save sensor data spiffs");
-    sensorDataSuccess = false;
+  if (doc["sensorData"] != NULL || doc["sensorData"] != "null" || doc["sensorData"] != "\0" || doc["sensorData"] != "") {
+    Serial.println("Sensor data found in json attempting to save data");
+    if (!saveSensorDataToSpiff(doc["sensorData"])) {
+      Serial.println("failed to save sensor data spiffs");
+      sensorDataSuccess = false;
+    }
   }
-  
+
   if (!saveDeviceUserSettings(doc["deviceCredentials"])) {
-    delay(500);
+    //delay(500);
     Serial.println("failed to save device data spiffs");
     deviceCredentialsSuccess = false;
   }
@@ -904,8 +955,7 @@ void handleSettingsUpdate(){
   } else {
     server.send(500, "application/json", "{\"status\":\"some updates failed\"}");
   }
-
-
+  
   delay(500);
   Serial.println("Restarting device");
   ESP.restart();
@@ -993,7 +1043,7 @@ bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
   if (!saveDallasSensorData(doc["dallas"])) {
     Serial.println("failed to set Dallas Spiff");
   }
-  if (!saveDhtSensorData(doc["dhtSensor"])) {
+  if (!saveDhtSensorData(doc["dht"])) {
     Serial.println("failed to set Dht Spiff");
   }
   return true;
@@ -1001,21 +1051,23 @@ bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
 
 
 bool saveDhtSensorData(DynamicJsonDocument dhtData) {
-    if (
-    dhtData["sensorName"] == NULL 
-    || dhtData["sensorName"] == "" 
-    || dhtData["sensorName"] == "\0" 
-    || dhtData["sensorName"] == "null"
-    ) {
-      Serial.println("dht sensor not sent, wont save any data");
-      return true;
-    }
-         
-    String nameCheck = dhtData["sensorName"].as<String>();
-    Serial.println("Dht sensor name");
-    Serial.println(nameCheck);
+    int dhtSensorCount = dhtData.size();
+    Serial.print("DHT sensor count calculated in request: ");
+    Serial.println(dhtSensorCount);
     
-    Serial.println("dht sensor data being saved");
+    for (int i = 0; i < dhtSensorCount; ++i) {
+      if (
+        dhtData[i]["sensorName"] == NULL 
+        || dhtData[i]["sensorName"] == "" 
+        || dhtData[i]["sensorName"] == "\0" 
+        || dhtData[i]["sensorName"] == "null"
+      ) {          
+        Serial.println("dht sensor not sent, for this value removing it");
+        dhtData.remove(dhtData[i]);
+      }
+    }
+    
+    Serial.println("Opening dht SPIFF for writing");
     File dhtSPIFF = SPIFFS.open("/dht.json", "w");
   
     if(serializeJson(dhtData, dhtSPIFF)) {
