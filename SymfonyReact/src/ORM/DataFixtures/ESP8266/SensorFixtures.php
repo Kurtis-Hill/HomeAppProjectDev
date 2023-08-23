@@ -27,6 +27,8 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
+use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -434,12 +436,15 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager): void
     {
         foreach (self::PERMISSION_CHECK_SENSORS as $sensorKey => $sensorDetails) {
-            $sensor = new Sensor();
+            $minueteInterval = random_int(0, 59);
+            $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minueteInterval . 'M'));
+                $sensor = new Sensor();
             $sensor->setDevice($this->getReference($sensorDetails['device']['referenceName']));
             $sensor->setSensorName($sensorDetails['sensorName']);
             $sensor->setSensorTypeID($this->getReference($sensorDetails['sensors']['alias']));
             $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
             $sensor->setPinNumber($sensorDetails['pinNumber']);
+            $sensor->setCreatedAt($createdAt);
             $this->addReference($sensorDetails['sensorName'], $sensor);
             $manager->persist($sensor);
 

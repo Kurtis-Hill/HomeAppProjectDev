@@ -100,7 +100,7 @@ final class Version20220303160823 extends AbstractMigration
                 humidReading DOUBLE PRECISION NOT NULL, 
                 highHumid DOUBLE PRECISION DEFAULT \'70\' NOT NULL, 
                 lowHumid DOUBLE PRECISION DEFAULT \'15\' NOT NULL, 
-                constRecord TINYINT(1) DFuniEFAULT \'0\' NOT NULL, 
+                constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, 
                 updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, 
                 UNIQUE INDEX humid_ibfk_1 (sensorID), 
                 PRIMARY KEY(humidID)
@@ -389,6 +389,7 @@ final class Version20220303160823 extends AbstractMigration
                 sensorTypeID INT NOT NULL,
                 pinNumber TINYINT NOT NULL,
                 takeReadingIntervalMilli MEDIUMINT DEFAULT '. Sensor::DEFAULT_READING_INTERVAL . ' NOT NULL,
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
                 INDEX sensornames_ibfk_1 (deviceID), 
                 INDEX sensornames_ibfk_2 (createdBy), 
                 INDEX sensortype (sensorTypeID), 

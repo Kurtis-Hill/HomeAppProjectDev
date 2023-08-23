@@ -6,6 +6,8 @@ use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -91,6 +93,16 @@ class Sensor
     ]
     private int $readingInterval = self::DEFAULT_READING_INTERVAL;
 
+    #[
+        ORM\Column(name: "createdAt", type: "datetime", nullable: false),
+    ]
+    private DateTimeInterface $createdAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new DateTimeImmutable();
+    }
+
     public function getSensorID(): int
     {
         return $this->sensorID;
@@ -159,5 +171,18 @@ class Sensor
     public function setReadingInterval(int $readingInterval): void
     {
         $this->readingInterval = $readingInterval;
+    }
+
+    public function getCreatedAt(): DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?DateTimeInterface $createdAt): void
+    {
+        if ($createdAt === null) {
+            $createdAt = new DateTimeImmutable('now');
+        }
+        $this->createdAt = $createdAt;
     }
 }

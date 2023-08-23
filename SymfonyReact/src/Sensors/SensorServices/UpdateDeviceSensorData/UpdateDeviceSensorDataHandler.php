@@ -5,10 +5,8 @@ namespace App\Sensors\SensorServices\UpdateDeviceSensorData;
 use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
 use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -21,7 +19,6 @@ use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,7 +42,8 @@ readonly class UpdateDeviceSensorDataHandler
      */
     public function handleSensorsUpdateRequest(array $sensorIDs): bool
     {
-        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs]);
+        // need to order by so that bus sensors get added to the json in the correct order
+        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs], ['createdAt' => 'DESC']);
         if (empty($sensors)) {
             throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
         }
