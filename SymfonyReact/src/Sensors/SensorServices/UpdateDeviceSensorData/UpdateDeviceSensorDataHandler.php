@@ -43,7 +43,7 @@ readonly class UpdateDeviceSensorDataHandler
     public function handleSensorsUpdateRequest(array $sensorIDs): bool
     {
         // need to order by so that bus sensors get added to the json in the correct order
-        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs], ['createdAt' => 'DESC']);
+        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs], ['createdAt' => 'ASC']);
         if (empty($sensors)) {
             throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
         }
@@ -60,7 +60,7 @@ readonly class UpdateDeviceSensorDataHandler
             if ($sensorType === null) {
                 $this->logger->error(sprintf('Error processing sensor data to upload sensor type not found, sensor id: %s, sensor type id: %s', $sensor->getSensorID(), $sensor->getSensorTypeObject()->getSensorTypeID()));
 
-                return true;
+                return false;
             }
             $sensorTypeName = $sensorType->getSensorTypeName();
 

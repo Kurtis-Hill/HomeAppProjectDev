@@ -46,7 +46,7 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
         } catch (DeviceNotFoundException) {
             $this->elasticLogger->error('Device settings update request failed, device not found');
 
-            return true;
+            return false;
         } catch (Exception $exception) {
             $this->elasticLogger->error('Device settings update request failed with unexpected error, exception message: ' . $exception->getMessage());
 

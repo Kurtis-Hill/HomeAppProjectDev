@@ -25,6 +25,10 @@ class GetRegisteredDeviceIPsController extends AbstractController
             $deviceIPs[] = $deviceIPResponseDTOBuilder->buildDeviceIPResponseDTOBuilder($deviceIP);
         }
 
+        if (empty($deviceIPs)) {
+            return $this->sendSuccessfulJsonResponse([], 'No devices registered');
+        }
+
         try {
             $normalizedResponse = $this->normalizeResponse($deviceIPs);
 

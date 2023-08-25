@@ -6,7 +6,7 @@ readonly class DeviceSettingsUpdateDTO
 {
     public function __construct(
         private int $deviceID,
-        private ?string $userName,
+        private ?string $username,
         private ?string $password,
     ) {}
 
@@ -15,9 +15,9 @@ readonly class DeviceSettingsUpdateDTO
         return $this->deviceID;
     }
 
-    public function getUserName(): string
+    public function getUsername(): string
     {
-        return $this->userName;
+        return $this->username;
     }
 
     public function getPassword(): string

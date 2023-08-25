@@ -9,6 +9,7 @@ use App\Common\DTO\Request\IPLog\IPLogRequestDTO;
 use App\Common\Entity\IPLog;
 use App\Common\Repository\IPLogRepository;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,7 @@ class RegisterNewDeviceController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         IPLogRepository $ipLogRepository,
+        DeviceRepositoryInterface $deviceRepository,
     ): JsonResponse {
         $ipRequestDTO = new IPLogRequestDTO();
         try {
@@ -44,6 +46,14 @@ class RegisterNewDeviceController extends AbstractController
         $validationErrors = $validator->validate($ipRequestDTO);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+        }
+        $device = $deviceRepository->findOneBy(['ipAddress' => $ipRequestDTO->getIpAddress()]);
+        if ($device !== null) {
+            return $this->sendSuccessfulJsonResponse(['Device already registered']);
+        }
+        $ipExist = $ipLogRepository->findOneBy(['ipAddress' => $ipRequestDTO->getIpAddress()]);
+        if ($ipExist) {
+            return $this->sendSuccessfulJsonResponse(['Device already registered']);
         }
 
         $newIpLog = new IPLog();

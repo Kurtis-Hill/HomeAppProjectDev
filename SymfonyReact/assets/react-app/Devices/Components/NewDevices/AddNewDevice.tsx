@@ -62,8 +62,13 @@ export function AddNewDevice(props: {
             });
         }
         if (registeredDeviceIPs.status === 200) {
-            const registeredDeviceIPsPayload = registeredDeviceIPs.data.payload as IPLogResponseInterface[];
-            setDeviceIPs(registeredDeviceIPsPayload);
+            if (Array.isArray(registeredDeviceIPs.data.payload)) {
+                const registeredDeviceIPsPayload = registeredDeviceIPs.data.payload as IPLogResponseInterface[];
+                console.log('ow damn not array', registeredDeviceIPsPayload)
+                console.log('TYPE', typeof registeredDeviceIPsPayload)
+                console.log('COUNT', registeredDeviceIPsPayload.length)
+                setDeviceIPs(registeredDeviceIPsPayload);
+            }
         }
     }
 
@@ -238,7 +243,7 @@ export function AddNewDevice(props: {
                             className="form-control"
                             name="deviceIPAddress"
                             id="deviceIPAddress"
-                            value={addNewDeviceUserInputs.deviceIPAddress}
+                            value={addNewDeviceUserInputs.deviceIPAddress ?? "0"}
                             onChange={handleAddNewDeviceInput}
                         >
                             <option value="0">No IP Selected</option>

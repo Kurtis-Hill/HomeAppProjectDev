@@ -10,6 +10,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
+use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
@@ -56,6 +57,10 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         $this->logger = $elasticLogger;
     }
 
+    /**
+     * @throws SensorNotFoundException
+     * @throws ReadingTypeNotExpectedException
+     */
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
         Devices $device,
@@ -75,7 +80,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
             $sensorReadingTypeQueryDTOs,
         );
         if (empty($sensorReadingObjects)) {
-            throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION);
+            throw new SensorNotFoundException(sprintf(SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME, $updateSensorCurrentReadingConsumerDTO->getSensorName()));
         }
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             /** @var AbstractCurrentReadingUpdateRequestDTO $currentReadingDTO */

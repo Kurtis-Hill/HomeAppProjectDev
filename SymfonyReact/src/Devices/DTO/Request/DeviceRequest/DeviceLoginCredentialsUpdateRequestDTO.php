@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 readonly class DeviceLoginCredentialsUpdateRequestDTO
 {
     public function __construct(
-        private string $userName,
+        private string $username,
         private ?string $password,
     ) {}
 
@@ -18,9 +18,9 @@ readonly class DeviceLoginCredentialsUpdateRequestDTO
         DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT,
         DeviceSettingsUpdateRequestHandler::PASSWORD_NOT_PRESENT
     ])]
-    public function getUserName(): string
+    public function getUsername(): string
     {
-        return $this->userName;
+        return $this->username;
     }
 
     #[Groups([DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT])]

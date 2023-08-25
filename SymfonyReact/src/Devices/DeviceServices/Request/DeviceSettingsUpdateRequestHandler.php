@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 readonly class DeviceSettingsUpdateRequestHandler
 {
-    private const SETTINGS_ENDPOINT = '/settings';
+    private const SETTINGS_ENDPOINT = 'settings';
 
     public const PASSWORD_PRESENT = 'password_present';
 
@@ -49,7 +49,6 @@ readonly class DeviceSettingsUpdateRequestHandler
         $deviceSettingsRequestDTO = $this->deviceSettingsRequestDTOBuilder->buildDeviceSettingsRequestDTO(
             deviceCredentials: $deviceLoginCredentialsUpdateRequestDTO,
         );
-
         $deviceEncapsulationRequestDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,
             $deviceSettingsRequestDTO,
