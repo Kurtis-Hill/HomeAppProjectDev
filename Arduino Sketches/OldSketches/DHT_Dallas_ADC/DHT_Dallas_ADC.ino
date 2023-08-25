@@ -35,7 +35,7 @@
 
 #include <Adafruit_ADS1015.h>
 
-#include <DHT.h>;
+#include <DHT.h>;ip
 #define DHTPIN 13  // what pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 DHT dht(DHTPIN, DHTTYPE);
