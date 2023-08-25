@@ -288,7 +288,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     }
 
     #[ArrayShape([Sensor::class])]
-    public function findSameSensorTypesOnSameDevice(Sensor $sensor): array
+    public function findSameSensorTypesOnSameDevice(int $deviceID, int $sensorType): array
     {
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
         $expr = $qb->expr();
@@ -300,8 +300,8 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             )
             ->setParameters(
                 [
-                    'deviceID' => $sensor->getDevice()->getDeviceID(),
-                    'sensorTypeID' => $sensor->getSensorTypeObject()->getSensorTypeID(),
+                    'deviceID' => $deviceID,
+                    'sensorTypeID' => $sensorType,
                 ]
             );
 

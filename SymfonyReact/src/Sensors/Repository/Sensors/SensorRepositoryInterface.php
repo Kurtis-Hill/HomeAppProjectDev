@@ -57,5 +57,5 @@ interface SensorRepositoryInterface
     public function findAllBusSensors(int $deviceID, int $sensorTypeID, int $pinNumber): array;
 
     #[ArrayShape([Sensor::class])]
-    public function findSameSensorTypesOnSameDevice(Sensor $sensor): array;
+    public function findSameSensorTypesOnSameDevice(int $deviceID, int $sensorType): array;
 }

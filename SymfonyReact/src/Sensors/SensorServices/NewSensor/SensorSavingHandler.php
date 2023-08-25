@@ -67,7 +67,10 @@ readonly class SensorSavingHandler
         $sensorsToUpdateIDs = [];
         foreach ($sensors as $sensor) {
             /** @var Sensor[] $sensorsToUpdate */
-            $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice($sensor);
+            $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice(
+                $sensor->getDevice()->getDeviceID(),
+                $sensor->getSensorTypeObject()->getSensorTypeID(),
+            );
         }
         if (empty($sensorsToUpdate)) {
             throw new SensorNotFoundException('No sensors found to update');
