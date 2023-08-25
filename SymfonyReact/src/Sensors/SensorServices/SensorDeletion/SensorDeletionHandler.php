@@ -6,6 +6,7 @@ use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilde
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Sensors\SensorServices\SensorUpdateEventHandler;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
@@ -15,21 +16,15 @@ class SensorDeletionHandler implements SensorDeletionInterface
 {
     private SensorRepositoryInterface $sensorRepository;
 
-    private SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder;
-
-    private EventDispatcherInterface $eventDispatcher;
+    private SensorUpdateEventHandler $sensorUpdateEventHandler;
 
     private LoggerInterface $logger;
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
-        SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder,
-        EventDispatcherInterface $eventDispatcher,
         LoggerInterface $logger,
     )
     {
-        $this->sensorEventUpdateDTOBuilder = $sensorEventUpdateDTOBuilder;
-        $this->eventDispatcher = $eventDispatcher;
         $this->sensorRepository = $sensorRepository;
         $this->logger = $logger;
     }
@@ -40,7 +35,6 @@ class SensorDeletionHandler implements SensorDeletionInterface
             $deviceID = $sensor->getDevice()->getDeviceID();
             $sensorTypeID = $sensor->getSensorTypeObject()->getSensorTypeID();
 
-
             $this->sensorRepository->remove($sensor);
             $this->sensorRepository->flush();
 
@@ -49,16 +43,7 @@ class SensorDeletionHandler implements SensorDeletionInterface
                 $sensorTypeID,
             );
             if (!empty($sameSensorsOnDevice)) {
-                $sensorIDs = array_map(
-                    static function (Sensor $sensor) {
-                        return $sensor->getSensorID();
-                    },
-                    $sameSensorsOnDevice
-                );
-
-                $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorsToUpdateIDs);
-                $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
-                $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
+                $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sameSensorsOnDevice);
             }
             //@TODO dispath message to remove the json file
 
