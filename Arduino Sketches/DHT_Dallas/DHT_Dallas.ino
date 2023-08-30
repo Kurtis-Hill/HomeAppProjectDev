@@ -1,4 +1,4 @@
- #include <Wire.h>
+#include <Wire.h>
 #include <Adafruit_Sensor.h>
 
 #include <SPIFFSReadServer.h>
@@ -57,11 +57,13 @@ const char fingerprint[] PROGMEM = "60ee151bee994d6ca826a69abce1e724173721ca";
 
 String ipAddress;
 String publicIpAddress;
+int publicIpAddressRequestAttempts = 0;
 String token;
 String refreshToken;
 bool deviceRegistered = false;
 
 int wifiRetryTimer = 0;
+int wifiRetryCounter = 0;
 
 bool deviceLoggedIn;
 
@@ -71,20 +73,21 @@ bool deviceLoggedIn;
 
 ESP8266WiFiMulti WiFiMulti;
 ESP8266WebServer server;
-IPAddress local_ip(192,168,1,254);
-IPAddress gateway(192,168,1,1);
-IPAddress netmask(255,255,255,0);
+IPAddress local_ip(192, 168, 1, 254);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress netmask(255, 255, 255, 0);
 
-#define WIFI_OFF_LED_PIN 16
+#define WIFI_OFF_LED_PIN 5
+#define DEVICE_ON_LED_PIN 16
 
 //LEDS
-int ledPins[4] = {WIFI_OFF_LED_PIN, 5, 4, 0};
+int ledPins[4] = {WIFI_OFF_LED_PIN, DEVICE_ON_LED_PIN, 4, 0};
 
 // DHT
 #define DHTNAME "Dht"
 #define DHTS_ASSINGED_TO_DEVICE 4
 #define DHTPIN 2
-#define DHTTYPE DHT22 
+#define DHTTYPE DHT22
 //DHT dht(DHTPIN, DHTTYPE);
 DHT* dhtSensors[DHTS_ASSINGED_TO_DEVICE];
 
@@ -92,12 +95,13 @@ struct DhtSensor {
   char sensorName[DHTS_ASSINGED_TO_DEVICE][25];
   float tempReading[DHTS_ASSINGED_TO_DEVICE];
   float humidReading[DHTS_ASSINGED_TO_DEVICE];
-  int sensorCount = 0;
   int interval[DHTS_ASSINGED_TO_DEVICE];
   int sendNextReadingAt[DHTS_ASSINGED_TO_DEVICE];
   int pinNumber[DHTS_ASSINGED_TO_DEVICE];
+  int sensorCount = 0;
   bool activeSensor = false;
   bool valuesAreSet = false;
+  bool settingsJsonExists = false;
 };
 DhtSensor dhtSensor;
 
@@ -105,28 +109,37 @@ DhtSensor dhtSensor;
 //#define ACTIVE_START_PIN 2
 //#define LAST_ACTIVE_PIN 2
 #define DALLASNNAME "Dallas"
+#define MAX_DALLAS_SENSORS 3
+
 OneWire oneWire(0);
 DallasTemperature sensors(&oneWire);
 
 //Dallas Bus Temperature
 struct DallasTempData {
-  char sensorName[8][25];
-  float tempReading[8];
+  char sensorName[MAX_DALLAS_SENSORS][25];
+  float tempReading[MAX_DALLAS_SENSORS];
+  int sendNextReadingAt[MAX_DALLAS_SENSORS];
+  int interval[MAX_DALLAS_SENSORS];
   int sensorCount = 0;
-  int interval;
   int pinNumber;
   bool activeSensor = false;
   bool valuesAreSet = false;
+  bool settingsJsonExists = false;
 };
 DallasTempData dallasTempData;
 
 //Relay
+#define MAX_RELAYS 5
 struct RelayData {
-  char sensorName[4][25];
-  bool currentReadings[4];
-  int pinNumbers[4];
-  int relayCount;
-  bool valuesAreSet = false; 
+  char sensorName[MAX_RELAYS][25];
+  bool currentReading[MAX_RELAYS];
+  int pinNumber[MAX_RELAYS];
+  int sendNextReadingAt[MAX_RELAYS];
+  int interval[MAX_RELAYS];
+  int sensorCount = 0;
+  bool activeSensor = false;
+  bool valuesAreSet = false;
+  bool settingsJsonExists = false;
 };
 
 RelayData relayData;
@@ -826,7 +839,7 @@ bool setupNetworkConnection() {
   if (connectToNetwork()) {
     return true;
   }
- 
+
   createAccessPoint();
   return false;
 }
@@ -917,12 +930,16 @@ void handleWifiReconnectionAttempt() {
       //@dev can remove? ++wifiRetryAttemptNumber;
     }
   }
+  if (wifiRetryCounter == 5) {
+    createAccessPoint();
+  }
+  ++wifiRetryCounter;
 }
 
 
 // decode this json string (data) and place different parts in different spiffs, wifi and sensor data
 void handleSettingsUpdate(){
-  Serial.println("Handling settings update");
+  Serial.println("Handling settings update!!!!");
   String data = server.arg("plain");
 
   Serial.println("Getting derialized json data from post server args");
@@ -940,7 +957,7 @@ void handleSettingsUpdate(){
   bool wifiChanged = false;
   bool deviceCredenatialsChanged = false;
   bool sensorDataChanged = false;
- 
+
   if (!doc["wifi"].isNull()) {
     Serial.println("Wifi credentials found in json setting values");
     wifiChanged = true;
@@ -962,7 +979,6 @@ void handleSettingsUpdate(){
   if (!doc["deviceCredentials"].isNull()) {
     deviceCredenatialsChanged = true;
     if (!saveDeviceUserSettings(doc["deviceCredentials"])) {
-      Serial.println("failed to save device data spiffs");
       deviceCredentialsSuccess = false;
     }  
   }
@@ -979,35 +995,23 @@ void handleSettingsUpdate(){
   }
 
   if (wifiChanged == true) {
+    publicIpAddressRequestAttempts = 0;
     if (setupNetworkConnection()) {
       Serial.print("Getting external IP... ");
       getExternalIP();
       deviceLoggedIn = deviceLogin();
-      if (deviceLoggedIn == false && deviceRegistered == false) {
-        registerDevice();
-      }
     }
   }  
-//  delay(500);
-//  Serial.println("Restarting device");
-//  ESP.restart();
 }
 
 bool saveWifiCredentials(DynamicJsonDocument doc) {
-  const char* ssid = doc["ssid"];
-  const char* password = doc["password"];
-
-  if (
-    ssid == NULL 
-    || ssid == ""
-    //|| password == NULL 
-    || ssid[0] == '\0'
-    //|| password == ""
-    ) {
+  if (doc["ssid"].isNull()) {
     Serial.println("Security is not trying to be set, empty values");
     return false;
   }
-
+  
+  const char* ssid = doc["ssid"];
+  const char* password = doc["password"];
   if (SPIFFS.exists("/wifi.json")) {
     Serial.println("wifi json was found removing current json");
     SPIFFS.remove("/wifi.json");
@@ -1038,19 +1042,8 @@ bool saveDeviceUserSettings(DynamicJsonDocument doc) {
   String deviceName = doc["username"].as<String>();
   String secret = doc["password"].as<String>();
 
-//  Serial.println("deviceName"); // @DEV
-//  Serial.println(deviceName);
-//  Serial.println("secret");
-//  Serial.println(secret);
-
-  if (
-    deviceName == NULL 
-    || deviceName == ""
-    || secret == NULL
-    || secret == ""
-    ) {
+  if (doc["username"].isNull()) {
     Serial.println("No device user name sent in payload, not setting any values and using defaults");
-
     return true;
   }
   
@@ -1074,29 +1067,135 @@ bool saveDeviceUserSettings(DynamicJsonDocument doc) {
 bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
   if (!saveDallasSensorData(doc["dallas"])) {
     Serial.println("failed to set Dallas Spiff");
+  } else {
+    setDallasValues();
+    if (dallasTempData.valuesAreSet) {
+      bool sensorActive = findDallasSensor();
+      if (sensorActive == true) {
+        dallasTempData.activeSensor = true;
+        Serial.println("Starting Dallas sensor");
+        sensors.begin();  
+        delay(500);
+      }
+    }
   }
   if (!saveDhtSensorData(doc["dht"])) {
-    Serial.println("failed to set Dht Spiff");
+    Serial.println("No Dht Spiff");
   } else {
     setDhtValues();
   }
+
+  if (!saveRelaySensorData(doc["relay"])) {
+    Serial.println("No relay Spiff");
+  } else {
+    setRelayValues();
+  }
+  
   return true;
 }
 
+bool saveRelaySensorData(DynamicJsonDocument relayDoc) {
+  for (int i = 0; i <= MAX_RELAYS; ++i) {
+    if (relayDoc[i]["sensorName"].isNull()) {
+      if (i == 0) {
+        Serial.print("Sensor data for relay was not recieved correctly sensor name is not set");  
+        return false;
+      }
+      continue;
+    }
+    Serial.print("Relay sensor data recieved sensor name:");
+    Serial.print(relayDoc[i]["sensorName"].as<String>());
+  }
+  if (SPIFFS.exists("/relay.json")) {
+    Serial.print("Relay spiff existed removing before creating");
+    SPIFFS.remove("/relay.json");
+  }
 
-bool saveDhtSensorData(DynamicJsonDocument dhtData) {    
-    for (int i = 0; i <= DHTS_ASSINGED_TO_DEVICE; ++i) {
+  Serial.println("Opening relay SPIFF for writing");
+  File relaySPIFF = SPIFFS.open("/relay.json", "w");
+
+  if(serializeJson(relayDoc, relaySPIFF)) {
+    Serial.println("Relay serialization save success");
+  } else {
+    relaySPIFF.close();
+    Serial.println("Relay Serialization failure");
+    
+    return false;
+  }
+  
+  relaySPIFF.close();
+  Serial.println("Relay SPIFF close, sucess");
+
+  return true;
+}
+
+bool setRelayValues() {
+  Serial.println("Attempting to set relay values");
+  if (!SPIFFS.exists("/relay.json")) {
+    Serial.print("No relay json found");
+    SPIFFS.remove("/relay.json");
+  }
+
+  String relaySensorData = getSerializedSpiff("/relay.json");
+
+  DynamicJsonDocument relayDoc = getDeserializedJson(relaySensorData, 1024);
+
+  relayData.sensorCount = 0;
+  for(int i = 0; i < MAX_RELAYS; ++i) {
+    if (relayDoc[i]["sensorName"].isNull()) {
+      if (i == 0) {
+        Serial.println("Name check failed on first relay failed to set relay");    
+        return false;           
+      }
+      Serial.println("Name check failed skipping relay this sensor");          
+      continue;
+    }
+
+    String relaySensorName = relayDoc[i]["sensorName"];
+    int pinNumber = relayDoc[i]["pinNumber"].as<int>();
+
+    int readingInterval = relayDoc[i]["readingInterval"].as<int>();
+    if (readingInterval) {
+      relayData.interval[i] = readingInterval;  
+    } else {
+      relayData.interval[i] = 6000;
+    }
+
+    strncpy(relayData.sensorName[i], relayDoc[i]["sensorName"], sizeof(relayData.sensorName[i]));  
+    Serial.print("relay sensor name: ");
+    Serial.println(relayData.sensorName[i]);      
+
+    relayData.pinNumber[i] = pinNumber;
+    Serial.printf("relay pin is: %d\n", relayData.pinNumber[i]);
+    pinMode(pinNumber, OUTPUT);
+
+    relayData.interval[i] = readingInterval;
+    Serial.printf("relay interval is: %d\n", relayData.interval[i]);
+    
+    relayData.sensorCount++;
+    Serial.print("Marking relays as set and active: ");
+    relayData.valuesAreSet = true;
+    Serial.println(relayData.activeSensor);
+    Serial.println(relayData.valuesAreSet);
+  }
+
+  return true;
+}
+
+bool saveDhtSensorData(DynamicJsonDocument dhtData) {
+    for (int i = 0; i <= MAX_DALLAS_SENSORS; ++i) {
       if (dhtData[i]["sensorName"].isNull()) {          
         if (i == 0) {
-          Serial.print("Sensor data was not recieved correctly sensor name is not set");  
+          Serial.print("Sensor data for dht was not recieved sensor name is not set");  
           return false;
         }
         continue;
       }
-        Serial.print("Dht sensor data recieved sensor name:");
-        Serial.println(dhtData[i]["sensorName"].as<String>());
+      Serial.print("Dht sensor data recieved sensor name:");
+      Serial.println(dhtData[i]["sensorName"].as<String>());
     }
     if (SPIFFS.exists("/dht.json")) {
+      Serial.print("Dht spiff exists removing before building new entry");  
       SPIFFS.remove("/dht.json");
     }
     
@@ -1106,6 +1205,7 @@ bool saveDhtSensorData(DynamicJsonDocument dhtData) {
     if(serializeJson(dhtData, dhtSPIFF)) {
       Serial.println("Dht serialization save success");
     } else {
+      dhtSPIFF.close();
       Serial.println("Dht Serialization failure");
       return false;
     }
@@ -1117,40 +1217,37 @@ bool saveDhtSensorData(DynamicJsonDocument dhtData) {
 }
 
 bool saveDallasSensorData(DynamicJsonDocument dallasData) {
-  if (
-    dallasData[0] == NULL 
-    || dallasData[0] == "" 
-    || dallasData[0] == "\0" 
-    || dallasData[0] == "null"
-  ) {
-    Serial.println("Dallas data is null not setting values");
+  for (int i = 0; i <= MAX_DALLAS_SENSORS; ++i) {
+    if (dallasData[i].isNull()) {
+      if (i == 0) {
+        Serial.print("Sensor data for dallas was not recieved correctly sensor name is not set");  
+        return false;
+      }
+      continue;
+    }
+  }
+
+  if (SPIFFS.exists("dallas.json")) {
+    Serial.print("Dallas spiff exists removing before building new entry");  
+    SPIFFS.remove("dallas.json");
+  }
+
+
+  Serial.println("dallas sensor data being set");
+  File dallasSPIFF = SPIFFS.open("/dallas.json", "w");
+
+  if(serializeJson(dallasData, dallasSPIFF)) {
+    Serial.println("Dallas serialization save success");
+  } else {
+    dallasSPIFF.close();
+    Serial.println("Dallas Serialization failure");
     return false;
   }
-  int dallasCount = dallasData["busTempCount"].as<int>();
-  Serial.println("dallas sensor count");
-  Serial.println(dallasCount);
-  if (dallasCount >= 1) {
-    Serial.println("dallas sensor data being set");
-    File dallasSPIFF = SPIFFS.open("/dallas.json", "w");
-  
-    if(serializeJson(dallasData, dallasSPIFF)) {
-      Serial.println("Dallas serialization save success");
-    } else {
-      dallasSPIFF.close();
-      Serial.println("Dallas Serialization failure");
-      return false;
-    }
     
-    dallasSPIFF.close();
+  dallasSPIFF.close();
+  Serial.println("Dallas SPIFF close, sucess");
 
-    Serial.println("Dallas SPIFF close, sucess");
-
-    Serial.println(dallasTempData.sensorCount);// @DEV
-    return true;  
-  }
-  Serial.println("No dallas sensor data sent");
-  
-  return true;
+  return true;    
 }
 
 
@@ -1165,6 +1262,11 @@ String ipToString(IPAddress ip){
 }
 
 void getExternalIP() {
+  if (publicIpAddressRequestAttempts >= 5) {
+    Serial.printf("Public ip request attemps has exceeded maximum allowed of %d \n", publicIpAddressRequestAttempts);
+    return;
+  }
+  
   WiFiClient client;
   HTTPClient https;
   Serial.print("[HTTP] begin connecting to... ");
@@ -1173,7 +1275,7 @@ void getExternalIP() {
   if (https.begin(client, EXTERNAL_IP_URL)) {
     Serial.print("[HTTP] GET...\n");
     int httpCode = https.GET();
-
+    ++publicIpAddressRequestAttempts;
     if (httpCode > 0) {
       Serial.printf("[HTTP] GET... code: %d\n", httpCode);
       if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
@@ -1187,13 +1289,16 @@ void getExternalIP() {
         publicIpAddress = externalIP["ip"].as<String>();
       } else {
         Serial.println("Not expecting response code for getting external IP");
+        delay(1000);
       }
     } else {
         Serial.printf("[HTTP] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+        delay(1000);
     }
     https.end();
-  } else {
-      Serial.printf("[HTTP} Unable to connect\n");
+  } else {    
+    Serial.printf("[HTTP} Unable to connect\n");
+    delay(1000);
   }
 }
 
@@ -1240,7 +1345,7 @@ String sendHomeAppHttpsRequest(
 
   if (addAuthHeader == true) {
     Serial.println("adding auth header with token");
-    Serial.println("Authorization Bearer "+token);
+//    Serial.println("Authorization Bearer "+token);
     https.addHeader("Authorization", "Bearer "+token);
   }
 
@@ -1268,55 +1373,9 @@ String sendHomeAppHttpsRequest(
       Serial.printf("[HTTP] POST... failed, error: %s%d\n", https.errorToString(httpCode).c_str(), httpCode);
   }
   https.end();
+  
   return "";
 }
-
-
-bool deviceLogin() {
-  Serial.println("Logging device in");
-
-  bool refreshTokenSuccess = handleRefreshTokens();
-  if (refreshTokenSuccess == true) {
-    return true;
-  }
-  
-  if (!SPIFFS.exists("/device.json")) {    
-    Serial.println("Device json does not exist no longer attempting to login");
-    
-    return false;
-  }
-  
-  String deviceData = getSerializedSpiff("/device.json");
-
-  DynamicJsonDocument loginDoc = getDeserializedJson(deviceData, 512);
-
-  if (loginDoc["username"].isNull()) {
-    Serial.println("device json username is empty failing login");
-    return false;
-  }
-  
-  loginDoc["ipAddress"] = ipAddress;
-
-  if(publicIpAddress != NULL && publicIpAddress != "" && !publicIpAddress ) {
-    Serial.print("addinng external ip to request... ");
-    Serial.println(publicIpAddress);
-    loginDoc["externalIpAddress"] = publicIpAddress;
-  }
-
-  String jsonData;
-  serializeJson(loginDoc, jsonData);
-
-  String url = buildHomeAppUrl(HOMEAPP_LOGIN);
-  String payload = sendHomeAppHttpsRequest(url, jsonData, false);
-
-  if (payload == "" || payload == "null") {
-    Serial.println("payload empty device has failed to login");
-    return false;
-  }
-  
-  return saveTokensFromLogin(payload);
-}
-
 
 bool registerDevice() {
   Serial.println("Begining To Register Device");
@@ -1350,6 +1409,51 @@ bool registerDevice() {
   return true;
 }
 
+
+bool deviceLogin() {
+  Serial.println("Logging device in");
+
+  bool refreshTokenSuccess = handleRefreshTokens();
+  if (refreshTokenSuccess == true) {
+    return true;
+  }
+  
+  if (!SPIFFS.exists("/device.json")) {    
+    Serial.println("Device json does not exist no longer attempting to login");
+    
+    return false;
+  }
+  
+  String deviceData = getSerializedSpiff("/device.json");
+
+  DynamicJsonDocument loginDoc = getDeserializedJson(deviceData, 512);
+
+  if (loginDoc["username"].isNull()) {
+    Serial.println("device json username is empty failing login");
+    return false;
+  }
+  
+  loginDoc["ipAddress"] = ipAddress;
+
+  if(publicIpAddress != NULL && publicIpAddress != "" && !publicIpAddress) {
+    Serial.print("addinng external ip to request... ");
+    Serial.println(publicIpAddress);
+    loginDoc["externalIpAddress"] = publicIpAddress;
+  }
+
+  String jsonData;
+  serializeJson(loginDoc, jsonData);
+
+  String url = buildHomeAppUrl(HOMEAPP_LOGIN);
+  String payload = sendHomeAppHttpsRequest(url, jsonData, false);
+
+  if (payload == "" || payload == "null") {
+    Serial.println("payload empty device has failed to login");
+    return false;
+  }
+  
+  return saveTokensFromLogin(payload);
+}
 
  bool handleRefreshTokens() {
   if (refreshToken.length() > 1 || !refreshToken || refreshToken == NULL ) {    
@@ -1451,6 +1555,7 @@ bool setDhtValues() {
   Serial.println("Dht SPIFF found");
   DynamicJsonDocument dhtDoc = getDeserializedJson(dhtSensorSpiff, 1024);
 
+  dhtSensor.sensorCount = 0;
   for(int i = 0; i < DHTS_ASSINGED_TO_DEVICE; ++i) {
     String dhtSensorName = dhtDoc[i]["sensorName"];  
     int pinNumber = dhtDoc[i]["pinNumber"].as<int>();
@@ -1458,13 +1563,13 @@ bool setDhtValues() {
 
     if(
       dhtSensorName == "null"
+      || dhtDoc[i]["sensorName"].isNull()
     ) {        
       if (i == 0) {
         Serial.println("Name check failed on first dht failed to set dht");    
         return false;           
       }
-      Serial.println("Name check failed skipping dht this sensor");    
-      
+      Serial.println("Name check failed skipping dht this sensor");          
       continue;
     }
 
@@ -1488,10 +1593,13 @@ bool setDhtValues() {
     dhtSensors[i]->begin();
 
     dhtSensor.sensorCount++;
+    dhtSensor.activeSensor = true;
   }
     Serial.printf("Total amount of dht sensor found: %d\n", dhtSensor.sensorCount);
     
     Serial.println("marking DHT as active");
+    dhtSensor.valuesAreSet = true;
+    
     return true;
 }
 
@@ -1580,101 +1688,38 @@ bool setDallasValues() {
   Serial.println("Deserialzing dallas json");
   DynamicJsonDocument dallasDoc = getDeserializedJson(dallasSensorSpiff, 1256);
 
-  dallasTempData.sensorCount = dallasDoc["busTempCount"].as<int>();
+  Serial.printf("Max dallas sensors allowed %d\n", MAX_DALLAS_SENSORS);
+  for (int i = 0; i < MAX_DALLAS_SENSORS; ++i) {
+    if (dallasDoc[i]["sensorName"].isNull()) {     
+      if (i == 0) {
+        Serial.println("Name check failed on first Dallas failed to set");    
+        return false;
+      }
+      Serial.printf("Name check failed on %d Dallas sensor \n", i);
+      continue;
+    }
+    Serial.printf("Name check passed name is %s", dallasDoc[i]["sensorName"]);
+    strncpy(dallasTempData.sensorName[i], dallasDoc[i]["sensorName"], sizeof(dallasTempData.sensorName[i]));
 
-  if (dallasTempData.sensorCount <= 0) {
-    Serial.println("No Sensor count not setting any values");
-    return false;
+    int readingInterval = dallasDoc[i]["readingInterval"].as<int>();
+    if (readingInterval) {
+     dallasTempData.interval[i] = readingInterval;  
+    } else {
+     dallasTempData.interval[i] = 6000;
+    }
+    
+    Serial.printf("bus temp temperature send interval: %d\n", dallasTempData.interval[i]);
   }
 
-  int dallasSensorPinNumber = dallasDoc["busTempPinNumber"].as<int>();
-
+  int dallasSensorPinNumber = dallasDoc[0]["pinNumber"].as<int>();
   dallasTempData.pinNumber = dallasSensorPinNumber;
 
   Serial.printf("Dallas temp pin number is %d\n", dallasTempData.pinNumber);
 
-  int dallasSensorInterval = dallasDoc["busTempInterval"].as<int>();
-  if (dallasSensorInterval) {
-    dallasTempData.interval = dallasSensorInterval;  
-  } else {
-    dallasTempData.interval = 6000;
-  }
-
-  Serial.printf("bus temp temperature send interval: %d\n", dallasTempData.interval);
-
-  Serial.print("dallas sensor count ");
-  Serial.println(dallasTempData.sensorCount);
-  
-  
-  for (int i=0; i < dallasTempData.sensorCount; ++i) {
-    String nameCheck = dallasDoc["busTempNameArray"][i].as<String>();
-
-    if(nameCheck == NULL || nameCheck == "" || nameCheck == "\0" || nameCheck == "null") {
-      Serial.println("Name check failed skipping this sensor");
-      continue;
-    }
-
-    strncpy(dallasTempData.sensorName[i], dallasDoc["busTempNameArray"][i], sizeof(dallasTempData.sensorName[i]));
-    Serial.print("dallas sensor name ");
-    Serial.println(dallasTempData.sensorName[i]);
-  }
+  dallasTempData.valuesAreSet = true;  
   
   return true;
 }
-
-
-bool setRelayValues() {
-  Serial.println("Checking to see if relay values are set");
-  if (!SPIFFS.exists("/relay.json")) {
-    Serial.println("No relay json found not setting values");
-    return false;
-  }
-
-  String relaySpiffData = getSerializedSpiff("/relay.json");
-
-  if (!relaySpiffData) {
-    Serial.println("Relay spiff data is not correct exiting setup");
-    return false;
-  }
-
-  Serial.println("Getting deserialized data");
-  DynamicJsonDocument relayDoc = getDeserializedJson(relaySpiffData, 1024);
-
-  relayData.relayCount = relayDoc["relayCount"].as<int>(); 
-  if (relayData.relayCount == 0) {
-    Serial.println("Relay sensor count is 0 no longer setting values");
-    return false;
-  }
-
-  for (int i = 0; i < relayData.relayCount; i++) {
-    String nameCheck = relayDoc["relayNames"][i].as<String>();
-
-    if(nameCheck == NULL || nameCheck == "" || nameCheck == "\0" || nameCheck == "null") {
-      Serial.println("Name check failed skipping this sensor");
-      continue;
-    }
-
-    strncpy(relayData.sensorName[i], relayDoc["relayNames"][i], sizeof(relayData.sensorName[i]));
-    Serial.printf("Relay sensor name set to: %s\n", relayData.sensorName[i]);
-
-    int pinNumber = relayDoc["relayPinNumbers"][i].as<int>();
-    relayData.pinNumbers[i] = pinNumber;
-
-    
-  }
-
-  return true;
-}
-
-void setRelayPins() {
-  for (int i = 0; i < relayData.relayCount; i++) {
-    int pinNumber = relayData.pinNumbers[i];
-    pinMode(pinNumber, OUTPUT);
-  }
-}
-
-
-
 
 bool findDallasSensor() {
   bool sensorSuccess = false;
@@ -1716,6 +1761,7 @@ uint8_t searchPinForOneWire(int pin){
     } while (ow.search(address));
     Serial.println("};");
     Serial.print("Number devices found: ");
+    dallasTempData.sensorCount = count;
     Serial.println(count);
     oneWire = (pin);
 
@@ -1728,7 +1774,6 @@ uint8_t searchPinForOneWire(int pin){
 void takeDallasTempReadings() {
   Serial.print("Requesting Bus temperatures...");
   sensors.requestTemperatures(); // Send the command to get temperatures
-  Serial.println("DONE");
 
   for(int i = 0; i < dallasTempData.sensorCount; i++) {
     float tempReading = sensors.getTempCByIndex(i);
@@ -1744,16 +1789,26 @@ String buildDallasReadingSensorUpdateRequest() {
   Serial.println("Building Dallas request");
   DynamicJsonDocument sensorUpdateRequest(1024);
 
+  int currentTime = millis();
+  Serial.printf("current time: %d\n", currentTime);
+  int jsonArrayIndex = 0;
   for (int i = 0; i < dallasTempData.sensorCount; ++i) {
-    if (dallasTempData.tempReading[i] != -127 || !isnan(dallasTempData.tempReading[i])) {
-      Serial.print("sensor name:");
-      Serial.println(dallasTempData.sensorName[i]);
-      sensorUpdateRequest["sensorData"][i]["sensorType"] = DALLASNNAME;
-      sensorUpdateRequest["sensorData"][i]["sensorName"] = dallasTempData.sensorName[i];
-      sensorUpdateRequest["sensorData"][i]["currentReadings"]["temperature"] = String(dallasTempData.tempReading[i]);
-      Serial.print("temp reading:");
-      Serial.println(String(dallasTempData.tempReading[i]));
-    }
+    Serial.printf("Dallas sensor next reading at value is %d\n", dallasTempData.sendNextReadingAt[i]);  
+    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (dallasTempData.sendNextReadingAt[i] - currentTime));
+    if ((dallasTempData.sendNextReadingAt[i] - currentTime) < 0) {
+      if (dallasTempData.tempReading[i] != -127 || !isnan(dallasTempData.tempReading[i])) {
+        Serial.print("sensor name:");
+        Serial.println(dallasTempData.sensorName[i]);
+        sensorUpdateRequest["sensorData"][jsonArrayIndex]["sensorType"] = DALLASNNAME;
+        sensorUpdateRequest["sensorData"][jsonArrayIndex]["sensorName"] = dallasTempData.sensorName[i];
+        sensorUpdateRequest["sensorData"][jsonArrayIndex]["currentReadings"]["temperature"] = String(dallasTempData.tempReading[i]);
+        Serial.print("temp reading:");
+        Serial.println(String(dallasTempData.tempReading[i]));
+
+        dallasTempData.sendNextReadingAt[i] = currentTime + dallasTempData.interval[i];
+        ++jsonArrayIndex;
+      } 
+    }    
   }
   String jsonData;
   serializeJson(sensorUpdateRequest, jsonData);
@@ -1765,13 +1820,19 @@ String buildDallasReadingSensorUpdateRequest() {
 
 bool sendDallasUpdateRequest() {
   Serial.println("Begining to send Dallas request");
-  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
   String payload = buildDallasReadingSensorUpdateRequest();
+  if (payload == "null") {
+    Serial.println("Aborting Dallas request payload empty");
+    return false;
+  }
+  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
   String response = sendHomeAppHttpsRequest(url, payload, true);
   Serial.println("response");
   Serial.println(response);
+  
   return true;
 }
+
 
 //@DEV Dummie reading provider
 //void takeDallasTempReadings() {
@@ -1797,7 +1858,7 @@ void resetDevice() {
   SPIFFS.remove("/dht.json");
   SPIFFS.remove("/relay.json");
   server.send(200, "application/json", "{\"status\":\"device reset\"}");
-  restartDevice();
+  ESP.restart;
 }
 
 void restartDevice() {
@@ -1846,20 +1907,43 @@ String getSerializedSpiff(String spiff) {
 
   return deviceJson;
 }
+
+void checkSensorSPIFFSExist() {
+  if (SPIFFS.exists("/dallas.json")) {
+    dallasTempData.settingsJsonExists = true;
+  }
+  if (SPIFFS.exists("/dht.json")) {
+    dhtSensor.settingsJsonExists = true;
+  }
+  if (SPIFFS.exists("/relay.json")) {
+    relayData.settingsJsonExists = true;
+  }
+}
+
 //<---------- END OF SPIFF MEthods ------------------>
 
 void handleSwitchSensor() {
-  Serial.println("Handling settings update");
+  Serial.println("Handling SWITCH");
   String sensorSwitchRequest = server.arg("plain");
 
   Serial.println("Deserialzing Request");
   DynamicJsonDocument sensorSwitchJson = getDeserializedJson(sensorSwitchRequest, 512);
 
-  if (sensorSwitchJson != NULL) {
+  if (!sensorSwitchJson["sensorName"].isNull() && !sensorSwitchJson["pinNumber"].isNull()) {
     String sensorName = sensorSwitchJson["sensorName"].as<String>();
     int pinNumber = sensorSwitchJson["pinNumber"].as<int>();
     bool requestedReading = sensorSwitchJson["requestedReading"].as<boolean>();
 
+    bool passed = false;
+    for(int i = 0; i < MAX_RELAYS; ++i) {
+      if (relayData.pinNumber[i] == pinNumber) {
+        passed = true;
+      }
+    }
+    if (passed == false) {
+      server.send(401, "application/json", "{\"status\":\"pin is not configured to set set\"}");   
+    }
+    
     Serial.print("Sensor Name: ");
     Serial.println(sensorName);
     Serial.print("pinNumber: ");
@@ -1872,14 +1956,12 @@ void handleSwitchSensor() {
     } else {
       Serial.println("Going High");
       digitalWrite(pinNumber, HIGH);  
-    }
-    
+    }    
     server.send(200, "application/json", "{\"status\":\"completed\"}"); 
   } else {
     server.send(500, "application/json", "{\"status\":\"failed to switch sensor request error\"}"); 
   }
 }
-
 
 void setup() {
   Serial.begin(DEVICE_SERIAL);
@@ -1909,34 +1991,18 @@ void setup() {
   for (int i = 0; i <= 4; i++) {
     pinMode(ledPins[i], OUTPUT); 
   }
+  
   digitalWrite(WIFI_OFF_LED_PIN, HIGH);
-
+  digitalWrite(DEVICE_ON_LED_PIN, HIGH);
   
   if (setupNetworkConnection()) {
     Serial.print("Getting external IP... ");
     getExternalIP();
     deviceLoggedIn = deviceLogin();  
   }
-  dhtSensor.valuesAreSet = setDhtValues();
-  dallasTempData.valuesAreSet = setDallasValues();
-  relayData.valuesAreSet = setRelayValues();
-
-  if (dhtSensor.valuesAreSet == true) {
-    Serial.println("Starting Dht");
-    dhtSensor.activeSensor = true;
-    delay(500);
-  }
   
+  checkSensorSPIFFSExist();
   
-  if (dallasTempData.valuesAreSet) {
-    bool sensorActive = findDallasSensor();
-    if (sensorActive == true) {
-      dallasTempData.activeSensor = true;
-      Serial.println("Starting Dallas sensor");
-      sensors.begin();  
-      delay(500);
-    }
-  }
   Serial.println("End of Setup");
 }
 
@@ -1969,13 +2035,42 @@ void loop() {
         registerDevice();
       }
     }
+    if (publicIpAddress == NULL || publicIpAddress == "" || !publicIpAddress) {
+      getExternalIP();
+    }
   } else {
     if (SPIFFS.exists("/wifi.json")) {
       handleWifiReconnectionAttempt();
-    }
-//    // delay or webpage server wont show correctly
-    
+    }    
   }
-  delay(1000); //@DEV
+
+
+  if (dallasTempData.settingsJsonExists == true && dallasTempData.valuesAreSet == false) {
+    setDallasValues();
+    if (dallasTempData.valuesAreSet == true) {
+      bool sensorActive = findDallasSensor();
+      if (sensorActive == true) {
+        dallasTempData.activeSensor = true;
+        Serial.println("Starting Dallas sensor");
+        sensors.begin();  
+        delay(500);
+      }
+    } 
+  }
+
+  if (dhtSensor.settingsJsonExists == true && dhtSensor.valuesAreSet == false) {
+    setDhtValues();
+    if (dhtSensor.valuesAreSet == true) {
+      Serial.println("Starting Dht");
+      dhtSensor.activeSensor = true;
+      delay(500);
+    }     
+  }
+
+  if (relayData.settingsJsonExists == true && relayData.valuesAreSet == false) {
+    setRelayValues();
+    Serial.println("Starting Relay");
+    relayData.activeSensor = true;
+  }
   Serial.println("Loop finished");
 }
