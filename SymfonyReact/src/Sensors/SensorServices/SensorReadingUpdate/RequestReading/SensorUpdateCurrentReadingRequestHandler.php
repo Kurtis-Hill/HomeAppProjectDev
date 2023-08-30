@@ -40,7 +40,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
      */
     public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
     {
-        $sensor = $this->sensorRepository->find($currentReadingUpdateMessageDTO->getSensorID());
+        $sensor = $this->sensorRepository->findSensorsByIDNoCache([$currentReadingUpdateMessageDTO->getSensorID()])[0];
         if ($sensor === null) {
             throw new SensorNotFoundException();
         }

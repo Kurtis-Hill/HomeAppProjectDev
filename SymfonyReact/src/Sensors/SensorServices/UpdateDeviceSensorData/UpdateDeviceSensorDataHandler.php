@@ -43,7 +43,7 @@ readonly class UpdateDeviceSensorDataHandler
     public function handleSensorsUpdateRequest(array $sensorIDs): bool
     {
         // need to order by so that bus sensors get added to the json in the correct order
-        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs], ['createdAt' => 'ASC']);
+        $sensors = $this->sensorRepository->findSensorsByIDNoCache($sensorIDs, 'ASC');
         if (empty($sensors)) {
             throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
         }

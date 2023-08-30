@@ -19,6 +19,7 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Cache;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -302,6 +303,26 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 [
                     'deviceID' => $deviceID,
                     'sensorTypeID' => $sensorType,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsByIDNoCache(array $sensorIDs, string $orderBy = 'ASC'): array
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+        $expr = $qb->expr();
+        $qb->setCacheMode(Cache::MODE_REFRESH);
+        $qb->select()
+            ->where(
+                $expr->in(Sensor::ALIAS . '.sensorID', ':sensorIDs')
+            )
+            ->orderBy(Sensor::ALIAS . '.createdAt', $orderBy)
+            ->setParameters(
+                [
+                    'sensorIDs' => $sensorIDs,
                 ]
             );
 

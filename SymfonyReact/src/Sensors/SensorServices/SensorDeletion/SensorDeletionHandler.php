@@ -2,15 +2,12 @@
 
 namespace App\Sensors\SensorServices\SensorDeletion;
 
-use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorUpdateEventHandler;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SensorDeletionHandler implements SensorDeletionInterface
 {
@@ -22,10 +19,12 @@ class SensorDeletionHandler implements SensorDeletionInterface
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
+        SensorUpdateEventHandler $sensorUpdateEventHandler,
         LoggerInterface $logger,
     )
     {
         $this->sensorRepository = $sensorRepository;
+        $this->sensorUpdateEventHandler = $sensorUpdateEventHandler;
         $this->logger = $logger;
     }
 
