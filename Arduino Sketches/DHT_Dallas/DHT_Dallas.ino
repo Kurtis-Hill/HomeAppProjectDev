@@ -2044,10 +2044,7 @@ void setup() {
 
 
 void loop() {
-//  Serial.println("Loop Begin");
-//  Serial.println("Handling Server Client...");
   server.handleClient();
-//  Serial.println("Server ClientHandled...");
 
   if (dallasTempData.activeSensor == true) {
     takeDallasTempReadings();
