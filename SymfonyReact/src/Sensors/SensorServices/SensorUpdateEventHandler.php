@@ -7,6 +7,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class SensorUpdateEventHandler
@@ -15,6 +16,7 @@ readonly class SensorUpdateEventHandler
         private SensorRepositoryInterface $sensorRepository,
         private SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder,
         private EventDispatcherInterface $eventDispatcher,
+        private LoggerInterface $elasticLogger,
     ) {}
 
     /**
@@ -39,8 +41,10 @@ readonly class SensorUpdateEventHandler
             $sensorsToUpdateIDs[] = $sensorToUpdate->getSensorID();
         }
         $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorsToUpdateIDs);
-        $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
+
+            $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
         $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
 
+        $this->elasticLogger->info(sprintf('Sensor update event dispatched for sensors: %s', implode(', ', $sensorsToUpdateIDs)));
     }
 }

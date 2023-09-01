@@ -17,6 +17,7 @@ use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,8 +60,12 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
           $httpClient,
+            $mockLogger,
         );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
@@ -103,8 +108,12 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::never())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
@@ -148,8 +157,12 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::never())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
@@ -191,8 +204,12 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => 200]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::never())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(
@@ -235,8 +252,12 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $sut = new SensorUpdateCurrentReadingRequestHandler(

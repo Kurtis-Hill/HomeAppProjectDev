@@ -46,8 +46,12 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceMockLogger = $this->createMock(LoggerInterface::class);
+        $deviceMockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $deviceMockLogger,
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);
@@ -87,10 +91,13 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceMockLogger = $this->createMock(LoggerInterface::class);
+//        $deviceMockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $deviceMockLogger,
         );
-
 
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::once())->method('error');
@@ -129,11 +136,13 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceMockLogger = $this->createMock(LoggerInterface::class);
+        $deviceMockLogger->expects(self::never())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $deviceMockLogger,
         );
-
-        $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::never())->method('info');
@@ -157,7 +166,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
 
         while (true) {
-            $sensorID = random_int(0, 99999);
+            $sensorID = random_int(1, 99999);
             $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorID]);
             if ($sensorToUpdate === null) {
                 break;

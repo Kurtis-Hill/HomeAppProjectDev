@@ -10,6 +10,7 @@ use App\Sensors\Exceptions\SensorPinNumberNotSetException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface;
 use Exception;
+use HttpException;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -48,14 +49,19 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
             } else {
                 $this->elasticLogger->error(sprintf('Sensor update request failed for sensor: %d', $sensorData->getSensorId()));
             }
-
             return $result;
         } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface | SensorPinNumberNotSetException $exception) {
-            $this->elasticLogger->error('Sensor update request failed, exception message: ' . $exception->getMessage());
+            $this->elasticLogger->error('Sensor update request failed: ' . $exception->getMessage());
+//            dd('lol', 1);
+
+            return true;
+        } catch (HttpException $exception) {
+            $this->elasticLogger->error('Sensor update request failed with http exception, exception message: ' . $exception->getMessage());
 
             return true;
         } catch (Exception $exception) {
             $this->elasticLogger->error('Sensor update request failed with unexpected error, exception message: ' . $exception->getMessage());
+
             return true;
         }
     }

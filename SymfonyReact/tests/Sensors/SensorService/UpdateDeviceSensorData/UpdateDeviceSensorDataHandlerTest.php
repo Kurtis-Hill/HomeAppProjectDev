@@ -120,8 +120,11 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);
@@ -152,8 +155,11 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);

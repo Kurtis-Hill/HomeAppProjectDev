@@ -43,6 +43,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function persist(Sensor $sensorReadingData): void
     {
+
         $this->getEntityManager()->persist($sensorReadingData);
     }
 
@@ -53,7 +54,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function flush(): void
     {
+        //refresh the cache
+//        $this->getEntityManager()->getConfiguration()->getResultCache()?->clear();
         $this->getEntityManager()->flush();
+//        $this->getEntityManager()->refresh();
     }
 
     public function remove(Sensor $sensors): void
@@ -314,7 +318,8 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     {
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
         $expr = $qb->expr();
-        $qb->setCacheMode(Cache::MODE_REFRESH);
+
+        $qb->setCacheable(false);
         $qb->select()
             ->where(
                 $expr->in(Sensor::ALIAS . '.sensorID', ':sensorIDs')
@@ -326,6 +331,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 ]
             );
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->execute();
     }
 }

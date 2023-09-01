@@ -5,13 +5,13 @@ namespace App\Devices\DTO\Request\DeviceRequest;
 readonly class DeviceRequestEncapsulationDTO
 {
     public function __construct(
-        private string $fullSensorUrl,
+        private string $fullDeviceUrl,
         private DeviceRequestDTOInterface $deviceRequestDTO,
     ) {}
 
-    public function getFullSensorUrl(): string
+    public function getFullDeviceUrl(): string
     {
-        return $this->fullSensorUrl;
+        return $this->fullDeviceUrl;
     }
 
     public function getDeviceRequestDTO(): DeviceRequestDTOInterface

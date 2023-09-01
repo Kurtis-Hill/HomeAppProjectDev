@@ -40,11 +40,11 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
      */
     public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
     {
-        $sensor = $this->sensorRepository->findSensorsByIDNoCache([$currentReadingUpdateMessageDTO->getSensorID()])[0];
-        if ($sensor === null) {
+        $sensors = $this->sensorRepository->findSensorsByIDNoCache([$currentReadingUpdateMessageDTO->getSensorID()]);
+        if (empty($sensors)) {
             throw new SensorNotFoundException();
         }
-
+        $sensor = $sensors[0];
         $readingTypeCurrentReadingDTO = $currentReadingUpdateMessageDTO->getReadingTypeCurrentReadingDTO();
 
         $requestArgumentBuilder = $this->deviceSensorRequestArgumentBuilderFactory->fetchDeviceRequestArgumentBuilder(DeviceSensorRequestArgumentBuilderFactory::UPDATE_SENSOR_CURRENT_READING);
@@ -67,6 +67,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
             $deviceEncapsulationRequestDTO
         );
+//dd($sensor);
 
         if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
             if ($sensorType instanceof GenericRelay) {

@@ -80,8 +80,13 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::never())->method('error');
+        $mockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
         $sensorUpdateCurrentReadingRequestHandler = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
@@ -131,8 +136,12 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::atLeastOnce())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
         $sensorUpdateCurrentReadingRequestHandler = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
@@ -173,7 +182,6 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
             $sensorID,
             $boolCurrentReadingUpdateDTO,
         );
-
         $amqpMess = new AMQPMessage(serialize($requestSensorCurrentReadingUpdateMessageDTO));
 
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
@@ -182,8 +190,11 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
         $sensorUpdateCurrentReadingRequestHandler = new SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,

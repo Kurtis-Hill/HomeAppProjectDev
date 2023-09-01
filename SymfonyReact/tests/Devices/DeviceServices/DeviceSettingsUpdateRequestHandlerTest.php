@@ -10,6 +10,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -77,8 +78,12 @@ class DeviceSettingsUpdateRequestHandlerTest extends KernelTestCase
         $mockResponse = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $mockHttpClient = new MockHttpClient($mockResponse);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $mockHttpClient,
+            $mockLogger,
         );
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
@@ -106,8 +111,12 @@ class DeviceSettingsUpdateRequestHandlerTest extends KernelTestCase
         $mockResponse = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $mockHttpClient = new MockHttpClient($mockResponse);
 
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $mockHttpClient,
+            $mockLogger,
         );
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);

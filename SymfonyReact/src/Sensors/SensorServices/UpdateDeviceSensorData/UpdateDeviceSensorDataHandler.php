@@ -44,6 +44,7 @@ readonly class UpdateDeviceSensorDataHandler
     {
         // need to order by so that bus sensors get added to the json in the correct order
         $sensors = $this->sensorRepository->findSensorsByIDNoCache($sensorIDs, 'ASC');
+//        dd($sensors);
         if (empty($sensors)) {
             throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
         }
@@ -58,7 +59,12 @@ readonly class UpdateDeviceSensorDataHandler
             }
             $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
             if ($sensorType === null) {
-                $this->logger->error(sprintf('Error processing sensor data to upload sensor type not found, sensor id: %s, sensor type id: %s', $sensor->getSensorID(), $sensor->getSensorTypeObject()->getSensorTypeID()));
+                $this->logger->error(
+                    sprintf(
+                        'Error processing sensor data to upload sensor type not found, sensor id: %s, sensor type id: %s',
+                        $sensor->getSensorID(),
+                        $sensor->getSensorTypeObject()->getSensorTypeID())
+                );
 
                 return false;
             }
@@ -74,12 +80,12 @@ readonly class UpdateDeviceSensorDataHandler
         }
 
         $sensorTypeDataRequestEncapsulationDTO = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
-            $sensorData[GenericRelay::NAME] ?? [],
-            $sensorData[Dht::NAME] ?? [],
-            $sensorData[Dallas::NAME] ?? [],
-            $sensorData[Soil::NAME] ?? [],
-            $sensorData[GenericMotion::NAME] ?? [],
-            $sensorData[Bmp::NAME] ?? [],
+            relay: $sensorData[GenericRelay::NAME] ?? [],
+            dht: $sensorData[Dht::NAME] ?? [],
+            dallas: $sensorData[Dallas::NAME] ?? [],
+            soil: $sensorData[Soil::NAME] ?? [],
+            motion: $sensorData[GenericMotion::NAME] ?? [],
+            bmp: $sensorData[Bmp::NAME] ?? [],
         );
 
         $deviceSettingsRequestDTO = $this->deviceSettingsRequestDTOBuilder->buildDeviceSettingsRequestDTO(

@@ -62,7 +62,7 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
 
         $deviceCredentials = $normalizedObject['deviceCredentials'];
 
-        self::assertEquals($userName, $deviceCredentials['userName']);
+        self::assertEquals($userName, $deviceCredentials['username']);
         self::assertEquals($password, $deviceCredentials['password']);
     }
 
@@ -109,7 +109,7 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
 
         $deviceCredentials = $normalizedObject['deviceCredentials'];
 
-        self::assertEquals($userName, $deviceCredentials['userName']);
+        self::assertEquals($userName, $deviceCredentials['username']);
         self::assertArrayNotHasKey('password', $deviceCredentials);
     }
 
@@ -212,7 +212,7 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
 
         $deviceCredentials = $normalizedObject['deviceCredentials'];
 
-        self::assertEquals($userName, $deviceCredentials['userName']);
+        self::assertEquals($userName, $deviceCredentials['username']);
         self::assertEquals($password, $deviceCredentials['password']);
 
         $wifi = $normalizedObject['wifi'];
