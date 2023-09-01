@@ -77,8 +77,15 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                     $sensorData,
                     $device
                 );
-            } catch (ORMException|OptimisticLockException) {
+            } catch (ORMException | OptimisticLockException) {
                 return false;
+            } catch (Exception $exception) {
+                error_log(
+                    'expection message: ' . $exception->getMessage(),
+                    0,
+                    ErrorLogs::SERVER_ERROR_LOG_LOCATION
+                );
+                return true;
             }
         }
 

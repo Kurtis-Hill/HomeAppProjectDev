@@ -2,6 +2,7 @@
 
 namespace App\Devices\Entity;
 
+use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
 use App\User\Entity\GroupNames;
 use App\User\Entity\Room;
 use App\User\Entity\User;
@@ -35,7 +36,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
      */
     #[
-        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
+        NoSpecialCharactersConstraint,
         Assert\NotBlank(
             message: 'Device name should not be blank'
         ),
@@ -236,7 +237,6 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->deviceName;
     }
-
 
     public function eraseCredentials()
     {
