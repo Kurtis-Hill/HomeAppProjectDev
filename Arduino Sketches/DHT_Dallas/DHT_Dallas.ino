@@ -64,7 +64,7 @@ bool deviceRegistered = false;
 int wifiRetryTimer = 0;
 int wifiRetryCounter = 0;
 
-bool deviceLoggedIn;
+bool deviceLoggedIn = false;
 
 // Access ponint network bits
 #define ACCESSPOINT_SSID "HomeApp-D-A-D-AP"
@@ -826,8 +826,8 @@ bool setupNetworkConnection() {
   if (connectToNetwork()) {
     return true;
   }
-
   createAccessPoint();
+  
   return false;
 }
 
@@ -859,12 +859,11 @@ bool connectToNetwork() {
 
   String ssid = wifiDoc["ssid"].as<String>();
   String pass = wifiDoc["password"].as<String>();
-  if (
-    wifiDoc["ssid"].isNull()
-  ) {
+  if (wifiDoc["ssid"].isNull()) {
     Serial.println("No network SSID set, not attempting to connect");
     return false;
   }
+  
   Serial.println(ssid); //@DEV
   Serial.println(pass);
   WiFi.mode(WIFI_STA);
@@ -903,24 +902,18 @@ bool connectToNetwork() {
 }
 
 void handleWifiReconnectionAttempt() {
-  if (wifiRetryTimer == 0) {
-    Serial.println("Wifi retry timer is 0 setting new timer");
-    wifiRetryTimer = millis() + 35000;  
+  if (!SPIFFS.exists("/wifi.json")) {
+    return;
   }
   int currentTime = millis();
-  if (wifiRetryTimer - currentTime < 0) {
+  if (wifiRetryTimer - currentTime <= 0) {
     Serial.println("handling wifi re connection");
-    bool connectionSuccess = connectToNetwork();
+    bool connectionSuccess = setupNetworkConnection();
 
     if (connectionSuccess == false) {
-      wifiRetryTimer = 0;
-      //@dev can remove? ++wifiRetryAttemptNumber;
-    }
+      wifiRetryTimer = millis() + 60000;
+    }    
   }
-  if (wifiRetryCounter == 5) {
-    createAccessPoint();
-  }
-  ++wifiRetryCounter;
 }
 
 
@@ -981,14 +974,18 @@ void handleSettingsUpdate(){
     server.send(500, "application/json", "{\"status\":\"some updates failed\"}");
   }
 
-  if (wifiChanged == true) {
+  if (wifiChanged == true && wifiSuccess == true) {
     publicIpAddressRequestAttempts = 0;
-    if (setupNetworkConnection()) {
-      Serial.print("Getting external IP... ");
-      getExternalIP();
-      deviceLoggedIn = deviceLogin();
-    }
+//    if (setupNetworkConnection()) {
+//      Serial.print("Getting external IP... ");
+//      getExternalIP();
+//      deviceLoggedIn = deviceLogin();
+//    }
   }  
+
+  if (sensorDataChanged == true) {
+    checkSensorSPIFFSExist();
+  }
 }
 
 bool saveWifiCredentials(DynamicJsonDocument doc) {
@@ -1054,28 +1051,14 @@ bool saveDeviceUserSettings(DynamicJsonDocument doc) {
 bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
   if (!saveDallasSensorData(doc["dallas"])) {
     Serial.println("failed to set Dallas Spiff");
-  } else {
-    setDallasValues();
-    if (dallasTempData.valuesAreSet) {
-      bool sensorActive = findDallasSensor();
-      if (sensorActive == true) {
-        dallasTempData.activeSensor = true;
-        Serial.println("Starting Dallas sensor");
-        sensors.begin();  
-        delay(500);
-      }
-    }
   }
+  
   if (!saveDhtSensorData(doc["dht"])) {
     Serial.println("No Dht Spiff");
-  } else {
-    setDhtValues();
   }
-
+  
   if (!saveRelaySensorData(doc["relay"])) {
     Serial.println("No relay Spiff");
-  } else {
-    setRelayValues();
   }
   
   return true;
@@ -2074,7 +2057,6 @@ void loop() {
   }
 
   if(WiFi.status() == WL_CONNECTED) {
-    Serial.println("Connected to wifi");
     if (deviceLoggedIn == true) {
       sendAllActiveSensorData();
     } else {
@@ -2087,10 +2069,8 @@ void loop() {
     if (publicIpAddress == NULL || publicIpAddress == "" || !publicIpAddress) {
       getExternalIP();
     }
-  } else {
-    if (SPIFFS.exists("/wifi.json")) {
-      handleWifiReconnectionAttempt();
-    }    
+  } else {    
+    handleWifiReconnectionAttempt();  
   }
 
 
