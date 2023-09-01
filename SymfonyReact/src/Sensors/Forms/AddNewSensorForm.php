@@ -3,9 +3,8 @@
 namespace App\Sensors\Forms;
 
 use App\Common\API\APIErrorMessages;
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
-use App\Form\FormMessages;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -24,7 +23,7 @@ class AddNewSensorForm extends AbstractType
             ->add('sensorName', TextType::class, [
                 'required' => true,
                 'constraints' => [
-                    new NoSpecialCharactersConstraint(),
+                    new NoSpecialCharactersNameConstraint(),
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'Sensor name')]),
                     new Length(['min' => 1, 'max' => 20,
                         'minMessage' => 'Sensor name too short',

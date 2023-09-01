@@ -2,147 +2,115 @@
 
 namespace App\Devices\Entity;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
-use App\User\Entity\GroupNames;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\Devices\Repository\ORM\DeviceRepository;
+use App\User\Entity\Group;
 use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Table(name="devicenames", indexes={@ORM\Index(name="createdBy", columns={"createdBy"}), @ORM\Index(name="groupNameID", columns={"groupNameID"}), @ORM\Index(name="roomID", columns={"roomID"})})
- * @ORM\Entity(repositoryClass="App\Devices\Repository\ORM\DeviceRepository")
- */
+#[
+    ORM\Entity(repositoryClass: DeviceRepository::class),
+    ORM\Table(name: "devices"),
+    ORM\Index(columns: ["createdBy"], name: "createdBy"),
+    ORM\Index(columns: ["groupID"], name: "groupID"),
+    ORM\Index(columns: ["roomID"], name: "roomID"),
+    ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
+]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    private const DEVICE_MIN_LENGTH = 2;
+    private const DEVICE_NAME_MIN_LENGTH = 2;
 
-    private const DEVICE_MAX_LENGTH = 20;
+    private const DEVICE_NAME_MAX_LENGTH = 50;
 
     public const ROLE = 'ROLE_DEVICE';
 
     public const ALIAS = 'device';
 
-    /**
-     * @ORM\Column(name="deviceNameID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private int $deviceNameID;
-
-    /**
-     * @ORM\Column(name="deviceName", type="string", length=20, nullable=false)
-     */
     #[
-        NoSpecialCharactersConstraint,
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+        ORM\Column(name: 'deviceID', type: "integer", nullable: false)
+    ]
+    private int $deviceID;
+
+    #[ORM\Column(name: "deviceName", type: "string", length: 20, nullable: false)]
+    #[
+        NoSpecialCharactersNameConstraint,
         Assert\NotBlank(
             message: 'Device name should not be blank'
         ),
         Assert\Length(
-            min: self::DEVICE_MIN_LENGTH,
-            max: self::DEVICE_MAX_LENGTH,
+            min: self::DEVICE_NAME_MIN_LENGTH,
+            max: self::DEVICE_NAME_MAX_LENGTH,
             minMessage: "Device name must be at least {{ limit }} characters long",
             maxMessage: "Device name cannot be longer than {{ limit }} characters"
         )
     ]
     private ?string $deviceName;
 
-    /**
-     * @ORM\Column(name="password", type="text", length=100, nullable=false)
-     */
+    #[ORM\Column(name: "password", type: "text", length: 100, nullable: false)]
     #[
         Assert\NotBlank(message: 'Password should not be blank', groups: ['final-check']),
         Assert\Length(
             min: 5,
             max: 100,
-            minMessage: "Device name must be at least {{ limit }} characters long",
-            maxMessage: "Device name cannot be longer than {{ limit }} characters"
+            minMessage: "Device password must be at least {{ limit }} characters long",
+            maxMessage: "Device password cannot be longer than {{ limit }} characters"
         )
     ]
     private string $password;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
-     * })
-     */
-    #[Assert\NotBlank(message: 'User object should not be blank')]
+    #[
+        ORM\ManyToOne(targetEntity: User::class),
+        ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
+    ]
+    #[Assert\NotBlank(message: 'UserExceptions object should not be blank')]
     private User $createdBy;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\GroupNames")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="groupNameID", referencedColumnName="groupNameID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Group::class),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
+    ]
     #[Assert\NotBlank(message: 'Group name should not be blank')]
-    private GroupNames $groupNameID;
+    private Group $groupID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\Room")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="roomID", referencedColumnName="roomID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Room::class),
+        ORM\JoinColumn(name: "roomID", referencedColumnName: "roomID"),
+    ]
     #[Assert\NotBlank(message: 'Room should not be blank')]
     private Room $roomID;
 
-    /**
-     * @ORM\Column(name="roles", type="json", nullable=false)
-     */
+    #[ORM\Column(name: "roles", type: "json", nullable: false)]
     private array $roles;
 
-    /**
-     * @ORM\Column(name="ipAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
-     */
+    #[ORM\Column(name: "ipAddress", type: "string", length: 13, nullable: true, options: ["default" => "NULL"])]
     private ?string $ipAddress = null;
 
-    /**
-     * @ORM\Column(name="externalIpAddress", type="string", length=13, nullable=true, options={"default"="NULL"})
-     */
+    #[ORM\Column(name: "externalIpAddress", type: "string", length: 13, nullable: true, options: ["default" => "NULL"])]
     private ?string $externalIpAddress = null;
 
-    private string $secret;
+    private ?string $secret = null;
 
-    private array $userGroupMappingEntities = [];
-
-
-    public function getUserGroupMappingEntities(): array
+    public function getDeviceID(): int
     {
-        return $this->userGroupMappingEntities;
-    }
-
-    public function setUserGroupMappingEntities(array $userGroupMappingEntities): void
-    {
-        $this->userGroupMappingEntities = $userGroupMappingEntities;
-    }
-
-    public function getGroupNameIds(): array
-    {
-        $groupNames = [];
-        foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroupNameID()->getGroupNameID();
-        }
-
-        return $groupNames;
-    }
-
-    public function getDeviceNameID(): int
-    {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
     public function getUserID(): int
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
-    public function setDeviceNameID(int $deviceNameID): void
+    public function setDeviceID(int $deviceID): void
     {
-        $this->deviceNameID = $deviceNameID;
+        $this->deviceID = $deviceID;
     }
 
     public function getDeviceName(): ?string
@@ -155,7 +123,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->deviceName = $deviceName;
     }
 
-    public function getDeviceSecret(): string
+    public function getDeviceSecret(): ?string
     {
         return $this->secret;
     }
@@ -179,11 +147,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getCreatedById(): ?int
     {
-        if ($this->createdBy instanceof User) {
-            return $this->createdBy->getUserID();
-        }
-
-        return null;
+        return $this->createdBy->getUserID();
     }
 
     public function getCreatedBy(): User
@@ -196,14 +160,14 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdBy = $createdBy;
     }
 
-    public function getGroupNameObject(): GroupNames
+    public function getGroupObject(): Group
     {
-        return $this->groupNameID;
+        return $this->groupID;
     }
 
-    public function setGroupNameObject(GroupNames $groupNameID): void
+    public function setGroupObject(Group $groupID): void
     {
-        $this->groupNameID = $groupNameID;
+        $this->groupID = $groupID;
     }
 
     public function getRoomObject(): Room
@@ -216,6 +180,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roomID = $room;
     }
 
+    #[ArrayShape(["0" => "ROLE_DEVICE"])]
     public function getRoles(): array
     {
         return array_unique($this->roles);
@@ -238,7 +203,7 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->deviceName;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 
@@ -257,9 +222,6 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->externalIpAddress;
     }
 
-    /**
-     * @param string|null $externalIpAddress
-     */
     public function setExternalIpAddress(?string $externalIpAddress): void
     {
         $this->externalIpAddress = $externalIpAddress;
@@ -267,6 +229,6 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->deviceNameID;
+        return $this->deviceName;
     }
 }

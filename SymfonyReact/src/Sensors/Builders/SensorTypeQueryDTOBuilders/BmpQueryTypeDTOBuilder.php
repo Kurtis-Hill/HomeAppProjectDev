@@ -7,8 +7,8 @@ use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\LatitudeQueryTypeDTOBuilder
 use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
-use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\DTO\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
@@ -24,8 +24,7 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         TemperatureQueryTypeDTOBuilder $temperatureQueryTypeDTOBuilder,
         HumidityQueryTypeDTOBuilder $humidityQueryTypeDTOBuilder,
         LatitudeQueryTypeDTOBuilder $latitudeQueryTypeDTOBuilder
-    )
-    {
+    ) {
         $this->temperatureQueryTypeDTOBuilder = $temperatureQueryTypeDTOBuilder;
         $this->humidityQueryTypeDTOBuilder = $humidityQueryTypeDTOBuilder;
         $this->latitudeQueryTypeDTOBuilder = $latitudeQueryTypeDTOBuilder;
@@ -37,7 +36,8 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             Bmp::ALIAS,
             Bmp::class,
-            'sensorNameID',
+            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }
@@ -47,9 +47,9 @@ class BmpQueryTypeDTOBuilder implements SensorTypeQueryDTOBuilderInterface
     public function buildSensorReadingTypes(): array
     {
         return [
-          $this->temperatureQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
-          $this->humidityQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
-          $this->latitudeQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
+            $this->temperatureQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
+            $this->humidityQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
+            $this->latitudeQueryTypeDTOBuilder->buildReadingTypeJoinQueryDTO(),
         ];
     }
 

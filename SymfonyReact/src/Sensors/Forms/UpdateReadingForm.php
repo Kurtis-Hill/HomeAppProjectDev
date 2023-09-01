@@ -3,7 +3,7 @@
 
 namespace App\Sensors\Forms;
 
-use App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint;
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Temperature;
@@ -32,7 +32,7 @@ class UpdateReadingForm extends AbstractType implements SensorReadingUpdateInter
                         'required' => true,
                         'constraints' => [
                             new DHTTemperatureConstraint(),
-                            new NoSpecialCharactersConstraint(),
+                            new NoSpecialCharactersNameConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -43,7 +43,7 @@ class UpdateReadingForm extends AbstractType implements SensorReadingUpdateInter
                         'required' => true,
                         'constraints' => [
                             new DallasTemperatureConstraint(),
-                            new NoSpecialCharactersConstraint(),
+                            new NoSpecialCharactersNameConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -54,7 +54,7 @@ class UpdateReadingForm extends AbstractType implements SensorReadingUpdateInter
                         'mapped' => false,
                         'required' => true,
                         'constraints' => [
-                            new NoSpecialCharactersConstraint(),
+                            new NoSpecialCharactersNameConstraint(),
                             new NotBlank(),
                         ],
                     ]);
@@ -66,7 +66,7 @@ class UpdateReadingForm extends AbstractType implements SensorReadingUpdateInter
                     'required' => true,
                     'constraints' => [
                         new HumidityConstraint(),
-                        new NoSpecialCharactersConstraint(),
+                        new NoSpecialCharactersNameConstraint(),
                         new NotBlank(),
                     ],
                 ]);
@@ -80,7 +80,7 @@ class UpdateReadingForm extends AbstractType implements SensorReadingUpdateInter
                         'required' => true,
                         'constraints' => [
                             new SoilConstraint(),
-                            new NoSpecialCharactersConstraint(),
+                            new NoSpecialCharactersNameConstraint(),
                             new NotBlank(),
                         ],
                     ]);

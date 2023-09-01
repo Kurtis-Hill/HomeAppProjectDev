@@ -5,16 +5,20 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Devices\Builders\NewDeviceDTOBuilder;
-use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
-use App\Devices\DeviceServices\NewDevice\NewDeviceBuilderInterface;
-use App\Devices\DTO\Internal\NewDeviceDTO;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
+use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Voters\DeviceVoter;
-use App\User\Entity\Room;
-use App\User\Exceptions\GroupNameExceptions\GroupNameNotFoundException;
-use App\User\Repository\ORM\RoomRepositoryInterface;
-use App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface;
+use App\User\Entity\User;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
+use Doctrine\ORM\Exception\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,22 +27,33 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
 class AddNewDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
 
-    #[Route('/add-new-device', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
+
+    #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
-        RoomRepositoryInterface $roomRepository,
-        NewDeviceBuilderInterface $newDeviceBuilder,
-        GroupCheckServiceInterface $groupCheckService,
-        DevicePasswordEncoderInterface $devicePasswordEncoder,
+        ValidatorInterface $validator,
+        NewDeviceHandlerInterface $newDeviceHandler,
+        DeleteDeviceServiceInterface $deleteDeviceHandler,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         $newDeviceRequestDTO = new NewDeviceRequestDTO();
-
         try {
             $this->deserializeRequest(
                 $request->getContent(),
@@ -47,64 +62,63 @@ class AddNewDeviceController extends AbstractController
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $newDeviceRequestDTO]
             );
         } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
         }
-
-        $requestValidationErrors = $newDeviceBuilder->validateDeviceRequestObject($newDeviceRequestDTO);
-        if (!empty($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($requestValidationErrors);
+        $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
         try {
-            $groupNameObject = $groupCheckService->checkForGroupById($newDeviceRequestDTO->getDeviceGroup());
-        } catch (GroupNameNotFoundException $e) {
-            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_ONLY->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
-        $roomObject = $roomRepository->findOneById($newDeviceRequestDTO->getDeviceRoom());
-
-        if (!$roomObject instanceof Room) {
-            return $this->sendBadRequestJsonResponse([
-                sprintf(
-                    APIErrorMessages::OBJECT_NOT_FOUND,
-                    'Room'
-                ),
-            ]);
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse();
         }
-        $newDeviceCheckDTO = new NewDeviceDTO(
-            $this->getUser(),
-            $groupNameObject,
-            $roomObject,
-            $newDeviceRequestDTO->getDeviceName(),
-        );
+
+        try {
+            $newDeviceCheckDTO = $newDeviceHandler->processAddDeviceObjects($newDeviceRequestDTO, $user);
+        } catch (GroupNotFoundException|RoomNotFoundException $e) {
+            return $this->sendNotFoundResponse([$e->getMessage()]);
+        } catch (ORMException $e) {
+            $this->logger->error($e->getMessage());
+
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
+        }
 
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $newDeviceCheckDTO);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-        $device = $newDeviceBuilder->createNewDevice($newDeviceCheckDTO);
-        $errors = $newDeviceBuilder->validateNewDevice($device);
 
+        $errors = $newDeviceHandler->processNewDevice($newDeviceCheckDTO);
         if (!empty($errors)) {
             return $this->sendBadRequestJsonResponse($errors);
         }
 
-        $devicePasswordEncoder->encodeDevicePassword($device);
-        $deviceSaved = $newDeviceBuilder->saveNewDevice($device);
+        $device = $newDeviceCheckDTO->getNewDevice();
+        $deviceSaved = $newDeviceHandler->saveDevice($device);
         if ($deviceSaved === false) {
-            return $this->sendInternalServerErrorJsonResponse(['Failed to save device']);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
         }
-        $secret = $device->getDeviceSecret();
-        $deviceID = $device->getDeviceNameID();
 
-        $newDeviceResponseDTO = NewDeviceDTOBuilder::buildNewDeviceSecretDTO($secret, $deviceID);
-
+        $newDeviceResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($device);
         try {
-            $response = $this->normalizeResponse($newDeviceResponseDTO);
-        } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse(['Failed to normalize response']);
+            $response = $this->normalizeResponse($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
+        } catch (ExceptionInterface $e) {
+            $deleteDeviceHandler->deleteDevice($device);
+            $this->logger->error($e, $e->getTrace());
+
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
+        $this->logger->info('new device created with id: ' . $device->getDeviceID(), ['user' => $user->getUserIdentifier()]);
 
         return $this->sendCreatedResourceJsonResponse($response);
     }

@@ -7,7 +7,7 @@ use App\Sensors\Entity\Sensor;
 
 interface AllSensorReadingTypeInterface
 {
-    public function getSensorNameID(): Sensor;
+    public function getSensor(): Sensor;
 
     public function getSensorID(): int;
 
@@ -21,5 +21,5 @@ interface AllSensorReadingTypeInterface
 
     public function getCurrentReading(): int|float|string;
 
-    public function setCurrentReading(int|float|string $currentCurrentReading);
+    public function setCurrentReading(int|float|string $currentReading);
 }

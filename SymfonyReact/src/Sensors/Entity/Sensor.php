@@ -2,45 +2,39 @@
 
 namespace App\Sensors\Entity;
 
+use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
+use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Sensors.
- *
- * @ORM\Table(name="sensornames", indexes={@ORM\Index(name="sensornames_ibfk_2", columns={"createdBy"}), @ORM\Index(name="SensorType", columns={"sensorTypeID"}), @ORM\Index(name="sensornames_ibfk_1", columns={"deviceNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\Sensors\SensorRepository")
- */
+#[
+    ORM\Entity(repositoryClass: SensorRepository::class),
+    ORM\Table(name: "sensors"),
+    ORM\UniqueConstraint(name: "sensor_device", columns: ["sensorName", "deviceID"]),
+    ORM\Index(columns: ["ddeviceID"], name: "sensornames_ibfk_1"),
+    ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
+    ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
+]
 class Sensor
 {
-    public const TEMPERATURE = 'Temperature';
-
-    public const HUMIDITY = 'Humidity';
-
-    public const ANALOG = 'Analog';
-
-    public const LATITUDE   = 'Latitude';
-
     public const ALIAS  = 'sensors';
 
     private const SENSOR_NAME_MAX_LENGTH = 20;
 
     private const SENSOR_NAME_MIN_LENGTH = 2;
 
-    /**
-     * @ORM\Column(name="sensorNameID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private int $sensorNameID;
-
-    /**
-     * @ORM\Column(name="sensorName", type="string", length=20, nullable=false)
-     */
     #[
-        \App\Common\Form\CustomFormValidators\NoSpecialCharactersConstraint,
+        ORM\Column(name: "sensorID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
+    private int $sensorID;
+
+    #[ORM\Column(name: "sensorName", type: "string", length: 20, nullable: false)]
+    #[
+        NoSpecialCharactersNameConstraint,
         Assert\Length(
             min: self::SENSOR_NAME_MIN_LENGTH,
             max: self::SENSOR_NAME_MAX_LENGTH,
@@ -51,44 +45,32 @@ class Sensor
     ]
     private string $sensorName;
 
-    /**
-     * @var SensorType
-     *
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\SensorType")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorTypeID", referencedColumnName="sensorTypeID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: SensorType::class),
+        ORM\JoinColumn(name: "sensorTypeID", referencedColumnName: "sensorTypeID"),
+    ]
     private SensorType $sensorTypeID;
 
-    /**
-     * @var Devices
-     *
-     * @ORM\ManyToOne(targetEntity="App\Devices\Entity\Devices")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deviceNameID", referencedColumnName="deviceNameID")
-     * })
-     */
-    private Devices $deviceNameID;
+    #[
+        ORM\ManyToOne(targetEntity: Devices::class),
+        ORM\JoinColumn(name: "deviceID", referencedColumnName: "deviceID"),
+    ]
+    private Devices $deviceID;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="createdBy", referencedColumnName="userID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: User::class),
+        ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
+    ]
     private User $createdBy;
 
-    public function getSensorNameID(): int
+    public function getSensorID(): int
     {
-        return $this->sensorNameID;
+        return $this->sensorID;
     }
 
-    public function setSensorNameID(int $sensorNameID): void
+    public function setSensorID(int $sensorID): void
     {
-        $this->sensorNameID = $sensorNameID;
+        $this->sensorID = $sensorID;
     }
 
     public function getSensorName(): string
@@ -111,14 +93,14 @@ class Sensor
         $this->sensorTypeID = $sensorTypeID;
     }
 
-    public function getDeviceObject(): Devices
+    public function getDevice(): Devices
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
-    public function setDeviceObject(Devices $deviceNameID): void
+    public function setDevice(Devices $deviceID): void
     {
-        $this->deviceNameID = $deviceNameID;
+        $this->deviceID = $deviceID;
     }
 
     public function getCreatedBy(): User
@@ -130,6 +112,4 @@ class Sensor
     {
         $this->createdBy = $createdBy;
     }
-
-
 }

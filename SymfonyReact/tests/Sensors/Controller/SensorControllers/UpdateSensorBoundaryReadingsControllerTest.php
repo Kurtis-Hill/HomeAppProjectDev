@@ -1,11 +1,11 @@
 <?php
 
-namespace Sensors\Controller\SensorControllers;
+namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
+use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -13,15 +13,18 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -33,6 +36,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const UPDATE_SENSOR_BOUNDARY_READING_URL = '/HomeApp/api/user/sensor/%d/boundary-update';
 
     private KernelBrowser $client;
@@ -49,7 +54,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->setUserToken();
+        $this->userToken = $this->setUserToken($this->client);
     }
 
     protected function tearDown(): void
@@ -59,34 +64,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    private function setUserToken(bool $forceToken = false, ?string $username = null, ?string $password = null): ?string
-    {
-        if ($this->userToken === null || $forceToken === true) {
-            $username = $username ?? UserDataFixtures::ADMIN_USER;
-            $password = $password ?? UserDataFixtures::ADMIN_PASSWORD;
-
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'. $username .'","password":"'. $password .'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            if ($forceToken === false) {
-                $this->userToken = $responseData['token'];
-            }
-
-            return $responseData['token'];
-        }
-
-        return null;
-    }
-
     /**
      * @dataProvider multiUpdateOneCorrectOneIncorrectDataProvider
      */
@@ -94,13 +71,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $sensorType,
         string $tableId,
         array $sensorReadingsToUpdate,
-        array|string $expectedDataPayloadMessage,
         array $expectedErrorPayloadMessage,
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -109,7 +86,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -124,19 +101,24 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         );
 
         $title = $responseData['title'];
-        $dataPayload = $responseData['payload'] ?? null;
-        $errorsPayload = $responseData['errors'] ?? null;
+        $dataPayloads = $responseData['payload'];
+        $errorsPayload = $responseData['errors'];
 
         self::assertEquals(Response::HTTP_MULTI_STATUS, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
-        if ($dataPayload !== null) {
-            self::assertEquals($expectedDataPayloadMessage, $dataPayload);
-        }
-        if ($errorsPayload !== null) {
-            self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
+        self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
+
+        if ($dataPayloads !== null) {
+            foreach ($dataPayloads as $dataPayload) {
+                self::assertArrayHasKey('sensorReadingTypeID', $dataPayload);
+                self::assertArrayHasKey('readingType', $dataPayload);
+                self::assertArrayHasKey('highReading', $dataPayload);
+                self::assertArrayHasKey('lowReading', $dataPayload);
+                self::assertArrayHasKey('constRecord', $dataPayload);
+            }
         }
 
-        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
+        $sensorTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
 
         $readingUpdates = [];
         foreach ($sensorReadingsToUpdate as $sensorReading) {
@@ -147,17 +129,17 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ];
         }
 
-        if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+        if ($sensorTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getTemperature(), Temperature::READING_TYPE);
         }
-        if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
+        if ($sensorTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getHumidObject(), Humidity::READING_TYPE);
         }
-        if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), 'analog');
+        if ($sensorTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getAnalogObject(), Analog::READING_TYPE);
         }
-        if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
+        if ($sensorTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
+            $this->checkOutOfBoundResult($readingUpdates, $sensorTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
         }
     }
 
@@ -179,11 +161,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'highReading' => Humidity::HIGH_READING + 5,
                     'lowReading' => Humidity::LOW_READING - 5,
                     'outOfBounds' => true,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    Temperature::READING_TYPE
                 ]
             ],
             'errorsPayloadMessage' => [
@@ -208,11 +185,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'highReading' => Humidity::HIGH_READING - 5,
                     'lowReading' => Humidity::LOW_READING + 5,
                     'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    Humidity::READING_TYPE
                 ]
             ],
             'errorsPayloadMessage' => [
@@ -249,12 +221,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    Temperature::READING_TYPE,
-                    "latitude"
-                ]
-            ],
             'errorsPayloadMessage' => [
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
@@ -283,12 +249,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'highReading' => Latitude::HIGH_READING - 5,
                     'lowReading' => Latitude::LOW_READING + 5,
                     'outOfBounds' => false,
-                ]
-            ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    Humidity::READING_TYPE,
-                    Latitude::READING_TYPE
                 ]
             ],
             'errorsPayloadMessage' => [
@@ -322,12 +282,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    Temperature::READING_TYPE,
-                    Latitude::READING_TYPE
-                ]
-            ],
             'errorsPayloadMessage' => [
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
@@ -358,21 +312,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'dataPayloadMessage' => [
-                "successfullyUpdated" => [
-                    Temperature::READING_TYPE,
-                    Humidity::READING_TYPE,
-                ]
-            ],
             'errorsPayloadMessage' => [
                 'The highest possible ' . Latitude::READING_TYPE .' is ' . Latitude::HIGH_READING . Latitude::READING_SYMBOL . ' you entered ' . Latitude::HIGH_READING + 5 . Latitude::READING_SYMBOL,
                 'The lowest possible '. Latitude::READING_TYPE .' is ' . Latitude::LOW_READING . Latitude::READING_SYMBOL .' you entered ' . Latitude::LOW_READING - 5 . Latitude::READING_SYMBOL
             ],
             'expectedTitle' => 'Some sensor boundary update requests failed',
         ];
-
-
-        // SOIL
+        // No SOIL Doesnt have multiple readings types
     }
 
     /**
@@ -382,12 +328,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $sensorType,
         string $tableId,
         array $sensorReadingsToUpdate,
-        array|string $expectedDataPayloadMessage,
+        array $expectedDataPayloadMessage,
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
-        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        /** @var StandardReadingSensorInterface $sensorReadingTypeObject */
+        $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
+        if ($sensorReadingTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -396,7 +343,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorReadingTypeObject->getSensor()->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -409,17 +356,28 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
-
-        $title = $responseData['title'];
-        $dataPayload = $responseData['payload'] ?? null;
-
-        self::assertEquals(Response::HTTP_ACCEPTED, $this->client->getResponse()->getStatusCode());
-        self::assertEquals($expectedTitle, $title);
-        if ($dataPayload !== null) {
-            self::assertEquals($expectedDataPayloadMessage, $dataPayload);
+        $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
+        if (!isset($responseData['payload'])) {
+            self::fail('Payload not set in response');
         }
+        $title = $responseData['title'];
+        $dataPayloads = $responseData['payload'];
 
-        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
+        $count = 0;
+        foreach ($dataPayloads as $dataPayload) {
+            self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
+
+            if ($sensorReadingTypeObject instanceof StandardSensorReadingTypeInterface) {
+                self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
+                self::assertEquals($expectedDataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
+                self::assertEquals($expectedDataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
+            }
+            ++$count;
+        }
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertEquals($expectedTitle, $title);
+
+        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorReadingTypeObject->getSensorTypeID()]);
 
         $readingUpdates = [];
         foreach ($sensorReadingsToUpdate as $sensorReading) {
@@ -431,16 +389,16 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), Temperature::READING_TYPE);
         }
         if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), Humidity::READING_TYPE);
         }
         if ($sensorReadingTypeAfterUpdate instanceof AnalogSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), 'analog');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getAnalogObject(), Analog::READING_TYPE);
         }
         if ($sensorReadingTypeAfterUpdate instanceof LatitudeSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), 'latitude');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getLatitudeObject(), Latitude::READING_TYPE);
         }
     }
 
@@ -462,8 +420,21 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 50,
+                    "lowReading" => -35,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "humidity",
+                    "highReading" => 95,
+                    "lowReading" => 10,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -481,8 +452,21 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 75,
+                    "lowReading" => 10,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "humidity",
+                    "highReading" => 80,
+                    "lowReading" => 5,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -502,8 +486,21 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 80,
+                    "lowReading" => -40,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "humidity",
+                    "highReading" => 100,
+                    "lowReading" => 0,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         //Dallas
@@ -518,8 +515,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ],
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 120,
+                    "lowReading" => -50,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -532,8 +536,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ],
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 120,
+                    "lowReading" => 10,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -546,8 +557,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ],
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 50,
+                    "lowReading" => -50,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         //Bmp
@@ -574,8 +592,27 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 80,
+                    "lowReading" => -40,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "humidity",
+                    "highReading" => 95,
+                    "lowReading" => 5,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "latitude",
+                    "highReading" => 85,
+                    "lowReading" => -85,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -598,8 +635,27 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 80,
+                    "lowReading" => 10,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "humidity",
+                    "highReading" => 95,
+                    "lowReading" => 10,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "latitude",
+                    "highReading" => 85,
+                    "lowReading" => -90,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -622,8 +678,27 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'dataPayloadMessage' => 'No Response Message',
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "temperature",
+                    "highReading" => 50,
+                    "lowReading" => -40,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "humidity",
+                    "highReading" => 80,
+                    "lowReading" => 5,
+                    "constRecord" => 0,
+                ],
+                [
+                    "readingType" => "latitude",
+                    "highReading" => 90,
+                    "lowReading" => -85,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         // Soil
@@ -638,8 +713,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ],
             ],
-            'dataPayloadMessage' => "No Response Message",
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "analog",
+                    "highReading" => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
+                    "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY + 5,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -648,12 +730,19 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'sensorReadingTypes' => [
                 [
                     'readingType' => Analog::READING_TYPE,
-                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY + 5,
+                    'lowReading' => Soil::LOW_SOIL_READING_BOUNDARY,
                     'outOfBounds' => false,
                 ],
             ],
-            'dataPayloadMessage' => "No Response Message",
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "analog",
+                    "highReading" => Soil::LOW_SOIL_READING_BOUNDARY,
+                    "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
 
         yield [
@@ -662,19 +751,26 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'sensorReadingTypes' => [
                 [
                     'readingType' => Analog::READING_TYPE,
-                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
+                    'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY,
                     'outOfBounds' => false,
                 ],
             ],
-            'dataPayloadMessage' => "No Response Message",
-            'expectedTitle' => 'Request Successful',
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => "analog",
+                    "highReading" => Soil::HIGH_SOIL_READING_BOUNDARY,
+                    "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
         ];
     }
 
     /**
      * @dataProvider sendingEntireWrongReadingPayloadDataProvider
      */
-    public function test_sending_wrong_data_entire_reading_payload(
+    public function test_sending_wrong_data_each_payload_reading(
         string $sensorType,
         string $tableId,
         array $sensorReadingsToUpdate,
@@ -683,8 +779,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 'sensorData' => $sensorReadingsToUpdate,
             ];
@@ -693,7 +790,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -708,14 +805,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         );
 
         $title = $responseData['title'];
-        $dataPayload = $responseData['payload'] ?? null;
-        $errorsPayload = $responseData['errors'] ?? null;
+        $errorsPayload = $responseData['errors'];
 
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
-        if ($dataPayload !== null) {
-            self::assertEquals($expectedDataPayloadMessage, $dataPayload);
-        }
         if ($errorsPayload !== null) {
             self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
         }
@@ -732,7 +825,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         if ($sensorReadingTypeAfterUpdate instanceof TemperatureSensorTypeInterface) {
-            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTempObject(), 'temperature');
+            $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getTemperature(), 'temperature');
         }
         if ($sensorReadingTypeAfterUpdate instanceof HumiditySensorTypeInterface) {
             $this->checkOutOfBoundResult($readingUpdates, $sensorReadingTypeAfterUpdate->getHumidObject(), 'humidity');
@@ -855,11 +948,12 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
     public function test_sending_malformed_request(): void
     {
+        /** @var Sensor $sensorObject */
         $sensorObject = $this->entityManager->getRepository(Sensor::class)->findAll()[0];
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObject->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObject->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/form-data'],
@@ -884,9 +978,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_sending_empty_sensor_data(array $sensorDataToSend): void
     {
         $sensorTypeRepository = $this->entityManager->getRepository(Dht::class);
+        /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
 
-        if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
+        if ($sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
             $sensorData = [
                 $sensorDataToSend
             ];
@@ -895,7 +990,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorObject()->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -933,9 +1028,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
         while (true) {
             $wrongSensorId = random_int(1, 10000);
-            $sensorTypeObject = $sensorRepository->findOneBy(['sensorNameID' => $wrongSensorId]);
+            $sensorTypeObject = $sensorRepository->findOneBy(['sensorID' => $wrongSensorId]);
 
-            if (!$sensorTypeObject instanceof StandardSensorTypeInterface) {
+            if (!$sensorTypeObject instanceof StandardSensorReadingTypeInterface) {
                 break;
             }
         }
@@ -968,6 +1063,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_sending_request_not_recognized_sensor_type(): void
     {
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
+        /** @var Sensor $sensorTypeObject */
         $sensorTypeObject = $sensorRepository->findAll()[0];
 
         $readingType = 'total-random-string';
@@ -986,7 +1082,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -1002,27 +1098,31 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals('All sensor boundary update requests failed', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals($readingType . ' Sensor type not recognised', $responseData['errors'][0]);
+        self::assertEquals('Sensor update builder not found: '. $readingType, $responseData['errors'][0]);
     }
 
-    public function test_sending_request_for_sensor_user_not_apart_of_group(): void
+    public function test_sending_request_for_sensor_regular_user_not_apart_of_group(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        $loggedInUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER]);
-        $userNotInGroup = $userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER]);
+        /** @var User $loggedInUser */
+        $loggedInUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        /** @var User $userNotInGroup */
+        $userNotInGroup = $userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $deviceRepository = $this->entityManager->getRepository(Devices::class);
-        $deviceObject = $deviceRepository->findBy(['groupNameID' => $loggedInUser->getGroupNameID()])[0];
+        /** @var Devices $deviceObject */
+        $deviceObject = $deviceRepository->findBy(['groupID' => $loggedInUser->getGroup()])[0];
 
-        if (in_array($deviceObject->getGroupNameObject()->getGroupNameID(), $userNotInGroup->getGroupNameIds(), true)) {
+        if (in_array($deviceObject->getGroupObject()->getGroupID(), $userNotInGroup->getAssociatedGroupIDs(), true)) {
             throw new Exception();
         }
 
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
-        $sensorObjectLoggedInUser = $sensorRepository->findBy(['deviceNameID' => $deviceObject->getDeviceNameID()])[0];
+        /** @var Sensor $sensorObjectLoggedInUser */
+        $sensorObjectLoggedInUser = $sensorRepository->findBy(['deviceID' => $deviceObject->getDeviceID()])[0];
 
         $sensorData = [
-            'sensorId' => $sensorObjectLoggedInUser->getSensorNameID(),
+            'sensorId' => $sensorObjectLoggedInUser->getSensorID(),
             'sensorData' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
@@ -1035,10 +1135,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $jsonData = json_encode($sensorData);
 
-        $token = $this->setUserToken(true, UserDataFixtures::REGULAR_USER, UserDataFixtures::REGULAR_PASSWORD);
+        $token = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObjectLoggedInUser->getSensorNameID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorObjectLoggedInUser->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $token, 'CONTENT_TYPE' => 'application/json'],
@@ -1088,5 +1188,31 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 }
             }
         }
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, 1),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_GET],
+            [Request::METHOD_POST],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
+        ];
     }
 }

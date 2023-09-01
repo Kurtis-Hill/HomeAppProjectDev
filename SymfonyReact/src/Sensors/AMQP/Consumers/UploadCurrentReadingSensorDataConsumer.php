@@ -11,13 +11,14 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentRead
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
+use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 
 class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 {
@@ -27,12 +28,16 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
 
     private DeviceRepositoryInterface $deviceRepository;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
-        DeviceRepositoryInterface $deviceRepository
+        DeviceRepositoryInterface $deviceRepository,
+        LoggerInterface $elasticLogger,
     ) {
         $this->sensorCurrentReadingUpdateService = $sensorDeviceDataQueueConsumerService;
         $this->deviceRepository = $deviceRepository;
+        $this->logger = $elasticLogger;
     }
 
     // @ADD new current reading type dtos to allowed_classes array
@@ -52,21 +57,14 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                 ]
             );
         } catch (Exception $exception) {
-            error_log(
-                'Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage(),
-                0,
-                ErrorLogs::SERVER_ERROR_LOG_LOCATION
-            );
+            $this->logger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
+
             return true;
         }
         try {
             $device = $this->deviceRepository->findOneById($sensorData->getDeviceId());
         } catch (NonUniqueResultException | ORMException $exception) {
-            error_log(
-                'expection message: ' . $exception->getMessage(),
-                0,
-                ErrorLogs::SERVER_ERROR_LOG_LOCATION
-            );
+            $this->logger->error('expection message: ' . $exception->getMessage());
 
             return true;
         }
@@ -77,14 +75,13 @@ class UploadCurrentReadingSensorDataConsumer implements ConsumerInterface
                     $sensorData,
                     $device
                 );
-            } catch (ORMException | OptimisticLockException) {
+            } catch (ORMException | OptimisticLockException $e) {
+                $this->logger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
+
                 return false;
-            } catch (Exception $exception) {
-                error_log(
-                    'expection message: ' . $exception->getMessage(),
-                    0,
-                    ErrorLogs::SERVER_ERROR_LOG_LOCATION
-                );
+            } catch (Exception $e) {
+                $this->logger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
+
                 return true;
             }
         }

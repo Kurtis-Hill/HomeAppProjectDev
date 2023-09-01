@@ -9,7 +9,7 @@ interface AnalogSensorTypeInterface
 {
     public function getAnalogObject(): Analog;
 
-    public function setAnalogObject(Analog $tempID): void;
+    public function setAnalogObject(Analog $analogID): void;
 
     public function getMaxAnalog(): float|int;
 

@@ -2,27 +2,37 @@
 
 namespace App\Sensors\DTO\Response\ReadingTypes;
 
+use App\Common\Services\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
-class ReadingTypeResponseDTO
+readonly class ReadingTypeResponseDTO
 {
-    private int $id;
-
-    private string $readingType;
-
-    public function __construct(int $id, string $readingType)
-    {
-        $this->id = $id;
-        $this->readingType = $readingType;
+    public function __construct(
+        private int $readingTypeID,
+        private string $readingType
+    ) {
     }
 
-    public function getId(): int
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getReadingTypeID(): int
     {
-        return $this->id;
+        return $this->readingTypeID;
     }
 
-    public function getReadingType(): string
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getReadingTypeName(): string
     {
         return $this->readingType;
     }

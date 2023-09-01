@@ -2,10 +2,10 @@
 
 namespace App\Sensors\Builders\ReadingTypeQueryDTOBuilders;
 
-use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\Sensor;
-use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
 class HumidityQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
@@ -18,7 +18,8 @@ class HumidityQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             $humidData['alias'],
             $humidData['object'],
-            'sensorNameID',
+            'sensor',
+            'sensorID',
             Sensor::ALIAS,
         );
     }

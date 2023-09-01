@@ -6,22 +6,13 @@ use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class ReadingTypeUpdateCurrentReadingDTO
+readonly class ReadingTypeUpdateCurrentReadingDTO
 {
-    private string $currentReading;
-
-    private string $newCurrentReading;
-
-    private AllSensorReadingTypeInterface $sensorReadingObject;
-
     public function __construct(
-        string $newCurrentReading,
-        string $currentReading,
-        AllSensorReadingTypeInterface $sensorObject,
+        private string $newCurrentReading,
+        private string $currentReading,
+        private AllSensorReadingTypeInterface $sensorObject,
     ) {
-        $this->currentReading = $newCurrentReading;
-        $this->newCurrentReading = $currentReading;
-        $this->sensorReadingObject = $sensorObject;
     }
 
     public function getNewCurrentReading(): string
@@ -31,7 +22,7 @@ class ReadingTypeUpdateCurrentReadingDTO
 
     public function getSensorReadingObject(): AllSensorReadingTypeInterface
     {
-        return $this->sensorReadingObject;
+        return $this->sensorObject;
     }
 
     public function getCurrentReading(): string

@@ -6,17 +6,17 @@ use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
-use App\UserInterface\Entity\Card\CardView;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
+use App\Sensors\Repository\SensorType\ORM\SoilRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Soil
- *
- * @ORM\Table(name="soil", uniqueConstraints={@ORM\UniqueConstraint(name="analogID", columns={"analogID"}), @ORM\UniqueConstraint(name="cardViewID", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\SensorType\SoilRepository")
- */
-class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSensorTypeInterface
+#[
+    ORM\Entity(repositoryClass: SoilRepository::class),
+    ORM\Table(name: "soil"),
+    ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
+    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
+]
+class Soil implements SensorTypeInterface, StandardSensorReadingTypeInterface, AnalogSensorTypeInterface
 {
     public const NAME = 'Soil';
 
@@ -30,93 +30,53 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogSe
         Analog::READING_TYPE
     ];
 
-    /**
-     * @ORM\Column(name="soilID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "soilID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $soilID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Analog")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="analogID", referencedColumnName="analogID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Analog::class),
+        ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
+    ]
     private Analog $analogID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
-     * })
-     */
-    private Sensor $sensorNameID;
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID", nullable: true),
+    ]
+    private Sensor $sensor;
 
-    private CardView $cardView;
-
-    /**
-     * @return int
-     */
     public function getSensorTypeID(): int
     {
         return $this->soilID;
     }
 
-    /**
-     * @param int $soilID
-     */
     public function setSensorTypeID(int $soilID): void
     {
         $this->soilID = $soilID;
     }
 
-    /**
-     * @return Analog
-     */
     public function getAnalogObject(): Analog
     {
         return $this->analogID;
     }
 
-    /**
-     * @param Analog $analogID
-     */
     public function setAnalogObject(Analog $analogID): void
     {
         $this->analogID = $analogID;
     }
 
-    /**
-     * @return Sensor
-     */
-    public function getSensorObject(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    /**
-     * @param Sensor $id
-     */
-    public function setSensorObject(Sensor $id): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $id;
-    }
-
-    /**
-     * @return CardView|null
-     */
-    public function getCardViewObject(): ?CardView
-    {
-        return $this->cardView;
-    }
-
-    /**
-     * @param CardView $cardView
-     */
-    public function setCardViewObject(CardView $cardView): void
-    {
-        $this->cardView = $cardView;
+        $this->sensor = $sensor;
     }
 
     public function getMaxAnalog(): float|int

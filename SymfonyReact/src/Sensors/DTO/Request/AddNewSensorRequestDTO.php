@@ -17,10 +17,10 @@ class AddNewSensorRequestDTO
     #[
         Assert\Type(type: 'integer', message: 'deviceNameID must be a {{ type }} you have provided {{ value }}'),
         Assert\NotNull(
-            message: "deviceNameID name cannot be null"
+            message: "deviceID name cannot be null"
         ),
     ]
-    private mixed $deviceNameID = null;
+    private mixed $deviceID = null;
 
     #[
         Assert\Type(type: 'string', message: 'sensorName must be a {{ type }} you have provided {{ value }}'),
@@ -40,14 +40,14 @@ class AddNewSensorRequestDTO
         $this->sensorTypeID = $sensorTypeID;
     }
 
-    public function getDeviceNameID(): mixed
+    public function getDeviceID(): mixed
     {
-        return $this->deviceNameID;
+        return $this->deviceID;
     }
 
-    public function setDeviceNameID(mixed $deviceNameID): void
+    public function setDeviceID(mixed $deviceID): void
     {
-        $this->deviceNameID = $deviceNameID;
+        $this->deviceID = $deviceID;
     }
 
     public function getSensorName(): mixed

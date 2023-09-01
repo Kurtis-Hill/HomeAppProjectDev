@@ -7,13 +7,13 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\BmpReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\DallasReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\DhtReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\AbstractSensorTypeReadingTypeChecker;
-use App\Sensors\SensorDataServices\SensorTypeReadingTypeChecker\SoilReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\BmpReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\DallasReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\DhtReadingTypeChecker;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\SensorTypeReadingTypeInterface;
+use App\Sensors\SensorServices\SensorTypeReadingTypeChecker\SoilReadingTypeChecker;
 
-class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeCheckerFactoryInterface
+class SensorTypeReadingTypeCheckerFactory
 {
     private DhtReadingTypeChecker $dhtReadingTypeChecker;
 
@@ -23,8 +23,12 @@ class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeChecke
 
     private SoilReadingTypeChecker $soilReadingTypeChecker;
 
-    public function __construct(DhtReadingTypeChecker $dhtReadingTypeChecker, BmpReadingTypeChecker $bmpReadingTypeChecker, DallasReadingTypeChecker $dallasReadingTypeChecker, SoilReadingTypeChecker $soilReadingTypeChecker)
-    {
+    public function __construct(
+        DhtReadingTypeChecker $dhtReadingTypeChecker,
+        BmpReadingTypeChecker $bmpReadingTypeChecker,
+        DallasReadingTypeChecker $dallasReadingTypeChecker,
+        SoilReadingTypeChecker $soilReadingTypeChecker
+    ) {
         $this->dhtReadingTypeChecker = $dhtReadingTypeChecker;
         $this->bmpReadingTypeChecker = $bmpReadingTypeChecker;
         $this->dallasReadingTypeChecker = $dallasReadingTypeChecker;
@@ -35,7 +39,7 @@ class SensorTypeReadingTypeCheckerFactory implements SensorTypeReadingTypeChecke
     /**
      * @throws SensorTypeNotFoundException
      */
-    public function fetchSensorReadingTypeChecker(string $sensorType): AbstractSensorTypeReadingTypeChecker
+    public function fetchSensorReadingTypeChecker(string $sensorType): SensorTypeReadingTypeInterface
     {
         return match ($sensorType) {
             Dht::NAME => $this->dhtReadingTypeChecker,

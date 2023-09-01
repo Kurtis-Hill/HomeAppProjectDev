@@ -10,9 +10,13 @@ class APIErrorMessages
 
     public const OBJECT_NOT_FOUND = '%s not found';
 
+    public const OBJECT_NOT_FOUND_FOR_ID = '%s not found for ID %s';
+
     public const OBJECT_NOT_RECOGNISED = '%s not recognised';
 
     public const FAILED_TO_SAVE_DATA = 'Failed to save data';
+
+    public const FAILED_TO_SAVE_OBJECT = 'Failed to save %s';
 
     public const ACCESS_DENIED = 'You have been denied permission to perform this action';
 
@@ -20,7 +24,11 @@ class APIErrorMessages
 
     public const QUERY_FAILURE = '%s Query failure';
 
+    public const FAILURE = '%s failure';
+
     public const FAILED_TO_PREPARE_DATA = 'Failed to prepare data';
+
+    public const FAILED_TO_PREPARE_OBJECT_RESPONSE = 'Failed to prepare %s data';
 
     public const FORMAT_NOT_SUPPORTED = 'Format not supported';
 
@@ -36,4 +44,15 @@ class APIErrorMessages
 
     public const READING_TYPE_NOT_VALID_FOR_SENSOR = '%s reading type not valid for sensor: %s';
 
+    public const FAILED_TO_NORMALIZE_RESPONSE = 'Failed to normalize response';
+
+    public const FORBIDDEN_ACTION = 'You are not supposed to be here';
+
+    public const OBJECT_ALREADY_EXISTS = '%s already exists';
+
+    public const USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED = 'User does not have access to requested %s: %s';
+
+    public const SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN = 'Something went wrong, please try again';
+
+    public const FAILED_TO_PROCESS_REQUEST = 'Failed to process request';
 }

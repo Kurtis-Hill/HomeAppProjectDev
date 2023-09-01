@@ -1,10 +1,9 @@
 <?php
 
-namespace Sensors\Controller\SensorControllers;
+namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Doctrine\DataFixtures\ESP8266\SensorFixtures;
-use App\Authentication\Controller\SecurityController;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\Sensors\Entity\ReadingTypes\Analog;
@@ -15,7 +14,8 @@ use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
+use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
+use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -25,13 +25,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const ESP_SENSOR_UPDATE = '/HomeApp/api/device/esp/update/current-reading';
 
     private KernelBrowser $client;
 
     private ?EntityManagerInterface $entityManager;
 
-    private ?string $userToken = null;
+    private ?string $deviceToken = null;
 
     protected function setUp(): void
     {
@@ -41,7 +43,11 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        $this->setUserToken();
+        $this->deviceToken = $this->setDeviceToken(
+            $this->client,
+            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'],
+            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password']
+        );
     }
 
     protected function tearDown(): void
@@ -49,25 +55,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         $this->entityManager->close();
         $this->entityManager = null;
         parent::tearDown();
-    }
-
-    private function setUserToken(): void
-    {
-        if ($this->userToken === null) {
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_DEVICE_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'].'","password":"'.ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'].'"}'
-            );
-
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-            $this->userToken = $responseData['token'];
-        }
     }
 
     /**
@@ -85,7 +72,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             self::ESP_SENSOR_UPDATE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 
@@ -266,7 +253,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             self::ESP_SENSOR_UPDATE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 
@@ -330,7 +317,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             self::ESP_SENSOR_UPDATE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 
@@ -478,7 +465,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             self::ESP_SENSOR_UPDATE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 
@@ -563,14 +550,13 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             self::ESP_SENSOR_UPDATE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-//        dd($responseData);
         self::assertEquals($responseCode, $requestResponse->getStatusCode());
         self::assertEquals($title, $responseData['title']);
         self::assertEquals($errors, $responseData['errors']);
@@ -652,13 +638,13 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             self::ESP_SENSOR_UPDATE,
             [],
             [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//        dd($responseData);
+
         self::assertEquals(Response::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());
         self::assertEquals(APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT, $responseData['title']);
         self::assertEquals($errors, $responseData['errors']);
@@ -768,6 +754,31 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
                 'Reading for ' . Soil::NAME . ' sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 1,
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            self::ESP_SENSOR_UPDATE,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_GET],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
         ];
     }
 }

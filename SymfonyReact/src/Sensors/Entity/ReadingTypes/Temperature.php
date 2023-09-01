@@ -3,52 +3,42 @@
 namespace App\Sensors\Entity\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Repository\ReadingType\ORM\TemperatureRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * Temp
- *
- * @ORM\Table(name="temp", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\TemperatureRepository")
- */
-class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+#[
+    ORM\Entity(repositoryClass: TemperatureRepository::class),
+    ORM\Table(name: "temperature"),
+    ORM\UniqueConstraint(name: "temp_ibfk_1", columns: ["sensorID"]),
+]
+class Temperature extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'temperature';
 
     public const READING_SYMBOL = '°C';
 
-//    public const TEMPERATURE_SENSORS = [
-//        Bmp::NAME,
-//        Dallas::NAME,
-//      SensorType::Dht::NAME
-//    ];
-
-    /**
-     * @ORM\Column(name="tempID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-//    #[ORM\Column(type: "integer", nullable: false)]
+    #[
+        ORM\Column(name: 'tempID', type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $tempID;
 
-    /**
-     * @ORM\Column(name="tempReading", type="float", precision=10, scale=0, nullable=false)
-     */
+    #[ORM\Column(name: 'tempReading', type: "float", precision: 10, scale: 0, nullable: false)]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]
@@ -62,9 +52,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     ]
     private float $currentReading;
 
-    /**
-     * @ORM\Column(name="highTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="26"})
-     */
+    #[ORM\Column(name: 'highTemp', type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "26"])]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]
@@ -79,9 +67,7 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     ]
     private float $highTemp = 50;
 
-    /**
-     * @ORM\Column(name="lowTemp", type="float", precision=10, scale=0, nullable=false, options={"default"="12"})
-     */
+    #[ORM\Column(name: 'lowTemp', type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "12"]),]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]
@@ -95,26 +81,19 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     ]
     private float $lowTemp = 10;
 
-    /**
-     * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
-     */
+    #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false, options: ["default" => "0"])]
     #[Assert\Type("bool")]
     private bool $constRecord = false;
 
-    /**
-     *
-     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
     #[Assert\NotBlank(message: 'temperature date time name should not be blank')]
     private DateTimeInterface $updatedAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
-     * })
-     */
-    private Sensor $sensorNameID;
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+    ]
+    private Sensor $sensor;
 
     public function getSensorID(): int
     {
@@ -126,14 +105,14 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         $this->tempID = $id;
     }
 
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $id): void
+    public function setSensor(Sensor $id): void
     {
-        $this->sensorNameID = $id;
+        $this->sensor = $id;
     }
 
     /**
@@ -159,9 +138,9 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $currentReading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
-        $this->currentReading = $currentReading;
+        $this->currentReading = $reading;
     }
 
     public function setHighReading(int|float|string $reading): void
@@ -194,6 +173,16 @@ class Temperature extends AbstractReadingType implements StandardReadingSensorIn
     }
 
     public function getReadingType(): string
+    {
+        return self::READING_TYPE;
+    }
+
+    public static function getReadingSymbol(): string
+    {
+        return self::READING_SYMBOL;
+    }
+
+    public static function getReadingTypeName(): string
     {
         return self::READING_TYPE;
     }

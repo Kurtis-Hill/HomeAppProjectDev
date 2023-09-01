@@ -1,0 +1,25 @@
+version: '2.2'
+
+services:
+  create_certs:
+    container_name: create_certs
+    # @TODO new elastic versions use different directories could sort 
+    # image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
+    env_file:
+      -  '../../.env'
+    command: >
+      bash -c '
+        if [[ ! -f /certs/bundle.zip ]]; then
+          bin/elasticsearch-certutil cert --silent --pem --in config/certificates/instances.yml -out /certs/bundle.zip;
+          unzip /certs/bundle.zip -d /certs;
+        else 
+          echo  "Bundle exists"
+        fi;
+        chown -R 1000:0 /certs
+      '
+    user: "0"
+    working_dir: /usr/share/elasticsearch
+    volumes: ['certs:/certs', '.:/usr/share/elasticsearch/config/certificates']
+
+volumes: {"certs"}

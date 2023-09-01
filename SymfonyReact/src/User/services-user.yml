@@ -1,15 +1,16 @@
 parameters:
 
 services:
-  # default configuration for services in *this* file
   _defaults:
-    autowire: true      # Automatically injects dependencies in your services.
-    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    bind:
+      string $projectDir: '%kernel.project_dir%'
+    autowire: true
+    autoconfigure: true
 
   ################### Core ############################
   App\User\:
     resource: './*'
-    exclude: './{Traits, DependencyInjection, Entity, Tests}'
+    exclude: './{Entity}'
 
   App\User\Controller\:
     resource: './Controller'
@@ -19,9 +20,9 @@ services:
 
   ######################## Consumers ######################################################
 
-  ######################## User Services ######################################################
+  ######################## UserExceptions Services ######################################################
   App\User\Services\RoomServices\AddNewRoomServiceInterface:
-    alias: 'App\User\Services\RoomServices\AddNewRoomService'
+    alias: 'App\User\Services\RoomServices\AddNewRoomHandler'
 
   App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface:
     alias: 'App\User\Services\GroupServices\GroupCheck\GroupCheckService'
@@ -32,8 +33,13 @@ services:
   App\User\Repository\ORM\RoomRepositoryInterface:
     alias: 'App\User\Repository\ORM\RoomRepository'
 
-  App\User\Repository\ORM\GroupNameRepositoryInterface:
-    alias: 'App\User\Repository\ORM\GroupNameRepository'
+  App\User\Repository\ORM\GroupRepositoryInterface:
+    alias: 'App\User\Repository\ORM\GroupRepository'
 
   App\User\Repository\ORM\UserRepositoryInterface:
     alias: 'App\User\Repository\ORM\UserRepository'
+
+  ######################## Services ########################################################################
+  App\User\Services\User\UserCreationHandler:
+    arguments:
+        $profilePictureDir: '%env(USER_PROFILE_DIRECTORY)%'

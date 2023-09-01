@@ -6,6 +6,8 @@ use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryR
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
+use App\Sensors\DTO\Request\SensorUpdateDTO\StandardSensorUpdateBoundaryDataDTO;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
@@ -14,28 +16,29 @@ use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
 class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder implements ReadingTypeUpdateBuilderInterface
 {
     public function buildUpdateSensorBoundaryReadingsDTO(
-        array $sensorData,
+        SensorUpdateBoundaryDataDTOInterface $updateDataSensorBoundaryDTO,
         AllSensorReadingTypeInterface $sensorReadingTypeObject,
-    ): UpdateStandardReadingTypeBoundaryReadingsDTO
-    {
-        if (!$sensorReadingTypeObject instanceof Humidity) {
+    ): UpdateStandardReadingTypeBoundaryReadingsDTO {
+        if (!$sensorReadingTypeObject instanceof Humidity || !$updateDataSensorBoundaryDTO instanceof StandardSensorUpdateBoundaryDataDTO) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
                     ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
                     $sensorReadingTypeObject->getReadingType(),
-                    $sensorData['readingType'],
+                    $updateDataSensorBoundaryDTO->getReadingType(),
                 )
             );
         }
 
-        return $this->buildStandardSensorUpdateReadingDTO($sensorData, $sensorReadingTypeObject);
+        return $this->buildStandardSensorUpdateReadingDTO(
+            $updateDataSensorBoundaryDTO,
+            $sensorReadingTypeObject
+        );
     }
 
     public function buildReadingTypeCurrentReadingUpdateDTO(
         AllSensorReadingTypeInterface $allSensorReadingType,
         AbstractCurrentReadingUpdateRequestDTO $sensorData,
-    ): ReadingTypeUpdateCurrentReadingDTO
-    {
+    ): ReadingTypeUpdateCurrentReadingDTO {
         if (!$allSensorReadingType instanceof Humidity) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
@@ -54,7 +57,7 @@ class HumiditySensorUpdateBuilder extends AbstractStandardSensorTypeBuilder impl
             );
         }
 
-        return $this->updateStandardSensorCurrentReading(
+        return $this->buildStandardSensorUpdateCurrentReadingDTO(
             $allSensorReadingType,
             $sensorData->getCurrentReading()
         );

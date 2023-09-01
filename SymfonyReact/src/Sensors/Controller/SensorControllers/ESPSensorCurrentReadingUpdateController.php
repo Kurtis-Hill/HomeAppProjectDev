@@ -5,19 +5,22 @@ namespace App\Sensors\Controller\SensorControllers;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Traits\ValidatorProcessorTrait;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
-use App\ErrorLogs;
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
-use App\Sensors\Builders\SensorTypeDTOBuilders\SensorDataCurrentReadingDTOBuilder;
+use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
-use App\Sensors\SensorDataServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
+use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
+use App\Sensors\Voters\SensorVoter;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -31,6 +34,13 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
     private ProducerInterface $currentReadingAMQPProducer;
 
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $elasticLogger)
+    {
+        $this->logger = $elasticLogger;
+    }
+
     #[Route(
         path: 'esp/update/current-reading',
         name: 'update-current-reading',
@@ -42,12 +52,19 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
     public function updateSensorsCurrentReading(
         Request $request,
         ValidatorInterface $validator,
-        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
+        CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
     ): Response {
-        if (!$this->getUser() instanceof Devices) {
-            return $this->sendBadRequestJsonResponse(['You are not supposed to be here']);
+        try {
+            $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR_CURRENT_READING, 'asd');
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-        $deviceId = $this->getUser()?->getDeviceNameID();
+
+        $device = $this->getUser();
+        if (!$device instanceof Devices) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
+        }
+        $deviceID = $device->getDeviceID();
 
         $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {
@@ -55,7 +72,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 $request->getContent(),
                 SensorUpdateRequestDTO::class,
                 'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO]
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
             );
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
@@ -67,59 +84,89 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         }
 
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
-            $sensorDataCurrentReadingUpdateDTO = SensorDataCurrentReadingDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
-            $sensorDataPassedValidation = $currentReadingSensorDataRequestHandler->handleSensorUpdateRequest($sensorDataCurrentReadingUpdateDTO);
+            $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateDTO($sensorUpdateData);
+            $sensorDataPassedValidation = $currentReadingSensorDataRequest->processSensorUpdateData($sensorDataCurrentReadingUpdateRequestDTO);
             if ($sensorDataPassedValidation === false) {
                 continue;
             }
 
-            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequestHandler->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateDTO);
+            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
 
             $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
-                $sensorDataCurrentReadingUpdateDTO->getSensorType(),
-                $sensorDataCurrentReadingUpdateDTO->getSensorName(),
+                $sensorDataCurrentReadingUpdateRequestDTO->getSensorType(),
+                $sensorDataCurrentReadingUpdateRequestDTO->getSensorName(),
                 $readingTypeCurrentReadingDTOs,
-                $deviceId,
+                $deviceID,
             );
             try {
                 $this->currentReadingAMQPProducer->publish(serialize($updateReadingDTO));
-            } catch (Exception $exception) {
-                $publishError = true;
-                error_log($exception->getMessage(), ErrorLogs::SERVER_ERROR_LOG_LOCATION);
+            } catch (Exception) {
+                $this->logger->emergency('failed to publish UPDATE SENSOR CURRENT READING message to queue', ['user' => $this->getUser()?->getUserIdentifier()]);
+
+                return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
             }
         }
 
-        if (isset($publishError) && $publishError === true) {
-            return $this->sendInternalServerErrorJsonResponse([], 'Failed to process request');
-        }
+        // Success return
         if (
-            isset($sensorDataCurrentReadingUpdateDTO)
-            && empty($currentReadingSensorDataRequestHandler->getErrors())
-            && empty($currentReadingSensorDataRequestHandler->getValidationErrors())
-            && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequestHandler->getSuccessfulRequests())
+            isset($sensorDataCurrentReadingUpdateRequestDTO)
+            && empty($currentReadingSensorDataRequest->getErrors())
+            && empty($currentReadingSensorDataRequest->getValidationErrors())
+            && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())
         ) {
-            return $this->sendSuccessfulJsonResponse($currentReadingSensorDataRequestHandler->getSuccessfulRequests(), 'All sensor readings handled successfully');
+            try {
+                $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequest->getSuccessfulRequests());
+                $normalizedResponse = array_map('current', $normalizedResponse);
+            } catch (ExceptionInterface) {
+                return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            }
+
+            return $this->sendSuccessfulJsonResponse($normalizedResponse, 'All sensor readings handled successfully');
         }
 
-        if (!empty($currentReadingSensorDataRequestHandler->getSuccessfulRequests())) {
-            return $this->sendMultiStatusJsonResponse(
-                array_merge(
-                    $currentReadingSensorDataRequestHandler->getValidationErrors(),
-                    $currentReadingSensorDataRequestHandler->getErrors()
-                ),
-                $currentReadingSensorDataRequestHandler->getSuccessfulRequests(),
-                APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+        // Complete Failed return
+        if (empty($currentReadingSensorDataRequest->getSuccessfulRequests())) {
+            $errors = array_merge(
+                $currentReadingSensorDataRequest->getValidationErrors(),
+                $currentReadingSensorDataRequest->getErrors()
             );
+            try {
+                $normalizedResponse = $this->normalizeResponse($errors);
+                if (count($normalizedResponse) > 0) {
+                    $normalizedResponse = array_map('current', $normalizedResponse);
+                }
+            } catch (ExceptionInterface) {
+                return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+            }
+            return $this->sendBadRequestJsonResponse($normalizedResponse, APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT);
         }
 
-        return $this->sendBadRequestJsonResponse(
-            array_merge(
-                $currentReadingSensorDataRequestHandler->getValidationErrors(),
-                $currentReadingSensorDataRequestHandler->getErrors()
-            ),
-            APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT
-        );
+        // Partial Success return
+        try {
+            $normalizedErrorResponse = $this->normalizeResponse(
+                array_merge(
+                    $currentReadingSensorDataRequest->getValidationErrors(),
+                    $currentReadingSensorDataRequest->getErrors()
+                ),
+            );
+            if (count($normalizedErrorResponse) > 0) {
+                $normalizedErrorResponse = array_map('current', $normalizedErrorResponse);
+            }
+            $normalizedSuccessResponse = $this->normalizeResponse(
+                $currentReadingSensorDataRequest->getSuccessfulRequests(),
+            );
+            if (count($normalizedSuccessResponse) > 0) {
+                $normalizedSuccessResponse = array_map('current', $normalizedSuccessResponse);
+            }
+        } catch (ExceptionInterface) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+        }
 
+        return $this->sendMultiStatusJsonResponse(
+            $normalizedErrorResponse,
+            $normalizedSuccessResponse,
+            APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+        );
     }
 
     #[Required]

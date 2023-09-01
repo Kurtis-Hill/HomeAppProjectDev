@@ -7,6 +7,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<CardColour>
+ *
+ * @method CardColour|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardColour|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardColour[]    findAll()
+ * @method CardColour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class CardColourRepository extends ServiceEntityRepository implements CardColourRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,9 +22,9 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
         parent::__construct($registry, CardColour::class);
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?CardColour
     {
-        return $this->findOneBy(['colourID' => $id]);
+        return $this->find($id);
     }
 
     public function persist(CardColour $cardColour): void
@@ -29,7 +37,7 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
         $this->getEntityManager()->flush();
     }
 
-    public function getFirstColourId(): CardColour
+    public function getFirstColourID(): CardColour
     {
         return $this->createQueryBuilder('cardColour')
             ->select()
@@ -45,12 +53,21 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
             ->getQuery()->getSingleScalarResult();
     }
 
-    #[ArrayShape([CardColour::class])]
-    public function getAllColours(): array
+    #[ArrayShape(['colourID' => "int", 'colour' => "string", 'shade' => "string"])]
+    public function getAllColoursAsArray(): array
     {
         $qb = $this->createQueryBuilder('c')
             ->orderBy('c.colour', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    #[ArrayShape([CardColour::class])]
+    public function getAllColourObjects(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->orderBy('c.colour', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

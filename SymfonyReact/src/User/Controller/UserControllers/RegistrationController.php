@@ -2,88 +2,69 @@
 
 namespace App\User\Controller\UserControllers;
 
-use App\Authentication\Entity\GroupNameMapping;
-use App\Form\RegistrationFormType;
-use App\User\Entity\GroupNames;
+use App\Common\API\CommonURL;
 use App\User\Entity\User;
-use Doctrine\ORM\ORMException;
+use App\User\Exceptions\GroupExceptions\GroupValidationException;
+use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
+use App\User\Forms\RegistrationForm;
+use App\User\Services\User\UserCreationHandler;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\Exception\ORMException;
+use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends AbstractController
 {
-    /**
-     * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @return Response
-     */
-    #[Route('/HomeApp/register', name: 'app_register', methods: [Request::METHOD_POST, Request::METHOD_GET])]
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
     {
+        $this->logger = $logger;
+    }
+
+    #[Route(
+        CommonURL::HOMEAPP_WEBAPP_URL_BASE . 'register',
+        name: 'app_register',
+        methods: [Request::METHOD_POST, Request::METHOD_GET]
+    )]
+    public function register(
+        Request $request,
+        UserCreationHandler $userCreationHandler,
+    ): Response {
+        return $this->json('not implemented');
         $user = new User();
 
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationForm::class, $user);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $entityManager = $this->getDoctrine()->getManager();
-                $groupNameObject = new GroupNames();
-
-                $groupName = $form->get('groupNameID')->getData();
-
-                $groupNameCheck = $entityManager->getRepository(GroupNames::class)->findOneBy(['groupName' => $groupName]);
-
-                if ($groupNameCheck instanceof GroupNames) {
-                    throw new BadRequestException($groupName.' has already been taken by another user');
-                }
-
-                $groupNameObject->setGroupName($groupName);
-                $groupNameObject->setCreatedAt();
-
-                $entityManager->persist($groupNameObject);
-                $entityManager->flush();
-
-                $user->setPassword(
-                    $passwordEncoder->encodePassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
+                $userCreationHandler->handleNewUserCreation(
+                    $form->get('firstName')->getData(),
+                    $form->get('lastName')->getData(),
+                    $form->get('email')->getData(),
+                    $form->get('groupName')->getData(),
+                    $form->get('plainPassword')->getData(),
+                    $form->get('profilePicture')->getData(),
                 );
-
-                $user->setEmail($form->get('email')->getData());
-                $user->setFirstName($form->get('firstName')->getData());
-                $user->setLastName($form->get('lastName')->getData());
-                $user->setRoles(['ROLE_USER']);
-                $user->setGroupNameID($groupNameObject);
-                $user->setCreatedAt(new \DateTime());
-
-                $groupNameMapping = new GroupNameMapping();
-
-                $groupNameMapping->setGroupnameid($groupNameObject);
-                $groupNameMapping->setUserID($user);
-
-                $entityManager->persist($user);
-                $entityManager->persist($groupNameMapping);
-                $entityManager->flush();
-            } catch (ORMException | \Exception $e) {
-                if (isset($groupNameObject)) {
-                    $entityManager->remove($groupNameObject);
+                $this->addFlash('success', 'Registration successful!');
+            } catch (BadRequestException $e) {
+                $form->addError(new FormError($e->getMessage()));
+            } catch (UniqueConstraintViolationException $e) {
+                $form->addError(new FormError('Email already exists!'));
+            } catch (UserCreationValidationErrorsException|GroupValidationException $e) {
+                foreach ($e->getValidationErrors() as $error) {
+                    $form->addError(new FormError($error));
                 }
-                if (isset($user)) {
-                    $entityManager->remove($user);
-                }
-                if (isset($groupNameMapping)) {
-                    $entityManager->remove($groupNameMapping);
-                }
-                error_log($e->getMessage());
+            } catch (ORMException|Exception $e) {
+                $this->logger->error($e->getMessage());
+                $this->addFlash('error', 'Registration failed! Something went wrong');
             }
-
-            return $this->redirectToRoute('spa-view', ['route' => 'login']);
         }
 
         return $this->render('registration/register.html.twig', [

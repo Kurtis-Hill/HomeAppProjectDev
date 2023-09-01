@@ -2,8 +2,8 @@
 
 namespace App\UserInterface\Factories\CardViewTypeFactories;
 
-use App\UserInterface\Builders\CardViewBuilders\CardViewFormDTOBuilderInterface;
-use App\UserInterface\Builders\CardViewBuilders\StandardCardViewFormDTOBuilder;
+use App\UserInterface\Builders\CardViewDTOBuilders\FormResponse\CardViewFormDTOBuilderInterface;
+use App\UserInterface\Builders\CardViewDTOBuilders\FormResponse\StandardCardViewFormDTOBuilder;
 use App\UserInterface\Exceptions\CardFormTypeNotRecognisedException;
 
 class CardViewFormDTOFactory

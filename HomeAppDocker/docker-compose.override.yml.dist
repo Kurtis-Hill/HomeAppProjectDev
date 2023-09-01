@@ -20,7 +20,6 @@ services:
       - ../SymfonyReact:/var/www/html
       - ../SSL:/etc/ssl
       - ./apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
-      - ./apache/logs:/etc/logs
   maria-db:
     ports:
       - '127.0.0.1:${DB_PORT}:3306'

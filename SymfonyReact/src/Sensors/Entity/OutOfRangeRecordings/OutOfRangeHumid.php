@@ -2,50 +2,42 @@
 
 namespace App\Sensors\Entity\OutOfRangeRecordings;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsHumidityRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * OutofRangeHumid
- *
- * @ORM\Table(name="outofrangehumid", indexes={@ORM\Index(name="sensorID", columns={"humidID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsHumidityRepository")
- */
+#[
+    ORM\Entity(repositoryClass: OutOfBoundsHumidityRepository::class),
+    ORM\Table(name: "outofrangehumid"),
+    ORM\Index(columns: ["humidID"], name: "humidID"),
+]
 class OutOfRangeHumid implements OutOfBoundsEntityInterface
 {
-    /**
-     * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "outofrangeID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $outOfRangeID;
 
-    /**
-     * @ORM\Column(name="sensorReading", type="float", precision=10, scale=0, nullable=false)
-     */
+    #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "NULL"]),]
     #[HumidityConstraint]
     private float $sensorReading;
 
-    /**
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
     #[Assert\NotBlank(message: 'Out of range humidity date time should not be blank')]
     private DateTime $createdAt;
 
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Humidity")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Humidity::class),
+        ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
+    ]
     #[Assert\NotNull(message: "Out of range Humidity Object cannot be null")]
-    private Humidity $sensorReadingTypeID;
+    private Humidity $sensorReadingID;
 
     public function getOutOfRangeID(): int
     {
@@ -77,15 +69,15 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
         $this->createdAt = new DateTime('now');
     }
 
-    public function getSensorReadingTypeID(): Humidity
+    public function getSensorReadingID(): Humidity
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Humidity) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

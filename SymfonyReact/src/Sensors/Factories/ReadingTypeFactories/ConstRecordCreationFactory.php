@@ -2,11 +2,11 @@
 
 namespace App\Sensors\Factories\ReadingTypeFactories;
 
-use App\Sensors\Builders\ReadingTypeCreationBuilders\NewConstRecordCreationBuilders\AnalogConstRecordObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\NewConstRecordCreationBuilders\ConstRecordObjectBuilderInterface;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\NewConstRecordCreationBuilders\HumidityConstRecordObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\NewConstRecordCreationBuilders\LatitudeConstRecordObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\NewConstRecordCreationBuilders\TemperatureConstRecordObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\AnalogConstRecordObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\ConstRecordObjectBuilderInterface;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\HumidityConstRecordObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\LatitudeConstRecordObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\TemperatureConstRecordObjectBuilder;
 use App\Sensors\Entity\ReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\Latitude;
@@ -27,8 +27,7 @@ class ConstRecordCreationFactory
         HumidityConstRecordObjectBuilder $humidityConstRecordObjectBuilder,
         LatitudeConstRecordObjectBuilder $latitudeConstRecordObjectBuilder,
         TemperatureConstRecordObjectBuilder $temperatureConstRecordObjectBuilder
-    )
-    {
+    ) {
         $this->analogConstRecordObjectBuilder = $analogConstRecordObjectBuilder;
         $this->humidityConstRecordObjectBuilder = $humidityConstRecordObjectBuilder;
         $this->latitudeConstRecordObjectBuilder = $latitudeConstRecordObjectBuilder;
@@ -38,10 +37,10 @@ class ConstRecordCreationFactory
     public function getConstRecordObjectBuilder(string $readingType): ConstRecordObjectBuilderInterface
     {
         return match ($readingType) {
-            Temperature::READING_TYPE => $this->temperatureConstRecordObjectBuilder,
-            Latitude::READING_TYPE => $this->latitudeConstRecordObjectBuilder,
-            Humidity::READING_TYPE => $this->humidityConstRecordObjectBuilder,
-            Analog::READING_TYPE => $this->analogConstRecordObjectBuilder,
+            Temperature::getReadingTypeName() => $this->temperatureConstRecordObjectBuilder,
+            Latitude::getReadingTypeName() => $this->latitudeConstRecordObjectBuilder,
+            Humidity::getReadingTypeName() => $this->humidityConstRecordObjectBuilder,
+            Analog::getReadingTypeName() => $this->analogConstRecordObjectBuilder,
         };
     }
 }

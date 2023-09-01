@@ -2,21 +2,29 @@
 
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
-use App\UserInterface\Entity\Card\Cardstate;
+use App\UserInterface\Entity\Card\CardState;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<CardState>
+ *
+ * @method CardState|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardState|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardState[]    findAll()
+ * @method CardState[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class CardStateRepository extends ServiceEntityRepository implements CardStateRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Cardstate::class);
+        parent::__construct($registry, CardState::class);
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?CardState
     {
-        return $this->findOneBy(['cardStateID' => $id]);
+        return $this->find($id);
     }
 
     public function findOneByState(string $state): ?CardState
@@ -24,7 +32,7 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
         return $this->findOneBy(['state' => $state]);
     }
 
-    public function persist(Cardstate $cardState): void
+    public function persist(CardState $cardState): void
     {
         $this->getEntityManager()->persist($cardState);
     }
@@ -34,12 +42,21 @@ class CardStateRepository extends ServiceEntityRepository implements CardStateRe
         $this->getEntityManager()->flush();
     }
 
-    #[ArrayShape([Cardstate::class])]
-    public function getAllStates(): array
+    #[ArrayShape([CardState::class])]
+    public function getAllStatesAsArray(): array
     {
         $qb = $this->createQueryBuilder('cs')
-            ->orderBy('cs.cardStateID', 'ASC');
+            ->orderBy('cs.stateID', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    #[ArrayShape([CardState::class])]
+    public function getAllStateAsObjects(): array
+    {
+        $qb = $this->createQueryBuilder('cs')
+            ->orderBy('cs.stateID', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

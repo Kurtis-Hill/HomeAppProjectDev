@@ -7,6 +7,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<Icons>
+ *
+ * @method Icons|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Icons|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Icons[]    findAll()
+ * @method Icons[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class IconsRepository extends ServiceEntityRepository implements IconsRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,9 +22,9 @@ class IconsRepository extends ServiceEntityRepository implements IconsRepository
         parent::__construct($registry, Icons::class);
     }
 
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?Icons
     {
-        return $this->findOneBy(['iconID' => $id]);
+        return $this->find($id);
     }
 
     public function persist(Icons $cardColour): void
@@ -45,12 +53,21 @@ class IconsRepository extends ServiceEntityRepository implements IconsRepository
             ->getQuery()->getOneOrNullResult();
     }
 
-    #[ArrayShape([Icons::class])]
-    public function getAllIcons(): array
+    #[ArrayShape(['iconID' => 'int', 'iconName' => 'string', 'description' => 'string'])]
+    public function getAllIconsAsArray(): array
     {
         $qb = $this->createQueryBuilder('i')
             ->orderBy('i.iconName', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    #[ArrayShape([Icons::class])]
+    public function getAllIconObjects(): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->orderBy('i.iconName', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 }

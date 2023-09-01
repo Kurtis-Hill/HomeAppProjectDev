@@ -3,25 +3,22 @@
 namespace App\Sensors\Entity\ReadingTypes;
 
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\Interfaces\ReadingSymbolInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
-use App\Sensors\SensorDataServices\SensorReadingTypesValidator\SensorReadingTypesValidatorServiceInterface;
+use App\Sensors\Repository\ReadingType\ORM\HumidityRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * Humidity
- *
- * @ORM\Table(name="humid", uniqueConstraints={@ORM\UniqueConstraint(name="sensorNameID", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\HumidityRepository")
- */
-//#[Assert\Callback([SensorReadingTypesValidatorServiceInterface::class, 'validate'])]
-class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+#[
+    ORM\Entity(repositoryClass: HumidityRepository::class),
+    ORM\Table(name: "humidity"),
+    ORM\UniqueConstraint(name: "humid_ibfk_1", columns: ["sensorID"]),
+]
+class Humidity extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'humidity';
 
@@ -31,50 +28,38 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
 
     public const LOW_READING = 0;
 
-    /**
-     * @ORM\Column(name="humidID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "humidID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $humidID;
 
-    /**
-     * @ORM\Column(name="humidReading", type="integer", precision=10, scale=0, nullable=false)
-     */
+    #[ORM\Column(name: "humidReading", type: "float", precision: 10, scale: 0, nullable: false)]
     #[HumidityConstraint]
     private float $currentReading;
 
-    /**
-     * @ORM\Column(name="highHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="70"})
-     */
+    #[ORM\Column(name: "highHumid", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "70"])]
     #[HumidityConstraint]
-    private int $highHumid = 80;
+    private float $highHumid = 80;
 
-    /**
-     * @ORM\Column(name="lowHumid", type="integer", precision=10, scale=0, nullable=false, options={"default"="15"})
-     */
+    #[ORM\Column(name: "lowHumid", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "15"])]
     #[HumidityConstraint]
-    private int $lowHumid = 10;
+    private float $lowHumid = 10;
 
-    /**
-     * @ORM\Column(name="constRecord", type="boolean", nullable=false, options={"default"="0"})
-     */
+    #[ORM\Column(name: "constRecord", type: "boolean", nullable: false, options: ["default" => "0"])]
     #[Assert\Type("bool")]
     private bool $constRecord = false;
 
-    /**
-     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
     #[Assert\NotBlank(message: 'humidity date time should not be blank')]
     private DateTimeInterface $updatedAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
-     * })
-     */
-    private Sensor $sensorNameID;
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+    ]
+    private Sensor $sensor;
 
 
     public function getSensorID(): int
@@ -87,14 +72,14 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         $this->humidID = $id;
     }
 
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $id): void
+    public function setSensor(Sensor $id): void
     {
-        $this->sensorNameID = $id;
+        $this->sensor = $id;
     }
 
     public function getCurrentReading(): int|float
@@ -117,9 +102,9 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $currentReading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
-        $this->currentReading = $currentReading;
+        $this->currentReading = $reading;
     }
 
     public function setHighReading(int|float|string $reading): void
@@ -141,21 +126,28 @@ class Humidity extends AbstractReadingType implements StandardReadingSensorInter
         $this->updatedAt = new DateTimeImmutable('now');
     }
 
-
     public function getConstRecord(): bool
     {
         return $this->constRecord;
     }
-
 
     public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
     }
 
-
     public function getReadingType(): string
     {
         return self::READING_TYPE;
+    }
+
+    public static function getReadingTypeName(): string
+    {
+        return self::READING_TYPE;
+    }
+
+    public static function getReadingSymbol(): string
+    {
+        return self::READING_SYMBOL;
     }
 }

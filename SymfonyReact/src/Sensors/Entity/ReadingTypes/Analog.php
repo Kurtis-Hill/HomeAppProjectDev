@@ -5,102 +5,83 @@ namespace App\Sensors\Entity\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
+use App\Sensors\Repository\ReadingType\ORM\AnalogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @ORM\Table(name="analog", uniqueConstraints={@ORM\UniqueConstraint(name="analog_ibfk_3", columns={"sensorNameID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ReadingType\AnalogRepository")
- */
+#[
+    ORM\Entity(repositoryClass: AnalogRepository::class),
+    ORM\Table(name: "analog"),
+    ORM\UniqueConstraint(name: "analog_ibfk_3", columns: ["sensorID"]),
+]
 class Analog extends AbstractReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'analog';
 
-    public const ANALOG_SENSORS = [
-        Soil::NAME
-    ];
-
-    /**
-     * @ORM\Column(name="analogID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "analogID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $analogID;
 
-    /**
-     * @ORM\Column(name="analogReading", type="smallint", nullable=true, options={"default"="NULL"})
-     */
+    #[ORM\Column(name: "analogReading", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "NULL"])]
     #[SoilConstraint(groups: [Soil::NAME])]
     private float $analogReading;
 
-    /**
-     * @ORM\Column(name="highAnalog", type="smallint", nullable=true, options={"default"="1000"})
-     */
+    #[ORM\Column(name: "highAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[SoilConstraint(groups: [Soil::NAME])]
-    private int $highAnalog = 9999;
+    private float $highAnalog = 1000;
 
-    /**
-     * @ORM\Column(name="lowAnalog", type="smallint", nullable=true, options={"default"="1000"})
-     */
+    #[ORM\Column(name: "lowAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[SoilConstraint(groups: [Soil::NAME])]
-    private int $lowAnalog = 1111;
+    private float $lowAnalog = 1000;
 
-    /**
-     * @ORM\Column(name="constRecord", type="boolean", nullable=true)
-     */
+    #[ORM\Column(name: "constRecord", type: "boolean", nullable: true)]
     #[Assert\Type("bool")]
     private bool $constRecord = false;
 
-    /**
-     * @ORM\Column(name="updatedAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "updatedAt", type: "datetime", precision: 0, nullable: false, options: ["default" => "current_timestamp()"])]
     #[Assert\NotBlank(message: 'analog date time should not be blank')]
     private DateTimeInterface $updatedAt;
 
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID")
-     * })
-     */
-    private Sensor $sensorNameID;
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+    ]
+    private Sensor $sensor;
 
     public function getSensorID(): int
     {
         return $this->analogID;
     }
 
-
     public function setSensorID(int $analogid): void
     {
         $this->analogID = $analogid;
     }
 
-
-    public function getSensorNameID(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
     /**
-     * @param Sensor $sensorNameID
+     * @param Sensor $sensor
      */
-    public function setSensorObject(Sensor $sensorNameID): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $sensorNameID;
+        $this->sensor = $sensor;
     }
 
     /**
      * Sensor Reading Methods
      */
-
     public function getCurrentReading(): int|float
     {
         return $this->analogReading;
@@ -121,9 +102,9 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
         return $this->updatedAt;
     }
 
-    public function setCurrentReading(int|float|string $currentReading): void
+    public function setCurrentReading(int|float|string $reading): void
     {
-        $this->analogReading = $currentReading;
+        $this->analogReading = $reading;
     }
 
     public function setHighReading(int|float|string $reading): void
@@ -156,6 +137,11 @@ class Analog extends AbstractReadingType implements StandardReadingSensorInterfa
     }
 
     public function getReadingType(): string
+    {
+        return self::READING_TYPE;
+    }
+
+    public static function getReadingTypeName(): string
     {
         return self::READING_TYPE;
     }

@@ -6,10 +6,16 @@ use App\UserInterface\Entity\Card\CardColour;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @method CardColour|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CardColour|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CardColour[]    findAll()
+ * @method CardColour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface CardColourRepositoryInterface
 {
     public function findOneById(int $id);
@@ -29,7 +35,7 @@ interface CardColourRepositoryInterface
     /**
      * @throws NonUniqueResultException
      */
-    public function getFirstColourId(): CardColour;
+    public function getFirstColourID(): CardColour;
 
     /**
      * @throws NonUniqueResultException
@@ -40,6 +46,9 @@ interface CardColourRepositoryInterface
     /**
      * @throws ORMException
      */
+    #[ArrayShape(['colourID' => "int", 'colour' => "string", 'shade' => "string"])]
+    public function getAllColoursAsArray(): array;
+
     #[ArrayShape([CardColour::class])]
-    public function getAllColours(): array;
+    public function getAllColourObjects(): array;
 }

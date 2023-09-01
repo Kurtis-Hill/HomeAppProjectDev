@@ -39,11 +39,11 @@ interface OutOfBoundsEntityInterface
     /**
      * @return AllSensorReadingTypeInterface
      */
-    public function getSensorReadingTypeID(): AllSensorReadingTypeInterface;
+    public function getSensorReadingID(): AllSensorReadingTypeInterface;
 
     /**
      * @param StandardReadingSensorInterface $sensorReadingTypeID
      */
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void;
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void;
 
 }

@@ -6,9 +6,9 @@ use App\Sensors\Entity\ReadingTypes\Temperature;
 
 interface TemperatureSensorTypeInterface
 {
-    public function getTempObject(): Temperature;
+    public function getTemperature(): Temperature;
 
-    public function setTempObject(Temperature $tempID): void;
+    public function setTemperature(Temperature $tempID): void;
 
     public function getMaxTemperature(): float|int;
 

@@ -3,32 +3,21 @@
 namespace App\Sensors\DTO\Internal\Sensor;
 
 use App\Devices\Entity\Devices;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
-use App\User\Entity\User;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Immutable]
-class NewSensorDTO
+readonly class NewSensorDTO
 {
-    private ?string $sensorName;
-
-    private SensorType $sensorTypeID;
-
-    private Devices $deviceNameID;
-
-    private UserInterface $user;
-
     public function __construct(
-        ?string $sensorName,
-        SensorType $sensorType,
-        Devices $device,
-        UserInterface $user,
+        private ?string $sensorName,
+        private SensorType $sensorType,
+        private Devices $device,
+        private UserInterface $user,
+        private Sensor $sensor,
     ) {
-        $this->sensorName = $sensorName;
-        $this->sensorTypeID = $sensorType;
-        $this->deviceNameID = $device;
-        $this->user = $user;
     }
 
     public function getSensorName(): ?string
@@ -38,16 +27,21 @@ class NewSensorDTO
 
     public function getSensorType(): SensorType
     {
-        return $this->sensorTypeID;
+        return $this->sensorType;
     }
 
     public function getDevice(): Devices
     {
-        return $this->deviceNameID;
+        return $this->device;
     }
 
-    public function getUser(): User
+    public function getUser(): UserInterface
     {
         return $this->user;
+    }
+
+    public function getSensor(): Sensor
+    {
+        return $this->sensor;
     }
 }

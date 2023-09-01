@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Builders\ReadingTypeQueryDTOBuilders;
 
-use App\UserInterface\DTO\CardDataQueryDTO\JoinQueryDTO;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 
 interface ReadingTypeQueryDTOBuilderInterface
 {

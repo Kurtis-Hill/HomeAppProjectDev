@@ -10,9 +10,9 @@ interface StandardReadingSensorInterface
     /**
      * Sensor relational Objects
      */
-    public function getSensorNameID(): Sensor;
+    public function getSensor(): Sensor;
 
-    public function setSensorObject(Sensor $id);
+    public function setSensor(Sensor $id);
 
 
     /**
@@ -47,4 +47,6 @@ interface StandardReadingSensorInterface
     public function getMeasurementDifferenceLowReading(): int|float;
 
     public function getReadingType(): string;
+
+    public static function getReadingTypeName(): string;
 }

@@ -7,17 +7,19 @@ use App\Sensors\Entity\ReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
-use App\UserInterface\Entity\Card\CardView;
+use App\Sensors\Repository\SensorType\ORM\DhtRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Table(name="dhtsensor", uniqueConstraints={@ORM\UniqueConstraint(name="cardviewID", columns={"sensorNameID"}), @ORM\UniqueConstraint(name="tempID", columns={"tempID"}), @ORM\UniqueConstraint(name="humidID", columns={"humidID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\SensorType\DhtRepository")
- */
-class Dht implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
+#[
+    ORM\Entity(repositoryClass: DhtRepository::class),
+    ORM\Table(name: "dht"),
+    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
+    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
+    ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
+]
+class Dht implements SensorTypeInterface, StandardSensorReadingTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
 {
     public const NAME = 'Dht';
 
@@ -32,38 +34,30 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         Humidity::READING_TYPE,
     ];
 
-    /**
-     * @ORM\Column(name="dhtID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "dhtID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $dhtID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Temperature")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="tempID", referencedColumnName="tempID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Temperature::class),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+    ]
     private Temperature $tempID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Humidity")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="humidID", referencedColumnName="humidID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Humidity::class),
+        ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
+    ]
     private Humidity $humidID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\Sensor")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="sensorNameID", referencedColumnName="sensorNameID", nullable=true)
-     * })
-     */
-    private Sensor $sensorNameID;
-
-    private CardView $cardView;
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+    ]
+    private Sensor $sensor;
 
     public function getSensorTypeID(): int
     {
@@ -75,24 +69,24 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         $this->dhtID = $dhtID;
     }
 
-    public function getTempObject(): Temperature
+    public function getTemperature(): Temperature
     {
         return $this->tempID;
     }
 
-    public function setTempObject(Temperature $tempID): void
+    public function setTemperature(Temperature $tempID): void
     {
         $this->tempID = $tempID;
     }
 
-    public function getSensorObject(): Sensor
+    public function getSensor(): Sensor
     {
-        return $this->sensorNameID;
+        return $this->sensor;
     }
 
-    public function setSensorObject(Sensor $id): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->sensorNameID = $id;
+        $this->sensor = $sensor;
     }
 
     public function getHumidObject(): Humidity
@@ -103,16 +97,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public function setHumidObject(Humidity $humidID): void
     {
         $this->humidID = $humidID;
-    }
-
-    public function getCardViewObject(): ?CardView
-    {
-        return $this->cardView;
-    }
-
-    public function setCardViewObject(CardView $cardView): void
-    {
-        $this->cardView = $cardView;
     }
 
     public function getMaxTemperature(): float|int

@@ -1,46 +1,39 @@
 {
-    "devDependencies": {
-        "@babel/core": "^7.9.0",
-        "@babel/plugin-proposal-class-properties": "^7.8.3",
-        "@babel/preset-env": "^7.9.5",
-        "@babel/preset-react": "^7.9.4",
-        "@symfony/webpack-encore": "^1.8.2",
-        "@types/bootstrap": "^4.3.2",
-        "babel-loader": "^8.1.0",
-        "core-js": "^3.6.5",
-        "regenerator-runtime": "^0.13.5",
-        "webpack": "^4.42.1",
-        "webpack-notifier": "^1.6.0"
-    },
-    "license": "UNLICENSED",
-    "private": true,
-    "scripts": {
-        "dev-server": "encore dev-server --hot --disable-host-check",
-        "dev": "encore dev",
-        "watch": "encore dev --watch",
-        "build": "encore production --progress"
-    },
-    "dependencies": {
-        "axios": ">=0.21.1",
-        "bootstrap": "^4.4.1",
-        "bootstrap-react": "^0.3.1",
-        "encore": "^0.0.30-beta",
-        "font-awesome": "^4.7.0",
-        "jquery": "^3.5.0",
-        "node-sass": "^6.0.0",
-        "popper.js": "^1.16.1",
-        "prop-types": "^15.7.2",
-        "react": "^16.13.1",
-        "react-bootstrap": "^1.0.0",
-        "react-dom": "^16.13.1",
-        "react-router": "^5.1.2",
-        "react-router-dom": "^5.1.2",
-        "reactdom": "^2.0.0",
-        "sass-loader": "7.0.1",
-        "startbootstrap-sb-admin-2": "^4.0.7",
-        "webkit": "^0.0.0"
-    },
-    "name": "src",
-    "version": "1.0.0",
-    "main": "index.js"
+  "name": "HomeAppProject",
+  "version": "1.0.0",
+  "description": "Monitor sensors from a centralized hub",
+  "main": "index.js",
+  "author": "Kurtis Hill",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/preset-env": "^7.20.2",
+    "@symfony/webpack-encore": "^4.0.0",
+    "axios": "^1.1.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "core-js": "^3.23.5",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^6.3.0",
+    "react-router-dom": "^6.3.0",
+    "startbootstrap-sb-admin-2": "^4.1.4",
+    "typescript": "^4.7.3",
+    "webpack": "^5.73.0"
+  },
+  "scripts": {
+    "dev-server": "encore dev-server --hot --disable-host-check",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
+    "sass": "^1.52.3",
+    "sass-loader": "^13.1.0",
+    "ts-loader": "^9.0.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-notifier": "^1.6.0"
+  }
 }

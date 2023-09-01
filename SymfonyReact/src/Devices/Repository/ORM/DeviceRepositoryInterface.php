@@ -3,11 +3,22 @@
 namespace App\Devices\Repository\ORM;
 
 use App\Devices\Entity\Devices;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @extends ServiceEntityRepository<Devices>
+ *
+ * @method Devices|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Devices|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Devices[]    findAll()
+ * @method Devices[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface DeviceRepositoryInterface
 {
     /**
@@ -35,7 +46,13 @@ interface DeviceRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllUsersDevicesByGroupId($groupNameID): array;
+    public function findAllUsersDevicesByGroupId(array $groupIDs, int $hydration = AbstractQuery::HYDRATE_ARRAY): array;
+
+    #[ArrayShape([Devices::class])]
+    public function findAllDevicesByGroupIDs(
+        array $groupIDs,
+        int $hydration = AbstractQuery::HYDRATE_OBJECT,
+    ): array;
 
     /**
      * @throws ORMException

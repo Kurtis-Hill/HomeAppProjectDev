@@ -5,41 +5,35 @@ namespace App\Sensors\Entity\OutOfRangeRecordings;
 use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
+use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsLatitudeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Table(name="outofrangelatitude")
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\OutOfBounds\OutOfBoundsLatitudeRepository")
- */
+#[
+    ORM\Entity(repositoryClass: OutOfBoundsLatitudeRepository::class),
+    ORM\Table(name: "outofrangelatitude"),
+]
 class OutOfRangeLatitude implements OutOfBoundsEntityInterface
 {
-    /**
-     * @ORM\Column(name="outofrangeID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "outofrangeID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $outOfRangeID;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Latitude")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="latitudeID", referencedColumnName="latitudeID")
-     * })
-     */
-    private Latitude $sensorReadingTypeID;
+    #[
+        ORM\ManyToOne(targetEntity: Latitude::class),
+        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
+    ]
+    private Latitude $sensorReadingID;
 
-    /**
-     * @ORM\Column(name="sensorReading", type="integer", nullable=false)
-     */
+    #[ORM\Column(name: "sensorReading", type: "float", nullable: false)]
     #[LatitudeConstraint]
     private int|float $sensorReading;
 
-    /**
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),]
     private DateTimeInterface $createdAt;
 
     public function getOutOfRangeID(): int
@@ -52,15 +46,15 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
         $this->outOfRangeID = $outOfRangeID;
     }
 
-    public function getSensorReadingTypeID(): Latitude
+    public function getSensorReadingID(): Latitude
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeID(StandardReadingSensorInterface $sensorReadingTypeID): void
+    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Latitude) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 

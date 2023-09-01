@@ -5,18 +5,22 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Devices\Builders\DeviceUpdate\DeviceUpdateDTOBuilder;
-use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceObjectBuilderInterface;
-use App\Devices\DTO\Internal\UpdateDeviceDTO;
+use App\Common\Builders\Request\RequestDTOBuilder;
+use App\Common\Exceptions\ValidatorProcessorException;
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Common\Services\RequestTypeEnum;
+use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
-use App\User\Entity\GroupNames;
-use App\User\Entity\Room;
-use App\User\Repository\ORM\GroupNameRepositoryInterface;
-use App\User\Repository\ORM\RoomRepositoryInterface;
+use App\User\Entity\User;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,15 +29,27 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'update-user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'update-user-devices')]
 class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
 
     #[
         Route(
-            path: '/update-device/{deviceNameID}',
+            path: '{deviceID}/update',
             name: 'update-esp-device',
             methods: [Request::METHOD_PUT, Request::METHOD_PATCH]
         )
@@ -41,9 +57,9 @@ class UpdateDeviceController extends AbstractController
     public function updateDevice(
         Devices $deviceToUpdate,
         Request $request,
-        UpdateDeviceObjectBuilderInterface $updateDeviceObjectBuilder,
-        RoomRepositoryInterface $roomRepository,
-        GroupNameRepositoryInterface $groupNameRepository
+        ValidatorInterface $validator,
+        UpdateDeviceHandlerInterface $updateDeviceHandler,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -55,42 +71,41 @@ class UpdateDeviceController extends AbstractController
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
             );
         } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
         }
 
-        $requestValidationErrors = $updateDeviceObjectBuilder->validateDeviceRequestObject($deviceUpdateRequestDTO);
-
-        if (!empty($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($requestValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
+        $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse(
+                $this->getValidationErrorAsArray($requestValidationErrors),
+                APIErrorMessages::VALIDATION_ERRORS
+            );
         }
 
-        if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
-            try {
-                $room = $roomRepository->findOneById($deviceUpdateRequestDTO->getDeviceRoom());
-            } catch (NonUniqueResultException | ORMException) {
-                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room')]);
-            }
-            if (!$room instanceof Room) {
-                return $this->sendBadRequestJsonResponse(['The id provided for room doesnt match any room we have'], 'Room not found');
-            }
-        }
-        if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
-            try {
-                $groupName = $groupNameRepository->findOneById($deviceUpdateRequestDTO->getDeviceGroup());
-            } catch (NonUniqueResultException | ORMException) {
-                return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Group name')]);
-            }
-            if (!$groupName instanceof GroupNames) {
-                return $this->sendBadRequestJsonResponse(['The id provided for groupname doesnt match any groupname we have'], 'Group name not found');
-            }
+        try {
+            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_FULL->value),
+            );
+        } catch (ValidatorProcessorException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
-        $updateDeviceDTO = new UpdateDeviceDTO(
-            $deviceUpdateRequestDTO,
-            $deviceToUpdate,
-            $room ?? null,
-            $groupName ?? null
-        );
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'User')]);
+        }
+
+        try {
+            $updateDeviceDTO = $updateDeviceHandler->buildUpdateDeviceDTO(
+                $deviceUpdateRequestDTO,
+                $user,
+                $deviceToUpdate,
+            );
+        } catch (NonUniqueResultException | ORMException) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room or group name')]);
+        } catch (GroupNotFoundException|RoomNotFoundException $e) {
+            return $this->sendNotFoundResponse([$e->getMessage()]);
+        }
 
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::UPDATE_DEVICE, $updateDeviceDTO);
@@ -98,26 +113,33 @@ class UpdateDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $deviceUpdateValidationErrors = $updateDeviceObjectBuilder->updateDeviceAndValidate($updateDeviceDTO);
-
+        $deviceUpdateValidationErrors = $updateDeviceHandler->updateDevice($updateDeviceDTO);
         if (!empty($deviceUpdateValidationErrors)) {
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        $savedDevice = $updateDeviceObjectBuilder->saveNewDevice($deviceToUpdate);
-
+        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate);
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
-        $deviceUpdateSuccessResponseDTO = DeviceUpdateDTOBuilder::buildSensorSuccessResponseDTO($deviceToUpdate);
-
+        $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToUpdate);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO);
+            $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
-            return $this->sendMultiStatusJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        return $this->sendSuccessfulUpdateJsonResponse($normalizedResponse, 'Device Successfully Updated');
+        $this->logger->info(
+            sprintf(
+                'Device %s updated successfully',
+                $deviceToUpdate->getDeviceID()
+            ),
+            [
+                'user' => $this->getUser()?->getUserIdentifier()
+            ]
+        );
+
+        return $this->sendSuccessfulJsonResponse($normalizedResponse, 'Device Successfully Updated');
     }
 }

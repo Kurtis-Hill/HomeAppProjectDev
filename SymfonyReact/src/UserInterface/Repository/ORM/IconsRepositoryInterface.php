@@ -6,10 +6,16 @@ use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @method Icons|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Icons|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Icons[]    findAll()
+ * @method Icons[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 interface IconsRepositoryInterface
 {
     public function findOneById(int $id);
@@ -40,6 +46,9 @@ interface IconsRepositoryInterface
     /**
      * @throws ORMException
      */
+    #[ArrayShape(['iconID' => 'int', 'iconName' => 'string', 'description' => 'string'])]
+    public function getAllIconsAsArray(): array;
+
     #[ArrayShape([Icons::class])]
-    public function getAllIcons(): array;
+    public function getAllIconObjects(): array;
 }

@@ -1,12 +1,9 @@
 <?php
 
-namespace Sensors\Controller\SensorTypeControllers;
+namespace App\Tests\Sensors\Controller\SensorTypeControllers;
 
-use App\Doctrine\DataFixtures\Core\UserDataFixtures;
-use App\Doctrine\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Authentication\Controller\SecurityController;
-use App\Devices\Entity\Devices;
 use App\Sensors\Entity\SensorType;
+use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -16,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GetSensorTypesControllerTest extends WebTestCase
 {
+    use TestLoginTrait;
+
     private const GET_SENSOR_TYPES_URL = '/HomeApp/api/user/sensor-types/all';
 
     private ?EntityManagerInterface $entityManager;
@@ -33,7 +32,7 @@ class GetSensorTypesControllerTest extends WebTestCase
             ->getManager();
 
         try {
-            $this->userToken = $this->setUserToken();
+            $this->userToken = $this->setUserToken($this->client);
         } catch (JsonException $e) {
             error_log($e);
         }
@@ -46,25 +45,24 @@ class GetSensorTypesControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    private function setUserToken(bool $forceToken = false): string
+    public function test_wrong_token_returns_error(): void
     {
-        if ($this->userToken === null || $forceToken === true) {
-            $this->client->request(
-                Request::METHOD_POST,
-                SecurityController::API_USER_LOGIN,
-                [],
-                [],
-                ['CONTENT_TYPE' => 'application/json'],
-                '{"username":"' . UserDataFixtures::ADMIN_USER . '","password":"' . UserDataFixtures::ADMIN_PASSWORD . '"}'
-            );
+        /** @var SensorType[] $sensorTypes */
+        $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
 
-            $requestResponse = $this->client->getResponse();
-            $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_SENSOR_TYPES_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken . '1', 'CONTENT_TYPE' => 'application/json']
+        );
 
-            return $responseData['token'];
-        }
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        return $this->userToken;
+        self::assertEquals('Invalid JWT Token', $responseData['message']);
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_all_sensortypes_that_are_documented_in_sensortypes_class_exists(): void
@@ -88,6 +86,7 @@ class GetSensorTypesControllerTest extends WebTestCase
 
     public function test_all_data_base_entries_are_returned(): void
     {
+        /** @var SensorType[] $sensorTypes */
         $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
 
         $this->client->request(
@@ -102,7 +101,42 @@ class GetSensorTypesControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
+        /** @var SensorType $sensorTypeFromDB */
+        foreach ($payload as $sensorType) {
+            foreach ($sensorTypes as $sensorTypeFromDB) {
+                if ($sensorType['sensorTypeID'] === $sensorTypeFromDB->getSensorTypeID()) {
+                    self::assertEquals($sensorType['sensorTypeName'], $sensorTypeFromDB->getSensorType());
+                    self::assertEquals($sensorType['sensorTypeDescription'], $sensorTypeFromDB->getDescription());
+                }
+            }
+        }
         self::assertCount(count($sensorTypes), $payload);
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $this->client->request(
+            $httpVerb,
+            self::GET_SENSOR_TYPES_URL,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_POST],
+            [Request::METHOD_PUT],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_DELETE],
+        ];
     }
 }

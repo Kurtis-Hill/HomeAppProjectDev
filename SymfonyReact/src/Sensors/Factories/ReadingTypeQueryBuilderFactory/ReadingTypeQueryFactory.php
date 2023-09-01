@@ -42,10 +42,10 @@ class ReadingTypeQueryFactory
     public function getReadingTypeQueryDTOBuilder(string $readingType): ReadingTypeQueryDTOBuilderInterface
     {
         return match ($readingType) {
-            Temperature::READING_TYPE => $this->temperatureQueryTypeDTOBuilder,
-            Humidity::READING_TYPE => $this->humidityQueryTypeDTOBuilder,
-            Latitude::READING_TYPE => $this->latitudeQueryTypeDTOBuilder,
-            Analog::READING_TYPE => $this->analogQueryTypeDTOBuilder,
+            Temperature::getReadingTypeName() => $this->temperatureQueryTypeDTOBuilder,
+            Humidity::getReadingTypeName() => $this->humidityQueryTypeDTOBuilder,
+            Latitude::getReadingTypeName() => $this->latitudeQueryTypeDTOBuilder,
+            Analog::getReadingTypeName() => $this->analogQueryTypeDTOBuilder,
             default => throw new ReadingTypeBuilderFailureException('Unknown reading type'),
         };
     }

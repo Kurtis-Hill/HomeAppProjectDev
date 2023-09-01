@@ -4,19 +4,22 @@ SymfonyReact/.env.test.nonelocal
 SymfonyReact/.env.local
 SymfonyReact/.env.nonelocal
 SymfonyReact/.env.*.local
-SymfonyReact/config/secrets/prod/prod.decrypt.private.php
 SymfonyReact/public/bundles/
 SymfonyReact/var/
 SymfonyReact/vendor/
+SymfonyReact/.php-version
+SymfonyReact/bin/*
+SymfonyReact/tests/test-files/*
+SymfonyReact/config/jwt/private.pem
+SymfonyReact/config/jwt/public.pem
+SymfonyReact/supervisord.log
+SymfonyReact/supervisord.pid
 
 ###> symfony/webpack-encore-bundle ###
 SymfonyReact/node_modules/
 SymfonyReact/public/build/
 SymfonyReact/npm-debug.log
 SymfonyReact/yarn-error.log
-
-SymfonyReact/yarn.lock
-SymfonyReact/package-lock.json
 
 ### IDE tools
 .idea
@@ -28,13 +31,13 @@ SymfonyReact/.idea
 .php_cs.cache
 .php-version
 .php-cs-fixer.cache
+
 ###> symfony/phpunit-bridge ###
 SymfonyReact/.phpunit
-SymfonyReact/phpunit.xml
-SymfonyReact/.php-version
-SymfonyReact/bin/*
 SymfonyReact/.phpunit.result.cache
+SymfonyReact/phpunit.xml
 
+##< SSL >###
 SSL/ca-key.pem
 SSL/client-cert.pem
 SSL/client-key.pem
@@ -43,16 +46,17 @@ SSL/server-key.pem
 SSL/server.pfx
 SSL/ca-cert.pem
 
-##< Docker ###
+##< Docker >###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
+HomeAppDocker/webservers/auth/auth.json
+HomeAppDocker/docker-compose.override.yml
+.run/Docker Image.run.xml
+.run/DockerComposeHomeApp.run.xml
 
+##< RabbitMQ >###
 HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/rabbitmq/log/*
 
-HomeAppDocker/apache/auth.json
-HomeAppDocker/apache/logs/*
-HomeAppDocker/docker-compose.override.yml
-
-.run/Docker Image.run.xml
-.run/DockerComposeHomeApp.run.xml
+##< ElasticSearch >###
+HomeAppDocker/elasticsearch/certs/.env

@@ -5,55 +5,46 @@ namespace App\Sensors\Entity\ConstantRecording;
 use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\Latitude;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
+use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordLatitudeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Constlatitude
- *
- * @ORM\Table(name="constlatitude", indexes={@ORM\Index(name="latitudeID", columns={"latitudeID"})})
- * @ORM\Entity(repositoryClass="App\Sensors\Repository\ORM\ConstRecord\ConstantlyRecordRepositoryLatitudeRepository")
- */
-class ConstLatitude implements ConstantlyRecordInterface
+#[
+    ORM\Entity(repositoryClass: ConstantlyRecordLatitudeRepository::class),
+    ORM\Table(name: "constlatitude"),
+    ORM\Index(columns: ["latitudeID"], name: "latitudeID"),
+]
+class ConstLatitude implements ConstantlyRecordEntityInterface
 {
-    /**
-     * @ORM\Column(name="constRecordID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[
+        ORM\Column(name: "constRecordID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
     private int $constRecordID;
 
-    /**
-     * @ORM\Column(name="sensorReading", type="integer", nullable=false)
-     */
+    #[ORM\Column(name: "sensorReading", type: "integer", nullable: false), ]
     #[LatitudeConstraint]
     private int|float $sensorReading;
 
-    /**
-     * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="current_timestamp()"})
-     */
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]), ]
     #[Assert\NotBlank(message: 'Const latitude date time should not be blank')]
     private DateTimeInterface $createdAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Sensors\Entity\ReadingTypes\Latitude")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="latitudeID", referencedColumnName="latitudeID")
-     * })
-     */
+    #[
+        ORM\ManyToOne(targetEntity: Latitude::class),
+        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
+    ]
     #[Assert\NotNull(message: "Const Record Latitude Object cannot be null")]
-    private Latitude $sensorReadingTypeID;
+    private Latitude $sensorReadingID;
 
     public function getConstRecordID(): int
     {
         return $this->constRecordID;
     }
 
-    /**
-     * @param int $constRecordID
-     */
     public function setConstRecordID(int $constRecordID): void
     {
         $this->constRecordID = $constRecordID;
@@ -79,15 +70,15 @@ class ConstLatitude implements ConstantlyRecordInterface
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingTypeObject(): Latitude
+    public function getSensorReadingObject(): Latitude
     {
-        return $this->sensorReadingTypeID;
+        return $this->sensorReadingID;
     }
 
-    public function setSensorReadingTypeObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
         if ($sensorReadingTypeID instanceof Latitude) {
-            $this->sensorReadingTypeID = $sensorReadingTypeID;
+            $this->sensorReadingID = $sensorReadingTypeID;
         }
     }
 }

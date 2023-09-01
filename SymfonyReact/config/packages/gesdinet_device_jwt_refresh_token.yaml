@@ -1,5 +1,5 @@
 gesdinet_jwt_refresh_token:
   ttl: 144400
-#  user_provider: 'security.user.provider.concrete.api_device_provider'
-#  firewall: 'device_api'
   token_parameter_name: refreshToken
+  refresh_token_class: Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken
+## for more info on config visit: https://github.com/markitosgv/JWTRefreshTokenBundle
