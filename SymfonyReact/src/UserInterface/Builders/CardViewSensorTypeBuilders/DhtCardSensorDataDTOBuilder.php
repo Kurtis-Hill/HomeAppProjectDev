@@ -2,11 +2,10 @@
 
 namespace App\UserInterface\Builders\CardViewSensorTypeBuilders;
 
-use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\HumiditySensorCardViewDTOBuilder;
-use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\TemperatureSensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\Standard\HumiditySensorCardViewDTOBuilder;
+use App\UserInterface\Builders\CardViewReadingTypeDTOBuilders\Standard\TemperatureSensorCardViewDTOBuilder;
 use App\UserInterface\DTO\Response\CardViewReadingDTO\StandardCardViewReadingResponseDTO;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class DhtCardSensorDataDTOBuilder extends AbstractCardDTOBuilder implements CardSensorDataDTOBuilderInterface
 {

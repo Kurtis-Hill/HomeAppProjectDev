@@ -59,6 +59,7 @@ class GetCardViewFormController extends AbstractController
                 CardViewFormDTOFactory::SENSOR_TYPE_READING_FORM_CARD
             );
         } catch (
+
             SensorTypeException
             | CardFormTypeNotRecognisedException
             | SensorTypeBuilderFailureException $e

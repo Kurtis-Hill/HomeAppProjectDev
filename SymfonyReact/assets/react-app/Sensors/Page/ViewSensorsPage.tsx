@@ -5,13 +5,17 @@ import { AddNewSensorButton } from '../Components/AddSensor/AddNewSensorButton';
 
 export function ViewSensorsPage(props: {
     sensorData: SensorResponseInterface[],
+    deviceID: number,
     refreshData?: () => void,
 }) {
-    const { sensorData, refreshData } = props;
+    const { sensorData, refreshData, deviceID } = props;
 
     if (sensorData.length === 0) {
         return (
-            <h1>No Sensors to Display</h1>
+            <>
+                <h1>No Sensors to Display</h1>
+                <AddNewSensorButton deviceID={deviceID} refreshData={refreshData}/>
+            </>
         )
     }
 
@@ -26,7 +30,7 @@ export function ViewSensorsPage(props: {
                     );
                 })
             }
-            <AddNewSensorButton deviceID={sensorData[0].device.deviceID} refreshData={refreshData}/>
+            <AddNewSensorButton deviceID={deviceID} refreshData={refreshData}/>
         </>
     )
 }

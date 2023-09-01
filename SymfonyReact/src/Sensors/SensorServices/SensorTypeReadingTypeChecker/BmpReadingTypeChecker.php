@@ -8,6 +8,6 @@ class BmpReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker impleme
 {
     public function checkReadingTypeIsValid(string $readingType): bool
     {
-        return $this->standardCheckReadingTypeIsValid($readingType, Bmp::getAllowedReadingTypes());
+        return $this->checkAllReadingTypeIsValid($readingType, Bmp::getAllowedReadingTypes());
     }
 }

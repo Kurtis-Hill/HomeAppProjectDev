@@ -95,7 +95,7 @@ export function UserUpdate(props: { userID: number }) {
 
     const sendUserUpdateRequest = async (event: Event) => {
         event.preventDefault();
-        console.log('userUpdateFormInputs: ', userUpdateFormInputs);
+        // console.log('userUpdateFormInputs: ', userUpdateFormInputs);
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name === undefined || (event.target as HTMLElement|HTMLInputElement).dataset.name == ''
         ? (event.target as HTMLInputElement).name
         : (event.target as HTMLElement|HTMLInputElement).dataset.name

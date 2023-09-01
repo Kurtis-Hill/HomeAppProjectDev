@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Soil;
+use App\User\Entity\Group;
+use App\UserInterface\Entity\Card\CardState;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20220303160823 extends AbstractMigration
 {
     public function getDescription(): string
@@ -242,7 +252,7 @@ final class Version20220303160823 extends AbstractMigration
             CREATE TABLE dallas (
                 dallasID INT AUTO_INCREMENT NOT NULL, 
                 tempID INT NOT NULL, 
-                sensorID INT NOT NULL, 
+                sensorID INT NOT NULL,
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(dallasID)
@@ -255,7 +265,7 @@ final class Version20220303160823 extends AbstractMigration
                 dhtID INT AUTO_INCREMENT NOT NULL, 
                 tempID INT NOT NULL, 
                 humidID INT NOT NULL, 
-                sensorID INT NOT NULL, 
+                sensorID INT NOT NULL,
                 UNIQUE INDEX sensorID (sensorID), 
                 UNIQUE INDEX tempID (tempID), 
                 UNIQUE INDEX humidID (humidID), 
@@ -268,7 +278,7 @@ final class Version20220303160823 extends AbstractMigration
             CREATE TABLE soil (
                 soilID INT AUTO_INCREMENT NOT NULL, 
                 analogID INT NOT NULL, 
-                sensorID INT NOT NULL, 
+                sensorID INT NOT NULL,                 
                 UNIQUE INDEX analogID (analogID), 
                 UNIQUE INDEX sensorID (sensorID), 
                 PRIMARY KEY(soilID)
@@ -310,7 +320,8 @@ final class Version20220303160823 extends AbstractMigration
                 INDEX createdBy (createdBy), 
                 INDEX groupID (groupID), 
                 INDEX roomID (roomID),
-                UNIQUE INDEX device_room_un (deviceName, roomID), 
+                UNIQUE INDEX device_room_un (deviceName, roomID),
+                UNIQUE INDEX deviceIP (ipAddress, externalIpAddress),  
                 PRIMARY KEY(deviceID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
@@ -375,7 +386,10 @@ final class Version20220303160823 extends AbstractMigration
                 createdBy INT NOT NULL, 
                 sensorName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 deviceID INT NOT NULL, 
-                sensorTypeID INT NOT NULL, 
+                sensorTypeID INT NOT NULL,
+                pinNumber TINYINT NOT NULL,
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. Sensor::DEFAULT_READING_INTERVAL . ' NOT NULL,
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
                 INDEX sensornames_ibfk_1 (deviceID), 
                 INDEX sensornames_ibfk_2 (createdBy), 
                 INDEX sensortype (sensorTypeID), 
@@ -406,24 +420,36 @@ final class Version20220303160823 extends AbstractMigration
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
+        // create table to log ip addresses
+        $this->addSql('
+            CREATE TABLE iplog (
+                iplogID INT AUTO_INCREMENT NOT NULL, 
+                ipAddress VARCHAR(13) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
+                UNIQUE INDEX ipAddress (ipAddress), 
+                PRIMARY KEY(iplogID)
+            ) 
+            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'
+        ');
+
         $this->addSql("
             INSERT INTO `readingtypes` 
                 (`readingTypeID`, `readingType`) 
             VALUES
-                (1, 'temperature'),
-                (2, 'humidity'),
-                (3, 'analog'),
-                (4, 'latitude');
+                (1, '". Temperature::READING_TYPE ."'),
+                (2, '" . Humidity::READING_TYPE . "'),
+                (3, '". Analog::READING_TYPE . "'),
+                (4, '". Latitude::READING_TYPE . "');
         ");
 
         $this->addSql("
             INSERT INTO `sensortype` 
                 (`sensorTypeID`, `sensorType`, `description`)   
             VALUES
-                (1, 'Dht', 'Temperature and Humidity Sensor'),
-                (2, 'Dallas', 'Water Proof Temperature Sensor'),
-                (3, 'Soil', 'Soil Moisture Sensor'),
-                (4, 'Bmp', 'Weather Station Sensor');
+                (1, '". Dht::NAME ."', 'Temperature and Humidity Sensor'),
+                (2, '" . Dallas::NAME . "', 'Water Proof Temperature Sensor'),
+                (3, '". Soil::NAME . "', 'Soil Moisture Sensor'),
+                (4, '" . Bmp::NAME . "', 'Weather Station Sensor');
         ");
 
         $this->addSql("
@@ -444,10 +470,10 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO `state` 
                 (`stateID`, `state`) 
             VALUES
-                (3, 'DEVICE_ONLY'),
-                (2, 'OFF'),
-                (1, 'ON'),
-                (4, 'ROOM_ONLY');
+                (3, '" . CardState::DEVICE_ONLY . "'),
+                (2, '" . CardState::OFF . "'),
+                (1, '" . CardState::ON . "'),
+                (4, '" . CardState::ROOM_ONLY . "');
         ");
 
         $this->addSql("
@@ -461,8 +487,8 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO groups
                 (`groupID`, `groupName`) 
             VALUES
-                (1, 'home-app-group'),
-                (2, 'admin-group');
+                (1, '" . Group::HOME_APP_GROUP_NAME . "'),
+                (2, '" . Group::ADMIN_GROUP_NAME ."');
         ");
 
         $this->addSql("
@@ -684,6 +710,8 @@ final class Version20220303160823 extends AbstractMigration
         $this->addSql('DROP TABLE IF EXISTS groupmapping');
 
         $this->addSql('DROP TABLE IF EXISTS user');
+
+        $this->addSql('DROP TABLE IF EXISTS iplog');
 
         $this->addSql("SET FOREIGN_KEY_CHECKS = 1;");
     }

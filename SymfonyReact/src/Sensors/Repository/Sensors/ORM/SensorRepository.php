@@ -5,10 +5,10 @@ namespace App\Sensors\Repository\Sensors\ORM;
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -19,11 +19,10 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Cache;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Deprecated;
 
 /**
  * @extends ServiceEntityRepository<SensorRepository>
@@ -44,6 +43,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function persist(Sensor $sensorReadingData): void
     {
+
         $this->getEntityManager()->persist($sensorReadingData);
     }
 
@@ -54,7 +54,10 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function flush(): void
     {
+        //refresh the cache
+//        $this->getEntityManager()->getConfiguration()->getResultCache()?->clear();
         $this->getEntityManager()->flush();
+//        $this->getEntityManager()->refresh();
     }
 
     public function remove(Sensor $sensors): void
@@ -62,7 +65,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $this->getEntityManager()->remove($sensors);
     }
 
-    public function checkForDuplicateSensorOnDevice(Sensor $sensorData): ?Sensor
+    public function findDuplicateSensorOnDeviceByGroup(Sensor $sensorData): ?Sensor
     {
         $qb = $this->createQueryBuilder('sensor');
         $expr = $qb->expr();
@@ -71,7 +74,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                $expr->eq('device.groupID', ':groupName'),
+                    $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
@@ -80,7 +83,28 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 ]
             );
 
-        return $qb->getQuery()->getResult()[0] ?? null;
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): array
+    {
+        $qb = $this->createQueryBuilder('sensor');
+
+        $qb->select('sensor')
+            ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
+            ->where(
+                $qb->expr()->eq('sensor.pinNumber', ':pinNumber'),
+                $qb->expr()->eq('device.deviceID', ':deviceID')
+            )
+            ->setParameters(
+                [
+                    'pinNumber' => $pinNumber,
+                    'deviceID' => $deviceID,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getSensorReadingTypeDataBySensor(
@@ -243,5 +267,70 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         $qb->setFirstResult($getSensorQueryDTO->getOffset())
             ->setMaxResults($getSensorQueryDTO->getLimit());
         return $qb->getQuery()->getResult();
+    }
+
+    #[ArrayShape([Sensor::class])]
+    public function findAllBusSensors(int $deviceID, int $sensorTypeID, int $pinNumber): array
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+
+        $qb->select(Sensor::ALIAS)
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
+            ->where(
+                $qb->expr()->eq(Devices::ALIAS . '.deviceID', ':deviceID'),
+                $qb->expr()->eq(Sensor::ALIAS . '.sensorTypeID', ':sensorTypeID'),
+                $qb->expr()->eq(Sensor::ALIAS . '.pinNumber', ':pinNumber')
+            )
+            ->setParameters(
+                [
+                    'deviceID' => $deviceID,
+                    'sensorTypeID' => $sensorTypeID,
+                    'pinNumber' => $pinNumber,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    #[ArrayShape([Sensor::class])]
+    public function findSameSensorTypesOnSameDevice(int $deviceID, int $sensorType): array
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+        $expr = $qb->expr();
+
+        $qb->select()
+            ->where(
+                $expr->eq(Sensor::ALIAS . '.deviceID', ':deviceID'),
+                $expr->eq(Sensor::ALIAS . '.sensorTypeID', ':sensorTypeID')
+            )
+            ->setParameters(
+                [
+                    'deviceID' => $deviceID,
+                    'sensorTypeID' => $sensorType,
+                ]
+            );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsByIDNoCache(array $sensorIDs, string $orderBy = 'ASC'): array
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+        $expr = $qb->expr();
+
+        $qb->setCacheable(false);
+        $qb->select()
+            ->where(
+                $expr->in(Sensor::ALIAS . '.sensorID', ':sensorIDs')
+            )
+            ->orderBy(Sensor::ALIAS . '.createdAt', $orderBy)
+            ->setParameters(
+                [
+                    'sensorIDs' => $sensorIDs,
+                ]
+            );
+
+        return $qb->getQuery()->execute();
     }
 }

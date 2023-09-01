@@ -3,55 +3,15 @@
 namespace App\Devices\DeviceServices\UpdateDevice;
 
 use App\Common\API\APIErrorMessages;
-use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\AbstractESPDeviceService;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
-use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
-use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class UpdateDeviceHandler extends AbstractESPDeviceService implements UpdateDeviceHandlerInterface
 {
-    /**
-     * @throws GroupNotFoundException
-     * @throws RoomNotFoundException
-     * @throws ORMException
-     */
-    public function buildUpdateDeviceDTO(
-        DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
-        User $createdByUser,
-        Devices $deviceToUpdate,
-    ): UpdateDeviceDTO {
-        if (!empty($deviceUpdateRequestDTO->getDeviceRoom())) {
-            $room = $this->roomRepository->find($deviceUpdateRequestDTO->getDeviceRoom());
-
-            if (!$room instanceof Room) {
-                throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $deviceUpdateRequestDTO->getDeviceRoom()));
-            }
-        }
-        if (!empty($deviceUpdateRequestDTO->getDeviceGroup())) {
-            $groupName = $this->groupRepository->find($deviceUpdateRequestDTO->getDeviceGroup());
-
-            if (!$groupName instanceof Group) {
-                throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $deviceUpdateRequestDTO->getDeviceGroup()));
-            }
-        }
-
-        return DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
-            $deviceUpdateRequestDTO,
-            $deviceToUpdate,
-            $room ?? null,
-            $groupName ?? null
-        );
-    }
-
     #[ArrayShape(['validationErrors'])]
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array
     {

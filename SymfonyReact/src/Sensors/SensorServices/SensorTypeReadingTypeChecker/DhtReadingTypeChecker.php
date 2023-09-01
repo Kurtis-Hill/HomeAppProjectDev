@@ -8,7 +8,7 @@ class DhtReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker impleme
 {
     public function checkReadingTypeIsValid(string $readingType): bool
     {
-        return $this->standardCheckReadingTypeIsValid($readingType, Dht::getAllowedReadingTypes());
+        return $this->checkAllReadingTypeIsValid($readingType, Dht::getAllowedReadingTypes());
     }
 
 }

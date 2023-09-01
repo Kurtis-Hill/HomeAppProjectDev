@@ -4,6 +4,12 @@ namespace App\Sensors\Repository\Sensors;
 
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -36,7 +42,7 @@ interface SensorTypeRepositoryInterface
     /**
      * @throws ORMException
      */
-    #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
+    #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME, GenericRelay::NAME, GenericMotion::NAME])]
     public function findAllSensorTypeNames(): array;
 
     /**

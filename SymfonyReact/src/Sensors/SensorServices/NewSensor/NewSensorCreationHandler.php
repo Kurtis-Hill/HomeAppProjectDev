@@ -3,24 +3,13 @@
 namespace App\Sensors\SensorServices\NewSensor;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\Builders\SensorCreationBuilders\NewSensorDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
-use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
-use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\DuplicateSensorException;
-use App\Sensors\Exceptions\SensorRequestException;
-use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use App\Sensors\SensorServices\Sensor\DuplicateSensorCheckService;
-use App\User\Entity\User;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\OptimisticLockException;
+use App\Sensors\SensorServices\UpdateSensor\DuplicateSensorCheckService;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use TypeError;
@@ -29,63 +18,24 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
 {
     use ValidatorProcessorTrait;
 
-    private SensorRepositoryInterface $sensorRepository;
-
     private DeviceRepositoryInterface $deviceRepository;
 
     private SensorTypeRepositoryInterface $sensorTypeRepository;
 
     private DuplicateSensorCheckService $duplicateSensorCheckService;
 
+    private SensorSavingHandler $newSensorSavingHandler;
+
     private ValidatorInterface $validator;
 
     public function __construct(
-        SensorRepositoryInterface $sensorRepository,
-        DeviceRepositoryInterface $deviceRepository,
-        SensorTypeRepositoryInterface $sensorTypeRepository,
         DuplicateSensorCheckService $duplicateSensorCheckService,
+        SensorSavingHandler $newSensorSavingHandler,
         ValidatorInterface $validator,
     ) {
-        $this->sensorRepository = $sensorRepository;
-        $this->deviceRepository = $deviceRepository;
-        $this->sensorTypeRepository = $sensorTypeRepository;
         $this->duplicateSensorCheckService = $duplicateSensorCheckService;
+        $this->newSensorSavingHandler = $newSensorSavingHandler;
         $this->validator = $validator;
-    }
-
-    public function buildNewSensorDTO(AddNewSensorRequestDTO $newSensorRequestDTO, User $user): NewSensorDTO
-    {
-        $requestValidationErrors = $this->validator->validate($newSensorRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            throw new SensorRequestException($this->getValidationErrorAsArray($requestValidationErrors));
-        }
-
-        $deviceObject = $this->deviceRepository->findOneById($newSensorRequestDTO->getDeviceID());
-        if (!$deviceObject instanceof Devices) {
-            throw new DeviceNotFoundException(
-                sprintf(
-                    DeviceNotFoundException::DEVICE_NOT_FOUND_FOR_ID,
-                    $newSensorRequestDTO->getDeviceID()
-                )
-            );
-        }
-
-        $sensorTypeObject = $this->sensorTypeRepository->findOneById($newSensorRequestDTO->getSensorTypeID());
-        if (!$sensorTypeObject instanceof SensorType) {
-            throw new SensorTypeNotFoundException(
-                sprintf(
-                    SensorTypeNotFoundException::SENSOR_TYPE_NOT_FOUND_FOR_ID,
-                    $newSensorRequestDTO->getSensorTypeID()
-                )
-            );
-        }
-
-        return NewSensorDTOBuilder::buildNewSensorDTO(
-            $newSensorRequestDTO->getSensorName(),
-            $sensorTypeObject,
-            $deviceObject,
-            $user
-        );
     }
 
     #[ArrayShape(['validationErrors'])]
@@ -100,6 +50,8 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
         $sensor->setSensorName($newSensorDTO->getSensorName());
         $sensor->setSensorTypeID($newSensorDTO->getSensorType());
         $sensor->setDevice($newSensorDTO->getDevice());
+        $sensor->setPinNumber($newSensorDTO->getPinNumber());
+        $sensor->setReadingInterval($newSensorDTO->getReadingInterval());
 
         return $this->validateSensor($sensor);
     }
@@ -115,41 +67,17 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
             $this->duplicateSensorCheckService->checkSensorForDuplicates(
                 $sensor,
                 $sensor->getDevice()->getDeviceID(),
+                true,
             );
-            $this->duplicateSensorOnSameDeviceCheck($sensor);
         } catch (DuplicateSensorException $e) {
-            $errors[] = $e->getMessage();
+            return [$e->getMessage()];
         }
 
         return $errors ?? [];
     }
 
-    /**
-     * @throws DuplicateSensorException
-     */
-    private function duplicateSensorOnSameDeviceCheck(Sensor $sensor): void
-    {
-        $currentUserSensorNameCheck = $this->sensorRepository->checkForDuplicateSensorOnDevice($sensor);
-
-        if ($currentUserSensorNameCheck instanceof Sensor) {
-            throw new DuplicateSensorException(
-                sprintf(
-                    DuplicateSensorException::MESSAGE,
-                    $sensor->getSensorName()
-                )
-            );
-        }
-    }
-
     public function saveSensor(Sensor $sensor): bool
     {
-        try {
-            $this->sensorRepository->persist($sensor);
-            $this->sensorRepository->flush();
-
-            return true;
-        } catch (ORMException|OptimisticLockException) {
-            return false;
-        }
+        return $this->newSensorSavingHandler->saveSensor($sensor);
     }
 }

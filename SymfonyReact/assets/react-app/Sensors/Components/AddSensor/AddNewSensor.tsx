@@ -23,8 +23,10 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
 
     const [newSensorFormInputs, setNewSensorFormInputs] = useState<NewSensorType>({
         sensorName: '',
+        pinNumber: 0,
         deviceID,
-        sensorTypeID: 0
+        sensorTypeID: 0,
+        readingInterval: 500,
     });
 
     const [responseLoading, setResponseLoading] = useState<boolean>(false);
@@ -55,6 +57,10 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
             errors.push('Sensor Type is required');
         }
 
+        if (newSensorFormInputs.pinNumber <= -1) {
+            errors.push('Pin Number is required to be a positive number');
+        }
+
         setErrors(errors);
         return errors.length === 0;
     }
@@ -67,7 +73,7 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
             setResponseLoading(true);
             try {                
                 const newSensorsResponse = await addNewSensorRequest(newSensorFormInputs);
-                if (newSensorsResponse.status === 201) {
+                if (newSensorsResponse.status === 201 || newSensorsResponse.status === 200) {
                     setResponseLoading(false);
                     if (refreshData !== undefined) {
                         refreshData();
@@ -81,7 +87,6 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
             }
         }
     }
-
 
     return (
         <>
@@ -105,6 +110,20 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
                     name="sensorName"
                     value={newSensorFormInputs.sensorName}
                     onChangeFunction={handleAddNewSensorInput}
+                />
+                <InputWLabel
+                    labelName='Pin Number'
+                    name="pinNumber"
+                    value={newSensorFormInputs.pinNumber}
+                    onChangeFunction={handleAddNewSensorInput}
+                    type='number'
+                />
+                <InputWLabel
+                    labelName='Reading Interval (ms)'
+                    name="readingInterval"
+                    value={newSensorFormInputs.readingInterval}
+                    onChangeFunction={handleAddNewSensorInput}
+                    type='number'
                 />
                 <Label
                     htmlFor='sensorTypeID'

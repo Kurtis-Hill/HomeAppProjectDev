@@ -2,10 +2,8 @@
 
 namespace App\Sensors\SensorServices\OutOfBounds;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Factories\OufOfBounds\OutOfBoundsFactoryInterface;
-use App\Sensors\Factories\OufOfBounds\OutOfBoundsORMFactory;
 use App\Sensors\Factories\ReadingTypeFactories\OutOfBoundsEntityCreationFactory;
 
 class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface

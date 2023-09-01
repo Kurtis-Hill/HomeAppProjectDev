@@ -7,10 +7,10 @@ use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\HumidityConstRecordObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\LatitudeConstRecordObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\TemperatureConstRecordObjectBuilder;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 
 class ConstRecordCreationFactory
 {

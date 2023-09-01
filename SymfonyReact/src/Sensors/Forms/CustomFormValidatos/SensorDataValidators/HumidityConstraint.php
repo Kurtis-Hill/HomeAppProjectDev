@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use Attribute;
 use Symfony\Component\Validator\Constraint;
 

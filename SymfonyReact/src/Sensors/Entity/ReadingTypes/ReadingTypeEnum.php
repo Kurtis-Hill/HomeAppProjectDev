@@ -2,13 +2,17 @@
 
 namespace App\Sensors\Entity\ReadingTypes;
 
-enum ReadingTypeEnum
+enum ReadingTypeEnum: string
 {
-    case Temperature;
+    case Temperature = 'Temperature';
 
-    case Humidity;
+    case Humidity = 'Humidity';
 
-    case Latitude;
+    case Latitude = 'Latitude';
 
-    case Analog;
+    case Analog = 'Analog';
+
+    case RELAY = 'RELAY';
+
+    case MOTION = 'MOTION';
 }

@@ -5,7 +5,7 @@ namespace App\UserInterface\DTO\Response\CardViewReadingDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class StandardCardViewReadingResponseDTO
+readonly class StandardCardViewReadingResponseDTO implements CardViewReadingResponseDTOInterface
 {
     private string $readingType;
 

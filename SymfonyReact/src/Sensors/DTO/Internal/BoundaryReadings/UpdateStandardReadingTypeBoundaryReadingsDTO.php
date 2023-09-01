@@ -5,7 +5,7 @@ namespace App\Sensors\DTO\Internal\BoundaryReadings;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-readonly class UpdateStandardReadingTypeBoundaryReadingsDTO
+readonly class UpdateStandardReadingTypeBoundaryReadingsDTO implements UpdateBoundaryReadingDTOInterface
 {
     public function __construct(
         private string $readingType,
@@ -33,12 +33,12 @@ readonly class UpdateStandardReadingTypeBoundaryReadingsDTO
         return $this->lowReading;
     }
 
-    public function getConstRecord(): ?bool
+    public function getNewConstRecord(): ?bool
     {
         return $this->constRecord;
     }
 
-    public function isCurrentConstRecord(): bool
+    public function getCurrentConstRecord(): bool
     {
         return $this->currentConstRecord;
     }

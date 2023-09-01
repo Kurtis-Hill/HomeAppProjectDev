@@ -3,7 +3,7 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders;
 
 use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 interface ConstRecordObjectBuilderInterface

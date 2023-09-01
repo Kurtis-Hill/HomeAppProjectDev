@@ -2,6 +2,14 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest;
 
+use App\Common\Services\RequestQueryParameterHandler;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,10 +19,12 @@ class SensorDataCurrentReadingUpdateDTO
     #[
         Assert\Type(
             type: ["string"],
-            message: "sensorName must be a {{ type }} you have provided {{ value }}"
+            message: "sensorName must be a {{ type }} you have provided {{ value }}",
+            groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING, CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
         Assert\NotNull(
-            message: "sensorName cannot be empty"
+            message: "sensorName cannot be empty",
+            groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING, CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
     ]
     private mixed $sensorName;
@@ -27,16 +37,37 @@ class SensorDataCurrentReadingUpdateDTO
         Assert\NotNull(
             message: "sensorType cannot be empty"
         ),
+        Assert\Choice(
+            choices: [
+                Bmp::NAME,
+                Soil::NAME,
+                Dallas::NAME,
+                Dht::NAME,
+                GenericRelay::NAME,
+                GenericMotion::NAME,
+            ],
+            message: 'sensorType must be one of {{ choices }}',
+            groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
+        ),
+//        Assert\Choice(
+//            choices: [
+//                GenericRelay::NAME,
+//            ],
+//            message: 'sensorType must be one of {{ choices }}',
+//            groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]
+//        ),
     ]
     private mixed $sensorType;
 
     #[
         Assert\Type(
             type: ["array"],
-            message: "currentReading must be a {{ type }} you have provided {{ value }}"
+            message: "currentReading must be a {{ type }}",
+            groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING, CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
         Assert\NotNull(
-            message: "currentReadings cannot be empty"
+            message: "currentReadings cannot be empty",
+            groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING, CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
     ]
     private mixed $currentReadings;
@@ -58,7 +89,7 @@ class SensorDataCurrentReadingUpdateDTO
         return $this->sensorType;
     }
 
-    public function getCurrentReadings(): array
+    public function getCurrentReadings(): ?array
     {
         return $this->currentReadings;
     }

@@ -9,20 +9,18 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\Builders\SensorCreationBuilders\NewSensorDTOBuilder;
+use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Exceptions\UserNotAllowedException;
-use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface;
 use App\Sensors\SensorServices\NewReadingType\ReadingTypeCreationInterface;
 use App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface;
+use App\Sensors\SensorServices\SensorDeletion\SensorDeletionInterface;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Entity\User;
 use App\UserInterface\Services\Cards\CardCreation\CardCreationHandlerInterface;
@@ -60,7 +58,9 @@ class AddNewSensorController extends AbstractController
         NewSensorCreationInterface $newSensorCreationService,
         ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,
-        DeleteSensorHandlerInterface $deleteSensorService,
+        SensorDeletionInterface $deleteSensorService,
+        NewSensorDTOBuilder $newSensorDTOBuilder,
+        ValidatorInterface $validator,
     ): JsonResponse {
         $newSensorRequestDTO = new AddNewSensorRequestDTO();
         try {
@@ -73,7 +73,6 @@ class AddNewSensorController extends AbstractController
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
-
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
                 $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
@@ -87,8 +86,20 @@ class AddNewSensorController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse();
         }
 
+        $requestValidationErrors = $validator->validate($newSensorRequestDTO);
+        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
+        }
+
         try {
-            $newSensorDTO = $newSensorCreationService->buildNewSensorDTO($newSensorRequestDTO, $user);
+            $newSensorDTO = $newSensorDTOBuilder->buildNewSensorDTO(
+                $newSensorRequestDTO->getSensorName(),
+                $newSensorRequestDTO->getSensorTypeID(),
+                $newSensorRequestDTO->getDeviceID(),
+                $user,
+                $newSensorRequestDTO->getPinNumber(),
+                $newSensorRequestDTO->getReadingInterval(),
+            );
         } catch (ORMException $e) {
             $this->logger->error($e->getMessage(), ['user' => $user->getUserIdentifier()]);
 
@@ -126,17 +137,15 @@ class AddNewSensorController extends AbstractController
 
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
         if (!empty($sensorReadingTypeCreationErrors)) {
-            try {
-                $deleteSensorService->deleteSensor($sensor);
-            } catch (ORMException $e) {
-                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
-            }
+            $deleteSensorService->deleteSensor($sensor);
+            $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
 
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }
+
         $this->logger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);
 
-        $errors = $cardCreationService->createUserCardForSensor($sensor, $this->getUser());
+        $errors = $cardCreationService->createUserCardForSensor($sensor, $user);
 
         $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {

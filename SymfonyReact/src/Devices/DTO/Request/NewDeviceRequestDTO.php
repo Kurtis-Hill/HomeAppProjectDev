@@ -4,7 +4,7 @@ namespace App\Devices\DTO\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class NewDeviceRequestDTO implements DeviceRequestDTOInterface
+class NewDeviceRequestDTO
 {
     #[
         Assert\NotNull(
@@ -62,6 +62,14 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
     ]
     private mixed $deviceRoom = null;
 
+    #[
+        Assert\Type(
+            type: ['string', 'null'],
+            message: 'Device IP value is {{ value }} and not a valid {{ type }}'
+        ),
+    ]
+    private mixed $deviceIPAddress = null;
+
     public function getDeviceName(): mixed
     {
         return $this->deviceName;
@@ -100,5 +108,15 @@ class NewDeviceRequestDTO implements DeviceRequestDTOInterface
     public function setDeviceRoom(mixed $deviceRoom): void
     {
         $this->deviceRoom = $deviceRoom;
+    }
+
+    public function getDeviceIPAddress(): mixed
+    {
+        return $this->deviceIPAddress;
+    }
+
+    public function setDeviceIPAddress(mixed $deviceIP): void
+    {
+        $this->deviceIPAddress = $deviceIP;
     }
 }

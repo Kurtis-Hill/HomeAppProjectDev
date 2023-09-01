@@ -7,10 +7,10 @@ use App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBu
 use App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders\LatitudeOutOfBoundsObjectCreationBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders\OutOfBoundsObjectCreationBuilderInterface;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders\TemperatureOutOfBoundsObjectCreationBuilder;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 
 class OutOfBoundsEntityCreationFactory
 {

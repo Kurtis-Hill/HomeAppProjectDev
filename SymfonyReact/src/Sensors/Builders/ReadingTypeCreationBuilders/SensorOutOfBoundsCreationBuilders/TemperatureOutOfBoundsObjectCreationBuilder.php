@@ -4,9 +4,8 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCrea
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeTemp;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 class TemperatureOutOfBoundsObjectCreationBuilder extends AbstractStandardSensorOutOfBoundsObjectCreationBuilder implements OutOfBoundsObjectCreationBuilderInterface

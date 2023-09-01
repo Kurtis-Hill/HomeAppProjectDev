@@ -4,7 +4,7 @@ namespace App\Tests\UserInterface\Controller\Card;
 
 use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
+use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
@@ -65,7 +65,6 @@ class UpdateCardViewControllerTest extends WebTestCase
             $jsonRequestData
         );
 
-//        dd($this->client->getResponse()->getContent());
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 

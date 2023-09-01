@@ -2,13 +2,12 @@
 
 namespace App\Sensors\Entity\SensorTypes;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\StandardSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DhtRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -19,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
 ]
-class Dht implements SensorTypeInterface, StandardSensorReadingTypeInterface, TemperatureSensorTypeInterface, HumiditySensorTypeInterface
+class Dht implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface
 {
     public const NAME = 'Dht';
 

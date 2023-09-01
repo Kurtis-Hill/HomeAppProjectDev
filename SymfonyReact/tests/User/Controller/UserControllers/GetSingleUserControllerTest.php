@@ -148,7 +148,7 @@ class GetSingleUserControllerTest extends WebTestCase
         self::assertEquals($this->regularUserTwo->getLastName(), $userData['lastName']);
         self::assertEquals($this->regularUserTwo->getGroup()->getGroupID(), $userData['group']['groupID']);
         self::assertEquals($this->regularUserTwo->getGroup()->getGroupName(), $userData['group']['groupName']);
-        self::assertTrue($userData['canUpdate']);
+        self::assertTrue($userData['canEdit']);
         self::assertFalse($userData['canDelete']);
     }
 }

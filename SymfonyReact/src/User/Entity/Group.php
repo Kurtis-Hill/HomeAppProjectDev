@@ -20,6 +20,8 @@ class Group
 {
     public const HOME_APP_GROUP_NAME = 'home-app-group';
 
+    public const ADMIN_GROUP_NAME = 'admin-group';
+
     private const GROUP_NAME_MIN_LENGTH = 2;
 
     private const GROUP_NAME_MAX_LENGTH = 50;

@@ -113,6 +113,7 @@ class GetSensorController extends AbstractController
 
         try {
             $normalizedResponse = $this->normalizeResponse($sensorDTOs, [$requestDTO->getResponseType()]);
+//            dd($normalizedResponse, [$requestDTO->getResponseType()], $sensorDTOs, $sensorDTOs[0]->getSensorReadingTypes());
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

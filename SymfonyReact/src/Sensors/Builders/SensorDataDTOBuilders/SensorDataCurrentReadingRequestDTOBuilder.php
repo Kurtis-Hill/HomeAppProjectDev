@@ -10,18 +10,15 @@ class SensorDataCurrentReadingRequestDTOBuilder
     /**
      * @throws SensorDataCurrentReadingUpdateBuilderException
      */
-    public static function buildSensorDataCurrentReadingUpdateDTO(mixed $sensorUpdateData): SensorDataCurrentReadingUpdateDTO
-    {
-        if (!is_array($sensorUpdateData)) {
-            throw new SensorDataCurrentReadingUpdateBuilderException(
-                SensorDataCurrentReadingUpdateBuilderException::NOT_ARRAY_ERROR_MESSAGE
-            );
-        }
-
+    public static function buildSensorDataCurrentReadingUpdateDTO(
+        mixed $sensorName = null,
+        mixed $sensorType = null,
+        mixed $currentReadings = null,
+    ): SensorDataCurrentReadingUpdateDTO {
         return new SensorDataCurrentReadingUpdateDTO(
-            $sensorUpdateData['sensorName'] ?? null,
-            $sensorUpdateData['sensorType'] ?? null,
-            $sensorUpdateData['currentReadings'] ?? null,
+            $sensorName,
+            $sensorType,
+            $currentReadings,
         );
     }
 }

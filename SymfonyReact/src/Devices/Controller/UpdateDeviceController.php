@@ -5,12 +5,12 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
@@ -60,6 +60,7 @@ class UpdateDeviceController extends AbstractController
         ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        DeviceDTOBuilder $deviceDTOBuilder,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -96,9 +97,8 @@ class UpdateDeviceController extends AbstractController
         }
 
         try {
-            $updateDeviceDTO = $updateDeviceHandler->buildUpdateDeviceDTO(
+            $updateDeviceDTO = $deviceDTOBuilder->buildUpdateDeviceInternalDTO(
                 $deviceUpdateRequestDTO,
-                $user,
                 $deviceToUpdate,
             );
         } catch (NonUniqueResultException | ORMException) {
@@ -118,7 +118,8 @@ class UpdateDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate);
+        $sendUpdateRequestToDevice = ($updateDeviceDTO->getDeviceUpdateRequestDTO()->getDeviceName() || $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword());
+        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate, $sendUpdateRequestToDevice);
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }

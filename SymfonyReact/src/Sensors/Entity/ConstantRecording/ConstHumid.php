@@ -2,8 +2,8 @@
 
 namespace App\Sensors\Entity\ConstantRecording;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;
 use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordHumidRepository;
 use DateTimeImmutable;

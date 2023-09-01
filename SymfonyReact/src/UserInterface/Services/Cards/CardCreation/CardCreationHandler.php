@@ -3,9 +3,9 @@
 namespace App\UserInterface\Services\Cards\CardCreation;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
+use App\UserInterface\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\UserInterface\DTO\Internal\NewCard\NewCardOptionsDTO;
 use App\UserInterface\Entity\Card\CardColour;
 use App\UserInterface\Entity\Card\CardState;

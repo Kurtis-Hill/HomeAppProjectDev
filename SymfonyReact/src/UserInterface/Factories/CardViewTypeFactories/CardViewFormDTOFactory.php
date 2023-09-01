@@ -12,9 +12,11 @@ class CardViewFormDTOFactory
 
     private StandardCardViewFormDTOBuilder $cardViewFormDTOBuilder;
 
-    public function __construct(StandardCardViewFormDTOBuilder $cardViewFormDTOBuilder,)
-    {
-        $this->cardViewFormDTOBuilder = $cardViewFormDTOBuilder;
+    public function __construct(
+        StandardCardViewFormDTOBuilder $standardCardViewFormDTOBuilder
+
+    ) {
+        $this->cardViewFormDTOBuilder = $standardCardViewFormDTOBuilder;
     }
 
     /**

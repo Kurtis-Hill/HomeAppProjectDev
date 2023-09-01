@@ -21,32 +21,6 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
-    /**
-     * @throws GroupNotFoundException
-     * @throws RoomNotFoundException
-     * @throws ORMException
-     */
-    public function processAddDeviceObjects(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
-    {
-        $groupObject = $this->groupRepository->find($newDeviceRequestDTO->getDeviceGroup());
-        if (!$groupObject instanceof Group) {
-            throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $newDeviceRequestDTO->getDeviceGroup()));
-        }
-
-        $roomObject = $this->roomRepository->find($newDeviceRequestDTO->getDeviceRoom());
-        if (!$roomObject instanceof Room) {
-            throw new RoomNotFoundException(sprintf(RoomNotFoundException::MESSAGE_WITH_ID, $newDeviceRequestDTO->getDeviceRoom()));
-        }
-
-        return DeviceDTOBuilder::buildNewDeviceDTO(
-            $createdByUser,
-            $groupObject,
-            $roomObject,
-            $newDeviceRequestDTO->getDeviceName(),
-            $newDeviceRequestDTO->getDevicePassword(),
-        );
-    }
-
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {
@@ -65,6 +39,7 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         $newDevice->setRoomObject($newDeviceDTO->getRoomObject());
         $newDevice->setDeviceSecret($newDeviceDTO->getDevicePassword());
         $newDevice->setPassword($newDeviceDTO->getDevicePassword());
+        $newDevice->setIpAddress($newDeviceDTO->getDeviceIP());
 
         $validationResult = $this->validateNewDevice($newDevice);
         if (empty($validationResult)) {
@@ -100,13 +75,5 @@ class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDevi
         }
 
         return $userErrors ?? [];
-    }
-
-    private function createDevicePasswordHash(Devices $device): string
-    {
-        $secret = $device->getDeviceName();
-        $secret .= time();
-
-        return hash("md5", $secret);
     }
 }

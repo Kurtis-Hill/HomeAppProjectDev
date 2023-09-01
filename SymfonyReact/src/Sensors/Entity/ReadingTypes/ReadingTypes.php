@@ -2,6 +2,12 @@
 
 namespace App\Sensors\Entity\ReadingTypes;
 
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
     ORM\Entity(repositoryClass: ReadingTypeRepository::class),
     ORM\Table(name: "readingtypes"),
     ORM\UniqueConstraint(name: "readingType", columns: ["readingType"]),
-
 ]
 class ReadingTypes
 {
@@ -31,6 +36,14 @@ class ReadingTypes
             'alias' => 'lat',
             'object' => Latitude::class,
         ],
+        Relay::READING_TYPE => [
+            'alias' => 'relay',
+            'object' => Relay::class,
+        ],
+        Motion::READING_TYPE => [
+            'alias' => 'motion',
+            'object' => Motion::class,
+        ],
     ];
 
     public const ALL_READING_TYPES = [
@@ -38,6 +51,8 @@ class ReadingTypes
         Humidity::READING_TYPE,
         Analog::READING_TYPE,
         Latitude::READING_TYPE,
+        Relay::READING_TYPE,
+        Motion::READING_TYPE,
     ];
 
     #[

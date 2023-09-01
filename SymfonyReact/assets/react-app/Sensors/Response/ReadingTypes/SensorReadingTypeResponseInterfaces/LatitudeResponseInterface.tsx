@@ -1,6 +1,5 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
-
-type LatitudeString = 'Latitude';
+import { ReadingTypesEnum } from '../../../../Enum/ReadingTypesEnum';
 
 export default interface LatitudeResponseInterface {
     latitudeID: number,
@@ -11,5 +10,5 @@ export default interface LatitudeResponseInterface {
     constRecord: boolean,
     updatedAt: string,
     readingType: string,
-    sensorType: LatitudeString,
+    sensorType: ReadingTypesEnum.latitude,
 }

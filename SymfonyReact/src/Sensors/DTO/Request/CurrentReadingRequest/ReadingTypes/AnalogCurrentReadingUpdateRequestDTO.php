@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use JetBrains\PhpStorm\Immutable;

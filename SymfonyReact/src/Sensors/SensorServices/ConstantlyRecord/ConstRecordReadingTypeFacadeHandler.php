@@ -2,9 +2,8 @@
 
 namespace App\Sensors\SensorServices\ConstantlyRecord;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Factories\ConstRecord\ConstRecordFactoryInterface;
-use App\Sensors\Factories\ConstRecord\ConstRecordORMFactory;
 use App\Sensors\Factories\ReadingTypeFactories\ConstRecordCreationFactory;
 
 class ConstRecordReadingTypeFacadeHandler implements SensorConstantlyRecordHandlerInterface

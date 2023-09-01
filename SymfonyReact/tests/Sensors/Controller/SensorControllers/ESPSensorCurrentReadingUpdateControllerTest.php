@@ -2,17 +2,21 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
 use App\Tests\Traits\TestLoginTrait;
@@ -235,6 +239,38 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
             ]
         ];
+
+        // Motion
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'currentReadings' => [
+                        'motion' => true,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Motion::READING_TYPE, SensorFixtures::SENSORS[GenericMotion::NAME]),
+            ]
+        ];
+
+        // Generic Relay
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
+            ]
+        ];
     }
 
     /**
@@ -279,7 +315,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-            'errors' => ['Sensor type ' . Dht::NAME . '1' . ' not recognised'],
+            'errors' => ['sensorType must be one of "Bmp", "Soil", "Dallas", "Dht", "GenericRelay", "GenericMotion"'],
         ];
 
         yield [
@@ -292,7 +328,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'sensorData' => [
                 [
                     'sensorType' => Bmp::NAME,
-                    'sensorName' => SensorFixtures::SENSORS['Bmp'],
+                    'sensorName' => SensorFixtures::SENSORS[Bmp::NAME],
                 ],
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
@@ -530,6 +566,59 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'payload' => [],
             'responseCode' => Response::HTTP_BAD_REQUEST
         ];
+
+        // Generic Motion
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'currentReadings' => [
+                        'motion' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME] .'2',
+                    'currentReadings' => [
+                        'motion' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'Bool readings can only be true or false',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        // Generic Relay
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'currentReadings' => [
+                        'relay' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME] .'2',
+                    'currentReadings' => [
+                        'relay' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'Bool readings can only be true or false',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
     }
 
     /**

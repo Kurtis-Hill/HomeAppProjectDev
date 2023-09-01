@@ -2,10 +2,12 @@
 
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
+use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
@@ -16,7 +18,11 @@ use JetBrains\PhpStorm\ArrayShape;
 
 interface CurrentReadingSensorDataRequestHandlerInterface
 {
-    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): bool;
+    public const UPDATE_CURRENT_READING = 'updateCurrentReading';
+
+    public const SEND_UPDATE_CURRENT_READING = 'sendUpdateCurrentReading';
+
+    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool;
 
     #[ArrayShape(
         [
@@ -24,11 +30,12 @@ interface CurrentReadingSensorDataRequestHandlerInterface
             HumidityCurrentReadingUpdateRequestDTO::class,
             LatitudeCurrentReadingUpdateRequestDTO::class,
             TemperatureCurrentReadingUpdateRequestDTO::class,
+            BoolCurrentReadingUpdateRequestDTO::class,
         ]
     )]
     public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array;
 
-    public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBuilderInterface;
+    public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBoundaryReadingBuilderInterface;
 
     public function getReadingTypeRequestAttempt(): int;
 

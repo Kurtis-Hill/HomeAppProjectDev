@@ -10,7 +10,7 @@ class DeviceAuthenticationResponse
 {
     private string $token;
 
-    private string $refreshToken;
+//    private string $refreshToken;
 
     private DeviceAuthenticationIPRequestDTO $deviceIps;
 
@@ -24,8 +24,8 @@ class DeviceAuthenticationResponse
         return $this->token;
     }
 
-    public function getRefreshToken(): string
-    {
-        return $this->refreshToken;
-    }
+//    public function getRefreshToken(): string
+//    {
+//        return $this->refreshToken;
+//    }
 }

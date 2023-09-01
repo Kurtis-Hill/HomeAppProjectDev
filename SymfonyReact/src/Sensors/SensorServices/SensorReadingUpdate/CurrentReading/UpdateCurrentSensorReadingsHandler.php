@@ -3,14 +3,16 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Devices\Entity\Devices;
-use App\ErrorLogs;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\ReadingTypeObjectBuilderException;
+use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeQueryBuilderFactory\ReadingTypeQueryFactory;
@@ -57,6 +59,11 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         $this->logger = $elasticLogger;
     }
 
+    /**
+     * @throws SensorNotFoundException
+     * @throws ReadingTypeNotExpectedException
+     * @throws ReadingTypeObjectBuilderException
+     */
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
         Devices $device,
@@ -75,9 +82,8 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
             null,
             $sensorReadingTypeQueryDTOs,
         );
-
         if (empty($sensorReadingObjects)) {
-            throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION);
+            throw new SensorNotFoundException(sprintf(SensorNotFoundException::SENSOR_NOT_FOUND_WITH_SENSOR_NAME, $updateSensorCurrentReadingConsumerDTO->getSensorName()));
         }
         foreach ($sensorReadingObjects as $sensorReadingObject) {
             /** @var AbstractCurrentReadingUpdateRequestDTO $currentReadingDTO */
@@ -95,11 +101,11 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                         $sensorReadingObject->getReadingType()
                     );
 
+                    /** @var ReadingTypeUpdateCurrentReadingDTO $updateReadingTypeCurrentReadingDTO */
                     $updateReadingTypeCurrentReadingDTO = $sensorReadingUpdateBuilder->buildReadingTypeCurrentReadingUpdateDTO(
                         $sensorReadingObject,
                         $currentReadingDTO,
                     );
-
                     $updateReadingTypeCurrentReadingDTO->getSensorReadingObject()->setCurrentReading(
                         $updateReadingTypeCurrentReadingDTO->getNewCurrentReading()
                     );
@@ -111,10 +117,13 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                     $sensorReadingObject->setUpdatedAt();
                     if (!empty($validationErrors)) {
                         $sensorReadingObject->setCurrentReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
-                    }
-                    if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
-                        $this->outOfBoundsSensorService->processOutOfBounds($sensorReadingObject);
-                        $this->constantlyRecordService->processConstRecord($sensorReadingObject);
+                        if ($sensorReadingObject instanceof StandardReadingSensorInterface) {
+                            $this->outOfBoundsSensorService->processOutOfBounds($sensorReadingObject);
+                            $this->constantlyRecordService->processConstRecord($sensorReadingObject);
+                        }
+                        if ($sensorReadingObject instanceof BoolReadingSensorInterface) {
+                            $sensorReadingObject->setRequestedReading($updateReadingTypeCurrentReadingDTO->getCurrentReading());
+                        }
                     }
                 } catch (
                     ReadingTypeNotExpectedException
@@ -127,9 +136,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
             }
         }
         try {
-
             $this->sensorRepository->flush();
-//                        dd('log error');
         } catch (ORMException|OptimisticLockException $e) {
             $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
 

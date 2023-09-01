@@ -11,4 +11,8 @@ enum SensorTypeEnum
     case Dallas;
 
     case Bmp;
+
+    case GenericRelay;
+
+    case GenericMotion;
 }

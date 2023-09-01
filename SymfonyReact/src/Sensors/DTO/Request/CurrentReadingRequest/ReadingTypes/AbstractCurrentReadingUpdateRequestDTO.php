@@ -14,10 +14,10 @@ abstract class AbstractCurrentReadingUpdateRequestDTO
         $this->readingTypeCurrentReading = $readingTypeCurrentReading;
     }
 
-    public function getCurrentReading(): float|int|string
+    public function getCurrentReading(): mixed
     {
         return $this->readingTypeCurrentReading;
     }
 
-    abstract public function getReadingType(): string;
+    abstract public function getReadingType(): mixed;
 }

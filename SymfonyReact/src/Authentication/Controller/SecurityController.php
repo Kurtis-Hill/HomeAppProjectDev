@@ -56,6 +56,12 @@ class SecurityController extends AbstractController
         die;
     }
 
+    #[Route('/HomeApp/test', name: 'test')]
+    public function testEndPoint()
+    {
+
+    }
+
     /**
      * FOR DEVELOPMENT ONLY
      */

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Internal\CurrentReadingDTO;
 
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]

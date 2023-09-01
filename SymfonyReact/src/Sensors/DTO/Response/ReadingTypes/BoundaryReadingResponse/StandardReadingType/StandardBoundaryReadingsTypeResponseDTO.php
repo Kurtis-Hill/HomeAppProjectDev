@@ -3,6 +3,7 @@
 namespace App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\StandardReadingType;
 
 use App\Common\Services\RequestTypeEnum;
+use App\Sensors\DTO\Response\ReadingTypes\BoundaryReadingResponse\BoundaryReadingTypeResponseInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 class StandardBoundaryReadingsTypeResponseDTO implements BoundaryReadingTypeResponseInterface

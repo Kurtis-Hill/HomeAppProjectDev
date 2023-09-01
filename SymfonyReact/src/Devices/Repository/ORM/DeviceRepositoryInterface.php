@@ -58,4 +58,7 @@ interface DeviceRepositoryInterface
      * @throws ORMException
      */
     public function remove(Devices $device): void;
+
+    #[ArrayShape([1,2,3])]
+    public function findAllDevicePinsInUse(int $deviceID): array;
 }

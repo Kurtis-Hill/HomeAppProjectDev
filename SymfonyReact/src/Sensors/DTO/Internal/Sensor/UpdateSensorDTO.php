@@ -9,20 +9,13 @@ use JetBrains\PhpStorm\Immutable;
 #[Immutable]
 readonly class UpdateSensorDTO
 {
-    private Sensor $sensor;
-
-    private ?string $sensorName;
-
-    private ?Devices $deviceID;
-
     public function __construct(
-        Sensor $sensor,
-        ?string $sensorName = null,
-        ?Devices $deviceID = null,
+        private Sensor $sensor,
+        private ?string $sensorName = null,
+        private ?Devices $deviceID = null,
+        private ?int $pinNumber = null,
+        private ?int $readingInterval = null,
     ) {
-        $this->sensor = $sensor;
-        $this->sensorName = $sensorName;
-        $this->deviceID = $deviceID;
     }
 
     public function getSensor(): Sensor
@@ -38,5 +31,15 @@ readonly class UpdateSensorDTO
     public function getDeviceID(): ?Devices
     {
         return $this->deviceID;
+    }
+
+    public function getPinNumber(): ?int
+    {
+        return $this->pinNumber;
+    }
+
+    public function getReadingInterval(): ?int
+    {
+        return $this->readingInterval;
     }
 }

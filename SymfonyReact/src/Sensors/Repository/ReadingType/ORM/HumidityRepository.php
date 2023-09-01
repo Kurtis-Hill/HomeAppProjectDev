@@ -2,16 +2,16 @@
 
 namespace App\Sensors\Repository\ReadingType\ORM;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Repository\ReadingType\ReadingTypeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Humidity>
+ * @extends ServiceEntityRepository<\App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity>
  *
  * @method Humidity|null find($id, $lockMode = null, $lockVersion = null)
  * @method Humidity|null findOneBy(array $criteria, array $orderBy = null)

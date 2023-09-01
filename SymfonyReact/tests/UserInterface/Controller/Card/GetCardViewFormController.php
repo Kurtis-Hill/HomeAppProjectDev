@@ -2,12 +2,22 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
 use App\Common\API\APIErrorMessages;
-use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
+use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Soil;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use App\UserInterface\Entity\Card\CardColour;
@@ -82,14 +92,29 @@ class GetCardViewFormController extends WebTestCase
             self::assertArrayHasKey('readingType', $sensorData);
             self::assertIsString($sensorData['readingType']);
 
-            self::assertArrayHasKey('highReading', $sensorData);
-            self::assertIsNumeric($sensorData['highReading']);
-
-            self::assertArrayHasKey('lowReading', $sensorData);
-            self::assertIsNumeric($sensorData['lowReading']);
-
             self::assertArrayHasKey('constRecord', $sensorData);
             self::assertIsBool($sensorData['constRecord']);
+
+            if (
+                $sensorData['readingType'] === Temperature::READING_TYPE
+                || $sensorData['readingType'] === Humidity::READING_TYPE
+                || $sensorData['readingType'] === Analog::READING_TYPE
+                || $sensorData['readingType'] === Latitude::READING_TYPE
+            ) {
+                self::assertArrayHasKey('highReading', $sensorData);
+                self::assertIsNumeric($sensorData['highReading']);
+
+                self::assertArrayHasKey('lowReading', $sensorData);
+                self::assertIsNumeric($sensorData['lowReading']);
+
+            }
+            if (
+                $sensorData['readingType'] === Relay::READING_TYPE
+                || $sensorData['readingType'] === Motion::READING_TYPE
+            ) {
+                self::assertArrayHasKey('expectedReading', $sensorData);
+                self::assertIsBool($sensorData['expectedReading']);
+            }
         }
 
         /** @var Icons[] $allIcons */
@@ -115,13 +140,17 @@ class GetCardViewFormController extends WebTestCase
 
     public function getCardViewFormDataProvider(): Generator
     {
-        yield ['Dht'];
+        yield [Dht::NAME];
 
-        yield ['Bmp'];
+        yield [Bmp::NAME];
 
-        yield ['Soil'];
+        yield [Soil::NAME];
 
-        yield ['Dallas'];
+        yield [Dallas::NAME];
+
+        yield [GenericRelay::NAME];
+
+        yield [GenericMotion::NAME];
     }
 
     /**

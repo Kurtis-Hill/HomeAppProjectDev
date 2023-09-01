@@ -43,7 +43,7 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
             ->select()
             ->orderBy('cardColour.colourID', 'ASC')
             ->setMaxResults(1)
-            ->getQuery()->getOneOrNullResult();
+            ->getQuery()->getSingleResult();
     }
 
     public function countAllColours(): int

@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\HumidityConstraint;

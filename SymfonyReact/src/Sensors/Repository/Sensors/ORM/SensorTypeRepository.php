@@ -6,6 +6,8 @@ use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -15,10 +17,10 @@ use JetBrains\PhpStorm\ArrayShape;
 /**
  * @extends ServiceEntityRepository<SensorTypeRepository>
  *
- * @method SensorRepository|null find($id, $lockMode = null, $lockVersion = null)
- * @method SensorRepository|null findOneBy(array $criteria, array $orderBy = null)
- * @method SensorRepository[]    findAll()
- * @method SensorRepository[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SensorType|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SensorType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SensorType[]    findAll()
+ * @method SensorType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class SensorTypeRepository extends ServiceEntityRepository implements SensorTypeRepositoryInterface
 {
@@ -32,7 +34,7 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
         return $this->find($id);
     }
 
-    #[ArrayShape(['Bmp', 'Dallas', 'Dht', 'Soil'])]
+    #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME, GenericRelay::NAME, GenericMotion::NAME])]
     public function findAllSensorTypeNames(): array
     {
         $qb = $this->createQueryBuilder('st');

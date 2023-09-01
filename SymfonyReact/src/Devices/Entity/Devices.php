@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["roomID"], name: "roomID"),
+    ORM\UniqueConstraint(name: "deviceIP", columns: ["ipAddress", "externalIpAddress"]),
     ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
 ]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
@@ -31,6 +32,8 @@ class Devices implements UserInterface, PasswordAuthenticatedUserInterface
     public const ROLE = 'ROLE_DEVICE';
 
     public const ALIAS = 'device';
+
+    public const USER_TYPE = 'user';
 
     #[
         ORM\Id,

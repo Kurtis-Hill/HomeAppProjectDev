@@ -4,8 +4,8 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBu
 
 use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use App\Sensors\Entity\ConstantRecording\ConstLatitude;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 
 class LatitudeConstRecordObjectBuilder extends AbstractStandardConstRecordBuilder implements ConstRecordObjectBuilderInterface
