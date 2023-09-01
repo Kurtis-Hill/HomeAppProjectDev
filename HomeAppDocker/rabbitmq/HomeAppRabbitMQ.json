@@ -6,7 +6,7 @@
     "users": [
         {
             "name": "kurt",
-            "password_hash": "PRXqKxgtHxDAGGvdHcUMJKJsD8tNbcy5sRc1YMXnnO9Id3DT",
+            "password_hash": "zsSGGtCxA+nLJAgkhXK0HzDkAbV6bN6kGGRcP2mOR8TTstEk",
             "hashing_algorithm": "rabbit_password_hashing_sha256",
             "tags": [
                 "administrator"
@@ -33,10 +33,21 @@
     "global_parameters": [
         {
             "name": "internal_cluster_id",
-            "value": "rabbitmq-cluster-id-s2Q-nz6a_ZDUANa7Zn3CyA"
+            "value": "rabbitmq-cluster-id-5yRXeMZi8QBfCqjcJ0VmFw"
         }
     ],
-    "policies": [],
+    "policies": [
+        {
+            "vhost": "/",
+            "name": "TTL",
+            "pattern": ".*",
+            "apply-to": "queues",
+            "definition": {
+                "message-ttl": 120000
+            },
+            "priority": 0
+        }
+    ],
     "queues": [
         {
             "name": "current-reading-sensor-data",
@@ -50,9 +61,7 @@
             "vhost": "/",
             "durable": true,
             "auto_delete": false,
-            "arguments": {
-                "x-queue-type": "classic"
-            }
+            "arguments": {}
         },
         {
             "name": "send-sensor-update",
@@ -60,9 +69,43 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
+        },
+        {
+            "name": "send-device-settings-update",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
         }
     ],
     "exchanges": [
+        {
+            "name": "send-device-settings-update-exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "send-sensor-update-exchange_test",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "send-device-settings-update-exchange_test",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
         {
             "name": "send-sensor-data-update-exchange",
             "vhost": "/",
@@ -89,9 +132,35 @@
             "auto_delete": false,
             "internal": false,
             "arguments": {}
+        },
+        {
+            "name": "update-sensor-exchange_test",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "send-sensor-data-update-exchange_test",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
         }
     ],
     "bindings": [
+        {
+            "source": "send-device-settings-update-exchange",
+            "vhost": "/",
+            "destination": "send-device-settings-update",
+            "destination_type": "queue",
+            "routing_key": "",
+            "arguments": {}
+        },
         {
             "source": "send-sensor-data-update-exchange",
             "vhost": "/",
