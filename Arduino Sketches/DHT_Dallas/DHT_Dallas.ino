@@ -38,7 +38,7 @@
 //Web bits
 // Test
 //#define HOMEAPP_HOST "https://192.168.1.172"
-#define HOMEAPP_HOST "https://192.168.1.158"
+#define HOMEAPP_HOST "https://192.168.1.157"
 // Prod
 //#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
