@@ -57,13 +57,14 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::once())->method('error');
-        $mockLogger->expects(self::never())->method('info');
+        $mockLogger->expects(self::once())->method('info');
 
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
@@ -95,7 +96,7 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
         $amqpMess = new AMQPMessage(serialize($requestDTO));
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::once())->method('info');
+        $mockLogger->expects(self::atLeast(2))->method('info');
         $mockLogger->expects(self::never())->method('error');
 
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
@@ -103,6 +104,7 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $mockLogger,
         );
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);

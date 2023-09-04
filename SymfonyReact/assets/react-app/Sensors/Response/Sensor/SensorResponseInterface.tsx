@@ -1,7 +1,10 @@
 import UserResponseInterface from '../../../User/Response/UserResponseInterface';
 import { DeviceResponseInterface } from '../../../Devices/Response/DeviceResponseInterface';
 import { SensorTypeResponseInterface } from '../SensorType/SensorTypeResponseInterface';
-import { SensorReadingTypeResponseInterface } from '../ReadingTypes/SensorReadingTypeResponseInterfaces/SensorReadingTypeResponseInterface';
+import {
+    IndividualSensorReadingTypeResponseInterface,
+    SensorReadingTypeResponseInterface
+} from '../ReadingTypes/SensorReadingTypeResponseInterfaces/SensorReadingTypeResponseInterface';
 import CardViewResponseInterface from '../../../UserInterface/Cards/Response/CardView/CardViewResponseInterface';
 
 export default interface SensorResponseInterface {
@@ -10,7 +13,7 @@ export default interface SensorResponseInterface {
     createdBy?: UserResponseInterface,
     device?: DeviceResponseInterface,
     sensorType?: SensorTypeResponseInterface,
-    sensorReadingTypes?: SensorReadingTypeResponseInterface,
+    sensorReadingTypes?: IndividualSensorReadingTypeResponseInterface,
     canEdit?: boolean,
     canDelete?: boolean,
     cardView?: CardViewResponseInterface,

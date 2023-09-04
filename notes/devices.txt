@@ -1,11 +1,17 @@
 Devices
 
+====================================================
 PondDevice
-DHT->GPIO->14->D5
-DHT->GPIO->12->D6
-
-
-
 LEDS
-DEVICE_ON->GPIO->16
-WIFI Not connected->GPIO->5
+DEVICE_ON->GPIO->16->D0
+WIFI Not connected->GPIO->5->D1
+
+Dallas->GPIO->12->D6
+DHT->GPIO->13->D7
+
+
+D2 4
+D3  0
+D4 HIGH AT BOOT 2
+D5 14
+====================================================

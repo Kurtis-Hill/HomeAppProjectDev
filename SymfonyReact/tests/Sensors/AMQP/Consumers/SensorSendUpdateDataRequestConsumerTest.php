@@ -47,8 +47,12 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceMockLogger = $this->createMock(LoggerInterface::class);
+        $deviceMockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $deviceMockLogger,
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);
@@ -93,10 +97,13 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_BAD_REQUEST]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceMockLogger = $this->createMock(LoggerInterface::class);
+//        $deviceMockLogger->expects(self::once())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $deviceMockLogger,
         );
-
 
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::once())->method('error');
@@ -137,11 +144,13 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $response = new MockResponse([], ['http_code' => Response::HTTP_OK]);
         $httpClient = new MockHttpClient($response);
 
+        $deviceMockLogger = $this->createMock(LoggerInterface::class);
+        $deviceMockLogger->expects(self::never())->method('info');
+
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
+            $deviceMockLogger,
         );
-
-//        $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger->expects(self::never())->method('info');

@@ -58,4 +58,7 @@ interface SensorRepositoryInterface
 
     #[ArrayShape([Sensor::class])]
     public function findSameSensorTypesOnSameDevice(int $deviceID, int $sensorType): array;
+
+    #[ArrayShape([Sensor::class])]
+    public function findSensorsByIDNoCache(array $sensorIDs, string $orderBy = 'ASC'): array;
 }

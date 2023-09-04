@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -86,18 +84,18 @@ final class Version20230622175315 extends AbstractMigration
 
         $this->addSql("
             INSERT INTO `sensortype` 
-                (`sensorType`, `description`)   
-            VALUES
-                ('" . GenericMotion::NAME . "', 'Generic Motion Sensor'),
-                ('" . GenericRelay::NAME . "', 'Generic Relay Sensor')
-        ");
-
-        $this->addSql("
-            INSERT INTO `sensortype` 
                 (`sensorTypeID`, `sensorType`, `description`)   
             VALUES
                 (5, '" . GenericRelay::NAME . "', 'Generic relay'),
                 (6, '" . GenericMotion::NAME . "', 'Generic motion sensor');
+        ");
+
+        $this->addSql("
+            INSERT INTO `readingtypes` 
+                (`readingTypeID`, `readingType`) 
+            VALUES
+                (5, '". Relay::READING_TYPE ."'),
+                (6, '" . Motion::READING_TYPE . "');
         ");
     }
 
@@ -121,6 +119,10 @@ final class Version20230622175315 extends AbstractMigration
 
         $this->addSql(
             "DELETE FROM `sensortype` WHERE sensorTypeID = 5 OR sensorTypeID = 6"
+        );
+
+        $this->addSql(
+            "DELETE FROM `readingtypes` WHERE readingTypeID = 5 OR readingTypeID = 6"
         );
 
         $this->addSql("SET FOREIGN_KEY_CHECKS=1");

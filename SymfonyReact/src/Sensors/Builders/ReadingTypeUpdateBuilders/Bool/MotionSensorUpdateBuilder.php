@@ -32,7 +32,7 @@ class MotionSensorUpdateBuilder extends AbstractBoolSensorUpdateBuilder implemen
                 )
             );
         }
-        if ($sensorData->getCurrentReading()) {
+        if ($sensorData->getCurrentReading() === null) {
             throw new ReadingTypeObjectBuilderException(
                 sprintf(
                     ReadingTypeObjectBuilderException::CURRENT_READING_FAILED_TO_BUILD_FOR_TYPE,

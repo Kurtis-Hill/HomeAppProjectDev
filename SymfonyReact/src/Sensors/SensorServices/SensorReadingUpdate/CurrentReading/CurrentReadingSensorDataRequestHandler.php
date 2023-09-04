@@ -75,33 +75,19 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     private function validateSensorData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool
     {
-//        dd($validationGroups);
         $objectValidationErrors = $this->validator->validate(
             $sensorDataCurrentReadingUpdateDTO,
             null,
             $validationGroups
         );
-//        dd($objectValidationErrors, $validationGroups);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
             foreach ($objectValidationErrors as $error) {
                 $this->validationErrors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($this->getValidationErrorsAsStrings($error));
-//                $validationErrors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO($this->getValidationErrorsAsStrings($error));
             }
             $passedValidation = false;
         }
-        //@TODO DELETE THIS
-//        if (!in_array($sensorDataCurrentReadingUpdateDTO->getSensorType(), $this->allSensorTypes, true)) {
-//            $this->errors[] = CurrentReadingUpdateDTOBuilder::buildCurrentReadingErrorResponseDTO(
-//                sprintf(
-//                    APIErrorMessages::OBJECT_NOT_RECOGNISED,
-//                    'Sensor type ' . $sensorDataCurrentReadingUpdateDTO->getSensorType()
-//                )
-//            );
-//            $passedValidation = false;
-//        }
 
         return $passedValidation ?? true;
-//        return $validationErrors ?? [];
     }
 
     #[ArrayShape(
@@ -198,7 +184,6 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $objectValidationErrors = $this->validator->validate($currentReadingUpdateRequestDTO, null, $sensorType);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
             foreach ($objectValidationErrors as $error) {
-//                dd($error);
                 $this->validationErrors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($this->getValidationErrorsAsStrings($error));
             }
             return false;
