@@ -7,6 +7,7 @@ use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
 use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -30,7 +31,6 @@ readonly class UpdateDeviceSensorDataHandler
         private DeviceRequestHandlerInterface $deviceRequestHandler,
         private SensorRepositoryInterface $sensorRepository,
         private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
-        private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
         private DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
         private LoggerInterface $logger,
     ) {}
@@ -39,17 +39,19 @@ readonly class UpdateDeviceSensorDataHandler
      * @throws SensorRequestException
      * @throws SensorNotFoundException
      * @throws SensorTypeException
+     *
+     * @param SensorUpdateRequestDTOInterface[] $sensorUpdateRequestDTOs
      */
-    public function handleSensorsUpdateRequest(array $sensorIDs): bool
+    public function handleSensorsUpdateRequest(array $sensorUpdateRequestDTOs): bool
     {
         // need to order by so that bus sensors get added to the json in the correct order
-        $sensors = $this->sensorRepository->findBy(['sensorID' => $sensorIDs], ['createdAt' => 'ASC']);
-        if (empty($sensors)) {
-            throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
-        }
 
         $sensorData = [];
-        foreach ($sensors as $sensor) {
+        foreach ($sensorUpdateRequestDTOs as $sensorUpdateRequestDTO) {
+            $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorUpdateRequestDTO->getSensorName()]);
+            if ($sensor === null) {
+                throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor name: %s', $sensorUpdateRequestDTO->getSensorName()));
+            }
             try {
                 $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
             } catch (SensorTypeException $e) {
@@ -64,9 +66,7 @@ readonly class UpdateDeviceSensorDataHandler
             }
             $sensorTypeName = $sensorType->getSensorTypeName();
 
-            $sensorData[$sensorTypeName][] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO(
-                $sensor,
-            );
+            $sensorData[$sensorTypeName][] = $sensorUpdateRequestDTO;
         }
 
         if (empty($sensorData)) {
@@ -88,7 +88,7 @@ readonly class UpdateDeviceSensorDataHandler
         $groups = array_keys($sensorData);
         $groups[] = DeviceSettingsRequestDTOBuilder::SENSOR_DATA;
 
-        $device = $sensors[0]->getDevice();
+        $device = $sensor->getDevice();
 
         $deviceEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,

@@ -298,12 +298,14 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 $expr->eq(Sensor::ALIAS . '.deviceID', ':deviceID'),
                 $expr->eq(Sensor::ALIAS . '.sensorTypeID', ':sensorTypeID')
             )
+            ->orderBy(Sensor::ALIAS . '.createdAt', 'ASC')
             ->setParameters(
                 [
                     'deviceID' => $deviceID,
                     'sensorTypeID' => $sensorType,
                 ]
-            );
+            )
+            ->orderBy(Sensor::ALIAS . '.createdAt', 'ASC');
 
         return $qb->getQuery()->getResult();
     }

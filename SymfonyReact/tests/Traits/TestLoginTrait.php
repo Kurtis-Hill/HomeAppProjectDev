@@ -29,7 +29,7 @@ trait TestLoginTrait
         );
 
         $requestResponse = $client->getResponse();
-//        dd($requestResponse->getContent());
+
         try {
             $responseData = json_decode(
                 $requestResponse->getContent(),
@@ -37,7 +37,8 @@ trait TestLoginTrait
                 512,
                 JSON_THROW_ON_ERROR
             );
-        } catch (JsonException) {
+        } catch (JsonException $exception) {
+            dd($exception->getMessage());
             throw new JsonException('Failed to (json)decode user/device login token request');
         }
 

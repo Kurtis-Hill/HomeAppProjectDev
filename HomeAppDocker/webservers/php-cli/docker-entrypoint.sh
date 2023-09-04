@@ -21,6 +21,8 @@ if [ ${APP_ENV} = 'dev' ]; then
 	bin/console doctrine:migrations:migrate -n
 	echo "...Local migrations complete"
 
+
+
 ##@TODO: not working
 	echo "Querying test database"
 	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep 'array(1)'; then
@@ -38,6 +40,11 @@ if [ ${ELASTIC_ENABLED} = 'true' ]; then
 	bin/console app:elastic-create-out-of-bounds-indices
 	bin/console app:elastic-create-log-index
 	echo "...Elastic indicie creation"
+fi
+
+if [ ! -f "/var/www/html/config/jwt/private.pem" ]; then
+  echo "Generating JWT keys..."
+  php bin/console lexik:jwt:generate-keypair
 fi
 
 echo "Starting supervisor..."
