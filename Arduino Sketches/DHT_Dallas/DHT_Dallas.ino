@@ -38,7 +38,7 @@
 //Web bits
 // Test
 //#define HOMEAPP_HOST "https://192.168.1.172"
-#define HOMEAPP_HOST "https://192.168.1.157"
+#define HOMEAPP_HOST "https://192.168.1.158"
 // Prod
 //#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
@@ -79,15 +79,14 @@ IPAddress netmask(255, 255, 255, 0);
 #define WIFI_OFF_LED_PIN 5
 #define DEVICE_ON_LED_PIN 16
 
+#define DEVICE_LED_PIN_SANCTIONED 2
 //LEDS
-int ledPins[4] = {WIFI_OFF_LED_PIN, DEVICE_ON_LED_PIN, 4, 0};
+int ledPins[DEVICE_LED_PIN_SANCTIONED] = {WIFI_OFF_LED_PIN, DEVICE_ON_LED_PIN};
 
 // DHT
 #define DHTNAME "Dht"
-#define DHTS_ASSINGED_TO_DEVICE 4
-#define DHTPIN 2
+#define DHTS_ASSINGED_TO_DEVICE 1
 #define DHTTYPE DHT22
-//DHT dht(DHTPIN, DHTTYPE);
 DHT* dhtSensors[DHTS_ASSINGED_TO_DEVICE];
 
 struct DhtSensor {
@@ -105,8 +104,6 @@ struct DhtSensor {
 DhtSensor dhtSensor;
 
 // Dallas
-//#define ACTIVE_START_PIN 2
-//#define LAST_ACTIVE_PIN 2
 #define DALLASNNAME "Dallas"
 #define MAX_DALLAS_SENSORS 3
 
@@ -1575,19 +1572,22 @@ bool setDhtValues() {
 
 
 
-void takeDhtReadings() {
-  Serial.println("Taking Dht readings");
-  for (int i = 0; i < dhtSensor.sensorCount; ++i) {
-    dhtSensor.tempReading[i] = dhtSensors[i]->readTemperature();
-    dhtSensor.humidReading[i] = dhtSensors[i]->readHumidity();
-    Serial.print("Temp is:");
-    Serial.print(dhtSensor.tempReading[i]);
-    Serial.println(" Celsius");
-    Serial.print("Humidity: ");
-    Serial.print(dhtSensor.humidReading[i]);
-    Serial.println("%");      
-  }
-}
+//void takeDhtReadings(bool force = false) {
+//  Serial.println("Checking if any Dht readings to take");
+//  int currentTime = millis();
+//  for (int i = 0; i < dhtSensor.sensorCount; ++i) {
+//    if ((dhtSensor.sendNextReadingAt[i] - currentTime) < 0 || force == true) {          
+//      dhtSensor.tempReading[i] = dhtSensors[i]->readTemperature();
+//      dhtSensor.humidReading[i] = dhtSensors[i]->readHumidity();
+//      Serial.print("Temp is:");
+//      Serial.print(dhtSensor.tempReading[i]);
+//      Serial.println(" Celsius");
+//      Serial.print("Humidity: ");
+//      Serial.print(dhtSensor.humidReading[i]);
+//      Serial.println("%");             
+//    }    
+//  }
+//}
 
 String buildDhtReadingSensorUpdateRequest(bool force = false) {
   Serial.println("Building dht request");  
@@ -1596,9 +1596,16 @@ String buildDhtReadingSensorUpdateRequest(bool force = false) {
   Serial.printf("current time: %d\n", currentTime);
   int jsonPositionTracker = 0;
   for (int i = 0; i < dhtSensor.sensorCount; ++i) {
-    Serial.printf("Dht sensor next reading at value is %d\n", dhtSensor.sendNextReadingAt[i]);  
     Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (dhtSensor.sendNextReadingAt[i] - currentTime));
-    if ((dhtSensor.sendNextReadingAt[i] - currentTime) < 0 || force == true) {          
+    if ((dhtSensor.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+      dhtSensor.tempReading[i] = dhtSensors[i]->readTemperature();
+      dhtSensor.humidReading[i] = dhtSensors[i]->readHumidity();
+      Serial.print("Temp is:");
+      Serial.print(dhtSensor.tempReading[i]);
+      Serial.println(" Celsius");
+      Serial.print("Humidity: ");
+      Serial.print(dhtSensor.humidReading[i]);
+      Serial.println("%");     
       if (!isnan(dhtSensor.tempReading[i]) || !isnan(dhtSensor.humidReading[i])) {
         Serial.print("sensor name:");
         Serial.println(dhtSensor.sensorName[i]);
@@ -1622,7 +1629,6 @@ String buildDhtReadingSensorUpdateRequest(bool force = false) {
 }
 
 bool sendDhtUpdateRequest(bool force = false) {
-  Serial.println("building Dht readings request");
   String payload = buildDhtReadingSensorUpdateRequest(force);
   if (payload == "null") {
     Serial.println("Aborting request");
@@ -1692,13 +1698,14 @@ bool setDallasValues() {
 
 bool findDallasSensor() {
   bool sensorSuccess = false;
-  for (uint8_t pin = dallasTempData.pinNumber; pin <= dallasTempData.pinNumber ; pin++) {
+  for (uint8_t pin = dallasTempData.pinNumber; pin <= dallasTempData.pinNumber ; pin++) {    
     Serial.print("pin ");
     Serial.println(pin);
+    pinMode(pin, INPUT_PULLUP);
     sensorSuccess = searchPinForOneWire(pin);
     if(sensorSuccess == true) {
       Serial.println("Dallas sensor found creating reference");
-      DallasTemperature sensors(&oneWire);
+      DallasTemperature sensors(&oneWire);      
       return true;
     }
   }      
@@ -1740,31 +1747,47 @@ uint8_t searchPinForOneWire(int pin) {
   return false;
 }
 
-void takeDallasTempReadings() {
-  Serial.print("Requesting Bus temperatures...");
-  sensors.requestTemperatures(); // Send the command to get temperatures
-
-  for(int i = 0; i < dallasTempData.sensorCount; i++) {
-    float tempReading = sensors.getTempCByIndex(i);
-    Serial.print("Temp number:");
-    Serial.print(i);
-    Serial.print(" Tempreture is:");
-    Serial.println(tempReading); 
-    dallasTempData.tempReading[i] = tempReading;
- }
-}
+//void takeDallasTempReadings(bool force = false) {
+//  Serial.print("Requesting Bus temperatures...");
+//  sensors.requestTemperatures();
+//
+//  int currentTime = millis();
+//  Serial.printf("current time: %d\n", currentTime);
+//  for(int i = 0; i < dallasTempData.sensorCount; i++) {
+//    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (dallasTempData.sendNextReadingAt[i] - currentTime));
+//      float tempReading = sensors.getTempCByIndex(i);
+//      Serial.print("Temp number:");
+//      Serial.print(i);
+//      Serial.print(" Tempreture is:");
+//      Serial.println(tempReading); 
+//      dallasTempData.tempReading[i] = tempReading; 
+//  }     
+//}
 
 String buildDallasReadingSensorUpdateRequest(bool force = false) {
   Serial.println("Building Dallas request");
   DynamicJsonDocument sensorUpdateRequest(1024);
-
   int currentTime = millis();
   Serial.printf("current time: %d\n", currentTime);
   int jsonArrayIndex = 0;
+
+  for (int i = 0; i < dallasTempData.sensorCount; ++i) {
+    if ((dallasTempData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+      sensors.requestTemperatures();
+      break;
+    }
+  }
+  
   for (int i = 0; i < dallasTempData.sensorCount; ++i) {
     Serial.printf("Dallas sensor next reading at value is %d\n", dallasTempData.sendNextReadingAt[i]);  
     Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (dallasTempData.sendNextReadingAt[i] - currentTime));
     if ((dallasTempData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+      float tempReading = sensors.getTempCByIndex(i);
+      Serial.print("Temp number:");
+      Serial.print(i);
+      Serial.print(" Tempreture is:");
+      Serial.println(tempReading); 
+      dallasTempData.tempReading[i] = tempReading; 
       if (dallasTempData.tempReading[i] != -127 || !isnan(dallasTempData.tempReading[i])) {
         Serial.print("sensor name:");
         Serial.println(dallasTempData.sensorName[i]);
@@ -1885,9 +1908,11 @@ void restartDevice() {
 
 void sendAllActiveSensorData(bool force = false) {
   if (dallasTempData.activeSensor == true) {
+//    takeDallasTempReadings(force);
     sendDallasUpdateRequest(force);  
   }
   if (dhtSensor.activeSensor == true) {
+//    takeDhtReadings(force);
     sendDhtUpdateRequest(force);
   }     
   if (relayData.activeSensor == true) {
@@ -1963,44 +1988,49 @@ void handleSwitchSensor() {
   Serial.println("Deserialzing Request");
   DynamicJsonDocument sensorSwitchJson = getDeserializedJson(sensorSwitchRequest, 512);
 
-  if (!sensorSwitchJson["sensorName"].isNull() && !sensorSwitchJson["pinNumber"].isNull()) {
-    String sensorName = sensorSwitchJson["sensorName"].as<String>();
-    int pinNumber = sensorSwitchJson["pinNumber"].as<int>();
-    bool requestedReading = sensorSwitchJson["requestedReading"].as<boolean>();
-
-    bool passed = false;
-    for(int i = 0; i < MAX_RELAYS; ++i) {
-      if (relayData.pinNumber[i] == pinNumber) {
-        passed = true;
-      }
-    }
-    if (passed == false) {
-      server.send(401, "application/json", "{\"status\":\"pin is not configured to set set\"}");   
-    }
-    
-    Serial.print("Sensor Name: ");
-    Serial.println(sensorName);
-    Serial.print("pinNumber: ");
-    Serial.println(pinNumber);
-    Serial.print("requested reading: ");
-    Serial.println(requestedReading);
-    if (requestedReading == 0) {
-      Serial.println("Going Low");
-      digitalWrite(pinNumber, LOW);        
-    } else {
-      Serial.println("Going High");
-      digitalWrite(pinNumber, HIGH);  
-    }    
-    server.send(200, "application/json", "{\"status\":\"completed\"}"); 
-  } else {
+  if (sensorSwitchJson["sensorName"].isNull() && sensorSwitchJson["pinNumber"].isNull()) {
     server.send(500, "application/json", "{\"status\":\"failed to switch sensor request error\"}"); 
+    return;
   }
+  
+  int pinNumber = sensorSwitchJson["pinNumber"].as<int>();
+  bool requestedReading = sensorSwitchJson["requestedReading"].as<boolean>();
+
+  bool passed = false;
+  for(int i = 0; i < MAX_RELAYS; ++i) {
+    if (relayData.pinNumber[i] == pinNumber && relayData.sensorName[i] == sensorSwitchJson["sensorName"]) {
+      Serial.println("Sensor and pin matched marking as passed");
+      passed = true;
+      relayData.currentReading[i] = requestedReading;
+    }          
+  }
+  if (passed == false) {
+    Serial.println("FAILED to find correct pin for sensor name");
+    server.send(401, "application/json", "{\"status\":\"pin is not configured to set set\"}");   
+    return;
+  }
+
+  Serial.print("Sensor Name: ");
+  Serial.println(sensorSwitchJson["sensorName"].as<String>());
+  Serial.print("pinNumber: ");
+  Serial.println(pinNumber);
+  Serial.print("requested reading: ");
+  Serial.println(requestedReading);
+  if (requestedReading == 0 && passed == true) {
+    Serial.println("Going Low");
+    digitalWrite(pinNumber, LOW);        
+  } else {
+    Serial.println("Going High");
+    digitalWrite(pinNumber, HIGH);  
+  }    
+  
+  server.send(200, "application/json", "{\"status\":\"completed\"}");     
 }
 
 void setup() {
   Serial.begin(DEVICE_SERIAL);
   Serial.println("Searial started");
-
+  
   Serial.print("Starting web servers...");
   server.on("/",[](){server.send_P(200,"text/html", webpage);});
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
@@ -2023,11 +2053,12 @@ void setup() {
   
   Serial.println("Begining device setup");
 
-  for (int i = 0; i <= 4; i++) {
+  for (int i = 0; i <= DEVICE_LED_PIN_SANCTIONED; i++) {
     pinMode(ledPins[i], OUTPUT); 
   }
   
   digitalWrite(WIFI_OFF_LED_PIN, HIGH);
+  
   digitalWrite(DEVICE_ON_LED_PIN, HIGH);
   
   if (setupNetworkConnection()) {
@@ -2046,12 +2077,12 @@ void setup() {
 void loop() {
   server.handleClient();
 
-  if (dallasTempData.activeSensor == true) {
-    takeDallasTempReadings();
-  }
-  if (dhtSensor.activeSensor == true) {
-    takeDhtReadings();
-  }
+//  if (dallasTempData.activeSensor == true) {
+//    takeDallasTempReadings(false);
+//  }
+//  if (dhtSensor.activeSensor == true) {
+//    takeDhtReadings(false);
+//  }
 
   if(WiFi.status() == WL_CONNECTED) {
     if (deviceLoggedIn == true) {
