@@ -90,7 +90,6 @@ readonly class UpdateDeviceSensorDataHandler
             self::SENSOR_UPDATE_SETTING_ENDPOINT
         );
 
-//        return true;
         try {
             $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
                 $deviceEncapsulationDTO,
