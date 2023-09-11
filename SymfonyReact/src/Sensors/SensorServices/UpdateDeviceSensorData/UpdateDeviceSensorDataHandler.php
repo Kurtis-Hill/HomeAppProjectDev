@@ -45,7 +45,6 @@ readonly class UpdateDeviceSensorDataHandler
     public function handleSensorsUpdateRequest(array $sensorUpdateRequestDTOs): bool
     {
         // need to order by so that bus sensors get added to the json in the correct order
-
         $sensorData = [];
         foreach ($sensorUpdateRequestDTOs as $sensorUpdateRequestDTO) {
             $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorUpdateRequestDTO->getSensorName()]);
@@ -58,18 +57,8 @@ readonly class UpdateDeviceSensorDataHandler
                 $this->logger->error($e->getMessage());
                 continue;
             }
-            $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
-            if ($sensorType === null) {
-                $this->logger->error(
-                    sprintf(
-                        'Error processing sensor data to upload sensor type not found, sensor id: %s, sensor type id: %s',
-                        $sensor->getSensorID(),
-                        $sensor->getSensorTypeObject()->getSensorTypeID())
-                );
 
-                return false;
-            }
-            $sensorTypeName = $sensorType->getSensorTypeName();
+            $sensorTypeName = $sensor->getSensorTypeObject()->getSensorType();
 
             $sensorData[$sensorTypeName][] = $sensorUpdateRequestDTO;
         }
@@ -101,6 +90,7 @@ readonly class UpdateDeviceSensorDataHandler
             self::SENSOR_UPDATE_SETTING_ENDPOINT
         );
 
+//        return true;
         try {
             $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
                 $deviceEncapsulationDTO,

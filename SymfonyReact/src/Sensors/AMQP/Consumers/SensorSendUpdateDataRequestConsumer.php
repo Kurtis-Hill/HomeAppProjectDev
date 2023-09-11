@@ -37,7 +37,6 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
 
             return true;
         }
-
         try {
             $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateEventDTO->getSensorUpdateRequestDTOs());
             if ($updateRequestResult === false) {

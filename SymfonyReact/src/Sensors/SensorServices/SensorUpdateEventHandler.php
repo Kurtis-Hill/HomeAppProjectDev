@@ -31,10 +31,10 @@ readonly class SensorUpdateEventHandler
         $sensorsToUpdate = [];
         foreach ($sensors as $sensor) {
             /** @var Sensor[] $sensorsToUpdate */
-            $sensorsToUpdate[] = $this->sensorRepository->findSameSensorTypesOnSameDevice(
+            $sensorsToUpdate = array_merge($this->sensorRepository->findSameSensorTypesOnSameDevice(
                 $sensor->getDevice()->getDeviceID(),
                 $sensor->getSensorTypeObject()->getSensorTypeID(),
-            );
+            ), $sensorsToUpdate);
         }
         if (empty($sensorsToUpdate)) {
             throw new SensorNotFoundException('No sensors found to update');
@@ -42,7 +42,6 @@ readonly class SensorUpdateEventHandler
 
         $sensorUpdateRequestDTOsByDeviceID = [];
         foreach ($sensorsToUpdate as $sensorToUpdate) {
-            dd($sensorToUpdate);
             $sensorUpdateRequestDTOsByDeviceID[$sensorToUpdate->getDevice()->getDeviceID()][] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
         }
 

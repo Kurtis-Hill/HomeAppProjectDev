@@ -36,6 +36,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                 'request' => $normalizedResponse,
             ]);
 
+        dd($normalizedResponse);
         try {
             return $this->httpClient->request(
                 Request::METHOD_POST,

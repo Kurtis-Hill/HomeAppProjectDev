@@ -36,12 +36,13 @@ elastic username is: <code>elastic</code> and the password is set in the .env fi
 
 <h2>Running the application</h2>
 First copy the auth.json.example file into the same directory <code>cp HomeAppDocker/webservers/auth.json.example HomeAppDocker/webservers/auth.json</code>.
-Then generate a git hub access token and replace GIT_TOKEN_HERE with your token remember to keep the " marks
+Then generate a git hub access token and replace GIT_TOKEN_HERE with your token remember to keep the " marks.
+After that run <code>cp SymfonyReact/.env.example SymfonyReact/.env</code> and proceed to alter the variables to suit your needs.
 
 Remember to set the APP_ENV variable in the HomeAppDocker/.env file to <b>prod|dev</b> depending on your intentions.
 Once your variables are set run
-<code>HomeAppDocker/docker-compose up --build</code>
-from the root project directory.
+<code>docker-compose up --build</code>
+from the HomeAppDocker directory.
 
 This should have; created all the necessary containers, loaded up the initial database file with an admin user and also loaded the fixtures up for running tests (if in dev mode).
 
@@ -55,4 +56,3 @@ and the password is:
 Permission system is rather simple, admin users have overview of everything on the system. Users are assigned to groups and devices are registered into these groups. None admin users that are granted access to a group can view/edit/update/delete the devices in that group. 
 
 Rooms can be added by anybody but only devices registered to that users groups will be able to be been.
-
