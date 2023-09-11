@@ -77,7 +77,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
      */
     private function persistSensorTypeObjects(SensorTypeInterface $sensorTypeObject): void
     {
-        $sensorTypeObjectAsString = $sensorTypeObject->getSensorTypeName();
+        $sensorTypeObjectAsString = $sensorTypeObject->getReadingTypeName();
         $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
         $sensorTypeRepository->persist($sensorTypeObject);
     }

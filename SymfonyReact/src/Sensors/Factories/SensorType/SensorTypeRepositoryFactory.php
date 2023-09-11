@@ -7,6 +7,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Repository\SensorType\ORM\BmpRepository;
@@ -15,6 +16,7 @@ use App\Sensors\Repository\SensorType\ORM\DhtRepository;
 use App\Sensors\Repository\SensorType\ORM\GenericMotionRepository;
 use App\Sensors\Repository\SensorType\ORM\GenericRelayRepository;
 use App\Sensors\Repository\SensorType\ORM\GenericSensorTypeRepositoryInterface;
+use App\Sensors\Repository\SensorType\ORM\LDRRepository;
 use App\Sensors\Repository\SensorType\ORM\SoilRepository;
 
 class SensorTypeRepositoryFactory
@@ -31,13 +33,16 @@ class SensorTypeRepositoryFactory
 
     private GenericRelayRepository $genericRelayRepository;
 
+    private LDRRepository $ldrRepository;
+
     public function __construct(
         DallasRepository $dallasRepository,
         BmpRepository $bmpRepository,
         SoilRepository $soilRepository,
         DhtRepository $dhtRepository,
         GenericMotionRepository $genericMotionRepository,
-        GenericRelayRepository $genericRelayRepository
+        GenericRelayRepository $genericRelayRepository,
+        LDRRepository $ldrRepository,
     ) {
         $this->dallasRepository = $dallasRepository;
         $this->bmpRepository = $bmpRepository;
@@ -45,6 +50,7 @@ class SensorTypeRepositoryFactory
         $this->dhtRepository = $dhtRepository;
         $this->genericMotionRepository = $genericMotionRepository;
         $this->genericRelayRepository = $genericRelayRepository;
+        $this->ldrRepository = $ldrRepository;
     }
 
     /**
@@ -59,6 +65,7 @@ class SensorTypeRepositoryFactory
             Dht::NAME => $this->dhtRepository,
             GenericMotion::NAME => $this->genericMotionRepository,
             GenericRelay::NAME => $this->genericRelayRepository,
+            LDR::NAME => $this->ldrRepository,
             default => throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED, $sensorType)),
         };
     }

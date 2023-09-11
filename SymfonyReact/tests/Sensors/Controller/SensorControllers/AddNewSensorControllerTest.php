@@ -32,6 +32,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -123,6 +124,11 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensor' => GenericRelay::NAME,
             'sensorName' => 'genericRelayTest'
         ];
+
+        yield [
+            'sensor' => LDR::NAME,
+            'sensorName' => 'ldrTest'
+        ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
@@ -181,6 +187,15 @@ class AddNewSensorControllerTest extends WebTestCase
             'class' => GenericRelay::class,
             [
                 'relay' => Relay::class
+            ]
+        ];
+
+        yield [
+            'sensor' => LDR::NAME,
+            'sensorName' => 'ldrTest',
+            'class' => LDR::class,
+            [
+                'analog' => Analog::class
             ]
         ];
     }
@@ -625,7 +640,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject->getSensorTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()->getSensorType());
         }
         if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
             self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
@@ -727,7 +742,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject->getSensorTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()->getSensorType());
         }
         if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
             self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());

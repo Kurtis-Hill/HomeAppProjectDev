@@ -61,7 +61,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
         $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
         $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
         if (!$sensorType instanceof GenericRelay) {
-            throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_ALLOWED, $sensorType->getSensorTypeName()));
+            throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_ALLOWED, $sensorType->getReadingTypeName()));
         }
 
         $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(

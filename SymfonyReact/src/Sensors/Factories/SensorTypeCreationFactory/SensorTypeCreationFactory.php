@@ -8,12 +8,14 @@ use App\Sensors\Builders\SensorReadingTypeCreationBuilders\NewSensorReadingTypeB
 use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\BmpNewReadingTypeBuilder;
 use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\DallasNewReadingTypeBuilder;
 use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\DhtNewReadingTypeBuilder;
+use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\LDRNewReadingTypeBuilder;
 use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\SoilNewReadingTypeBuilder;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeException;
 
@@ -31,13 +33,16 @@ class SensorTypeCreationFactory
 
     private GenericRelayNewReadingTypeBuilder $genericRelaySensorReadingTypeBuilder;
 
+    private LDRNewReadingTypeBuilder $ldrSensorReadingTypeBuilder;
+
     public function __construct(
         BmpNewReadingTypeBuilder $bmpSensorReadingTypeBuilder,
         SoilNewReadingTypeBuilder $soilSensorReadingTypeBuilder,
         DallasNewReadingTypeBuilder $dallasSensorReadingTypeBuilder,
         DhtNewReadingTypeBuilder $dhtSensorReadingTypeBuilder,
         GenericMotionNewReadingTypeBuilder $genericMotionSensorReadingTypeBuilder,
-        GenericRelayNewReadingTypeBuilder $genericRelaySensorReadingTypeBuilder
+        GenericRelayNewReadingTypeBuilder $genericRelaySensorReadingTypeBuilder,
+        LDRNewReadingTypeBuilder $ldrSensorReadingTypeBuilder,
     ) {
         $this->bmpSensorReadingTypeBuilder = $bmpSensorReadingTypeBuilder;
         $this->soilSensorReadingTypeBuilder = $soilSensorReadingTypeBuilder;
@@ -45,6 +50,7 @@ class SensorTypeCreationFactory
         $this->dallasSensorReadingTypeBuilder = $dallasSensorReadingTypeBuilder;
         $this->genericMotionSensorReadingTypeBuilder = $genericMotionSensorReadingTypeBuilder;
         $this->genericRelaySensorReadingTypeBuilder = $genericRelaySensorReadingTypeBuilder;
+        $this->ldrSensorReadingTypeBuilder = $ldrSensorReadingTypeBuilder;
     }
 
     /**
@@ -59,6 +65,7 @@ class SensorTypeCreationFactory
             Dht::NAME => $this->dhtSensorReadingTypeBuilder,
             GenericRelay::NAME => $this->genericRelaySensorReadingTypeBuilder,
             GenericMotion::NAME => $this->genericMotionSensorReadingTypeBuilder,
+            LDR::NAME => $this->ldrSensorReadingTypeBuilder,
             default => throw new SensorTypeException(
                 sprintf(
                     SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED,

@@ -8,6 +8,7 @@ use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\MotionReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\RelayReadingTypeObjectBuilder;
 use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\TemperatureReadingTypeObjectBuilder;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -21,6 +22,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 
 abstract class AbstractNewReadingTypeBuilder
 {
@@ -77,11 +79,11 @@ abstract class AbstractNewReadingTypeBuilder
         }
 
         if ($sensorType instanceof RelayReadingTypeInterface) {
-            $this->relayReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Relay::READING_TYPE] ?? 10);
+            $this->relayReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Relay::READING_TYPE] ?? false);
         }
 
         if ($sensorType instanceof MotionSensorReadingTypeInterface) {
-            $this->motionReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Motion::READING_TYPE] ?? 10);
+            $this->motionReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Motion::READING_TYPE] ?? false);
         }
     }
 }

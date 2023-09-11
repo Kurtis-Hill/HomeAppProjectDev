@@ -88,12 +88,12 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRe
         return self::LOW_SOIL_READING_BOUNDARY;
     }
 
-    public function getSensorTypeName(): string
+    public function getReadingTypeName(): string
     {
         return self::NAME;
     }
 
-    public static function getSensorTypeAlias(): string
+    public static function getReadingTypeAlias(): string
     {
         return self::ALIAS;
     }
