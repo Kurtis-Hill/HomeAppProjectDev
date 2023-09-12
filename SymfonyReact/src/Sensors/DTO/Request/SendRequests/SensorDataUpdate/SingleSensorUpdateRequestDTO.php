@@ -13,7 +13,7 @@ readonly class SingleSensorUpdateRequestDTO implements SensorUpdateRequestDTOInt
 {
     public function __construct(
         private string $sensorName,
-        private int $pinNumber,
+        private int|string $pinNumber,
         private int $readingInterval,
     ) {}
 
@@ -36,7 +36,7 @@ readonly class SingleSensorUpdateRequestDTO implements SensorUpdateRequestDTOInt
         Soil::NAME,
         GenericMotion::NAME,
     ])]
-    public function getPinNumber(): int
+    public function getPinNumber(): string|int
     {
         return $this->pinNumber;
     }
