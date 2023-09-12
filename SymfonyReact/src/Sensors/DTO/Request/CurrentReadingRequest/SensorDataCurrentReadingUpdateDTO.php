@@ -8,6 +8,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use JetBrains\PhpStorm\Immutable;
@@ -45,6 +46,7 @@ class SensorDataCurrentReadingUpdateDTO
                 Dht::NAME,
                 GenericRelay::NAME,
                 GenericMotion::NAME,
+                LDR::NAME,
             ],
             message: 'sensorType must be one of {{ choices }}',
             groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]

@@ -530,6 +530,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
+
         /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */

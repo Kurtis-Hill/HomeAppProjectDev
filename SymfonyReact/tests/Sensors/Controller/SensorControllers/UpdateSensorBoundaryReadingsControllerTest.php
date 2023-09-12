@@ -27,7 +27,9 @@ use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use App\Tests\Traits\TestLoginTrait;
@@ -81,7 +83,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
@@ -206,7 +208,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'expectedTitle' => 'Some sensor boundary update requests failed',
         ];
 //        DALLAS
-
 
 
 //        BMP
@@ -365,6 +366,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             512,
             JSON_THROW_ON_ERROR
         );
+
         $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
         if (!isset($responseData['payload'])) {
             self::fail('Payload not set in response');
@@ -765,7 +767,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "analog",
-                    "highReading" => Soil::LOW_SOIL_READING_BOUNDARY,
+                    "highReading" => Soil::HIGH_SOIL_READING_BOUNDARY,
                     "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY,
                     "constRecord" => 0,
                 ]
@@ -910,6 +912,71 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => Relay::READING_TYPE,
                     "expectedReading" => true,
                     "constRecord" => true,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+        ];
+
+        // LDR
+        yield [
+            'sensorType' => LDR::class,
+            'tableId' => 'ldrID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Analog::READING_TYPE,
+                    'highReading' => LDR::HIGH_READING - 5,
+                    'lowReading' =>  LDR::LOW_READING + 5,
+                    'outOfBounds' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Analog::READING_TYPE,
+                    "highReading" => Ldr::HIGH_READING - 5,
+                    "lowReading" => Ldr::LOW_READING + 5,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+        ];
+
+        yield [
+            'sensorType' => LDR::class,
+            'tableId' => 'ldrID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Analog::READING_TYPE,
+                    'highReading' => LDR::HIGH_READING - 5,
+                    'outOfBounds' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Analog::READING_TYPE,
+                    "highReading" => Ldr::HIGH_READING - 5,
+                    "lowReading" => Ldr::LOW_READING,
+                    "constRecord" => 0,
+                ]
+            ],
+            'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
+        ];
+
+        yield [
+            'sensorType' => LDR::class,
+            'tableId' => 'ldrID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Analog::READING_TYPE,
+                    'lowReading' => LDR::LOW_READING + 5,
+                    'outOfBounds' => false,
+                ],
+            ],
+            'dataPayloadMessage' => [
+                [
+                    "readingType" => Analog::READING_TYPE,
+                    "highReading" => Ldr::HIGH_READING,
+                    "lowReading" => Ldr::LOW_READING + 5,
+                    "constRecord" => 0,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -1208,7 +1275,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         ];
 
         // Generic Relay
-
         yield [
             'sensorType' => GenericRelay::class,
             'tableId' => 'genericRelayID',
@@ -1223,6 +1289,26 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'errorsPayloadMessage' => [
                 'expectedReading must be a bool|null you have provided 4',
                 'constRecord must be a bool|null you have provided 4',
+            ],
+            'expectedTitle' => 'All sensor boundary update requests failed',
+        ];
+
+        //LDR
+        yield [
+            'sensorType' => LDR::class,
+            'tableId' => 'ldrID',
+            'sensorReadingTypes' => [
+                [
+                    'readingType' => Analog::READING_TYPE,
+                    'highReading' => LDR::HIGH_READING + 5,
+                    'lowReading' => LDR::LOW_READING - 5,
+                    'outOfBounds' => true,
+                ],
+            ],
+            'dataPayloadMessage' => [],
+            'errorsPayloadMessage' => [
+                'Reading for ' . LDR::NAME . ' sensor cannot be over ' . LDR::HIGH_READING .' you entered ' . LDR::HIGH_READING + 5,
+                'Reading for ' . LDR::NAME . ' sensor cannot be under ' . LDR::LOW_READING . ' you entered ' . LDR::LOW_READING - 5,
             ],
             'expectedTitle' => 'All sensor boundary update requests failed',
         ];

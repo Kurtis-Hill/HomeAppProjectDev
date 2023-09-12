@@ -6,24 +6,24 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Repository\SensorType\ORM\SoilRepository;
+use App\Sensors\Repository\SensorType\ORM\LDRRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: SoilRepository::class),
-    ORM\Table(name: "soil"),
+    ORM\Entity(repositoryClass: LDRRepository::class),
+    ORM\Table(name: "ldr"),
     ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]
 class LDR implements SensorTypeInterface, StandardSensorTypeInterface, AnalogReadingTypeInterface
 {
-    public const NAME = 'LDR';
+    public const NAME = 'Ldr';
 
     public const ALIAS = 'ldr';
 
-    public const HIGH_LDR_READING_BOUNDARY = 999;
+    public const HIGH_READING = 999;
 
-    public const LOW_LDR_READING_BOUNDARY = 100;
+    public const LOW_READING = 100;
 
     private const ALLOWED_READING_TYPES = [
         Analog::READING_TYPE
@@ -47,6 +47,16 @@ class LDR implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRea
         ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID", nullable: true),
     ]
     private Sensor $sensor;
+
+    public function getLdrID(): int
+    {
+        return $this->ldrID;
+    }
+
+    public function setLdrID(int $ldrID): void
+    {
+        $this->ldrID = $ldrID;
+    }
 
     public function getSensorTypeID(): int
     {
@@ -99,12 +109,12 @@ class LDR implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRea
 
     public function getMaxAnalog(): float|int
     {
-        return self::HIGH_LDR_READING_BOUNDARY;
+        return self::HIGH_READING;
     }
 
     public function getMinAnalog(): float|int
     {
-        return self::LOW_LDR_READING_BOUNDARY;
+        return self::LOW_READING;
     }
 
     public function getReadingTypeName(): string

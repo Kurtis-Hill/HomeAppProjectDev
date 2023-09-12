@@ -17,6 +17,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
 use App\Tests\Traits\TestLoginTrait;
@@ -271,6 +272,22 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
             ]
         ];
+
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => 500,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[LDR::NAME]),
+            ]
+        ];
     }
 
     /**
@@ -315,7 +332,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-            'errors' => ['sensorType must be one of "Bmp", "Soil", "Dallas", "Dht", "GenericRelay", "GenericMotion"'],
+            'errors' => ['sensorType must be one of "Bmp", "Soil", "Dallas", "Dht", "GenericRelay", "GenericMotion", "Ldr"'],
         ];
 
         yield [
@@ -619,6 +636,32 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME] .'2',
+                    'currentReadings' => [
+                        'analog' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'The submitted value is not a number string',
+                'The submitted value is not a number array',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
     }
 
     /**
@@ -842,6 +885,30 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'errors' => [
                 'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
                 'Reading for ' . Soil::NAME . ' sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 1,
+            ],
+        ];
+
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => LDR::HIGH_READING + 1,
+                    ],
+                ],
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => LDR::LOW_READING - 1,
+                    ],
+                ]
+            ],
+            'errors' => [
+                'Reading for ' . LDR::NAME . ' sensor cannot be over ' . LDR::HIGH_READING . ' you entered ' . LDR::HIGH_READING + 1,
+                'Reading for ' . LDR::NAME . ' sensor cannot be under ' . LDR::LOW_READING . ' you entered ' . LDR::LOW_READING - 1,
             ],
         ];
     }

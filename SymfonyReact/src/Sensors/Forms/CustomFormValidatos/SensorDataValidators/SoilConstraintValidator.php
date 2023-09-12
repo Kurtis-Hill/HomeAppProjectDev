@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorDataValidators;
 
+use App\Sensors\Entity\SensorTypes\Soil;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -28,14 +29,14 @@ class SoilConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if (is_numeric($value) && $value > 9999) {
+        if (is_numeric($value) && $value > Soil::HIGH_SOIL_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->maxMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)
                 ->addViolation();
         }
 
-        if (is_numeric($value) && $value < 1000) {
+        if (is_numeric($value) && $value < Soil::LOW_SOIL_READING_BOUNDARY) {
             $this->context->buildViolation($constraint->minMessage)
                 ->setParameter('{{ string }}', $value)
                 ->setInvalidValue($value)

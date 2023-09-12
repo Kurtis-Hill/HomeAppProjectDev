@@ -25,6 +25,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use DateInterval;
@@ -88,6 +89,14 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'object' => GenericMotion::class,
             'readingTypes' => [
                 Motion::READING_TYPE =>  Motion::class,
+            ],
+        ],
+
+        LDR::NAME => [
+            'alias' => LDR::NAME,
+            'object' => LDR::class,
+            'readingTypes' => [
+                Analog::READING_TYPE =>  Analog::class,
             ],
         ],
     ];
@@ -331,11 +340,61 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 6,
         ],
 
+        'RegularUserTwoDeviceAdminGroupOneMotion' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => 'UsDev3Motion',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
+            'pinNumber' => 6,
+        ],
+
         'RegularUserTwoDeviceRegularGroupTwoMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'UsDev2Motion',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
+        ],
+
+//        //LDR
+        'AdminUserOneDeviceAdminGroupOneLDR' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => 'AdDev1LDR',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
+            'pinNumber' => 7,
+        ],
+
+        'AdminUserOneDeviceRegularGroupTwoLDR' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => 'AdDev2LDR',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
+            'pinNumber' => 7,
+        ],
+
+        'AdminUserTwoDeviceAdminGroupTwoLDR' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
+            'sensorName' => 'AdDev3LDR',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
+            'pinNumber' => 7,
+        ],
+
+        'RegularUserOneDeviceRegularGroupOneLDR' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
+            'sensorName' => 'UsDev1LDR',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
+            'pinNumber' => 7,
+        ],
+
+        'RegularUserTwoDeviceRegularGroupTwoLDR' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => 'UsDev2LDR',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
+            'pinNumber' => 7,
+        ],
+
+        'RegularUserTwoDeviceAdminGroupOneLDR' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => 'UsDev3LDR',
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
+            'pinNumber' => 7,
         ],
     ];
 
@@ -352,6 +411,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserOneDeviceRegularGroupTwoRelay',
         'AdminUserOneDeviceAdminGroupOneMotion',
         'AdminUserOneDeviceRegularGroupTwoMotion',
+        'AdminUserOneDeviceAdminGroupOneLDR',
     ];
 
     public const ADMIN_USER_TWO_OWNED_SENSORS = [
@@ -361,6 +421,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserTwoDeviceAdminGroupTwoBmp',
         'AdminUserTwoDeviceAdminGroupTwoRelay',
         'AdminUserTwoDeviceAdminGroupTwoMotion',
+        'AdminUserTwoDeviceAdminGroupTwoLDR',
     ];
 
     public const REGULAR_USER_ONE_OWNED_SENSORS = [
@@ -370,6 +431,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserOneDeviceRegularGroupOneBmp',
         'RegularUserOneDeviceRegularGroupOneRelay',
         'RegularUserOneDeviceRegularGroupOneMotion',
+        'RegularUserOneDeviceRegularGroupOneLDR',
     ];
 
     public const REGULAR_USER_TWO_OWNED_SENSORS = [
@@ -383,6 +445,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserTwoDeviceAdminGroupOneBmp',
         'RegularUserTwoDeviceRegularGroupTwoRelay',
         'RegularUserTwoDeviceRegularGroupTwoMotion',
+        'RegularUserTwoDeviceRegularGroupTwoLDR',
     ];
 
     public const GROUP_ONE_SENSORS = [
@@ -397,6 +460,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserOneDeviceAdminGroupOneRelay',
         'RegularUserTwoDeviceAdminGroupOneRelay',
         'AdminUserOneDeviceAdminGroupOneMotion',
+        'RegularUserTwoDeviceAdminGroupOneMotion',
     ];
 
     public const GROUP_TWO_SENSORS = [
@@ -426,6 +490,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         Bmp::NAME => 'AdminBmpSensor',
         GenericRelay::NAME => 'AdminRelaySensor',
         GenericMotion::NAME => 'AdminMotionSensor',
+        LDR::NAME => 'AdminLDRSensor',
     ];
 
     public function getOrder(): int
@@ -486,19 +551,21 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         if ($newObject instanceof StandardReadingSensorInterface) {
             if ($newSensorType instanceof StandardSensorTypeInterface) {
                 if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
-                    $newObject->setCurrentReading(10);
+                    $newObject->setCurrentReading($newSensorType->getMinTemperature());
                     $newSensorType->setTemperature($newObject);
                 }
                 if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
-                    $newObject->setCurrentReading(10);
+                    $newObject->setCurrentReading($newSensorType->getMinHumidity());
                     $newSensorType->setHumidObject($newObject);
                 }
                 if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
-                    $newObject->setCurrentReading(10);
+                    $newObject->setCurrentReading($newSensorType->getMinLatitude());
                     $newSensorType->setLatitudeObject($newObject);
                 }
                 if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
-                    $newObject->setCurrentReading(1001);
+                    $newObject->setCurrentReading($newSensorType->getMinAnalog());
+                    $newObject->setLowReading($newSensorType->getMinAnalog());
+                    $newObject->setHighReading($newSensorType->getMaxAnalog());
                     $newSensorType->setAnalogObject($newObject);
                 }
             }

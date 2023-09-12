@@ -4,8 +4,10 @@ namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LDRConstraint;
 use App\Sensors\Repository\ReadingType\ORM\AnalogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -30,16 +32,25 @@ class Analog extends AbstractStandardReadingType implements StandardReadingSenso
     private int $analogID;
 
     #[ORM\Column(name: "analogReading", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "NULL"])]
-    #[SoilConstraint(groups: [Soil::NAME])]
+    #[
+        SoilConstraint(groups: [Soil::NAME]),
+        LDRConstraint(groups: [LDR::NAME])
+    ]
     private float $analogReading;
 
     #[ORM\Column(name: "highAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
-    #[SoilConstraint(groups: [Soil::NAME])]
-    private float $highAnalog = 1000;
+    #[
+        SoilConstraint(groups: [Soil::NAME]),
+        LDRConstraint(groups: [LDR::NAME])
+    ]
+    private float $highAnalog;
 
     #[ORM\Column(name: "lowAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
-    #[SoilConstraint(groups: [Soil::NAME])]
-    private float $lowAnalog = 1000;
+    #[
+        SoilConstraint(groups: [Soil::NAME]),
+        LDRConstraint(groups: [LDR::NAME])
+    ]
+    private float $lowAnalog;
 
     #[ORM\Column(name: "constRecord", type: "boolean", nullable: true)]
     #[Assert\Type("bool")]
