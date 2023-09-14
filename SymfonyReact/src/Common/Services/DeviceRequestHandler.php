@@ -15,7 +15,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private LoggerInterface $elasticLogger,
+        private readonly LoggerInterface $elasticLogger,
     ) {}
 
     /**
@@ -35,7 +35,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                 'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
                 'request' => $normalizedResponse,
             ]);
-
+//dd($normalizedResponse);
         try {
             return $this->httpClient->request(
                 Request::METHOD_POST,

@@ -13,7 +13,7 @@ use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 readonly class SingleSensorUpdateRequestDTOBuilder implements SensorUpdateRequestDTOBuilderInterface
 {
     public function __construct(
-        private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory
+//        private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory
     ) {}
 
     /**
@@ -21,18 +21,18 @@ readonly class SingleSensorUpdateRequestDTOBuilder implements SensorUpdateReques
      */
     public function buildSensorUpdateRequestDTO(Sensor $sensor): SensorUpdateRequestDTOInterface
     {
-        $sensorType = $sensor->getSensorTypeObject()->getSensorType();
-        $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensorType);
-        $sensorTypeObject = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
-
-        $pinNumber = $sensor->getPinNumber();
-        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
-            $pinNumber = "A$pinNumber";
-        }
+//        $sensorType = $sensor->getSensorTypeObject()->getSensorType();
+//        $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensorType);
+//        $sensorTypeObject = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+//
+//        $pinNumber = $sensor->getPinNumber();
+//        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
+//            $pinNumber = "A$pinNumber";
+//        }
 
         return new SingleSensorUpdateRequestDTO(
             $sensor->getSensorName(),
-            $pinNumber,
+            $sensor->getPinNumber(),
             $sensor->getReadingInterval()
         );
     }

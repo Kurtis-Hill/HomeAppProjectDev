@@ -8,6 +8,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -27,6 +28,8 @@ readonly class SensorTypeDataRequestEncapsulationDTO
         private ?array $motion = null,
         #[ArrayShape([SingleSensorUpdateRequestDTO::class])]
         private ?array $bmp = null,
+        #[ArrayShape([SingleSensorUpdateRequestDTO::class])]
+        private ?array $ldr = null,
     ) {}
 
     #[
@@ -81,5 +84,14 @@ readonly class SensorTypeDataRequestEncapsulationDTO
     public function getBmp(): ?array
     {
         return $this->bmp;
+    }
+
+    #[
+        ArrayShape([SingleSensorUpdateRequestDTO::class]),
+        Groups([Ldr::NAME]),
+    ]
+    public function getLdr(): ?array
+    {
+        return $this->ldr;
     }
 }
