@@ -8,6 +8,9 @@ use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,8 +34,9 @@ class SensorType
         Soil::NAME,
         Dallas::NAME,
         Dht::NAME,
-        Motion::READING_TYPE,
-        Relay::READING_TYPE
+        GenericMotion::NAME,
+        GenericRelay::NAME,
+        LDR::NAME,
     ];
 
     private const SENSOR_TYPE_DESCRIPTION_MIN_LENGTH = 5;

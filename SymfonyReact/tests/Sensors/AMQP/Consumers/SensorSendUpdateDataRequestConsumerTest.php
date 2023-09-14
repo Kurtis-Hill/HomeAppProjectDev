@@ -8,7 +8,10 @@ use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
+use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorType;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
@@ -177,7 +180,11 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $mockSensor->setSensorName('NAANONAME');
         $mockSensor->setPinNumber(2);
 
-        $sensorRequestDTO = $singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($mockSensor);
+        $sensorRequestDTO = new SingleSensorUpdateRequestDTO(
+            $mockSensor->getSensorName(),
+            $mockSensor->getPinNumber(),
+            $mockSensor->getReadingInterval()
+        );
 
         $sensorUpdateEventDTO = new SensorUpdateEventDTO(
             [$sensorRequestDTO],

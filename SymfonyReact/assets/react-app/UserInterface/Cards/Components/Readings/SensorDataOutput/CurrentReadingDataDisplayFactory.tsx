@@ -14,6 +14,7 @@ export function CurrentReadingDataDisplayFactory(props: CardReadingFactoryInterf
         case SensorTypesEnum.Dallas:
         case SensorTypesEnum.GenericMotion:
         case SensorTypesEnum.GenericRelay:
+        case SensorTypesEnum.LDR:
             return (
                 <CardCurrentReadingBuilder
                     cardData={props.cardData}

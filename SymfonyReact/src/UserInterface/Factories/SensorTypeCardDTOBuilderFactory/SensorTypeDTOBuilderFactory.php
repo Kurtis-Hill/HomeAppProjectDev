@@ -7,6 +7,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\BmpCardSensorDataDTOBuilder;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\CardSensorDataDTOBuilderInterface;
@@ -14,6 +15,7 @@ use App\UserInterface\Builders\CardViewSensorTypeBuilders\DallasSensorDataCardDT
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\DhtCardSensorDataDTOBuilder;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\GenericMotionCardSensorDataDTOBuilder;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\GenericRelayCardSensorDataDTOBuilder;
+use App\UserInterface\Builders\CardViewSensorTypeBuilders\LDRCardSensorDataDTOBuilder;
 use App\UserInterface\Builders\CardViewSensorTypeBuilders\SoilCardSensorDataDTOBuilder;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 
@@ -31,6 +33,8 @@ class SensorTypeDTOBuilderFactory
 
     private GenericMotionCardSensorDataDTOBuilder $genericMotionCardSensorDataDTOBuilder;
 
+    private LDRCardSensorDataDTOBuilder $ldrCardSensorDataDTOBuilder;
+
     public function __construct(
         BmpCardSensorDataDTOBuilder $bmpCardSensorDataDTOBuilder,
         DallasSensorDataCardDTOBuilder $dallasSensorDataCardDTOBuilder,
@@ -38,6 +42,7 @@ class SensorTypeDTOBuilderFactory
         SoilCardSensorDataDTOBuilder $soilCardSensorDataDTOBuilder,
         GenericRelayCardSensorDataDTOBuilder $genericRelayCardSensorDataDTOBuilder,
         GenericMotionCardSensorDataDTOBuilder $genericMotionCardSensorDataDTOBuilder,
+        LDRCardSensorDataDTOBuilder $ldrCardSensorDataDTOBuilder,
     ) {
         $this->bmpCardSensorDataDTOBuilder = $bmpCardSensorDataDTOBuilder;
         $this->dallasSensorDataCardDTOBuilder = $dallasSensorDataCardDTOBuilder;
@@ -45,6 +50,7 @@ class SensorTypeDTOBuilderFactory
         $this->soilCardDTOBuilder = $soilCardSensorDataDTOBuilder;
         $this->genericRelayCardSensorDataDTOBuilder = $genericRelayCardSensorDataDTOBuilder;
         $this->genericMotionCardSensorDataDTOBuilder = $genericMotionCardSensorDataDTOBuilder;
+        $this->ldrCardSensorDataDTOBuilder = $ldrCardSensorDataDTOBuilder;
     }
 
     /**
@@ -59,6 +65,7 @@ class SensorTypeDTOBuilderFactory
             Dallas::NAME => $this->dallasSensorDataCardDTOBuilder,
             GenericRelay::NAME => $this->genericRelayCardSensorDataDTOBuilder,
             GenericMotion::NAME => $this->genericMotionCardSensorDataDTOBuilder,
+            LDR::NAME => $this->ldrCardSensorDataDTOBuilder,
             default => throw new SensorTypeBuilderFailureException(SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE)
         };
     }
