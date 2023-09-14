@@ -38,7 +38,6 @@ trait TestLoginTrait
                 JSON_THROW_ON_ERROR
             );
         } catch (JsonException $exception) {
-            dd($exception->getMessage());
             throw new JsonException('Failed to (json)decode user/device login token request');
         }
 

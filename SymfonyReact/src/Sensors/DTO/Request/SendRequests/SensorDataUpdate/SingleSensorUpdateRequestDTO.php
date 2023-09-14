@@ -14,7 +14,7 @@ readonly class SingleSensorUpdateRequestDTO implements SensorUpdateRequestDTOInt
 {
     public function __construct(
         private string $sensorName,
-        private int|string $pinNumber,
+        private int $pinNumber,
         private int $readingInterval,
     ) {}
 
