@@ -23,6 +23,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -534,6 +535,18 @@ class GetSingleSensorControllerTest extends WebTestCase
                 'temperatureID',
             ]
         ];
+
+        yield [
+            'sensorType' => LDR::NAME,
+            'expectedResponseTypes' => [
+                'analogID',
+            ],
+            'notExpectedResponseTypes' => [
+                'latitudeID',
+                'humidityID',
+                'temperatureID',
+            ]
+        ];
     }
 
     public function test_response_admin_full(): void
@@ -599,7 +612,10 @@ class GetSingleSensorControllerTest extends WebTestCase
             self::assertEquals($latitude->getConstRecord(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['constRecord']);
         }
 
-        if ($sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME) {
+        if (
+            $sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME
+            || $sensorObject->getSensorTypeObject()->getSensorType() === LDR::NAME
+        ) {
             $analogRepository = $this->entityManager->getRepository(Analog::class);
             /** @var Analog $analog */
             $analog = $analogRepository->find($sensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);

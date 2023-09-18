@@ -15,7 +15,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private LoggerInterface $elasticLogger,
+        private readonly LoggerInterface $elasticLogger,
     ) {}
 
     /**

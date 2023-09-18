@@ -3,6 +3,7 @@
 namespace App\Sensors\SensorServices;
 
 use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
+use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Exceptions\SensorNotFoundException;
@@ -16,6 +17,7 @@ readonly class SensorUpdateEventHandler
         private SensorRepositoryInterface $sensorRepository,
         private SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder,
         private EventDispatcherInterface $eventDispatcher,
+        private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
         private LoggerInterface $elasticLogger,
     ) {}
 
@@ -26,25 +28,27 @@ readonly class SensorUpdateEventHandler
      */
     public function handleSensorUpdateEvent(array $sensors): void
     {
-        $sensorsToUpdateIDs = [];
+        $sensorsToUpdate = [];
         foreach ($sensors as $sensor) {
             /** @var Sensor[] $sensorsToUpdate */
-            $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice(
+            $sensorsToUpdate = array_merge($this->sensorRepository->findSameSensorTypesOnSameDevice(
                 $sensor->getDevice()->getDeviceID(),
                 $sensor->getSensorTypeObject()->getSensorTypeID(),
-            );
+            ), $sensorsToUpdate);
         }
         if (empty($sensorsToUpdate)) {
             throw new SensorNotFoundException('No sensors found to update');
         }
+
+        $sensorUpdateRequestDTOsByDeviceID = [];
         foreach ($sensorsToUpdate as $sensorToUpdate) {
-            $sensorsToUpdateIDs[] = $sensorToUpdate->getSensorID();
+            $sensorUpdateRequestDTOsByDeviceID[$sensorToUpdate->getDevice()->getDeviceID()][] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
         }
-        $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorsToUpdateIDs);
 
+        foreach ($sensorUpdateRequestDTOsByDeviceID as $sensorUpdateRequestDTOs) {
+            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorUpdateRequestDTOs);
             $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
-        $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
-
-        $this->elasticLogger->info(sprintf('Sensor update event dispatched for sensors: %s', implode(', ', $sensorsToUpdateIDs)));
+            $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
+        }
     }
 }

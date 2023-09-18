@@ -5,6 +5,7 @@ namespace App\Tests\Sensors\SensorService\UpdateDeviceSensorData;
 use App\Common\Services\DeviceRequestHandler;
 use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Exceptions\SensorNotFoundException;
@@ -29,7 +30,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
 
     private SensorRepositoryInterface $sensorRepository;
 
-    private SensorTypeRepository $sensorTypeRepository;
 
     protected function setUp(): void
     {
@@ -38,7 +38,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $this->diContainer = static::getContainer();
         $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');
         $this->sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
-        $this->sensorTypeRepository = $this->diContainer->get(SensorTypeRepository::class);
     }
 
     protected function tearDown(): void
@@ -51,7 +50,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
     public function test_no_sensors_found_throws_sensor_not_found_exception(): void
     {
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
-        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
 
         $deviceRequestHandler = $this->diContainer->get(DeviceRequestHandler::class);
 
@@ -63,7 +61,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
-            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
@@ -74,21 +71,24 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $randomSensorID = random_int(1, 9999);
             $sensor = $this->sensorRepository->findOneBy(['sensorID' => $randomSensorID]);
             if ($sensor === null) {
+                $sensorUpdateRequestDTO = new SingleSensorUpdateRequestDTO(
+                    'test',
+                    'test',
+                    1
+                );
                 break;
             }
         }
-        $sut->handleSensorsUpdateRequest([$randomSensorID]);
+        $sut->handleSensorsUpdateRequest([$sensorUpdateRequestDTO]);
     }
 
     public function test_sensor_type_doesnt_exist_logs_error(): void
     {
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
-        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
 
         $deviceRequestHandler = $this->diContainer->get(DeviceRequestHandler::class);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::once())->method('error');
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
@@ -96,7 +96,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
-            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
@@ -108,12 +107,14 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $sensor->setSensorTypeID($mockSensorType);
 
         $this->expectException(SensorNotFoundException::class);
-        $sut->handleSensorsUpdateRequest([$sensor->getSensorID()]);
+
+        $singleSensorUpdateRequestDTO = new SingleSensorUpdateRequestDTO(
+            'test',
+            'test',
+            1
+        );
+        $sut->handleSensorsUpdateRequest([$singleSensorUpdateRequestDTO]);
     }
-
-
-
-
 
     public function test_response_not_ok_returns_false(): void
     {
@@ -130,14 +131,12 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $mockLogger = $this->createMock(LoggerInterface::class);
 
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
-        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
         $sut = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
-            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
@@ -145,7 +144,12 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         /** @var Sensor $relayRepository */
         $sensorToUpdate = $this->sensorRepository->findAll()[0];
 
-        $result = $sut->handleSensorsUpdateRequest([$sensorToUpdate->getSensorID()]);
+        $sensorUpdate = new SingleSensorUpdateRequestDTO(
+            $sensorToUpdate->getSensorName(),
+            $sensorToUpdate->getPinNumber(),
+            $sensorToUpdate->getReadingInterval()
+        );
+        $result = $sut->handleSensorsUpdateRequest([$sensorUpdate]);
 
         self::assertFalse($result);
     }
@@ -165,14 +169,12 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $mockLogger = $this->createMock(LoggerInterface::class);
 
         $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
-        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
         $sut = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
-            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
@@ -180,7 +182,13 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         /** @var Sensor $relayRepository */
         $sensorToUpdate = $this->sensorRepository->findAll()[0];
 
-        $result = $sut->handleSensorsUpdateRequest([$sensorToUpdate->getSensorID()]);
+        $sensorUpdate = new SingleSensorUpdateRequestDTO(
+            $sensorToUpdate->getSensorName(),
+            $sensorToUpdate->getPinNumber(),
+            $sensorToUpdate->getReadingInterval()
+        );
+
+        $result = $sut->handleSensorsUpdateRequest([$sensorUpdate]);
 
         self::assertFalse($result);
     }

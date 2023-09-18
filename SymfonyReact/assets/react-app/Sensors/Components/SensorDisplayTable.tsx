@@ -18,6 +18,7 @@ import { UpdateCard } from '../../UserInterface/Cards/Components/Form/UpdateCard
 import BaseModal from '../../Common/Components/Modals/BaseModal';
 import CloseButton from '../../Common/Components/Buttons/CloseButton';
 import { addNewCardRequest, AddNewCardType } from '../../UserInterface/Cards/Request/Card/AddNewCardRequest';
+import {SensorTypesEnum} from "../../Enum/SensorTypesEnum";
 
 const defaultFormActiveState = {
     sensorName: false,
@@ -43,6 +44,11 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         device: sensor.device,
         createdBy: sensor.createdBy,
         readingInterval: sensor.readingInterval,
+        canDelete: sensor.canDelete,
+        canEdit: sensor.canEdit,
+        cardView: sensor.cardView,
+        sensorID: sensor.sensorID,
+        sensorReadingTypes: sensor.sensorReadingTypes,
     });
 
     const [sensorUpdateFormInputs, setSensorUpdateFormInputs] = useState<SensorResponseInterface>({
@@ -52,6 +58,11 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         device: sensor.device,
         createdBy: sensor.createdBy,
         readingInterval: sensor.readingInterval,
+        canDelete: sensor.canDelete,
+        canEdit: sensor.canEdit,
+        cardView: sensor.cardView,
+        sensorID: sensor.sensorID,
+        sensorReadingTypes: sensor.sensorReadingTypes,
     });
 
     const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface|null>(null);
@@ -240,7 +251,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                         extraClasses='center-text'
                                     />
                                 :
-                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="pinNumber" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.pinNumber}</span>
+                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="pinNumber" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorReadingTypes.analog !== undefined  ? 'A' : '' }{originalSensorData.current.pinNumber}</span>
                         }                            
                     </GeneralTableRow>
                     <GeneralTableRow>

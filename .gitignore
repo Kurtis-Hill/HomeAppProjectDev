@@ -50,7 +50,8 @@ SSL/ca-cert.pem
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
 HomeAppDocker/webservers/auth/auth.json
-HomeAppDocker/docker-compose.override.yml
+HomeAppDocker/docker-compose.override.*
+HomeAppDocker/docker-compose.yml.*
 .run/Docker Image.run.xml
 .run/DockerComposeHomeApp.run.xml
 

@@ -25,11 +25,8 @@ class GetSensorTypesController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    private LoggerInterface $logger;
-
     public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
     {
-        $this->logger = $elasticLogger;
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 

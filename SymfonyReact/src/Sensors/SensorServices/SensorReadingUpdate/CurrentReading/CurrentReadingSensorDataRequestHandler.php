@@ -80,6 +80,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             null,
             $validationGroups
         );
+
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
             foreach ($objectValidationErrors as $error) {
                 $this->validationErrors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($this->getValidationErrorsAsStrings($error));

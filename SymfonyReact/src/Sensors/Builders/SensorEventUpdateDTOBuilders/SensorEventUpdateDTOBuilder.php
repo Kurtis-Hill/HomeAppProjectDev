@@ -3,24 +3,27 @@
 namespace App\Sensors\Builders\SensorEventUpdateDTOBuilders;
 
 use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
-use App\Sensors\Entity\Sensor;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
+use InvalidArgumentException;
 
 class SensorEventUpdateDTOBuilder
 {
-    public function buildSensorEventUpdateDTO(array $sensors): SensorUpdateEventDTO
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function buildSensorEventUpdateDTO(array $sensorUpdateRequestDTOs): SensorUpdateEventDTO
     {
-        $sensorIDs = [];
-        foreach ($sensors as $sensor) {
-            if ($sensor instanceof Sensor) {
-                $sensorIDs[] = $sensor->getSensorID();
+        $validatedDTOs = [];
+        foreach ($sensorUpdateRequestDTOs as $sensor) {
+            if (!$sensor instanceof SensorUpdateRequestDTOInterface) {
+                throw new InvalidArgumentException('Sensor must implement SensorUpdateRequestDTOInterface');
             }
-            if (is_int($sensor)) {
-                $sensorIDs[] = $sensor;
-            }
+
+            $validatedDTOs[] = $sensor;
         }
 
         return new SensorUpdateEventDTO(
-            $sensorIDs,
+            $validatedDTOs,
         );
     }
 }

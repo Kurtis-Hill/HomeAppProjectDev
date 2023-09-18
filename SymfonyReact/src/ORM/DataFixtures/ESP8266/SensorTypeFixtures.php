@@ -2,14 +2,13 @@
 
 namespace App\ORM\DataFixtures\ESP8266;
 
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -73,6 +72,14 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 
         $this->addReference(GenericMotion::NAME, $motionSensorType);
         $manager->persist($motionSensorType);
+
+        $ldrSensorType = new SensorType();
+
+        $ldrSensorType->setSensorType(LDR::NAME);
+        $ldrSensorType->setDescription('Light resistor sensor');
+
+        $this->addReference(LDR::NAME, $ldrSensorType);
+        $manager->persist($ldrSensorType);
 
         $manager->flush();
     }

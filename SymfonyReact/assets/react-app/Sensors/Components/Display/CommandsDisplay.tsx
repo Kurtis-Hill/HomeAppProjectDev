@@ -39,7 +39,8 @@ export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
 
     if (sensor.sensorType.sensorTypeName === SensorTypesEnum.GenericRelay) {
         const shouldBeChecked = relayState;;
-        const disabled = sensor.sensorReadingTypes.relay.currentReading === true !== sensor.sensorReadingTypes.relay.requestedReading === true;
+        // const disabled = sensor.sensorReadingTypes.relay.currentReading === true !== sensor.sensorReadingTypes.relay.requestedReading;
+        const disabled = false;
 
         return (
             <>                       

@@ -117,7 +117,7 @@ class SwitchSensorController extends AbstractController
                 ($readingTypeCurrentReadingDTO instanceof BoolCurrentReadingUpdateRequestDTO)
                 && $sensorReadingType instanceof RelayReadingTypeInterface
             ) {
-                $sensorReadingType?->getRelay()->setRequestedReading($readingTypeCurrentReadingDTO->getCurrentReading());
+                $sensorReadingType->getRelay()->setRequestedReading($readingTypeCurrentReadingDTO->getCurrentReading());
             }
 
             $updateReadingDTO = $updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(

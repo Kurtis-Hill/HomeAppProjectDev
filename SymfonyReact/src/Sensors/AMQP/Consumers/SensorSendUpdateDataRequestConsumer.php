@@ -3,6 +3,7 @@
 namespace App\Sensors\AMQP\Consumers;
 
 use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\SensorServices\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
@@ -27,6 +28,7 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
                 [
                     'allowed_classes' => [
                         SensorUpdateEventDTO::class,
+                        SingleSensorUpdateRequestDTO::class,
                     ]
                 ]
             );
@@ -35,13 +37,12 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
 
             return true;
         }
-
         try {
-            $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateEventDTO->getSensorIDs());
+            $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateEventDTO->getSensorUpdateRequestDTOs());
             if ($updateRequestResult === false) {
-                $this->logger->error('Error processing sensor data to upload sensor not found, sensor ids: ' . implode(',', $sensorUpdateEventDTO->getSensorIDs()));
+                $this->logger->error('Error processing sensor data to upload sensor not found, sensor name: ' . $sensorUpdateEventDTO->getSensorUpdateRequestDTOs()[0]->getSensorName());
             } else {
-                $this->logger->info('Sensor data update request sent successfully, sensor ids: ' . implode(',', $sensorUpdateEventDTO->getSensorIDs()));
+                $this->logger->info('Sensor data update handled successfully, sensor name: ' . $sensorUpdateEventDTO->getSensorUpdateRequestDTOs()[0]->getSensorName());
             }
             return $updateRequestResult;
         } catch (SensorRequestException $e) {

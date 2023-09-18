@@ -23,6 +23,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -683,7 +684,10 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals(Latitude::READING_TYPE, $sensorReadingTypes[Latitude::READING_TYPE]['readingType']);
             }
 
-            if ($sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME) {
+            if (
+                $sensorObject->getSensorTypeObject()->getSensorType() === Soil::NAME
+                || $sensorObject->getSensorTypeObject()->getSensorType() === LDR::NAME
+            ) {
                 $analogRepository = $this->entityManager->getRepository(Analog::class);
                 /** @var Analog $analog */
                 $analog = $analogRepository->find($singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);

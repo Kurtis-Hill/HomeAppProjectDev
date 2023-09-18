@@ -111,6 +111,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
+//        dd($newSensorDTO);
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);
         } catch (AccessDeniedException) {
@@ -137,8 +138,11 @@ class AddNewSensorController extends AbstractController
 
         $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
         if (!empty($sensorReadingTypeCreationErrors)) {
-            $deleteSensorService->deleteSensor($sensor);
-            $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
+            try {
+                $deleteSensorService->deleteSensor($sensor);
+            } catch (ORMException $e) {
+                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
+            }
 
             return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
         }

@@ -118,6 +118,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 }
                 continue;
             }
+//            dd($updateBoundaryDataDTO);
 
             try {
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject(

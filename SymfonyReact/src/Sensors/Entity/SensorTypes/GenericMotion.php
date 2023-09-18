@@ -68,12 +68,12 @@ class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInter
         $this->sensor = $sensor;
     }
 
-    public function getSensorTypeName(): string
+    public function getReadingTypeName(): string
     {
         return self::NAME;
     }
 
-    public static function getSensorTypeAlias(): string
+    public static function getReadingTypeAlias(): string
     {
         return self::ALIAS;
     }

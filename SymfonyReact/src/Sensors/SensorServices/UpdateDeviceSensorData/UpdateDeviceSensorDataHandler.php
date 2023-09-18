@@ -7,11 +7,13 @@ use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
 use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
+use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
@@ -30,7 +32,6 @@ readonly class UpdateDeviceSensorDataHandler
         private DeviceRequestHandlerInterface $deviceRequestHandler,
         private SensorRepositoryInterface $sensorRepository,
         private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
-        private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
         private DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
         private LoggerInterface $logger,
     ) {}
@@ -39,40 +40,28 @@ readonly class UpdateDeviceSensorDataHandler
      * @throws SensorRequestException
      * @throws SensorNotFoundException
      * @throws SensorTypeException
+     *
+     * @param SensorUpdateRequestDTOInterface[] $sensorUpdateRequestDTOs
      */
-    public function handleSensorsUpdateRequest(array $sensorIDs): bool
+    public function handleSensorsUpdateRequest(array $sensorUpdateRequestDTOs): bool
     {
         // need to order by so that bus sensors get added to the json in the correct order
-        $sensors = $this->sensorRepository->findSensorsByIDNoCache($sensorIDs, 'ASC');
-//        dd($sensors);
-        if (empty($sensors)) {
-            throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor ids: %s', implode(', ', $sensorIDs)));
-        }
-
         $sensorData = [];
-        foreach ($sensors as $sensor) {
+        foreach ($sensorUpdateRequestDTOs as $sensorUpdateRequestDTO) {
+            $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorUpdateRequestDTO->getSensorName()]);
+            if ($sensor === null) {
+                throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor name: %s', $sensorUpdateRequestDTO->getSensorName()));
+            }
             try {
                 $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
             } catch (SensorTypeException $e) {
                 $this->logger->error($e->getMessage());
                 continue;
             }
-            $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
-            if ($sensorType === null) {
-                $this->logger->error(
-                    sprintf(
-                        'Error processing sensor data to upload sensor type not found, sensor id: %s, sensor type id: %s',
-                        $sensor->getSensorID(),
-                        $sensor->getSensorTypeObject()->getSensorTypeID())
-                );
 
-                return false;
-            }
-            $sensorTypeName = $sensorType->getSensorTypeName();
+            $sensorTypeName = $sensor->getSensorTypeObject()->getSensorType();
 
-            $sensorData[$sensorTypeName][] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO(
-                $sensor,
-            );
+            $sensorData[$sensorTypeName][] = $sensorUpdateRequestDTO;
         }
 
         if (empty($sensorData)) {
@@ -86,6 +75,7 @@ readonly class UpdateDeviceSensorDataHandler
             soil: $sensorData[Soil::NAME] ?? [],
             motion: $sensorData[GenericMotion::NAME] ?? [],
             bmp: $sensorData[Bmp::NAME] ?? [],
+            ldr: $sensorData[LDR::NAME] ?? [],
         );
 
         $deviceSettingsRequestDTO = $this->deviceSettingsRequestDTOBuilder->buildDeviceSettingsRequestDTO(
@@ -94,7 +84,7 @@ readonly class UpdateDeviceSensorDataHandler
         $groups = array_keys($sensorData);
         $groups[] = DeviceSettingsRequestDTOBuilder::SENSOR_DATA;
 
-        $device = $sensors[0]->getDevice();
+        $device = $sensor->getDevice();
 
         $deviceEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,

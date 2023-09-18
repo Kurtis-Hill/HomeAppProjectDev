@@ -4,11 +4,13 @@ namespace App\Sensors\Factories\SensorTypeQueryDTOFactory;
 
 use App\Sensors\Builders\SensorTypeQueryDTOBuilders\GenericMotionQueryTypeDTOBuilder;
 use App\Sensors\Builders\SensorTypeQueryDTOBuilders\GenericRelayQueryTypeDTOBuilder;
+use App\Sensors\Builders\SensorTypeQueryDTOBuilders\LdrQueryTypeDTOBuilder;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Builders\SensorTypeQueryDTOBuilders\BmpQueryTypeDTOBuilder;
 use App\Sensors\Builders\SensorTypeQueryDTOBuilders\SensorTypeQueryDTOBuilderInterface;
@@ -31,6 +33,8 @@ class SensorTypeQueryFactory
 
     private GenericMotionQueryTypeDTOBuilder $genericMotionQueryTypeDTOBuilder;
 
+    private LdrQueryTypeDTOBuilder $ldrQueryTypeDTOBuilder;
+
     public function __construct(
         DHTQueryTypeDTOBuilder $dhtQueryTypeDTOBuilder,
         DallasQueryTypeDTOBuilder $dallasQueryTypeDTOBuilder,
@@ -38,6 +42,7 @@ class SensorTypeQueryFactory
         BmpQueryTypeDTOBuilder $bmpQueryTypeDTOBuilder,
         GenericRelayQueryTypeDTOBuilder $genericRelayQueryTypeDTOBuilder,
         GenericMotionQueryTypeDTOBuilder $genericMotionQueryTypeDTOBuilder,
+        LdrQueryTypeDTOBuilder $ldrQueryTypeDTOBuilder,
     ) {
         $this->dhtQueryTypeDTOBuilder = $dhtQueryTypeDTOBuilder;
         $this->dallasQueryTypeDTOBuilder = $dallasQueryTypeDTOBuilder;
@@ -45,6 +50,7 @@ class SensorTypeQueryFactory
         $this->bmpQueryTypeDTOBuilder = $bmpQueryTypeDTOBuilder;
         $this->genericRelayQueryTypeDTOBuilder = $genericRelayQueryTypeDTOBuilder;
         $this->genericMotionQueryTypeDTOBuilder = $genericMotionQueryTypeDTOBuilder;
+        $this->ldrQueryTypeDTOBuilder = $ldrQueryTypeDTOBuilder;
     }
 
     /**
@@ -59,6 +65,7 @@ class SensorTypeQueryFactory
             Bmp::NAME => $this->bmpQueryTypeDTOBuilder,
             GenericRelay::NAME => $this->genericRelayQueryTypeDTOBuilder,
             GenericMotion::NAME => $this->genericMotionQueryTypeDTOBuilder,
+            LDR::NAME => $this->ldrQueryTypeDTOBuilder,
             default => throw new SensorTypeBuilderFailureException(
                 sprintf(
                     SensorTypeBuilderFailureException::SENSOR_TYPE_BUILDER_FAILURE_MESSAGE,
