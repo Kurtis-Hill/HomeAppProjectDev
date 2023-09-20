@@ -38,9 +38,9 @@
 //Web bits
 // Test
 //#define HOMEAPP_HOST "https://192.168.1.172"
-#define HOMEAPP_HOST "https://192.168.1.158"
+//#define HOMEAPP_HOST "https://192.168.1.158"
 // Prod
-//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
+#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
@@ -1998,13 +1998,7 @@ bool sendRelayUpdateRequest(bool force = false) {
 
 
 // Web Functions
-void resetDevice() {
-  strncpy(relayData.sensorName[i], relayDoc[i]["sensorName"], sizeof(relayData.sensorName[i]));  
-  for (int i = 0; i <= deviceSpiffs.length(); ++i) {
-    String 
-    strncpy(deviceSpiffs[i], 
-    SPIFFS.remove("/device.json")  
-  }
+void resetDevice() {   
   SPIFFS.remove("/device.json");
   SPIFFS.remove("/wifi.json");
 
