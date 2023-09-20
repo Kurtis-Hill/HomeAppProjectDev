@@ -11,9 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[
     ORM\Entity(repositoryClass: LDRRepository::class),
-    ORM\Table(name: "ldr"),
-    ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
-    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
+    ORM\Table(name: 'ldr'),
+    ORM\UniqueConstraint(name: 'analogID', columns: ['analogID']),
+    ORM\UniqueConstraint(name: 'sensorID', columns: ['sensorID']),
 ]
 class LDR implements SensorTypeInterface, StandardSensorTypeInterface, AnalogReadingTypeInterface
 {
@@ -21,30 +21,30 @@ class LDR implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRea
 
     public const ALIAS = 'ldr';
 
-    public const HIGH_READING = 999;
+    public const HIGH_READING = 1023;
 
-    public const LOW_READING = 100;
+    public const LOW_READING = 0;
 
     private const ALLOWED_READING_TYPES = [
-        Analog::READING_TYPE
+        Analog::READING_TYPE,
     ];
 
     #[
-        ORM\Column(name: "ldrID", type: "integer", nullable: false),
+        ORM\Column(name: 'ldrID', type: 'integer', nullable: false),
         ORM\Id,
-        ORM\GeneratedValue(strategy: "IDENTITY"),
+        ORM\GeneratedValue(strategy: 'IDENTITY'),
     ]
     private int $ldrID;
 
     #[
         ORM\ManyToOne(targetEntity: Analog::class),
-        ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
+        ORM\JoinColumn(name: 'analogID', referencedColumnName: 'analogID'),
     ]
     private Analog $analogID;
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID", nullable: true),
+        ORM\JoinColumn(name: 'sensorID', referencedColumnName: 'sensorID', nullable: true),
     ]
     private Sensor $sensor;
 
@@ -87,12 +87,13 @@ class LDR implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRea
     {
         $this->sensor = $sensor;
     }
-    public function getAnalogObject() : Analog
+
+    public function getAnalogObject(): Analog
     {
         return $this->analogID;
     }
 
-    public function setAnalogObject(Analog $analogID) : void
+    public function setAnalogObject(Analog $analogID): void
     {
         $this->analogID = $analogID;
     }

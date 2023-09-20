@@ -51,13 +51,6 @@ class SensorDataCurrentReadingUpdateDTO
             message: 'sensorType must be one of {{ choices }}',
             groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
-//        Assert\Choice(
-//            choices: [
-//                GenericRelay::NAME,
-//            ],
-//            message: 'sensorType must be one of {{ choices }}',
-//            groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]
-//        ),
     ]
     private mixed $sensorType;
 
