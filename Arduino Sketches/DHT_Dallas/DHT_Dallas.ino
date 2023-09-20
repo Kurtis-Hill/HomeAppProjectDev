@@ -38,9 +38,9 @@
 //Web bits
 // Test
 //#define HOMEAPP_HOST "https://192.168.1.172"
-//#define HOMEAPP_HOST "https://192.168.1.158"
+#define HOMEAPP_HOST "https://192.168.1.158"
 // Prod
-#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
+//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
@@ -76,11 +76,12 @@ IPAddress local_ip(192, 168, 1, 254);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress netmask(255, 255, 255, 0);
 
-#define WIFI_OFF_LED_PIN 5
+//LEDS
 #define DEVICE_ON_LED_PIN 16
+#define WIFI_OFF_LED_PIN 0 
 
 #define DEVICE_LED_PIN_SANCTIONED 2
-//LEDS
+
 int ledPins[DEVICE_LED_PIN_SANCTIONED] = {WIFI_OFF_LED_PIN, DEVICE_ON_LED_PIN};
 
 // DHT
@@ -140,7 +141,7 @@ struct RelayData {
 };
 RelayData relayData;
 
-#define LDRNAME "LDR"
+#define LDRNAME "Ldr"
 #define MAX_LDRS 1
 
 struct LdrData {
@@ -1089,7 +1090,7 @@ bool saveLdrSensorData(DynamicJsonDocument ldrDoc) {
       }
       continue;
     }
-    Serial.print("LDR sensor data recieved sensor name:");
+    Serial.println("LDR sensor data recieved sensor name:");
     Serial.print(ldrDoc[i]["sensorName"].as<String>());
   }
 
@@ -1101,8 +1102,9 @@ bool saveLdrSensorData(DynamicJsonDocument ldrDoc) {
   Serial.println("Opening ldr SPIFF for writing");
   File ldrSPIFF = SPIFFS.open("/ldr.json", "w");
   
-  if(serializeJson(ldrDoc, ldrSPIFF)) {
+  if(serializeJson(ldrDoc, ldrSPIFF)) {    
     Serial.println("LDR serialization save success");
+    ldrData.valuesAreSet = false;
   } else {
     ldrSPIFF.close();
     Serial.println("LDR Serialization failure");
@@ -1136,8 +1138,9 @@ bool saveRelaySensorData(DynamicJsonDocument relayDoc) {
   Serial.println("Opening relay SPIFF for writing");
   File relaySPIFF = SPIFFS.open("/relay.json", "w");
 
-  if(serializeJson(relayDoc, relaySPIFF)) {
+  if(serializeJson(relayDoc, relaySPIFF)) {    
     Serial.println("Relay serialization save success");
+    relayData.valuesAreSet = false;
   } else {
     relaySPIFF.close();
     Serial.println("Relay Serialization failure");
@@ -1574,7 +1577,7 @@ bool setLdrValues() {
   ldrData.sensorCount = 0;
   for(int i = 0; i < MAX_LDRS; ++i) {
     String ldrSensorName = ldrDoc[i]["sensorName"];  
-    int pinNumber = ldrDoc[i]["pinNumber"].as<int>();
+    int pinNumber = ldrDoc[i]["pinNumber"].as<int>();   
     int readingInterval = ldrDoc[i]["readingInterval"].as<int>();
 
     if(
@@ -1603,9 +1606,7 @@ bool setLdrValues() {
     Serial.printf("LDR pin is: %d\n", ldrData.pinNumber[i]);
 
     ldrData.interval[i] = readingInterval;
-    Serial.printf("LDR interval is: %d\n", ldrData.interval[i]);
-
-    pinMode(pinNumber, INPUT);
+    Serial.printf("LDR interval is: %d\n", ldrData.interval[i]);   
 
     ++ldrData.sensorCount;
     ldrData.activeSensor = true;
@@ -1690,8 +1691,7 @@ String buildLdrReadingsSensorUpdateRequest(bool force = false) {
     Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (ldrData.sendNextReadingAt[i] - currentTime));
     if ((ldrData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
       ldrData.currentReading[i] = analogRead(ldrData.pinNumber[i]);
-      
-      Serial.print("LDR reading is:");
+      Serial.println("LDR reading is: ");
       Serial.print(ldrData.currentReading[i]);
       if (!isnan(ldrData.currentReading[i])) {
         Serial.print("sensor name:");
@@ -1770,6 +1770,8 @@ bool sendLdrUpdateRequest(bool force = false) {
   String payload = buildLdrReadingsSensorUpdateRequest(force);
   if (payload == "null") {
     Serial.println("Aborting LDR request payload empty");
+
+    return false;
   }
   String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
 
@@ -1997,6 +1999,12 @@ bool sendRelayUpdateRequest(bool force = false) {
 
 // Web Functions
 void resetDevice() {
+  strncpy(relayData.sensorName[i], relayDoc[i]["sensorName"], sizeof(relayData.sensorName[i]));  
+  for (int i = 0; i <= deviceSpiffs.length(); ++i) {
+    String 
+    strncpy(deviceSpiffs[i], 
+    SPIFFS.remove("/device.json")  
+  }
   SPIFFS.remove("/device.json");
   SPIFFS.remove("/wifi.json");
 
@@ -2084,6 +2092,9 @@ void checkSensorSPIFFSExist() {
   if (SPIFFS.exists("/relay.json")) {
     relayData.settingsJsonExists = true;
   }
+  if (SPIFFS.exists("/ldr.json")) {
+    ldrData.settingsJsonExists = true;
+  }
 }
 
 //<---------- END OF SPIFF MEthods ------------------>
@@ -2137,7 +2148,12 @@ void handleSwitchSensor() {
 void setup() {
   Serial.begin(DEVICE_SERIAL);
   Serial.println("Searial started");
-  
+
+  for (int i = 0; i <= DEVICE_LED_PIN_SANCTIONED; i++) {
+    pinMode(ledPins[i], OUTPUT); 
+    digitalWrite(ledPins[i], HIGH);
+  }
+ 
   Serial.print("Starting web servers...");
   server.on("/",[](){server.send_P(200,"text/html", webpage);});
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
@@ -2159,14 +2175,6 @@ void setup() {
   Serial.println("...SPIFFS started");
   
   Serial.println("Begining device setup");
-
-  for (int i = 0; i <= DEVICE_LED_PIN_SANCTIONED; i++) {
-    pinMode(ledPins[i], OUTPUT); 
-  }
-  
-  digitalWrite(WIFI_OFF_LED_PIN, HIGH);
-  
-  digitalWrite(DEVICE_ON_LED_PIN, HIGH);
   
   if (setupNetworkConnection()) {
     Serial.print("Getting external IP... ");
@@ -2183,14 +2191,7 @@ void setup() {
 
 void loop() {
   server.handleClient();
-
-//  if (dallasTempData.activeSensor == true) {
-//    takeDallasTempReadings(false);
-//  }
-//  if (dhtSensor.activeSensor == true) {
-//    takeDhtReadings(false);
-//  }
-
+  
   if(WiFi.status() == WL_CONNECTED) {
     if (deviceLoggedIn == true) {
       sendAllActiveSensorData();
@@ -2238,7 +2239,5 @@ void loop() {
     setLdrValues();
     Serial.println("Starting LDRS");
     ldrData.activeSensor = true;
-  }
-  
-//  Serial.println("Loop finished");
+  } 
 }
