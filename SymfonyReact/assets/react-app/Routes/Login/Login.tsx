@@ -31,7 +31,7 @@ export default function Login(): void {
 
     useEffect(() => {
         checkCurrentToken();
-    })
+    }, [])
 
     const handleInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;

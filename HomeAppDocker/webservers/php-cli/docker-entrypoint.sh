@@ -42,10 +42,10 @@ if [ ${ELASTIC_ENABLED} = 'true' ]; then
 	echo "...Elastic indicie creation"
 fi
 
-if [ ! -f "/var/www/html/config/jwt/private.pem" ]; then
-  echo "Generating JWT keys..."
-  php bin/console lexik:jwt:generate-keypair
-fi
+# if [ ! -f "/var/www/html/config/jwt/private.pem" ]; then
+#   echo "Generating JWT keys..."
+php bin/console lexik:jwt:generate-keypair --overwrite
+# fi
 
 echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf

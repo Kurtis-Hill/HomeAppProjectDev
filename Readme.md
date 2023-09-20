@@ -56,3 +56,7 @@ and the password is:
 Permission system is rather simple, admin users have overview of everything on the system. Users are assigned to groups and devices are registered into these groups. None admin users that are granted access to a group can view/edit/update/delete the devices in that group. 
 
 Rooms can be added by anybody but only devices registered to that users groups will be able to be been.
+
+
+<h2>Admin account<h2>
+Admin account email has to be changed first to a proper email address after that you are free to update any of the other user settings

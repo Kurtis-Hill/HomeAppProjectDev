@@ -110,7 +110,9 @@ export function CardReadingHandler(props: {
 
     if (loadingCards === true) {
         return (
-            <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
+            <div className="" style={{ height: "100%", overflow: "hidden", width: "100%", }}>
+                <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
+            </div>
         );
     }
     return (   
