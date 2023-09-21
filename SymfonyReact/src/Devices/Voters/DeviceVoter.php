@@ -22,6 +22,8 @@ class DeviceVoter extends Voter
 
     public const GET_DEVICE = 'get-device';
 
+    public const PING_DEVICE = 'ping-device';
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         if (!in_array($attribute, [
@@ -29,6 +31,7 @@ class DeviceVoter extends Voter
             self::UPDATE_DEVICE,
             self::DELETE_DEVICE,
             self::GET_DEVICE,
+            self::PING_DEVICE,
         ])) {
             return false;
         }
@@ -46,9 +49,11 @@ class DeviceVoter extends Voter
             self::UPDATE_DEVICE => $this->canUpdateDevice($user, $subject),
             self::DELETE_DEVICE => $this->cadDeleteDevice($user, $subject),
             self::GET_DEVICE => $this->canGetDevice($user, $subject),
+            self::PING_DEVICE => $this->canPing($user, $subject),
             default => false
         };
     }
+
 
     private function checkCommon(UserInterface $user, Group $proposedGroupName): ?bool
     {
@@ -110,6 +115,16 @@ class DeviceVoter extends Voter
     }
 
     private function canGetDevice(UserInterface $user, Devices $devices): bool
+    {
+        $checkCommon = $this->checkCommon(
+            $user,
+            $devices->getGroupObject(),
+        );
+
+        return $checkCommon ?? true;
+    }
+
+    private function canPing(UserInterface $user, Devices $devices): bool
     {
         $checkCommon = $this->checkCommon(
             $user,

@@ -55,4 +55,6 @@ class APIErrorMessages
     public const SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN = 'Something went wrong, please try again';
 
     public const FAILED_TO_PROCESS_REQUEST = 'Failed to process request';
+
+    public const DEVICE_PING_FAILED = 'Device ping failed';
 }
