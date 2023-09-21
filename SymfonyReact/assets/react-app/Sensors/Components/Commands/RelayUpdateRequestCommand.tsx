@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import { SensorTypesEnum } from '../../../Enum/SensorTypesEnum';
 import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';

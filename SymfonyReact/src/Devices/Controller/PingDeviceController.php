@@ -27,6 +27,8 @@ class PingDeviceController extends AbstractController
     )]
     public function pingDevice(Devices $device, DevicePingRequestHandler $devicePingRequestHandler): JsonResponse
     {
+        sleep(5);
+        return $this->sendSuccessfulJsonResponse(title: 'Device pinged successfully');
         $userAllowedToPint = $this->isGranted(DeviceVoter::PING_DEVICE, $device);
 
         if ($userAllowedToPint === false) {
