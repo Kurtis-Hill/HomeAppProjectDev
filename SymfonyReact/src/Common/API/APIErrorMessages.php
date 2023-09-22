@@ -57,4 +57,6 @@ class APIErrorMessages
     public const FAILED_TO_PROCESS_REQUEST = 'Failed to process request';
 
     public const DEVICE_PING_FAILED = 'Device ping failed';
+
+    public const DEVICE_RESTART_FAILED = 'Device restart failed';
 }

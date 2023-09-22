@@ -24,6 +24,8 @@ class DeviceVoter extends Voter
 
     public const PING_DEVICE = 'ping-device';
 
+    public const RESTART_DEVICE = 'restart-device';
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         if (!in_array($attribute, [
@@ -32,6 +34,7 @@ class DeviceVoter extends Voter
             self::DELETE_DEVICE,
             self::GET_DEVICE,
             self::PING_DEVICE,
+            self::RESTART_DEVICE,
         ])) {
             return false;
         }
@@ -50,6 +53,7 @@ class DeviceVoter extends Voter
             self::DELETE_DEVICE => $this->cadDeleteDevice($user, $subject),
             self::GET_DEVICE => $this->canGetDevice($user, $subject),
             self::PING_DEVICE => $this->canPing($user, $subject),
+            self::RESTART_DEVICE => $this->canRestart($user, $subject),
             default => false
         };
     }
@@ -134,4 +138,13 @@ class DeviceVoter extends Voter
         return $checkCommon ?? true;
     }
 
+    private function canRestart(UserInterface $user, Devices $devices): bool
+    {
+        $checkCommon = $this->checkCommon(
+            $user,
+            $devices->getGroupObject(),
+        );
+
+        return $checkCommon ?? true;
+    }
 }

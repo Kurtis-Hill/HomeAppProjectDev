@@ -3,7 +3,6 @@
 namespace App\Tests\Devices\Controller;
 
 use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
@@ -14,17 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class PingDeviceControllerTest extends WebTestCase
+class RestartDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const PING_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/ping';
+    private const RESTART_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/restart';
 
     private ?string $adminToken = null;
 
     private ?EntityManagerInterface $entityManager;
-
-    private DeviceRepository $deviceRepository;
 
     private KernelBrowser $client;
 
@@ -48,7 +45,7 @@ class PingDeviceControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function test_pinging_device_doesnt_exist(): void
+    public function test_restarting_device_doesnt_exist(): void
     {
         while (true) {
             $randomID = random_int(1, 9999);
@@ -60,18 +57,18 @@ class PingDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_GET,
-            sprintf(self::PING_DEVICE_URL, $randomID),
+            sprintf(self::RESTART_DEVICE_URL, $randomID),
             [],
             [],
             [
-                'HTTP_AUTHORIZATION' => 'Bearer ' . $this->adminToken,
+                'HTTP_AUTHORIZATION' => 'Bearer ' . $this->adminToken
             ]
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function test_pinging_device_no_access_to(): void
+    public function test_restarting_device_unauthorized(): void
     {
         /** @var User $regularUserTwo */
         $regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
@@ -89,7 +86,7 @@ class PingDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_GET,
-            sprintf(self::PING_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::RESTART_DEVICE_URL, $device->getDeviceID()),
             [],
             [],
             [

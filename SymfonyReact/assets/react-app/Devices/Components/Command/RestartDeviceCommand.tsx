@@ -6,15 +6,15 @@ import { AnnouncementFlashModal } from '../../../Common/Components/Modals/Announ
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 
-export function PingDeviceCommand(props: { deviceID: number }) {
+export function RestartDeviceCommand(props: { deviceID: number }) {
     const { deviceID } = props;
-    
-    const [pingDeviceLoading, setPingDeviceLoading] = useState<boolean>(false);
-    
+
+    const [restartDeviceLoading, setRestartDeviceLoading] = useState<boolean>(false);
+
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
-    const pingDevice = async () => {
-        setPingDeviceLoading(true);
+    const restartDevice = async () => {
+        setRestartDeviceLoading(true);
 
         const response = await pingDeviceRequest(deviceID);
         if (response?.status &&  response.status === 200) {
@@ -22,13 +22,13 @@ export function PingDeviceCommand(props: { deviceID: number }) {
                 <AnnouncementFlashModalBuilder
                     setAnnouncementModals={setAnnouncementModals}
                     title={response.data.title}
-                    dataToList={['Device pinged successfully']}
+                    dataToList={['Device restarted successfully']}
                     timer={40}
                 />
             ])
         }
 
-        setPingDeviceLoading(false);
+        setRestartDeviceLoading(false);
     }
 
     return (
@@ -43,14 +43,14 @@ export function PingDeviceCommand(props: { deviceID: number }) {
                 })
             }
             {
-                pingDeviceLoading === false 
+                restartDeviceLoading === false 
                     ? 
                         <div>
                             <SubmitButton
-                                text="Ping Device"
-                                name="ping-device"
+                                text="Restart Device"
+                                name="restart-device"
                                 // className="button is-primary"
-                                onClickFunction={() => pingDevice()}
+                                onClickFunction={() => restartDevice()}
                             />
                         </div>
                     : 
