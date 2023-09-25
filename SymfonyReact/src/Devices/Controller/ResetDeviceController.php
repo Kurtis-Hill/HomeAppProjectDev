@@ -23,8 +23,8 @@ class ResetDeviceController extends AbstractController
 
     #[Route(
         path: '{deviceID}/reset',
-        name: 'restart-esp-device',
-        methods: [Request::METHOD_GET]
+        name: 'reset-esp-device',
+        methods: [Request::METHOD_POST]
     )]
     public function resetDevice(Devices $device, DeviceResetRequestHandler $deviceResetRequestHandler): JsonResponse
     {

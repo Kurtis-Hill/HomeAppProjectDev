@@ -25,7 +25,7 @@ if [ ${APP_ENV} = 'dev' ]; then
 
 ##@TODO: not working
 	echo "Querying test database"
-	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep 'array(1)'; then
+	if [ php bin/console dbal:run-sql "select firstName from user" --env=test | grep 'array(1)']; then
 		echo "Test database empty loading fixtures..."
    		php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"

@@ -10,7 +10,7 @@ class OutOfBoundsAnalogRepository extends AbstractOutOfBoundsRepository implemen
 {
     public function flush(): void
     {
-        // TODO: Implement flush() method.
+        $this->_em->flush();
     }
 
     public function find(): ?OutOfRangeAnalog

@@ -3,6 +3,7 @@
 namespace App\Tests\Devices\Controller;
 
 use App\Devices\Entity\Devices;
+use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
@@ -22,6 +23,8 @@ class RestartDeviceControllerTest extends WebTestCase
     private ?string $adminToken = null;
 
     private ?EntityManagerInterface $entityManager;
+
+    private DeviceRepository $deviceRepository;
 
     private KernelBrowser $client;
 

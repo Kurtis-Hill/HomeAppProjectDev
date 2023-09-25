@@ -17,7 +17,7 @@ class OutOfBoundsHumidityRepository extends AbstractOutOfBoundsRepository implem
 {
     public function flush(): void
     {
-        // TODO: Implement flush() method.
+        $this->_em->flush();
     }
 
     public function find(): ?OutOfRangeHumid
