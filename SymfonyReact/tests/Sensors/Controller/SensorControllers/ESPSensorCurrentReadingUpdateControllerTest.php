@@ -267,9 +267,17 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                         'relay' => true,
                     ],
                 ],
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => 'UsDev2Relay',
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
             ],
             'message' => [
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, 'UsDev2Relay'),
             ]
         ];
 
