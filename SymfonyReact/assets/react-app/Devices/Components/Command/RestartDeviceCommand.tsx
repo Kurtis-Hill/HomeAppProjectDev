@@ -49,7 +49,6 @@ export function RestartDeviceCommand(props: { deviceID: number }) {
                             <SubmitButton
                                 text="Restart Device"
                                 name="restart-device"
-                                // className="button is-primary"
                                 onClickFunction={() => restartDevice()}
                             />
                         </div>

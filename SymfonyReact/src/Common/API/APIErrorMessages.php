@@ -59,4 +59,6 @@ class APIErrorMessages
     public const DEVICE_PING_FAILED = 'Device ping failed';
 
     public const DEVICE_RESTART_FAILED = 'Device restart failed';
+
+    public const DEVICE_RESET_FAILED = 'Device reset failed';
 }

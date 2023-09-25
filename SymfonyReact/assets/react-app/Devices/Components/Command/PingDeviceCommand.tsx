@@ -49,7 +49,6 @@ export function PingDeviceCommand(props: { deviceID: number }) {
                             <SubmitButton
                                 text="Ping Device"
                                 name="ping-device"
-                                // className="button is-primary"
                                 onClickFunction={() => pingDevice()}
                             />
                         </div>
