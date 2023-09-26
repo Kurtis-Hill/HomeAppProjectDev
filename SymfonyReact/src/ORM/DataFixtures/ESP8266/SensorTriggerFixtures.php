@@ -9,6 +9,7 @@ use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\SensorServices\SensorTrigger\SensorTriggerConvertor;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -40,9 +41,9 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
             'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         ],
         'sensor-trigger-4' => [
-            'sensorID' => SensorFixtures::DHT_SENSOR_NAME,
+            'sensorID' => SensorFixtures::MOTION_SENSOR_NAME,
             'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
-            'valueThatTriggers' => 20,
+            'valueThatTriggers' => false,
             'operatorID' => OperatorsFixtures::GREATER_THAN_OR_EQUAL_TO,
             'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         ],
@@ -54,9 +55,9 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
             'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         ],
         'sensor-trigger-6' => [
-            'sensorID' => SensorFixtures::BMP_SENSOR_NAME,
+            'sensorID' => SensorFixtures::SOIL_SENSOR_NAME,
             'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
-            'valueThatTriggers' => 25,
+            'valueThatTriggers' => 2542,
             'operatorID' => OperatorsFixtures::NOT_EQUALS,
             'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         ],
@@ -73,7 +74,7 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
             $sensorTriggerEntity = new SensorTrigger();
             $sensorTriggerEntity->setSensor($this->getReference($sensorTrigger['sensorID']));
             $sensorTriggerEntity->setSensorToTrigger($this->getReference($sensorTrigger['sensorToTriggerID']));
-            $sensorTriggerEntity->setValueThatTriggers($sensorTrigger['valueThatTriggers']);
+            $sensorTriggerEntity->setValueThatTriggers(SensorTriggerConvertor::convertMixedToString($sensorTrigger['valueThatTriggers']));
             $sensorTriggerEntity->setOperator($this->getReference($sensorTrigger['operatorID']));
             $sensorTriggerEntity->setCreatedBy($this->getReference($sensorTrigger['createdBy']));
 

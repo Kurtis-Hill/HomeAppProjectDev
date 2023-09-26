@@ -9,11 +9,16 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -310,10 +315,25 @@ trait HomeAppAPITrait
         string|array $data,
         ?string $class = null,
         ?string $format = null,
-        array $extraContexts = []
+        array $extraContexts = [],
+        bool $docExtractor = false,
     ): mixed {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
+
+        if ($docExtractor === true) {
+            $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
+            $normalizers = [
+                new ArrayDenormalizer(),
+                new ObjectNormalizer(
+                    null,
+                    new CamelCaseToSnakeCaseNameConverter(),
+                    null,
+                    $extractor
+                )
+            ];
+        } else {
+            $normalizers = [new ObjectNormalizer()];
+        }
 
         return (new Serializer(
             $normalizers,

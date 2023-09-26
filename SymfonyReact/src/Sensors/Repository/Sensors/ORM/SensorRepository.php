@@ -107,7 +107,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getResult();
     }
 
-    public function getSensorReadingTypeDataBySensor(
+    public function findSensorReadingTypeDataBySensor(
         Sensor $sensors,
         array $sensorTypeJoinDTOs
     ): SensorTypeInterface {
@@ -131,7 +131,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         Sensor::class | Dht::class | Bmp::class | Dallas::class | Soil::class,
         Temperature::class, Analog::class, Humidity::class, Latitude::class,
     ])]
-    public function getSensorTypeAndReadingTypeObjectsForSensor(
+    public function findSensorTypeAndReadingTypeObjectsForSensor(
         int $deviceID,
         string $sensorsName,
         JoinQueryDTO $joinQueryDTO = null,

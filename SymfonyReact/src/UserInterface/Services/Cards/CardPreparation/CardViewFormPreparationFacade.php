@@ -69,7 +69,7 @@ class CardViewFormPreparationFacade implements CardViewFormPreparationHandlerInt
             $sensorReadingTypeJoinQueryDTOs[] = $this->prepareSensorTypesQueryBuilder($sensorType);
         }
 
-        return $this->sensorRepository->getSensorReadingTypeDataBySensor(
+        return $this->sensorRepository->findSensorReadingTypeDataBySensor(
             $cardViewObject->getSensor(),
             $sensorReadingTypeJoinQueryDTOs
         );

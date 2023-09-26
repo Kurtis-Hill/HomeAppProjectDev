@@ -111,6 +111,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public const SOIL_SENSOR_NAME = 'AdminDev1Soil';
 
+    public const MOTION_SENSOR_NAME = 'AdDev1Motion';
+
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
         'AdminUserOneDeviceAdminGroupOneDht' => [
@@ -320,7 +322,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         'AdminUserOneDeviceAdminGroupOneMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdDev1Motion',
+            'sensorName' => self::MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
         ],

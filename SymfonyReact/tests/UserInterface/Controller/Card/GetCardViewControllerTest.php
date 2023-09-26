@@ -118,7 +118,7 @@ class GetCardViewControllerTest extends WebTestCase
                 ->buildSensorReadingTypes();
 
             /** @var Sensor[] $cardSensorReadingTypeObjects */
-            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+            $cardSensorReadingTypeObjects = $sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
                 $cardViewObject->getSensor()->getDevice()->getDeviceID(),
                 $cardViewObject->getSensor()->getSensorName(),
                 null,
@@ -269,7 +269,7 @@ class GetCardViewControllerTest extends WebTestCase
                 ->buildSensorReadingTypes();
 
             /** @var Sensor[] $cardSensorReadingTypeObjects */
-            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+            $cardSensorReadingTypeObjects = $sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
                 $cardViewObject->getSensor()->getDevice()->getDeviceID(),
                 $cardViewObject->getSensor()->getSensorName(),
                 null,
@@ -446,7 +446,7 @@ class GetCardViewControllerTest extends WebTestCase
                 ++$arrayPlace;
             }
 
-            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+            $cardSensorReadingTypeObjects = $sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
                 $cardViewObject->getSensor()->getDevice()->getDeviceID(),
                 $cardViewObject->getSensor()->getSensorName(),
                 null,

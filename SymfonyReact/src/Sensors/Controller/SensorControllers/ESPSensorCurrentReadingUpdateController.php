@@ -60,9 +60,8 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
     ): Response {
-        try {
-            $this->denyAccessUnlessGranted(SensorVoter::DEVICE_UPDATE_SENSOR_CURRENT_READING);
-        } catch (AccessDeniedException) {
+        $isGranted = $this->isGranted(SensorVoter::DEVICE_UPDATE_SENSOR_CURRENT_READING);
+        if (!$isGranted) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
 

@@ -14,6 +14,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 ]
 class Operator
 {
+    public const OPERATOR_EQUAL = '==';
+
+    public const OPERATOR_NOT_EQUAL = '!=';
+
+    public const OPERATOR_GREATER_THAN_OR_EQUAL = '>=';
+
+    public const OPERATOR_LESS_THAN_OR_EQUAL = '<=';
+
+    public const OPERATOR_GREATER_THAN = '>';
+
+    public const OPERATOR_LESS_THAN = '<';
+
     #[
         ORM\Column(name: "operatorID", type: "integer", nullable: false),
         ORM\Id,

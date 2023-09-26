@@ -76,7 +76,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         if (empty($sensorReadingTypeQueryDTOs)) {
             return true;
         }
-        $sensorReadingObjects = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+        $sensorReadingObjects = $this->sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
             $updateSensorCurrentReadingConsumerDTO->getDeviceID(),
             $updateSensorCurrentReadingConsumerDTO->getSensorName(),
             null,
