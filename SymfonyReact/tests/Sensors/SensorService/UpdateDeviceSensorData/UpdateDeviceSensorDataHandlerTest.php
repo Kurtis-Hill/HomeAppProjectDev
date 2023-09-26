@@ -61,7 +61,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $deviceRequestHandler,
             $this->sensorRepository,
             $sensorTypeRepositoryFactory,
-            $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
 
@@ -73,7 +72,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             if ($sensor === null) {
                 $sensorUpdateRequestDTO = new SingleSensorUpdateRequestDTO(
                     'test',
-                    'test',
+                    1,
                     1
                 );
                 break;
@@ -100,17 +99,11 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        $mockSensorType = $this->createMock(SensorType::class);
-        $mockSensorType->method('getSensorType')->willReturn('unknown');
-
-        $sensor = $this->sensorRepository->findAll()[0];
-        $sensor->setSensorTypeID($mockSensorType);
-
         $this->expectException(SensorNotFoundException::class);
 
         $singleSensorUpdateRequestDTO = new SingleSensorUpdateRequestDTO(
             'test',
-            'test',
+            1,
             1
         );
         $sut->handleSensorsUpdateRequest([$singleSensorUpdateRequestDTO]);

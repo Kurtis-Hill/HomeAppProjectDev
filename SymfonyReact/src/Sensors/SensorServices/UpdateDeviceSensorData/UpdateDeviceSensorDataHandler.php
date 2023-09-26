@@ -31,7 +31,6 @@ readonly class UpdateDeviceSensorDataHandler
     public function __construct(
         private DeviceRequestHandlerInterface $deviceRequestHandler,
         private SensorRepositoryInterface $sensorRepository,
-        private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         private DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
         private LoggerInterface $logger,
     ) {}
@@ -51,12 +50,6 @@ readonly class UpdateDeviceSensorDataHandler
             $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorUpdateRequestDTO->getSensorName()]);
             if ($sensor === null) {
                 throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor name: %s', $sensorUpdateRequestDTO->getSensorName()));
-            }
-            try {
-                $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
-            } catch (SensorTypeException $e) {
-                $this->logger->error($e->getMessage());
-                continue;
             }
 
             $sensorTypeName = $sensor->getSensorTypeObject()->getSensorType();
@@ -100,7 +93,8 @@ readonly class UpdateDeviceSensorDataHandler
             if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
                 return true;
             }
-        } catch (Exception) {
+        } catch (Exception $e) {
+            $this->logger->error(sprintf('Error processing sensor data to upload exception: %s', $e->getMessage()));
             return false;
         }
 
