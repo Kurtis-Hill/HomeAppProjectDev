@@ -4,6 +4,7 @@ namespace App\Common\Services;
 
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\DTO\Request\DeviceRequest\DeviceRequestEncapsulationDTO;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -19,7 +20,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
     ) {}
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function handleDeviceRequest(
         DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO,
@@ -49,7 +50,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                     'json' => $normalizedResponse,
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->elasticLogger->error(
                 'Sending request to device failed',
                 [

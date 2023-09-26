@@ -4,7 +4,7 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 import { apiURL, indexUrl } from '../../URLs/CommonURLs';
-import { getRefreshToken } from '../../../Authentication/Tokens/GetAPITokens';
+import { getRefreshToken, removeTokens } from '../../../Authentication/Tokens/GetAPITokens';
 import { ErrorResponseInterface } from '../../Response/ErrorResponseInterface';
 import { loginUrl } from '../../URLs/CommonURLs';
 import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest';
@@ -68,7 +68,7 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
         if (error instanceof AxiosError) {
             if (
                 error.response.config.url ===  `${apiURL}token/refresh` 
-                && window.location.pathname !==`${loginUrl}`
+                && window.location.pathname !== `${loginUrl}`
                 ) {        
                     window.location.replace(`${loginUrl}`)
                 }
@@ -84,27 +84,29 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                     if (refreshToken !== null) {
                         try {
                             const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
+                            removeTokens();
                             if (refreshTokenResponse.status === 200) {
                                 const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
                                 refreshUserTokens(refreshTokenResponseData);
                                 setResponseTokenRequestInProgress(false);
                             }
                         } catch (err) {
-                            const error = err as Error | AxiosError;
+                            const error = err as Error|AxiosError;
                             alert('Your session has expired please log in again');
-                            setResponseTokenRequestInProgress(false);
+setResponseTokenRequestInProgress(false);
                         }
                     } else {
-                        setResponseTokenRequestInProgress(false);
+setResponseTokenRequestInProgress(false);
                         window.location.replace(`${loginUrl}`)
                     }
-                } 
+                }
                 if (error.response.status === 500) {
                     errorAnnouncementFlash(['Unrecognized issue please log out and back in again'], 'Error');
                 }
-                else if (error.response.status === 404) {
-                    navigate(`${indexUrl}`)
-                } else if (error.response.status !== 401) {
+                // else if (error.response.status === 404) {
+                //     navigate(`${indexUrl}`)
+                // }
+                 else if (error.response.status !== 401) {
                     errorAnnouncementFlash([error.message], 'Error');
                 }                 
             }

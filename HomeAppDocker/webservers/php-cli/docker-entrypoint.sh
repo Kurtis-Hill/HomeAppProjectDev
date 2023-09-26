@@ -25,7 +25,7 @@ if [ ${APP_ENV} = 'dev' ]; then
 
 ##@TODO: not working
 	echo "Querying test database"
-	if php bin/console dbal:run-sql "select firstName from user" --env=test | grep 'array(1)'; then
+	if [ php bin/console dbal:run-sql "select firstName from user" --env=test | grep 'array(1)']; then
 		echo "Test database empty loading fixtures..."
    		php bin/console doctrine:fixtures:load --no-interaction --env=test
     echo "...Fixtures loaded"
@@ -42,10 +42,10 @@ if [ ${ELASTIC_ENABLED} = 'true' ]; then
 	echo "...Elastic indicie creation"
 fi
 
-if [ ! -f "/var/www/html/config/jwt/private.pem" ]; then
-  echo "Generating JWT keys..."
-  php bin/console lexik:jwt:generate-keypair
-fi
+# if [ ! -f "/var/www/html/config/jwt/private.pem" ]; then
+#   echo "Generating JWT keys..."
+php bin/console lexik:jwt:generate-keypair --overwrite
+# fi
 
 echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
