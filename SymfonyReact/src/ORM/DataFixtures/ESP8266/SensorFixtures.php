@@ -105,6 +105,12 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public const DHT_SENSOR_NAME = 'AdminDevice1Dht';
 
+    public const DALLAS_SENSOR_NAME = 'AdminDevice1Dallas';
+
+    public const BMP_SENSOR_NAME = 'AdDev1Bmp280';
+
+    public const SOIL_SENSOR_NAME = 'AdminDev1Soil';
+
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
         'AdminUserOneDeviceAdminGroupOneDht' => [
@@ -146,7 +152,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         'AdminUserOneDeviceAdminGroupOneDallas' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdminDevice1Dallas',
+            'sensorName' => self::DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
         ],
@@ -188,7 +194,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         'AdminUserOneDeviceAdminGroupOneSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdminDev1Soil',
+            'sensorName' => self::SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
         ],
@@ -230,7 +236,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
         'AdminUserOneDeviceAdminGroupOneBmp' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdDev1Bmp280',
+            'sensorName' => self::BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
@@ -354,7 +360,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 6,
         ],
 
-//        //LDR
+        //LDR
         'AdminUserOneDeviceAdminGroupOneLDR' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'AdDev1LDR',

@@ -16,6 +16,10 @@ class OperatorsFixtures extends Fixture
 
     public const LESS_THAN = 'Less Than';
 
+    public const GREATER_THAN_OR_EQUAL_TO = 'Greater Than or Equal To';
+
+    public const LESS_THAN_OR_EQUAL_TO = 'Less Than or Equal To';
+
     public const OPERATORS = [
         self::EQUALS => [
             'operatorName' => self::EQUALS,
@@ -36,6 +40,16 @@ class OperatorsFixtures extends Fixture
             'operatorName' => self::LESS_THAN,
             'operatorSymbol' => '<',
             'operatorDescription' => self::LESS_THAN,
+        ],
+        self::GREATER_THAN_OR_EQUAL_TO => [
+            'operatorName' => self::GREATER_THAN_OR_EQUAL_TO,
+            'operatorSymbol' => '>=',
+            'operatorDescription' => self::GREATER_THAN_OR_EQUAL_TO,
+        ],
+        self::LESS_THAN_OR_EQUAL_TO => [
+            'operatorName' => self::LESS_THAN_OR_EQUAL_TO,
+            'operatorSymbol' => '<=',
+            'operatorDescription' => self::LESS_THAN_OR_EQUAL_TO,
         ],
     ];
 

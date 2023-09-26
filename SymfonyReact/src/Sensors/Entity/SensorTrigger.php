@@ -35,7 +35,7 @@ class SensorTrigger
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorToTriggerID", referencedColumnName: "sensorToTriggerID"),
+        ORM\JoinColumn(name: "sensorToTriggerID", referencedColumnName: "sensorID"),
     ]
     private Sensor $sensorToTrigger;
 
