@@ -9,6 +9,8 @@ use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DhtRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
@@ -131,5 +133,15 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public static function getAllowedReadingTypes(): array
     {
         return self::ALLOWED_READING_TYPES;
+    }
+
+    public function getReadingTypes(): Collection
+    {
+        return new ArrayCollection(
+            [
+                $this->getTemperature(),
+                $this->getHumidObject(),
+            ]
+        );
     }
 }

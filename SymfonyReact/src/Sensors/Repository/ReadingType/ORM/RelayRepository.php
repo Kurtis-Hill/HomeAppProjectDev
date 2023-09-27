@@ -42,7 +42,7 @@ class RelayRepository extends ServiceEntityRepository implements ReadingTypeRepo
     }
 
 
-    public function getOneBySensorNameID(int $sensorNameID): ?Relay
+    public function findOneBySensorNameID(int $sensorNameID): ?Relay
     {
         $qb = $this->createQueryBuilder(Relay::READING_TYPE);
         $expr = $qb->expr();
@@ -58,5 +58,28 @@ class RelayRepository extends ServiceEntityRepository implements ReadingTypeRepo
             ->setParameters(['sensor' => $sensorNameID]);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneBySensorName(string $sensorName): ?Relay
+    {
+        $qb = $this->createQueryBuilder(Relay::READING_TYPE);
+        $expr = $qb->expr();
+
+        $qb->select(Relay::READING_TYPE)
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Relay::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorName',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorName]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $this->getEntityManager()->refresh($readingTypeObject);
     }
 }

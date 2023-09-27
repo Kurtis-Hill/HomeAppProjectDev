@@ -78,37 +78,31 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 SensorUpdateRequestDTO::class,
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
+                true,
             );
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $validationErrors = $validator->validate($sensorUpdateRequestDTO);
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+        $errors = $validator->validate(value: $sensorUpdateRequestDTO);
+        if ($this->checkIfErrorsArePresent($errors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($errors));
         }
 
-        foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
-            if (!is_array($sensorUpdateData)) {
-                $individualSensorRequestValidationErrors[] = SensorDataCurrentReadingUpdateBuilderException::NOT_ARRAY_ERROR_MESSAGE;
+        $errors = [];
+        foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorDataCurrentReadingUpdateDTO) {
+            $error = $validator->validate(value: $sensorDataCurrentReadingUpdateDTO, groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]);
+            if ($this->checkIfErrorsArePresent($error)) {
+                foreach ($error as $errorString) {
+                    $errors[] = $this->getValidationErrorsAsStrings($errorString);
+                }
                 continue;
             }
-
-            $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateDTO(
-                $sensorUpdateData['sensorName'] ?? null,
-                $sensorUpdateData['sensorType'] ?? null,
-                $sensorUpdateData['currentReadings'] ?? null,
-            );
-
-            $sensorDataPassedValidation = $currentReadingSensorDataRequest->processSensorUpdateData($sensorDataCurrentReadingUpdateRequestDTO, [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]);
-            if ($sensorDataPassedValidation === false) {
-                continue;
-            }
-            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
+            $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateDTO);
 
             $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
-                $sensorDataCurrentReadingUpdateRequestDTO->getSensorType(),
-                $sensorDataCurrentReadingUpdateRequestDTO->getSensorName(),
+                $sensorDataCurrentReadingUpdateDTO->getSensorType(),
+                $sensorDataCurrentReadingUpdateDTO->getSensorName(),
                 $readingTypeCurrentReadingDTOs,
                 $deviceID,
             );
@@ -123,8 +117,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
         // Success return
         if (
-            isset($sensorDataCurrentReadingUpdateRequestDTO)
-            && empty($individualSensorRequestValidationErrors)
+            empty($errors)
             && empty($currentReadingSensorDataRequest->getErrors())
             && empty($currentReadingSensorDataRequest->getValidationErrors())
             && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() > 0
@@ -141,7 +134,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         }
 
         $mergedErrors = array_merge(
-            $individualSensorRequestValidationErrors ?? [],
+        $errors,
             $currentReadingSensorDataRequest->getValidationErrors(),
             $currentReadingSensorDataRequest->getErrors(),
         );
@@ -151,7 +144,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             try {
                 $normalizedResponse = $this->normalizeResponse($mergedErrors);
                 if (count($normalizedResponse) > 0) {
-                    $normalizedResponse = array_unique(array_map('current', $normalizedResponse));
+                    $normalizedResponse = array_unique($normalizedResponse);
                 }
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);

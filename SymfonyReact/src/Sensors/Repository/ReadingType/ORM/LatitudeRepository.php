@@ -45,7 +45,7 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
         $this->getEntityManager()->remove($readingTypeObject);
     }
 
-    public function getOneBySensorNameID(int $sensorNameID): ?Latitude
+    public function findOneBySensorNameID(int $sensorNameID): ?Latitude
     {
         $qb = $this->createQueryBuilder(Latitude::READING_TYPE);
         $expr = $qb->expr();
@@ -61,5 +61,28 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
             ->setParameters(['sensor' => $sensorNameID]);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneBySensorName(string $sensorName): ?Latitude
+    {
+        $qb = $this->createQueryBuilder(Latitude::READING_TYPE);
+        $expr = $qb->expr();
+
+        $qb->select(Latitude::READING_TYPE)
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Latitude::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorName',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorName]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $this->getEntityManager()->refresh($readingTypeObject);
     }
 }

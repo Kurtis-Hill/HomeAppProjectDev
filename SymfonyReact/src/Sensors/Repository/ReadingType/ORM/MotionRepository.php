@@ -41,7 +41,7 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
     }
 
 
-    public function getOneBySensorNameID(int $sensorNameID): ?Motion
+    public function findOneBySensorNameID(int $sensorNameID): ?Motion
     {
         $qb = $this->createQueryBuilder(Motion::READING_TYPE);
         $expr = $qb->expr();
@@ -57,5 +57,28 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
             ->setParameters(['sensor' => $sensorNameID]);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneBySensorName(string $sensorName): ?Motion
+    {
+        $qb = $this->createQueryBuilder(Motion::READING_TYPE);
+        $expr = $qb->expr();
+
+        $qb->select(Motion::READING_TYPE)
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Motion::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorName',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorName]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $this->getEntityManager()->refresh($readingTypeObject);
     }
 }

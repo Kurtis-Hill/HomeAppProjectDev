@@ -41,7 +41,7 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
     }
 
 
-    public function getOneBySensorNameID(int $sensorNameID): ?Humidity
+    public function findOneBySensorNameID(int $sensorNameID): ?Humidity
     {
         $qb = $this->createQueryBuilder(Humidity::READING_TYPE);
         $expr = $qb->expr();
@@ -57,5 +57,28 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
             ->setParameters(['sensor' => $sensorNameID]);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneBySensorName(string $sensorName): ?Humidity
+    {
+        $qb = $this->createQueryBuilder(Humidity::READING_TYPE);
+        $expr = $qb->expr();
+
+        $qb->select(Humidity::READING_TYPE)
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Humidity::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorName',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorName]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $this->getEntityManager()->refresh($readingTypeObject);
     }
 }

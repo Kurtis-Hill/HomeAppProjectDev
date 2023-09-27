@@ -23,6 +23,9 @@ readonly class UpdateSensorCurrentReadingMessageDTO
     }
 
     #[ArrayShape([AbstractCurrentReadingUpdateRequestDTO::class])]
+    /**
+     * @return AbstractCurrentReadingUpdateRequestDTO[]
+     */
     public function getCurrentReadings(): array
     {
         return $this->currentReadings;

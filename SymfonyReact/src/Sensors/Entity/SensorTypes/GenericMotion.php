@@ -7,6 +7,8 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\GenericMotionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
@@ -86,5 +88,10 @@ class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInter
     public function getSensorTypeID(): int
     {
         return $this->genericMotionID;
+    }
+
+    public function getReadingTypes(): Collection
+    {
+        return new ArrayCollection([$this->motion]);
     }
 }

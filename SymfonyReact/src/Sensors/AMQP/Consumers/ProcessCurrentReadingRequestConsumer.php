@@ -11,7 +11,6 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentRe
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
@@ -65,11 +64,14 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
 
         if ($device instanceof Devices) {
             try {
-                return $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
+                $validationErrors = $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
                     $sensorData,
                     $device
                 );
-            } catch (ORMException | OptimisticLockException $e) {
+                if ($validationErrors) {
+                    $this->elasticLogger->error('Validation errors', ['errors' => $validationErrors]);
+                }
+            } catch (ORMException|OptimisticLockException $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
                 return false;

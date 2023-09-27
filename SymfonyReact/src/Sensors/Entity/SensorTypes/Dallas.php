@@ -7,6 +7,8 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DallasRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
@@ -101,5 +103,14 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
     public static function getAllowedReadingTypes(): array
     {
         return self::ALLOWED_READING_TYPES;
+    }
+
+    public function getReadingTypes(): Collection
+    {
+        return new ArrayCollection(
+            [
+                $this->getTemperature()
+            ]
+        );
     }
 }

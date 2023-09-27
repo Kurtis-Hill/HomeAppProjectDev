@@ -6,6 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Controller\SensorControllers\ESPSensorCurrentReadingUpdateController;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
@@ -82,6 +83,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+//        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
@@ -190,6 +192,27 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                         'humidity' => 50
                     ]
                 ],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'sensorType' => GenericMotion::NAME,
+                    'currentReadings' => [
+                        'motion' => true,
+                    ],
+                ],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'sensorType' => GenericRelay::NAME,
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'sensorType' => LDR::NAME,
+                    'currentReadings' => [
+                        'analog' => 500,
+                    ],
+                ]
             ],
             'message' => [
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
@@ -199,6 +222,9 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Motion::READING_TYPE, SensorFixtures::SENSORS[GenericMotion::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[LDR::NAME]),
             ]
         ];
 
@@ -319,6 +345,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+//        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());

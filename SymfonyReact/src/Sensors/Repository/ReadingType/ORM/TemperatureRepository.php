@@ -58,7 +58,7 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         return $qb->getQuery()->getResult() ?? [];
     }
 
-    public function getOneBySensorNameID(int $sensorNameID): ?Temperature
+    public function findOneBySensorNameID(int $sensorNameID): ?Temperature
     {
         $qb = $this->createQueryBuilder(Temperature::getReadingTypeName());
         $expr = $qb->expr();
@@ -74,5 +74,28 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
             ->setParameters(['sensor' => $sensorNameID]);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneBySensorName(string $sensorName): ?Temperature
+    {
+        $qb = $this->createQueryBuilder(Temperature::getReadingTypeName());
+        $expr = $qb->expr();
+
+        $qb->select(Temperature::getReadingTypeName())
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Temperature::getReadingTypeName().'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where(
+                $expr->eq(
+                    Sensor::ALIAS.'.sensorName',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorName]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $this->getEntityManager()->refresh($readingTypeObject);
     }
 }

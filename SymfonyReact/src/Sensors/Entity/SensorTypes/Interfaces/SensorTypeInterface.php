@@ -3,6 +3,7 @@
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
 use App\Sensors\Entity\Sensor;
+use Doctrine\Common\Collections\Collection;
 
 interface SensorTypeInterface
 {
@@ -18,4 +19,6 @@ interface SensorTypeInterface
     public static function getReadingTypeAlias(): string;
 
     public static function getAllowedReadingTypes(): array;
+
+    public function getReadingTypes(): Collection;
 }

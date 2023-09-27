@@ -7,7 +7,6 @@ use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\CurrentReadingDTOBuilders\CurrentReadingMessageUpdateDTOBuilder;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBuilderInterface;
 use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
@@ -27,8 +26,6 @@ use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeCheckerFactory;
-use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -66,29 +63,6 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $this->validator = $validator;
         $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
         $this->sensorTypeTypeCheckerFactory = $sensorTypeReadingTypeCheckerFactory;
-    }
-
-    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool
-    {
-        return $this->validateSensorData($sensorDataCurrentReadingUpdateDTO, $validationGroups);
-    }
-
-    private function validateSensorData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool
-    {
-        $objectValidationErrors = $this->validator->validate(
-            $sensorDataCurrentReadingUpdateDTO,
-            null,
-            $validationGroups
-        );
-
-        if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
-            foreach ($objectValidationErrors as $error) {
-                $this->validationErrors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($this->getValidationErrorsAsStrings($error));
-            }
-            $passedValidation = false;
-        }
-
-        return $passedValidation ?? true;
     }
 
     #[ArrayShape(

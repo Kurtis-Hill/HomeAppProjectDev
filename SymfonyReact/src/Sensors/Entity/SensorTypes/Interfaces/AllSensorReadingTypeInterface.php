@@ -26,4 +26,6 @@ interface AllSensorReadingTypeInterface
     public static function getReadingTypeName(): string;
 
     public function getReadingType(): string;
+
+    public function setUpdatedAt(): void;
 }

@@ -50,13 +50,13 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
     public function getSensorReadingTypeObject(int $sensorID, string $readingType): AllSensorReadingTypeInterface
     {
         $repository = $this->sensorReadingUpdateRepositoryFactory->getSensorReadingTypeRepository($readingType);
-        $sensorReadingTypeObject = $repository->getOneBySensorNameID($sensorID);
+        $sensorReadingTypeObject = $repository->findOneBySensorNameID($sensorID);
 
         if ($sensorReadingTypeObject === null) {
             throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND);
         }
 
-        return $repository->getOneBySensorNameID($sensorID);
+        return $repository->findOneBySensorNameID($sensorID);
     }
 
 

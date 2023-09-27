@@ -22,8 +22,6 @@ interface CurrentReadingSensorDataRequestHandlerInterface
 
     public const SEND_UPDATE_CURRENT_READING = 'sendUpdateCurrentReading';
 
-    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool;
-
     #[ArrayShape(
         [
             AnalogCurrentReadingUpdateRequestDTO::class,

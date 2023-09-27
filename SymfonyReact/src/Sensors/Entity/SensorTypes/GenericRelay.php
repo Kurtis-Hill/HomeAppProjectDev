@@ -7,6 +7,8 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\GenericRelayRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
@@ -85,5 +87,10 @@ class GenericRelay implements SensorTypeInterface, RelayReadingTypeInterface, Bo
     public function getSensorTypeID(): int
     {
         return $this->genericRelayID;
+    }
+
+    public function getReadingTypes(): Collection
+    {
+        return new ArrayCollection([$this->relay]);
     }
 }

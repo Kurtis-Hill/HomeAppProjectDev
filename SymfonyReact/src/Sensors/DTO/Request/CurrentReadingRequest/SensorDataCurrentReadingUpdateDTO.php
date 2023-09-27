@@ -14,7 +14,6 @@ use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReading
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[Immutable]
 class SensorDataCurrentReadingUpdateDTO
 {
     #[
@@ -71,6 +70,21 @@ class SensorDataCurrentReadingUpdateDTO
     {
         $this->sensorName = $sensorName;
         $this->sensorType = $sensorType;
+        $this->currentReadings = $currentReadings;
+    }
+
+    public function setSensorName(mixed $sensorName): void
+    {
+        $this->sensorName = $sensorName;
+    }
+
+    public function setSensorType(mixed $sensorType): void
+    {
+        $this->sensorType = $sensorType;
+    }
+
+    public function setCurrentReadings(mixed $currentReadings): void
+    {
         $this->currentReadings = $currentReadings;
     }
 
