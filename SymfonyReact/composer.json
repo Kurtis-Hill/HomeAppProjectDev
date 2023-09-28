@@ -68,7 +68,7 @@
             "App\\": "src/"
         },
         "exclude-from-classmap": [
-            "/src/Migrations/"
+            "/src/ORM/Migrations/"
         ]
     },
     "autoload-dev": {
