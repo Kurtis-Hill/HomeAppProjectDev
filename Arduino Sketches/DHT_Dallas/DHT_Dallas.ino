@@ -1,8 +1,9 @@
-#include <Wire.h>
 #include <Adafruit_Sensor.h>
 
 #include <SPIFFSReadServer.h>
 #include <SPIFFSIniFile.h>
+#include <EEPROM.h>
+#include <FS.h>
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiAP.h>
@@ -15,10 +16,7 @@
 #include <WiFiServer.h>
 #include <WiFiServerSecure.h>
 #include <ESP8266HTTPClient.h>
-
 #include <ESP8266WebServer.h>
-#include <EEPROM.h>
-#include <FS.h>
 
 #include <ArduinoJson.h>
 
@@ -26,6 +24,10 @@
 #include <DallasTemperature.h>
 
 #include <DHT.h>;
+
+#include <Wire.h>
+#include <Arduino.h>
+#include "Adafruit_SHT31.h"
 
 #define MICRO_ESP_SERIAL 115200
 #define NODE_MCU_SERIAL 9600
@@ -156,6 +158,24 @@ struct LdrData {
   bool settingsJsonExists = false;
 };
 LdrData ldrData;
+
+#define SHTNAME "Sht"
+#define MAX_SHTS 1
+Adafruit_SHT31* sht31[MAX_SHTS];
+
+struct ShtData {
+  char sensorName[MAX_SHTS][25];
+  float tempReading[MAX_SHTS];
+  float humidReading[MAX_SHTS];
+  int sendNextReadingAt[MAX_SHTS];
+  int interval[MAX_SHTS];
+  int sensorCount = 0;
+  int pinNumber[MAX_SHTS];
+  bool activeSensor = false;
+  bool valuesAreSet = false;
+  bool settingsJsonExists = false;  
+};
+ShtData shtData;
 
 const char* deviceSpiffs[3][10] = {"dallas", "dht", "relay", "ldr"};
 
@@ -989,11 +1009,6 @@ void handleSettingsUpdate(){
 
   if (wifiChanged == true && wifiSuccess == true) {
     publicIpAddressRequestAttempts = 0;
-//    if (setupNetworkConnection()) {
-//      Serial.print("Getting external IP... ");
-//      getExternalIP();
-//      deviceLoggedIn = deviceLogin();
-//    }
   }  
 
   if (sensorDataChanged == true) {
@@ -1067,17 +1082,20 @@ bool saveSensorDataToSpiff(DynamicJsonDocument doc) {
   }
   
   if (!saveDhtSensorData(doc["dht"])) {
-    Serial.println("No Dht Spiff");
+    Serial.println("No Dht data");
   }
   
   if (!saveRelaySensorData(doc["relay"])) {
-    Serial.println("No relay Spiff");
+    Serial.println("No relay data");
   }
 
   if (!saveLdrSensorData(doc["ldr"])) {
-    Serial.println("No LDR Spiff");
+    Serial.println("No LDR data");
   }
-  
+
+  if (!saveShtSensorData(doc["sht"])) {
+    Serial.println("No SHT data");
+  }
   return true;
 }
 
@@ -1277,6 +1295,40 @@ bool saveDallasSensorData(DynamicJsonDocument dallasData) {
   return true;    
 }
 
+bool saveShtSensorData(DynamicJsonDocument shtDoc) {
+  for (int i = 0; i <= MAX_SHTS; ++i) {
+    if (shtDoc[i].isNull()) {
+      if (i == 0) {
+        Serial.print("Sensor data for sht was not recieved correctly sensor name is not set");  
+        return false;
+      }
+      continue;
+    }
+  }
+
+  if (SPIFFS.exists("/sht.json")) {
+    Serial.print("Sht spiff exists removing before building new entry");  
+    SPIFFS.remove("/sht.json");
+  }
+  
+  Serial.println("Sht sensor data being set");
+  File shtSPIFF = SPIFFS.open("/sht.json", "w");
+
+  if(serializeJson(shtDoc, shtSPIFF)) {
+    Serial.println("Sht serialization save success");
+    shtData.valuesAreSet = false;
+  } else {
+    shtSPIFF.close();
+    Serial.println("Sht Serialization failure");
+    return false;
+  }
+    
+  shtSPIFF.close();
+  Serial.println("Sht SPIFF close, sucess");
+
+  return true;      
+}
+// End of saving sensor data
 
 
 String ipToString(IPAddress ip){
@@ -1420,7 +1472,7 @@ bool registerDevice() {
   Serial.println(url);
 
   String response = sendHomeAppHttpsRequest(url, jsonData, false);
- if (response == "" || response == "null") {
+  if (response == "" || response == "null") {
     return false;
   }
 
@@ -1619,6 +1671,77 @@ bool setLdrValues() {
     return true;
 }
 
+bool setShtValues() {
+  Serial.println("Checking to see if sht values are set");
+  if (!SPIFFS.exists("/sht.json")) {
+    Serial.println("No sht json found");
+    return false;
+  }
+  
+  String shtSensorSpiff = getSerializedSpiff("/sht.json");
+  
+  Serial.println("Sht SPIFF found");
+  DynamicJsonDocument shtDoc = getDeserializedJson(shtSensorSpiff, 1024);
+
+  shtData.sensorCount = 0;
+  for(int i = 0; i < MAX_SHTS; ++i) {
+    String shtSensorName = shtDoc[i]["sensorName"];  
+    int pinNumber = shtDoc[i]["pinNumber"].as<int>();
+    int readingInterval = shtDoc[i]["readingInterval"].as<int>();
+
+    if(
+      shtSensorName == "null"
+      || shtDoc[i]["sensorName"].isNull()
+    ) {        
+      if (i == 0) {
+        Serial.println("Name check failed on first sht failed to set dht");    
+        return false;           
+      }
+      Serial.println("Name check failed skipping sht this sensor");          
+      continue;
+    }
+
+    if (readingInterval) {
+      shtData.interval[i] = readingInterval;  
+    } else {
+      shtData.interval[i] = 6000;
+    }
+
+    strncpy(shtData.sensorName[i], shtDoc[i]["sensorName"], sizeof(shtData.sensorName[i]));
+    Serial.print("sht sensor name ");
+    Serial.println(shtData.sensorName[i]);      
+
+    shtData.pinNumber[i] = pinNumber;
+    Serial.printf("Sht pin is: %d\n", shtData.pinNumber[i]);
+
+    shtData.interval[i] = readingInterval;
+    Serial.printf("Sht interval is: %d\n", shtData.interval[i]);
+
+    sht31[i] = new Adafruit_SHT31();
+    int timeout = millis() + 35000;
+    
+    if (!sht31[i]->begin(0x44)) {
+      Serial.println("Couldn't find SHT31");
+      while (1) delay(1);
+      int currentTime = millis();
+      if (timeout <= currentTime) {
+        break;
+      }
+    } else {
+      shtData.activeSensor = true;  
+      shtData.sensorCount++;
+      shtData.activeSensor = true;
+      Serial.println("marking SHT as active");
+      shtData.valuesAreSet = true;
+    }
+  }
+    Serial.printf("Total amount of sht sensor found: %d\n", shtData.sensorCount);  
+    if (shtData.sensorCount > 0 ) {
+      return true;  
+    }
+
+    return false;
+}
 
 //<!------------- DHT Functions --------------!>
 bool setDhtValues() {
@@ -1763,6 +1886,7 @@ bool sendDhtUpdateRequest(bool force = false) {
   String response = sendHomeAppHttpsRequest(url, payload, true);
   Serial.println("response");
   Serial.println(response);
+  
   return true;
 }
 
@@ -1778,6 +1902,57 @@ bool sendLdrUpdateRequest(bool force = false) {
   String response = sendHomeAppHttpsRequest(url, payload, true);
   Serial.println("response");
   Serial.println(response);
+  return true;
+}
+
+String buildShtUpdateRequest(bool force = false) {
+  Serial.println("Building Sht request");  
+  DynamicJsonDocument sensorUpdateRequest(1024);
+
+  int currentTime = millis();
+  int jsonPositionTracker = 0;
+  for (int i = 0; i < shtData.sensorCount; ++i) {
+    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (shtData.sendNextReadingAt[i] - currentTime));
+    if ((shtData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+      shtData.tempReading[i] = sht31[i]->readTemperature();
+      shtData.humidReading[i] = sht31[i]->readHumidity();
+      Serial.println("Sht Temp readings is: ");
+      Serial.print(shtData.tempReading[i]);
+      Serial.println("Sht Temp readings is: ");
+      Serial.print(shtData.humidReading[i]);
+      if (!isnan(shtData.tempReading[i])) {
+        Serial.print("sensor name:");
+        Serial.println(shtData.sensorName[i]);
+        sensorUpdateRequest["sensorData"][jsonPositionTracker]["sensorType"] = SHTNAME;
+        sensorUpdateRequest["sensorData"][jsonPositionTracker]["sensorName"] = shtData.sensorName[i];
+        sensorUpdateRequest["sensorData"][jsonPositionTracker]["currentReadings"]["temperature"] = String(shtData.tempReading[i]);
+        sensorUpdateRequest["sensorData"][jsonPositionTracker]["currentReadings"]["humidity"] = String(shtData.humidReading[i]);
+  
+        shtData.sendNextReadingAt[i] = currentTime + shtData.interval[i];
+        ++jsonPositionTracker;
+      }
+    }
+  }
+  
+  String jsonData;
+  serializeJson(sensorUpdateRequest, jsonData);
+  Serial.print("SHT json data to send: ");
+  Serial.println(jsonData);    
+
+  return jsonData;  
+}
+
+bool sendShtUpdateRequest(bool force = false) {
+  String payload = buildShtUpdateRequest(force);
+  if (payload == "null") {
+    Serial.println("Aborting Sht request payload empty");
+  }
+  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
+
+  String response = sendHomeAppHttpsRequest(url, payload, true);
+  Serial.println("response");
+  Serial.println(response);
+  
   return true;
 }
 
@@ -2005,6 +2180,7 @@ void resetDevice() {
   SPIFFS.remove("/dallas.json");
   SPIFFS.remove("/dht.json");
   SPIFFS.remove("/relay.json");
+  SPIFFS.remove("/sht.json");
   server.send(200, "application/json", "{\"status\":\"device reset\"}");
   ESP.restart;
 }
@@ -2026,6 +2202,9 @@ void sendAllActiveSensorData(bool force = false) {
   }
   if (ldrData.activeSensor == true) {
     sendLdrUpdateRequest(force);
+  }
+  if (shtData.activeSensor == true) {
+    sendShtUpdateRequest(force);
   }
 }
 
@@ -2088,6 +2267,9 @@ void checkSensorSPIFFSExist() {
   }
   if (SPIFFS.exists("/ldr.json")) {
     ldrData.settingsJsonExists = true;
+  }
+  if (SPIFFS.exists("sht.json")) {
+    shtData.settingsJsonExists = true;
   }
 }
 
@@ -2215,7 +2397,6 @@ void loop() {
       }
     } 
   }
-
   if (dhtSensor.settingsJsonExists == true && dhtSensor.valuesAreSet == false) {
     setDhtValues();
     if (dhtSensor.valuesAreSet == true) {
@@ -2223,7 +2404,6 @@ void loop() {
       dhtSensor.activeSensor = true;
     }     
   }
-
   if (relayData.settingsJsonExists == true && relayData.valuesAreSet == false) {
     setRelayValues();
     Serial.println("Starting Relay");
@@ -2234,4 +2414,10 @@ void loop() {
     Serial.println("Starting LDRS");
     ldrData.activeSensor = true;
   } 
+
+  if (shtData.settingsJsonExists == true && shtData.valuesAreSet == false) {
+    setShtValues();
+    Serial.println("Starting SHT");
+    shtData.activeSensor = true;
+  }
 }
