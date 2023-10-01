@@ -33,6 +33,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -129,6 +130,11 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensor' => LDR::NAME,
             'sensorName' => 'ldrTest'
         ];
+
+        yield [
+            'sensor' => Sht::NAME,
+            'sensorName' => 'shtTest'
+        ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
@@ -196,6 +202,16 @@ class AddNewSensorControllerTest extends WebTestCase
             'class' => LDR::class,
             [
                 'analog' => Analog::class
+            ]
+        ];
+
+        yield [
+            'sensor' => Sht::NAME,
+            'sensorName' => 'shtTest',
+            'class' => Sht::class,
+            [
+                'temperature' => Temperature::class,
+                'humidity' => Humidity::class,
             ]
         ];
     }

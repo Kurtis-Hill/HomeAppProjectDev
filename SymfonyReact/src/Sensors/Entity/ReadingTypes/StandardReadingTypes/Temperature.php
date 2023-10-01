@@ -8,9 +8,11 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\ReadingSymbolInterface;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SHTTemperatureConstraint;
 use App\Sensors\Repository\ReadingType\ORM\TemperatureRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -47,7 +49,10 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
-        )
+        ),
+        SHTTemperatureConstraint(
+            groups:[Sht::NAME]
+        ),
     ]
     private float $currentReading;
 
@@ -61,6 +66,9 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
+        ),
+        SHTTemperatureConstraint(
+            groups:[Sht::NAME]
         ),
         Assert\Callback([self::class, 'validate'])
     ]
@@ -76,6 +84,9 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
+        ),
+        SHTTemperatureConstraint(
+            groups:[Sht::NAME]
         ),
     ]
     private float $lowTemp = 10;
@@ -117,7 +128,8 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
     /**
      * Sensor Reading Methods
      */
-    #[Pure] public function getCurrentReading(): int|float
+    #[Pure]
+    public function getCurrentReading(): int|float
     {
         return $this->currentReading;
     }
@@ -186,7 +198,7 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         return self::READING_TYPE;
     }
 
-    #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME])]
+    #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME, Sht::NAME])]
     public function validate(ExecutionContextInterface $context): void
     {
         if ($this->getHighReading() < $this->getLowReading()) {

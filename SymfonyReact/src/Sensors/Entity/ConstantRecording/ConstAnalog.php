@@ -4,7 +4,9 @@ namespace App\Sensors\Entity\ConstantRecording;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LDRConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use App\Sensors\Repository\ConstRecord\ORM\ConstantlyRecordAnalogRepository;
 use DateTimeImmutable;
@@ -30,7 +32,10 @@ class ConstAnalog implements ConstantlyRecordEntityInterface
     #[
         ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false),
     ]
-    #[SoilConstraint(groups: [Soil::NAME])]
+    #[
+        SoilConstraint(groups: [Soil::NAME]),
+        LDRConstraint(groups: [LDR::NAME]),
+    ]
     private float $sensorReading;
 
     #[

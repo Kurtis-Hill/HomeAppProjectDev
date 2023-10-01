@@ -17,6 +17,8 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
@@ -151,6 +153,10 @@ class GetCardViewFormController extends WebTestCase
         yield [GenericRelay::NAME];
 
         yield [GenericMotion::NAME];
+
+        yield [LDR::NAME];
+
+        yield [Sht::NAME];
     }
 
     /**

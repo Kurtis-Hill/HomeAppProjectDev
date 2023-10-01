@@ -11,6 +11,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -37,6 +38,7 @@ class SensorType
         GenericMotion::NAME,
         GenericRelay::NAME,
         LDR::NAME,
+        Sht::NAME,
     ];
 
     private const SENSOR_TYPE_DESCRIPTION_MIN_LENGTH = 5;

@@ -9,6 +9,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -80,6 +81,15 @@ class SensorTypeFixtures extends Fixture implements OrderedFixtureInterface
 
         $this->addReference(LDR::NAME, $ldrSensorType);
         $manager->persist($ldrSensorType);
+
+        $shtSensorType = new SensorType();
+
+        $shtSensorType->setSensorType(Sht::NAME);
+        $shtSensorType->setDescription('High Accuracy Temperature and Humidity Sensor');
+
+        $this->addReference(Sht::NAME, $shtSensorType);
+        $manager->persist($shtSensorType);
+
 
         $manager->flush();
     }

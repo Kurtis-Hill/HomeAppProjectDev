@@ -7,9 +7,11 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SHTTemperatureConstraint;
 use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsTempRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -40,6 +42,9 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
+        ),
+        SHTTemperatureConstraint(
+            groups: [Sht::NAME]
         )
     ]
     private float $sensorReading;

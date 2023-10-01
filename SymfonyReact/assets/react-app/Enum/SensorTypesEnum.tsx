@@ -6,4 +6,5 @@ export enum SensorTypesEnum {
     GenericMotion = 'GenericMotion',
     GenericRelay = 'GenericRelay',
     LDR = 'Ldr',
+    Sht = 'Sht',
 }
