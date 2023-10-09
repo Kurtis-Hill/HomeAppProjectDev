@@ -12,6 +12,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade;
 use Doctrine\ORM\EntityManagerInterface;
@@ -168,6 +169,11 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
             'sensorName' => "AdminUserOneDeviceAdminGroupOneDht",
             'sensorClass' => Dht::class
         ];
+
+        yield [
+            'sensorName' => "AdminUserOneDeviceRegularGroupTwoSHT",
+            'sensorClass' => Sht::class
+        ];
     }
 
     /**
@@ -230,6 +236,11 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         yield [
             'sensorName' => "AdminUserOneDeviceAdminGroupOneDht",
             'sensorClass' => Dht::class
+        ];
+
+        yield [
+            'sensorName' => "AdminUserOneDeviceRegularGroupTwoSHT",
+            'sensorClass' => Sht::class
         ];
     }
 

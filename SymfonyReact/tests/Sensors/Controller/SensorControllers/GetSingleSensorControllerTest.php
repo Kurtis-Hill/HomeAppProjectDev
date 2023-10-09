@@ -24,6 +24,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -275,6 +276,21 @@ class GetSingleSensorControllerTest extends WebTestCase
                 Relay::READING_TYPE => Relay::READING_TYPE,
             ]
         ];
+
+        yield [
+            'sensorType' => LDR::class,
+            'allowedTypes' => [
+                Analog::READING_TYPE => Analog::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            'sensorType' => Sht::class,
+            'allowedTypes' => [
+                Temperature::READING_TYPE => Temperature::READING_TYPE,
+                Humidity::READING_TYPE => Humidity::READING_TYPE,
+            ]
+        ];
     }
 
     public function test_admin_user_can_get_sensor_device_group_not_apart_of(): void
@@ -470,7 +486,8 @@ class GetSingleSensorControllerTest extends WebTestCase
             ],
             'notExpectedResponseTypes' => [
                 'latitudeID',
-                'analogID'
+                'analogID',
+                'boolID',
             ]
         ];
 
@@ -482,7 +499,8 @@ class GetSingleSensorControllerTest extends WebTestCase
             'notExpectedResponseTypes' => [
                 'latitudeID',
                 'temperatureID',
-                'humidityID'
+                'humidityID',
+                'boolID',
             ]
         ];
 
@@ -494,7 +512,8 @@ class GetSingleSensorControllerTest extends WebTestCase
             'notExpectedResponseTypes' => [
                 'latitudeID',
                 'analogID',
-                'humidityID'
+                'humidityID',
+                'boolID',
             ]
         ];
 
@@ -507,6 +526,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             ],
             'notExpectedResponseTypes' => [
                 'analogID',
+                'boolID',
             ]
         ];
 
@@ -545,6 +565,20 @@ class GetSingleSensorControllerTest extends WebTestCase
                 'latitudeID',
                 'humidityID',
                 'temperatureID',
+                'boolID',
+            ]
+        ];
+
+        yield [
+            'sensorType' => Sht::NAME,
+            'expectedResponseTypes' => [
+                'temperatureID',
+                'humidityID',
+            ],
+            'notExpectedResponseTypes' => [
+                'latitudeID',
+                'analogID',
+                'boolID',
             ]
         ];
     }

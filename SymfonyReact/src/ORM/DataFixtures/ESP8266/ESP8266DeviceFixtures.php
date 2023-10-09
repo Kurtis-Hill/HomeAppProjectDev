@@ -38,6 +38,8 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
     public const ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO = 'A1RG2';
 
+    public const ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE = 'A2AG1';
+
     public const ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO = 'A2AG2';
 
     public const REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE = 'R1RG1';
@@ -54,6 +56,10 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         ],
         self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO => [
             'referenceName' => self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO,
+            'password' => 'device1234'
+        ],
+        self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE => [
+            'referenceName' => self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE,
             'password' => 'device1234'
         ],
         self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO => [
@@ -119,6 +125,18 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         $this->addReference(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO]['referenceName'], $adminOneRegularGroupTwo);
         $manager->persist($adminOneRegularGroupTwo);
 
+        //Create Admin Two Owned Device Admin Group One
+        $adminTwoDeviceAdminGroupOne = new Devices();
+        $adminTwoDeviceAdminGroupOne->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO));
+        $adminTwoDeviceAdminGroupOne->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
+        $adminTwoDeviceAdminGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $adminTwoDeviceAdminGroupOne->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['referenceName']);
+        $adminTwoDeviceAdminGroupOne->setPassword($this->passwordEncoder->hashPassword($adminTwoDeviceAdminGroupOne, self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['password']));
+        $adminTwoDeviceAdminGroupOne->setRoles([Devices::ROLE]);
+        $adminTwoDeviceAdminGroupOne->setIpAddress(self::DEVICE_IP_ADDRESS);
+
+        $this->addReference(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['referenceName'], $adminTwoDeviceAdminGroupOne);
+        $manager->persist($adminTwoDeviceAdminGroupOne);
 
         //Create Admin Two Owned Device Admin Group Two
         $adminTwoDeviceAdminGroupTwo = new Devices();

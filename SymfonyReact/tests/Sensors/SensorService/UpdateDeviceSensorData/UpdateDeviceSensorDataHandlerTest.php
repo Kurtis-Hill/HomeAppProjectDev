@@ -60,7 +60,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $sut = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
+            $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
 
@@ -94,7 +94,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $sut = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
@@ -129,7 +128,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $sut = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
@@ -167,7 +165,6 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
         $sut = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );

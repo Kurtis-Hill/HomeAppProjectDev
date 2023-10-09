@@ -12,6 +12,8 @@ export function CurrentReadingSensorDataOutputFactory(props: { sensorData: Stand
         case SensorTypesEnum.Dallas:
         case SensorTypesEnum.Bmp:
         case SensorTypesEnum.Soil:
+        case SensorTypesEnum.LDR:
+        case SensorTypesEnum.Sht:
             return (
                 <StandardCurrentReadingSensorDataOutput
                     sensorData={sensorData as StandardCardCurrentSensorDataInterface[]}

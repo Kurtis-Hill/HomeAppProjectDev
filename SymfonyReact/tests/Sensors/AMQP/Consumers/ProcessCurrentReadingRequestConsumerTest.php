@@ -22,6 +22,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -46,7 +47,9 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
     private const GENERIC_RELAY_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserTwoDeviceAdminGroupTwoRelay"]['sensorName'];
 
-    private const GENERIC_LDR_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserOneDeviceAdminGroupOneLDR"]['sensorName'];
+    private const LDR_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserOneDeviceAdminGroupOneLDR"]['sensorName'];
+
+    private const SHT_SENSOR_TO_UPDATE = SensorFixtures::PERMISSION_CHECK_SENSORS["AdminUserOneDeviceAdminGroupOneSHT"]['sensorName'];
 
     protected function setUp(): void
     {
@@ -157,11 +160,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
     public function test_ldr_current_reading_message_consumers_correctly(): void
     {
         /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_LDR_SENSOR_TO_UPDATE]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::LDR_SENSOR_TO_UPDATE]);
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(LDR::HIGH_READING - random_int(1, 50));
         $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
             LDR::NAME,
-            self::GENERIC_LDR_SENSOR_TO_UPDATE,
+            self::LDR_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
             $sensor->getDevice()->getDeviceID()
         );
@@ -182,12 +185,12 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
     public function test_ldr_current_reading_message_consumers_wrong_current_reading_request_dto(): void
     {
         /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_LDR_SENSOR_TO_UPDATE]);
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::LDR_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - 50);
         $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
             LDR::NAME,
-            self::GENERIC_LDR_SENSOR_TO_UPDATE,
+            self::LDR_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage],
             $sensor->getDevice()->getDeviceID()
         );
@@ -291,6 +294,97 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         );
         self::assertNotEquals(
             $dhtSensor->getTemperature()->getCurrentReading(),
+            $analogCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
+    public function test_sht_current_reading_message_consumers_correctly_one_reading(): void
+    {
+        /** Sensor $sensor */
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SHT_SENSOR_TO_UPDATE]);
+
+        $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            Sht::NAME,
+            self::SHT_SENSOR_TO_UPDATE,
+            [$humidCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+
+        $result = $this->sut->execute($amqpMessage);
+
+        /** @var Sht $shtSensor */
+        $shtSensor = $this->entityManager->getRepository(Sht::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertEquals(
+            $shtSensor->getHumidObject()->getCurrentReading(),
+            $humidCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
+    public function test_sht_current_reading_message_consumers_correctly_all_readings(): void
+    {
+        /** Sensor $sensor */
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SHT_SENSOR_TO_UPDATE]);
+
+        $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
+        $tempCurrentReadingUpdateMessage = new TemperatureCurrentReadingUpdateRequestDTO(Sht::HIGH_TEMPERATURE_READING_BOUNDARY - 10);
+
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            Sht::NAME,
+            self::SHT_SENSOR_TO_UPDATE,
+            [$humidCurrentReadingUpdateMessage, $tempCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+
+        $result = $this->sut->execute($amqpMessage);
+
+        /** @var Sht $shtSensor */
+        $shtSensor = $this->entityManager->getRepository(Sht::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertEquals(
+            $shtSensor->getHumidObject()->getCurrentReading(),
+            $humidCurrentReadingUpdateMessage->getCurrentReading()
+        );
+        self::assertEquals(
+            $shtSensor->getTemperature()->getCurrentReading(),
+            $tempCurrentReadingUpdateMessage->getCurrentReading()
+        );
+    }
+
+    public function test_sht_current_reading_message_consumers_wrong_current_reading_dto(): void
+    {
+        /** Sensor $sensor */
+        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SHT_SENSOR_TO_UPDATE]);
+
+        $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 23);
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            Sht::NAME,
+            self::SHT_SENSOR_TO_UPDATE,
+            [$analogCurrentReadingUpdateMessage],
+            $sensor->getDevice()->getDeviceID()
+        );
+
+        $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
+
+        $result = $this->sut->execute($amqpMessage);
+
+        /** @var Sht $shtSensor */
+        $shtSensor = $this->entityManager->getRepository(Sht::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+
+        self::assertTrue($result);
+        self::assertNotEquals(
+            $shtSensor->getHumidObject()->getCurrentReading(),
+            $analogCurrentReadingUpdateMessage->getCurrentReading()
+        );
+        self::assertNotEquals(
+            $shtSensor->getTemperature()->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
         );
     }

@@ -24,6 +24,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -643,6 +644,7 @@ class GetSensorControllerTest extends WebTestCase
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Dallas::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME
+                || $sensorObject->getSensorTypeObject()->getSensorType() === Sht::NAME
             ) {
                 $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
                 /** @var Temperature $temperature */
@@ -658,6 +660,7 @@ class GetSensorControllerTest extends WebTestCase
             if (
                 $sensorObject->getSensorTypeObject()->getSensorType() === Dht::NAME
                 || $sensorObject->getSensorTypeObject()->getSensorType() === Bmp::NAME
+                || $sensorObject->getSensorTypeObject()->getSensorType() === Sht::NAME
             ) {
                 $humidityRepository = $this->entityManager->getRepository(Humidity::class);
                 /** @var Humidity $humidity */
