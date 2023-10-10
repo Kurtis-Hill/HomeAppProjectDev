@@ -21,7 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SwitchSensorControllerTest extends WebTestCase
+class   SwitchSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
@@ -295,7 +295,6 @@ class SwitchSensorControllerTest extends WebTestCase
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
             'errors' => [
-                'Bool readings can only be true or false',
                 'Bool readings can only be true or false',
             ],
             'payload' => [],

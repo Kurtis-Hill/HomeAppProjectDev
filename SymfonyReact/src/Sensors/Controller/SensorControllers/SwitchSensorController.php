@@ -75,12 +75,18 @@ class SwitchSensorController extends AbstractController
         $individualSensorRequestValidationErrors = [];
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             if (!is_array($sensorUpdateData)) {
-                $individualSensorRequestValidationErrors[] = SensorDataCurrentReadingUpdateBuilderException::NOT_ARRAY_ERROR_MESSAGE;
+                $individualSensorRequestValidationErrors = [
+                    SensorDataCurrentReadingUpdateBuilderException::NOT_ARRAY_ERROR_MESSAGE,
+                    ...$individualSensorRequestValidationErrors,
+                ];
                 continue;
             }
 
             if ($sensorUpdateData['sensorName'] === null) {
-                $individualSensorRequestValidationErrors[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'sensorName');
+                $individualSensorRequestValidationErrors = [
+                    sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'sensorName'),
+                    ...$individualSensorRequestValidationErrors,
+                ];
                 continue;
             }
 
@@ -94,16 +100,21 @@ class SwitchSensorController extends AbstractController
 
             $sensorDataPassedValidationErrors = $validator->validate(value: $sensorDataCurrentReadingUpdateRequestDTO, groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]);
             if ($this->checkIfErrorsArePresent($sensorDataPassedValidationErrors)) {
-                $individualSensorRequestValidationErrors = [
-                    $this->getValidationErrorAsArray(
-                        $sensorDataPassedValidationErrors
-                    ),
-                    ...$individualSensorRequestValidationErrors
-                ];
+                foreach ($sensorDataPassedValidationErrors as $error) {
+                    $individualSensorRequestValidationErrors = [
+                        $this->getValidationErrorsAsStrings(
+                            $error
+                        ),
+                        ...$individualSensorRequestValidationErrors,
+                    ];
+                }
                 continue;
             }
             if ($sensor === null) {
-                $individualSensorRequestValidationErrors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Sensor')];
+                $individualSensorRequestValidationErrors = [
+                    sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Sensor'),
+                    ...$individualSensorRequestValidationErrors,
+                ];
                 continue;
             }
 
@@ -147,7 +158,7 @@ class SwitchSensorController extends AbstractController
         if (
             isset($sensorDataCurrentReadingUpdateRequestDTO)
             && empty($individualSensorRequestValidationErrors)
-            && empty($currentReadingSensorDataRequestHandler->getErrors())
+            && empty($currentReadingSensorDataRequestHandler->getValidationErrors())
             && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() > 0
             && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequestHandler->getSuccessfulRequests())
         ) {
@@ -162,7 +173,6 @@ class SwitchSensorController extends AbstractController
         }
 
         $errors = array_merge(
-            $currentReadingSensorDataRequestHandler->getErrors(),
             $currentReadingSensorDataRequestHandler->getValidationErrors(),
             $individualSensorRequestValidationErrors,
         );
@@ -172,12 +182,15 @@ class SwitchSensorController extends AbstractController
             try {
                 $normalizedResponse = $this->normalizeResponse($errors);
                 if (count($normalizedResponse) > 0) {
-                    $normalizedResponse = array_map('current', $normalizedResponse);
+                    $normalizedResponse = array_unique($normalizedResponse);
+//                dd('d');
+//                    dd($normalizedResponse);
+//                    $normalizedResponse = array_map('current', $normalizedResponse);
                 }
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
-
+//dd($normalizedResponse);
             return $this->sendBadRequestJsonResponse($normalizedResponse, APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT);
         }
 
@@ -185,7 +198,8 @@ class SwitchSensorController extends AbstractController
         try {
             $normalizedErrorResponse = $this->normalizeResponse($errors);
             if (count($normalizedErrorResponse) > 0) {
-                $normalizedErrorResponse = array_map('current', $normalizedErrorResponse);
+//                $normalizedErrorResponse = array_map('current', $normalizedErrorResponse);
+                $normalizedErrorResponse = array_unique($normalizedErrorResponse);
             }
             $normalizedSuccessResponse = $this->normalizeResponse(
                 $currentReadingSensorDataRequestHandler->getSuccessfulRequests(),
