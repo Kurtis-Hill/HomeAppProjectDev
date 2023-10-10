@@ -179,7 +179,7 @@ class UserCreationHandler
             return null;
         }
 
-        return $newName ?? null;
+        return $newName;
     }
 
     /**

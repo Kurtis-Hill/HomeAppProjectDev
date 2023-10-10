@@ -30,16 +30,6 @@ class AddCardController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
-
     #[Route('add', name: 'add-card-form-v2', methods: [Request::METHOD_POST])]
     public function addCardForUser(Request $request, ValidatorInterface $validator, SensorRepositoryInterface $sensorRepository, CardCreationHandlerInterface $cardCreationHandler): JsonResponse
     {

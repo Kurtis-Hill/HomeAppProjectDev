@@ -16,32 +16,36 @@ class OperatorConvertor
         mixed $valueThatTriggers
     ): string {
         $operatorSymbol = $operator->getOperatorSymbol();
-        if ($operatorSymbol === Operator::OPERATOR_EQUAL) {
-            return $value === $valueThatTriggers;
+
+        if ($value === 'false') {
+            $value = false;
+        }
+        if ($value === 'true') {
+            $value = true;
         }
 
-        if ($operatorSymbol === Operator::OPERATOR_NOT_EQUAL) {
-            return $value !== $valueThatTriggers;
+        if (is_numeric($value)) {
+            $value = (float) $value;
         }
 
-        if (!is_bool($value)) {
-            if ($operatorSymbol === Operator::OPERATOR_GREATER_THAN_OR_EQUAL) {
-                return '>=';
-            }
-
-            if ($operatorSymbol === Operator::OPERATOR_LESS_THAN_OR_EQUAL) {
-                return '<=';
-            }
-
-            if ($operatorSymbol === Operator::OPERATOR_GREATER_THAN) {
-                return '>';
-            }
-
-            if ($operatorSymbol === Operator::OPERATOR_LESS_THAN) {
-                return '<';
-            }
+        if ($valueThatTriggers === 'false') {
+            $valueThatTriggers = false;
+        }
+        if ($valueThatTriggers === 'true') {
+            $valueThatTriggers = true;
         }
 
-        throw new OperatorConvertionException(sprintf(OperatorConvertionException::MESSAGE, $operator));
+        if (is_numeric($valueThatTriggers)) {
+            $valueThatTriggers = (float) $valueThatTriggers;
+        }
+        return match ($operatorSymbol) {
+            Operator::OPERATOR_EQUAL => $value === $valueThatTriggers,
+            Operator::OPERATOR_NOT_EQUAL => $value !== $valueThatTriggers,
+            Operator::OPERATOR_GREATER_THAN_OR_EQUAL => $value >= $valueThatTriggers,
+            Operator::OPERATOR_LESS_THAN_OR_EQUAL => $value <= $valueThatTriggers,
+            Operator::OPERATOR_GREATER_THAN => $value > $valueThatTriggers,
+            Operator::OPERATOR_LESS_THAN => $value < $valueThatTriggers,
+            default => throw new OperatorConvertionException(sprintf(OperatorConvertionException::MESSAGE, $operator)),
+        };
     }
 }

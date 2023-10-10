@@ -18,6 +18,7 @@ use App\UserInterface\DTO\Response\NavBar\NavBarResponseDTO;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
+use Psr\Log\LoggerInterface;
 
 class NavBarDataProvider implements NavBarDataProviderInterface
 {
@@ -29,46 +30,48 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private UserGroupsFinder $getGroupNamesFinder;
 
-    private array $errors = [];
+    private LoggerInterface $elasticLogger;
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
         DeviceRepositoryInterface $deviceRepository,
         NavBarDTOBuilder $navBarDTOBuilder,
         UserGroupsFinder $getGroupNamesHandler,
+        LoggerInterface $elasticLogger,
     ) {
         $this->roomRepository = $roomRepository;
         $this->deviceRepository = $deviceRepository;
         $this->navBarDTOBuilder = $navBarDTOBuilder;
         $this->getGroupNamesFinder = $getGroupNamesHandler;
+        $this->elasticLogger = $elasticLogger;
     }
 
     #[ArrayShape([NavBarResponseDTO::class])]
     public function getNavBarData(User $user): array
     {
         try {
-            $userDevices = $this->getDeviceData($user);
-            $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices ?? []);
+            $userDevices = $this->deviceRepository->findAllUsersDevicesByGroupId($this->getGroupNamesFinder->getUsersGroups($user), AbstractQuery::HYDRATE_OBJECT);
+            $navbarResponseDTOs[] = $this->getDevicesNavBarResponseObjects($userDevices);
         } catch (ORMException) {
-            $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices')];
+            $this->elasticLogger->error(sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Devices'));
         }
 
         try {
             $userGroups = $this->getGroupNamesFinder->getUsersGroups($user);
             $navbarResponseDTOs[] = $this->getGroupNameNavBarResponseObjects($userGroups);
         } catch (ORMException) {
-            $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groups')];
+            $this->elasticLogger->error(sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Groups'));
         }
 
         try {
-            $userRooms = $this->getRoomData($user);
+            $userRooms = $this->roomRepository->getAllUserRoomsByGroupId($this->getGroupNamesFinder->getUsersGroups($user), AbstractQuery::HYDRATE_OBJECT);
         } catch (ORMException) {
-            $this->errors[] = [sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms')];
+            $this->elasticLogger->error(sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Rooms'));
         }
         $navbarResponseDTOs[] = $this->getRoomNavBarResponseObjects($userRooms ?? []);
 
 
-        return $navbarResponseDTOs ?? [];
+        return $navbarResponseDTOs;
     }
 
     private function getGroupNameNavBarResponseObjects(array $userGroups): NavBarResponseDTO
@@ -138,27 +141,5 @@ class NavBarDataProvider implements NavBarDataProviderInterface
             'rooms',
             $userGroupNavbarListLinkResponseDTO ?? [],
         );
-    }
-
-    #[ArrayShape(['errors'])]
-    public function getNavbarRequestErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @throws ORMException
-     */
-    private function getRoomData(User $user): array
-    {
-        return $this->roomRepository->getAllUserRoomsByGroupId($this->getGroupNamesFinder->getUsersGroups($user), AbstractQuery::HYDRATE_OBJECT);
-    }
-
-    /**
-     * @throws ORMException
-     */
-    private function getDeviceData(User $user): array
-    {
-        return $this->deviceRepository->findAllUsersDevicesByGroupId($this->getGroupNamesFinder->getUsersGroups($user), AbstractQuery::HYDRATE_OBJECT);
     }
 }

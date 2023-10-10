@@ -95,8 +95,8 @@ class GroupRepository extends ServiceEntityRepository implements GroupRepository
                     $expr->in('u.groupID', ':userGroups')
                 )
             )
-            ->setParameter('groups', $user?->getAssociatedGroupIDs())
-            ->setParameter('userGroups', $user?->getAssociatedGroupIDs());
+            ->setParameter('groups', $user->getAssociatedGroupIDs())
+            ->setParameter('userGroups', $user->getAssociatedGroupIDs());
 
         if (!empty($groups)) {
             $qb->andWhere($expr->in('gn.groupID', ':groups'));

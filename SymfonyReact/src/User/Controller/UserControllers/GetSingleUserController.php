@@ -26,13 +26,10 @@ class GetSingleUserController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    private LoggerInterface $logger;
-
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(RequestQueryParameterHandler $requestQueryParameterHandler)
     {
-        $this->logger = $elasticLogger;
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 

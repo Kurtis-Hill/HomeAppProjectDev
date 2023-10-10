@@ -17,8 +17,7 @@ final class Version20230926193013 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql(
-            'CREATE TABLE `operators`
-                (
+            'CREATE TABLE `operators` (
                 `operatorID` INT NOT NULL AUTO_INCREMENT,
                 `operatorName` VARCHAR(255) NOT NULL,
                 `operatorSymbol` VARCHAR(255) NOT NULL,
@@ -40,11 +39,29 @@ final class Version20230926193013 extends AbstractMigration
         );
 
         $this->addSql(
+            'CREATE TABLE `triggerType` (
+                `triggerTypeID` INT NOT NULL AUTO_INCREMENT,
+                `triggerTypeName` VARCHAR(255) NOT NULL,
+                `triggerTypeDescription` VARCHAR(255) NOT NULL,
+                PRIMARY KEY (`triggerTypeID`),
+                UNIQUE INDEX `triggerTypeName` (`triggerTypeName`)
+            )'
+        );
+
+        $this->addSql(
+            'INSERT INTO `triggerType` (`triggerTypeID`, `triggerTypeName`, `triggerTypeDescription`) VALUES
+                (1, \'Email\', \'Send an email\'),
+                (2, \'Relay Up\', \'Turn relay on\'),
+                (3, \'Relay Down\', \'Turn relay off\')'
+        );
+
+        $this->addSql(
             'CREATE TABLE `sensortrigger` 
                 (
                     `sensorTriggerID` INT NOT NULL AUTO_INCREMENT,
                     `sensorID` INT NOT NULL,
                     `sensorToTriggerID` INT NOT NULL,
+                    `triggerTypeID` INT NOT NULL,
                     `valueThatTriggers` VARCHAR(255) NOT NULL,
                     `operatorID` INT NOT NULL,                    
                     `createdBy` INT NOT NULL,                    
@@ -56,8 +73,9 @@ final class Version20230926193013 extends AbstractMigration
                     INDEX `IDX_1F9B6F4F8D93D6493` (`operatorID`),
                     CONSTRAINT `FK_1F9B6F4F8D93D649` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
                     CONSTRAINT `FK_1F9B6F4F8D93D6492` FOREIGN KEY (`sensorToTriggerID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                    CONSTRAINT `FK_1F9B6F4F8D93D6493` FOREIGN KEY (`operatorID`) REFERENCES `operators` (`operatorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                    CONSTRAINT `FK_1F9B6F4F8D93D6494` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
+                    CONSTRAINT `FK_1F9B6F4F8D93D6493` FOREIGN KEY (`triggerTypeID`) REFERENCES `triggerType` (`triggerTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                    CONSTRAINT `FK_1F9B6F4F8D93D6494` FOREIGN KEY (`operatorID`) REFERENCES `operators` (`operatorID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                    CONSTRAINT `FK_1F9B6F4F8D93D6495` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
                 )'
         );
     }
@@ -65,6 +83,7 @@ final class Version20230926193013 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE `sensortrigger`');
+        $this->addSql('DROP TABLE `triggerType`');
         $this->addSql('DROP TABLE `operators`');
     }
 }

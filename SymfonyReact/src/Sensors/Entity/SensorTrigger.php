@@ -3,6 +3,7 @@
 namespace App\Sensors\Entity;
 
 use App\Common\Entity\Operator;
+use App\Common\Entity\TriggerType;
 use App\Sensors\Repository\SensorTriggerRepository;
 use App\User\Entity\User;
 use DateTimeImmutable;
@@ -56,6 +57,12 @@ class SensorTrigger
         ORM\JoinColumn(name: "operatorID", referencedColumnName: "operatorID"),
     ]
     private Operator $operator;
+
+    #[
+        ORM\ManyToOne(targetEntity: TriggerType::class),
+        ORM\JoinColumn(name: "triggerTypeID", referencedColumnName: "triggerTypeID"),
+    ]
+    private TriggerType $triggerType;
 
     #[
         ORM\ManyToOne(targetEntity: User::class),
@@ -151,5 +158,15 @@ class SensorTrigger
     public function setUpdatedAt(DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getTriggerType(): TriggerType
+    {
+        return $this->triggerType;
+    }
+
+    public function setTriggerType(TriggerType $triggerType): void
+    {
+        $this->triggerType = $triggerType;
     }
 }

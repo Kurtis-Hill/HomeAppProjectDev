@@ -65,18 +65,18 @@ class CardCreationHandler implements CardCreationHandlerInterface
     {
         try {
             if ($cardOptionsDTO !== null && $cardOptionsDTO->getIconID() !== null) {
-                $icon = $this->iconsRepository->find($cardOptionsDTO?->getIconID());
+                $icon = $this->iconsRepository->find($cardOptionsDTO->getIconID());
             }
 
             $icon = $icon ?? $this->generateRandomIconObject();
 
-            if ($cardOptionsDTO !== null && $cardOptionsDTO?->getColourID() !== null) {
-                $colour = $this->cardColourRepository->find($cardOptionsDTO?->getColourID());
+            if ($cardOptionsDTO !== null && $cardOptionsDTO->getColourID() !== null) {
+                $colour = $this->cardColourRepository->find($cardOptionsDTO->getColourID());
             }
             $colour = $colour ?? $this->generateRandomColourObject();
 
-            if ($cardOptionsDTO !== null && $cardOptionsDTO?->getStateID() !== null) {
-                $onCardState = $this->cardStateRepository->find($cardOptionsDTO?->getStateID());
+            if ($cardOptionsDTO !== null && $cardOptionsDTO->getStateID() !== null) {
+                $onCardState = $this->cardStateRepository->find($cardOptionsDTO->getStateID());
             }
             $onCardState = $onCardState ?? $this->generateOnStateCardObject();
 
@@ -175,6 +175,8 @@ class CardCreationHandler implements CardCreationHandlerInterface
 
     /**
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws UniqueConstraintViolationException
      */
     private function saveNewCard(CardView $cardView): void
     {

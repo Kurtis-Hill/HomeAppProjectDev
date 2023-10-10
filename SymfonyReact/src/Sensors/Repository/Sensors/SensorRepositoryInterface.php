@@ -5,6 +5,8 @@ namespace App\Sensors\Repository\Sensors;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -61,4 +63,16 @@ interface SensorRepositoryInterface
 
     #[ArrayShape([Sensor::class])]
     public function findSensorsByIDNoCache(array $sensorIDs, string $orderBy = 'ASC'): array;
+
+    public function findSensorReadingTypeDataBySensor(
+        Sensor $sensors,
+        array $sensorTypeJoinDTOs
+    ): SensorTypeInterface;
+
+    public function findSensorTypeAndReadingTypeObjectsForSensor(
+        int $deviceID,
+        string $sensorsName,
+        JoinQueryDTO $joinQueryDTO = null,
+        array $readingTypeJoinQueryDTOs = [],
+    ): array;
 }

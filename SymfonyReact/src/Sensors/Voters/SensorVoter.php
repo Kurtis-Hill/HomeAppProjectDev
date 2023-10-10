@@ -20,8 +20,6 @@ class SensorVoter extends Voter
 
     public const DEVICE_UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
 
-    public const USER_UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading-user';
-
     public const DELETE_SENSOR = 'delete-sensor';
 
     public const UPDATE_SENSOR = 'update-sensor';
@@ -42,7 +40,6 @@ class SensorVoter extends Voter
             self::DELETE_SENSOR,
             self::UPDATE_SENSOR,
             self::GET_SENSOR,
-            self::USER_UPDATE_SENSOR_CURRENT_READING,
         ])) {
             return false;
         }
@@ -59,6 +56,9 @@ class SensorVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
+        if (!$user instanceof UserInterface) {
+            return false;
+        }
 
         return match ($attribute) {
             self::ADD_NEW_SENSOR => $this->canAddNewSensor($user, $subject),
@@ -67,27 +67,8 @@ class SensorVoter extends Voter
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
             self::GET_SENSOR => $this->canGetSensor($user, $subject),
-//            self::USER_UPDATE_SENSOR_CURRENT_READING => $this->userCanUpdateSensor($user, $sensorReadingType),
-
             default => false
         };
-    }
-
-    private function userCanUpdateSensor(UserInterface $user, Sensor $sensor): bool
-    {
-        if (!$user instanceof User) {
-            return false;
-        }
-
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
-            return false;
-        }
-
-        return true;
     }
 
     private function canAddNewSensor(UserInterface $user, NewSensorDTO $newSensorDTO): bool
