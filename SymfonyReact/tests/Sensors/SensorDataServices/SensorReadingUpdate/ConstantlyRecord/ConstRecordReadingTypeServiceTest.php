@@ -16,6 +16,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler;
 use Doctrine\ORM\EntityManagerInterface;
@@ -167,6 +168,11 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
             'sensorName' => 'RegularUserTwoDeviceRegularGroupTwoDht',
             'sensorClass' => Dht::class
         ];
+
+        yield [
+            'sensorName' => 'RegularUserTwoDeviceRegularGroupTwoSHT',
+            'sensorClass' => Sht::class
+        ];
     }
 
     /**
@@ -227,6 +233,11 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         yield [
             'sensorName' => 'AdminUserOneDeviceAdminGroupOneDht',
             'sensorClass' => Dht::class
+        ];
+
+        yield [
+            'sensorName' => 'AdminUserOneDeviceRegularGroupTwoSHT',
+            'sensorClass' => Sht::class
         ];
     }
 

@@ -29,6 +29,8 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\Attribute\Required;
+use TypeError;
+use UnexpectedValueException;
 
 #[Route(CommonURL::DEVICE_HOMEAPP_API_URL, name: 'sensor-current-reading-update')]
 class ESPSensorCurrentReadingUpdateController extends AbstractController
@@ -37,8 +39,6 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
     use ValidatorProcessorTrait;
 
     private ProducerInterface $currentReadingAMQPProducer;
-
-    private ProducerInterface $sendCurrentReadingAMQPProducer;
 
     private LoggerInterface $logger;
 
@@ -80,10 +80,9 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
                 true,
             );
-        } catch (NotEncodableValueException) {
+        } catch (NotEncodableValueException|TypeError|UnexpectedValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
-
         $errors = $validator->validate(value: $sensorUpdateRequestDTO);
         if ($this->checkIfErrorsArePresent($errors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($errors));
@@ -118,7 +117,6 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         // Success return
         if (
             empty($errors)
-            && empty($currentReadingSensorDataRequest->getErrors())
             && empty($currentReadingSensorDataRequest->getValidationErrors())
             && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() > 0
             && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())
@@ -136,8 +134,11 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         $mergedErrors = array_merge(
         $errors,
             $currentReadingSensorDataRequest->getValidationErrors(),
-            $currentReadingSensorDataRequest->getErrors(),
         );
+
+        if (!empty($mergedErrors)) {
+            $mergedErrors = [...$mergedErrors];
+        }
 
         // Complete Failed return
         if (empty($currentReadingSensorDataRequest->getSuccessfulRequests())) {
@@ -157,7 +158,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         try {
             $normalizedErrorResponse = $this->normalizeResponse($mergedErrors);
             if (count($normalizedErrorResponse) > 0) {
-                $normalizedErrorResponse = array_unique(array_map('current', $normalizedErrorResponse));
+                $normalizedErrorResponse = array_unique($normalizedErrorResponse);
             }
             $normalizedSuccessResponse = $this->normalizeResponse(
                 $currentReadingSensorDataRequest->getSuccessfulRequests(),

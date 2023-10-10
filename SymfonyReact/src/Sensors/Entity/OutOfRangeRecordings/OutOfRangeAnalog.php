@@ -4,7 +4,9 @@ namespace App\Sensors\Entity\OutOfRangeRecordings;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LDRConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SoilConstraint;
 use App\Sensors\Repository\OutOfBounds\ORM\OutOfBoundsAnalogRepository;
 use DateTimeImmutable;
@@ -27,7 +29,10 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     private int $outOfRangeID;
 
     #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "NULL"])]
-    #[SoilConstraint(groups: [Soil::NAME])]
+    #[
+        SoilConstraint(groups: [Soil::NAME]),
+        LDRConstraint(groups: [LDR::NAME]),
+    ]
     private float $sensorReading;
 
     #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]

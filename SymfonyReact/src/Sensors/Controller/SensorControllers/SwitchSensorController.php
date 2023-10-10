@@ -73,7 +73,6 @@ class SwitchSensorController extends AbstractController
         }
 
         $individualSensorRequestValidationErrors = [];
-        $validationErrors = [];
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             if (!is_array($sensorUpdateData)) {
                 $individualSensorRequestValidationErrors[] = SensorDataCurrentReadingUpdateBuilderException::NOT_ARRAY_ERROR_MESSAGE;
@@ -93,8 +92,14 @@ class SwitchSensorController extends AbstractController
                 currentReadings: $sensorUpdateData['currentReadings'] ?? null,
             );
 
-            $sensorDataPassedValidation = $currentReadingSensorDataRequestHandler->processSensorUpdateData($sensorDataCurrentReadingUpdateRequestDTO, [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]);
-            if ($sensorDataPassedValidation === false) {
+            $sensorDataPassedValidationErrors = $validator->validate(value: $sensorDataCurrentReadingUpdateRequestDTO, groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]);
+            if ($this->checkIfErrorsArePresent($sensorDataPassedValidationErrors)) {
+                $individualSensorRequestValidationErrors = [
+                    $this->getValidationErrorAsArray(
+                        $sensorDataPassedValidationErrors
+                    ),
+                    ...$individualSensorRequestValidationErrors
+                ];
                 continue;
             }
             if ($sensor === null) {
@@ -142,7 +147,6 @@ class SwitchSensorController extends AbstractController
         if (
             isset($sensorDataCurrentReadingUpdateRequestDTO)
             && empty($individualSensorRequestValidationErrors)
-            && empty($validationErrors)
             && empty($currentReadingSensorDataRequestHandler->getErrors())
             && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() > 0
             && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequestHandler->getSuccessfulRequests())
@@ -158,7 +162,6 @@ class SwitchSensorController extends AbstractController
         }
 
         $errors = array_merge(
-            $validationErrors,
             $currentReadingSensorDataRequestHandler->getErrors(),
             $currentReadingSensorDataRequestHandler->getValidationErrors(),
             $individualSensorRequestValidationErrors,

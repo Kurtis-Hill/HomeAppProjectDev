@@ -33,8 +33,6 @@ interface CurrentReadingSensorDataRequestHandlerInterface
     )]
     public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array;
 
-    public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBoundaryReadingBuilderInterface;
-
     public function getReadingTypeRequestAttempt(): int;
 
     #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
@@ -42,7 +40,4 @@ interface CurrentReadingSensorDataRequestHandlerInterface
 
     #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
     public function getValidationErrors(): array;
-
-    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
-    public function getErrors(): array;
 }

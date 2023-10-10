@@ -14,7 +14,7 @@ class AnalogCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateR
 {
     #[
         SoilConstraint(groups: [Soil::NAME]),
-        LDRConstraint(groups: [LDR::NAME])
+        LDRConstraint(groups: [LDR::NAME]),
     ]
     protected mixed $readingTypeCurrentReading;
 

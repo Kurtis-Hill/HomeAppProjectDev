@@ -14,6 +14,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
@@ -69,6 +70,7 @@ readonly class UpdateDeviceSensorDataHandler
             motion: $sensorData[GenericMotion::NAME] ?? [],
             bmp: $sensorData[Bmp::NAME] ?? [],
             ldr: $sensorData[LDR::NAME] ?? [],
+            sht: $sensorData[Sht::NAME] ?? [],
         );
 
         $deviceSettingsRequestDTO = $this->deviceSettingsRequestDTOBuilder->buildDeviceSettingsRequestDTO(

@@ -68,7 +68,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $updateDeviceSensorDataHandler = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
+//            $sensorTypeRepositoryFactory,
 //            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
@@ -118,7 +118,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $updateDeviceSensorDataHandler = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
+//            $sensorTypeRepositoryFactory,
 //            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
@@ -166,7 +166,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $updateDeviceSensorDataHandler = new UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
-            $sensorTypeRepositoryFactory,
+//            $sensorTypeRepositoryFactory,
 //            $singleSensorUpdateRequestDTOBuilder,
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,

@@ -14,9 +14,4 @@ class CurrentReadingMessageUpdateDTOBuilder
             sprintf(self::SENSOR_UPDATE_SUCCESS_MESSAGE, $readingType, $sensorName)
         );
     }
-
-    public static function buildCurrentReadingResponseDTO(string $message): CurrentReadingUpdateResponseDTO
-    {
-        return new CurrentReadingUpdateResponseDTO($message);
-    }
 }

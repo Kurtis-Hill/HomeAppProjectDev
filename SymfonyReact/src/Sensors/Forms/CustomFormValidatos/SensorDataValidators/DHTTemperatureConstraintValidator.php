@@ -45,5 +45,4 @@ class DHTTemperatureConstraintValidator extends ConstraintValidator
                 ->addViolation();
         }
     }
-
 }

@@ -14,17 +14,17 @@ class SensorUpdateRequestDTO
 //        SerializedPath('SensorDataCurrentReadingUpdateDTO[]'),
 //        SerializedName('[SensorDataCurrentReadingUpdateDTO]'),
         Assert\Type(
-        type: ['array'],
-        message: 'sensorData must be a {{ type }} you have provided {{ value }}'
+            type: ['array'],
+            message: 'sensorData must be a {{ type }} you have provided {{ value }}'
         ),
         Assert\NotNull(
-        message: "sensorData cannot be empty"
+            message: "sensorData cannot be empty"
         ),
         Assert\Count(
-        min: 1,
-        max: 50,
-        minMessage: "sensorData must contain at least {{ limit }} elements",
-        maxMessage: "sensorData cannot contain more than {{ limit }} elements"
+            min: 1,
+            max: 50,
+            minMessage: "sensorData must contain at least {{ limit }} elements",
+            maxMessage: "sensorData cannot contain more than {{ limit }} elements"
         ),
         ArrayShape([SensorDataCurrentReadingUpdateDTO::class])
     ]
