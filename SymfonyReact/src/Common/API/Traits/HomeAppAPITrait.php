@@ -28,8 +28,6 @@ trait HomeAppAPITrait
 
     public const REQUEST_SUCCESSFUL = 'Request Successful';
 
-    public const REQUEST_ACCEPTED = 'Request Accepted';
-
     public const REQUEST_ACCEPTED_SUCCESS_CREATED = 'Request Accepted Successfully Created';
 
     public const REQUEST_PARTIALLY_ACCEPTED = 'Request Accepted Only Partial Response Sent';
@@ -42,10 +40,13 @@ trait HomeAppAPITrait
 
     public const BAD_REQUEST_NO_DATA_RETURNED = 'Bad Request No Data Returned';
 
-    public const SOME_ISSUES_WITH_REQUEST = 'Some issues were found with your request';
-
     // 20x Successfull
-    public function sendSuccessfulJsonResponse(array $data = [], $title = self::REQUEST_SUCCESSFUL): JsonResponse
+    /**
+      * @param array $data
+      * @param string $title
+      * @return JsonResponse
+     */
+    public function sendSuccessfulJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
             return $this->returnJsonResponse(
@@ -66,6 +67,11 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendSuccessfullyAddedToBeProcessedJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
@@ -118,6 +124,11 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendCreatedResourceJsonResponse(
         array $data = [],
         string $title = self::REQUEST_ACCEPTED_SUCCESS_CREATED
@@ -141,6 +152,11 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param mixed[] $errors
+     * @param mixed[] $data
+     * @return JsonResponse
+     */
     public function sendPartialContentJsonResponse(array $errors = [], array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -164,6 +180,12 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param mixed[] $errors
+     * @param mixed[] $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendMultiStatusJsonResponse(array $errors = [], array $data = [], string $title = 'Part of the request was accepted'): JsonResponse
     {
         return $this->returnJsonResponse(
@@ -195,6 +217,11 @@ trait HomeAppAPITrait
     }
 
     // 40x Client Error Response
+    /**
+     * @param array $errors
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendBadRequestJsonResponse(array $errors = [], string $title = self::BAD_REQUEST_NO_DATA_RETURNED): JsonResponse
     {
         if (!empty($errors)) {
@@ -216,6 +243,10 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $errors
+     * @return JsonResponse
+     */
     public function sendNotFoundResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
@@ -238,6 +269,12 @@ trait HomeAppAPITrait
     }
 
     // 50x Server Error Response
+
+    /**
+     * @param array $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendInternalServerErrorJsonResponse(array $data = [], string $title = self::SERVER_ERROR_TRY_AGAIN): JsonResponse
     {
         if (!empty($data)) {
@@ -259,6 +296,10 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $errors
+     * @return JsonResponse
+     */
     public function sendForbiddenAccessJsonResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
@@ -285,7 +326,11 @@ trait HomeAppAPITrait
         return new Response($data, $statusCode);
     }
 
-
+    /**
+     * @param array $data
+     * @param int $statusCode
+     * @return JsonResponse
+     */
     private function returnJsonResponse(array $data, int $statusCode): JsonResponse
     {
         return new JsonResponse($data, $statusCode);
@@ -311,6 +356,14 @@ trait HomeAppAPITrait
         return $normalizer->normalize($data, null, $context ?? []);
     }
 
+    /**
+     * @param string|mixed[] $data
+     * @param string|null $class
+     * @param string|null $format
+     * @param array $extraContexts
+     * @param bool $docExtractor
+     * @return mixed
+     */
     public function deserializeRequest(
         string|array $data,
         ?string $class = null,
