@@ -38,13 +38,13 @@ SymfonyReact/.phpunit.result.cache
 SymfonyReact/phpunit.xml
 
 ##< SSL >###
-SSL/ca-key.pem
 SSL/client-cert.pem
 SSL/client-key.pem
 SSL/server-cert.pem
 SSL/server-key.pem
 SSL/server.pfx
 SSL/ca-cert.pem
+SSL/ca-key.pem
 
 ##< Docker >###
 HomeAppDocker/.env

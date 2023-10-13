@@ -3,6 +3,8 @@
 if [ ${APP_ENV} = 'prod' ]; then
   echo "production container build"
   echo "installing composer packages..."
+  git clean -f
+  git pull origin master
   composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
   echo "Executing database migrations production..."
   bin/console doctrine:migrations:migrate -n
@@ -21,9 +23,7 @@ if [ ${APP_ENV} = 'dev' ]; then
 	bin/console doctrine:migrations:migrate -n
 	echo "...Local migrations complete"
 
-
-
-##@TODO: not working
+	##@TODO: not working
 	echo "Querying test database"
 	if [ php bin/console dbal:run-sql "select firstName from user" --env=test | grep 'array(1)']; then
 		echo "Test database empty loading fixtures..."
