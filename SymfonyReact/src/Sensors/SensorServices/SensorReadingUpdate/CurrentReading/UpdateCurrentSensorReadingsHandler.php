@@ -140,9 +140,9 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         } catch (ORMException|OptimisticLockException $e) {
             $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
 
-            return $validationErrors;
+            return $validationErrors ?? [];
         }
 
-        return $validationErrors;
+        return $validationErrors ?? [];
     }
 }

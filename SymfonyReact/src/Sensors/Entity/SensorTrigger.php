@@ -65,6 +65,26 @@ class SensorTrigger
     private TriggerType $triggerType;
 
     #[
+        ORM\Column(name: "startTime", type: "integer", nullable: true),
+        Assert\Range(
+            notInRangeMessage: "Start time must be between {{ min }} and {{ max }}",
+            min: 0,
+            max: 2400,
+        ),
+    ]
+    private ?int $startTime;
+
+    #[
+        ORM\Column(name: "endTime", type: "integer", nullable: true),
+        Assert\Range(
+            notInRangeMessage: "Start time must be between {{ min }} and {{ max }}",
+            min: 0,
+            max: 2400,
+        ),
+    ]
+    private ?int $endTime;
+
+    #[
         ORM\ManyToOne(targetEntity: User::class),
         ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID"),
     ]
@@ -84,9 +104,43 @@ class SensorTrigger
     ]
     private DateTimeInterface $updatedAt;
 
+    #[
+        ORM\Column(name: "monday", type: "boolean", nullable: false),
+    ]
+    private bool $monday = true;
+
+    #[
+        ORM\Column(name: "tuesday", type: "boolean", nullable: false),
+    ]
+    private bool $tuesday = true;
+
+    #[
+        ORM\Column(name: "wednesday", type: "boolean", nullable: false),
+    ]
+    private bool $wednesday = true;
+
+    #[
+        ORM\Column(name: "thursday", type: "boolean", nullable: false),
+    ]
+    private bool $thursday = true;
+
+    #[
+        ORM\Column(name: "friday", type: "boolean", nullable: false),
+    ]
+    private bool $friday = true;
+
+    #[
+        ORM\Column(name: "saturday", type: "boolean", nullable: false),
+    ]
+    private bool $saturday = true;
+
+    #[
+        ORM\Column(name: "sunday", type: "boolean", nullable: false),
+    ]
+    private bool $sunday = true;
+
     public function __construct()
     {
-        $this->createdAt = new DateTimeImmutable('now');
         $this->updatedAt = new DateTimeImmutable('now');
     }
 
@@ -150,6 +204,11 @@ class SensorTrigger
         return $this->createdAt;
     }
 
+    public function setCreatedAt(DateTimeInterface $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
     public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
@@ -160,6 +219,26 @@ class SensorTrigger
         $this->updatedAt = $updatedAt;
     }
 
+    public function getStartTime(): ?int
+    {
+        return $this->startTime;
+    }
+
+    public function setStartTime(?int $startTime): void
+    {
+        $this->startTime = $startTime;
+    }
+
+    public function getEndTime(): ?int
+    {
+        return $this->endTime;
+    }
+
+    public function setEndTime(?int $endTime): void
+    {
+        $this->endTime = $endTime;
+    }
+
     public function getTriggerType(): TriggerType
     {
         return $this->triggerType;
@@ -168,5 +247,75 @@ class SensorTrigger
     public function setTriggerType(TriggerType $triggerType): void
     {
         $this->triggerType = $triggerType;
+    }
+
+    public function getMonday(): bool
+    {
+        return $this->monday;
+    }
+
+    public function setMonday(bool $monday): void
+    {
+        $this->monday = $monday;
+    }
+
+    public function getTuesday(): bool
+    {
+        return $this->tuesday;
+    }
+
+    public function setTuesday(bool $tuesday): void
+    {
+        $this->tuesday = $tuesday;
+    }
+
+    public function getWednesday(): bool
+    {
+        return $this->wednesday;
+    }
+
+    public function setWednesday(bool $wednesday): void
+    {
+        $this->wednesday = $wednesday;
+    }
+
+    public function getThursday(): bool
+    {
+        return $this->thursday;
+    }
+
+    public function setThursday(bool $thursday): void
+    {
+        $this->thursday = $thursday;
+    }
+
+    public function getFriday(): bool
+    {
+        return $this->friday;
+    }
+
+    public function setFriday(bool $friday): void
+    {
+        $this->friday = $friday;
+    }
+
+    public function getSaturday(): bool
+    {
+        return $this->saturday;
+    }
+
+    public function setSaturday(bool $saturday): void
+    {
+        $this->saturday = $saturday;
+    }
+
+    public function getSunday(): bool
+    {
+        return $this->sunday;
+    }
+
+    public function setSunday(bool $sunday): void
+    {
+        $this->sunday = $sunday;
     }
 }

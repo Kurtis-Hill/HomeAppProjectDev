@@ -24,7 +24,7 @@ services:
       PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
     volumes:
       - ../SymfonyReact:/var/www/html:cached
-      - ../SSL:/etc/ssl/custom:ro
+      - ../SSL:/etc/ssl:ro
     depends_on:
       maria-db:
         condition: service_healthy
@@ -81,7 +81,7 @@ services:
       MARIADB_INTERNAL_PORT: ${MARIADB_INTERNAL_PORT}
     volumes:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
-      - ../SSL:/etc/mysql/ssl:ro
+      - ../SSL/custom:/etc/mysql/ssl:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD
       interval: 5s

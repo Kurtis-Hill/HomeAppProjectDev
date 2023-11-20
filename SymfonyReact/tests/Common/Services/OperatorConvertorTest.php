@@ -4,17 +4,17 @@ namespace App\Tests\Common\Services;
 
 use App\Common\Entity\Operator;
 use App\Common\Exceptions\OperatorConvertionException;
-use App\Common\Services\OperatorConvertor;
+use App\Common\Services\OperatorValueCheckerConvertor;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
 class OperatorConvertorTest extends TestCase
 {
-    private OperatorConvertor $sut;
+    private OperatorValueCheckerConvertor $sut;
 
     protected function setUp(): void
     {
-        $this->sut = new OperatorConvertor();
+        $this->sut = new OperatorValueCheckerConvertor();
         parent::setUp();
     }
 
@@ -29,7 +29,7 @@ class OperatorConvertorTest extends TestCase
         $operator = new Operator();
         $operator->setOperatorSymbol(Operator::OPERATOR_EQUAL);
 
-        $result = $this->sut::convertUsingOperator(
+        $result = $this->sut::checkValuesAgainstOperator(
             $operator,
             $value,
             $valueThatTriggers,
@@ -66,9 +66,9 @@ class OperatorConvertorTest extends TestCase
     }
 
     /**
-     * @dataProvider numbersDataProvider
+     * @dataProvider stringAndNumbersDataProvider
      */
-    public function test_numbers_can_be_compared(
+    public function test_number_strings_and_numbers_can_be_compared(
         mixed $value,
         mixed $valueThatTriggers,
         string $operatorSymbol,
@@ -77,7 +77,7 @@ class OperatorConvertorTest extends TestCase
         $operator = new Operator();
         $operator->setOperatorSymbol($operatorSymbol);
 
-        $result = $this->sut::convertUsingOperator(
+        $result = $this->sut::checkValuesAgainstOperator(
             $operator,
             $value,
             $valueThatTriggers,
@@ -86,7 +86,7 @@ class OperatorConvertorTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function numbersDataProvider(): Generator
+    public function stringAndNumbersDataProvider(): Generator
     {
         yield [
             'value' => '1234',
@@ -168,7 +168,7 @@ class OperatorConvertorTest extends TestCase
 
         $this->expectException(OperatorConvertionException::class);
 
-        $result = $this->sut::convertUsingOperator(
+        $result = $this->sut::checkValuesAgainstOperator(
             $operator,
             null,
             null,

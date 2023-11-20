@@ -5,12 +5,14 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
-use App\Sensors\Exceptions\SensorNotFoundException;
+use App\Sensors\Exceptions\ReadingTypeNotFoundException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
+use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -25,13 +27,14 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
         private SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory,
         private SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService,
         private SensorConstantlyRecordHandlerInterface $constantlyRecordService,
+        private SensorReadingTriggerCheckerInterface $sensorReadingTriggerChecker,
         private SensorRepositoryInterface $sensorRepository,
     ) {}
 
     /**
-     * @throws SensorNotFoundException
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws ReadingTypeNotFoundException
      */
     #[ArrayShape(["errors"])]
     public function handleUpdateSensorCurrentReading(
@@ -40,7 +43,10 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
     ): array {
         $validationErrors = [];
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateRequestDTO) {
-            $currentValidationErrors = $this->validator->validate(value: $currentReadingUpdateRequestDTO, groups: [$updateSensorCurrentReadingConsumerDTO->getSensorType()]);
+            $currentValidationErrors = $this->validator->validate(
+                value: $currentReadingUpdateRequestDTO,
+                groups: [$updateSensorCurrentReadingConsumerDTO->getSensorType()]
+            );
             if ($this->checkIfErrorsArePresent($currentValidationErrors)) {
                 $validationErrors = [
                     ...$this->getValidationErrorAsArray($currentValidationErrors),
@@ -55,7 +61,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
 
             $readingTypeObject = $readingTypeRepository->findOneBySensorName($updateSensorCurrentReadingConsumerDTO->getSensorName());
             if ($readingTypeObject === null) {
-                throw new SensorNotFoundException(
+                throw new ReadingTypeNotFoundException(
                     sprintf(
                         'Sensor with name %s not found',
                         $updateSensorCurrentReadingConsumerDTO->getSensorName()
@@ -83,6 +89,10 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
             if ($readingTypeObject instanceof StandardReadingSensorInterface) {
                 $this->outOfBoundsSensorService->processOutOfBounds($readingTypeObject);
             }
+            if ($readingTypeObject instanceof BoolReadingSensorInterface) {
+                $readingTypeObject->setRequestedReading($currentReadingUpdateRequestDTO->getCurrentReading());
+            }
+            $this->sensorReadingTriggerChecker->checkSensorForTriggers($readingTypeObject);
         }
 
         $this->sensorRepository->flush();

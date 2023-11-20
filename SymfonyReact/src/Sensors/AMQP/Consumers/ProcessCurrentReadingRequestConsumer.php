@@ -24,8 +24,7 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
         private UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
         private DeviceRepositoryInterface $deviceRepository,
         private LoggerInterface $elasticLogger,
-    ) {
-    }
+    ) {}
 
     // @ADD new current reading type dtos to allowed_classes array
     public function execute(AMQPMessage $msg): bool

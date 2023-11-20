@@ -79,6 +79,9 @@ services:
   App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandler'
 
+  App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface:
+    alias: 'App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerChecker'
+
 ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface:
     alias: 'App\Sensors\SensorServices\NewSensor\NewSensorCreationHandler'

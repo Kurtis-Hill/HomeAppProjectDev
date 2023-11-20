@@ -5,12 +5,12 @@ namespace App\Common\Services;
 use App\Common\Entity\Operator;
 use App\Common\Exceptions\OperatorConvertionException;
 
-class OperatorConvertor
+class OperatorValueCheckerConvertor
 {
     /**
      * @throws OperatorConvertionException
      */
-    public static function convertUsingOperator(
+    public static function checkValuesAgainstOperator(
         Operator $operator,
         mixed $value,
         mixed $valueThatTriggers
@@ -20,12 +20,15 @@ class OperatorConvertor
         if ($value === 'false') {
             $value = false;
         }
+
         if ($value === 'true') {
             $value = true;
         }
+
         if ($valueThatTriggers === 'false') {
             $valueThatTriggers = false;
         }
+
         if ($valueThatTriggers === 'true') {
             $valueThatTriggers = true;
         }
@@ -45,7 +48,12 @@ class OperatorConvertor
             Operator::OPERATOR_LESS_THAN_OR_EQUAL => $value <= $valueThatTriggers,
             Operator::OPERATOR_GREATER_THAN => $value > $valueThatTriggers,
             Operator::OPERATOR_LESS_THAN => $value < $valueThatTriggers,
-            default => throw new OperatorConvertionException(sprintf(OperatorConvertionException::MESSAGE, $operatorSymbol)),
+            default => throw new OperatorConvertionException(
+                sprintf(
+                    OperatorConvertionException::MESSAGE,
+                    $operatorSymbol
+                )
+            ),
         };
     }
 }

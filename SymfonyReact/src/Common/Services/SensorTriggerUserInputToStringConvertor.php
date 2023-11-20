@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Sensors\SensorServices\SensorTrigger;
+namespace App\Common\Services;
 
 use App\Sensors\Exceptions\SensorTriggerConversionException;
 
-class SensorTriggerConvertor
+class SensorTriggerUserInputToStringConvertor
 {
     /**
      * @throws SensorTriggerConversionException

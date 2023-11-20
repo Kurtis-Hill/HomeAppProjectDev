@@ -2,9 +2,11 @@
 
 namespace App\Sensors\Repository;
 
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTrigger;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<SensorTrigger>
@@ -29,5 +31,45 @@ class SensorTriggerRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->_em->flush();
+    }
+
+    /**
+     * @return SensorTrigger[]
+     */
+    #[ArrayShape([SensorTrigger::class])]
+    public function findAllSensorTriggersForDayAndTime(
+        Sensor $sensor,
+        ?string $day = null,
+        ?string $time = null,
+    ): array {
+        $currentTime = $time ?? date('H:i');
+        $currentTime = str_replace([':', ' '], '', $currentTime);
+        $currentTime = (int)$currentTime;
+
+        $currentDay = $day ?? date('l');
+        $currentDay = lcfirst($currentDay);
+
+        $qb = $this->createQueryBuilder('st');
+        $expr = $qb->expr();
+
+        $qb->where(
+            $expr->eq('st.sensor', ':sensor'),
+            $expr->eq('st.' . $currentDay, true),
+            $expr->orX(
+                $expr->isNull('st.startTime'),
+                $expr->isNull('st.endTime'),
+                $expr->andX(
+                    $expr->gte('st.startTime', ':currentTime'),
+                    $expr->lte('st.endTime', ':currentTime'),
+                )
+            )
+        )->setParameters(
+            [
+                'sensor', $sensor,
+                'currentTime' => $currentTime,
+            ]
+        );
+
+        return $qb->getQuery()->getResult();
     }
 }
