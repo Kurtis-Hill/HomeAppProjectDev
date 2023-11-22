@@ -66,7 +66,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
      */
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
-        Devices $device,
+//        Devices $device,
     ): array {
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateDTO) {
             $readingTypeQueryDTOBuilder = $this->readingTypeQueryBuilderFactory->getReadingTypeQueryDTOBuilder($currentReadingUpdateDTO->getReadingType());
@@ -130,7 +130,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                     | SensorReadingUpdateFactoryException
                     | ReadingTypeObjectBuilderException $e
                 ) {
-                    $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
+                    $this->logger->error($e->getMessage());
                     continue;
                 }
             }
@@ -138,7 +138,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         try {
             $this->sensorRepository->flush();
         } catch (ORMException|OptimisticLockException $e) {
-            $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
+            $this->logger->error($e->getMessage());
 
             return $validationErrors ?? [];
         }

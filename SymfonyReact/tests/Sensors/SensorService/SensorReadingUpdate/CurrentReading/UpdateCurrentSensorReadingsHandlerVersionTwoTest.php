@@ -11,17 +11,22 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
+use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo;
+use App\Sensors\SensorServices\SensorTriggerProcessor\TriggerHandler;
+use App\Sensors\SensorServices\SensorTriggerProcessor\TriggerHandlerInterface;
+use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -41,10 +46,11 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
     private SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService;
 
+    private SensorReadingTriggerCheckerInterface $sensorReadingTriggerChecker;
+
     private SensorConstantlyRecordHandlerInterface $constantlyRecordService;
 
     private SensorRepositoryInterface $sensorRepository;
-
 
     protected function setUp(): void
     {
@@ -57,6 +63,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $this->outOfBoundsSensorService = $this->diContainer->get(SensorOutOfBoundsHandlerInterface::class);
         $this->constantlyRecordService = $this->diContainer->get(SensorConstantlyRecordHandlerInterface::class);
         $this->sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
+        $this->sensorReadingTriggerChecker = $this->diContainer->get(SensorReadingTriggerCheckerInterface::class);
     }
 
     protected function tearDown(): void
@@ -80,6 +87,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $this->sensorReadingTypeRepositoryFactory,
             $this->outOfBoundsSensorService,
             $this->constantlyRecordService,
+            $this->sensorReadingTriggerChecker,
             $this->sensorRepository,
         );
 
@@ -97,10 +105,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             deviceID: $device->getDeviceID(),
         );
 
-        $result = $sut->handleUpdateSensorCurrentReading(
-            $updateSensorCurrentReadingConsumerDTO,
-            $device,
-        );
+        $result = $sut->handleUpdateSensorCurrentReading($updateSensorCurrentReadingConsumerDTO);
 
         self::assertNotEmpty($result);
 
@@ -242,21 +247,202 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
     public function test_sensor_name_doesnt_exist_throws_sensor_not_found_exception(): void
     {
+        $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
+            $this->validator,
+            $this->sensorReadingTypeRepositoryFactory,
+            $this->outOfBoundsSensorService,
+            $this->constantlyRecordService,
+            $this->sensorReadingTriggerChecker,
+            $this->sensorRepository,
+        );
 
+        /** @var Sensor[] $sensors */
+        $sensors = $this->sensorRepository->findAll();
+
+        $device = $sensors[0]->getDevice();
+
+        $updateSensorCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            sensorType: Dht::NAME,
+            sensorName: random_int(10, 32222),
+            currentReadings: [
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 32),
+                Humidity::READING_TYPE => new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 23)
+            ],
+            deviceID: $device->getDeviceID(),
+        );
+
+        $this->expectException(SensorNotFoundException::class);
+
+        $sut->handleUpdateSensorCurrentReading($updateSensorCurrentReadingMessageDTO);
     }
 
-    public function test_const_record_isnt_processed_when_errors_detected(): void
+    public function test_sub_processes_are_not_processed_when_errors_detected(): void
     {
+        $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
+        $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
 
+        $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
+        $constRecordService->expects(self::never())->method('processConstRecord');
+
+        $sensorTriggerProcessor = $this->createMock(SensorReadingTriggerCheckerInterface::class);
+        $sensorTriggerProcessor->expects(self::never())->method('checkSensorForTriggers');
+
+        $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
+            $this->validator,
+            $this->sensorReadingTypeRepositoryFactory,
+            $outOfBoundsService,
+            $constRecordService,
+            $sensorTriggerProcessor,
+            $this->sensorRepository,
+        );
+
+        /** @var Sensor[] $sensors */
+        $sensors = $this->sensorRepository->findAll();
+
+        $sensor = $sensors[0];
+
+        $updateSensorCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+            sensorType: Dht::NAME,
+            sensorName: $sensor->getSensorName(),
+            currentReadings: [
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 32),
+                Humidity::READING_TYPE => new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING + 23)
+            ],
+            deviceID: $sensor->getDevice()->getDeviceID(),
+        );
+
+        $sut->handleUpdateSensorCurrentReading($updateSensorCurrentReadingMessageDTO);
     }
 
-    public function test_out_of_bounds_isnt_processed_when_errors_detected(): void
-    {
+    /**
+     * @dataProvider correctCurrentReadingDataProvider
+     */
+    public function test_correct_data_is_processed(
+        string $sensorType,
+        string $sensorTypeClass,
+        array $currentReadings,
+    ): void {
+        $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
+            $this->validator,
+            $this->sensorReadingTypeRepositoryFactory,
+            $this->outOfBoundsSensorService,
+            $this->constantlyRecordService,
+            $this->sensorReadingTriggerChecker,
+            $this->sensorRepository,
+        );
 
+        $sensorTypeRepository = $this->entityManager->getRepository($sensorTypeClass);
+
+        /** @var SensorTypeInterface[] $allSensors */
+        $allSensors = $sensorTypeRepository->findAll();
+        $firstSensor = $allSensors[0];
+
+        $device = $firstSensor->getSensor()->getDevice();
+        $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingMessageDTO(
+            sensorType: $sensorType,
+            sensorName: $firstSensor->getSensor()->getSensorName(),
+            currentReadings: array_values($currentReadings),
+            deviceID: $device->getDeviceID(),
+        );
+
+        $result = $sut->handleUpdateSensorCurrentReading($updateSensorCurrentReadingConsumerDTO);
+        self::assertEmpty($result);
+
+        /** @var SensorTypeInterface $sensorAfterUpdate */
+        $sensorAfterUpdate = $sensorTypeRepository->find($firstSensor->getSensorTypeID());
+        self::assertNotNull($sensorAfterUpdate);
+
+        foreach ($sensorAfterUpdate->getReadingTypes() as $readingType) {
+            self::assertEquals($readingType->getCurrentReading(), $currentReadings[$readingType->getReadingTypeName()]->getCurrentReading());
+        }
     }
 
-    public function test_correct_data_is_processed(): void
+    public function correctCurrentReadingDataProvider(): Generator
     {
+        yield [
+            'sensorType' => Dht::NAME,
+            'sensorTypeClass' => Dht::class,
+            'currentReadings' => [
+                Humidity::READING_TYPE => new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - random_int(1, 20)),
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Dht::HIGH_TEMPERATURE_READING_BOUNDARY - random_int(1, 20))
+            ],
+        ];
 
+        yield [
+            'sensorType' => Dht::NAME,
+            'sensorTypeClass' => Dht::class,
+            'currentReadings' => [
+                Humidity::READING_TYPE => new HumidityCurrentReadingUpdateRequestDTO(Humidity::LOW_READING + random_int(1, 20)),
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Dht::LOW_TEMPERATURE_READING_BOUNDARY + random_int(1, 20))
+            ],
+        ];
+
+        yield [
+            'sensorType' => Dallas::NAME,
+            'sensorTypeClass' => Dallas::class,
+            'currentReadings' => [
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - random_int(1, 20))
+            ],
+        ];
+
+        yield [
+            'sensorType' => Dallas::NAME,
+            'sensorTypeClass' => Dallas::class,
+            'currentReadings' => [
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Dallas::LOW_TEMPERATURE_READING_BOUNDARY + random_int(1, 20))
+            ],
+        ];
+
+        yield [
+            'sensorType' => Bmp::NAME,
+            'sensorTypeClass' => Bmp::class,
+            'currentReadings' => [
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - random_int(1, 20)),
+                Humidity::READING_TYPE => new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - random_int(1, 20)),
+                Latitude::READING_TYPE => new LatitudeCurrentReadingUpdateRequestDTO(Latitude::HIGH_READING - random_int(1, 20)),
+            ],
+        ];
+
+        yield [
+            'sensorType' => Bmp::NAME,
+            'sensorTypeClass' => Bmp::class,
+            'currentReadings' => [
+                Temperature::READING_TYPE => new TemperatureCurrentReadingUpdateRequestDTO(Bmp::LOW_TEMPERATURE_READING_BOUNDARY + random_int(1, 20)),
+                Humidity::READING_TYPE => new HumidityCurrentReadingUpdateRequestDTO(Humidity::LOW_READING + random_int(1, 20)),
+                Latitude::READING_TYPE => new LatitudeCurrentReadingUpdateRequestDTO(Latitude::LOW_READING + random_int(1, 20)),
+            ],
+        ];
+
+        yield [
+            'sensorType' => Soil::NAME,
+            'sensorTypeClass' => Soil::class,
+            'currentReadings' => [
+                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - random_int(1, 20)),
+            ],
+        ];
+
+        yield [
+            'sensorType' => Soil::NAME,
+            'sensorTypeClass' => Soil::class,
+            'currentReadings' => [
+                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(Soil::LOW_SOIL_READING_BOUNDARY + random_int(1, 20)),
+            ],
+        ];
+
+        yield [
+            'sensorType' => LDR::NAME,
+            'sensorTypeClass' => LDR::class,
+            'currentReadings' => [
+                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(LDR::HIGH_READING - random_int(1, 20)),
+            ],
+        ];
+
+        yield [
+            'sensorType' => LDR::NAME,
+            'sensorTypeClass' => LDR::class,
+            'currentReadings' => [
+                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(LDR::LOW_READING + random_int(1, 20)),
+            ],
+        ];
     }
 }

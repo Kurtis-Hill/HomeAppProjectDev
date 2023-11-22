@@ -3,11 +3,11 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\ReadingTypeNotFoundException;
+use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
@@ -34,12 +34,11 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
     /**
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws ReadingTypeNotFoundException
+     * @throws SensorNotFoundException
      */
     #[ArrayShape(["errors"])]
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
-        Devices $device,
     ): array {
         $validationErrors = [];
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateRequestDTO) {
@@ -61,7 +60,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
 
             $readingTypeObject = $readingTypeRepository->findOneBySensorName($updateSensorCurrentReadingConsumerDTO->getSensorName());
             if ($readingTypeObject === null) {
-                throw new ReadingTypeNotFoundException(
+                throw new SensorNotFoundException(
                     sprintf(
                         'Sensor with name %s not found',
                         $updateSensorCurrentReadingConsumerDTO->getSensorName()
@@ -92,7 +91,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
             if ($readingTypeObject instanceof BoolReadingSensorInterface) {
                 $readingTypeObject->setRequestedReading($currentReadingUpdateRequestDTO->getCurrentReading());
             }
-            $this->sensorReadingTriggerChecker->checkSensorForTriggers($readingTypeObject);
+//            $this->sensorReadingTriggerChecker->checkSensorForTriggers($readingTypeObject);
         }
 
         $this->sensorRepository->flush();

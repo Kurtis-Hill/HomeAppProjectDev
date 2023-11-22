@@ -5,7 +5,7 @@ namespace App\Sensors\SensorServices\SensorTriggerProcessor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerChecker;
 
-readonly class TriggerHandler
+readonly class TriggerHandler implements TriggerHandlerInterface
 {
     public function __construct(
         private SensorReadingTriggerChecker $sensorReadingTriggerChecker,

@@ -15,5 +15,7 @@ interface UpdateCurrentSensorReadingInterface
      * @throws OptimisticLockException
      * @throws SensorReadingTypeObjectNotFoundException
      */
-    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO, Devices $device): array;
+    public function handleUpdateSensorCurrentReading(UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
+    //    Devices $device
+    ): array;
 }

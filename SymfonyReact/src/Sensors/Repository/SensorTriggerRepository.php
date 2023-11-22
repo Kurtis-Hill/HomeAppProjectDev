@@ -4,6 +4,7 @@ namespace App\Sensors\Repository;
 
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTrigger;
+use App\Sensors\SensorServices\TriggerHelpers\TriggerDateTimeConvertor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -42,12 +43,8 @@ class SensorTriggerRepository extends ServiceEntityRepository
         ?string $day = null,
         ?string $time = null,
     ): array {
-        $currentTime = $time ?? date('H:i');
-        $currentTime = str_replace([':', ' '], '', $currentTime);
-        $currentTime = (int)$currentTime;
-
-        $currentDay = $day ?? date('l');
-        $currentDay = lcfirst($currentDay);
+        $currentTime = TriggerDateTimeConvertor::prepareTimesForComparison($time);
+        $currentDay = TriggerDateTimeConvertor::prepareDaysForComparison($day);
 
         $qb = $this->createQueryBuilder('st');
         $expr = $qb->expr();
