@@ -11,20 +11,23 @@ import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest
 import { refreshUserTokens } from '../../../Authentication/Session/UserSession';
 import { TokenRefreshResponseInterface } from '../../../Authentication/Response/TokenRefreshResponseInterface';
 
-export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Array<string>, title: string, timer?: number|null) => void}): void {
+export function ResponseInterceptor(props: {
+    showAnnouncementFlash: (errors: Array<string>, title: string, timer?: number|null) => void
+    refreshNavBar: (newValue: boolean) => void
+}): void {
     const errorAnnouncementFlash = props.showAnnouncementFlash;
 
     const navigate: NavigateFunction = useNavigate();
 
-    const [responseTokenRequestInProgress, setResponseTokenRequestInProgress] = useState<boolean>(false);
+    const refreshNavBar = props.refreshNavBar;
 
     axios.interceptors.response.use(function (response) {
         return response;
     }, async function (error: AxiosError|Error) {
-        console.log('error', error);
         if (error instanceof AxiosError) {
+            const urlOfRequest: string = error.config.url ?? '';
             if (
-                error.config.url ===  `${apiURL}token/refresh` 
+                urlOfRequest ===  `${apiURL}token/refresh` 
                 && window.location.pathname !== `${loginUrl}`
                 ) {        
                     window.location.replace(`${loginUrl}`)
@@ -38,32 +41,38 @@ export function ResponseInterceptor(props: {showAnnouncementFlash: (errors: Arra
                 return error;
             }
              
-            if (error.response.status === 401 || error.response.status === 403 && responseTokenRequestInProgress === false) {
-                setResponseTokenRequestInProgress(true);
-                const refreshToken: string|null = getRefreshToken();
-                if (refreshToken !== null) {
-                    try {
-                        const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
-                        removeTokens();
-                        if (refreshTokenResponse.status === 200) {
-                            const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
-                            refreshUserTokens(refreshTokenResponseData);
-                            setResponseTokenRequestInProgress(false);
+            if (error.response.status === 401 || error.response.status === 403) {
+                if (
+                    urlOfRequest !== `${apiURL}token/refresh`
+                    && urlOfRequest !== `${apiURL}navbar/navbar-data`
+                    && urlOfRequest !== `${apiURL}ping`
+                    && urlOfRequest !== `${apiURL}reading-types/all`
+                    && urlOfRequest !== `${apiURL}sensor-types/all`
+                ) {
+                    const refreshToken: string|null = getRefreshToken();
+                    if (refreshToken !== null) {
+                        try {
+                            const refreshTokenResponse: AxiosResponse = await handleTokenRefresh();
+                            removeTokens();
+                            if (refreshTokenResponse.status === 200) {
+                                const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
+                                refreshUserTokens(refreshTokenResponseData);
+                                console.log('refreshed tokens');
+                                refreshNavBar(true);
+                            }
+                        } catch (err) {
+                            const error = err as Error|AxiosError;
+                            console.log('catch error', error)
+                            alert('Your session has expired please log in again');
                         }
-                    } catch (err) {
-                        const error = err as Error|AxiosError;
-                        alert('Your session has expired please log in again');
-setResponseTokenRequestInProgress(false);
+                    } else {
+                        window.location.replace(`${loginUrl}`)
                     }
-                } else {
-setResponseTokenRequestInProgress(false);
-                    window.location.replace(`${loginUrl}`)
                 }
             }
             if (error.response.status === 500) {
                 errorAnnouncementFlash(['Unrecognized issue please log out and back in again'], 'Error');
-            }
-                else if (error.response.status !== 401) {
+            } else if (error.response.status !== 401) {
                 errorAnnouncementFlash([error.message], 'Error');
             }                 
             

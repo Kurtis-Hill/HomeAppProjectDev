@@ -1,6 +1,6 @@
 gesdinet_jwt_refresh_token:
-#  ttl: 144400
-  ttl: 5
+  ttl: 144400
+#  ttl: 5
   token_parameter_name: refreshToken
   refresh_token_class: Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken
   ## for more info on config visit: https://github.com/markitosgv/JWTRefreshTokenBundle

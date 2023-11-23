@@ -10,11 +10,13 @@ use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurren
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Soil;
@@ -322,15 +324,6 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         string $sensorTypeClass,
         array $currentReadings,
     ): void {
-        $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
-            $this->validator,
-            $this->sensorReadingTypeRepositoryFactory,
-            $this->outOfBoundsSensorService,
-            $this->constantlyRecordService,
-            $this->sensorReadingTriggerChecker,
-            $this->sensorRepository,
-        );
-
         $sensorTypeRepository = $this->entityManager->getRepository($sensorTypeClass);
 
         /** @var SensorTypeInterface[] $allSensors */
@@ -345,6 +338,36 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             deviceID: $device->getDeviceID(),
         );
 
+        $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
+        $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
+
+        $sensorBeforeUpdate = $sensorTypeRepository->find($firstSensor->getSensorTypeID());
+        /** @var AllSensorReadingTypeInterface $readingType */
+        foreach ($sensorBeforeUpdate->getReadingTypes() as $readingType) {
+            if ($readingType instanceof StandardReadingSensorInterface) {
+                if ($readingType->isReadingOutOfBounds()) {
+                    $outOfBoundsService->expects(self::once())->method('processOutOfBounds');
+                } else {
+                    $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
+                }
+
+                if ($readingType->getConstRecord() === true) {
+                    $constRecordService->expects(self::once())->method('processConstRecord');
+                } else {
+                    $constRecordService->expects(self::never())->method('processConstRecord');
+                }
+            }
+        }
+
+        $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
+            $this->validator,
+            $this->sensorReadingTypeRepositoryFactory,
+            $outOfBoundsService,
+            $constRecordService,
+            $this->sensorReadingTriggerChecker,
+            $this->sensorRepository,
+        );
+
         $result = $sut->handleUpdateSensorCurrentReading($updateSensorCurrentReadingConsumerDTO);
         self::assertEmpty($result);
 
@@ -352,8 +375,9 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $sensorAfterUpdate = $sensorTypeRepository->find($firstSensor->getSensorTypeID());
         self::assertNotNull($sensorAfterUpdate);
 
+        /** @var AllSensorReadingTypeInterface $readingType */
         foreach ($sensorAfterUpdate->getReadingTypes() as $readingType) {
-            self::assertEquals($readingType->getCurrentReading(), $currentReadings[$readingType->getReadingTypeName()]->getCurrentReading());
+            self::assertEquals($readingType->getCurrentReading(), $currentReadings[$readingType::getReadingTypeName()]->getCurrentReading());
         }
     }
 
