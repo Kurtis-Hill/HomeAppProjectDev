@@ -56,9 +56,9 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         yield [
             'sensor' => SensorFixtures::DHT_SENSOR_NAME,
             'sensorReading' => 20,
+            'numberOfTriggers' => 1,
             'time' => "21:05",
             'day' => "monday",
-            'numberOfTriggers' => 1,
         ];
     }
 }
