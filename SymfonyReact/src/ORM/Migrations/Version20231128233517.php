@@ -18,7 +18,7 @@ final class Version20231128233517 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'create standardReadingType table and migrate temperature, humidity, analog and latitude tables to standardReadingType table';
     }
 
     public function up(Schema $schema): void
@@ -60,9 +60,6 @@ final class Version20231128233517 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `temperature` 
-                DROP FOREIGN KEY IF EXISTS `FK_B5385CA3BE475E6`,  
-                DROP INDEX IF EXISTS `FK_B5385CA3BE475E6`,
-                DROP COLUMN `sensorID`,
                 DROP COLUMN `tempReading`,
                 DROP COLUMN `highTemp`,
                 DROP COLUMN `lowTemp`,
@@ -87,9 +84,6 @@ final class Version20231128233517 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `humidity` 
-                DROP FOREIGN KEY IF EXISTS `humid_ibfk_1`,
-                DROP INDEX IF EXISTS `humid_ibfk_1`,
-                DROP COLUMN `sensorID`,
                 DROP COLUMN `humidReading`,
                 DROP COLUMN `highHumid`,
                 DROP COLUMN `lowHumid`,
@@ -114,9 +108,6 @@ final class Version20231128233517 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `analog` 
-                DROP FOREIGN KEY IF EXISTS `analog_ibfk_3`,
-                DROP INDEX IF EXISTS `analog_ibfk_3`,
-                DROP COLUMN `sensorID`,
                 DROP COLUMN `analogReading`,
                 DROP COLUMN `highAnalog`,
                 DROP COLUMN `lowAnalog`,
@@ -141,9 +132,6 @@ final class Version20231128233517 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `latitude` 
-                DROP FOREIGN KEY IF EXISTS `latitude_ibfk_4`,
-                DROP INDEX IF EXISTS `latitude_ibfk_4`,
-                DROP COLUMN `sensorID`,
                 DROP COLUMN `latitude`,
                 DROP COLUMN `highLatitude`,
                 DROP COLUMN `lowLatitude`,
@@ -152,15 +140,15 @@ final class Version20231128233517 extends AbstractMigration
                 RENAME COLUMN `latitudeID` TO `readingTypeID`;
         ");
 
-        $this->addSql("
-            ALTER TABLE `sht`
-                DROP FOREIGN KEY `shtsensor_ibfk_1`,
-                DROP FOREIGN KEY `shtsensor_ibfk_2`,
-                DROP FOREIGN KEY `shtsensor_ibfk_3`,
-                ADD CONSTRAINT `shtsensor_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                ADD CONSTRAINT `shtsensor_ibfk_2` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`readingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                ADD CONSTRAINT `shtsensor_ibfk_3` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`readingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
+//        $this->addSql("
+//            ALTER TABLE `sht`
+//                DROP FOREIGN KEY `shtsensor_ibfk_1`,
+//                DROP FOREIGN KEY `shtsensor_ibfk_2`,
+//                DROP FOREIGN KEY `shtsensor_ibfk_3`,
+//                ADD CONSTRAINT `shtsensor_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
+//                ADD CONSTRAINT `shtsensor_ibfk_2` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`readingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
+//                ADD CONSTRAINT `shtsensor_ibfk_3` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`readingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
+//        ");
     }
 
     public function down(Schema $schema): void
@@ -174,11 +162,10 @@ final class Version20231128233517 extends AbstractMigration
 //                ADD CONSTRAINT `shtsensor_ibfk_2` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE,
 //                ADD CONSTRAINT `shtsensor_ibfk_3` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
 //        ");
-        // this down() migration is auto-generated, please modify it to your needs
 
         $this->addSql("SET FOREIGN_KEY_CHECKS = 0;");
 
-//        $this->addSql('ALTER TABLE temperature ADD sensorID INT NOT NULL, ADD tempReading DOUBLE PRECISION NOT NULL, ADD highTemp DOUBLE PRECISION NOT NULL, ADD lowTemp DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO tempID');
+        $this->addSql('ALTER TABLE temperature ADD tempReading DOUBLE PRECISION NOT NULL, ADD highTemp DOUBLE PRECISION NOT NULL, ADD lowTemp DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO tempID');
 //        $this->addSql('ALTER TABLE temperature ADD CONSTRAINT FK_B5385CA3BE475E6 FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE ON UPDATE CASCADE');
 
         foreach ($this->connection->fetchAllAssociative("SELECT * FROM `standardReadingType` WHERE `readingType` = 'temperature'") as $standardReadingType) {
@@ -190,7 +177,7 @@ final class Version20231128233517 extends AbstractMigration
             ");
         }
 
-//        $this->addSql('ALTER TABLE humidity ADD sensorID INT NOT NULL, ADD humidReading DOUBLE PRECISION NOT NULL, ADD highHumid DOUBLE PRECISION NOT NULL, ADD lowHumid DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO humidID');
+        $this->addSql('ALTER TABLE humidity ADD humidReading DOUBLE PRECISION NOT NULL, ADD highHumid DOUBLE PRECISION NOT NULL, ADD lowHumid DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO humidID');
 //        $this->addSql('ALTER TABLE humidity ADD CONSTRAINT humid_ibfk_1 FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE ON UPDATE CASCADE');
 
         foreach ($this->connection->fetchAllAssociative("SELECT * FROM standardReadingType WHERE readingType = 'humidity'") as $standardReadingType) {
@@ -202,7 +189,7 @@ final class Version20231128233517 extends AbstractMigration
             ");
         }
 
-//        $this->addSql('ALTER TABLE analog ADD sensorID INT NOT NULL, ADD analogReading DOUBLE PRECISION NOT NULL, ADD highAnalog DOUBLE PRECISION NOT NULL, ADD lowAnalog DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO analogID');
+        $this->addSql('ALTER TABLE analog ADD analogReading DOUBLE PRECISION NOT NULL, ADD highAnalog DOUBLE PRECISION NOT NULL, ADD lowAnalog DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO analogID');
 //        $this->addSql('ALTER TABLE analog ADD CONSTRAINT analog_ibfk_3 FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE ON UPDATE CASCADE');
 
         foreach ($this->connection->fetchAllAssociative("SELECT * FROM standardReadingType WHERE readingType = 'analog'") as $standardReadingType) {
@@ -214,7 +201,7 @@ final class Version20231128233517 extends AbstractMigration
             ");
         }
 
-//        $this->addSql('ALTER TABLE latitude ADD sensorID INT NOT NULL, ADD latitude DOUBLE PRECISION NOT NULL, ADD highLatitude DOUBLE PRECISION NOT NULL, ADD lowLatitude DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO latitudeID');
+        $this->addSql('ALTER TABLE latitudet ADD latitude DOUBLE PRECISION NOT NULL, ADD highLatitude DOUBLE PRECISION NOT NULL, ADD lowLatitude DOUBLE PRECISION NOT NULL, ADD constRecord TINYINT(1) NOT NULL, ADD updatedAt DATETIME NOT NULL, RENAME COLUMN readingTypeID TO latitudeID');
 //        $this->addSql('ALTER TABLE latitude ADD CONSTRAINT latitude_ibfk_4 FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE ON UPDATE CASCADE');
 
         foreach ($this->connection->fetchAllAssociative("SELECT * FROM standardReadingType WHERE readingType = 'latitude'") as $standardReadingType) {
