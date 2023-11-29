@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordTempRepository::class),
     ORM\Table(name: "consttemp"),
-    ORM\Index(columns: ["sensorID"], name: "consttemp_ibfk_1"),
+//    ORM\Index(columns: ["sensorID"], name: "consttemp_ibfk_1"),
 ]
 class ConstTemp implements ConstantlyRecordEntityInterface
 {
@@ -55,7 +55,7 @@ class ConstTemp implements ConstantlyRecordEntityInterface
 
     #[
         ORM\ManyToOne(targetEntity: Temperature::class),
-        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Const Record Temperature Object cannot be null")]
     private Temperature $sensorReadingID;

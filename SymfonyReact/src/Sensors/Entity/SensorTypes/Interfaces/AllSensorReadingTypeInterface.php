@@ -11,7 +11,7 @@ interface AllSensorReadingTypeInterface
 
     public function getSensorID(): int;
 
-    public function setSensorID(int $id);
+//    public function setSensorID(int $id);
 
 //    public function getReadingType(): string;
 
@@ -21,7 +21,7 @@ interface AllSensorReadingTypeInterface
 
     public function getCurrentReading(): int|float|string|bool;
 
-    public function setCurrentReading(int|float|string|bool $currentReading);
+    public function setCurrentReading(int|float|string $currentReading);
 
     public static function getReadingTypeName(): string;
 

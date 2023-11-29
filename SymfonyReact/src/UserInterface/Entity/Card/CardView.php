@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["userID"], name: "UserID"),
     ORM\Index(columns: ["iconID"], name: "FK_E36636B5840D9A7A"),
     ORM\Index(columns: ["cardViewID"], name: "cardview_show"),
-    ORM\UniqueConstraint(name: "user_cardview", columns: ["userID", "sensor"]),
+    ORM\UniqueConstraint(name: "user_cardview", columns: ["userID", "sensorID"]),
 ]
 class CardView
 {

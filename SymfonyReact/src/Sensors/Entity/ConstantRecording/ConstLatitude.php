@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordLatitudeRepository::class),
     ORM\Table(name: "constlatitude"),
-    ORM\Index(columns: ["latitudeID"], name: "latitudeID"),
+//    ORM\Index(columns: ["latitudeID"], name: "latitudeID"),
 ]
 class ConstLatitude implements ConstantlyRecordEntityInterface
 {
@@ -29,13 +29,16 @@ class ConstLatitude implements ConstantlyRecordEntityInterface
     #[LatitudeConstraint]
     private int|float $sensorReading;
 
-    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]), ]
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+//        options: [
+//        "default" => "current_timestamp()"]
+    ), ]
     #[Assert\NotBlank(message: 'Const latitude date time should not be blank')]
     private DateTimeInterface $createdAt;
 
     #[
         ORM\ManyToOne(targetEntity: Latitude::class),
-        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
+        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Const Record Latitude Object cannot be null")]
     private Latitude $sensorReadingID;

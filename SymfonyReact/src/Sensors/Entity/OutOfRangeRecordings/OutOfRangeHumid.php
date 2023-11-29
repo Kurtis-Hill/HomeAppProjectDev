@@ -34,7 +34,7 @@ class OutOfRangeHumid implements OutOfBoundsEntityInterface
 
     #[
         ORM\ManyToOne(targetEntity: Humidity::class),
-        ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
+        ORM\JoinColumn(name: "humidID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Out of range Humidity Object cannot be null")]
     private Humidity $sensorReadingID;

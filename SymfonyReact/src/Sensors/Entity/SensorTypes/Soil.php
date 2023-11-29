@@ -40,7 +40,7 @@ class Soil implements SensorTypeInterface, StandardSensorTypeInterface, AnalogRe
 
     #[
         ORM\ManyToOne(targetEntity: Analog::class),
-        ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
+        ORM\JoinColumn(name: "analogID", referencedColumnName: "readingTypeID"),
     ]
     private Analog $analogID;
 

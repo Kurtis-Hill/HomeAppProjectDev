@@ -119,7 +119,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private Group|int $groupID;
 
     #[
-        ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
+        ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+//            options: ["default" => "current_timestamp()"]
+        ),
     ]
     private DateTimeInterface $createdAt;
 

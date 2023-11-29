@@ -40,7 +40,7 @@ class Dallas implements SensorTypeInterface, StandardSensorTypeInterface, Temper
 
     #[
         ORM\ManyToOne(targetEntity: Temperature::class),
-        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "readingTypeID"),
     ]
     private Temperature $tempID;
 

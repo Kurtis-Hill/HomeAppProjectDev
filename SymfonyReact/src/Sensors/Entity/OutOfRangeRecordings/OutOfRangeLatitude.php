@@ -25,7 +25,7 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
 
     #[
         ORM\ManyToOne(targetEntity: Latitude::class),
-        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
+        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "readingTypeID"),
     ]
     private Latitude $sensorReadingID;
 
@@ -33,7 +33,9 @@ class OutOfRangeLatitude implements OutOfBoundsEntityInterface
     #[LatitudeConstraint]
     private int|float $sensorReading;
 
-    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),]
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+//        options: ["default" => "current_timestamp()"]
+    ),]
     private DateTimeInterface $createdAt;
 
     public function getOutOfRangeID(): int

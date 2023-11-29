@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -14,11 +18,19 @@ final class Version20230928192822 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'intergration of SHT sensor type';
+        return 'integration of SHT sensor type';
     }
 
     public function up(Schema $schema): void
     {
+        $this->addSql("
+            INSERT INTO `sensortype` 
+                (`sensorTypeID`, `sensorType`, `description`) 
+            VALUES
+                (8, 'Sht', 'High Accuracy Temperature and Humidity Sensor');
+            
+        ");
+
         $this->addSql('
             CREATE TABLE sht (
                 shtID INT AUTO_INCREMENT NOT NULL, 
@@ -39,21 +51,13 @@ final class Version20230928192822 extends AbstractMigration
               ADD CONSTRAINT `shtsensor_ibfk_2` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `shtsensor_ibfk_3` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
-
-        $this->addSql("
-            INSERT INTO `sensortype` 
-                (`sensorTypeID`, `sensorType`, `description`) 
-            VALUES
-                (8, 'Sht', 'High Accuracy Temperature and Humidity Sensor');
-            
-        ");
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql("SET FOREIGN_KEY_CHECKS = 0;");
+        $this->addSql('DELETE FROM sensortype WHERE sensorType = \'Sht\'');
+
         $this->addSql('DROP TABLE sht');
-        $this->addSql('DELETE FROM sensortype WHERE sensorTypeID = 8');
-        $this->addSql("SET FOREIGN_KEY_CHECKS = 1;");
+
     }
 }

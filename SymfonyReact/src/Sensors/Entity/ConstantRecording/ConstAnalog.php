@@ -46,7 +46,7 @@ class ConstAnalog implements ConstantlyRecordEntityInterface
 
     #[
         ORM\ManyToOne(targetEntity: Analog::class),
-        ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
+        ORM\JoinColumn(name: "analogID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Const Record Analog Object cannot be null")]
     private Analog $sensorReadingID;

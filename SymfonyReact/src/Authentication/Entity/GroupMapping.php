@@ -12,8 +12,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     ORM\Entity(repositoryClass: GroupMappingRepository::class),
     ORM\Table(name: "groupmapping"),
     ORM\Index(columns: ["groupID"], name: "groupID"),
-    ORM\Index(columns: ["user"], name: "IDX_1C993DEE5FD86D04"),
-    ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D04", columns: ["user", "groupID"]),
+    ORM\Index(columns: ["userID"], name: "IDX_1C993DEE5FD86D04"),
+    ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D05", columns: ["userID", "groupID"]),
 ]
 #[UniqueEntity(fields: ['user', 'groupID'], message: self::GROUP_NAME_MAPPING_EXISTS)]
 class GroupMapping

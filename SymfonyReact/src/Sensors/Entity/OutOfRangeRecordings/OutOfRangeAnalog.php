@@ -35,13 +35,15 @@ class OutOfRangeAnalog implements OutOfBoundsEntityInterface
     ]
     private float $sensorReading;
 
-    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+//        options: ["default" => "current_timestamp()"]
+    )]
     #[Assert\NotBlank(message: 'Out of range analog date time name should not be blank')]
     private DateTimeInterface $createdAt;
 
     #[
         ORM\ManyToOne(targetEntity: Analog::class),
-        ORM\JoinColumn(name: "analogID", referencedColumnName: "analogID"),
+        ORM\JoinColumn(name: "analogID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Out of range Analog Object cannot be null")]
     private Analog $sensorReadingID;

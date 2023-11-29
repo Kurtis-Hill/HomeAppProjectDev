@@ -9,16 +9,16 @@ class LatitudeSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBui
 {
     public function buildLatitudeSensorDataFromScalarArray(array $cardData): ?StandardCardViewReadingResponseDTO
     {
-        if (empty($cardData['lat_latitudeID'])) {
+        if (empty($cardData['lat_readingTypeID'])) {
             return null;
         }
         $dateTime = $this->formatDateTime($cardData['lat_updatedAt']);
 
         return $this->getStandardCardViewDTO(
             Latitude::READING_TYPE,
-            $cardData['lat_latitude'],
-            $cardData['lat_highLatitude'],
-            $cardData['lat_lowLatitude'],
+            $cardData['lat_currentReading'],
+            $cardData['lat_highReading'],
+            $cardData['lat_lowReading'],
             $dateTime,
         );
     }

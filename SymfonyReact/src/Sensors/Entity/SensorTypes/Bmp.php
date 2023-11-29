@@ -55,19 +55,19 @@ class Bmp implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
 
     #[
         ORM\ManyToOne(targetEntity: Temperature::class),
-        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "readingTypeID"),
     ]
     private Temperature $tempID;
 
     #[
         ORM\ManyToOne(targetEntity: Humidity::class),
-        ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
+        ORM\JoinColumn(name: "humidID", referencedColumnName: "readingTypeID"),
     ]
     private Humidity $humidID;
 
     #[
         ORM\ManyToOne(targetEntity: Latitude::class),
-        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "latitudeID"),
+        ORM\JoinColumn(name: "latitudeID", referencedColumnName: "readingTypeID"),
     ]
     private Latitude $latitudeID;
 

@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: OperatorRepository::class),
     ORM\Table(name: "operators"),
-    ORM\Index(columns: ["sensorID"], name: "IDX_1F9B6F4F8D93D649"),
-    ORM\Index(columns: ["sensorToTriggerID"], name: "IDX_1F9B6F4F8D93D6492"),
 ]
 class Operator
 {

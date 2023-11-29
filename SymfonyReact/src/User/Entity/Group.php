@@ -12,7 +12,7 @@ use App\User\Repository\ORM\GroupRepository;
 #[
     ORM\Entity(repositoryClass: GroupRepository::class),
     ORM\Table(name: "groups"),
-    ORM\Index(columns: ["createdBy"], name: "createdBy"),
+//    ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
 ]
 #[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
@@ -53,7 +53,9 @@ class Group
     private string $groupName;
 
     #[
-        ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" =>"current_timestamp()"]),
+        ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+//            options: ["default" =>"current_timestamp()"]
+        ),
     ]
     private DateTimeInterface $createdAt;
 

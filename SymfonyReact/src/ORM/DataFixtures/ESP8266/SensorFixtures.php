@@ -579,7 +579,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        foreach (self::PERMISSION_CHECK_SENSORS as $sensorKey => $sensorDetails) {
+        foreach (self::PERMISSION_CHECK_SENSORS as $sensorDetails) {
             $minueteInterval = random_int(0, 59);
             $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minueteInterval . 'M'));
                 $sensor = new Sensor();
@@ -626,7 +626,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $newObject->setSensor($newSensor);
             $newSensorType->setSensor($newSensor);
             $newObject->setUpdatedAt();
+            $newObject->setCreatedAt(new DateTimeImmutable('now'));
         }
+
         if ($newObject instanceof StandardReadingSensorInterface) {
             if ($newSensorType instanceof StandardSensorTypeInterface) {
                 if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {

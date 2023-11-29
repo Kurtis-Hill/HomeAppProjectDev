@@ -223,6 +223,7 @@ class GetCardViewControllerTest extends WebTestCase
         self::assertTrue($temperature);
         self::assertTrue($humidity);
         self::assertTrue($latitude);
+        self::assertTrue($analog);
         self::assertTrue($motion);
         self::assertTrue($relay);
     }

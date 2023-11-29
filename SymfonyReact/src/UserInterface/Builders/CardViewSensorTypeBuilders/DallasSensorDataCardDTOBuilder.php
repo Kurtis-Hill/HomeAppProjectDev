@@ -18,6 +18,7 @@ class DallasSensorDataCardDTOBuilder extends AbstractCardDTOBuilder implements C
     #[ArrayShape([StandardCardViewReadingResponseDTO::class])]
     public function formatScalarCardSensorData(array $sensorData): array
     {
+//        dd($sensorData);
         $temperatureSensorData = $this->tempSensorBuilder->buildTemperatureSensorDataFromScalarArray($sensorData);
 
         return [

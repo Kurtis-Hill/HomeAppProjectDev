@@ -49,13 +49,15 @@ class OutOfRangeTemp implements OutOfBoundsEntityInterface
     ]
     private float $sensorReading;
 
-    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+//        options: ["default" => "current_timestamp()"]
+    )]
     #[Assert\NotBlank(message: 'out of range temp date time should not be blank')]
     private DateTimeInterface $createdAt;
 
     #[
         ORM\ManyToOne(targetEntity: Temperature::class),
-        ORM\JoinColumn(name: "tempID", referencedColumnName: "tempID"),
+        ORM\JoinColumn(name: "tempID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Out of range Temperature Object cannot be null")]
     private Temperature $sensorReadingID;

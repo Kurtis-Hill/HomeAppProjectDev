@@ -9,7 +9,7 @@ class TemperatureSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTO
 {
     public function buildTemperatureSensorDataFromScalarArray(array $cardData): ?StandardCardViewReadingResponseDTO
     {
-        if (empty($cardData['temp_tempID'])) {
+        if (empty($cardData['temp_readingTypeID'])) {
             return null;
         }
         $dateTime = $this->formatDateTime($cardData['temp_updatedAt']);
@@ -17,8 +17,8 @@ class TemperatureSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTO
         return $this->getStandardCardViewDTO(
             Temperature::READING_TYPE,
             $cardData['temp_currentReading'],
-            $cardData['temp_highTemp'],
-            $cardData['temp_lowTemp'],
+            $cardData['temp_highReading'],
+            $cardData['temp_lowReading'],
             $dateTime,
             Temperature::READING_SYMBOL,
         );

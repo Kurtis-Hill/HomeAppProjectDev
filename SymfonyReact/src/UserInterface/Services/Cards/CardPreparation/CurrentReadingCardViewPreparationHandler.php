@@ -34,7 +34,7 @@ class CurrentReadingCardViewPreparationHandler
             default => CardState::INDEX_ONLY
         };
 
-        return $this->cardViewRepository->getAllCardSensorDataForUser(
+        return $this->cardViewRepository->findAllCardSensorDataForUser(
             $user,
             $cardViewTwo,
             $cardDataPostFilterDTO,

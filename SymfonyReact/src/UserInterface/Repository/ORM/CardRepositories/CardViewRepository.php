@@ -49,7 +49,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $this->getEntityManager()->flush();
     }
 
-    public function getAllCardSensorDataForUser(
+    public function findAllCardSensorDataForUser(
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,
@@ -83,7 +83,12 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             );
         }
 
-
+//        dd( $this->cardViewFilterExecution(
+//            $qb,
+//            $cardViewTypeFilterDTO,
+//            $cardDataPostFilterDTO,
+//            $parameters,
+//            $hydrationMode));
         return $this->cardViewFilterExecution(
             $qb,
             $cardViewTypeFilterDTO,

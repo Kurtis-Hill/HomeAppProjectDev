@@ -34,7 +34,7 @@ class ConstHumid implements ConstantlyRecordEntityInterface
 
     #[
         ORM\ManyToOne(targetEntity: Humidity::class),
-        ORM\JoinColumn(name: "humidID", referencedColumnName: "humidID"),
+        ORM\JoinColumn(name: "humidID", referencedColumnName: "readingTypeID"),
     ]
     #[Assert\NotNull(message: "Const Record Humidity Object cannot be null")]
     private Humidity $sensorReadingID;
