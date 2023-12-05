@@ -32,6 +32,9 @@ final class Version20231129212759 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `temperature`
+                DROP FOREIGN KEY IF EXISTS `temp_ibfk_1`,
+                DROP KEY IF EXISTS `temp_ibfk_1`,
+                DROP INDEX IF EXISTS `temp_ibfk_1`,
                 DROP FOREIGN KEY IF EXISTS `FK_B5385CA3BE475E6A`,
                 DROP COLUMN IF EXISTS `sensorID`;                
         ");
@@ -49,8 +52,10 @@ final class Version20231129212759 extends AbstractMigration
         }
 
         $this->addSql("
-            ALTER TABLE `humidity`
+            ALTER TABLE `humidity`                
                 DROP FOREIGN KEY IF EXISTS `humid_ibfk_1`,
+                DROP INDEX IF EXISTS `humid_ibfk_1`,
+                DROP KEY IF EXISTS `humid_ibfk_1`,
                 DROP COLUMN IF EXISTS  `sensorID`;
         ");
 
@@ -68,7 +73,9 @@ final class Version20231129212759 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `analog`
-                DROP FOREIGN KEY IF EXISTS  `analog_ibfk_3`,
+                DROP FOREIGN KEY IF EXISTS `analog_ibfk_3`,
+                DROP KEY IF EXISTS `analog_ibfk_3`,
+                DROP INDEX IF EXISTS `analog_ibfk_3`,
                 DROP COLUMN IF EXISTS `sensorID`;
         ");
 
@@ -87,6 +94,9 @@ final class Version20231129212759 extends AbstractMigration
 
         $this->addSql("
             ALTER TABLE `latitude`
+                DROP FOREIGN KEY IF EXISTS `latitude_ibfk_4`,
+                DROP KEY IF EXISTS `latitude_ibfk_4`,
+                DROP INDEX IF EXISTS `latitude_ibfk_4`,
                 DROP FOREIGN KEY IF EXISTS `latitude_ibfk_4`,
                 DROP COLUMN IF EXISTS `sensorID`;
         ");

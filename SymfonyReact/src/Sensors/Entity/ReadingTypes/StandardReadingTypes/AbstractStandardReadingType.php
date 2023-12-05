@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
+use App\Sensors\Entity\ReadingTypes\AbstractSensorReadingType;
 use App\Sensors\Entity\Sensor;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -25,25 +26,25 @@ use Doctrine\ORM\Mapping as ORM;
         Latitude::READING_TYPE => Latitude::class,
     ]
 )]
-abstract class AbstractStandardReadingType
+abstract class AbstractStandardReadingType extends AbstractSensorReadingType
 {
     protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
 
-    #[
-        ORM\Column(name: 'readingTypeID', type: "integer", nullable: false),
-        ORM\Id,
-        ORM\GeneratedValue(strategy: "IDENTITY"),
-    ]
-    protected int $readingTypeID;
+//    #[
+//        ORM\Column(name: 'readingTypeID', type: "integer", nullable: false),
+//        ORM\Id,
+//        ORM\GeneratedValue(strategy: "IDENTITY"),
+//    ]
+//    protected int $readingTypeID;
 
-//    #[ORM\Column(name: 'readingType', type: "string", nullable: false)]
+    #[ORM\Column(name: 'readingType', type: "string", nullable: false)]
     protected string $readingType;
 
-    #[
-        ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
-    ]
-    private Sensor $sensor;
+//    #[
+//        ORM\ManyToOne(targetEntity: Sensor::class),
+//        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+//    ]
+//    private Sensor $sensor;
 
     #[ORM\Column(name: 'currentReading', type: "float", precision: 10, scale: 0, nullable: false)]
     protected float $currentReading;
@@ -58,19 +59,19 @@ abstract class AbstractStandardReadingType
     #[Assert\Type("bool")]
     protected bool $constRecord = false;
 
-    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false,
-//        options: ["default" => "current_timestamp()"]
-)
-    ]
-
-    #[Assert\NotBlank(message: 'date time name should not be blank')]
-    protected DateTimeInterface $updatedAt;
-
-    #[ORM\Column(name: 'createdAt', type: "datetime", nullable: false,
-//        options: ["default" => "current_timestamp()"]
-    )]
-    #[Assert\NotBlank(message: 'createdAt time name should not be blank')]
-    protected DateTimeInterface $createdAt;
+//    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false,
+////        options: ["default" => "current_timestamp()"]
+//)
+//    ]
+//
+//    #[Assert\NotBlank(message: 'date time name should not be blank')]
+//    protected DateTimeInterface $updatedAt;
+//
+//    #[ORM\Column(name: 'createdAt', type: "datetime", nullable: false,
+////        options: ["default" => "current_timestamp()"]
+//    )]
+//    #[Assert\NotBlank(message: 'createdAt time name should not be blank')]
+//    protected DateTimeInterface $createdAt;
 
     public function __construct()
     {

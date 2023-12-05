@@ -2,9 +2,8 @@
 
 namespace App\Sensors\Entity\ReadingTypes\BoolReadingTypes;
 
+use App\Sensors\Entity\ReadingTypes\AbstractSensorReadingType;
 use App\Sensors\Entity\Sensor;
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\ORM\Mapping\Entity;
@@ -16,14 +15,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'boolsensor')]
 #[DiscriminatorColumn(name: 'boolReadingType', type: 'string')]
 #[DiscriminatorMap(['relay' => Relay::class, 'motion' => Motion::class])]
-abstract class AbstractBoolReadingSensor implements BoolReadingSensorInterface
+abstract class AbstractBoolReadingSensor extends AbstractSensorReadingType implements BoolReadingSensorInterface
 {
-    #[
-        ORM\Column(name: "boolID", type: "integer", nullable: false),
-        ORM\Id,
-        ORM\GeneratedValue(strategy: "IDENTITY"),
-    ]
-    protected int $boolID;
+//    #[
+//        ORM\Column(name: "boolID", type: "integer", nullable: false),
+//        ORM\Id,
+//        ORM\GeneratedValue(strategy: "IDENTITY"),
+//    ]
+//    protected int $boolID;
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
@@ -43,11 +42,11 @@ abstract class AbstractBoolReadingSensor implements BoolReadingSensorInterface
 //    #[ORM\Column(name: "boolReadingType", type: "string", nullable: false)]
 //    protected string $boolReadingType;
 
-    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false)]
-    protected DateTimeInterface $createdAt;
-
-    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false)]
-    protected DateTimeInterface $updatedAt;
+//    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false)]
+//    protected DateTimeInterface $createdAt;
+//
+//    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false)]
+//    protected DateTimeInterface $updatedAt;
 
     protected bool $constRecord = false;
 
@@ -106,25 +105,25 @@ abstract class AbstractBoolReadingSensor implements BoolReadingSensorInterface
 //        $this->boolReadingType = $boolReadingType;
 //    }
 
-    public function getCreatedAt(): DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeInterface $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    public function getUpdatedAt(): DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(): void
-    {
-        $this->updatedAt = new DateTimeImmutable('now');
-    }
+//    public function getCreatedAt(): DateTimeInterface
+//    {
+//        return $this->createdAt;
+//    }
+//
+//    public function setCreatedAt(DateTimeInterface $createdAt): void
+//    {
+//        $this->createdAt = $createdAt;
+//    }
+//
+//    public function getUpdatedAt(): DateTimeInterface
+//    {
+//        return $this->updatedAt;
+//    }
+//
+//    public function setUpdatedAt(): void
+//    {
+//        $this->updatedAt = new DateTimeImmutable('now');
+//    }
 
     public function getConstRecord(): bool
     {
