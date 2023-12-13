@@ -3,6 +3,8 @@
 namespace App\ORM\DataFixtures\ESP8266;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
@@ -123,15 +125,25 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public const MOTION_SENSOR_NAME = 'AdDev1Motion';
 
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT = 'AdminUserOneDeviceAdminGroupOneDht';
+
+    public const ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT = 'AdminUserOneDeviceRegularGroupTwoDht';
+
+    public const REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY = 'RegularUserTwoDeviceAdminGroupOneRelay';
+
+    public const ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS = 'AdminUserTwoDeviceAdminGroupTwoDallas';
+
+    //AdminUserOneDeviceAdminGroupOneRelay
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY = 'AdminUserOneDeviceAdminGroupOneRelay';
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
-        'AdminUserOneDeviceAdminGroupOneDht' => [
+        self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => self::DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
         ],
-        'AdminUserOneDeviceRegularGroupTwoDht' => [
+        self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => 'AdminDevice2Dht',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
@@ -176,7 +188,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 2,
         ],
 
-        'AdminUserTwoDeviceAdminGroupTwoDallas' => [
+        self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
             'sensorName' => 'AdminDevice3Dallas',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
@@ -288,7 +300,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 4,
         ],
 
-        'AdminUserOneDeviceAdminGroupOneRelay' => [
+        self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => self::RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
@@ -323,7 +335,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 5,
         ],
 
-        'RegularUserTwoDeviceAdminGroupOneRelay' => [
+        self::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
             'sensorName' => 'UsDev3Relay',
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
@@ -579,23 +591,25 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        foreach (self::PERMISSION_CHECK_SENSORS as $sensorDetails) {
-            $minueteInterval = random_int(0, 59);
-            $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minueteInterval . 'M'));
-                $sensor = new Sensor();
+        foreach (self::PERMISSION_CHECK_SENSORS as $ref => $sensorDetails) {
+            $minuteInterval = random_int(0, 59);
+            $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minuteInterval . 'M'));
+            $sensor = new Sensor();
             $sensor->setDevice($this->getReference($sensorDetails['device']['referenceName']));
             $sensor->setSensorName($sensorDetails['sensorName']);
             $sensor->setSensorTypeID($this->getReference($sensorDetails['sensors']['alias']));
             $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
             $sensor->setPinNumber($sensorDetails['pinNumber']);
-            $sensor->setCreatedAt($createdAt);
+//            $sensor->setCreatedAt($createdAt);
             $this->addReference($sensorDetails['sensorName'], $sensor);
             $manager->persist($sensor);
 
             $newSensorType = new $sensorDetails['sensors']['object']();
 
-            foreach ($sensorDetails['sensors']['readingTypes'] as $readingType) {
+            foreach ($sensorDetails['sensors']['readingTypes'] as $key => $readingType) {
+//                dd($key, $readingType);
                 $this->setSensorObjects(
+                    $ref,
                     $readingType,
                     $sensor,
                     $newSensorType,
@@ -615,59 +629,87 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
      * @throws Exception
      */
     private function setSensorObjects(
+        string $refName,
         string $readingTypeObjects,
         Sensor $newSensor,
         SensorTypeInterface $newSensorType,
         ObjectManager $manager
     ): void {
-        $newObject = new $readingTypeObjects();
+        try {
+            $newObject = new $readingTypeObjects();
+            if ($newObject instanceof BaseReadingTypeInterface) {
+                $baseReadingType = new BaseSensorReadingType();
+                $manager->persist($baseReadingType);
+                $manager->flush();
 
-        if ($newObject instanceof AllSensorReadingTypeInterface) {
-            $newObject->setSensor($newSensor);
-            $newSensorType->setSensor($newSensor);
-            $newObject->setUpdatedAt();
-            $newObject->setCreatedAt(new DateTimeImmutable('now'));
+                $newObject->setBaseReadingType($baseReadingType);
+            }
+
+
+            if ($newObject instanceof AllSensorReadingTypeInterface) {
+                $newObject->setSensor($newSensor);
+                $newSensorType->setSensor($newSensor);
+                $newObject->setUpdatedAt();
+            }
+
+            if ($newObject instanceof StandardReadingSensorInterface) {
+                if ($newSensorType instanceof StandardSensorTypeInterface) {
+                    if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
+                        $newObject->setCurrentReading($newSensorType->getMinTemperature());
+                        $newObject->setLowReading($newSensorType->getMinTemperature());
+                        $newObject->setHighReading($newSensorType->getMaxTemperature());
+//                    $newSensorType->setTemperature($newObject);
+                    }
+                    if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
+                        $newObject->setCurrentReading($newSensorType->getMinHumidity());
+                        $newObject->setLowReading($newSensorType->getMinHumidity());
+                        $newObject->setHighReading($newSensorType->getMaxHumidity());
+//                    $newSensorType->setHumidObject($newObject);
+                    }
+                    if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
+                        $newObject->setCurrentReading($newSensorType->getMinLatitude());
+                        $newObject->setLowReading($newSensorType->getMinLatitude());
+                        $newObject->setHighReading($newSensorType->getMaxLatitude());
+//                    $newSensorType->setLatitudeObject($newObject);
+                    }
+                    if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
+                        $newObject->setCurrentReading($newSensorType->getMinAnalog());
+                        $newObject->setLowReading($newSensorType->getMinAnalog());
+                        $newObject->setHighReading($newSensorType->getMaxAnalog());
+//                    $newSensorType->setAnalogObject($newObject);
+                    }
+                }
+            } elseif ($newObject instanceof BoolReadingSensorInterface) {
+                $newObject->setCurrentReading(true);
+                $newObject->setExpectedReading(true);
+                $newObject->setCurrentReading(true);
+                $newObject->setRequestedReading(true);
+//            $newObject->setCreatedAt(new DateTimeImmutable('now'));
+                $newObject->setUpdatedAt();
+                if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
+//                $newSensorType->setMotion($newObject);
+//                $manager->persist($newSensorType);
+                }
+                if ($newSensorType instanceof RelayReadingTypeInterface) {
+//                $newSensorType->setRelay($newObject);
+//                $manager->persist($newSensorType);
+                }
+            } else {
+                throw new Exception('Sensor type not found');
+            }
+
+//            if ($newObject->getUpdatedAt() === null) {
+//                dd($newObject, $newSensorType);
+//                dd($newObject, $newSensorType);
+//            }
+        } catch (Exception $e) {
+            dd($e, $newObject, $newSensorType, $newSensor);
         }
 
-        if ($newObject instanceof StandardReadingSensorInterface) {
-            if ($newSensorType instanceof StandardSensorTypeInterface) {
-                if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
-                    $newObject->setCurrentReading($newSensorType->getMinTemperature());
-                    $newSensorType->setTemperature($newObject);
-                }
-                if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
-                    $newObject->setCurrentReading($newSensorType->getMinHumidity());
-                    $newSensorType->setHumidObject($newObject);
-                }
-                if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
-                    $newObject->setCurrentReading($newSensorType->getMinLatitude());
-                    $newSensorType->setLatitudeObject($newObject);
-                }
-                if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
-                    $newObject->setCurrentReading($newSensorType->getMinAnalog());
-                    $newObject->setLowReading($newSensorType->getMinAnalog());
-                    $newObject->setHighReading($newSensorType->getMaxAnalog());
-                    $newSensorType->setAnalogObject($newObject);
-                }
-            }
-        } elseif ($newObject instanceof BoolReadingSensorInterface) {
-            $newObject->setCurrentReading(true);
-            $newObject->setExpectedReading(true);
-            $newObject->setCurrentReading(true);
-            $newObject->setRequestedReading(true);
-            $newObject->setCreatedAt(new DateTimeImmutable('now'));
-            $newObject->setUpdatedAt();
-            if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
-                $newSensorType->setMotion($newObject);
-                $manager->persist($newSensorType);
-            }
-            if ($newSensorType instanceof RelayReadingTypeInterface) {
-                $newSensorType->setRelay($newObject);
-            }
-        } else {
-            throw new Exception('Sensor type not found');
-        }
-        $manager->persist($newSensorType);
+//        dd($newSensorType, $readingTypeObjects);
+//        $this->setReference($refName, $newObject);
+        $this->setReference($refName, $baseReadingTypes);
+//        $manager->persist($newSensorType);
         $manager->persist($newObject);
     }
 }

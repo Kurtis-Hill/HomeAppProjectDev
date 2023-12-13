@@ -16,8 +16,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: BmpRepository::class),
-    ORM\Table(name: "bmp"),
+//    ORM\Entity(repositoryClass: BmpRepository::class),
+//    ORM\Table(name: "bmp"),
     ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
     ORM\UniqueConstraint(name: "latitudeID", columns: ["latitudeID"]),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),

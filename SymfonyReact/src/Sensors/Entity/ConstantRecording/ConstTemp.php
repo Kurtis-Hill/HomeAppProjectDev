@@ -19,9 +19,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordTempRepository::class),
-    ORM\Table(name: "consttemp"),
-//    ORM\Index(columns: ["sensorID"], name: "consttemp_ibfk_1"),
+//    ORM\Entity(repositoryClass: ConstantlyRecordTempRepository::class),
+//    ORM\Table(name: "consttemp"),
+    ORM\Index(columns: ["sensorID"], name: "consttemp_ibfk_1"),
 ]
 class ConstTemp implements ConstantlyRecordEntityInterface
 {

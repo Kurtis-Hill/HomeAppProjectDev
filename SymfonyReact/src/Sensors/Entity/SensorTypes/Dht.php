@@ -14,8 +14,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: DhtRepository::class),
-    ORM\Table(name: "dht"),
+//    ORM\Entity(repositoryClass: DhtRepository::class),
+//    ORM\Table(name: "dht"),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),

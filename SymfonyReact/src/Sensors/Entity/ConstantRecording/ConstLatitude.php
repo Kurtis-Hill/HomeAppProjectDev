@@ -12,9 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordLatitudeRepository::class),
-    ORM\Table(name: "constlatitude"),
-//    ORM\Index(columns: ["latitudeID"], name: "latitudeID"),
+//    ORM\Entity(repositoryClass: ConstantlyRecordLatitudeRepository::class),
+//    ORM\Table(name: "constlatitude"),
+    ORM\Index(columns: ["latitudeID"], name: "latitudeID"),
 ]
 class ConstLatitude implements ConstantlyRecordEntityInterface
 {

@@ -39,7 +39,7 @@ final class Version20230926193013 extends AbstractMigration
         );
 
         $this->addSql(
-            'CREATE TABLE `triggerType` (
+            'CREATE TABLE `triggertype` (
                 `triggerTypeID` INT NOT NULL AUTO_INCREMENT,
                 `triggerTypeName` VARCHAR(255) NOT NULL,
                 `triggerTypeDescription` VARCHAR(255) NOT NULL,
@@ -49,7 +49,7 @@ final class Version20230926193013 extends AbstractMigration
         );
 
         $this->addSql(
-            'INSERT INTO `triggerType` (`triggerTypeID`, `triggerTypeName`, `triggerTypeDescription`) VALUES
+            'INSERT INTO `triggertype` (`triggerTypeID`, `triggerTypeName`, `triggerTypeDescription`) VALUES
                 (1, \'Email\', \'Send an email\'),
                 (2, \'Relay Up\', \'Turn relay on\'),
                 (3, \'Relay Down\', \'Turn relay off\')'
@@ -59,8 +59,8 @@ final class Version20230926193013 extends AbstractMigration
             'CREATE TABLE `sensortrigger` 
                 (
                     `sensorTriggerID` INT NOT NULL AUTO_INCREMENT,
-                    `sensorID` INT NOT NULL,
-                    `sensorToTriggerID` INT NOT NULL,
+                    `baseReadingTypeThatTriggers` INT NOT NULL,
+                    `baseReadingTypeToTriggerID` INT NOT NULL,
                     `triggerTypeID` INT NOT NULL,
                     `valueThatTriggers` VARCHAR(255) NOT NULL,                
                     `operatorID` INT NOT NULL,                    
@@ -76,23 +76,27 @@ final class Version20230926193013 extends AbstractMigration
                     `sunday` BOOLEAN DEFAULT TRUE,  
                     `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    PRIMARY KEY (`sensorTriggerID`),
-                    INDEX `IDX_1F9B6F4F8D93D649` (`sensorID`),
-                    INDEX `IDX_1F9B6F4F8D93D6492` (`sensorToTriggerID`),
-                    INDEX `IDX_1F9B6F4F8D93D6493` (`operatorID`),
-                    CONSTRAINT `FK_1F9B6F4F8D93D649` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                    CONSTRAINT `FK_1F9B6F4F8D93D6492` FOREIGN KEY (`sensorToTriggerID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                    CONSTRAINT `FK_1F9B6F4F8D93D6493` FOREIGN KEY (`triggerTypeID`) REFERENCES `triggerType` (`triggerTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                    CONSTRAINT `FK_1F9B6F4F8D93D6494` FOREIGN KEY (`operatorID`) REFERENCES `operators` (`operatorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                    CONSTRAINT `FK_1F9B6F4F8D93D6495` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
-                )'
-        );
+                    PRIMARY KEY (`sensorTriggerID`)
+                )
+                DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
+        ');
+
+        $this->addSql("
+            ALTER TABLE `sensortrigger`
+                ADD CONSTRAINT `FK_1F9B6F4F8D93D6494` FOREIGN KEY (`operatorID`) REFERENCES `operators` (`operatorID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `FK_1F9B6F4F8D93D6495` FOREIGN KEY (`triggerTypeID`) REFERENCES `triggertype` (`triggerTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `FK_1F9B6F4F8D93D6498` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `FK_1F9B6F4F8D93D6497` FOREIGN KEY (baseReadingTypeToTriggerID) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                ADD CONSTRAINT `FK_1F9B6F4F8D93D6496` FOREIGN KEY (`baseReadingTypeThatTriggers`) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+        ");
+
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE `sensortrigger`');
-        $this->addSql('DROP TABLE `triggerType`');
+        $this->addSql('DROP TABLE `triggertype`');
         $this->addSql('DROP TABLE `operators`');
     }
 }

@@ -12,8 +12,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: GenericMotionRepository::class),
-    ORM\Table(name: "genericmotion"),
+//    ORM\Entity(repositoryClass: GenericMotionRepository::class),
+//    ORM\Table(name: "genericmotion"),
     ORM\UniqueConstraint(name: "UNIQ_GENERIC_MOTION", columns: ["sensorID"]),
 ]
 class GenericMotion implements SensorTypeInterface, MotionSensorReadingTypeInterface, BoolSensorTypeInterface

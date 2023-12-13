@@ -19,8 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: OutOfBoundsTempRepository::class),
-    ORM\Table(name: "outofrangetemp"),
+//    ORM\Entity(repositoryClass: OutOfBoundsTempRepository::class),
+//    ORM\Table(name: "outofrangetemp"),
     ORM\Index(columns: ["tempID"], name: "outofrangetemp_ibfk_1"),
 ]
 class OutOfRangeTemp implements OutOfBoundsEntityInterface

@@ -12,8 +12,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: LDRRepository::class),
-    ORM\Table(name: 'ldr'),
+//    ORM\Entity(repositoryClass: LDRRepository::class),
+//    ORM\Table(name: 'ldr'),
     ORM\UniqueConstraint(name: 'analogID', columns: ['analogID']),
     ORM\UniqueConstraint(name: 'sensorID', columns: ['sensorID']),
 ]

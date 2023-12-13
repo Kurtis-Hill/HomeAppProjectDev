@@ -17,9 +17,8 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
     private const FIXTURE_ORDER = 11;
 
     private const SENSOR_TRIGGER_1 = [
-//        'sensor-trigger-1' => [
-        'sensorID' => SensorFixtures::DHT_SENSOR_NAME,
-        'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT,
+        'baseReadingTypeToTriggerID' => SensorFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY,
         'valueThatTriggers' => 20,
         'startTime' => 2100,
         'endTime' => 2200,
@@ -34,12 +33,12 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         'operatorID' => OperatorsFixtures::EQUALS,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
         'createdAt' => '2021-09-26 19:30:00',
-//        ],
     ];
 
     private const SENSOR_TRIGGER_2 = [
         'sensorID' => SensorFixtures::DALLAS_SENSOR_NAME,
-        'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT,
+        'baseReadingTypeToTriggerID' => SensorFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY,
         'triggerType' => TriggerTypeFixtures::RELAY_DOWN,
         'valueThatTriggers' => 14,
         'startTime' => 800,
@@ -58,7 +57,8 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
 
     private const SENSOR_TRIGGER_3 = [
         'sensorID' => SensorFixtures::BMP_SENSOR_NAME,
-        'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
         'valueThatTriggers' => 25,
         'startTime' => null,
         'endTime' => null,
@@ -77,6 +77,8 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
 
     private const SENSOR_TRIGGER_4 = [
         'sensorID' => SensorFixtures::MOTION_SENSOR_NAME,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
         'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
         'valueThatTriggers' => false,
         'startTime' => 900,
@@ -96,7 +98,8 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
 
     private const SENSOR_TRIGGER_5 = [
         'sensorID' => SensorFixtures::DALLAS_SENSOR_NAME,
-        'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
         'triggerType' => TriggerTypeFixtures::RELAY_UP,
         'valueThatTriggers' => 14,
         'startTime' => 800,
@@ -116,7 +119,8 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
     private const SENSOR_TRIGGER_6 = [
         'sensorID' => SensorFixtures::SOIL_SENSOR_NAME,
         'triggerType' => TriggerTypeFixtures::RELAY_UP,
-        'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
         'valueThatTriggers' => 2542,
         'monday' => true,
         'tuesday' => true,
@@ -150,8 +154,9 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
     {
         foreach (self::SENSOR_TRIGGERS as $sensorTrigger) {
             $sensorTriggerEntity = new SensorTrigger();
-            $sensorTriggerEntity->setSensor($this->getReference($sensorTrigger['sensorID']));
-            $sensorTriggerEntity->setSensorToTrigger($this->getReference($sensorTrigger['sensorToTriggerID']));
+//            dd($this->getReference($sensorTrigger['sensorID']));
+            $sensorTriggerEntity->setBaseReadingTypeThatTriggers($this->getReference($sensorTrigger['baseReadingTypeThatTriggers']));
+            $sensorTriggerEntity->setBaseReadingTypeToTriggerID($this->getReference($sensorTrigger['baseReadingTypeToTriggerID']));
             $sensorTriggerEntity->setTriggerType($this->getReference($sensorTrigger['triggerType']));
             $sensorTriggerEntity->setValueThatTriggers(SensorTriggerUserInputToStringConvertor::convertMixedToString($sensorTrigger['valueThatTriggers']));
             $sensorTriggerEntity->setOperator($this->getReference($sensorTrigger['operatorID']));

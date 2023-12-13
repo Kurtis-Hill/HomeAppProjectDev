@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: OutOfBoundsHumidityRepository::class),
-    ORM\Table(name: "outofrangehumid"),
+//    ORM\Entity(repositoryClass: OutOfBoundsHumidityRepository::class),
+//    ORM\Table(name: "outofrangehumid"),
     ORM\Index(columns: ["humidID"], name: "humidID"),
 ]
 class OutOfRangeHumid implements OutOfBoundsEntityInterface

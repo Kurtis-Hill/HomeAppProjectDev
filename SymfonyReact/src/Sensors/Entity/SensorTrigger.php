@@ -4,6 +4,7 @@ namespace App\Sensors\Entity;
 
 use App\Common\Entity\Operator;
 use App\Common\Entity\TriggerType;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Repository\SensorTriggerRepository;
 use App\User\Entity\User;
 use DateTimeImmutable;
@@ -29,16 +30,16 @@ class SensorTrigger
     private int $sensorTriggerID;
 
     #[
-        ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+        ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
+        ORM\JoinColumn(name: "baseReadingTypeThatTriggers", referencedColumnName: "baseReadingTypeID"),
     ]
-    private Sensor $sensor;
+    private BaseSensorReadingType $baseReadingTypeThatTriggers;
 
     #[
-        ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorToTriggerID", referencedColumnName: "sensorID"),
+        ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
+        ORM\JoinColumn(name: "baseReadingTypeToTriggerID", referencedColumnName: "baseReadingTypeID"),
     ]
-    private Sensor $sensorToTrigger;
+    private BaseSensorReadingType $baseReadingTypeToTriggerID;
 
     #[
         ORM\Column(name: "valueThatTriggers", type: "string", length: 255, nullable: false),
@@ -149,24 +150,24 @@ class SensorTrigger
         return $this->sensorTriggerID;
     }
 
-    public function getSensor(): Sensor
+    public function getBaseReadingTypeThatTriggers(): BaseSensorReadingType
     {
-        return $this->sensor;
+        return $this->baseReadingTypeThatTriggers;
     }
 
-    public function setSensor(Sensor $sensor): void
+    public function setBaseReadingTypeThatTriggers(BaseSensorReadingType $baseReadingTypeThatTriggers): void
     {
-        $this->sensor = $sensor;
+        $this->baseReadingTypeThatTriggers = $baseReadingTypeThatTriggers;
     }
 
-    public function getSensorToTrigger(): Sensor
+    public function getBaseReadingTypeToTriggerID(): BaseSensorReadingType
     {
-        return $this->sensorToTrigger;
+        return $this->baseReadingTypeToTriggerID;
     }
 
-    public function setSensorToTrigger(Sensor $sensorToTrigger): void
+    public function setBaseReadingTypeToTriggerID(BaseSensorReadingType $baseReadingTypeToTriggerID): void
     {
-        $this->sensorToTrigger = $sensorToTrigger;
+        $this->baseReadingTypeToTriggerID = $baseReadingTypeToTriggerID;
     }
 
     public function getValueThatTriggers(): string

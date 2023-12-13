@@ -35,7 +35,7 @@ interface BoolReadingSensorInterface
 
     public function getUpdatedAt(): DateTimeInterface;
 
-    public function setUpdatedAt();
+    public function setUpdatedAt(): void;
 
     public function getConstRecord(): bool;
 

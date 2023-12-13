@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: TriggerTypeRepository::class),
-    ORM\Table(name: "triggerType"),
+    ORM\Table(name: "triggertype"),
     ORM\UniqueConstraint(name: "triggerTypeName", columns: ["triggerTypeName"]),
 ]
 class TriggerType

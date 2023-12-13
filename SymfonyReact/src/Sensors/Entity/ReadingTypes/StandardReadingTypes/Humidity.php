@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: HumidityRepository::class),
-    ORM\Table(name: "humidity"),
+//    ORM\Table(name: "humidity"),
 //    ORM\UniqueConstraint(name: "humid_ibfk_1", columns: ["sensorID"]),
 ]
 class Humidity extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
@@ -63,13 +63,13 @@ class Humidity extends AbstractStandardReadingType implements StandardReadingSen
 
     public function getSensorID(): int
     {
-        return $this->readingTypeID;
+        return $this->getReadingTypeID();
     }
 //
-    public function setSensorID(int $id): void
-    {
-        $this->readingTypeID = $id;
-    }
+//    public function setSensorID(int $id): void
+//    {
+//        $this->readingTypeID = $id;
+//    }
 //
 //    public function getSensor(): Sensor
 //    {
@@ -120,10 +120,10 @@ class Humidity extends AbstractStandardReadingType implements StandardReadingSen
         }
     }
 
-//    public function setUpdatedAt(): void
-//    {
-//        $this->updatedAt = new DateTimeImmutable('now');
-//    }
+    public function setUpdatedAt(): void
+    {
+//        $this->getUpdatedAt() = new DateTimeImmutable('now');
+    }
 
 //    public function getConstRecord(): bool
 //    {

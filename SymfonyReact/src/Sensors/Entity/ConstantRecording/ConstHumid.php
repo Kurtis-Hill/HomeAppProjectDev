@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordHumidRepository::class),
-    ORM\Table(name: "consthumid"),
+//    ORM\Entity(repositoryClass: ConstantlyRecordHumidRepository::class),
+//    ORM\Table(name: "consthumid"),
     ORM\Index(columns: ["humidID"], name: "humidID"),
 ]
 class ConstHumid implements ConstantlyRecordEntityInterface

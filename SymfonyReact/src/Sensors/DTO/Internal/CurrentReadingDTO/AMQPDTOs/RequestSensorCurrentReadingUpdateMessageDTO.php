@@ -9,7 +9,7 @@ use JetBrains\PhpStorm\Immutable;
 readonly class RequestSensorCurrentReadingUpdateMessageDTO
 {
     public function __construct(
-        private  int $sensorID,
+        private int $sensorID,
         private BoolCurrentReadingUpdateDTO $readingTypeCurrentReadingDTO,
     ) {}
 

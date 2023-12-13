@@ -15,8 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: OutOfBoundsAnalogRepository::class),
-    ORM\Table(name: "outofrangeanalog"),
+//    ORM\Entity(repositoryClass: OutOfBoundsAnalogRepository::class),
+//    ORM\Table(name: "outofrangeanalog"),
     ORM\Index(columns: ["analogID"], name: "analogID"),
 ]
 class OutOfRangeAnalog implements OutOfBoundsEntityInterface

@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[
     ORM\Entity(repositoryClass: TemperatureRepository::class),
-    ORM\Table(name: "temperature"),
+//    ORM\Table(name: "temperature"),
 //    ORM\UniqueConstraint(name: "temp_ibfk_1", columns: ["sensorID"]),
 ]
 class Temperature extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
@@ -107,12 +107,7 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
 
     public function getSensorID(): int
     {
-        return $this->readingTypeID;
-    }
-
-    public function setSensorID(int $id): void
-    {
-        $this->readingType = $id;
+        return $this->getReadingTypeID();
     }
 
 //    public function getSensor(): Sensor
@@ -144,11 +139,6 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
 //        return $this->lowReading;
 //    }
 //
-//    public function getUpdatedAt(): DateTimeInterface
-//    {
-//        return $this->updatedAt;
-//    }
-
 //    public function setCurrentReading(int|float|string|bool $reading): void
 //    {
 //        $this->currentReading = $reading;

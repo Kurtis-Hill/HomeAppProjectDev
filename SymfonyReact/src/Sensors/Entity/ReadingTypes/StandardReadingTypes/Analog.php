@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[
     ORM\Entity(repositoryClass: AnalogRepository::class),
-    ORM\Table(name: "analog"),
+//    ORM\Table(name: "analog"),
 //    ORM\UniqueConstraint(name: "analog_ibfk_3", columns: ["sensorID"]),
 ]
 class Analog extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
@@ -43,7 +43,7 @@ class Analog extends AbstractStandardReadingType implements StandardReadingSenso
         SoilConstraint(groups: [Soil::NAME]),
         LDRConstraint(groups: [LDR::NAME])
     ]
-    protected float $highReading;
+    protected float $highReading = 1000;
 
 //    #[ORM\Column(name: "lowAnalog", type: "float", precision: 10, scale: 0, nullable: true, options: ["default" => "1000"])]
     #[
@@ -68,13 +68,13 @@ class Analog extends AbstractStandardReadingType implements StandardReadingSenso
 
     public function getSensorID(): int
     {
-        return $this->readingTypeID;
+        return $this->getReadingTypeID();
     }
 
-    public function setSensorID(int $analogid): void
-    {
-        $this->readingTypeID = $analogid;
-    }
+//    public function setSensorID(int $analogid): void
+//    {
+//        $this->setReadingTypeID($analogid);
+//    }
 
 //    public function getSensor(): Sensor
 //    {

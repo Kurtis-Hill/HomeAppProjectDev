@@ -10,10 +10,10 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-#[
-    ORM\Entity(repositoryClass: OutOfBoundsLatitudeRepository::class),
-    ORM\Table(name: "outofrangelatitude"),
-]
+//#[
+//    ORM\Entity(repositoryClass: OutOfBoundsLatitudeRepository::class),
+//    ORM\Table(name: "outofrangelatitude"),
+//]
 class OutOfRangeLatitude implements OutOfBoundsEntityInterface
 {
     #[

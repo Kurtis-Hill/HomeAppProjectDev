@@ -12,8 +12,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: DallasRepository::class),
-    ORM\Table(name: "dallas"),
+//    ORM\Entity(repositoryClass: DallasRepository::class),
+//    ORM\Table(name: "dallas"),
     ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]

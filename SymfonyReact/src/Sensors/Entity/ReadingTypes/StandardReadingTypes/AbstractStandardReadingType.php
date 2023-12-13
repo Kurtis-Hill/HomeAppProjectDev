@@ -2,7 +2,8 @@
 
 namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\AbstractSensorReadingType;
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -15,9 +16,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[Entity]
-#[ORM\Table(name: "standardReadingType")]
-#[InheritanceType('JOINED')]
-#[DiscriminatorColumn(name: 'readingType', type: 'string')]
+#[ORM\Table(name: "standardreadingtype")]
+#[InheritanceType('SINGLE_TABLE')]
+#[DiscriminatorColumn(name: 'standardReadingType', type: 'string')]
 #[DiscriminatorMap(
     [
         Temperature::READING_TYPE => Temperature::class,
@@ -26,43 +27,44 @@ use Doctrine\ORM\Mapping as ORM;
         Latitude::READING_TYPE => Latitude::class,
     ]
 )]
-abstract class AbstractStandardReadingType extends AbstractSensorReadingType
+abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, StandardReadingSensorInterface
 {
     protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
 
-//    #[
-//        ORM\Column(name: 'readingTypeID', type: "integer", nullable: false),
-//        ORM\Id,
-//        ORM\GeneratedValue(strategy: "IDENTITY"),
-//    ]
-//    protected int $readingTypeID;
+    #[
+        ORM\Column(name: 'readingTypeID', type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
+    private int $readingTypeID;
 
-    #[ORM\Column(name: 'readingType', type: "string", nullable: false)]
-    protected string $readingType;
+    #[
+        ORM\OneToOne(targetEntity: BaseSensorReadingType::class),
+        ORM\JoinColumn(name: "baseReadingTypeID", referencedColumnName: "baseReadingTypeID"),
+    ]
+    private BaseSensorReadingType $baseReadingType;
 
-//    #[
-//        ORM\ManyToOne(targetEntity: Sensor::class),
-//        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
-//    ]
-//    private Sensor $sensor;
+    #[
+        ORM\ManyToOne(targetEntity: Sensor::class),
+        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+    ]
+    private Sensor $sensor;
 
     #[ORM\Column(name: 'currentReading', type: "float", precision: 10, scale: 0, nullable: false)]
-    protected float $currentReading;
+    private float $currentReading;
 
     #[ORM\Column(name: 'highReading', type: "float", precision: 10, scale: 0, nullable: false)]
-    protected float $highReading;
+    private float $highReading = 0;
 
     #[ORM\Column(name: 'lowReading', type: "float", precision: 10, scale: 0, nullable: false)]
-    protected float $lowReading;
+    private float $lowReading = 0;
 
     #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false, options: ["default" => "0"])]
     #[Assert\Type("bool")]
-    protected bool $constRecord = false;
+    private bool $constRecord = false;
 
-//    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false,
-////        options: ["default" => "current_timestamp()"]
-//)
-//    ]
+    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false)]
+    private DateTimeInterface $updatedAt;
 //
 //    #[Assert\NotBlank(message: 'date time name should not be blank')]
 //    protected DateTimeInterface $updatedAt;
@@ -75,7 +77,19 @@ abstract class AbstractStandardReadingType extends AbstractSensorReadingType
 
     public function __construct()
     {
-        $this->setCreatedAt(new DateTimeImmutable('now'));
+        $this->updatedAt = new DateTimeImmutable('now');
+        $this->setUpdatedAt();
+//        $this->setCreatedAt(new DateTimeImmutable('now'));
+    }
+
+    public function getBaseReadingType(): BaseSensorReadingType
+    {
+        return $this->baseReadingType;
+    }
+
+    public function setBaseReadingType(BaseSensorReadingType $readingType): void
+    {
+        $this->baseReadingType = $readingType;
     }
 
     public function getReadingTypeID(): int
@@ -140,6 +154,10 @@ abstract class AbstractStandardReadingType extends AbstractSensorReadingType
 
     public function getUpdatedAt(): DateTimeInterface
     {
+        $this->updatedAt = new DateTimeImmutable('now');
+//        if (!$this->updatedAt) {
+//            dd($this->setUpdatedAt());
+//        }
         return $this->updatedAt;
     }
 
@@ -148,15 +166,27 @@ abstract class AbstractStandardReadingType extends AbstractSensorReadingType
         $this->updatedAt = new DateTimeImmutable('now');
     }
 
-    public function getCreatedAt(): DateTimeInterface
-    {
-        return $this->createdAt;
-    }
+//    public function getCreatedAt(): DateTimeInterface
+//    {
+//        return $this->createdAt;
+//    }
+//
+//    public function setCreatedAt(DateTimeInterface $createdAt): void
+//    {
+//        $this->createdAt = $createdAt;
+//    }
 
-    public function setCreatedAt(DateTimeInterface $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
+//    public function getUpdatedAt(): DateTimeInterface
+//    {
+//        return $this->updatedAt;
+//    }
+//
+//    public function setUpdatedAt(): void
+//    {
+//        $this->updatedAt = new DateTimeImmutable('now');
+//    }
+
+
 
     public function isReadingOutOfBounds(): bool
     {

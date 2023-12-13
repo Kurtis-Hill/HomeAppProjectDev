@@ -15,8 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: ConstantlyRecordAnalogRepository::class),
-    ORM\Table(name: "constanalog"),
+//    ORM\Entity(repositoryClass: ConstantlyRecordAnalogRepository::class),
+//    ORM\Table(name: "constanalog"),
     ORM\Index(columns: ["analogID"], name: "analogID"),
 ]
 

@@ -12,8 +12,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: SoilRepository::class),
-    ORM\Table(name: "soil"),
+//    ORM\Entity(repositoryClass: SoilRepository::class),
+//    ORM\Table(name: "soil"),
     ORM\UniqueConstraint(name: "analogID", columns: ["analogID"]),
     ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
 ]

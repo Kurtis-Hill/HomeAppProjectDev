@@ -2,8 +2,11 @@
 
 namespace App\Sensors\Entity\ReadingTypes\BoolReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\AbstractSensorReadingType;
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\ORM\Mapping\Entity;
@@ -12,32 +15,43 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[Entity]
 #[InheritanceType('SINGLE_TABLE')]
-#[ORM\Table(name: 'boolsensor')]
+#[ORM\Table(name: 'boolreadingtype')]
 #[DiscriminatorColumn(name: 'boolReadingType', type: 'string')]
-#[DiscriminatorMap(['relay' => Relay::class, 'motion' => Motion::class])]
-abstract class AbstractBoolReadingSensor extends AbstractSensorReadingType implements BoolReadingSensorInterface
+#[DiscriminatorMap(
+    [
+        'relay' => Relay::class,
+        'motion' => Motion::class
+    ]
+)]
+abstract class AbstractBoolReadingBaseSensor implements BoolReadingSensorInterface, BaseReadingTypeInterface
 {
-//    #[
-//        ORM\Column(name: "boolID", type: "integer", nullable: false),
-//        ORM\Id,
-//        ORM\GeneratedValue(strategy: "IDENTITY"),
-//    ]
-//    protected int $boolID;
+    #[
+        ORM\Column(name: "readingTypeID", type: "integer", nullable: false),
+        ORM\Id,
+        ORM\GeneratedValue(strategy: "IDENTITY"),
+    ]
+    private int $boolID;
+
+    #[
+        ORM\OneToOne(targetEntity: BaseSensorReadingType::class),
+        ORM\JoinColumn(name: "baseReadingTypeID", referencedColumnName: "baseReadingTypeID"),
+    ]
+    private BaseSensorReadingType $baseReadingType;
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
         ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
     ]
-    protected Sensor $sensor;
+    private Sensor $sensor;
 
     #[ORM\Column(name: "currentReading", type: "boolean", nullable: false)]
-    protected bool $currentReading;
+    private bool $currentReading;
 
     #[ORM\Column(name: "requestedReading", type: "boolean", nullable: false)]
-    protected bool $requestedReading;
+    private bool $requestedReading;
 
     #[ORM\Column(name: "expectedReading", type: "boolean", nullable: true)]
-    protected ?bool $expectedReading;
+    private ?bool $expectedReading;
 
 //    #[ORM\Column(name: "boolReadingType", type: "string", nullable: false)]
 //    protected string $boolReadingType;
@@ -45,14 +59,31 @@ abstract class AbstractBoolReadingSensor extends AbstractSensorReadingType imple
 //    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false)]
 //    protected DateTimeInterface $createdAt;
 //
-//    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false)]
-//    protected DateTimeInterface $updatedAt;
+    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false)]
+    protected DateTimeInterface $updatedAt;
 
+    #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false)]
     protected bool $constRecord = false;
+
+    public function __construct()
+    {
+        $this->updatedAt = new DateTimeImmutable('now');
+        $this->setUpdatedAt();
+    }
 
     public function getBoolID(): int
     {
         return $this->boolID;
+    }
+
+    public function getBaseReadingType(): BaseSensorReadingType
+    {
+        return $this->baseReadingType;
+    }
+
+    public function setBaseReadingType(BaseSensorReadingType $baseReadingType): void
+    {
+        $this->baseReadingType = $baseReadingType;
     }
 
     public function getSensor(): Sensor
@@ -115,15 +146,15 @@ abstract class AbstractBoolReadingSensor extends AbstractSensorReadingType imple
 //        $this->createdAt = $createdAt;
 //    }
 //
-//    public function getUpdatedAt(): DateTimeInterface
-//    {
-//        return $this->updatedAt;
-//    }
-//
-//    public function setUpdatedAt(): void
-//    {
-//        $this->updatedAt = new DateTimeImmutable('now');
-//    }
+    public function getUpdatedAt(): DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(): void
+    {
+        $this->updatedAt = new DateTimeImmutable('now');
+    }
 
     public function getConstRecord(): bool
     {
