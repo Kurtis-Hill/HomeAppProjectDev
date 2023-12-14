@@ -7,7 +7,7 @@ use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
 use App\UserInterface\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\UserInterface\DTO\Internal\NewCard\NewCardOptionsDTO;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -133,13 +133,13 @@ class CardCreationHandler implements CardCreationHandlerInterface
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    private function generateRandomColourObject(): CardColour
+    private function generateRandomColourObject(): Colour
     {
         $maxColourNumber = $this->cardColourRepository->countAllColours();
         $firstColourId = $this->cardColourRepository->getFirstColourID()->getColourID();
         $randomColour = $this->cardColourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber + $firstColourId -1)]);
 
-        if (!$randomColour instanceof CardColour) {
+        if (!$randomColour instanceof Colour) {
             throw new CardColourException(CardColourException::FAILED_SETTING_RANDOM_COLOUR);
         }
 

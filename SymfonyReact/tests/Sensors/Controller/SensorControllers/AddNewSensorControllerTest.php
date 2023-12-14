@@ -17,7 +17,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\BoolSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -221,8 +221,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_new_sensor_correct_details(string $sensorType, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($this->device->getDeviceID());
 
@@ -271,7 +271,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
         self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
         self::assertEquals($responseData['payload']['readingInterval'], $sensor->getReadingInterval());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
@@ -287,8 +287,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_not_add_new_sensor_with_special_characters(string $sensorType, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
             'sensorName' => '&' . $sensorName,
@@ -325,8 +325,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_not_add_new_sensor_with_long_name(string $sensorType, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
             'sensorName' => 'TestingTestingTesti' . $sensorName,
@@ -360,8 +360,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_not_add_new_sensor_with_short_name(string $sensorType): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
             'sensorName' => 'T',
@@ -397,8 +397,8 @@ class AddNewSensorControllerTest extends WebTestCase
     {
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]['referenceName']]);
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['deviceID' => $device->getDeviceID()])[0];
 
@@ -439,8 +439,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorType, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         while (true) {
             $randomID = random_int(0, 1000000);
@@ -481,8 +481,8 @@ class AddNewSensorControllerTest extends WebTestCase
     {
         while (true) {
             $randomID = random_int(0, 1000000);
-            $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $randomID]);
-            if (!$sensorType instanceof SensorType) {
+            $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $randomID]);
+            if (!$sensorType instanceof AbstractSensorType) {
                 break;
             }
         }
@@ -520,8 +520,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_sensor_and_card_details_admin(string $sensorType, string $sensorName, string $class, array $sensors): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $formData = [
             'sensorName' => $sensorName,
@@ -567,7 +567,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
@@ -582,8 +582,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_sensor_and_card_details_admin_group_not_apart_of(string $sensorType, string $sensorName, string $class, array $sensors): void
     {
-        /** @var SensorType $sensorTypeMappingObject */
-        $sensorTypeMappingObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorTypeMappingObject */
+        $sensorTypeMappingObject = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
         /** @var GroupRepository $groupNameRepository */
@@ -657,7 +657,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
         }
         if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
             self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
@@ -695,7 +695,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
@@ -710,8 +710,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_sensor_and_card_details_regular_user_admin_group_is_apart_of(string $sensorType, string $sensorName, string $class, array $sensors): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         $userToken = $this->setUserToken(
             $this->client,
@@ -759,7 +759,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
         }
         if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
             self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
@@ -801,7 +801,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
         self::assertEquals($pinNumber, $sensor->getPinNumber());
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $responseData['payload']['readingInterval']);
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
@@ -847,8 +847,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_adding_sensor_with_negative_pin(): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -879,8 +879,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_adding_reading_interval_wrong_data_type(): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -912,8 +912,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_adding_reading_interval_with_interval_too_low(): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -953,8 +953,8 @@ class AddNewSensorControllerTest extends WebTestCase
             UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             UserDataFixtures::REGULAR_PASSWORD
         );
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         /** @var GroupRepository $groupRepository */
         $groupRepository = $this->entityManager->getRepository(Group::class);

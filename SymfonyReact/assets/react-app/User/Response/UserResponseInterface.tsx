@@ -6,7 +6,7 @@ export default interface UserResponseInterface {
     lastName: string,
     email: string,
     createdAt: Date,
-    group?: GroupResponseInterface,
+    groups?: GroupResponseInterface[],
     profilePicture?: string,
     roles?: string[],
     canEdit?: boolean,

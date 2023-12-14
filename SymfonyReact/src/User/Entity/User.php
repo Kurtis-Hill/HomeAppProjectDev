@@ -17,11 +17,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: UserRepository::class),
-    ORM\Table(name: "user"),
+    ORM\Table(name: "users"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
     ORM\Index(columns: ["groupID"], name: "GroupName"),
-    ORM\UniqueConstraint(name: "email", columns: ["email"]),
     ORM\Index(columns: ["profilePic"], name: "profilePic"),
+    ORM\Index(columns: ["roles"], name: "roles"),
+    ORM\Index(columns: ["createdAt"], name: "createdAt"),
 ]
 #[UniqueEntity(fields: ['email'], message: 'Email already exists')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -112,11 +113,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     ]
     private string $password;
 
-    #[
-        ORM\ManyToOne(targetEntity: Group::class),
-        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
-    ]
-    private Group|int $groupID;
+//    #[
+//        ORM\ManyToOne(targetEntity: Group::class),
+//        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
+//    ]
+//    private Group|int $groupID;
 
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false,
@@ -147,9 +148,15 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
-    public function getUsersGroupName(): Group
+    public function getUsersGroupName(): ?Group
     {
-        return $this->groupID;
+        foreach ($this->userGroupMappingEntities as $groupMapping) {
+            if ($groupMapping->getGroup()->getCreatedBy()->getUserID() === $this->getUserID()) {
+                return $groupMapping->getGroup();
+            }
+        }
+
+        return null;
     }
 
     #[ArrayShape([Group::class])]
@@ -166,21 +173,16 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape(['int'])]
     public function getAssociatedGroupIDs(): array
     {
-        $groupNames[] = $this->getGroup()->getGroupID();
         /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroup()->getGroupID();
         }
-        return $groupNames;
+        return $groupNames ?? [];
     }
 
     #[ArrayShape(['groupID' => 'int', 'groupName' => 'string'])]
     public function getAssociatedGroupNameAndIds(): array
     {
-        $groupNames[] = [
-            'groupID' => $this->getGroup()->getGroupID(),
-            'groupName' => $this->getGroup()->getGroupName()
-        ];
         /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = [
@@ -189,18 +191,17 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             ];
         }
 
-        return $groupNames;
+        return $groupNames ?? [];
     }
 
     #[ArrayShape([Group::class])]
     public function getAssociatedGroups(): array
     {
-        $groupNames[] = $this->getGroup();
         /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroup();
         }
-        return $groupNames;
+        return $groupNames ?? [];
     }
 
     public function getUsername(): string
@@ -302,14 +303,16 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getGroup(): Group
+    public function getGroup(): ?Group
     {
-        return $this->groupID;
-    }
+        /** @var GroupMapping $groupMapping */
+        foreach ($this->userGroupMappingEntities as $groupMapping) {
+            if ($groupMapping->getGroup()->getCreatedBy()->getUserID() === $this->getUserID()) {
+                return $groupMapping->getGroup();
+            }
+        }
 
-    public function setGroup(int|Group $groupID): void
-    {
-        $this->groupID = $groupID;
+        return null;
     }
 
     public function getCreatedAt(): ?DateTimeInterface

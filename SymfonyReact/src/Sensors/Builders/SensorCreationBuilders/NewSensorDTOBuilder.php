@@ -6,7 +6,7 @@ use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
@@ -44,7 +44,7 @@ readonly class NewSensorDTOBuilder
         }
 
         $sensorTypeObject = $this->sensorTypeRepository->find($sensorTypeID);
-        if (!$sensorTypeObject instanceof SensorType) {
+        if (!$sensorTypeObject instanceof AbstractSensorType) {
             throw new SensorTypeNotFoundException(
                 sprintf(
                     SensorTypeNotFoundException::SENSOR_TYPE_NOT_FOUND_FOR_ID,

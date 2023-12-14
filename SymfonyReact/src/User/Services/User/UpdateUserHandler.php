@@ -88,7 +88,6 @@ class UpdateUserHandler
             if ($groupName === null) {
                 throw new GroupNotFoundException(sprintf(GroupNotFoundException::MESSAGE, $userUpdateDTO->getGroupID()));
             }
-            $userToUpdate->setGroup($groupName);
         }
 
         return $this->validateUserEntity($userToUpdate);

@@ -3,24 +3,24 @@
 namespace App\Sensors\Builders\SensorTypeDTOBuilders;
 
 use App\Sensors\DTO\Response\SensorResponse\SensorTypeResponseDTO;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 
 class SensorTypeResponseDTOBuilder
 {
-    public function buildSensorTypeResponseDTO(SensorType $sensorType): SensorTypeResponseDTO
+    public function buildSensorTypeResponseDTO(AbstractSensorType $sensorType): SensorTypeResponseDTO
     {
         return new SensorTypeResponseDTO(
             $sensorType->getSensorTypeID(),
-            $sensorType->getSensorType(),
+            $sensorType::getReadingTypeName(),
             $sensorType->getDescription()
         );
     }
 
-    public static function buildFullSensorTypeResponseDTO(SensorType $sensorType): SensorTypeResponseDTO
+    public static function buildFullSensorTypeResponseDTO(AbstractSensorType $sensorType): SensorTypeResponseDTO
     {
         return new SensorTypeResponseDTO(
             $sensorType->getSensorTypeID(),
-            $sensorType->getSensorType(),
+            $sensorType::getReadingTypeName(),
             $sensorType->getDescription()
         );
     }

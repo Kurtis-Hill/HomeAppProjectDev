@@ -5,7 +5,7 @@ namespace App\User\Builders\GroupName;
 use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
 use App\User\Entity\Group;
 
-class GroupNameResponseDTOBuilder
+class GroupResponseDTOBuilder
 {
     public static function buildGroupNameResponseDTO(Group $groupName): GroupResponseDTO
     {

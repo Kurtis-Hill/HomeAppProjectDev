@@ -10,7 +10,7 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\AddNewGroupNameDTOBuilder;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\DTO\Request\GroupDTOs\NewGroupRequestDTO;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupValidationException;
@@ -98,7 +98,7 @@ class AddGroupController extends AbstractController
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_ALREADY_EXISTS, $newGroupDTO->getGroupName())]);
         }
 
-        $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
+        $groupResponseDTO = GroupResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
         try {
             $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {

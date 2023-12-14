@@ -10,19 +10,37 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\InheritanceType;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
 
 #[
     ORM\Entity(repositoryClass: SensorTypeRepository::class),
     ORM\Table(name: "sensortype"),
     ORM\UniqueConstraint(name: "sensorType", columns: ["sensorType"]),
+    InheritanceType('SINGLE_TABLE'),
+    DiscriminatorColumn(name: 'sensorType', type: 'string'),
+    DiscriminatorMap(
+        [
+            Dht::NAME => Dht::class,
+            Bmp::NAME => Bmp::class,
+            Soil::NAME => Soil::class,
+            Dallas::NAME => Dallas::class,
+            GenericMotion::NAME => GenericMotion::class,
+            GenericRelay::NAME => GenericRelay::class,
+            LDR::NAME => LDR::class,
+            Sht::NAME => Sht::class,
+        ]
+    )
 ]
-class SensorType
+abstract class AbstractSensorType implements SensorTypeInterface
 {
     public const ALIAS = 'sensortype';
 
@@ -52,9 +70,9 @@ class SensorType
     ]
     private int $sensorTypeID;
 
-    #[ORM\Column(name: "sensorType", type: "string", length: 20, nullable: false)]
-    #[NoSpecialCharactersNameConstraint]
-    private string $sensorType;
+//    #[ORM\Column(name: "sensorType", type: "string", length: 20, nullable: false)]
+//    #[NoSpecialCharactersNameConstraint]
+//    private SensorTypeInterface $sensorType;
 
     #[ORM\Column(name: "description", type: "string", length: 50, nullable: false)]
     #[
@@ -77,16 +95,6 @@ class SensorType
     public function setSensorTypeID(int $sensorTypeID): void
     {
         $this->sensorTypeID = $sensorTypeID;
-    }
-
-    public function getSensorType(): string
-    {
-        return $this->sensorType;
-    }
-
-    public function setSensorType(string $sensorType): void
-    {
-        $this->sensorType = $sensorType;
     }
 
     public function getDescription(): string

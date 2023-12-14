@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["deviceID"], name: "sensornames_ibfk_1"),
     ORM\Index(columns: ["createdBy"], name: "sensornames_ibfk_2"),
     ORM\Index(columns: ["sensorTypeID"], name: "sensortype"),
+    ORM\Index(columns: ["sensorName"], name: "sensorName")
 ]
 class Sensor
 {
@@ -52,10 +53,10 @@ class Sensor
     private string $sensorName;
 
     #[
-        ORM\ManyToOne(targetEntity: SensorType::class),
+        ORM\ManyToOne(targetEntity: AbstractSensorType::class),
         ORM\JoinColumn(name: "sensorTypeID", referencedColumnName: "sensorTypeID"),
     ]
-    private SensorType $sensorTypeID;
+    private AbstractSensorType $sensorTypeID;
 
     #[
         ORM\ManyToOne(targetEntity: Devices::class),
@@ -123,12 +124,12 @@ class Sensor
         $this->sensorName = $sensorName;
     }
 
-    public function getSensorTypeObject(): SensorType
+    public function getSensorTypeObject(): AbstractSensorType
     {
         return $this->sensorTypeID;
     }
 
-    public function setSensorTypeID(SensorType $sensorTypeID): void
+    public function setSensorTypeID(AbstractSensorType $sensorTypeID): void
     {
         $this->sensorTypeID = $sensorTypeID;
     }

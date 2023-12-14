@@ -60,11 +60,11 @@ class CardView
     private ?Icons $cardIconID;
 
     #[
-        ORM\ManyToOne(targetEntity: CardColour::class),
+        ORM\ManyToOne(targetEntity: Colour::class),
         ORM\JoinColumn(name: "colourID", referencedColumnName: "colourID"),
     ]
     #[Assert\NotNull(message: "Card Colour colour cannot be null")]
-    private CardColour $cardColourID;
+    private Colour $cardColourID;
 
     public function getCardViewID(): int
     {
@@ -118,12 +118,12 @@ class CardView
         $this->cardIconID = $cardIconID;
     }
 
-    public function getCardColourID(): CardColour
+    public function getCardColourID(): Colour
     {
         return $this->cardColourID;
     }
 
-    public function setCardColourID(?CardColour $cardColourID): void
+    public function setCardColourID(?Colour $cardColourID): void
     {
         $this->cardColourID = $cardColourID;
     }

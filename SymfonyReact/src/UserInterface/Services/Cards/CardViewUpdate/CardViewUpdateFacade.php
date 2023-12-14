@@ -4,7 +4,7 @@ namespace App\UserInterface\Services\Cards\CardViewUpdate;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -43,7 +43,7 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
     {
         if ($cardUpdateDTO->getCardColourID() !== null) {
             $cardColour = $this->cardColourRepository->findOneById($cardUpdateDTO->getCardColourID());
-            if (!$cardColour instanceof CardColour) {
+            if (!$cardColour instanceof Colour) {
                 $errors[] = 'Colour not found';
             } else {
                 $cardView->setCardColourID($cardColour);

@@ -2,7 +2,7 @@
 
 namespace App\User\Builders\User;
 
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use App\User\Entity\User;
 use App\User\Voters\UserVoter;
@@ -25,12 +25,16 @@ readonly class UserResponseBuilder
         ?bool $canUpdate = null,
         ?bool $canDelete = null,
     ): UserResponseDTO {
+        $groups = array_map(
+            static fn ($groupMapping) => GroupResponseDTOBuilder::buildGroupNameResponseDTO($groupMapping->getGroup()),
+            $user->getUserGroupMappingEntities()->toArray(),
+        );
         return new UserResponseDTO(
             $user->getUserID(),
             $user->getFirstName(),
             $user->getLastName(),
             $user->getEmail(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroup()),
+            $groups,
             $user->getCreatedAt(),
             $user->getProfilePic(),
             $user->getRoles(),

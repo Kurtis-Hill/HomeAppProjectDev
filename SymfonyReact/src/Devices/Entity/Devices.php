@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["createdBy"], name: "createdBy"),
     ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["roomID"], name: "roomID"),
+    ORM\Index(columns: ["deviceName"], name: "deviceName"),
     ORM\UniqueConstraint(name: "deviceIP", columns: ["ipAddress", "externalIpAddress"]),
     ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
 ]

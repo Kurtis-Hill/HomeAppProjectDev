@@ -3,7 +3,7 @@
 namespace App\Sensors\DTO\Request\CurrentReadingRequest;
 
 use App\Common\Services\RequestQueryParameterHandler;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -39,7 +39,7 @@ class SensorDataCurrentReadingUpdateDTO
             message: "sensorType cannot be empty"
         ),
         Assert\Choice(
-            choices: SensorType::ALL_SENSOR_TYPES,
+            choices: AbstractSensorType::ALL_SENSOR_TYPES,
             message: 'sensorType must be one of {{ choices }}',
             groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),

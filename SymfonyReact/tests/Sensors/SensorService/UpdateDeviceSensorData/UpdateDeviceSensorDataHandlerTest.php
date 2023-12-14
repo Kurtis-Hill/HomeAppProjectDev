@@ -7,7 +7,7 @@ use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
 use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;

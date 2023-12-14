@@ -2,7 +2,7 @@
 
 namespace App\ORM\DataFixtures\UserInterface;
 
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -54,7 +54,7 @@ class ColourFixtures extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager): void
     {
         foreach (self::COLOURS as $iconDetails) {
-            $cardColour = new CardColour();
+            $cardColour = new Colour();
             $cardColour->setColour($iconDetails['colour']);
             $cardColour->setShade($iconDetails['shade']);
 

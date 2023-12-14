@@ -96,7 +96,7 @@ class AddUserController extends AbstractController
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
         }
 
-        try{
+        try {
             $userCreationHandler->saveUser($newUser);
             $this->logger->info('New user created', ['user' => $newUser, 'createdBy' => $this->getUser()?->getUserIdentifier()]);
         } catch (ORMException|OptimisticLockException) {

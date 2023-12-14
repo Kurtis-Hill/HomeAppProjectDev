@@ -17,7 +17,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
@@ -108,7 +108,7 @@ class GetCardViewControllerTest extends WebTestCase
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
             self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']);
             self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
             self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
@@ -260,7 +260,7 @@ class GetCardViewControllerTest extends WebTestCase
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
             self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']);
             self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
             self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
@@ -427,7 +427,7 @@ class GetCardViewControllerTest extends WebTestCase
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
             self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']);
             self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
             self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
@@ -777,7 +777,7 @@ class GetCardViewControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::CARD_VIEW_URL, 'index'),
-            ['sensor-types' => SensorType::ALL_SENSOR_TYPES],
+            ['sensor-types' => AbstractSensorType::ALL_SENSOR_TYPES],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );

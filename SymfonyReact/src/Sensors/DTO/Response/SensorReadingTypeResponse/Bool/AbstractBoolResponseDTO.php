@@ -4,7 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Bool;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -119,6 +119,6 @@ readonly abstract class AbstractBoolResponseDTO
     ])]
     public function getSensorType(): string
     {
-        return SensorType::BOOL_READING_SENSOR_TYPE;
+        return AbstractSensorType::BOOL_READING_SENSOR_TYPE;
     }
 }

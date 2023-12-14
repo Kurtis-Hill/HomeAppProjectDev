@@ -12,7 +12,7 @@ use App\User\Repository\ORM\GroupRepository;
 #[
     ORM\Entity(repositoryClass: GroupRepository::class),
     ORM\Table(name: "groups"),
-//    ORM\Index(columns: ["createdBy"], name: "createdBy"),
+    ORM\Index(columns: ["createdAt"], name: "createdAt"),
     ORM\UniqueConstraint(name: "groupName", columns: ["groupName"]),
 ]
 #[UniqueEntity(fields: ['groupName'], message: 'Group name already exists')]
@@ -53,17 +53,19 @@ class Group
     private string $groupName;
 
     #[
-        ORM\Column(name: "createdAt", type: "datetime", nullable: false,
-//            options: ["default" =>"current_timestamp()"]
+        ORM\Column(
+            name: "createdAt",
+            type: "datetime",
+            nullable: false,
         ),
     ]
     private DateTimeInterface $createdAt;
 
-//    #[
-//        ORM\ManyToOne(targetEntity: User::class),
-//        ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID", nullable: false),
-//    ]
-//    private User $createdBy;
+    #[
+        ORM\ManyToOne(targetEntity: User::class),
+        ORM\JoinColumn(name: "createdBy", referencedColumnName: "userID", nullable: false),
+    ]
+    private User $createdBy;
 
     public function getGroupID(): int
     {
@@ -95,13 +97,13 @@ class Group
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-//    public function getCreatedBy(): UserDTOs
-//    {
-//        return $this->createdBy;
-//    }
-//
-//    public function setCreatedBy(UserDTOs $createdBy): void
-//    {
-//        $this->createdBy = $createdBy;
-//    }
+    public function getCreatedBy(): User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(User $createdBy): void
+    {
+        $this->createdBy = $createdBy;
+    }
 }

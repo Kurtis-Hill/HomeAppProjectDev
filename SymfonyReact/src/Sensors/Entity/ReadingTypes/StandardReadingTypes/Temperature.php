@@ -2,7 +2,6 @@
 
 namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -14,32 +13,19 @@ use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperature
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SHTTemperatureConstraint;
 use App\Sensors\Repository\ReadingType\ORM\TemperatureRepository;
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[
     ORM\Entity(repositoryClass: TemperatureRepository::class),
-//    ORM\Table(name: "temperature"),
-//    ORM\UniqueConstraint(name: "temp_ibfk_1", columns: ["sensorID"]),
 ]
-class Temperature extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
+class Temperature extends AbstractStandardReadingType implements AllSensorReadingTypeInterface, ReadingSymbolInterface
 {
     public const READING_TYPE = 'temperature';
 
     public const READING_SYMBOL = '°C';
 
-//    #[
-//        ORM\Column(name: 'readingTypeID', type: "integer", nullable: false),
-//        ORM\Id,
-//        ORM\GeneratedValue(strategy: "IDENTITY"),
-//    ]
-//    private int $tempID;
-
-//    #[ORM\Column(name: 'tempReading', type: "float", precision: 10, scale: 0, nullable: false)]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]

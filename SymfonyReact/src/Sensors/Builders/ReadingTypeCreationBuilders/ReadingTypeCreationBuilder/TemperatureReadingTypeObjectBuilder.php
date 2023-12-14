@@ -3,6 +3,7 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
@@ -14,21 +15,21 @@ class TemperatureReadingTypeObjectBuilder extends AbstractReadingTypeBuilder imp
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
-    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, int|float|bool $currentReading = 10): void
+    public function buildReadingTypeObject(Sensor $sensor): void
     {
-        if (!$sensorTypeObject instanceof TemperatureReadingTypeInterface) {
+        $sensorType = $sensor->getSensorTypeObject();
+        if (!$sensorType instanceof TemperatureReadingTypeInterface) {
             throw new SensorTypeException(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
             );
         }
         $temperatureSensor = new Temperature();
-        $temperatureSensor->setCurrentReading($currentReading);
-        $temperatureSensor->setHighReading($sensorTypeObject->getMaxTemperature());
-        $temperatureSensor->setLowReading($sensorTypeObject->getMinTemperature());
+        $temperatureSensor->setCurrentReading($sensorType->getMaxTemperature() / 2);
+        $temperatureSensor->setHighReading($sensorType->getMaxTemperature());
+        $temperatureSensor->setLowReading($sensorType->getMinTemperature());
         $temperatureSensor->setUpdatedAt();
-        $temperatureSensor->setSensor($sensorTypeObject->getSensor());
+        $temperatureSensor->setSensor($sensor);
 
-        $sensorTypeObject->setTemperature($temperatureSensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($temperatureSensor->getReadingType());
         $readingTypeRepository->persist($temperatureSensor);

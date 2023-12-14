@@ -15,7 +15,7 @@ class LDRNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements 
     {
         $ldr = new LDR();
         $ldr->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($ldr, [Analog::READING_TYPE => LDR::LOW_READING]);
+        $this->buildSensorReadingTypeObjects($ldr, [Analog::READING_TYPE => LDR::LOW_READING]);
 
         return $ldr;
     }

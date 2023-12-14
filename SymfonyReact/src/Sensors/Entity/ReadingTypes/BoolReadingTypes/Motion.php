@@ -15,16 +15,6 @@ class Motion extends AbstractBoolReadingBaseSensor implements AllSensorReadingTy
 {
     public const READING_TYPE = 'motion';
 
-    public function getSensorID(): int
-    {
-        return $this->getSensor()->getSensorID();
-    }
-
-//    public function setSensorID(int $id)
-//    {
-//        return $this->boolID = $id;
-//    }
-
     public static function getReadingTypeName(): string
     {
         return self::READING_TYPE;
@@ -33,15 +23,5 @@ class Motion extends AbstractBoolReadingBaseSensor implements AllSensorReadingTy
     public function getReadingType(): string
     {
         return self::READING_TYPE;
-    }
-
-    public function getCreatedAt(): DateTimeInterface
-    {
-        return $this->getSensor()->getCreatedAt();
-    }
-
-    public function setCreatedAt(DateTimeInterface $createdAt)
-    {
-        $this->getSensor()->setCreatedAt($createdAt);
     }
 }

@@ -11,7 +11,7 @@ use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;

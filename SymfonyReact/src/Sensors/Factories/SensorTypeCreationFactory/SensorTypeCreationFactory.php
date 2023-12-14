@@ -21,7 +21,7 @@ use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class SensorTypeCreationFactory
+readonly class SensorTypeCreationFactory
 {
     public function __construct(
         private BmpNewReadingTypeBuilder $bmpSensorReadingTypeBuilder,
@@ -32,7 +32,8 @@ class SensorTypeCreationFactory
         private GenericRelayNewReadingTypeBuilder $genericRelaySensorReadingTypeBuilder,
         private LDRNewReadingTypeBuilder $ldrSensorReadingTypeBuilder,
         private ShtNewReadingTypeBuilder $shtSensorReadingTypeBuilder
-    ) {}
+    ) {
+    }
 
     /**
      * @throws SensorTypeException

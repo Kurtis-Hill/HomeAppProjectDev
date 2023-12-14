@@ -21,7 +21,6 @@ class NewUserBuilder
         string $email,
         string $password,
         array $roles,
-        $groupNameObject,
         ?string $profilePic,
     ): User {
         $user = new User();
@@ -29,7 +28,7 @@ class NewUserBuilder
         $user->setLastName($lastName);
         $user->setEmail($email);
         $user->setRoles($roles);
-        $user->setGroup($groupNameObject);
+//        $user->setGroup($groupNameObject);
         $user->setCreatedAt(new DateTimeImmutable('now'));
 
         if ($profilePic !== null) {

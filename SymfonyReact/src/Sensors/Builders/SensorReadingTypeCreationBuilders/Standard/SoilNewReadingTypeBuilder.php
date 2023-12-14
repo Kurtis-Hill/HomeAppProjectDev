@@ -14,7 +14,7 @@ class SoilNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements
     {
         $soil = new Soil();
         $soil->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($soil, ['analog' => Soil::LOW_SOIL_READING_BOUNDARY]);
+        $this->buildSensorReadingTypeObjects($soil, ['analog' => Soil::LOW_SOIL_READING_BOUNDARY]);
 
         return $soil;
     }

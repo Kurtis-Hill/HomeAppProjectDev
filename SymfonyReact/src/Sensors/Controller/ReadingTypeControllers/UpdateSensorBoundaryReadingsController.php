@@ -145,7 +145,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 $validationError = $updateSensorBoundaryReadingsService->processBoundaryDataDTO(
                     $updateBoundaryDataDTO,
                     $sensorReadingTypeObject,
-                    $sensorObject->getSensorTypeObject()->getSensorType(),
+                    $sensorObject->getSensorTypeObject()::getReadingTypeName(),
                 );
             } catch (SensorReadingUpdateFactoryException|ReadingTypeNotExpectedException|ReadingTypeNotSupportedException $exception) {
                 $sensorProcessingErrors[] = $exception->getMessage();

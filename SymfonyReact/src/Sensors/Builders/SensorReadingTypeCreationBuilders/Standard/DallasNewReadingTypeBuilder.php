@@ -12,10 +12,6 @@ class DallasNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implemen
 {
     public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
-        $dallas = new Dallas();
-        $dallas->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($dallas);
-
-        return $dallas;
+        $this->buildSensorReadingTypeObjects($dallas);
     }
 }

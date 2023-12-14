@@ -11,7 +11,7 @@ use App\Devices\Voters\DeviceVoter;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\Builders\User\UserResponseBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -83,7 +83,7 @@ class DeviceResponseDTOBuilder
             $device->getDeviceID(),
             $device->getDeviceName(),
             $device->getDeviceSecret(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
+            GroupResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
             RoomResponseDTOBuilder::buildRoomResponseDTO($device->getRoomObject()),
             $device->getIpAddress(),
             $device->getExternalIpAddress(),

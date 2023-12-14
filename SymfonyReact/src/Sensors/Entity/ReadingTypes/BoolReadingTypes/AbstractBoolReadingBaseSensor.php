@@ -13,16 +13,24 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping as ORM;
 
-#[Entity]
-#[InheritanceType('SINGLE_TABLE')]
-#[ORM\Table(name: 'boolreadingtype')]
-#[DiscriminatorColumn(name: 'boolReadingType', type: 'string')]
-#[DiscriminatorMap(
-    [
-        'relay' => Relay::class,
-        'motion' => Motion::class
-    ]
-)]
+#[
+    Entity,
+    InheritanceType('SINGLE_TABLE'),
+    ORM\Table(name: 'boolreadingtype'),
+    ORM\Index(columns: ["currentReading"], name: "currentReading"),
+    ORM\Index(columns: ["constRecord"], name: "constRecord"),
+    ORM\Index(columns: ["updatedAt"], name: "updatedAt"),
+    ORM\Index(columns: ["standardReadingType"], name: "standardreadingtypeIndex"),
+    ORM\Index(columns: ["sensorID"], name: "sensorID"),
+    ORM\Index(columns: ["createdAt"], name: "createdAt"),
+    DiscriminatorColumn(name: 'boolReadingType', type: 'string'),
+    DiscriminatorMap(
+        [
+            'relay' => Relay::class,
+            'motion' => Motion::class
+        ]
+    )
+]
 abstract class AbstractBoolReadingBaseSensor implements BoolReadingSensorInterface, BaseReadingTypeInterface
 {
     #[
@@ -164,5 +172,20 @@ abstract class AbstractBoolReadingBaseSensor implements BoolReadingSensorInterfa
     public function setConstRecord(bool $constRecord): void
     {
         $this->constRecord = $constRecord;
+    }
+
+    public function getSensorID(): int
+    {
+        return $this->getSensor()->getSensorID();
+    }
+
+    public function getCreatedAt(): DateTimeInterface
+    {
+        return $this->getSensor()->getCreatedAt();
+    }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): void
+    {
+        $this->getSensor()->setCreatedAt($createdAt);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Services\Cards\CardPreparation;
 
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -78,9 +78,9 @@ class CardViewFormPreparationFacade implements CardViewFormPreparationHandlerInt
     /**
      * @throws SensorTypeBuilderFailureException
      */
-    private function prepareSensorTypesQueryBuilder(SensorType $sensorType): JoinQueryDTO
+    private function prepareSensorTypesQueryBuilder(AbstractSensorType $sensorType): JoinQueryDTO
     {
-        $sensorTypeQueryDTOBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorType->getSensorType());
+        $sensorTypeQueryDTOBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorType::getReadingTypeName());
 
         return $sensorTypeQueryDTOBuilder->buildSensorTypeQueryJoinDTO();
     }

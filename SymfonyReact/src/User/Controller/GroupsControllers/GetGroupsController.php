@@ -7,7 +7,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Entity\User;
 use App\User\Services\GroupServices\UserGroupsFinder;
 use Psr\Log\LoggerInterface;
@@ -55,7 +55,7 @@ class GetGroupsController extends AbstractController
 
         $groupNameDTOs = [];
         foreach ($userGroupsFinder->getUsersGroups($user) as $groupName) {
-            $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
+            $groupNameDTOs[] = GroupResponseDTOBuilder::buildGroupNameResponseDTO(
                 $groupName
             );
         }

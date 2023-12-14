@@ -15,7 +15,7 @@ use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository;
     ORM\UniqueConstraint(name: "shade", columns: ["shade"]),
 ]
 #[UniqueEntity('colour')]
-class CardColour
+class Colour
 {
     private const COLOUR_MAX_LENGTH = 20;
 

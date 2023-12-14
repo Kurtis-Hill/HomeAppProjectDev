@@ -2,32 +2,32 @@
 
 namespace App\UserInterface\Repository\ORM\CardRepositories;
 
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<CardColour>
+ * @extends ServiceEntityRepository<Colour>
  *
- * @method CardColour|null find($id, $lockMode = null, $lockVersion = null)
- * @method CardColour|null findOneBy(array $criteria, array $orderBy = null)
- * @method CardColour[]    findAll()
- * @method CardColour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Colour|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Colour|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Colour[]    findAll()
+ * @method Colour[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CardColourRepository extends ServiceEntityRepository implements CardColourRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CardColour::class);
+        parent::__construct($registry, Colour::class);
     }
 
-    public function findOneById(int $id): ?CardColour
+    public function findOneById(int $id): ?Colour
     {
         return $this->find($id);
     }
 
-    public function persist(CardColour $cardColour): void
+    public function persist(Colour $cardColour): void
     {
         $this->getEntityManager()->persist($cardColour);
     }
@@ -37,7 +37,7 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
         $this->getEntityManager()->flush();
     }
 
-    public function getFirstColourID(): CardColour
+    public function getFirstColourID(): Colour
     {
         return $this->createQueryBuilder('cardColour')
             ->select()
@@ -62,7 +62,7 @@ class CardColourRepository extends ServiceEntityRepository implements CardColour
         return $qb->getQuery()->getArrayResult();
     }
 
-    #[ArrayShape([CardColour::class])]
+    #[ArrayShape([Colour::class])]
     public function getAllColourObjects(): array
     {
         $qb = $this->createQueryBuilder('c')

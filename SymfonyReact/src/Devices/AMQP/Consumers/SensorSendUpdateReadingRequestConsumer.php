@@ -7,6 +7,7 @@ use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentRead
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorPinNumberNotSetException;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface;
 use Exception;
@@ -50,9 +51,8 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
                 $this->elasticLogger->error(sprintf('Sensor update request failed for sensor: %d', $sensorData->getSensorId()));
             }
             return $result;
-        } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface | SensorPinNumberNotSetException $exception) {
+        } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface | SensorReadingTypeRepositoryFactoryException $exception) {
             $this->elasticLogger->error('Sensor update request failed: ' . $exception->getMessage());
-//            dd('lol', 1);
 
             return true;
         } catch (HttpException $exception) {

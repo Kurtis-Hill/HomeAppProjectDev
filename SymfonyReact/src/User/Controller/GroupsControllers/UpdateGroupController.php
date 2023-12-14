@@ -9,7 +9,7 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Builders\GroupName\UpdateGroupDTOBuilder;
 use App\User\DTO\Request\GroupDTOs\UpdateGroupRequestDTO;
 use App\User\Entity\Group;
@@ -95,7 +95,7 @@ class UpdateGroupController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse();
         }
 
-        $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupID);
+        $groupResponseDTO = GroupResponseDTOBuilder::buildGroupNameResponseDTO($groupID);
         try {
             $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {

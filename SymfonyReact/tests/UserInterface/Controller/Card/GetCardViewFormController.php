@@ -11,7 +11,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -22,7 +22,7 @@ use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -69,8 +69,8 @@ class GetCardViewFormController extends WebTestCase
      */
     public function test_get_card_view_form_data(string $sensorType): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['sensorTypeID' => $sensorType->getSensorTypeID()])[0];
@@ -121,8 +121,8 @@ class GetCardViewFormController extends WebTestCase
 
         /** @var Icons[] $allIcons */
         $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
-        /** @var CardColour[] $allCardColours */
-        $allCardColours = $this->entityManager->getRepository(CardColour::class)->findAll();
+        /** @var Colour[] $allCardColours */
+        $allCardColours = $this->entityManager->getRepository(Colour::class)->findAll();
         /** @var CardState[] $allCardState */
         $allCardState = $this->entityManager->getRepository(CardState::class)->findAll();
 

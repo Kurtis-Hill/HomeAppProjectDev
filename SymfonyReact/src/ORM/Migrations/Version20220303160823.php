@@ -40,7 +40,7 @@ final class Version20220303160823 extends AbstractMigration
         );
 
         $this->addSql('
-            CREATE TABLE user (
+            CREATE TABLE users (
                 userID INT AUTO_INCREMENT NOT NULL, 
                 firstName VARCHAR(20) NOT NULL, 
                 lastName VARCHAR(20) NOT NULL, 
@@ -49,10 +49,12 @@ final class Version20220303160823 extends AbstractMigration
                 profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', 
                 password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, 
                 salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, 
-                groupID INT DEFAULT NULL, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
+                UNIQUE INDEX email (email),
                 INDEX profilePic (profilePic), 
-                UNIQUE INDEX email (email), 
+                INDEX `password` (password),
+                INDEX roles (roles),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(userID)
             ) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
@@ -62,14 +64,16 @@ final class Version20220303160823 extends AbstractMigration
                 groupID INT AUTO_INCREMENT NOT NULL,
                 groupName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                UNIQUE INDEX groupName (groupName), 
+                createdBy INT NOT NULL,
+                UNIQUE INDEX groupName (groupName),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(groupID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
         $this->addSql('
-            CREATE TABLE groupmapping (
+            CREATE TABLE groupmappings (
                 groupMappingID INT AUTO_INCREMENT NOT NULL, 
                 userID INT NOT NULL, 
                 groupID INT NOT NULL, 
@@ -80,8 +84,7 @@ final class Version20220303160823 extends AbstractMigration
         ');
 
         $this->addSql("
-            CREATE TABLE `basereadingtype`
-            (
+            CREATE TABLE `basereadingtype` (
                 `baseReadingTypeID` INT AUTO_INCREMENT NOT NULL,                
                 PRIMARY KEY (`baseReadingTypeID`)
             )
@@ -95,25 +98,41 @@ final class Version20220303160823 extends AbstractMigration
                 `currentReading` DOUBLE PRECISION NOT NULL,
                 `highReading` DOUBLE PRECISION NOT NULL,
                 `lowReading` DOUBLE PRECISION NOT NULL,
-                `standardReadingType` VARCHAR(255) NOT NULL,
+                `standardReadingType` VARCHAR(50) NOT NULL,
                 `sensorID` INT NOT NULL,
                 `constRecord` TINYINT(1) NOT NULL,
                 `updatedAt` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                `createdAt` DATETIME NOT NULL DEFAULT current_timestamp(),
+                INDEX currentReading (currentReading),
+                INDEX highReading (highReading),
+                INDEX lowReading (lowReading),
+                INDEX standardreadingtypeIndex (standardReadingType),
+                INDEX sensorID (sensorID),
+                INDEX constRecord (constRecord),
+                INDEX updatedAt (updatedAt),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY (`readingTypeID`)
             )             
         ");
 
         $this->addSql(
             'CREATE TABLE boolreadingtype (
-                readingTypeID INT AUTO_INCREMENT NOT NULL,
-                baseReadingTypeID INT NOT NULL,
-                currentReading TINYINT(1) NOT NULL,
-                requestedReading TINYINT(1) NOT NULL,
-                expectedReading TINYINT(1) NULL DEFAULT NULL,
-                boolReadingType VARCHAR(25) NOT NULL,
+                `readingTypeID` INT AUTO_INCREMENT NOT NULL,
+                `baseReadingTypeID` INT NOT NULL,
+                `currentReading` TINYINT(1) NOT NULL,
+                `requestedReading` TINYINT(1) NOT NULL,
+                `expectedReading` TINYINT(1) NULL DEFAULT NULL,
+                `boolReadingType` VARCHAR(25) NOT NULL,
                 `sensorID` INT NOT NULL,
                 `constRecord` TINYINT(1) NOT NULL,
                 `updatedAt` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                `createdAt` DATETIME NOT NULL DEFAULT current_timestamp(),
+                INDEX currentReading (currentReading),
+                INDEX boolReadingType (boolReadingType),
+                INDEX sensorID (sensorID),
+                INDEX constRecord (constRecord),
+                INDEX updatedAt (updatedAt),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(readingTypeID)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
         );
@@ -124,7 +143,10 @@ final class Version20220303160823 extends AbstractMigration
                 constRecordID INT AUTO_INCREMENT NOT NULL, 
                 baseReadingTypeID INT NOT NULL, 
                 sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME NOT NULL,
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
+                sensorReadingType VARCHAR(50) NOT NULL, 
+                INDEX sensorReading (sensorReading),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(constRecordID)
              ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' '
@@ -136,7 +158,10 @@ final class Version20220303160823 extends AbstractMigration
                 outofrangeID INT AUTO_INCREMENT NOT NULL, 
                 baseReadingTypeID INT NOT NULL, 
                 sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
+                sensorReadingType VARCHAR(50) NOT NULL, 
+                INDEX sensorReading (sensorReading),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(outofrangeID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
@@ -168,7 +193,10 @@ final class Version20220303160823 extends AbstractMigration
                 ipAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 externalIpAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 roles JSON NOT NULL COLLATE `utf8mb4_general_ci`, 
-                INDEX createdBy (createdBy), 
+                INDEX createdBy (createdBy),
+                INDEX groupID (groupID),
+                INDEX roomID (roomID),
+                INDEX deviceName (deviceName),
                 UNIQUE INDEX device_room_un (deviceName, roomID),
                 UNIQUE INDEX deviceIP (ipAddress, externalIpAddress),  
                 PRIMARY KEY(deviceID)
@@ -240,6 +268,10 @@ final class Version20220303160823 extends AbstractMigration
                 takeReadingIntervalMilli MEDIUMINT DEFAULT '. Sensor::DEFAULT_READING_INTERVAL . ' NOT NULL,
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
                 UNIQUE INDEX sensor_device (sensorName, deviceID),
+                INDEX sensorName (sensorName),
+                INDEX createdBy (createdBy),
+                INDEX deviceID (deviceID),
+                INDEX sensorTypeID (sensorTypeID),
                 PRIMARY KEY(sensorID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'
@@ -329,18 +361,18 @@ final class Version20220303160823 extends AbstractMigration
         ");
 
         $this->addSql("
-            INSERT INTO `user` 
-                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `groupID`, `createdAt`) 
+            INSERT INTO `users` 
+                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `createdAt`) 
             VALUES
-                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, 2, '2021-07-15 17:19:32');
+                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, '2021-07-15 17:19:32');
         ");
 
         $this->addSql("
             INSERT INTO groups
-                (`groupID`, `groupName`) 
+                (`groupID`, `groupName`, `createdBy`) 
             VALUES
-                (1, '" . Group::HOME_APP_GROUP_NAME . "'),
-                (2, '" . Group::ADMIN_GROUP_NAME ."');
+                (1, '" . Group::HOME_APP_GROUP_NAME . "', 1),
+                (2, '" . Group::ADMIN_GROUP_NAME ."', 1);
         ");
 
         $this->addSql("
@@ -387,36 +419,41 @@ final class Version20220303160823 extends AbstractMigration
         ");
 
         // Alter tables
+//        $this->addSql("
+//            ALTER TABLE `users`
+//              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
+//        ");
+
         $this->addSql("
-            ALTER TABLE `user`
-              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
+            ALTER TABLE `groups`
+                ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
-            ALTER TABLE `groupmapping`
+            ALTER TABLE `groupmappings`
               ADD CONSTRAINT `groupmapping_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `groupmapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+              ADD CONSTRAINT `groupmapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `sensors`
               ADD CONSTRAINT `FK_82F2A8F46B4A071A` FOREIGN KEY (`sensorTypeID`) REFERENCES `sensortype` (`sensorTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `sensornames_ibfk_1` FOREIGN KEY (`deviceID`) REFERENCES `devices` (`deviceID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+              ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `devices`
               ADD CONSTRAINT `devicenames_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `devicenames_ibfk_2` FOREIGN KEY (`roomID`) REFERENCES `room` (`roomID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+              ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `cardview`
               ADD CONSTRAINT `FK_E36636B53BE475E6` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B53casrdState` FOREIGN KEY (`stateID`) REFERENCES `state` (`stateID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `FK_E36636B55FD86D04` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+              ADD CONSTRAINT `FK_E36636B55FD86D04` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B5840D9A7A` FOREIGN KEY (`iconID`) REFERENCES `icons` (`iconID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B5A356FF88` FOREIGN KEY (`colourID`) REFERENCES `colours` (`colourID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
@@ -507,11 +544,11 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql('DROP TABLE IF EXISTS readingtypes');
 
-        $this->addSql('DROP TABLE IF EXISTS groups');
+        $this->addSql('DROP TABLE IF EXISTS `groups`');
 
-        $this->addSql('DROP TABLE IF EXISTS groupmapping');
+        $this->addSql('DROP TABLE IF EXISTS groupmappings');
 
-        $this->addSql('DROP TABLE IF EXISTS user');
+        $this->addSql('DROP TABLE IF EXISTS users');
 
         $this->addSql('DROP TABLE IF EXISTS iplog');
 

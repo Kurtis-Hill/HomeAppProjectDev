@@ -39,7 +39,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
         } catch (SensorTypeException | SensorReadingTypeRepositoryFactoryException $e) {
             return [$e->getMessage()];
         } catch (ORMException) {
-           return ['Failed to create sensor reading types'];
+            return ['Failed to create sensor reading types'];
         }
         if (empty($validationErrors)) {
             try {
@@ -57,7 +57,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
      */
     private function createNewSensorReadingTypeData(Sensor $sensor): SensorTypeInterface
     {
-        $sensorType = $sensor->getSensorTypeObject()->getSensorType();
+        $sensorType = $sensor->getSensorTypeObject()::getReadingTypeName();
 
         $sensorReadingCreationService = $this->readingTypeCreationFactory
             ->getSensorReadingTypeBuilder(
@@ -79,6 +79,6 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
     {
         $sensorTypeObjectAsString = $sensorTypeObject->getReadingTypeName();
         $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
-        $sensorTypeRepository->persist($sensorTypeObject);
+//        $sensorTypeRepository->persist($sensorTypeObject);
     }
 }

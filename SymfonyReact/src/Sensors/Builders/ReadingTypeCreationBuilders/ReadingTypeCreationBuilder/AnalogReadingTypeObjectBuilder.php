@@ -3,26 +3,29 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
 class AnalogReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
-    public function buildReadingTypeObject(SensorTypeInterface $sensorTypeObject, float|int|bool $currentReading = 10): void
+    public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = 10): void
     {
-        if (!$sensorTypeObject instanceof AnalogReadingTypeInterface) {
+        $sensorType = $sensor->getSensorTypeObject();
+        if (!$sensorType instanceof AnalogReadingTypeInterface) {
             throw new SensorTypeException(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
             );
         }
         $analogSensor = new Analog();
         $analogSensor->setCurrentReading($currentReading);
-        $analogSensor->setHighReading($sensorTypeObject->getMaxAnalog());
-        $analogSensor->setLowReading($sensorTypeObject->getMinAnalog());
+        $analogSensor->setHighReading($sensorType->getMaxAnalog());
+        $analogSensor->setLowReading($sensorType->getMinAnalog());
         $analogSensor->setUpdatedAt();
-        $analogSensor->setSensor($sensorTypeObject->getSensor());
+        $analogSensor->setSensor($sensor);
 
-        $sensorTypeObject->setAnalogObject($analogSensor);
+        $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($temperatureSensor->getReadingType());
+        $readingTypeRepository->persist($analogSensor);
     }
 }

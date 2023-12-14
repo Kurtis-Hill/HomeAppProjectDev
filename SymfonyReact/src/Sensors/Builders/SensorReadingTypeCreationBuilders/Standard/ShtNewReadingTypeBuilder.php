@@ -14,7 +14,7 @@ class ShtNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements 
     {
         $sht = new Sht();
         $sht->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($sht);
+        $this->buildSensorReadingTypeObjects($sht);
 
         return $sht;
     }

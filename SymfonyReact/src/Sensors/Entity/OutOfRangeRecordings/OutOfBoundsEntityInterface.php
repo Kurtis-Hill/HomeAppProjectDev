@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Entity\OutOfRangeRecordings;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use DateTime;
@@ -39,11 +40,11 @@ interface OutOfBoundsEntityInterface
     /**
      * @return \App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface
      */
-    public function getSensorReadingID(): AllSensorReadingTypeInterface;
+    public function getSensorReadingID(): BaseSensorReadingType;
 
     /**
      * @param \App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface $sensorReadingTypeID
      */
-    public function setSensorReadingID(StandardReadingSensorInterface $sensorReadingTypeID): void;
+    public function setSensorReadingID(BaseSensorReadingType $sensorReadingTypeID): void;
 
 }

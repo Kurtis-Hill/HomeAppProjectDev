@@ -15,18 +15,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-#[Entity]
-#[ORM\Table(name: "standardreadingtype")]
-#[InheritanceType('SINGLE_TABLE')]
-#[DiscriminatorColumn(name: 'standardReadingType', type: 'string')]
-#[DiscriminatorMap(
-    [
-        Temperature::READING_TYPE => Temperature::class,
-        Humidity::READING_TYPE => Humidity::class,
-        Analog::READING_TYPE => Analog::class,
-        Latitude::READING_TYPE => Latitude::class,
-    ]
-)]
+#[
+    Entity,
+    ORM\Table(name: "standardreadingtype"),
+    ORM\Index(columns: ["currentReading"], name: "currentReading"),
+    ORM\Index(columns: ["highReading"], name: "highReading"),
+    ORM\Index(columns: ["lowReading"], name: "lowReading"),
+    ORM\Index(columns: ["constRecord"], name: "constRecord"),
+    ORM\Index(columns: ["updatedAt"], name: "updatedAt"),
+    ORM\Index(columns: ["standardReadingType"], name: "standardreadingtypeIndex"),
+    ORM\Index(columns: ["sensorID"], name: "sensorID"),
+    ORM\Index(columns: ["createdAt"], name: "createdAt"),
+    InheritanceType('SINGLE_TABLE'),
+    DiscriminatorColumn(name: 'standardReadingType', type: 'string'),
+    DiscriminatorMap(
+        [
+            Temperature::READING_TYPE => Temperature::class,
+            Humidity::READING_TYPE => Humidity::class,
+            Analog::READING_TYPE => Analog::class,
+            Latitude::READING_TYPE => Latitude::class,
+        ]
+    )
+]
 abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, StandardReadingSensorInterface
 {
     protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
@@ -63,23 +73,23 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
     #[Assert\Type("bool")]
     private bool $constRecord = false;
 
-    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false)]
+    #[
+        ORM\Column(name: 'updatedAt', type: "datetime", nullable: false),
+        Assert\NotBlank(message: 'date time name should not be blank')
+    ]
     private DateTimeInterface $updatedAt;
-//
-//    #[Assert\NotBlank(message: 'date time name should not be blank')]
-//    protected DateTimeInterface $updatedAt;
-//
-//    #[ORM\Column(name: 'createdAt', type: "datetime", nullable: false,
-////        options: ["default" => "current_timestamp()"]
-//    )]
-//    #[Assert\NotBlank(message: 'createdAt time name should not be blank')]
-//    protected DateTimeInterface $createdAt;
+
+    #[ORM\Column(
+        name: 'createdAt',
+        type: "datetime",
+        nullable: false,
+    )]
+    #[Assert\NotBlank(message: 'createdAt time name should not be blank')]
+    protected DateTimeInterface $createdAt;
 
     public function __construct()
     {
         $this->updatedAt = new DateTimeImmutable('now');
-        $this->setUpdatedAt();
-//        $this->setCreatedAt(new DateTimeImmutable('now'));
     }
 
     public function getBaseReadingType(): BaseSensorReadingType
@@ -154,10 +164,6 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
 
     public function getUpdatedAt(): DateTimeInterface
     {
-        $this->updatedAt = new DateTimeImmutable('now');
-//        if (!$this->updatedAt) {
-//            dd($this->setUpdatedAt());
-//        }
         return $this->updatedAt;
     }
 
@@ -166,27 +172,15 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
         $this->updatedAt = new DateTimeImmutable('now');
     }
 
-//    public function getCreatedAt(): DateTimeInterface
-//    {
-//        return $this->createdAt;
-//    }
-//
-//    public function setCreatedAt(DateTimeInterface $createdAt): void
-//    {
-//        $this->createdAt = $createdAt;
-//    }
+    public function getCreatedAt(): DateTimeInterface
+    {
+        return $this->createdAt;
+    }
 
-//    public function getUpdatedAt(): DateTimeInterface
-//    {
-//        return $this->updatedAt;
-//    }
-//
-//    public function setUpdatedAt(): void
-//    {
-//        $this->updatedAt = new DateTimeImmutable('now');
-//    }
-
-
+    public function setCreatedAt(DateTimeInterface $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
 
     public function isReadingOutOfBounds(): bool
     {

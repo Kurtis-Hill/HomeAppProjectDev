@@ -45,9 +45,7 @@ class SensorReadingTypeDTOResponseBuilder
      */
     public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array
     {
-        $sensorType = $sensor->getSensorTypeObject();
-
-        $sensorReadingTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensorType->getSensorType());
+        $sensorReadingTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()::getReadingTypeName());
         $sensorTypeObject = $sensorReadingTypeRepository->findOneBy(['sensor' => $sensor]);
         if ($sensorTypeObject === null) {
             return [];

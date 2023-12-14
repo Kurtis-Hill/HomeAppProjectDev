@@ -4,23 +4,16 @@ namespace App\Sensors\Entity\SensorTypes;
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Repository\SensorType\ORM\DhtRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-//    ORM\Entity(repositoryClass: DhtRepository::class),
-//    ORM\Table(name: "dht"),
-    ORM\UniqueConstraint(name: "sensorID", columns: ["sensorID"]),
-    ORM\UniqueConstraint(name: "tempID", columns: ["tempID"]),
-    ORM\UniqueConstraint(name: "humidID", columns: ["humidID"]),
+    ORM\Entity(repositoryClass: DhtRepository::class),
 ]
-class Dht implements SensorTypeInterface, StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface
+class Dht extends AbstractSensorType implements StandardSensorTypeInterface, TemperatureReadingTypeInterface, HumidityReadingTypeInterface
 {
     public const NAME = 'Dht';
 
@@ -34,71 +27,6 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         Temperature::READING_TYPE,
         Humidity::READING_TYPE,
     ];
-
-    #[
-        ORM\Column(name: "dhtID", type: "integer", nullable: false),
-        ORM\Id,
-        ORM\GeneratedValue(strategy: "IDENTITY"),
-    ]
-    private int $dhtID;
-
-    #[
-        ORM\ManyToOne(targetEntity: Temperature::class),
-        ORM\JoinColumn(name: "tempID", referencedColumnName: "readingTypeID"),
-    ]
-    private Temperature $tempID;
-
-    #[
-        ORM\ManyToOne(targetEntity: Humidity::class),
-        ORM\JoinColumn(name: "humidID", referencedColumnName: "readingTypeID"),
-    ]
-    private Humidity $humidID;
-
-    #[
-        ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
-    ]
-    private Sensor $sensor;
-
-    public function getSensorTypeID(): int
-    {
-        return $this->dhtID;
-    }
-
-    public function setSensorTypeID(int $dhtID): void
-    {
-        $this->dhtID = $dhtID;
-    }
-
-    public function getTemperature(): Temperature
-    {
-        return $this->tempID;
-    }
-
-    public function setTemperature(Temperature $tempID): void
-    {
-        $this->tempID = $tempID;
-    }
-
-    public function getSensor(): Sensor
-    {
-        return $this->sensor;
-    }
-
-    public function setSensor(Sensor $sensor): void
-    {
-        $this->sensor = $sensor;
-    }
-
-    public function getHumidObject(): Humidity
-    {
-        return $this->humidID;
-    }
-
-    public function setHumidObject(Humidity $humidID): void
-    {
-        $this->humidID = $humidID;
-    }
 
     public function getMaxTemperature(): float|int
     {
@@ -120,7 +48,7 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
         return Humidity::LOW_READING;
     }
 
-    public function getReadingTypeName(): string
+    public static function getReadingTypeName(): string
     {
         return self::NAME;
     }
@@ -133,15 +61,5 @@ class Dht implements SensorTypeInterface, StandardSensorTypeInterface, Temperatu
     public static function getAllowedReadingTypes(): array
     {
         return self::ALLOWED_READING_TYPES;
-    }
-
-    public function getReadingTypes(): Collection
-    {
-        return new ArrayCollection(
-            [
-                $this->getTemperature(),
-                $this->getHumidObject(),
-            ]
-        );
     }
 }

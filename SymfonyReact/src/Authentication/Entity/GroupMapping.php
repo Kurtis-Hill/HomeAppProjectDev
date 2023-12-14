@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[
     ORM\Entity(repositoryClass: GroupMappingRepository::class),
-    ORM\Table(name: "groupmapping"),
+    ORM\Table(name: "groupmappings"),
     ORM\Index(columns: ["groupID"], name: "groupID"),
     ORM\Index(columns: ["userID"], name: "IDX_1C993DEE5FD86D04"),
     ORM\UniqueConstraint(name: "IDX_1C993DEE5FD86D05", columns: ["userID", "groupID"]),

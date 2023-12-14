@@ -4,7 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -96,7 +96,7 @@ readonly abstract class AbstractStandardResponseDTO
     ])]
     public function getSensorType(): string
     {
-        return SensorType::STANDARD_READING_SENSOR_TYPE;
+        return AbstractSensorType::STANDARD_READING_SENSOR_TYPE;
     }
 
     #[Groups([

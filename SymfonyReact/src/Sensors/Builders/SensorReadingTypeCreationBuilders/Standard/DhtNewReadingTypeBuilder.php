@@ -12,10 +12,6 @@ class DhtNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements 
 {
     public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
     {
-        $dht = new Dht();
-        $dht->setSensor($sensor);
-        $this->buildStandardSensorReadingTypeObjects($dht);
-
-        return $dht;
+        $this->buildSensorReadingTypeObjects($sensor);
     }
 }

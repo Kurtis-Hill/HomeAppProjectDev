@@ -13,6 +13,8 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
@@ -57,33 +59,33 @@ abstract class AbstractNewReadingTypeBuilder
     /**
      * @throws SensorTypeException
      */
-    protected function buildStandardSensorReadingTypeObjects(StandardSensorTypeInterface $sensorType, array $currentReading = []): void
+    protected function buildSensorReadingTypeObjects(Sensor $sensor): void
     {
-        if (!$sensorType instanceof SensorTypeInterface) {
+        if (!$sensor instanceof SensorTypeInterface) {
             throw new SensorTypeException('Sensor type must implement SensorTypeInterface');
         }
-        if ($sensorType instanceof TemperatureReadingTypeInterface) {
-            $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Temperature::READING_TYPE] ?? 10);
+        if ($sensor instanceof TemperatureReadingTypeInterface) {
+            $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
         }
 
-        if ($sensorType instanceof HumidityReadingTypeInterface) {
-            $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Humidity::READING_TYPE] ?? 10);
+        if ($sensor instanceof HumidityReadingTypeInterface) {
+            $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
         }
 
-        if ($sensorType instanceof LatitudeReadingTypeInterface) {
-            $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Latitude::READING_TYPE] ?? 10);
+        if ($sensor instanceof LatitudeReadingTypeInterface) {
+            $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
         }
 
-        if ($sensorType instanceof AnalogReadingTypeInterface) {
-            $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Analog::READING_TYPE] ?? 10);
+        if ($sensor instanceof AnalogReadingTypeInterface) {
+            $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
         }
 
-        if ($sensorType instanceof RelayReadingTypeInterface) {
-            $this->relayReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Relay::READING_TYPE] ?? false);
+        if ($sensor instanceof RelayReadingTypeInterface) {
+            $this->relayReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
         }
 
-        if ($sensorType instanceof MotionSensorReadingTypeInterface) {
-            $this->motionReadingTypeObjectBuilder->buildReadingTypeObject($sensorType, $currentReading[Motion::READING_TYPE] ?? false);
+        if ($sensor instanceof MotionSensorReadingTypeInterface) {
+            $this->motionReadingTypeObjectBuilder->buildReadingTypeObject($sensor, $currentReading[Motion::READING_TYPE] ?? false);
         }
     }
 }
