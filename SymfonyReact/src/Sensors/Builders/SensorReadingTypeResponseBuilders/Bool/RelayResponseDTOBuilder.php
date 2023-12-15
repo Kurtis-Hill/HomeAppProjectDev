@@ -12,22 +12,22 @@ use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 
 class RelayResponseDTOBuilder implements SensorResponseDTOBuilderInterface
 {
-    public function buildSensorReadingTypeResponseDTO(AllSensorReadingTypeInterface $relay) : AllSensorReadingTypeResponseDTOInterface
+    public function buildSensorReadingTypeResponseDTO(AllSensorReadingTypeInterface $readingTypeObject) : AllSensorReadingTypeResponseDTOInterface
     {
-        if (!$relay instanceof Relay) {
+        if (!$readingTypeObject instanceof Relay) {
             throw new SensorReadingTypeObjectNotFoundException(
                 SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION
             );
         }
 
         return new RelayResponseDTO(
-            sensorResponseDTO: SensorResponseDTOBuilder::buildSensorResponseDTO($relay->getSensor()),
-            boolID: $relay->getBoolID(),
-            currentReading: $relay->getCurrentReading(),
-            requestedReading: $relay->getRequestedReading(),
-            constRecord: $relay->getConstRecord(),
-            updatedAt: $relay->getUpdatedAt()->format('d/m/y H:i:s'),
-            expectedReading: $relay->getExpectedReading(),
+            sensorResponseDTO: SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
+            boolID: $readingTypeObject->getBoolID(),
+            currentReading: $readingTypeObject->getCurrentReading(),
+            requestedReading: $readingTypeObject->getRequestedReading(),
+            constRecord: $readingTypeObject->getConstRecord(),
+            updatedAt: $readingTypeObject->getUpdatedAt()->format('d/m/y H:i:s'),
+            expectedReading: $readingTypeObject->getExpectedReading(),
         );
     }
 

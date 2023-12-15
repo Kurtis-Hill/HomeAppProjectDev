@@ -15,8 +15,7 @@ readonly class UserResponseDTO
         private string $firstName,
         private string $lastName,
         private string $email,
-        #[ArrayShape([GroupResponseDTO::class])]
-        private array $groups,
+        private GroupResponseDTO $group,
         private DateTimeInterface $createdAt,
         private ?string $profilePicture = null,
         private ?array $roles = [],
@@ -69,13 +68,17 @@ readonly class UserResponseDTO
         return $this->email;
     }
 
-    #[Groups([
-        RequestTypeEnum::FULL->value,
-        RequestTypeEnum::SENSITIVE_FULL->value,
-    ])]
-    public function getGroups(): GroupResponseDTO
+    #[
+        Groups([
+            RequestTypeEnum::FULL->value,
+
+            RequestTypeEnum::SENSITIVE_FULL->value,
+        ]),
+
+    ]
+    public function getGroup(): GroupResponseDTO
     {
-        return $this->groups;
+        return $this->group;
     }
 
     #[Groups([

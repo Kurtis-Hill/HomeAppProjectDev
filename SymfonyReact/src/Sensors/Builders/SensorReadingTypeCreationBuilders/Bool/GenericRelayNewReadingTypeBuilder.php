@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Builders\SensorReadingTypeCreationBuilders\Bool;
 
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\RelayReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\RelayReadingTypeReadingTypeBuilder;
 use App\Sensors\Builders\SensorReadingTypeCreationBuilders\NewSensorReadingTypeBuilderInterface;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
@@ -10,9 +10,9 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
 class GenericRelayNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    private RelayReadingTypeObjectBuilder $relayReadingTypeObjectBuilder;
+    private RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder;
 
-    public function __construct(RelayReadingTypeObjectBuilder $relayReadingTypeObjectBuilder)
+    public function __construct(RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder)
     {
         $this->relayReadingTypeObjectBuilder = $relayReadingTypeObjectBuilder;
     }

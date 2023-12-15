@@ -5,6 +5,7 @@ namespace App\Sensors\Entity\ReadingTypes\BoolReadingTypes;
 use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    Entity,
+    Entity(repositoryClass: BoolReadingBaseSensorRepository::class),
     InheritanceType('SINGLE_TABLE'),
     ORM\Table(name: 'boolreadingtype'),
     ORM\Index(columns: ["currentReading"], name: "currentReading"),
@@ -31,7 +32,7 @@ use Doctrine\ORM\Mapping as ORM;
         ]
     )
 ]
-abstract class AbstractBoolReadingBaseSensor implements BoolReadingSensorInterface, BaseReadingTypeInterface
+abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface, BoolReadingSensorInterface
 {
     #[
         ORM\Column(name: "readingTypeID", type: "integer", nullable: false),

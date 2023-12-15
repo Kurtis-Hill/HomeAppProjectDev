@@ -7,7 +7,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class MotionReadingTypeObjectBuilder extends AbstractBoolObjectBuilder implements ReadingTypeObjectBuilderInterface
+class MotionReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
     public function buildReadingTypeObject(Sensor $sensor): void
     {

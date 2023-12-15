@@ -5,6 +5,8 @@ namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
@@ -16,7 +18,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    Entity,
+    Entity(repositoryClass: StandardReadingTypeRepository::class),
     ORM\Table(name: "standardreadingtype"),
     ORM\Index(columns: ["currentReading"], name: "currentReading"),
     ORM\Index(columns: ["highReading"], name: "highReading"),
@@ -37,7 +39,7 @@ use Doctrine\ORM\Mapping as ORM;
         ]
     )
 ]
-abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, StandardReadingSensorInterface
+abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, StandardReadingSensorInterface, AllSensorReadingTypeInterface
 {
     protected const HIGHER_LOWER_THAN_LOWER = 'High reading for %s cannot be lower than low reading';
 

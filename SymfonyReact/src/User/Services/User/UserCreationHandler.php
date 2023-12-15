@@ -99,6 +99,7 @@ class UserCreationHandler
             $email,
             $password,
             $roles,
+            $groupNameObject,
             $profilePicFileName ?? null,
         );
 

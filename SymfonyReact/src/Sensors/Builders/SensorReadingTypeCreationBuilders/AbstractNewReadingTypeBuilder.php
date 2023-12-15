@@ -2,12 +2,12 @@
 
 namespace App\Sensors\Builders\SensorReadingTypeCreationBuilders;
 
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\AnalogReadingTypeObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\HumidityReadingTypeObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\LatitudeReadingTypeObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\MotionReadingTypeObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\RelayReadingTypeObjectBuilder;
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\TemperatureReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\AnalogStandardReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\HumidityStandardReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\LatitudeStandardReadingTypeObjectBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\MotionReadingTypeReadingTypeBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\RelayReadingTypeReadingTypeBuilder;
+use App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder\TemperatureStandardReadingTypeObjectBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
@@ -28,25 +28,25 @@ use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 
 abstract class AbstractNewReadingTypeBuilder
 {
-    private TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder;
+    private TemperatureStandardReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder;
 
-    private HumidityReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder;
+    private HumidityStandardReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder;
 
-    private LatitudeReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder;
+    private LatitudeStandardReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder;
 
-    private AnalogReadingTypeObjectBuilder $analogReadingTypeObjectBuilder;
+    private AnalogStandardReadingTypeObjectBuilder $analogReadingTypeObjectBuilder;
 
-    private RelayReadingTypeObjectBuilder $relayReadingTypeObjectBuilder;
+    private RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder;
 
-    private MotionReadingTypeObjectBuilder $motionReadingTypeObjectBuilder;
+    private MotionReadingTypeReadingTypeBuilder $motionReadingTypeObjectBuilder;
 
     public function __construct(
-        TemperatureReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder,
-        HumidityReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder,
-        LatitudeReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder,
-        AnalogReadingTypeObjectBuilder $analogReadingTypeObjectBuilder,
-        RelayReadingTypeObjectBuilder $relayReadingTypeObjectBuilder,
-        MotionReadingTypeObjectBuilder $motionReadingTypeObjectBuilder,
+        TemperatureStandardReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder,
+        HumidityStandardReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder,
+        LatitudeStandardReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder,
+        AnalogStandardReadingTypeObjectBuilder $analogReadingTypeObjectBuilder,
+        RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder,
+        MotionReadingTypeReadingTypeBuilder $motionReadingTypeObjectBuilder,
     ) {
         $this->temperatureReadingTypeObjectBuilder = $temperatureReadingTypeObjectBuilder;
         $this->humidityReadingTypeObjectBuilder = $humidityReadingTypeObjectBuilder;

@@ -2,19 +2,32 @@
 
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
+use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 abstract class AbstractReadingTypeBuilder
 {
-    protected SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory;
+    protected BaseReadingTypeBuilder $baseReadingTypeBuilder;
 
-    public function __construct(SensorReadingTypeRepositoryFactory $readingTypeFactory)
+    private BaseSensorReadingTypeRepository $baseSensorReadingTypeRepository;
+
+    public function __construct(BaseReadingTypeBuilder $baseSensorReadingType, BaseSensorReadingTypeRepository $baseSensorReadingTypeRepository)
     {
-        $this->sensorReadingTypeRepositoryFactory = $readingTypeFactory;
+        $this->baseReadingTypeBuilder = $baseSensorReadingType;
+        $this->baseSensorReadingTypeRepository = $baseSensorReadingTypeRepository;
+    }
+
+    /**
+     * @throws ORMException|OptimisticLockException
+     */
+    protected function createNewBaseReadingTypeObject(): BaseSensorReadingType
+    {
+        $baseReadingType = $this->baseReadingTypeBuilder->buildBaseReadingTypeObject();
+        $this->baseSensorReadingTypeRepository->persist($baseReadingType);
+        $this->baseSensorReadingTypeRepository->flush();
+
+        return $baseReadingType;
     }
 }

@@ -6,6 +6,7 @@ use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorReadingTypeEnca
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard\StandardReadingTypeResponseInterface;
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
@@ -22,72 +23,65 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
+use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeResponseFactory;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
+use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
+use App\Sensors\SensorServices\SensorReadingTypeFetcher;
 use JetBrains\PhpStorm\ArrayShape;
 
 class SensorReadingTypeDTOResponseBuilder
 {
     private SensorReadingTypeResponseFactory $sensorReadingTypeResponseFactory;
 
-    private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory;
+    private SensorReadingTypeFetcher $sensorReadingTypeFetcher;
 
     public function __construct(
         SensorReadingTypeResponseFactory $sensorReadingTypeResponseFactory,
-        SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
+        SensorReadingTypeFetcher $sensorReadingTypeFetcher,
     ) {
         $this->sensorReadingTypeResponseFactory = $sensorReadingTypeResponseFactory;
-        $this->sensorTypeRepositoryFactory = $sensorTypeRepositoryFactory;
-    }
-
-    /**
-     * @throws ReadingTypeNotExpectedException
-     */
-    public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array
-    {
-        $sensorReadingTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()::getReadingTypeName());
-        $sensorTypeObject = $sensorReadingTypeRepository->findOneBy(['sensor' => $sensor]);
-        if ($sensorTypeObject === null) {
-            return [];
-        }
-
-        return  $this->handleSensorReadingTypeDTOCreation($sensorTypeObject);
+        $this->sensorReadingTypeFetcher = $sensorReadingTypeFetcher;
     }
 
     /**
      * @return SensorReadingTypeResponseDTOInterface[]
-     * @throws ReadingTypeNotExpectedException
+     * @throws SensorReadingTypeObjectNotFoundException|SensorReadingTypeRepositoryFactoryException
      */
     #[ArrayShape([StandardReadingTypeResponseInterface::class])]
-    private function handleSensorReadingTypeDTOCreation(SensorTypeInterface $sensorTypeObject): array
+    public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array
     {
-        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
-            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Temperature::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[Temperature::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getTemperature());
-        }
-        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
-            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Humidity::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[Humidity::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getHumidObject());
-        }
-        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
-            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Latitude::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[Latitude::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getLatitudeObject());
-        }
-        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
-            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Analog::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[Analog::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getAnalogObject());
-        }
-        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
-            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Motion::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[Motion::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getMotion());
-        }
-        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
-            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Relay::getReadingTypeName());
-            $sensorReadingTypeResponseDTOs[Relay::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorTypeObject->getRelay());
-        }
+        $allStandardReadingTypes = $this->sensorReadingTypeFetcher->fetchAllSensorReadingTypesBySensor($sensor);
 
-        if (empty($sensorReadingTypeResponseDTOs)) {
-            throw new ReadingTypeNotExpectedException(ReadingTypeNotSupportedException::READING_TYPE_NOT_SUPPORTED_UPDATE_APP_MESSAGE);
+        $sensorReadingTypeResponseDTOs = [];
+        foreach ($allStandardReadingTypes as $readingType) {
+            if ($readingType instanceof Temperature) {
+                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+                $sensorReadingTypeResponseDTOs[Temperature::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+            }
+            if ($readingType instanceof Humidity) {
+                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+                $sensorReadingTypeResponseDTOs[Humidity::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+            }
+            if ($readingType instanceof Latitude) {
+                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+                $sensorReadingTypeResponseDTOs[Latitude::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+                break;
+            }
+            if ($readingType instanceof Analog) {
+                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+                $sensorReadingTypeResponseDTOs[Analog::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+                break;
+            }
+            if ($readingType instanceof Motion) {
+                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Motion::getReadingTypeName());
+                $sensorReadingTypeResponseDTOs[Motion::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+            }
+            if ($readingType instanceof Relay) {
+                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Relay::getReadingTypeName());
+                $sensorReadingTypeResponseDTOs[Relay::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+            }
         }
 
         return $sensorReadingTypeResponseDTOs;

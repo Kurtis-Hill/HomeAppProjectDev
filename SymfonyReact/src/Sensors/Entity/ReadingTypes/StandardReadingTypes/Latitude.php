@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 //    ORM\Table(name: "latitude"),
 //    ORM\UniqueConstraint(name: "lat_ibfk_1", columns: ["sensorID"]),
 ]
-class Latitude extends AbstractStandardReadingType implements AllSensorReadingTypeInterface, StandardReadingSensorInterface, ReadingSymbolInterface
+class Latitude extends AbstractStandardReadingType implements ReadingSymbolInterface
 {
     public const READING_TYPE = 'latitude';
 

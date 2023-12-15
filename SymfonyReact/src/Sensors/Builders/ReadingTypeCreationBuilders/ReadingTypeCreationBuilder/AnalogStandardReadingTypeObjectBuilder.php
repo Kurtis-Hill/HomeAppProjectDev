@@ -8,7 +8,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class AnalogReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
+class AnalogStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
     public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = 10): void
     {
@@ -24,6 +24,8 @@ class AnalogReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implemen
         $analogSensor->setLowReading($sensorType->getMinAnalog());
         $analogSensor->setUpdatedAt();
         $analogSensor->setSensor($sensor);
+
+        $this->setBaseReadingTypeForStandardSensor($analogSensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($temperatureSensor->getReadingType());
         $readingTypeRepository->persist($analogSensor);

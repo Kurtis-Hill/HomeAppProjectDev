@@ -113,11 +113,11 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     ]
     private string $password;
 
-//    #[
-//        ORM\ManyToOne(targetEntity: Group::class),
-//        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
-//    ]
-//    private Group|int $groupID;
+    #[
+        ORM\ManyToOne(targetEntity: Group::class),
+        ORM\JoinColumn(name: "groupID", referencedColumnName: "groupID"),
+    ]
+    private Group|int $groupID;
 
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false,
@@ -148,6 +148,46 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = $userGroupMappingEntities;
     }
 
+    #[ArrayShape(['int'])]
+    public function getAssociatedGroupIDs(): array
+    {
+        $groupNames[] = $this->getGroup()->getGroupID();
+        /** @var GroupMapping $entity */
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = $entity->getGroup()->getGroupID();
+        }
+        return $groupNames;
+    }
+
+    #[ArrayShape(['groupID' => 'int', 'groupName' => 'string'])]
+    public function getAssociatedGroupNameAndIds(): array
+    {
+        $groupNames[] = [
+            'groupID' => $this->getGroup()->getGroupID(),
+            'groupName' => $this->getGroup()->getGroupName()
+        ];
+        /** @var GroupMapping $entity */
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = [
+                'groupID' => $entity->getGroup()->getGroupID(),
+                'groupName' => $entity->getGroup()->getGroupName()
+            ];
+        }
+
+        return $groupNames;
+    }
+
+    #[ArrayShape([Group::class])]
+    public function getAssociatedGroups(): array
+    {
+        $groupNames[] = $this->getGroup();
+        /** @var GroupMapping $entity */
+        foreach ($this->userGroupMappingEntities as $entity) {
+            $groupNames[] = $entity->getGroup();
+        }
+        return $groupNames;
+    }
+
     public function getUsersGroupName(): ?Group
     {
         foreach ($this->userGroupMappingEntities as $groupMapping) {
@@ -168,45 +208,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         }
 
         return $groupNameArray ?? [];
-    }
-
-    #[ArrayShape(['int'])]
-    public function getAssociatedGroupIDs(): array
-    {
-        /** @var GroupMapping $entity */
-        foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroup()->getGroupID();
-        }
-        return $groupNames ?? [];
-    }
-
-    #[ArrayShape(['groupID' => 'int', 'groupName' => 'string'])]
-    public function getAssociatedGroupNameAndIds(): array
-    {
-        /** @var GroupMapping $entity */
-        foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = [
-                'groupID' => $entity->getGroup()->getGroupID(),
-                'groupName' => $entity->getGroup()->getGroupName()
-            ];
-        }
-
-        return $groupNames ?? [];
-    }
-
-    #[ArrayShape([Group::class])]
-    public function getAssociatedGroups(): array
-    {
-        /** @var GroupMapping $entity */
-        foreach ($this->userGroupMappingEntities as $entity) {
-            $groupNames[] = $entity->getGroup();
-        }
-        return $groupNames ?? [];
-    }
-
-    public function getUsername(): string
-    {
-        return $this->email;
     }
 
     #[ArrayShape(['ROLES'])]
@@ -303,16 +304,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getGroup(): ?Group
+    public function getGroup(): Group
     {
-        /** @var GroupMapping $groupMapping */
-        foreach ($this->userGroupMappingEntities as $groupMapping) {
-            if ($groupMapping->getGroup()->getCreatedBy()->getUserID() === $this->getUserID()) {
-                return $groupMapping->getGroup();
-            }
-        }
+        return $this->groupID;
+    }
 
-        return null;
+    public function setGroup(int|Group $groupID): void
+    {
+        $this->groupID = $groupID;
     }
 
     public function getCreatedAt(): ?DateTimeInterface

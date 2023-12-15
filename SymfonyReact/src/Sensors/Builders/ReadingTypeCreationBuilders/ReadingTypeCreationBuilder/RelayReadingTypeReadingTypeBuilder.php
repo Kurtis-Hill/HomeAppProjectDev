@@ -9,7 +9,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 use DateTimeImmutable;
 
-class RelayReadingTypeObjectBuilder extends AbstractBoolObjectBuilder implements ReadingTypeObjectBuilderInterface
+class RelayReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
     public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = false) : void
     {

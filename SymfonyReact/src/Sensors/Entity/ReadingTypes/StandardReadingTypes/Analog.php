@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 //    ORM\Table(name: "analog"),
 //    ORM\UniqueConstraint(name: "analog_ibfk_3", columns: ["sensorID"]),
 ]
-class Analog extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface
+class Analog extends AbstractStandardReadingType
 {
     public const READING_TYPE = 'analog';
 

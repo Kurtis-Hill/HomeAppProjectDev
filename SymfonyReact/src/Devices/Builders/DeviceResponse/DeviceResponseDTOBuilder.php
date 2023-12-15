@@ -45,7 +45,8 @@ class DeviceResponseDTOBuilder
         return self::buildDeviceResponseDTO(
             $device,
             $sensorReadingTypeDTOs,
-            $this->security->isGranted(DeviceVoter::UPDATE_DEVICE,
+            $this->security->isGranted(
+                DeviceVoter::UPDATE_DEVICE,
                 $this->deviceDTOBuilder->buildUpdateDeviceInternalDTO(
                     (new DeviceUpdateRequestDTO()),
                     $device,

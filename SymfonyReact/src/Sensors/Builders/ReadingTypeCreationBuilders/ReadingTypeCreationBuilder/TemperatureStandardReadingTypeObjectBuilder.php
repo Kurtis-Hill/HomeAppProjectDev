@@ -9,7 +9,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class TemperatureReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
+class TemperatureStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
     /**
      * @throws SensorReadingTypeRepositoryFactoryException
@@ -29,6 +29,8 @@ class TemperatureReadingTypeObjectBuilder extends AbstractReadingTypeBuilder imp
         $temperatureSensor->setLowReading($sensorType->getMinTemperature());
         $temperatureSensor->setUpdatedAt();
         $temperatureSensor->setSensor($sensor);
+
+        $this->setBaseReadingTypeForStandardSensor($temperatureSensor);
 
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($temperatureSensor->getReadingType());

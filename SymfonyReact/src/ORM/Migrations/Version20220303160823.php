@@ -44,13 +44,15 @@ final class Version20220303160823 extends AbstractMigration
                 userID INT AUTO_INCREMENT NOT NULL, 
                 firstName VARCHAR(20) NOT NULL, 
                 lastName VARCHAR(20) NOT NULL, 
-                email VARCHAR(180) NOT NULL, 
+                email VARCHAR(180) NOT NULL,
+                groupID INT NOT NULL,
                 roles JSON NOT NULL, 
                 profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', 
                 password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, 
                 salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
                 UNIQUE INDEX email (email),
+                INDEX groupID (groupID),
                 INDEX profilePic (profilePic), 
                 INDEX `password` (password),
                 INDEX roles (roles),
@@ -64,7 +66,6 @@ final class Version20220303160823 extends AbstractMigration
                 groupID INT AUTO_INCREMENT NOT NULL,
                 groupName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                createdBy INT NOT NULL,
                 UNIQUE INDEX groupName (groupName),
                 INDEX createdAt (createdAt),
                 PRIMARY KEY(groupID)
@@ -362,17 +363,17 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql("
             INSERT INTO `users` 
-                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `createdAt`) 
+                (`userID`, `firstName`, `lastName`, `email`, `roles`, `groupID`, `profilePic`, `password`, `salt`, `createdAt`) 
             VALUES
-                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, '2021-07-15 17:19:32');
+                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 1, 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, '2021-07-15 17:19:32');
         ");
 
         $this->addSql("
             INSERT INTO groups
-                (`groupID`, `groupName`, `createdBy`) 
+                (`groupID`, `groupName`) 
             VALUES
-                (1, '" . Group::HOME_APP_GROUP_NAME . "', 1),
-                (2, '" . Group::ADMIN_GROUP_NAME ."', 1);
+                (1, '" . Group::HOME_APP_GROUP_NAME . "'),
+                (2, '" . Group::ADMIN_GROUP_NAME ."');
         ");
 
         $this->addSql("
@@ -419,15 +420,15 @@ final class Version20220303160823 extends AbstractMigration
         ");
 
         // Alter tables
-//        $this->addSql("
-//            ALTER TABLE `users`
-//              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
-//        ");
-
         $this->addSql("
-            ALTER TABLE `groups`
-                ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+            ALTER TABLE `users`
+              ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
         ");
+
+//        $this->addSql("
+//            ALTER TABLE `groups`
+//                ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+//        ");
 
         $this->addSql("
             ALTER TABLE `groupmappings`

@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[
     ORM\Entity(repositoryClass: TemperatureRepository::class),
 ]
-class Temperature extends AbstractStandardReadingType implements AllSensorReadingTypeInterface, ReadingSymbolInterface
+class Temperature extends AbstractStandardReadingType implements ReadingSymbolInterface
 {
     public const READING_TYPE = 'temperature';
 

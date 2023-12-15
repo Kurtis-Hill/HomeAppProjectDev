@@ -62,7 +62,6 @@ class GetDeviceController extends AbstractController
         } catch (ValidatorProcessorException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
-
         $getDeviceDTO = GetDeviceDTOBuilder::buildGetDeviceDTO(
             min(
                 $requestDTO->getLimit(),
@@ -123,7 +122,6 @@ class GetDeviceController extends AbstractController
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
-
         $responseType = $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value);
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
@@ -140,7 +138,9 @@ class GetDeviceController extends AbstractController
                 [
                     RequestTypeEnum::SENSITIVE_FULL->value,
                     RequestTypeEnum::FULL->value
-                ], true)
+                ],
+                true
+            )
         );
 
         try {

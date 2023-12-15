@@ -8,7 +8,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class HumidityReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
+class HumidityStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
     public function buildReadingTypeObject(Sensor $sensor, int|float|bool $currentReading = 10): void
     {
@@ -25,6 +25,7 @@ class HumidityReadingTypeObjectBuilder extends AbstractReadingTypeBuilder implem
         $humiditySensor->setUpdatedAt();
         $humiditySensor->setSensor($sensor);
 
+        $this->setBaseReadingTypeForStandardSensor($humiditySensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($humiditySensor->getReadingType());
         $readingTypeRepository->persist($humiditySensor);

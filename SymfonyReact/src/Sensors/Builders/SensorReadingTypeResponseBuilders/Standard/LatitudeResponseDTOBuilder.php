@@ -12,21 +12,21 @@ use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 
 class LatitudeResponseDTOBuilder implements SensorResponseDTOBuilderInterface
 {
-    public function buildSensorReadingTypeResponseDTO(AllSensorReadingTypeInterface $relay): AllSensorReadingTypeResponseDTOInterface
+    public function buildSensorReadingTypeResponseDTO(AllSensorReadingTypeInterface $readingTypeObject): AllSensorReadingTypeResponseDTOInterface
     {
-        if (!$relay instanceof Latitude) {
+        if (!$readingTypeObject instanceof Latitude) {
             throw new SensorReadingTypeObjectNotFoundException(
                 SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION
             );
         }
         return new LatitudeResponseDTO(
-            $relay->getSensorID(),
-            SensorResponseDTOBuilder::buildSensorResponseDTO($relay->getSensor()),
-            $relay->getCurrentReading(),
-            $relay->getHighReading(),
-            $relay->getLowReading(),
-            $relay->getConstRecord(),
-            $relay->getUpdatedAt()->format('d/m/y H:i:s'),
+            $readingTypeObject->getSensorID(),
+            SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
+            $readingTypeObject->getCurrentReading(),
+            $readingTypeObject->getHighReading(),
+            $readingTypeObject->getLowReading(),
+            $readingTypeObject->getConstRecord(),
+            $readingTypeObject->getUpdatedAt()->format('d/m/y H:i:s'),
         );
     }
 }

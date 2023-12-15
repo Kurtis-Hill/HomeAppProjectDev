@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 //    ORM\Table(name: "humidity"),
 //    ORM\UniqueConstraint(name: "humid_ibfk_1", columns: ["sensorID"]),
 ]
-class Humidity extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
+class Humidity extends AbstractStandardReadingType implements ReadingSymbolInterface
 {
     public const READING_TYPE = 'humidity';
 

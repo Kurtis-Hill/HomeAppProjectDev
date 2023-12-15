@@ -7,10 +7,9 @@ use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\SensorReadingTypeDTOResponseBuilder;
 use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\Entity\User;
@@ -37,6 +36,9 @@ class SensorResponseDTOBuilder
         $this->security = $security;
     }
 
+    /**
+     * @throws ReadingTypeNotExpectedException
+     */
     public function buildFullSensorResponseDTOWithPermissions(Sensor $sensor, array $groups): SensorResponseDTO
     {
         if (

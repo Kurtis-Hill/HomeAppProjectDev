@@ -11,15 +11,21 @@ use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use DateTimeImmutable;
 
-abstract class AbstractBoolObjectBuilder
+abstract class AbstractBoolReadingTypeBuilder extends AbstractReadingTypeBuilder
 {
     protected SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory;
 
-    public function __construct(SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory)
-    {
+
+    public function __construct(
+        BaseReadingTypeBuilder $baseSensorReadingType,
+        BaseSensorReadingTypeRepository $baseSensorReadingTypeRepository,
+        SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory
+    ) {
         $this->sensorReadingTypeRepositoryFactory = $sensorReadingTypeRepositoryFactory;
+        parent::__construct($baseSensorReadingType, $baseSensorReadingTypeRepository);
     }
 
     /**
@@ -36,6 +42,8 @@ abstract class AbstractBoolObjectBuilder
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
             );
         }
+        $baseReadingType = $this->createNewBaseReadingTypeObject();
+        $boolObject->setBaseReadingType($baseReadingType);
         $now = new DateTimeImmutable('now');
         $boolObject->setCurrentReading($currentReading);
         $boolObject->setSensor($sensor);
