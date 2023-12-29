@@ -66,8 +66,8 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
 //    #[ORM\Column(name: "boolReadingType", type: "string", nullable: false)]
 //    protected string $boolReadingType;
 
-//    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false)]
-//    protected DateTimeInterface $createdAt;
+    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false)]
+    protected DateTimeInterface $createdAt;
 //
     #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false)]
     protected DateTimeInterface $updatedAt;
@@ -191,6 +191,6 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
         if ($createdAt === null) {
             $createdAt = new DateTimeImmutable('now');
         }
-        $this->setCreatedAt($createdAt);
+        $this->createdAt = $createdAt;
     }
 }

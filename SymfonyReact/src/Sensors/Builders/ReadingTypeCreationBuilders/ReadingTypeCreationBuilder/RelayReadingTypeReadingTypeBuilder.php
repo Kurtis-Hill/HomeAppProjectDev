@@ -14,7 +14,7 @@ class RelayReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder 
 {
     public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = false) : AllSensorReadingTypeInterface
     {
-        $sensorType = $sensor->getSensorTypeObject()::getReadingTypeName();
+        $sensorType = $sensor->getSensorTypeObject();
         if (!$sensorType instanceof RelayReadingTypeInterface) {
             throw new SensorTypeException(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME

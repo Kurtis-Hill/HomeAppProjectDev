@@ -47,7 +47,8 @@ abstract class AbstractBoolReadingTypeBuilder extends AbstractReadingTypeBuilder
         $now = new DateTimeImmutable('now');
         $boolObject->setCurrentReading($currentReading);
         $boolObject->setSensor($sensor);
-        $boolObject->setCreatedAt(clone $now);
+//        dd($boolObject, $baseReadingType);
+        $boolObject->setCreatedAt();
         $boolObject->setRequestedReading($currentReading);
         $boolObject->setConstRecord($constRecord);
         $boolObject->setUpdatedAt();

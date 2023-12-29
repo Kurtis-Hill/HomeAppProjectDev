@@ -9,7 +9,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-readonly class GenericRelayNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder //implements NewSensorReadingTypeBuilderInterface
+readonly class GenericRelayNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
 //    private RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder;
 //

@@ -12,13 +12,14 @@ class MotionReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder
 {
     public function buildReadingTypeObject(Sensor $sensor): AllSensorReadingTypeInterface
     {
-        $sensorType = $sensor->getSensorTypeObject()::getReadingTypeName();
+        $sensorType = $sensor->getSensorTypeObject();
+//        dd('MotionReadingTypeReadingTypeBuilder', $sensorType);
+//        dd($sensorType instanceof MotionSensorReadingTypeInterface);
         if (!$sensorType instanceof MotionSensorReadingTypeInterface) {
             throw new SensorTypeException(
                 SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
             );
         }
-
         $motionSensor = new Motion();
 
         $this->setBoolDefaults(

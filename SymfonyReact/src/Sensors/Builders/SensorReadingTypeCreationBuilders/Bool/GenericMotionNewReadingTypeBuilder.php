@@ -9,7 +9,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-readonly class GenericMotionNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder
+readonly class GenericMotionNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
 //    private MotionReadingTypeReadingTypeBuilder $motionReadingTypeObjectBuilder;
 //

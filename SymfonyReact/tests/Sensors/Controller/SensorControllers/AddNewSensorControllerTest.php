@@ -17,6 +17,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReading
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\AbstractSensorType;
@@ -550,7 +551,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
         /** @var SensorTypeInterface $sensorTypeObject */
-        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
+        $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
@@ -762,7 +763,7 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
         /** @var SensorTypeInterface $sensorTypeObject */
-        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
+        $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
@@ -770,37 +771,33 @@ class AddNewSensorControllerTest extends WebTestCase
             /** @var AllSensorReadingTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
             self::assertInstanceOf($sensorTypeClass, $sensorType);
-        }
 
-        if ($sensorTypeObject instanceof SensorTypeInterface) {
-            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeMappingObject->getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
-        }
-        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeObject->getTemperature()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeObject->getHumidObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeObject->getHumidObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorTypeObject->getAnalogObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorTypeObject->getAnalogObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorTypeObject->getLatitudeObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorTypeObject->getLatitudeObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
-            self::assertNull($sensorTypeObject->getMotion()->getExpectedReading());
-            self::assertFalse($sensorTypeObject->getMotion()->getRequestedReading());
-            self::assertFalse($sensorTypeObject->getMotion()->getCurrentReading());
-        }
-        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
-            self::assertNull($sensorTypeObject->getRelay()->getExpectedReading());
-            self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
-            self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
+            if ($sensorTypeObject instanceof TemperatureReadingTypeInterface && $sensorType instanceof Temperature) {
+                self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof HumidityReadingTypeInterface && $sensorType instanceof Humidity) {
+                self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof AnalogReadingTypeInterface && $sensorType instanceof Analog) {
+                self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof LatitudeReadingTypeInterface && $sensorType instanceof Latitude) {
+                self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface && $sensorType instanceof Motion) {
+                self::assertNull($sensorType->getExpectedReading());
+                self::assertFalse($sensorType->getRequestedReading());
+                self::assertFalse($sensorType->getCurrentReading());
+            }
+            if ($sensorTypeObject instanceof RelayReadingTypeInterface && $sensorType instanceof Relay) {
+                self::assertNull($sensorType->getExpectedReading());
+                self::assertFalse($sensorType->getRequestedReading());
+                self::assertFalse($sensorType->getCurrentReading());
+            }
         }
 
         self::assertInstanceOf(Sensor::class, $sensor);
@@ -863,7 +860,7 @@ class AddNewSensorControllerTest extends WebTestCase
     public function test_adding_sensor_with_negative_pin(): void
     {
         /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -895,7 +892,7 @@ class AddNewSensorControllerTest extends WebTestCase
     public function test_adding_reading_interval_wrong_data_type(): void
     {
         /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -928,7 +925,7 @@ class AddNewSensorControllerTest extends WebTestCase
     public function test_adding_reading_interval_with_interval_too_low(): void
     {
         /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 

@@ -75,7 +75,7 @@ readonly abstract class AbstractNewReadingTypeBuilder
             $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Relay::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 
-        if ($sensor instanceof MotionSensorReadingTypeInterface) {
+        if ($sensorType instanceof MotionSensorReadingTypeInterface) {
             $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Motion::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 

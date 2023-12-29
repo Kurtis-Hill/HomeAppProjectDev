@@ -3,12 +3,13 @@
 namespace App\Sensors\Entity\ReadingTypes\BoolReadingTypes;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Repository\ReadingType\ORM\MotionRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Entity;
 
 #[
-//    Entity(repositoryClass: MotionRepository::class),
-    Entity(),
+    Entity(repositoryClass: MotionRepository::class),
+//    Entity(),
 //    ORM\Table(name: 'motion'),
 ]
 class Motion extends AbstractBoolReadingBaseSensor //implements AllSensorReadingTypeInterface //, AllSensorReadingTypeInterface

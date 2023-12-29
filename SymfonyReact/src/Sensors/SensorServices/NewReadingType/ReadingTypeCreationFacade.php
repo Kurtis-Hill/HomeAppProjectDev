@@ -38,7 +38,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
     }
 
     /**
-     * @throws SensorTypeException|SensorReadingTypeRepositoryFactoryException|ORMException
+     * @throws SensorTypeException|SensorReadingTypeRepositoryFactoryException
      * @throws ReadingTypeNotFoundException
      */
     #[ArrayShape([Temperature::class|Humidity::class|Latitude::class|Analog::class|Relay::class|Motion::class])]

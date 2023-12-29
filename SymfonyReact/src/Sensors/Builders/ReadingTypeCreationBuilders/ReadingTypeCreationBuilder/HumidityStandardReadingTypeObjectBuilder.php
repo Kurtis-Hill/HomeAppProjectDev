@@ -26,7 +26,6 @@ class HumidityStandardReadingTypeObjectBuilder extends AbstractStandardReadingTy
         $humiditySensor->setUpdatedAt();
         $humiditySensor->setCreatedAt();
         $humiditySensor->setSensor($sensor);
-//dd($humiditySensor);
         $this->setBaseReadingTypeForStandardSensor($humiditySensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($humiditySensor->getReadingType());
