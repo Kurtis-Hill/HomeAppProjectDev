@@ -6,6 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\Sensor;
@@ -21,7 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class   SwitchSensorControllerTest extends WebTestCase
+class SwitchSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
@@ -66,6 +67,7 @@ class   SwitchSensorControllerTest extends WebTestCase
         string $sensorType,
         string $sensorName,
         array $currentReadings,
+        string $readingType,
     ): void {
         /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorName]);
@@ -102,15 +104,13 @@ class   SwitchSensorControllerTest extends WebTestCase
         self::assertEquals('All sensor readings handled successfully', $title);
         self::assertEquals(["relay data accepted for sensor $sensorName"], $payload);
 
-        $sensorReadingTypeRepository = $this->entityManager
-            ->getRepository($sensorType);
+        $readingTypeRepository = $this->entityManager->getRepository($readingType);
 
-
-        /** @var RelayReadingTypeInterface $sensorReadingType */
-        $sensorReadingType = $sensorReadingTypeRepository
+        /** @var BoolReadingSensorInterface $sensorReadingType */
+        $sensorReadingType = $readingTypeRepository
             ->findOneBy(['sensor' => $sensor->getSensorID()]);
 
-        self::assertEquals($currentReadings['relay'], $sensorReadingType->getRelay()->getRequestedReading());
+        self::assertEquals($currentReadings['relay'], $sensorReadingType->getRequestedReading());
     }
 
     /**
@@ -120,6 +120,7 @@ class   SwitchSensorControllerTest extends WebTestCase
         string $sensorType,
         string $sensorName,
         array $currentReadings,
+        string $readingType,
     ): void {
         /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorName]);
@@ -163,14 +164,13 @@ class   SwitchSensorControllerTest extends WebTestCase
         self::assertEquals(["relay data accepted for sensor $sensorName"], $payload);
 
         $sensorReadingTypeRepository = $this->entityManager
-            ->getRepository($sensorType);
+            ->getRepository($readingType);
 
-
-        /** @var RelayReadingTypeInterface $sensorReadingType */
+        /** @var BoolReadingSensorInterface $sensorReadingType */
         $sensorReadingType = $sensorReadingTypeRepository
             ->findOneBy(['sensor' => $sensor->getSensorID()]);
 
-        self::assertEquals($currentReadings['relay'], $sensorReadingType->getRelay()->getRequestedReading());
+        self::assertEquals($currentReadings['relay'], $sensorReadingType->getRequestedReading());
     }
 
     public function successfulSwitchDataProvider(): Generator
@@ -180,7 +180,8 @@ class   SwitchSensorControllerTest extends WebTestCase
             'sensorName' => SensorFixtures::RELAY_SENSOR_NAME,
             'currentReadings' => [
                 Relay::READING_TYPE => false
-            ]
+            ],
+            'readingType' => Relay::class,
         ];
     }
 

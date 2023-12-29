@@ -39,4 +39,9 @@ class Dallas extends AbstractSensorType implements StandardSensorTypeInterface, 
     {
         return self::NAME;
     }
+
+    public static function getAllowedReadingTypes(): array
+    {
+        return self::ALLOWED_READING_TYPES;
+    }
 }

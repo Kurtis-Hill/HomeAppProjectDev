@@ -15,4 +15,6 @@ use JetBrains\PhpStorm\ArrayShape;
 interface SensorTypeInterface
 {
     public static function getReadingTypeName(): string;
+
+    public static function getAllowedReadingTypes(): array;
 }

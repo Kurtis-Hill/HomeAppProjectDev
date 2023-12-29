@@ -390,8 +390,8 @@ trait HomeAppAPITrait
 
         return (new Serializer(
             $normalizers,
-            $encoders)
-        )->deserialize(
+            $encoders
+        ))->deserialize(
             $data,
             $class,
             $format,

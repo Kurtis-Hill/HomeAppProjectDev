@@ -12,8 +12,10 @@ use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDT
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
+use App\Sensors\Exceptions\ReadingTypeNotFoundException;
 use App\Sensors\Exceptions\SensorDataCurrentReadingUpdateBuilderException;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
+use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,15 +47,19 @@ class SwitchSensorController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
+    /**
+     * @throws SensorDataCurrentReadingUpdateBuilderException
+     * @throws ReadingTypeNotFoundException
+     */
     #[Route('switch-sensor', name: 'switch-sensor', methods: [Request::METHOD_POST])]
     public function switchSensorAction(
         Request $request,
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
-        SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
         EntityManagerInterface $entityManager,
+        RelayRepository $relayRepository,
     ): JsonResponse {
         $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
         try {
@@ -62,12 +68,16 @@ class SwitchSensorController extends AbstractController
                 SensorUpdateRequestDTO::class,
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
+//                true,
             );
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
 
-        $validationErrors = $validator->validate($sensorUpdateRequestDTO);
+        $validationErrors = $validator->validate(
+            value: $sensorUpdateRequestDTO,
+//            groups: CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING
+        );
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
@@ -118,9 +128,6 @@ class SwitchSensorController extends AbstractController
                 continue;
             }
 
-            $sensorReadingRepository = $sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()::getReadingTypeName());
-            $sensorReadingType = $sensorReadingRepository->findOneBy(['sensor' => $sensor]);
-
             $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequestHandler->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateRequestDTO);
 
             if (empty($readingTypeCurrentReadingDTOs)) {
@@ -131,9 +138,13 @@ class SwitchSensorController extends AbstractController
             $readingTypeCurrentReadingDTO = array_pop($readingTypeCurrentReadingDTOs);
             if (
                 ($readingTypeCurrentReadingDTO instanceof BoolCurrentReadingUpdateRequestDTO)
-                && $sensorReadingType instanceof RelayReadingTypeInterface
+                && $sensor->getSensorTypeObject() instanceof RelayReadingTypeInterface
             ) {
-                $sensorReadingType->getRelay()->setRequestedReading($readingTypeCurrentReadingDTO->getCurrentReading());
+                $relay = $relayRepository->findOneBy(['sensor' => $sensor]);
+                if (!$relay) {
+                    throw new ReadingTypeNotFoundException('Relay reading type not found');
+                }
+                $relay->setRequestedReading($readingTypeCurrentReadingDTO->getCurrentReading());
             }
 
             $updateReadingDTO = $updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(
@@ -183,14 +194,11 @@ class SwitchSensorController extends AbstractController
                 $normalizedResponse = $this->normalizeResponse($errors);
                 if (count($normalizedResponse) > 0) {
                     $normalizedResponse = array_unique($normalizedResponse);
-//                dd('d');
-//                    dd($normalizedResponse);
-//                    $normalizedResponse = array_map('current', $normalizedResponse);
                 }
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
             }
-//dd($normalizedResponse);
+
             return $this->sendBadRequestJsonResponse($normalizedResponse, APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT);
         }
 
@@ -198,7 +206,6 @@ class SwitchSensorController extends AbstractController
         try {
             $normalizedErrorResponse = $this->normalizeResponse($errors);
             if (count($normalizedErrorResponse) > 0) {
-//                $normalizedErrorResponse = array_map('current', $normalizedErrorResponse);
                 $normalizedErrorResponse = array_unique($normalizedErrorResponse);
             }
             $normalizedSuccessResponse = $this->normalizeResponse(

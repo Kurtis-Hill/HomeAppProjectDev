@@ -23,6 +23,7 @@ use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
@@ -202,14 +203,9 @@ class GetSingleSensorControllerTest extends WebTestCase
     public function test_getting_all_sensor_response_admin(string $sensorType, array $allowedTypes): void
     {
         /** @var GenericSensorTypeRepositoryInterface $sensorTypeRepository */
-        $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        $sensorType = $this->entityManager->getRepository($sensorType)->findAll()[0];
 
-        /** @var \App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface[] $sensorTypes */
-        $sensorTypes = $sensorTypeRepository->findAll();
-
-        $sensorType = $sensorTypes[0];
-
-        $sensor = $sensorType->getSensor();
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorType])[0];
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGULAR_SENSOR_URL, $sensor->getSensorID()),
@@ -445,10 +441,13 @@ class GetSingleSensorControllerTest extends WebTestCase
     /**
      * @dataProvider filterResponseSensorDataProvider
      */
-    public function test_get_filtered_response_data(string $sensorType, array $expectedResponseTypes, array $notExpectedResponseTypes): void
-    {
+    public function test_get_filtered_response_data(
+        string $sensorType,
+        array $expectedResponseTypes,
+        array $notExpectedResponseTypes
+    ): void {
         /** @var AbstractSensorType $sensorTypeObject */
-        $sensorTypeObject = $this->sensorTypeRepository->findOneBy(['sensorType' => $sensorType]);
+        $sensorTypeObject = $this->entityManager->getRepository($sensorType)->findAll()[0];
         /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject]);
 
@@ -479,7 +478,7 @@ class GetSingleSensorControllerTest extends WebTestCase
     public function filterResponseSensorDataProvider(): Generator
     {
         yield [
-            'sensorType' => Dht::NAME,
+            'sensorType' => Dht::class,
             'expectedResponseTypes' => [
                 'temperatureID',
                 'humidityID',
@@ -492,7 +491,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => Soil::NAME,
+            'sensorType' => Soil::class,
             'expectedResponseTypes' => [
                 'analogID',
             ],
@@ -505,7 +504,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => Dallas::NAME,
+            'sensorType' => Dallas::class,
             'expectedResponseTypes' => [
                 'temperatureID',
             ],
@@ -518,7 +517,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => Bmp::NAME,
+            'sensorType' => Bmp::class,
             'expectedResponseTypes' => [
                 'temperatureID',
                 'humidityID',
@@ -531,7 +530,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => GenericMotion::NAME,
+            'sensorType' => GenericMotion::class,
             'expectedResponseTypes' => [
                 'boolID',
             ],
@@ -544,7 +543,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => GenericRelay::NAME,
+            'sensorType' => GenericRelay::class,
             'expectedResponseTypes' => [
                 'boolID',
             ],
@@ -557,7 +556,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => LDR::NAME,
+            'sensorType' => LDR::class,
             'expectedResponseTypes' => [
                 'analogID',
             ],
@@ -570,7 +569,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensorType' => Sht::NAME,
+            'sensorType' => Sht::class,
             'expectedResponseTypes' => [
                 'temperatureID',
                 'humidityID',
