@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     Entity,
-    ORM\Table(name: "standardreadingtype"),
+    ORM\Table(name: "readingtypeoutofrange"),
     ORM\Index(columns: ["sensorReading"], name: "sensorReading"),
     ORM\Index(columns: ["createdAt"], name: "createdAt"),
     InheritanceType('SINGLE_TABLE'),
@@ -51,7 +51,7 @@ abstract class AbstractOutOfRange
 
     #[
         ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
-        ORM\JoinColumn(name: "baseSensorReadingType", referencedColumnName: "baseSensorReadingTypeID"),
+        ORM\JoinColumn(name: "baseReadingTypeID", referencedColumnName: "baseReadingTypeID"),
     ]
     #[Assert\NotNull(message: "Out of range base sensor cannot be null")]
     private BaseSensorReadingType $sensorReadingID;

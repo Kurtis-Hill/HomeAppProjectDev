@@ -133,7 +133,7 @@ class Temperature extends AbstractStandardReadingType implements ReadingSymbolIn
     public function setHighReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
-            $this->highReading = $reading;
+            $this->highReading = (float)$reading;
         }
     }
 

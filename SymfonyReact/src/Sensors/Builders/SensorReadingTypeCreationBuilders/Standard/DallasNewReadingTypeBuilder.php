@@ -8,10 +8,6 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-class DallasNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
+readonly class DallasNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
-    {
-        $this->buildSensorReadingTypeObjects($dallas);
-    }
 }

@@ -8,10 +8,6 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-class DhtNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
+readonly class DhtNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
-    {
-        $this->buildSensorReadingTypeObjects($sensor);
-    }
 }

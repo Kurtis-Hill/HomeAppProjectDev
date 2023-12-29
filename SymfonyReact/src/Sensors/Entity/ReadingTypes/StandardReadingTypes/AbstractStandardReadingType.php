@@ -63,13 +63,13 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
     private Sensor $sensor;
 
     #[ORM\Column(name: 'currentReading', type: "float", precision: 10, scale: 0, nullable: false)]
-    private float $currentReading;
+    protected float $currentReading;
 
     #[ORM\Column(name: 'highReading', type: "float", precision: 10, scale: 0, nullable: false)]
-    private float $highReading = 0;
+    protected float $highReading = 0;
 
     #[ORM\Column(name: 'lowReading', type: "float", precision: 10, scale: 0, nullable: false)]
-    private float $lowReading = 0;
+    protected float $lowReading = 0;
 
     #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false, options: ["default" => "0"])]
     #[Assert\Type("bool")]
@@ -179,8 +179,11 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeInterface $createdAt): void
+    public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
+        if ($createdAt === null) {
+            $createdAt = new DateTimeImmutable('now');
+        }
         $this->createdAt = $createdAt;
     }
 

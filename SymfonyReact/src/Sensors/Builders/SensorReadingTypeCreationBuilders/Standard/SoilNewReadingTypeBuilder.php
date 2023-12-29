@@ -8,14 +8,6 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Soil;
 
-class SoilNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
+readonly class SoilNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
-    {
-        $soil = new Soil();
-        $soil->setSensor($sensor);
-        $this->buildSensorReadingTypeObjects($soil, ['analog' => Soil::LOW_SOIL_READING_BOUNDARY]);
-
-        return $soil;
-    }
 }

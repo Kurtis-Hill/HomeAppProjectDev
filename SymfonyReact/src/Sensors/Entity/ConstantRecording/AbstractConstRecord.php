@@ -10,6 +10,7 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
@@ -57,8 +58,8 @@ abstract class AbstractConstRecord
     protected DateTimeInterface $createdAt;
 
     #[
-        ORM\ManyToOne(targetEntity: Analog::class),
-        ORM\JoinColumn(name: "baseSensorReadingType", referencedColumnName: "baseSensorReadingTypeID"),
+        ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
+        ORM\JoinColumn(name: "baseSensorReadingType", referencedColumnName: "baseReadingTypeID"),
     ]
     #[Assert\NotNull(message: "Const Record Analog Object cannot be null")]
     protected BaseSensorReadingType $sensorReadingID;
@@ -93,14 +94,14 @@ abstract class AbstractConstRecord
         $this->createdAt = new DateTimeImmutable('now');
     }
 
-    public function getSensorReadingObject(): Analog
+    public function getSensorReadingObject(): BaseSensorReadingType
     {
         return $this->sensorReadingID;
     }
 
     public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
     {
-        if ($sensorReadingTypeID instanceof Analog) {
+        if ($sensorReadingTypeID instanceof BaseSensorReadingType) {
             $this->sensorReadingID = $sensorReadingTypeID;
         }
     }

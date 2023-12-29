@@ -47,7 +47,10 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
 
         $this->diContainer = static::getContainer();
 
-        $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');
+//        $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');
+        $this->entityManager = static::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
         $this->sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
         $this->sensorTypeRepository = $this->diContainer->get(SensorTypeRepository::class);
 //        $this->sut = $this->diContainer->get(SensorTypeDataRequestEncapsulationDTOBuilder::class);
@@ -59,12 +62,11 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
     public function test_just_adding_one_sensor_to_builder(string $sensorType): void
     {
         /** @var AbstractSensorType $sensorTypeToUser */
-        $sensorTypeToUser = $this->sensorTypeRepository->findOneBy(['sensorType' => $sensorType]);
-
+        $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         /** @var Sensor[] $sensorsToUser */
-        $sensorsToUser = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeToUser]);
+        $sensorsToUser = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject]);
 
-//        dd($sensorsToUser);
         $singleSensorUpdateRequestDTOs = [];
         foreach ($sensorsToUser as $sensor) {
             $singleSensorUpdateRequestDTOs[] = new SingleSensorUpdateRequestDTO(
@@ -175,35 +177,35 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
     public function oneSensorTypeDataProvider(): Generator
     {
         yield [
-            'sensorType' => GenericRelay::NAME,
+            'sensorType' => GenericRelay::class,
         ];
 
         yield [
-            'sensorType' => GenericMotion::NAME,
+            'sensorType' => GenericMotion::class,
         ];
 
         yield [
-            'sensorType' => Dht::NAME,
+            'sensorType' => Dht::class,
         ];
 
         yield [
-            'sensorType' => Soil::NAME,
+            'sensorType' => Soil::class,
         ];
 
         yield [
-            'sensorType' => Dallas::NAME,
+            'sensorType' => Dallas::class,
         ];
 
         yield [
-            'sensorType' => Bmp::NAME,
+            'sensorType' => Bmp::class,
         ];
 
         yield [
-            'sensorType' => LDR::NAME,
+            'sensorType' => LDR::class,
         ];
 
         yield [
-            'sensorType' => Sht::NAME,
+            'sensorType' => Sht::class,
         ];
     }
 }

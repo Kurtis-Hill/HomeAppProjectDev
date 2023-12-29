@@ -4,6 +4,7 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBu
 
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
@@ -11,7 +12,7 @@ use DateTimeImmutable;
 
 class RelayReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
-    public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = false) : void
+    public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = false) : AllSensorReadingTypeInterface
     {
         $sensorType = $sensor->getSensorTypeObject()::getReadingTypeName();
         if (!$sensorType instanceof RelayReadingTypeInterface) {
@@ -28,6 +29,8 @@ class RelayReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder 
             $currentReading,
             false
         );
+
+        return $relaySensor;
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 use Doctrine\ORM\Exception\ORMException;
@@ -16,5 +17,5 @@ interface ReadingTypeObjectBuilderInterface
      * @throws ORMException
      * @throws ORMInvalidArgumentException
      */
-    public function buildReadingTypeObject(Sensor $sensor): void;
+    public function buildReadingTypeObject(Sensor $sensor): AllSensorReadingTypeInterface;
 }

@@ -12,7 +12,7 @@ abstract class AbstractStandardSensorOutOfBoundsObjectCreationBuilder
         OutOfBoundsEntityInterface $outOfBoundsObject
     ): void {
         $outOfBoundsObject->setSensorReading($sensorReadingObject->getCurrentReading());
-        $outOfBoundsObject->setSensorReadingID($sensorReadingObject->get);
+        $outOfBoundsObject->setSensorReadingID($sensorReadingObject->getBaseReadingType());
         $outOfBoundsObject->setCreatedAt();
     }
 }

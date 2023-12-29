@@ -5,10 +5,11 @@ namespace App\Sensors\Entity\SensorTypes;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
+use App\Sensors\Repository\SensorType\ORM\GenericRelayRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: GenericRelay::class),
+    ORM\Entity(repositoryClass: GenericRelayRepository::class),
 ]
 class GenericRelay extends AbstractSensorType implements RelayReadingTypeInterface, BoolSensorTypeInterface
 {

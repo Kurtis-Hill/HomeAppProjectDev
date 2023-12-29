@@ -28,7 +28,6 @@ class AnalogOutOfBoundsObjectCreationBuilder extends AbstractStandardSensorOutOf
             $sensorReadingTypeObject,
             $outOfBoundsObject,
         );
-
         return $outOfBoundsObject;
     }
 }

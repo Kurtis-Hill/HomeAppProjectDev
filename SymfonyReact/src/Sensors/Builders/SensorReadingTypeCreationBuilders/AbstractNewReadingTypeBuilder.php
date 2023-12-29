@@ -23,69 +23,62 @@ use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Factories\SensorReadingType\SensorReadingTypeCreationFactory;
+use Doctrine\ORM\Exception\ORMException;
+use JetBrains\PhpStorm\ArrayShape;
 
-abstract class AbstractNewReadingTypeBuilder
+readonly abstract class AbstractNewReadingTypeBuilder
 {
-    private TemperatureStandardReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder;
-
-    private HumidityStandardReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder;
-
-    private LatitudeStandardReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder;
-
-    private AnalogStandardReadingTypeObjectBuilder $analogReadingTypeObjectBuilder;
-
-    private RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder;
-
-    private MotionReadingTypeReadingTypeBuilder $motionReadingTypeObjectBuilder;
-
     public function __construct(
-        TemperatureStandardReadingTypeObjectBuilder $temperatureReadingTypeObjectBuilder,
-        HumidityStandardReadingTypeObjectBuilder $humidityReadingTypeObjectBuilder,
-        LatitudeStandardReadingTypeObjectBuilder $latitudeReadingTypeObjectBuilder,
-        AnalogStandardReadingTypeObjectBuilder $analogReadingTypeObjectBuilder,
-        RelayReadingTypeReadingTypeBuilder $relayReadingTypeObjectBuilder,
-        MotionReadingTypeReadingTypeBuilder $motionReadingTypeObjectBuilder,
-    ) {
-        $this->temperatureReadingTypeObjectBuilder = $temperatureReadingTypeObjectBuilder;
-        $this->humidityReadingTypeObjectBuilder = $humidityReadingTypeObjectBuilder;
-        $this->latitudeReadingTypeObjectBuilder = $latitudeReadingTypeObjectBuilder;
-        $this->analogReadingTypeObjectBuilder = $analogReadingTypeObjectBuilder;
-        $this->relayReadingTypeObjectBuilder = $relayReadingTypeObjectBuilder;
-        $this->motionReadingTypeObjectBuilder = $motionReadingTypeObjectBuilder;
+        private SensorReadingTypeCreationFactory $sensorReadingTypeCreationFactory,
+    ) {}
+
+    /**
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeException
+     * @throws ORMException
+     */
+    #[ArrayShape([Temperature::class|Humidity::class|Latitude::class|Analog::class|Relay::class|Motion::class])]
+    public function buildNewSensorTypeObjects(Sensor $sensor): array
+    {
+        return $this->buildSensorReadingTypeObjects($sensor);
     }
 
     /**
      * @throws SensorTypeException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws ORMException
      */
-    protected function buildSensorReadingTypeObjects(Sensor $sensor): void
+    protected function buildSensorReadingTypeObjects(Sensor $sensor): array
     {
-        if (!$sensor instanceof SensorTypeInterface) {
-            throw new SensorTypeException('Sensor type must implement SensorTypeInterface');
-        }
-        if ($sensor instanceof TemperatureReadingTypeInterface) {
-            $this->temperatureReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
+        $sensorType = $sensor->getSensorTypeObject();
+        if ($sensorType instanceof TemperatureReadingTypeInterface) {
+            $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Temperature::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 
-        if ($sensor instanceof HumidityReadingTypeInterface) {
-            $this->humidityReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
+        if ($sensorType instanceof HumidityReadingTypeInterface) {
+            $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Humidity::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 
-        if ($sensor instanceof LatitudeReadingTypeInterface) {
-            $this->latitudeReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
+        if ($sensorType instanceof LatitudeReadingTypeInterface) {
+            $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Latitude::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 
-        if ($sensor instanceof AnalogReadingTypeInterface) {
-            $this->analogReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
+        if ($sensorType instanceof AnalogReadingTypeInterface) {
+            $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Analog::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 
-        if ($sensor instanceof RelayReadingTypeInterface) {
-            $this->relayReadingTypeObjectBuilder->buildReadingTypeObject($sensor);
+        if ($sensorType instanceof RelayReadingTypeInterface) {
+            $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Relay::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
 
         if ($sensor instanceof MotionSensorReadingTypeInterface) {
-            $this->motionReadingTypeObjectBuilder->buildReadingTypeObject($sensor, $currentReading[Motion::READING_TYPE] ?? false);
+            $readingType[] = $this->sensorReadingTypeCreationFactory->getReadingTypeObjectBuilder(Motion::getReadingTypeName())->buildReadingTypeObject($sensor);
         }
+
+        return $readingType ?? [];
     }
 }

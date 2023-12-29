@@ -31,7 +31,7 @@ interface AllSensorReadingTypeInterface
 
     public function setUpdatedAt(): void;
 
-    public function setCreatedAt(DateTimeInterface $dateTime): void;
+    public function setCreatedAt(?DateTimeInterface $dateTime = null): void;
 
     public function getUpdatedAt(): DateTimeInterface;
 }

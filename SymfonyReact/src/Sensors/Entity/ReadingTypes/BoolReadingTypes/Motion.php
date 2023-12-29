@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\Entity;
     Entity(),
 //    ORM\Table(name: 'motion'),
 ]
-class Motion extends AbstractBoolReadingBaseSensor implements AllSensorReadingTypeInterface //, AllSensorReadingTypeInterface
+class Motion extends AbstractBoolReadingBaseSensor //implements AllSensorReadingTypeInterface //, AllSensorReadingTypeInterface
 {
     public const READING_TYPE = 'motion';
 

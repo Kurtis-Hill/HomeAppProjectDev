@@ -4,12 +4,13 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBu
 
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
 class MotionReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
-    public function buildReadingTypeObject(Sensor $sensor): void
+    public function buildReadingTypeObject(Sensor $sensor): AllSensorReadingTypeInterface
     {
         $sensorType = $sensor->getSensorTypeObject()::getReadingTypeName();
         if (!$sensorType instanceof MotionSensorReadingTypeInterface) {
@@ -26,5 +27,7 @@ class MotionReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder
             false,
             false
         );
+
+        return $motionSensor;
     }
 }

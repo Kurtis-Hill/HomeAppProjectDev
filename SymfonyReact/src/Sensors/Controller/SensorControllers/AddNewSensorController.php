@@ -56,8 +56,8 @@ class AddNewSensorController extends AbstractController
     public function addNewSensor(
         Request $request,
         NewSensorCreationInterface $newSensorCreationService,
-        ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,
+        ReadingTypeCreationInterface $readingTypeCreation,
         SensorDeletionInterface $deleteSensorService,
         NewSensorDTOBuilder $newSensorDTOBuilder,
         ValidatorInterface $validator,
@@ -106,8 +106,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::QUERY_FAILURE, 'Sensor data']);
         } catch (SensorRequestException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
-        }
-        catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
+        } catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
@@ -136,15 +135,14 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
-        if (!empty($sensorReadingTypeCreationErrors)) {
-            try {
+        $sensorReadingTypesCreated = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
+        foreach ($sensorReadingTypesCreated as $sensorReadingType) {
+            $readingTypeValidationErrors = $validator->validate(value: $sensorReadingType, groups: [$sensor->getSensorTypeObject()::getReadingTypeName()]);
+            if ($this->checkIfErrorsArePresent($readingTypeValidationErrors)) {
                 $deleteSensorService->deleteSensor($sensor);
-            } catch (ORMException $e) {
-                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
-            }
 
-            return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
+                return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($readingTypeValidationErrors));
+            }
         }
 
         $this->logger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);

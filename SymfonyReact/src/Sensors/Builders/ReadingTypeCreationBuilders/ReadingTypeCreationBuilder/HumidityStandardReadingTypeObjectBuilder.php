@@ -4,13 +4,14 @@ namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBu
 
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Exceptions\SensorTypeException;
 
 class HumidityStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
-    public function buildReadingTypeObject(Sensor $sensor, int|float|bool $currentReading = 10): void
+    public function buildReadingTypeObject(Sensor $sensor, int|float|bool $currentReading = 10): AllSensorReadingTypeInterface
     {
         $sensorType = $sensor->getSensorTypeObject();
         if (!$sensorType instanceof HumidityReadingTypeInterface) {
@@ -23,11 +24,14 @@ class HumidityStandardReadingTypeObjectBuilder extends AbstractStandardReadingTy
         $humiditySensor->setHighReading($sensorType->getMaxHumidity());
         $humiditySensor->setLowReading($sensorType->getMinHumidity());
         $humiditySensor->setUpdatedAt();
+        $humiditySensor->setCreatedAt();
         $humiditySensor->setSensor($sensor);
-
+//dd($humiditySensor);
         $this->setBaseReadingTypeForStandardSensor($humiditySensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($humiditySensor->getReadingType());
         $readingTypeRepository->persist($humiditySensor);
+
+        return $humiditySensor;
     }
 }

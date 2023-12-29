@@ -20,7 +20,7 @@ abstract class AbstractReadingTypeBuilder
     }
 
     /**
-     * @throws ORMException|OptimisticLockException
+     * @throws OptimisticLockException|\Doctrine\ORM\ORMException
      */
     protected function createNewBaseReadingTypeObject(): BaseSensorReadingType
     {

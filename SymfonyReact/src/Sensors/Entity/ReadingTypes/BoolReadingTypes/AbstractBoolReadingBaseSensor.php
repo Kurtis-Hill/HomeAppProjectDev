@@ -5,6 +5,7 @@ namespace App\Sensors\Entity\ReadingTypes\BoolReadingTypes;
 use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -32,7 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
         ]
     )
 ]
-abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface, BoolReadingSensorInterface
+abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface, BoolReadingSensorInterface, AllSensorReadingTypeInterface
 {
     #[
         ORM\Column(name: "readingTypeID", type: "integer", nullable: false),
@@ -185,8 +186,11 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
         return $this->getSensor()->getCreatedAt();
     }
 
-    public function setCreatedAt(DateTimeInterface $createdAt): void
+    public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
-        $this->getSensor()->setCreatedAt($createdAt);
+        if ($createdAt === null) {
+            $createdAt = new DateTimeImmutable('now');
+        }
+        $this->setCreatedAt($createdAt);
     }
 }

@@ -76,6 +76,7 @@ class UserCreationHandler
      * @throws UserCreationValidationErrorsException
      * @throws GroupValidationException
      * @throws GroupNotFoundException
+     * @throws GroupMappingValidationException
      */
     public function handleNewUserCreation(
         string $firstName,
@@ -186,10 +187,6 @@ class UserCreationHandler
         return $newName;
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function saveUser(User $user): bool
     {
         try {

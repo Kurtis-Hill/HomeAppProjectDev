@@ -5,10 +5,11 @@ namespace App\Sensors\Entity\SensorTypes;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Sensors\Repository\SensorType\ORM\GenericMotionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[
-    ORM\Entity(repositoryClass: GenericMotion::class),
+    ORM\Entity(repositoryClass: GenericMotionRepository::class),
 ]
 
 class GenericMotion extends AbstractSensorType implements MotionSensorReadingTypeInterface, BoolSensorTypeInterface

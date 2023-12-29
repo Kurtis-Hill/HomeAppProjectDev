@@ -9,14 +9,6 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 
-class LDRNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
+readonly class LDRNewReadingTypeBuilder extends AbstractNewReadingTypeBuilder implements NewSensorReadingTypeBuilderInterface
 {
-    public function buildNewSensorTypeObjects(Sensor $sensor): SensorTypeInterface
-    {
-        $ldr = new LDR();
-        $ldr->setSensor($sensor);
-        $this->buildSensorReadingTypeObjects($ldr, [Analog::READING_TYPE => LDR::LOW_READING]);
-
-        return $ldr;
-    }
 }
