@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Entity;
 
@@ -9,7 +10,6 @@ use App\User\Entity\Room;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;

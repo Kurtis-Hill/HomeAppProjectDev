@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Normalizers;
 
-use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Serializer;
 
 class DeviceResponseNormalizer implements NormalizerInterface
 {
-    public function normalize($device, string $format = null, array $context = [])
+    public function normalize(mixed $device, string $format = null, array $context = []): mixed
     {
         if (!empty($context['groups'])) {
             $classMetadataFactory = new ClassMetadataFactory(

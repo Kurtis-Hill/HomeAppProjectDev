@@ -285,7 +285,6 @@ class UpdateSensorControllerTest extends WebTestCase
             json_encode(['deviceID' => $deviceID, 'sensorName' => $newSensorName, 'pinNumber' => 10]),
         );
 
-//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,

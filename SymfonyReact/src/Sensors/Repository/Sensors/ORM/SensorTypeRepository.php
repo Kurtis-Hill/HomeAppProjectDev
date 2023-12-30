@@ -34,15 +34,6 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
         return $this->find($id);
     }
 
-    #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME, GenericRelay::NAME, GenericMotion::NAME])]
-    public function findAllSensorTypeNames(): array
-    {
-        $qb = $this->createQueryBuilder('st');
-        $qb->select('st.sensorType');
-
-        return array_map('current', $qb->getQuery()->getResult());
-    }
-
     #[ArrayShape([Bmp::class, Dallas::class, Dht::class, Soil::class])]
     public function findAllSensorTypes(bool $cache = true): array
     {
@@ -51,7 +42,7 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
             $qb->setCacheable(true);
         }
         $qb->select();
-        $qb->orderBy('st.sensorType', 'ASC');
+        $qb->orderBy('st.sensorTypeID', 'ASC');
 
         return $qb->getQuery()->execute();
 

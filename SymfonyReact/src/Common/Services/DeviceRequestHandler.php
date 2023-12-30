@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Common\Services;
 
@@ -7,6 +8,8 @@ use App\Devices\DTO\Request\DeviceRequest\DeviceRequestEncapsulationDTO;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -20,7 +23,9 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
     ) {}
 
     /**
+     * @throws ExceptionInterface
      * @throws Exception
+     * @throws TransportExceptionInterface
      */
     public function handleDeviceRequest(
         DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO,
@@ -51,6 +56,16 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                 ]
             );
         } catch (Exception $e) {
+            $this->elasticLogger->error(
+                'Sending request to device failed',
+                [
+                    'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
+                    'request' => $normalizedResponse,
+                    'exception' => $e->getMessage(),
+                ]
+            );
+            throw $e;
+        } catch (TransportExceptionInterface $e) {
             $this->elasticLogger->error(
                 'Sending request to device failed',
                 [

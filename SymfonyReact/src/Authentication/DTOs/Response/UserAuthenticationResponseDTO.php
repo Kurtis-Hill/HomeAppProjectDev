@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Authentication\DTOs\Response;
 
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-class UserAuthenticationResponseDTO
+readonly class UserAuthenticationResponseDTO
 {
     private UserDataDTO $userData;
 

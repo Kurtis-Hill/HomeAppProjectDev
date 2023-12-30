@@ -40,12 +40,6 @@ interface SensorTypeRepositoryInterface
     public function findAllSensorTypes(): array;
 
     /**
-     * @throws ORMException
-     */
-    #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME, GenericRelay::NAME, GenericMotion::NAME])]
-    public function findAllSensorTypeNames(): array;
-
-    /**
      * @throws OptimisticLockException
      * @throws ORMException
      */

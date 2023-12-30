@@ -132,7 +132,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         }
 
         $mergedErrors = array_merge(
-        $errors,
+            $errors,
             $currentReadingSensorDataRequest->getValidationErrors(),
         );
 

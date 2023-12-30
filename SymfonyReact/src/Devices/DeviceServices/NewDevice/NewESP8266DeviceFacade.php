@@ -1,21 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\DeviceServices\NewDevice;
 
-use App\Common\API\APIErrorMessages;
-use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\AbstractESPDeviceService;
-use App\Devices\DeviceServices\DevicePasswordService\DevicePasswordEncoderInterface;
 use App\Devices\DTO\Internal\NewDeviceDTO;
-use App\Devices\DTO\Request\NewDeviceRequestDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Exceptions\DuplicateDeviceException;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
 use App\User\Entity\User;
-use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
-use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 

@@ -21,7 +21,6 @@ use App\Sensors\Exceptions\SensorUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeFactories\ReadingTypeResponseBuilderFactory;
 use App\Sensors\Factories\SensorUpdateFactory\SensorReadingUpdateFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\SensorReadingTypes\SensorReadingTypeUpdateHandler;
 use App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -102,6 +101,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
         $sensorProcessingErrors = [];
         $validationErrors = [];
+//        dd($updateBoundaryReadingRequestDTO->getSensorData());
         foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
             try {
                 $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);

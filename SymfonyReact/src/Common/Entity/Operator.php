@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Common\Entity;
 
@@ -9,6 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: OperatorRepository::class),
     ORM\Table(name: "operators"),
+    ORM\UniqueConstraint(name: "operatorName", columns: ["operatorName"]),
+    ORM\UniqueConstraint(name: "operatorSymbol", columns: ["operatorSymbol"]),
 ]
 class Operator
 {

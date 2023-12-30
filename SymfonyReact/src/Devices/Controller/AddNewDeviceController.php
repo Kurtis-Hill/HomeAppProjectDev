@@ -14,6 +14,7 @@ use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
+use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
@@ -46,6 +47,12 @@ class AddNewDeviceController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
+    /**
+     * @throws RoomNotFoundException
+     * @throws ORMException
+     * @throws DeviceCreationFailureException
+     * @throws GroupNotFoundException
+     */
     #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,

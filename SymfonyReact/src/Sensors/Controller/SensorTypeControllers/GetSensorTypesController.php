@@ -41,7 +41,6 @@ class GetSensorTypesController extends AbstractController
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
         $sensorTypes = $sensorTypeRepository->findAllSensorTypes();
-
         foreach ($sensorTypes as $sensorType) {
             $sensorTypeResponseDTO[] = $responseDTOBuilder->buildSensorTypeResponseDTO($sensorType);
         }

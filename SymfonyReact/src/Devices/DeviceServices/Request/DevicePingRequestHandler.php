@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\DeviceServices\Request;
 
@@ -6,7 +7,9 @@ use App\Common\Services\DeviceRequestHandlerInterface;
 use App\Devices\Builders\Request\DevicePingRequestDTOBuilder;
 use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Entity\Devices;
+use App\Devices\Exceptions\DeviceIPNotSetException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 readonly class DevicePingRequestHandler
 {
@@ -17,6 +20,10 @@ readonly class DevicePingRequestHandler
         private DevicePingRequestDTOBuilder $devicePingRequestDTOBuilder,
     ) {}
 
+    /**
+     * @throws DeviceIPNotSetException
+     * @throws TransportExceptionInterface
+     */
     public function pingDevice(Devices $device): bool
     {
         $devicePingRequestDTO = $this->devicePingRequestDTOBuilder->buildPingRequestDTO();

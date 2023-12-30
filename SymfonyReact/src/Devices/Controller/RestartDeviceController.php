@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Controller;
 
@@ -14,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/')]
 class RestartDeviceController extends AbstractController
@@ -38,6 +40,8 @@ class RestartDeviceController extends AbstractController
             $restartSuccess = $deviceRestartRequestHandler->restartDevice($device);
         } catch (DeviceIPNotSetException) {
             return $this->sendBadRequestJsonResponse(['Device IP not set']);
+        } catch (TransportExceptionInterface $e) {
+            return $this->sendInternalServerErrorJsonResponse();
         }
         if ($restartSuccess === false) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::DEVICE_RESTART_FAILED]);

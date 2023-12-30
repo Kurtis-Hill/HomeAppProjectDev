@@ -33,6 +33,7 @@ use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
+use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,6 +56,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
     private ?EntityManagerInterface $entityManager;
 
+    private SensorRepositoryInterface $sensorRepository;
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -64,6 +67,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ->getManager();
 
         $this->userToken = $this->setUserToken($this->client);
+
+        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
     }
 
     protected function tearDown(): void
@@ -92,10 +97,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ];
         }
         $jsonData = json_encode($sensorData);
-
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -127,7 +132,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             }
         }
 
-        $sensorTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
+        $sensorTypeAfterUpdate = $this->sensorRepository->find($sensor->getSensorID());
 
         $readingUpdates = [];
         foreach ($sensorReadingsToUpdate as $sensorReading) {
@@ -395,8 +400,10 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
-        /** @var StandardReadingSensorInterface $sensorReadingTypeObject */
+        /** @var SensorTypeInterface $sensorReadingTypeObject */
         $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
+        /** @var Sensor $sensor */
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorReadingTypeObject])[0];
         $sensorData = [
             'sensorData' => $sensorReadingsToUpdate,
         ];
@@ -404,7 +411,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorReadingTypeObject->getSensor()->getSensorID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -429,6 +436,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
 
             if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
+//                dd($expectedDataPayloadMessage, $dataPayload);
                 self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
 
                 if (!empty($expectedDataPayloadMessage[$count]['lowReading'])) {
@@ -445,7 +453,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
 
-        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorReadingTypeObject->getSensorTypeID()]);
+        $sensorReadingTypeAfterUpdate = $this->sensorRepository->find($sensor->getSensorID());
 
         $readingUpdates = [];
         foreach ($sensorReadingsToUpdate as $sensorReading) {
@@ -505,15 +513,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             ],
             'dataPayloadMessage' => [
                 [
-                    "readingType" => "temperature",
-                    "highReading" => 50,
-                    "lowReading" => -35,
+                    "readingType" => Temperature::READING_TYPE,
+                    "highReading" => 80,
+                    "lowReading" => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "humidity",
                     "highReading" => 95,
-                    "lowReading" => 10,
+                    "lowReading" => 0,
                     "constRecord" => 0,
                 ]
             ],
@@ -526,7 +534,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'sensorReadingTypes' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY -5,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     'outOfBounds' => false,
                 ],
                 [
@@ -538,14 +546,14 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 75,
-                    "lowReading" => 10,
+                    "highReading" => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    "lowReading" => 0,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "humidity",
-                    "highReading" => 80,
-                    "lowReading" => 5,
+                    "highReading" => 100,
+                    "lowReading" => Humidity::LOW_READING + 5,
                     "constRecord" => 0,
                 ]
             ],
@@ -601,8 +609,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 120,
-                    "lowReading" => -50,
+                    "highReading" => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    "lowReading" => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
                     "constRecord" => 0,
                 ]
             ],
@@ -622,8 +630,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 120,
-                    "lowReading" => 10,
+                    "highReading" => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    "lowReading" => Dallas::LOW_TEMPERATURE_READING_BOUNDARY,
                     "constRecord" => 0,
                 ]
             ],
@@ -643,8 +651,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 50,
-                    "lowReading" => -50,
+                    "highReading" => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY,
+                    "lowReading" => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
                     "constRecord" => 0,
                 ]
             ],
@@ -678,20 +686,20 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 80,
-                    "lowReading" => -40,
+                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "humidity",
-                    "highReading" => 95,
-                    "lowReading" => 5,
+                    'highReading' => Humidity::HIGH_READING - 5,
+                    'lowReading' => Humidity::LOW_READING + 5,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "latitude",
-                    "highReading" => 85,
-                    "lowReading" => -85,
+                    'highReading' => Latitude::HIGH_READING - 5,
+                    'lowReading' => Latitude::LOW_READING + 5,
                     "constRecord" => 0,
                 ]
             ],
@@ -721,20 +729,20 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 80,
-                    "lowReading" => 10,
+                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    "lowReading" => Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "humidity",
-                    "highReading" => 95,
-                    "lowReading" => 10,
+                    'highReading' => Humidity::HIGH_READING - 5,
+                    "lowReading" => Humidity::LOW_READING,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "latitude",
-                    "highReading" => 85,
-                    "lowReading" => -90,
+                    'highReading' => Latitude::HIGH_READING - 5,
+                    "lowReading" => Latitude::LOW_READING,
                     "constRecord" => 0,
                 ]
             ],
@@ -764,20 +772,20 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'dataPayloadMessage' => [
                 [
                     "readingType" => "temperature",
-                    "highReading" => 50,
-                    "lowReading" => -40,
+                    "highReading" => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
+                    'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "humidity",
-                    "highReading" => 80,
-                    "lowReading" => 5,
+                    "highReading" => Humidity::HIGH_READING,
+                    'lowReading' => Humidity::LOW_READING + 5,
                     "constRecord" => 0,
                 ],
                 [
                     "readingType" => "latitude",
-                    "highReading" => 90,
-                    "lowReading" => -85,
+                    "highReading" => Latitude::HIGH_READING,
+                    'lowReading' => Latitude::LOW_READING + 5,
                     "constRecord" => 0,
                 ]
             ],
@@ -1117,6 +1125,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
+
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
         $sensorData = [
             'sensorData' => $sensorReadingsToUpdate,
         ];
@@ -1124,7 +1134,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
@@ -1148,7 +1158,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         /** @var Dht|Dallas|Soil|Bmp|GenericRelay|GenericMotion $sensorReadingTypeAfterUpdate */
-        $sensorReadingTypeAfterUpdate = $sensorTypeRepository->findOneBy([$tableId => $sensorTypeObject->getSensorTypeID()]);
+        $sensorReadingTypeAfterUpdate = $this->sensorRepository->find($sensor->getSensorID());
 
         if (new $sensorType instanceof BoolSensorTypeInterface) {
             $readingUpdates = [];
@@ -1497,6 +1507,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         /** @var AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
 
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
         $sensorData = [
             $sensorDataToSend
         ];
@@ -1504,7 +1515,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensorTypeObject->getSensor()->getSensorID()),
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],

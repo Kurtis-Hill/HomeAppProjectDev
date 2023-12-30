@@ -76,7 +76,6 @@ class GetSensorTypesControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 

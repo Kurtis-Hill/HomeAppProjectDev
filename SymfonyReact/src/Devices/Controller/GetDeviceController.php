@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Controller;
 
@@ -15,7 +16,10 @@ use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
+use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +27,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-device/', name: 'get-user-devices')]
 class GetDeviceController extends AbstractController
@@ -42,6 +45,11 @@ class GetDeviceController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ReadingTypeNotExpectedException
+     */
     #[Route('all', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(
         Request $request,
@@ -107,6 +115,11 @@ class GetDeviceController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ReadingTypeNotExpectedException
+     */
     #[Route(
         '{deviceID}/get',
         name: 'get-user-device-single',

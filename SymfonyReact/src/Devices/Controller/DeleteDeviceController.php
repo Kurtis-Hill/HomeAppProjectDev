@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Controller;
 
@@ -12,6 +13,8 @@ use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +38,10 @@ class DeleteDeviceController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
+    /**
+     * @throws RoomNotFoundException
+     * @throws GroupNotFoundException
+     */
     #[
         Route(
             path: '{deviceID}/delete',

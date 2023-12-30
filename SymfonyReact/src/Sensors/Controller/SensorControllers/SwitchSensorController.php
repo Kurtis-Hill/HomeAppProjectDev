@@ -108,7 +108,10 @@ class SwitchSensorController extends AbstractController
                 currentReadings: $sensorUpdateData['currentReadings'] ?? null,
             );
 
-            $sensorDataPassedValidationErrors = $validator->validate(value: $sensorDataCurrentReadingUpdateRequestDTO, groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]);
+            $sensorDataPassedValidationErrors = $validator->validate(
+                value: $sensorDataCurrentReadingUpdateRequestDTO,
+                groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING]
+            );
             if ($this->checkIfErrorsArePresent($sensorDataPassedValidationErrors)) {
                 foreach ($sensorDataPassedValidationErrors as $error) {
                     $individualSensorRequestValidationErrors = [

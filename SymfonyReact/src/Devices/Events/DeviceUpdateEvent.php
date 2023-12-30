@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Events;
 
@@ -11,7 +12,8 @@ class DeviceUpdateEvent extends Event
 
     public function __construct(
         protected DeviceSettingsUpdateDTO $deviceUpdateEventDTO
-    ) {}
+    ) {
+    }
 
     public function getDeviceUpdateEventDTO(): DeviceSettingsUpdateDTO
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Builders\DeviceResponse;
 
@@ -10,10 +11,13 @@ use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\Builders\User\UserResponseBuilder;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DeviceResponseDTOBuilder
@@ -38,6 +42,10 @@ class DeviceResponseDTOBuilder
         $this->security = $security;
     }
 
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     */
     public function buildDeviceResponseDTOWithDevicePermissions(
         Devices $device,
         array $sensorReadingTypeDTOs = [],
@@ -56,6 +64,11 @@ class DeviceResponseDTOBuilder
         );
     }
 
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ReadingTypeNotExpectedException
+     */
     public function buildFullDeviceResponseDTO(Devices $device, bool $includeSensors = false): DeviceResponseDTO
     {
         if ($includeSensors === true) {

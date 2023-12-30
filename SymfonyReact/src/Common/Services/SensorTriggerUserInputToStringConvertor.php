@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Common\Services;
 
@@ -26,14 +27,6 @@ class SensorTriggerUserInputToStringConvertor
         if (is_bool($mixed)) {
             return $mixed ? 'true' : 'false';
         }
-
-//        if (is_array($mixed)) {
-//            return json_encode($mixed);
-//        }
-//
-//        if (is_object($mixed)) {
-//            return json_encode($mixed);
-//        }
 
         throw new SensorTriggerConversionException(SensorTriggerConversionException::MESSAGE);
     }
