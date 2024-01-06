@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordHumidRepository::class),
 ]
-class ConstHumid extends AbstractConstRecord implements ConstantlyRecordEntityInterface
+class ConstHumid extends AbstractConstRecord
 {
     #[HumidityConstraint]
     protected float $sensorReading;

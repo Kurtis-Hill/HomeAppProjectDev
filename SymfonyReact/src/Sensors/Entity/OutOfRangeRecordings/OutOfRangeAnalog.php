@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: OutOfBoundsAnalogRepository::class),
 ]
-class OutOfRangeAnalog extends AbstractOutOfRange implements OutOfBoundsEntityInterface
+class OutOfRangeAnalog extends AbstractOutOfRange
 {
     #[
         SoilConstraint(groups: [Soil::NAME]),

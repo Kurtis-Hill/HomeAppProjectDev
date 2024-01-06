@@ -3,6 +3,7 @@
 
 namespace App\Sensors\Entity\SensorTypes\Interfaces;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -34,4 +35,6 @@ interface AllSensorReadingTypeInterface
     public function setCreatedAt(?DateTimeInterface $dateTime = null): void;
 
     public function getUpdatedAt(): DateTimeInterface;
+
+    public function getBaseReadingType(): BaseSensorReadingType;
 }

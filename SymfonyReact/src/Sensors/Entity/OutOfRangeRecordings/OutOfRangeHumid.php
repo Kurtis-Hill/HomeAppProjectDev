@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: OutOfBoundsHumidityRepository::class),
 ]
-class OutOfRangeHumid extends AbstractOutOfRange implements OutOfBoundsEntityInterface
+class OutOfRangeHumid extends AbstractOutOfRange
 {
     #[HumidityConstraint]
     protected float $sensorReading;

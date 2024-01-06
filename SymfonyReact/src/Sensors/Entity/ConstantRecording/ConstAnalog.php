@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordAnalogRepository::class),
 ]
-class ConstAnalog extends AbstractConstRecord implements ConstantlyRecordEntityInterface
+class ConstAnalog extends AbstractConstRecord
 {
     #[
         SoilConstraint(groups: [Soil::NAME]),

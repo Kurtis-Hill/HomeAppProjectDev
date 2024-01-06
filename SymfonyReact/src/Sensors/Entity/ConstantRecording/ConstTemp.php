@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordTempRepository::class),
 ]
-class ConstTemp extends AbstractConstRecord implements ConstantlyRecordEntityInterface
+class ConstTemp extends AbstractConstRecord
 {
     #[
         DallasTemperatureConstraint(

@@ -120,7 +120,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private Group|int $groupID;
 
     #[
-        ORM\Column(name: "createdAt", type: "datetime", nullable: false,
+        ORM\Column(
+            name: "createdAt",
+            type: "datetime",
+            nullable: false,
 //            options: ["default" => "current_timestamp()"]
         ),
     ]
@@ -190,13 +193,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public function getUsersGroupName(): ?Group
     {
-        foreach ($this->userGroupMappingEntities as $groupMapping) {
-            if ($groupMapping->getGroup()->getCreatedBy()->getUserID() === $this->getUserID()) {
-                return $groupMapping->getGroup();
-            }
-        }
-
-        return null;
+        return $this->groupID;
     }
 
     #[ArrayShape([Group::class])]

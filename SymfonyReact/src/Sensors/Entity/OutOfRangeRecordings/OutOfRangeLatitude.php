@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: OutOfBoundsLatitudeRepository::class),
 ]
-class OutOfRangeLatitude extends AbstractOutOfRange implements OutOfBoundsEntityInterface
+class OutOfRangeLatitude extends AbstractOutOfRange
 {
     #[LatitudeConstraint]
     protected int|float $sensorReading;

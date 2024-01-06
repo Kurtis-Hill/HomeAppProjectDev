@@ -3,10 +3,15 @@
 namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\CurrentReading;
 
 use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -15,6 +20,8 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
@@ -28,6 +35,7 @@ use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentS
 use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,6 +89,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         $constRecordService->expects(self::never())->method('processConstRecord');
 
+        $logger = $this->createMock(LoggerInterface::class);
         $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
             $this->validator,
             $this->sensorReadingTypeRepositoryFactory,
@@ -88,18 +97,19 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $this->sensorReadingTriggerChecker,
             $this->sensorRepository,
+            $logger,
         );
 
-        $sensorTypeRepository = $this->entityManager->getRepository($sensorTypeClass);
+        /** @var SensorTypeInterface $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findAll()[0];
 
-        /** @var SensorTypeInterface[] $allSensors */
-        $allSensors = $sensorTypeRepository->findAll();
-        $firstSensor = $allSensors[0];
+        /** @var Sensor $firstSensor */
+        $firstSensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorType])[0];
 
-        $device = $firstSensor->getSensor()->getDevice();
+        $device = $firstSensor->getDevice();
         $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingMessageDTO(
-            sensorType: $sensorType,
-            sensorName: $firstSensor->getSensor()->getSensorName(),
+            sensorType: $sensorType::getReadingTypeName(),
+            sensorName: $firstSensor->getSensorName(),
             currentReadings: array_values($currentReadings),
             deviceID: $device->getDeviceID(),
         );
@@ -110,12 +120,21 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         self::assertEquals($errorMessages, $result);
 
-        /** @var SensorTypeInterface $sensorAfterUpdate */
-        $sensorAfterUpdate = $sensorTypeRepository->find($firstSensor->getSensorTypeID());
+        /** @var Sensor $sensorAfterUpdate */
+        $sensorAfterUpdate = $this->sensorRepository->find($firstSensor->getSensorID());
         self::assertNotNull($sensorAfterUpdate);
 
-        foreach ($sensorAfterUpdate->getReadingTypes() as $readingType) {
-            self::assertNotEquals($readingType->getCurrentReading(), $currentReadings[$readingType->getReadingTypeName()]->getCurrentReading());
+        /** @var AllSensorReadingTypeInterface[] $sensorReadingTypes */
+        $sensorReadingTypes = array_merge(
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $sensorAfterUpdate]),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $sensorAfterUpdate]),
+
+        );
+
+        self::assertNotEmpty($sensorReadingTypes);
+
+        foreach ($sensorReadingTypes as $readingType) {
+            self::assertNotEquals($readingType->getCurrentReading(), $currentReadings[$readingType::getReadingTypeName()]->getCurrentReading());
         }
     }
 
@@ -252,6 +271,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         $constRecordService->expects(self::never())->method('processConstRecord');
 
+        $logger = $this->createMock(LoggerInterface::class);
         $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
             $this->validator,
             $this->sensorReadingTypeRepositoryFactory,
@@ -259,6 +279,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $this->sensorReadingTriggerChecker,
             $this->sensorRepository,
+            $logger,
         );
 
         /** @var Sensor[] $sensors */
@@ -292,6 +313,9 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $sensorTriggerProcessor = $this->createMock(SensorReadingTriggerCheckerInterface::class);
         $sensorTriggerProcessor->expects(self::never())->method('checkSensorForTriggers');
 
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method('error');
+
         $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
             $this->validator,
             $this->sensorReadingTypeRepositoryFactory,
@@ -299,6 +323,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $sensorTriggerProcessor,
             $this->sensorRepository,
+            $logger,
         );
 
         /** @var Sensor[] $sensors */
@@ -326,17 +351,20 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         string $sensorType,
         string $sensorTypeClass,
         array $currentReadings,
+        ?bool $processOutOfBounds = true,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorTypeClass);
 
-        /** @var SensorTypeInterface[] $allSensors */
-        $allSensors = $sensorTypeRepository->findAll();
-        $firstSensor = $allSensors[0];
+        /** @var AllSensorReadingTypeInterface $sensorReadingType */
+        $sensorReadingType = $sensorTypeRepository->findAll()[0];
 
-        $device = $firstSensor->getSensor()->getDevice();
+        /** @var Sensor $firstSensor */
+        $firstSensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorReadingType])[0];
+
+        $device = $firstSensor->getDevice();
         $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingMessageDTO(
             sensorType: $sensorType,
-            sensorName: $firstSensor->getSensor()->getSensorName(),
+            sensorName: $firstSensor->getSensorName(),
             currentReadings: array_values($currentReadings),
             deviceID: $device->getDeviceID(),
         );
@@ -344,10 +372,21 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
 
-        $sensorBeforeUpdate = $sensorTypeRepository->find($firstSensor->getSensorTypeID());
-        $readingTypeCount = count($sensorBeforeUpdate->getReadingTypes());
-        $outOfBoundsService->expects(self::exactly($readingTypeCount))->method('processOutOfBounds');
-        $constRecordService->expects(self::exactly($readingTypeCount))->method('processConstRecord');
+        $sensorReadingTypes = array_merge(
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $firstSensor]),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $firstSensor]),
+
+        );
+        self::assertNotEmpty($sensorReadingTypes);
+        $sensorReadingTypesCount = count($sensorReadingTypes);
+
+        if ($processOutOfBounds === true) {
+            $outOfBoundsService->expects(self::exactly($sensorReadingTypesCount))->method('processOutOfBounds');
+        }
+        $constRecordService->expects(self::exactly($sensorReadingTypesCount))->method('processConstRecord');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method('error');
 
         $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
             $this->validator,
@@ -356,17 +395,23 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $this->sensorReadingTriggerChecker,
             $this->sensorRepository,
+            $logger,
         );
 
         $result = $sut->handleUpdateSensorCurrentReading($updateSensorCurrentReadingConsumerDTO);
         self::assertEmpty($result);
 
-        /** @var SensorTypeInterface $sensorAfterUpdate */
-        $sensorAfterUpdate = $sensorTypeRepository->find($firstSensor->getSensorTypeID());
-        self::assertNotNull($sensorAfterUpdate);
+        /** @var Sensor $sensorAfterUpdate */
+        $sensorAfterUpdate = $this->sensorRepository->find($firstSensor->getSensorID());
+        /** @var AllSensorReadingTypeInterface[] $sensorReadingTypes */
+        $sensorReadingTypes = array_merge(
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $sensorAfterUpdate]),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $sensorAfterUpdate]),
 
-        /** @var AllSensorReadingTypeInterface $readingType */
-        foreach ($sensorAfterUpdate->getReadingTypes() as $readingType) {
+        );
+        self::assertNotEmpty($sensorReadingTypes);
+
+        foreach ($sensorReadingTypes as $readingType) {
             self::assertEquals($readingType->getCurrentReading(), $currentReadings[$readingType::getReadingTypeName()]->getCurrentReading());
         }
     }
@@ -431,7 +476,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             'sensorType' => Soil::NAME,
             'sensorTypeClass' => Soil::class,
             'currentReadings' => [
-                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - random_int(1, 20)),
+                Analog::READING_TYPE => new AnalogCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - random_int(1, 20)),
             ],
         ];
 
@@ -439,7 +484,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             'sensorType' => Soil::NAME,
             'sensorTypeClass' => Soil::class,
             'currentReadings' => [
-                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(Soil::LOW_SOIL_READING_BOUNDARY + random_int(1, 20)),
+                Analog::READING_TYPE => new AnalogCurrentReadingUpdateRequestDTO(Soil::LOW_SOIL_READING_BOUNDARY + random_int(1, 20)),
             ],
         ];
 
@@ -447,7 +492,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             'sensorType' => LDR::NAME,
             'sensorTypeClass' => LDR::class,
             'currentReadings' => [
-                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(LDR::HIGH_READING - random_int(1, 20)),
+                Analog::READING_TYPE => new AnalogCurrentReadingUpdateRequestDTO(LDR::HIGH_READING - random_int(1, 20)),
             ],
         ];
 
@@ -455,8 +500,44 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             'sensorType' => LDR::NAME,
             'sensorTypeClass' => LDR::class,
             'currentReadings' => [
-                Analog::READING_TYPE =>new AnalogCurrentReadingUpdateRequestDTO(LDR::LOW_READING + random_int(1, 20)),
+                Analog::READING_TYPE => new AnalogCurrentReadingUpdateRequestDTO(LDR::LOW_READING + random_int(1, 20)),
             ],
+        ];
+
+        yield [
+            'sensorType' => GenericMotion::NAME,
+            'sensorTypeClass' => GenericMotion::class,
+            'currentReadings' => [
+                Motion::READING_TYPE => new BoolCurrentReadingUpdateDTO(Motion::getReadingTypeName(), true),
+            ],
+            'outOfBounds' => false,
+        ];
+
+        yield [
+            'sensorType' => GenericMotion::NAME,
+            'sensorTypeClass' => GenericMotion::class,
+            'currentReadings' => [
+                Motion::READING_TYPE => new BoolCurrentReadingUpdateDTO(Motion::getReadingTypeName(), false),
+            ],
+            'outOfBounds' => false,
+        ];
+
+        yield [
+            'sensorType' => GenericRelay::NAME,
+            'sensorTypeClass' => GenericRelay::class,
+            'currentReadings' => [
+                Relay::READING_TYPE => new BoolCurrentReadingUpdateDTO(Relay::getReadingTypeName(), true),
+            ],
+            'outOfBounds' => false,
+        ];
+
+        yield [
+            'sensorType' => GenericRelay::NAME,
+            'sensorTypeClass' => GenericRelay::class,
+            'currentReadings' => [
+                Relay::READING_TYPE => new BoolCurrentReadingUpdateDTO(Relay::getReadingTypeName(), false),
+            ],
+            'outOfBounds' => false,
         ];
     }
 }

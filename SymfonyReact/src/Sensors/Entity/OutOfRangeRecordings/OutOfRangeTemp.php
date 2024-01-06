@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: OutOfBoundsTempRepository::class),
 ]
-class OutOfRangeTemp extends AbstractOutOfRange implements OutOfBoundsEntityInterface
+class OutOfRangeTemp extends AbstractOutOfRange
 {
     #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false),]
     #[

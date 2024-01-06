@@ -10,7 +10,7 @@ class OutOfBoundsPersistenceDTOBuilder
     public static function buildOutOfBoundsPersistenceDTO(OutOfBoundsEntityInterface $outOfBoundsEntity): OutOfBoundsElasticPersistenceDTO
     {
         return new OutOfBoundsElasticPersistenceDTO(
-            $outOfBoundsEntity->getSensorReadingID()->getSensorID(),
+            $outOfBoundsEntity->getBaseSensorReadingType()->getSensorID(),
             $outOfBoundsEntity->getSensorReading(),
             $outOfBoundsEntity->getCreatedAt(),
         );

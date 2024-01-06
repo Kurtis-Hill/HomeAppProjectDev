@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[
     ORM\Entity(repositoryClass: ConstantlyRecordLatitudeRepository::class),
 ]
-class ConstLatitude extends AbstractConstRecord implements ConstantlyRecordEntityInterface
+class ConstLatitude extends AbstractConstRecord
 {
     #[LatitudeConstraint]
     protected float $sensorReading;

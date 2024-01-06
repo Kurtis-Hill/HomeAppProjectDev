@@ -27,7 +27,6 @@ class ConstRecordReadingTypeFacadeHandler implements SensorConstantlyRecordHandl
 
             $constRecordObjectBuilder = $this->constRecordCreationFactory->getConstRecordObjectBuilder($readingType);
             $constRecordObject = $constRecordObjectBuilder->buildConstRecordObject($readingTypeObject);
-
             $constRecordRepository = $this->constRecordRepositoryFactory->getConstRecordServiceRepository($readingType);
             $constRecordRepository->persist($constRecordObject);
         }

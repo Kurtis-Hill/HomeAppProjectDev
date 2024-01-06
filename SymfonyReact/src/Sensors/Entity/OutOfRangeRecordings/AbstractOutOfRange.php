@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ]
     )
 ]
-abstract class AbstractOutOfRange
+abstract class AbstractOutOfRange implements OutOfBoundsEntityInterface
 {
     #[
         ORM\Column(name: "outofrangeID", type: "integer", nullable: false),
@@ -54,7 +54,7 @@ abstract class AbstractOutOfRange
         ORM\JoinColumn(name: "baseReadingTypeID", referencedColumnName: "baseReadingTypeID"),
     ]
     #[Assert\NotNull(message: "Out of range base sensor cannot be null")]
-    private BaseSensorReadingType $sensorReadingID;
+    private BaseSensorReadingType $baseSensorReadingType;
 
     public function getOutOfRangeID(): int
     {
@@ -86,13 +86,13 @@ abstract class AbstractOutOfRange
         $this->createdAt = new DateTime('now');
     }
 
-    public function getSensorReadingID(): BaseSensorReadingType
+    public function getBaseSensorReadingType(): BaseSensorReadingType
     {
-        return $this->sensorReadingID;
+        return $this->baseSensorReadingType;
     }
 
-    public function setSensorReadingID(BaseSensorReadingType $sensorReadingTypeID): void
+    public function setBaseSensorReadingType(BaseSensorReadingType $sensorReadingTypeID): void
     {
-        $this->sensorReadingID = $sensorReadingTypeID;
+        $this->baseSensorReadingType = $sensorReadingTypeID;
     }
 }

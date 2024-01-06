@@ -3,13 +3,10 @@
 namespace App\Sensors\Entity\ConstantRecording;
 
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     Entity,
-    ORM\Table(name: "standardreadingtype"),
+    ORM\Table(name: "readingtypeconst"),
     ORM\Index(columns: ["sensorReading"], name: "sensorReading"),
     ORM\Index(columns: ["createdAt"], name: "createdAt"),
     InheritanceType('SINGLE_TABLE'),
@@ -37,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ]
     )
 ]
-abstract class AbstractConstRecord
+abstract class AbstractConstRecord implements ConstantlyRecordEntityInterface
 {
     #[
         ORM\Column(name: "constRecordID", type: "integer", nullable: false),
@@ -59,10 +56,10 @@ abstract class AbstractConstRecord
 
     #[
         ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
-        ORM\JoinColumn(name: "baseSensorReadingType", referencedColumnName: "baseReadingTypeID"),
+        ORM\JoinColumn(name: "baseReadingTypeID", referencedColumnName: "baseReadingTypeID"),
     ]
     #[Assert\NotNull(message: "Const Record Analog Object cannot be null")]
-    protected BaseSensorReadingType $sensorReadingID;
+    protected BaseSensorReadingType $baseSensorReadingType;
 
     public function getConstRecordID(): int
     {
@@ -96,13 +93,11 @@ abstract class AbstractConstRecord
 
     public function getSensorReadingObject(): BaseSensorReadingType
     {
-        return $this->sensorReadingID;
+        return $this->baseSensorReadingType;
     }
 
-    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void
+    public function setSensorReadingObject(BaseSensorReadingType $sensorReadingTypeID): void
     {
-        if ($sensorReadingTypeID instanceof BaseSensorReadingType) {
-            $this->sensorReadingID = $sensorReadingTypeID;
-        }
+        $this->baseSensorReadingType = $sensorReadingTypeID;
     }
 }
