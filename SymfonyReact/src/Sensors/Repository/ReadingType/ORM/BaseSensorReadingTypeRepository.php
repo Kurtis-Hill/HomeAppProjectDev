@@ -5,7 +5,7 @@ namespace App\Sensors\Repository\ReadingType\ORM;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

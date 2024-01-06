@@ -7,11 +7,20 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 use DateTimeImmutable;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 
 class RelayReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
+    /**
+     * @throws OptimisticLockException
+     * @throws SensorTypeException
+     * @throws ORMException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     */
     public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = false) : AllSensorReadingTypeInterface
     {
         $sensorType = $sensor->getSensorTypeObject();

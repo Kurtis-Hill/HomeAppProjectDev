@@ -25,4 +25,9 @@ class Motion extends AbstractBoolReadingBaseSensor //implements AllSensorReading
     {
         return self::READING_TYPE;
     }
+
+    public function getSensorID(): int
+    {
+        return $this->boolID;
+    }
 }

@@ -7,10 +7,20 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 
 class AnalogStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
+    /**
+     * @throws OptimisticLockException
+     * @throws SensorTypeException
+     * @throws ORMException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     */
     public function buildReadingTypeObject(Sensor $sensor, float|int|bool $currentReading = 10): AllSensorReadingTypeInterface
     {
         $sensorType = $sensor->getSensorTypeObject();
@@ -20,14 +30,13 @@ class AnalogStandardReadingTypeObjectBuilder extends AbstractStandardReadingType
             );
         }
         $analogSensor = new Analog();
-//        dd($sensorType);
         $analogSensor->setCurrentReading($sensorType->getMaxAnalog() / 2);
         $analogSensor->setHighReading($sensorType->getMaxAnalog());
         $analogSensor->setLowReading($sensorType->getMinAnalog());
-        $analogSensor->setCreatedAt();
-        $analogSensor->setUpdatedAt();
-        $analogSensor->setSensor($sensor);
-        $this->setBaseReadingTypeForStandardSensor($analogSensor);
+//        $analogSensor->setCreatedAt();
+//        $analogSensor->setUpdatedAt();
+//        $analogSensor->setSensor($sensor);
+        $this->setBaseReadingTypeForStandardSensor($analogSensor, $sensor);
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($analogSensor->getReadingType());
         $readingTypeRepository->persist($analogSensor);

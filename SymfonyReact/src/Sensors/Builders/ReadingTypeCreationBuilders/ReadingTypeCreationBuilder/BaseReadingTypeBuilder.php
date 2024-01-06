@@ -3,11 +3,17 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
+use App\Sensors\Entity\Sensor;
 
 class BaseReadingTypeBuilder
 {
-    public function buildBaseReadingTypeObject(): BaseSensorReadingType
+    public function buildBaseReadingTypeObject(Sensor $sensor): BaseSensorReadingType
     {
-        return new BaseSensorReadingType();
+        $baseSensorReadingType = new BaseSensorReadingType();
+
+        $baseSensorReadingType->setSensor($sensor);
+        $baseSensorReadingType->setCreatedAt();
+
+        return $baseSensorReadingType;
     }
 }

@@ -12,7 +12,7 @@ use App\User\Entity\User;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
-class NewESP8266DeviceFacade extends AbstractESPDeviceService implements NewDeviceHandlerInterface
+class NewESP8266DeviceHandler extends AbstractESPDeviceService implements NewDeviceHandlerInterface
 {
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array

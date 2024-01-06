@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders;
 
@@ -15,7 +16,7 @@ class TemperatureConstRecordObjectBuilder extends AbstractStandardConstRecordBui
         if (!$sensorReadingTypeObject instanceof Temperature) {
             throw new ReadingTypeNotExpectedException(
                 sprintf(
-                ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
+                    ReadingTypeNotExpectedException::READING_TYPE_NOT_EXPECTED,
                     $sensorReadingTypeObject->getReadingType(),
                     Temperature::getReadingTypeName()
                 )

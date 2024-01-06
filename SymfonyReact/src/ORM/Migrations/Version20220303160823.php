@@ -86,7 +86,15 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql("
             CREATE TABLE `basereadingtype` (
-                `baseReadingTypeID` INT AUTO_INCREMENT NOT NULL,                
+                `baseReadingTypeID` INT AUTO_INCREMENT NOT NULL,
+                `sensorID` INT NOT NULL,         
+                `constRecord` TINYINT(1) NOT NULL,
+                `updatedAt` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                `createdAt` DATETIME NOT NULL DEFAULT current_timestamp(),      
+                INDEX sensorID (sensorID),
+                INDEX constRecord (constRecord),
+                INDEX updatedAt (updatedAt),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY (`baseReadingTypeID`)
             )
         ");
@@ -99,19 +107,11 @@ final class Version20220303160823 extends AbstractMigration
                 `currentReading` DOUBLE PRECISION NOT NULL,
                 `highReading` DOUBLE PRECISION NOT NULL,
                 `lowReading` DOUBLE PRECISION NOT NULL,
-                `standardReadingType` VARCHAR(50) NOT NULL,
-                `sensorID` INT NOT NULL,
-                `constRecord` TINYINT(1) NOT NULL,
-                `updatedAt` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-                `createdAt` DATETIME NOT NULL DEFAULT current_timestamp(),
+                `standardReadingType` VARCHAR(50) NOT NULL,        
                 INDEX currentReading (currentReading),
                 INDEX highReading (highReading),
                 INDEX lowReading (lowReading),
                 INDEX standardreadingtypeIndex (standardReadingType),
-                INDEX sensorID (sensorID),
-                INDEX constRecord (constRecord),
-                INDEX updatedAt (updatedAt),
-                INDEX createdAt (createdAt),
                 PRIMARY KEY (`readingTypeID`)
             )             
         ");
@@ -124,16 +124,8 @@ final class Version20220303160823 extends AbstractMigration
                 `requestedReading` TINYINT(1) NOT NULL,
                 `expectedReading` TINYINT(1) NULL DEFAULT NULL,
                 `boolReadingType` VARCHAR(25) NOT NULL,
-                `sensorID` INT NOT NULL,
-                `constRecord` TINYINT(1) NOT NULL,
-                `updatedAt` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-                `createdAt` DATETIME NOT NULL DEFAULT current_timestamp(),
                 INDEX currentReading (currentReading),
                 INDEX boolReadingType (boolReadingType),
-                INDEX sensorID (sensorID),
-                INDEX constRecord (constRecord),
-                INDEX updatedAt (updatedAt),
-                INDEX createdAt (createdAt),
                 PRIMARY KEY(readingTypeID)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
         );
@@ -469,16 +461,19 @@ final class Version20220303160823 extends AbstractMigration
                 ADD CONSTRAINT `constanalog_ibfk_1` FOREIGN KEY (baseReadingTypeID) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
+        $this->addSql("
+            ALTER TABLE `basereadingtype`
+                ADD CONSTRAINT FK_STANDARD_READING_TYPE_SENSOR FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE ON UPDATE CASCADE;
+        ");
+
         $this->addSql('
             ALTER TABLE `standardreadingtype`
-            ADD CONSTRAINT FK_STANDARD_READING_TYPE FOREIGN KEY (baseReadingTypeID) REFERENCES basereadingtype (baseReadingTypeID) ON DELETE CASCADE,
-            ADD CONSTRAINT FK_STANDARD_READING_TYPE_SENSOR FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE
+            ADD CONSTRAINT FK_STANDARD_READING_TYPE FOREIGN KEY (baseReadingTypeID) REFERENCES basereadingtype (baseReadingTypeID) ON DELETE CASCADE ON UPDATE CASCADE        
         ');
 
         $this->addSql('
             ALTER TABLE `boolreadingtype`
-            ADD CONSTRAINT FK_BOOL_READING_TYPE FOREIGN KEY (baseReadingTypeID) REFERENCES basereadingtype (baseReadingTypeID) ON DELETE CASCADE,
-            ADD CONSTRAINT FK_BOOL_READING_TYPE_SENSOR FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE            
+            ADD CONSTRAINT FK_BOOL_READING_TYPE FOREIGN KEY (baseReadingTypeID) REFERENCES basereadingtype (baseReadingTypeID) ON DELETE CASCADE ON UPDATE CASCADE
         ');
     }
 

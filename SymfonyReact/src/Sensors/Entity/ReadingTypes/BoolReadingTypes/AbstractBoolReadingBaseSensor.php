@@ -40,7 +40,7 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
     ]
-    private int $boolID;
+    protected int $boolID;
 
     #[
         ORM\OneToOne(targetEntity: BaseSensorReadingType::class),
@@ -48,38 +48,14 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
     ]
     private BaseSensorReadingType $baseReadingType;
 
-    #[
-        ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
-    ]
-    private Sensor $sensor;
-
     #[ORM\Column(name: "currentReading", type: "boolean", nullable: false)]
-    private bool $currentReading;
+    protected bool $currentReading;
 
     #[ORM\Column(name: "requestedReading", type: "boolean", nullable: false)]
-    private bool $requestedReading;
+    protected bool $requestedReading;
 
     #[ORM\Column(name: "expectedReading", type: "boolean", nullable: true)]
     private ?bool $expectedReading;
-
-//    #[ORM\Column(name: "boolReadingType", type: "string", nullable: false)]
-//    protected string $boolReadingType;
-
-    #[ORM\Column(name: "createdAt", type: "datetime", nullable: false)]
-    protected DateTimeInterface $createdAt;
-//
-    #[ORM\Column(name: "updatedAt", type: "datetime", nullable: false)]
-    protected DateTimeInterface $updatedAt;
-
-    #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false)]
-    protected bool $constRecord = false;
-
-    public function __construct()
-    {
-        $this->updatedAt = new DateTimeImmutable('now');
-        $this->setUpdatedAt();
-    }
 
     public function getBoolID(): int
     {
@@ -94,16 +70,6 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
     public function setBaseReadingType(BaseSensorReadingType $baseReadingType): void
     {
         $this->baseReadingType = $baseReadingType;
-    }
-
-    public function getSensor(): Sensor
-    {
-        return $this->sensor;
-    }
-
-    public function setSensor(Sensor $sensor): void
-    {
-        $this->sensor = $sensor;
     }
 
     public function getCurrentReading(): bool
@@ -136,54 +102,39 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
         $this->expectedReading = $expectedReading;
     }
 
-//    public function getReadingType(): string
-//    {
-//        return $this->boolReadingType;
-//    }
-
-//    public function setBoolReadingType(string $boolReadingType): void
-//    {
-//        $this->boolReadingType = $boolReadingType;
-//    }
-
-//    public function getCreatedAt(): DateTimeInterface
-//    {
-//        return $this->createdAt;
-//    }
-//
-//    public function setCreatedAt(DateTimeInterface $createdAt): void
-//    {
-//        $this->createdAt = $createdAt;
-//    }
-//
-    public function getUpdatedAt(): DateTimeInterface
+    public function getSensor(): Sensor
     {
-        return $this->updatedAt;
+        return $this->getBaseReadingType()->getSensor();
     }
 
-    public function setUpdatedAt(): void
+    public function setSensor(Sensor $sensor): void
     {
-        $this->updatedAt = new DateTimeImmutable('now');
+        $this->getBaseReadingType()->setSensor($sensor);
     }
 
     public function getConstRecord(): bool
     {
-        return $this->constRecord;
+        return $this->getBaseReadingType()->getConstRecord();
     }
 
     public function setConstRecord(bool $constRecord): void
     {
-        $this->constRecord = $constRecord;
+        $this->getBaseReadingType()->setConstRecord($constRecord);
     }
 
-    public function getSensorID(): int
+    public function getUpdatedAt(): DateTimeInterface
     {
-        return $this->getSensor()->getSensorID();
+        return $this->getBaseReadingType()->getUpdatedAt();
+    }
+
+    public function setUpdatedAt(): void
+    {
+        $this->getBaseReadingType()->setUpdatedAt();
     }
 
     public function getCreatedAt(): DateTimeInterface
     {
-        return $this->getSensor()->getCreatedAt();
+        return $this->getBaseReadingType()->getCreatedAt();
     }
 
     public function setCreatedAt(?DateTimeInterface $createdAt = null): void
@@ -191,6 +142,6 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
         if ($createdAt === null) {
             $createdAt = new DateTimeImmutable('now');
         }
-        $this->createdAt = $createdAt;
+        $this->getBaseReadingType()->setCreatedAt($createdAt);
     }
 }

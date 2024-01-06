@@ -93,7 +93,6 @@ readonly class DeviceDTOBuilder
     /**
      * @throws RoomNotFoundException
      * @throws GroupNotFoundException
-     * @throws ORMException
      */
     public function buildNewDeviceDTOFromNewDeviceRequest(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {

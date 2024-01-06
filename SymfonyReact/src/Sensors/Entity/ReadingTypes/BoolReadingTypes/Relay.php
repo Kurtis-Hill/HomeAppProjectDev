@@ -28,4 +28,9 @@ class Relay extends AbstractBoolReadingBaseSensor //implements AllSensorReadingT
     {
         // TODO: Implement setUpdatedAt() method.
     }
+
+    public function getSensorID(): int
+    {
+        return $this->boolID;
+    }
 }

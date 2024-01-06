@@ -30,7 +30,7 @@ services:
 
   ######################## Services ########################################################################
   App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface:
-    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceFacade'
+    alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceHandler'
 
   App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface:
     alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandler'

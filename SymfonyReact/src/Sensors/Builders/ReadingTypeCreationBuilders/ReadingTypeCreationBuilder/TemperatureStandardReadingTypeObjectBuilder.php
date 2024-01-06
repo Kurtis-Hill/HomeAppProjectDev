@@ -10,13 +10,16 @@ use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 class TemperatureStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
 {
     /**
-     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws OptimisticLockException
      * @throws SensorTypeException
-     * @throws ORMException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws SensorReadingTypeRepositoryFactoryException
      */
     public function buildReadingTypeObject(Sensor $sensor): AllSensorReadingTypeInterface
     {
@@ -30,11 +33,10 @@ class TemperatureStandardReadingTypeObjectBuilder extends AbstractStandardReadin
         $temperatureSensor->setCurrentReading($sensorType->getMaxTemperature() / 2);
         $temperatureSensor->setHighReading($sensorType->getMaxTemperature());
         $temperatureSensor->setLowReading($sensorType->getMinTemperature());
-        $temperatureSensor->setCreatedAt();
-        $temperatureSensor->setUpdatedAt();
-        $temperatureSensor->setSensor($sensor);
-//        dd($sensorType->getMaxTemperature(), $temperatureSensor, $temperatureSensor->getLowReading(), 'ehere');
-        $this->setBaseReadingTypeForStandardSensor($temperatureSensor);
+//        $temperatureSensor->setCreatedAt();
+//        $temperatureSensor->setUpdatedAt();
+//        $temperatureSensor->setSensor($sensor);
+        $this->setBaseReadingTypeForStandardSensor($temperatureSensor, $sensor);
 
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($temperatureSensor->getReadingType());

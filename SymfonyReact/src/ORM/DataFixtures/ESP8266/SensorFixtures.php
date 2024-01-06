@@ -639,6 +639,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $newObject = new $readingTypeObjects();
             if ($newObject instanceof BaseReadingTypeInterface) {
                 $baseReadingType = new BaseSensorReadingType();
+                $baseReadingType->setSensor($newSensor);
+                $baseReadingType->setCreatedAt(new DateTimeImmutable('now'));
+                $baseReadingType->setUpdatedAt();
                 $manager->persist($baseReadingType);
                 $manager->flush();
 
@@ -647,7 +650,6 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
 
             if ($newObject instanceof AllSensorReadingTypeInterface) {
-                $newObject->setSensor($newSensor);
                 $newObject->setUpdatedAt();
                 $newObject->setCreatedAt(new DateTimeImmutable('now'));
             }
@@ -685,7 +687,6 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newObject->setCurrentReading(true);
                 $newObject->setRequestedReading(true);
 //            $newObject->setCreatedAt(new DateTimeImmutable('now'));
-                $newObject->setUpdatedAt();
                 if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
 //                $newSensorType->setMotion($newObject);
 //                $manager->persist($newSensorType);

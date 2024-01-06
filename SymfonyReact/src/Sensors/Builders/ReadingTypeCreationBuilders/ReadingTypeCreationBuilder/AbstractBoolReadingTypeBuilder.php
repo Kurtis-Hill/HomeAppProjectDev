@@ -9,10 +9,13 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use DateTimeImmutable;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 
 abstract class AbstractBoolReadingTypeBuilder extends AbstractReadingTypeBuilder
 {
@@ -30,28 +33,24 @@ abstract class AbstractBoolReadingTypeBuilder extends AbstractReadingTypeBuilder
 
     /**
      * @throws SensorTypeException
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws SensorReadingTypeRepositoryFactoryException
      */
     protected function setBoolDefaults(
         Sensor $sensor,
-        AllSensorReadingTypeInterface $boolObject,
+        BoolReadingSensorInterface $boolObject,
         float|int|bool $currentReading,
         bool $constRecord
     ): void {
-        if (!$boolObject instanceof BoolReadingSensorInterface) {
-            throw new SensorTypeException(
-                SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED_NO_NAME
-            );
-        }
-        $baseReadingType = $this->createNewBaseReadingTypeObject();
+        $baseReadingType = $this->createNewBaseReadingTypeObject($sensor);
         $boolObject->setBaseReadingType($baseReadingType);
-        $now = new DateTimeImmutable('now');
         $boolObject->setCurrentReading($currentReading);
-        $boolObject->setSensor($sensor);
-//        dd($boolObject, $baseReadingType);
-        $boolObject->setCreatedAt();
+//        $boolObject->setSensor($sensor);
+//        $boolObject->setCreatedAt();
         $boolObject->setRequestedReading($currentReading);
         $boolObject->setConstRecord($constRecord);
-        $boolObject->setUpdatedAt();
+//        $boolObject->setUpdatedAt();
 
         if (($sensor instanceof MotionSensorReadingTypeInterface) && !$boolObject instanceof Motion) {
             throw new SensorTypeException(

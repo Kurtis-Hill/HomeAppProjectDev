@@ -3,6 +3,7 @@
 namespace App\Sensors\Builders\ReadingTypeCreationBuilders\ReadingTypeCreationBuilder;
 
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -20,11 +21,14 @@ abstract class AbstractReadingTypeBuilder
     }
 
     /**
-     * @throws OptimisticLockException|\Doctrine\ORM\ORMException
+     * @param Sensor $sensor
+     * @return BaseSensorReadingType
+     * @throws OptimisticLockException
+     * @throws ORMException
      */
-    protected function createNewBaseReadingTypeObject(): BaseSensorReadingType
+    protected function createNewBaseReadingTypeObject(Sensor $sensor): BaseSensorReadingType
     {
-        $baseReadingType = $this->baseReadingTypeBuilder->buildBaseReadingTypeObject();
+        $baseReadingType = $this->baseReadingTypeBuilder->buildBaseReadingTypeObject($sensor);
         $this->baseSensorReadingTypeRepository->persist($baseReadingType);
         $this->baseSensorReadingTypeRepository->flush();
 
